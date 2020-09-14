@@ -1,4 +1,4 @@
-# @daangn/react-swiper-webview
+# @daangn/karrotframe
 
 > swipe back 을 웹에서 구현하는 프로젝트 입니다.
 
