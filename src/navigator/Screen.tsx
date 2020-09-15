@@ -2,7 +2,7 @@ import React, { useEffect, useMemo } from 'react'
 import { useSetRecoilState } from 'recoil'
 import { AtomScreens } from './atoms/Screens'
 import short from 'short-uuid'
-import { ScreenContext } from './contexts/ScreenContext'
+import { ScreenOptionsProvider } from './contexts/ContextScreenOptions'
 import { AtomScreenInstances, NavbarOptions } from './atoms/ScreenInstances'
 
 interface ScreenProps {
@@ -46,13 +46,13 @@ const Screen: React.FC<ScreenProps> = (props) => {
           }
 
           return (
-            <ScreenContext.Provider value={{
-              screenId: id,
-              screenInstanceId,
-              setNavbar,
-            }}>
+            <ScreenOptionsProvider
+              value={{
+                setNavbar,
+              }}
+            >
               {props.children}
-            </ScreenContext.Provider>
+            </ScreenOptionsProvider>
           )
         },
       }

@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react'
-import { useScreenContext } from './contexts/ScreenContext'
+import { useScreenOptions } from './contexts/ContextScreenOptions'
 
 interface HelmetProps {
   title: string
 }
 const Helmet: React.FC<HelmetProps> = (props) => {
-  const screen = useScreenContext()
+  const screen = useScreenOptions()
 
   useEffect(() => {
     screen.setNavbar({

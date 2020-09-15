@@ -5,7 +5,7 @@ import styled from '@emotion/styled'
 import IconBack from '../assets/IconBack'
 import IconClose from '../assets/IconClose'
 import { Environment } from '../../types'
-import { useNavigatorContext } from '../contexts/NavigatorContext'
+import { useNavigatorOptions } from '../contexts/ContextNavigatorOptions'
 import { useRecoilState } from 'recoil'
 import { AtomScreenInstances } from '../atoms/ScreenInstances'
 
@@ -17,7 +17,7 @@ interface NavbarProps {
 }
 const Navbar: React.FC<NavbarProps> = (props) => {
   const history = useHistory()
-  const navigator = useNavigatorContext()
+  const navigator = useNavigatorOptions()
 
   const [screenInstances] = useRecoilState(AtomScreenInstances)
   const screenInstance = screenInstances.find((instance) => instance.id === props.screenInstanceId)

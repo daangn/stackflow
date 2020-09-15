@@ -1,14 +1,14 @@
 import { atom } from 'recoil'
 
 export const AtomScreenEdge = atom<{
-  edgeStartX: number | null
-  edgeStartTime: number | null
-  edgeX: number
+  startX: number | null
+  startTime: number | null
+  x: number
 }>({
   key: 'ScreenEdge',
   default: {
-    edgeStartX: null,
-    edgeStartTime: null,
-    edgeX: 0,
+    startX: null,
+    startTime: null,
+    x: 0,
   },
 })

@@ -2,7 +2,7 @@ import React from 'react'
 import { css } from '@emotion/core'
 import styled from '@emotion/styled'
 import Navbar from './Navbar'
-import { useNavigatorContext } from '../contexts/NavigatorContext'
+import { useNavigatorOptions } from '../contexts/ContextNavigatorOptions'
 import { Environment } from '../../types'
 import { useRecoilState } from 'recoil'
 import { AtomScreenEdge } from '../atoms/ScreenEdge'
@@ -20,7 +20,7 @@ interface CardProps {
 const Card: React.FC<CardProps> = (props) => {
   const history = useHistory()
 
-  const navigator = useNavigatorContext()
+  const navigator = useNavigatorOptions()
 
   const [screenInstances] = useRecoilState(AtomScreenInstances)
   const [screenEdge, setScreenEdge] = useRecoilState(AtomScreenEdge)
@@ -30,39 +30,39 @@ const Card: React.FC<CardProps> = (props) => {
   const onEdgeTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
     setScreenEdge({
       ...screenEdge,
-      edgeStartX: e.touches[0].clientX,
-      edgeStartTime: Date.now(),
+      startX: e.touches[0].clientX,
+      startTime: Date.now(),
     })
   }
 
   const onEdgeTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
-    if (screenEdge.edgeStartX) {
-      const computedEdgeX = e.touches[0].clientX - screenEdge.edgeStartX
+    if (screenEdge.startX) {
+      const computedEdgeX = e.touches[0].clientX - screenEdge.startX
       if (computedEdgeX >= 0) {
         setScreenEdge({
           ...screenEdge,
-          edgeX: computedEdgeX,
+          x: computedEdgeX,
         })
       } else {
         setScreenEdge({
           ...screenEdge,
-          edgeX: 0,
+          x: 0,
         })
       }
     }
   }
 
   const onEdgeTouchEnd = () => {
-    const velocity = screenEdge.edgeX / (Date.now() - (screenEdge.edgeStartTime as number))
+    const velocity = screenEdge.x / (Date.now() - (screenEdge.startTime as number))
 
-    if (velocity > 1 || screenEdge.edgeX / window.screen.width > 0.4) {
+    if (velocity > 1 || screenEdge.x / window.screen.width > 0.4) {
       history.goBack()
     }
 
     setScreenEdge({
-      edgeX: 0,
-      edgeStartX: null,
-      edgeStartTime: null,
+      x: 0,
+      startX: null,
+      startTime: null,
     })
   }
 
@@ -85,18 +85,18 @@ const Card: React.FC<CardProps> = (props) => {
         animationDuration={navigator.animationDuration}
         style={{
           backgroundColor:
-            screenEdge.edgeStartX !== null && props.isTop
+            screenEdge.startX !== null && props.isTop
               ? `rgba(0, 0, 0, ${
-                  0.2 - (screenEdge.edgeX / window.screen.width) * 0.2
+                  0.2 - (screenEdge.x / window.screen.width) * 0.2
                 })`
               : undefined,
           transform:
-            screenEdge.edgeStartX !== null && !props.isTop
+            screenEdge.startX !== null && !props.isTop
               ? `translateX(-${
-                  2 - (2 * screenEdge.edgeX) / window.screen.width
+                  2 - (2 * screenEdge.x) / window.screen.width
                 }rem)`
               : undefined,
-          transition: screenEdge.edgeStartX !== null ? `0s` : undefined,
+          transition: screenEdge.startX !== null ? `0s` : undefined,
         }}
       >
         <FrameContainer
@@ -104,13 +104,13 @@ const Card: React.FC<CardProps> = (props) => {
           isRoot={props.isRoot}
           animationDuration={navigator.animationDuration}
           style={{
-            overflowY: screenEdge.edgeStartX !== null ? 'hidden' : undefined,
+            overflowY: screenEdge.startX !== null ? 'hidden' : undefined,
             transform:
-              screenEdge.edgeStartX !== null && props.isTop
-                ? `translateX(${screenEdge.edgeX}px)`
+              screenEdge.startX !== null && props.isTop
+                ? `translateX(${screenEdge.x}px)`
                 : undefined,
             transition:
-              screenEdge.edgeStartX !== null && props.isTop
+              screenEdge.startX !== null && props.isTop
                 ? `transform 0s`
                 : undefined,
           }}

@@ -5,7 +5,7 @@ import { RecoilRoot, useRecoilState } from 'recoil'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import { AtomScreens } from './atoms/Screens'
 import { AtomScreenInstances } from './atoms/ScreenInstances'
-import { NavigatorContext, useNavigatorContext } from './contexts/NavigatorContext'
+import { NavigatorOptionsProvider, useNavigatorOptions } from './contexts/ContextNavigatorOptions'
 import Card from './components/Card'
 import qs from 'qs'
 import { Environment } from '../types'
@@ -39,16 +39,18 @@ const Navigator: React.FC<NavigatorProps> = (props) => {
   return (
     <HashRouter>
       <RecoilRoot>
-        <NavigatorContext.Provider value={{
-          environment: props.environment,
-          animationDuration: props.animationDuration ?? DEFAULT_ANIMATION_DURATION,
-        }}>
+        <NavigatorOptionsProvider
+          value={{
+            environment: props.environment,
+            animationDuration: props.animationDuration ?? DEFAULT_ANIMATION_DURATION,
+          }}
+        >
           <NavigatorScreens
             onClose={props.onClose}
           >
             {props.children}
           </NavigatorScreens>
-        </NavigatorContext.Provider>
+        </NavigatorOptionsProvider>
       </RecoilRoot>
     </HashRouter>
   )
@@ -58,7 +60,7 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
   const location = useLocation()
   const history = useHistory()
   
-  const navigator = useNavigatorContext()
+  const navigator = useNavigatorOptions()
 
   const [screens] = useRecoilState(AtomScreens)
   const [screenInstances, setScreenInstances] = useRecoilState(AtomScreenInstances)
