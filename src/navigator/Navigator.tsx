@@ -83,8 +83,8 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
       screenId: string
       screenInstanceId: string
     }) {
-      setScreenInstances((stack) => [
-        ...stack,
+      setScreenInstances((instances) => [
+        ...instances,
         {
           id: screenInstanceId,
           screenId,
@@ -103,8 +103,8 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
       screenId: string
       screenInstanceId: string
     }) {
-      setScreenInstances((stack) => [
-        ...stack.filter((_, index) => index < stack.length - 1),
+      setScreenInstances((instances) => [
+        ...instances.filter((_, index) => index < instances.length - 1),
         {
           id: screenInstanceId,
           screenId,
@@ -137,7 +137,7 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
       
       if (screen) {
         /**
-         * 앞으로 가기 기능 지원을 위한 stackInstance
+         * 앞으로 가기 기능 지원을 위한 ScreenInstance.id
          */
         const screenInstanceId = qs.parse(location.search.split('?')[1])?.kf_sid as string | undefined ?? ''
         push({

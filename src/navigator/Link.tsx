@@ -12,7 +12,7 @@ const Link: React.FC<LinkProps> = (props) => {
   let search = props.to.split('?')[1]
 
   /**
-   * 다음 화면의 StackInstance.id를 생성합니다
+   * 다음 화면의 ScreenInstance.id를 생성합니다
    */
   const sid = useMemo(() => short.generate().substr(0, 8), [])
 
