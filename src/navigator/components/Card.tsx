@@ -118,7 +118,7 @@ const Card: React.FC<CardProps> = (props) => {
           <Frame>
             {props.children}
           </Frame>
-          {navigator.environment ==='Cupertino' && 
+          {navigator.environment ==='Cupertino' && !props.isRoot &&
             <Edge
               onTouchStart={onEdgeTouchStart}
               onTouchMove={onEdgeTouchMove}
@@ -159,6 +159,8 @@ const FrameContainer = styled.div<FrameContainerProps>`
   height: 100%;
   transition: transform ${(props) => props.animationDuration}ms;
   transform: translateX(0);
+  overflow-y: scroll;
+  background-color: #fff;
 
   ${(props) =>
     !props.isRoot &&
@@ -169,9 +171,7 @@ const FrameContainer = styled.div<FrameContainerProps>`
 
 const Frame = styled.div`
   width: 100%;
-  height: 100%;
-  overflow-y: scroll;
-  background-color: #fff;
+  min-height: 100%;
 `
 
 const Edge = styled.div`
@@ -226,6 +226,9 @@ const Container = styled.div<ContainerProps>`
     }
     .kf-frame-container {
       transform: translateX(100%);
+    }
+    .kf-navbar-container {
+      opacity: 0;
     }
   }
 `

@@ -6,7 +6,7 @@ import { Navigator, Screen, Link, Helmet } from '@daangn/karrotframe/lib/navigat
 function App() {
   return (
     <Navigator
-      environment='Web'
+      environment='Cupertino'
       animationDuration={350}
       onClose={() => {
         window.alert('close!!')

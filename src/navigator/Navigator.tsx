@@ -9,6 +9,7 @@ import { NavigatorContext, useNavigatorContext } from './contexts/NavigatorConte
 import Card from './components/Card'
 import qs from 'qs'
 import { Environment } from '../types'
+import { AtomScreenInstancePointer } from './atoms/ScreenInstancePointer'
 
 const DEFAULT_ANIMATION_DURATION = 350
 
@@ -61,6 +62,7 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
 
   const [screens] = useRecoilState(AtomScreens)
   const [screenInstances, setScreenInstances] = useRecoilState(AtomScreenInstances)
+  const [screenInstancePointer, setScreenInstancePointer] = useRecoilState(AtomScreenInstancePointer)
 
   useEffect(() => {
     if (isNavigatorInitialized) {
@@ -83,17 +85,24 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
       screenId: string
       screenInstanceId: string
     }) {
-      setScreenInstances((instances) => [
-        ...instances,
-        {
-          id: screenInstanceId,
-          screenId,
-          navbar: {
-            title: '',
-            visible: false,
-          }
-        },
-      ])
+      const nextPointer = screenInstances.findIndex((screenInstance) => screenInstance.id === screenInstanceId)
+
+      if (nextPointer === -1) {
+        setScreenInstances((instances) => [
+          ...instances.filter((_, index) => index <= screenInstancePointer),
+          {
+            id: screenInstanceId,
+            screenId,
+            navbar: {
+              title: '',
+              visible: false,
+            }
+          },
+        ])
+        setScreenInstancePointer((pointer) => pointer + 1)
+      } else {
+        setScreenInstancePointer(() => nextPointer)
+      }
     }
 
     function replace({
@@ -104,7 +113,7 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
       screenInstanceId: string
     }) {
       setScreenInstances((instances) => [
-        ...instances.filter((_, index) => index < instances.length - 1),
+        ...instances.filter((_, index) => index < screenInstancePointer),
         {
           id: screenInstanceId,
           screenId,
@@ -121,9 +130,7 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
     }: {
       depth: number
     }) {
-      setScreenInstances((instances) => [
-        ...instances.filter((_, index) => index < instances.length - depth),
-      ])
+      setScreenInstancePointer((pointer) => pointer - depth)
     }
 
     if (screenInstances.length === 0) {
@@ -195,7 +202,9 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
 
           if (screen) {
             const screenInstanceId = qs.parse(location.search.split('?')[1])?.kf_sid as string | undefined ?? ''
-            const isForward = screenInstances.findIndex((screenInstance) => screenInstance.id === screenInstanceId) === -1
+            const nextPointer = screenInstances.findIndex((screenInstance) => screenInstance.id === screenInstanceId)
+
+            const isForward = nextPointer > screenInstancePointer || nextPointer === -1
 
             if (isForward) {
               push({
@@ -204,7 +213,7 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
               })
             } else {
               pop({
-                depth: screenInstances.length - 1 - screenInstances.findIndex((screenInstance) => screenInstance.id === screenInstanceId)
+                depth: screenInstancePointer - nextPointer
               })
             }
           }
@@ -217,7 +226,7 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
     return () => {
       disposeListen()
     }
-  }, [screens, screenInstances])
+  }, [screens, screenInstances, screenInstancePointer])
 
   const onClose = () => {
     props.onClose?.()
@@ -227,7 +236,7 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
     <Root>
       {props.children}
       <TransitionGroup>
-        {screenInstances.map((screenInstance, index) => {
+        {screenInstances.filter((_, index) => index <= screenInstancePointer).map((screenInstance, index) => {
           const { Component } = screens[screenInstance.screenId]
 
           return (
@@ -236,8 +245,8 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
                 screenInstanceId={screenInstance.id}
                 isNavbar
                 isRoot={index === 0}
-                isTop={index === screenInstances.length - 1}
-                isUnderTop={index === screenInstances.length - 2}
+                isTop={index === screenInstancePointer}
+                isUnderTop={index === screenInstancePointer - 1}
                 onClose={onClose}
               >
                 <Component screenInstanceId={screenInstance.id} />

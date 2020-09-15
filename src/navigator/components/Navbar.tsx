@@ -26,8 +26,6 @@ const Navbar: React.FC<NavbarProps> = (props) => {
     history.goBack()
   }
 
-  console.log(screenInstance)
-
   return (
     <Container
       className='kf-navbar-container'
