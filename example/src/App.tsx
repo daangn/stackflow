@@ -18,7 +18,7 @@ function App() {
           <div>hello, world</div>
         </Screen>
         <Screen path='/me'>
-          <Helmet title='나' />
+          {/* <Helmet title='나' /> */}
           <Link to='/why'>to_why</Link>
           <div>me</div>
           <div>me</div>

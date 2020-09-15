@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import { css } from '@emotion/core'
 import styled from '@emotion/styled'
 import Navbar from './Navbar'
@@ -26,6 +26,9 @@ const Card: React.FC<CardProps> = (props) => {
   const [screenEdge, setScreenEdge] = useRecoilState(AtomScreenEdge)
   
   const screenInstance = screenInstances.find((instance) => instance.id === props.screenInstanceId)
+
+  const $dim = useRef<HTMLDivElement>(null)
+  const $frameContainer = useRef<HTMLDivElement>(null)
 
   const onEdgeTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
     setScreenEdge({
@@ -66,6 +69,55 @@ const Card: React.FC<CardProps> = (props) => {
     })
   }
 
+  useEffect(() => {
+    let stopped = false
+
+    if (screenEdge.startX !== null) {
+      animate()
+    }
+
+    function animate() {
+      requestAnimationFrame(() => {
+        if ($dim.current) {
+          if (props.isTop) {
+            $dim.current.style.backgroundColor = `rgba(0, 0, 0, ${0.2 - (screenEdge.x / window.screen.width) * 0.2})`
+          }
+          if (!props.isTop) {
+            $dim.current.style.transform = `translateX(-${2 - (2 * screenEdge.x) / window.screen.width}rem)`
+          }
+          $dim.current.style.transition = '0s'
+        }
+        if ($frameContainer.current) {
+          $frameContainer.current.style.overflowY = 'hidden'
+          if (props.isTop) {
+            $frameContainer.current.style.transform = `translateX(${screenEdge.x}px)`
+            $frameContainer.current.style.transition = 'transform 0s'
+          }
+        }
+
+        if (stopped) {
+          if ($dim.current) {
+            $dim.current.style.backgroundColor = ''
+            $dim.current.style.transform = ''
+            $dim.current.style.transition = ''
+          }
+          if ($frameContainer.current) {
+            $frameContainer.current.style.overflowY = ''
+            $frameContainer.current.style.transform = ''
+            $frameContainer.current.style.transition = ''
+          }
+
+        } else {
+          animate()
+        }
+      })
+    }
+
+    return () => {
+      stopped = true
+    }
+  }, [props.isTop, screenEdge])
+
   return (
     <Container
       environment={navigator.environment}
@@ -80,40 +132,16 @@ const Card: React.FC<CardProps> = (props) => {
         />
       }
       <Dim
+        ref={$dim}
         className='kf-dim'
         isTop={props.isTop}
         animationDuration={navigator.animationDuration}
-        style={{
-          backgroundColor:
-            screenEdge.startX !== null && props.isTop
-              ? `rgba(0, 0, 0, ${
-                  0.2 - (screenEdge.x / window.screen.width) * 0.2
-                })`
-              : undefined,
-          transform:
-            screenEdge.startX !== null && !props.isTop
-              ? `translateX(-${
-                  2 - (2 * screenEdge.x) / window.screen.width
-                }rem)`
-              : undefined,
-          transition: screenEdge.startX !== null ? `0s` : undefined,
-        }}
       >
         <FrameContainer
+          ref={$frameContainer}
           className='kf-frame-container'
           isRoot={props.isRoot}
           animationDuration={navigator.animationDuration}
-          style={{
-            overflowY: screenEdge.startX !== null ? 'hidden' : undefined,
-            transform:
-              screenEdge.startX !== null && props.isTop
-                ? `translateX(${screenEdge.x}px)`
-                : undefined,
-            transition:
-              screenEdge.startX !== null && props.isTop
-                ? `transform 0s`
-                : undefined,
-          }}
         >
           <Frame>
             {props.children}
