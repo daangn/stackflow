@@ -24,7 +24,7 @@
     "extends": "react-app"
   },
   "dependencies": {
-    "@daangn/react-swiper-webview": "link:../",
+    "@daangn/karrotframe": "link:../",
     "@daangn/react-webview-bridge": "^0.0.1",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
@@ -35,7 +35,11 @@
     "@types/react-dom": "^16.9.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.3",
     "typescript": "~3.7.2"
+  },
+  "devDependencies": {
+    "@types/react-router-dom": "^5.1.5"
   }
 }

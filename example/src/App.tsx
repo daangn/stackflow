@@ -1,26 +1,73 @@
-import React from "react";
-import { SwipeRouter, PageRoute } from "@daangn/react-swiper-webview";
-import { createHashHistory } from "history";
-import "./App.css";
-import { useBridgePop } from "@daangn/react-webview-bridge";
-import RootPage from "./pages";
-import DisabledPage from "./pages/disabled";
-import Test2Page from "./pages/test2";
-import IdPage from "./pages/id";
+import './App.css'
 
-const history = createHashHistory();
+import React from "react";
+import { Navigator, Screen, Link } from '@daangn/karrotframe/lib/navigator'
 
 function App() {
-  const { pop } = useBridgePop();
   return (
-    <SwipeRouter history={history} onLastPagePop={pop}>
-      <PageRoute path="/" exact component={RootPage} />
-      <PageRoute exact path="/disabled" render={() => <DisabledPage />} />
-      <PageRoute exact path="/test2">
-        <Test2Page />
-      </PageRoute>
-      <PageRoute exact path="/id/:id" component={IdPage} />
-    </SwipeRouter>
+    <div>
+      <h1>karrotframe</h1>
+      <div className='container'>
+        <Navigator
+        environment='Cupertino'
+        onClose={() => {
+          window.alert('close!!')
+        }}>
+          <Screen path='/'>
+            <Link to='/me'>to_me</Link>
+            <div>hello, world</div>
+          </Screen>
+          <Screen path='/me'>
+            <Link to='/?hello=world'>to_root</Link>
+            <div>me</div>
+            <div>me</div>
+            <div>me</div>
+            <div>me</div>
+            <div>me</div>
+            <div>me</div>
+            <div>me</div>
+            <div>me</div>
+            <div>me</div>
+            <div>me</div>
+            <div>me</div>
+            <div>me</div>
+            <div>me</div>
+            <div>me</div>
+            <div>me</div>
+            <div>me</div>
+            <div>me</div>
+            <div>me</div>
+            <div>me</div>
+            <div>me</div>
+            <div>me</div>
+            <div>me</div>
+            <div>me</div>
+            <div>me</div>
+            <div>me</div>
+            <div>me</div>
+            <div>me</div>
+            <div>me</div>
+            <div>me</div>
+            <div>me</div>
+            <div>me</div>
+            <div>me</div>
+            <div>me</div>
+            <div>me</div>
+            <div>me</div>
+            <div>me</div>
+            <div>me</div>
+            <div>me</div>
+            <div>me</div>
+            <div>me</div>
+            <div>me</div>
+            <div>me</div>
+          </Screen>
+          <Screen path='/why'>
+            <div>why</div>
+          </Screen>
+        </Navigator>
+      </div>
+    </div>
   );
 }
 
