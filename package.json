@@ -24,12 +24,10 @@
   "dependencies": {
     "@types/react-router-dom": "^5.1.5",
     "emotion": "^10.0.27",
-    "path-to-regexp": "^6.1.0",
     "qs": "^6.9.4",
     "react-router-dom": "^5.2.0",
     "react-transition-group": "^4.4.1",
     "recoil": "^0.0.10",
-    "rxjs": "^6.6.2",
     "short-uuid": "^4.1.0"
   },
   "devDependencies": {
