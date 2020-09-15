@@ -76,30 +76,74 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
   }, [])
 
   useEffect(() => {
+    function push({
+      screenId,
+      screenInstanceId,
+    }: {
+      screenId: string
+      screenInstanceId: string
+    }) {
+      setScreenInstances((stack) => [
+        ...stack,
+        {
+          id: screenInstanceId,
+          screenId,
+          navbar: {
+            title: '',
+            visible: false,
+          }
+        },
+      ])
+    }
+
+    function replace({
+      screenId,
+      screenInstanceId,
+    }: {
+      screenId: string
+      screenInstanceId: string
+    }) {
+      setScreenInstances((stack) => [
+        ...stack.filter((_, index) => index < stack.length - 1),
+        {
+          id: screenInstanceId,
+          screenId,
+          navbar: {
+            title: '',
+            visible: false,
+          }
+        },
+      ])
+    }
+
+    function pop({
+      depth,
+    }: {
+      depth: number
+    }) {
+      setScreenInstances((instances) => [
+        ...instances.filter((_, index) => index < instances.length - depth),
+      ])
+    }
+
     if (screenInstances.length === 0) {
       /**
        * 처음 Screen들이 초기화될 때,
        * 현재 path와 일치하는 스크린을 찾아서, 스택 맨 위로 넣어준다
        */
-      const matchedScreen = Object
+      const screen = Object
         .values(screens)
         .find((screen) => screen.path === location.pathname)
       
-      if (matchedScreen) {
+      if (screen) {
         /**
          * 앞으로 가기 기능 지원을 위한 stackInstance
          */
         const screenInstanceId = qs.parse(location.search.split('?')[1])?.kf_sid as string | undefined ?? ''
-        setScreenInstances(() => ([
-          {
-            id: screenInstanceId,
-            screenId: matchedScreen.id,
-            navbar: {
-              title: '',
-              visible: false,
-            }
-          },
-        ]))
+        push({
+          screenId: screen.id,
+          screenInstanceId,
+        })
       }
     }
 
@@ -115,17 +159,10 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
           
           if (screen) {
             const screenInstanceId = qs.parse(location.search.split('?')[1])?.kf_sid as string
-            setScreenInstances((stack) => [
-              ...stack,
-              {
-                id: screenInstanceId,
-                screenId: screen.id,
-                navbar: {
-                  title: '',
-                  visible: false,
-                }
-              },
-            ])
+            push({
+              screenId: screen.id,
+              screenInstanceId,
+            })
           }
           break
         }
@@ -140,17 +177,10 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
           
           if (screen) {
             const screenInstanceId = qs.parse(location.search.split('?')[1])?.kf_sid as string
-            setScreenInstances((stack) => [
-              ...stack.filter((_, index) => index < stack.length - 1),
-              {
-                id: screenInstanceId,
-                screenId: screen.id,
-                navbar: {
-                  title: '',
-                  visible: false,
-                }
-              },
-            ])
+            replace({
+              screenId: screen.id,
+              screenInstanceId,
+            })
           }
           break
         }
@@ -168,21 +198,14 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
             const isForward = screenInstances.findIndex((screenInstance) => screenInstance.id === screenInstanceId) === -1
 
             if (isForward) {
-              setScreenInstances((stack) => [
-                ...stack,
-                {
-                  id: screenInstanceId,
-                  screenId: screen.id,
-                  navbar: {
-                    title: '',
-                    visible: false,
-                  }
-                },
-              ])
+              push({
+                screenId: screen.id,
+                screenInstanceId,
+              })
             } else {
-              setScreenInstances((stack) => [
-                ...stack.filter((_, index) => index < 1 + screenInstances.findIndex((screenInstance) => screenInstance.id === screenInstanceId)),
-              ])
+              pop({
+                depth: screenInstances.length - 1 - screenInstances.findIndex((screenInstance) => screenInstance.id === screenInstanceId)
+              })
             }
           }
 
