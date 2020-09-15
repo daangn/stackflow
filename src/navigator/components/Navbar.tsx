@@ -6,15 +6,21 @@ import IconBack from '../assets/IconBack'
 import IconClose from '../assets/IconClose'
 import { Environment } from '../../types'
 import { useNavigatorContext } from '../contexts/NavigatorContext'
+import { useRecoilState } from 'recoil'
+import { AtomScreenInstances } from '../atoms/ScreenInstances'
 
 interface NavbarProps {
+  screenInstanceId: string
   environment: Environment
   isRoot: boolean
   onClose: () => void
 }
 const Navbar: React.FC<NavbarProps> = (props) => {
-  const navigator = useNavigatorContext()
   const history = useHistory()
+  const navigator = useNavigatorContext()
+
+  const [screenInstances] = useRecoilState(AtomScreenInstances)
+  const screenInstance = screenInstances.find((instance) => instance.id === props.screenInstanceId)
 
   const onBackClick = () => {
     history.goBack()
@@ -22,9 +28,9 @@ const Navbar: React.FC<NavbarProps> = (props) => {
 
   return (
     <Container
+      className='kf-navbar-container'
       environment={props.environment}
       animationDuration={navigator.animationDuration}
-      className='kf-navbar-container'
     >
       {!props.isRoot &&
         <Left>
@@ -33,7 +39,7 @@ const Navbar: React.FC<NavbarProps> = (props) => {
           </Back>
         </Left>
       }
-      <Center environment={props.environment} >하이</Center>
+      <Center environment={props.environment}>{screenInstance?.navbar.title}</Center>
       <Right>
         {props.isRoot &&
           <Close onClick={props.onClose}>

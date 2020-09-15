@@ -3,7 +3,7 @@ import { atom } from 'recoil'
 export interface Screen {
   id: string
   path: string
-  Component: React.FC<{ stackItemId: string }>
+  Component: React.FC<{ screenInstanceId: string }>
 }
 
 /**

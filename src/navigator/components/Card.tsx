@@ -6,6 +6,7 @@ import { useNavigatorContext } from '../contexts/NavigatorContext'
 import { Environment } from '../../types'
 
 interface CardProps {
+  screenInstanceId: string
   isNavbar: boolean
   isRoot: boolean
   isTop: boolean
@@ -22,6 +23,7 @@ const Card: React.FC<CardProps> = (props) => {
     >
       {props.isNavbar &&
         <Navbar
+          screenInstanceId={props.screenInstanceId}
           environment={navigator.environment}
           isRoot={props.isRoot}
           onClose={props.onClose}

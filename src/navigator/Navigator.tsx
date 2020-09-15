@@ -4,7 +4,7 @@ import styled from '@emotion/styled'
 import { RecoilRoot, useRecoilState } from 'recoil' 
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import { AtomScreens } from './atoms/Screens'
-import { AtomScreenStack } from './atoms/ScreenStack'
+import { AtomScreenInstances } from './atoms/ScreenInstances'
 import { NavigatorContext } from './contexts/NavigatorContext'
 import Card from './components/Card'
 import qs from 'qs'
@@ -25,14 +25,14 @@ interface NavigatorProps {
   environment: Environment
 
   /**
-   * 닫기 버튼을 눌렀을때 해당 콜백이 호출됩니다
-   */
-  onClose?: () => void
-
-  /**
    * 애니메이션 지속시간
    */
   animationDuration?: number
+
+  /**
+   * 닫기 버튼을 눌렀을때 해당 콜백이 호출됩니다
+   */
+  onClose?: () => void
 }
 const Navigator: React.FC<NavigatorProps> = (props) => {
   return (
@@ -58,7 +58,7 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
   const history = useHistory()
 
   const [screens] = useRecoilState(AtomScreens)
-  const [screenStack, setScreenStack] = useRecoilState(AtomScreenStack)
+  const [screenInstances, setScreenInstances] = useRecoilState(AtomScreenInstances)
 
   useEffect(() => {
     if (isNavigatorInitialized) {
@@ -74,7 +74,7 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
   }, [])
 
   useEffect(() => {
-    if (screenStack.length === 0) {
+    if (screenInstances.length === 0) {
       /**
        * 처음 Screen들이 초기화될 때,
        * 현재 path와 일치하는 스크린을 찾아서, 스택 맨 위로 넣어준다
@@ -85,13 +85,16 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
       
       if (matchedScreen) {
         /**
-         * 앞으로 가기 기능 지원을 위한 stackItemId
+         * 앞으로 가기 기능 지원을 위한 stackInstance
          */
-        const stackItemId = qs.parse(location.search.split('?')[1])?.sid as string | undefined ?? ''
-        setScreenStack(() => ([
+        const screenInstanceId = qs.parse(location.search.split('?')[1])?.kf_sid as string | undefined ?? ''
+        setScreenInstances(() => ([
           {
-            id: stackItemId,
+            id: screenInstanceId,
             screenId: matchedScreen.id,
+            navbar: {
+              title: '',
+            }
           },
         ]))
       }
@@ -108,12 +111,15 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
             .find((screen) => screen.path === location.pathname)
           
           if (screen) {
-            const stackItemId = qs.parse(location.search.split('?')[1])?.sid as string
-            setScreenStack((stack) => [
+            const screenInstanceId = qs.parse(location.search.split('?')[1])?.kf_sid as string
+            setScreenInstances((stack) => [
               ...stack,
               {
-                id: stackItemId,
+                id: screenInstanceId,
                 screenId: screen.id,
+                navbar: {
+                  title: '',
+                }
               },
             ])
           }
@@ -129,12 +135,15 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
             .find((screen) => screen.path === location.pathname)
           
           if (screen) {
-            const stackItemId = qs.parse(location.search.split('?')[1])?.sid as string
-            setScreenStack((stack) => [
+            const screenInstanceId = qs.parse(location.search.split('?')[1])?.kf_sid as string
+            setScreenInstances((stack) => [
               ...stack.filter((_, index) => index < stack.length - 1),
               {
-                id: stackItemId,
+                id: screenInstanceId,
                 screenId: screen.id,
+                navbar: {
+                  title: '',
+                }
               },
             ])
           }
@@ -150,20 +159,23 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
             .find((screen) => screen.path === location.pathname)
 
           if (screen) {
-            const stackItemId = qs.parse(location.search.split('?')[1])?.sid as string | undefined ?? ''
-            const isForward = screenStack.findIndex((stackItem) => stackItem.id === stackItemId) === -1
+            const screenInstanceId = qs.parse(location.search.split('?')[1])?.kf_sid as string | undefined ?? ''
+            const isForward = screenInstances.findIndex((screenInstance) => screenInstance.id === screenInstanceId) === -1
 
             if (isForward) {
-              setScreenStack((stack) => [
+              setScreenInstances((stack) => [
                 ...stack,
                 {
-                  id: stackItemId,
+                  id: screenInstanceId,
                   screenId: screen.id,
+                  navbar: {
+                    title: '',
+                  }
                 },
               ])
             } else {
-              setScreenStack((stack) => [
-                ...stack.filter((_, index) => index < 1 + screenStack.findIndex((stackItem) => stackItem.id === stackItemId)),
+              setScreenInstances((stack) => [
+                ...stack.filter((_, index) => index < 1 + screenInstances.findIndex((screenInstance) => screenInstance.id === screenInstanceId)),
               ])
             }
           }
@@ -176,7 +188,7 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
     return () => {
       disposeListen()
     }
-  }, [screens, screenStack])
+  }, [screens, screenInstances])
 
   const onClose = () => {
     props.onClose?.()
@@ -186,19 +198,20 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
     <Root>
       {props.children}
       <TransitionGroup>
-        {screenStack.map((stackItem, index) => {
-          const { Component } = screens[stackItem.screenId]
+        {screenInstances.map((screenInstance, index) => {
+          const { Component } = screens[screenInstance.screenId]
 
           return (
             <CSSTransition key={index} timeout={500}>
               <Card
+                screenInstanceId={screenInstance.id}
                 isNavbar
                 isRoot={index === 0}
-                isTop={index === screenStack.length - 1}
-                isUnderTop={index === screenStack.length - 2}
+                isTop={index === screenInstances.length - 1}
+                isUnderTop={index === screenInstances.length - 2}
                 onClose={onClose}
               >
-                <Component stackItemId={stackItem.id} />
+                <Component screenInstanceId={screenInstance.id} />
               </Card>
             </CSSTransition>
           )

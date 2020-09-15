@@ -11,17 +11,20 @@ const Link: React.FC<LinkProps> = (props) => {
   const pathname = props.to.split('?')[0]
   let search = props.to.split('?')[1]
 
-  const nextStackId = useMemo(() => short.generate().substr(0, 8), [])
+  /**
+   * 다음 화면의 stackInstance.id를 생성합니다
+   */
+  const sid = useMemo(() => short.generate().substr(0, 8), [])
 
   if (search) {
     const parsedSearch = qs.parse(search)
     search = qs.stringify({
       ...parsedSearch,
-      sid: nextStackId,
+      kf_sid: sid,
     })
   } else {
     search = qs.stringify({
-      sid: nextStackId,
+      kf_sid: sid,
     })
   }
 

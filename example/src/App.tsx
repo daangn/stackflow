@@ -2,6 +2,7 @@ import './App.css'
 
 import React from "react";
 import { Navigator, Screen, Link } from '@daangn/karrotframe/lib/navigator'
+import { useScreenContext } from '@daangn/karrotframe/lib/navigator/contexts/ScreenContext'
 
 function App() {
   return (
@@ -18,7 +19,7 @@ function App() {
             <div>hello, world</div>
           </Screen>
           <Screen path='/me'>
-            <Link to='/?hello=world'>to_root</Link>
+            <Link to='/why'>to_why</Link>
             <div>me</div>
             <div>me</div>
             <div>me</div>
@@ -63,12 +64,69 @@ function App() {
             <div>me</div>
           </Screen>
           <Screen path='/why'>
-            <div>why</div>
+            <Why></Why>
           </Screen>
         </Navigator>
       </div>
     </div>
   );
+}
+
+const Why: React.FC = () => {
+  const screen = useScreenContext()
+
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    screen.setNavbar({
+      title: e.target.value,
+    })
+  }
+  return (
+    <div>
+      <div>me</div>
+      <div>me</div>
+      <div>me</div>
+      <div>me</div>
+      <div>me</div>
+      <div>me</div>
+      <div>me</div>
+      <div>me</div>
+      <div>me</div>
+      <div>me</div>
+      <div>me</div>
+      <div>me</div>
+      <div>me</div>
+      <div>me</div>
+      <div>me</div>
+      <div>me</div>
+      <div>me</div>
+      <div>me</div>
+      <div>me</div>
+      <div>me</div>
+      <div>me</div>
+      <div>me</div>
+      <div>me</div>
+      <div>me</div>
+      <div>me</div>
+      <div>me</div>
+      <div>me</div>
+      <div>me</div>
+      <div>me</div>
+      <div>me</div>
+      <div>me</div>
+      <div>me</div>
+      <div>me</div>
+      <div>me</div>
+      <div>me</div>
+      <div>me</div>
+      <div>me</div>
+      <div>me</div>
+      <div>me</div>
+      <div>me</div>
+      <div>me</div>
+      <div>me</div>
+      <input type='text' onChange={onChange}></input>
+    </div>
+  )
 }
 
 export default App;

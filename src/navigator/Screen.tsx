@@ -3,18 +3,21 @@ import { useSetRecoilState } from 'recoil'
 import { AtomScreens } from './atoms/Screens'
 import short from 'short-uuid'
 import { ScreenContext } from './contexts/ScreenContext'
+import { AtomScreenInstances, NavbarOptions } from './atoms/ScreenInstances'
 
 interface ScreenProps {
+  children: React.ReactNode
+
   /**
    * 해당 스크린의 URL Path
    */
   path: string
-
-  children: React.ReactNode
 }
 const Screen: React.FC<ScreenProps> = (props) => {
   const id = useMemo(() => short.generate(), [])
+
   const setScreens = useSetRecoilState(AtomScreens)
+  const setScreenInstances = useSetRecoilState(AtomScreenInstances)
 
   useEffect(() => {
     setScreens((screens) => ({
@@ -22,10 +25,39 @@ const Screen: React.FC<ScreenProps> = (props) => {
       [id]: {
         id,
         path: props.path,
-        Component: ({ stackItemId: stackId }) => (
-          <ScreenContext.Provider value={{ id, stackId }}>
-            {props.children}
-          </ScreenContext.Provider>),
+        navbar: {
+          title: '',
+        },
+        Component: ({ screenInstanceId }) => {
+          /**
+           * ScreenContext를 통해 유저가 navbar를 바꿀때마다
+           * 실제 ScreenInstance의 navbar를 변경
+           */
+          const setNavbar = (navbar: NavbarOptions) => {
+            setScreenInstances((instances) => {
+              return instances.map((instance) => {
+                if (instance.id === screenInstanceId) {
+                  return {
+                    ...instance,
+                    navbar,
+                  }
+                } else {
+                  return instance
+                }
+              })
+            })
+          }
+
+          return (
+            <ScreenContext.Provider value={{
+              screenId: id,
+              screenInstanceId,
+              setNavbar,
+            }}>
+              {props.children}
+            </ScreenContext.Provider>
+          )
+        },
       }
     }))
   }, [])
