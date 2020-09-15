@@ -1,7 +1,7 @@
 import './App.css'
 
 import React from "react";
-import { Navigator, Screen, Link } from '@daangn/karrotframe/lib/navigator'
+import { Navigator, Screen, Link, Helmet } from '@daangn/karrotframe/lib/navigator'
 import { useScreenContext } from '@daangn/karrotframe/lib/navigator/contexts/ScreenContext'
 
 function App() {
@@ -11,14 +11,18 @@ function App() {
       <div className='container'>
         <Navigator
         environment='Cupertino'
+        animationDuration={350}
         onClose={() => {
           window.alert('close!!')
         }}>
           <Screen path='/'>
+            <Helmet title='홈' />
             <Link to='/me'>to_me</Link>
+            <Link to='/why'>to_why</Link>
             <div>hello, world</div>
           </Screen>
           <Screen path='/me'>
+            <Helmet title='나' />
             <Link to='/why'>to_why</Link>
             <div>me</div>
             <div>me</div>
@@ -82,49 +86,8 @@ const Why: React.FC = () => {
   }
   return (
     <div>
-      <div>me</div>
-      <div>me</div>
-      <div>me</div>
-      <div>me</div>
-      <div>me</div>
-      <div>me</div>
-      <div>me</div>
-      <div>me</div>
-      <div>me</div>
-      <div>me</div>
-      <div>me</div>
-      <div>me</div>
-      <div>me</div>
-      <div>me</div>
-      <div>me</div>
-      <div>me</div>
-      <div>me</div>
-      <div>me</div>
-      <div>me</div>
-      <div>me</div>
-      <div>me</div>
-      <div>me</div>
-      <div>me</div>
-      <div>me</div>
-      <div>me</div>
-      <div>me</div>
-      <div>me</div>
-      <div>me</div>
-      <div>me</div>
-      <div>me</div>
-      <div>me</div>
-      <div>me</div>
-      <div>me</div>
-      <div>me</div>
-      <div>me</div>
-      <div>me</div>
-      <div>me</div>
-      <div>me</div>
-      <div>me</div>
-      <div>me</div>
-      <div>me</div>
-      <div>me</div>
       <input type='text' onChange={onChange}></input>
+      <Link to='/me'>to_me</Link>
     </div>
   )
 }

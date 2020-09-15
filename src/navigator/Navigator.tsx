@@ -5,7 +5,7 @@ import { RecoilRoot, useRecoilState } from 'recoil'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import { AtomScreens } from './atoms/Screens'
 import { AtomScreenInstances } from './atoms/ScreenInstances'
-import { NavigatorContext } from './contexts/NavigatorContext'
+import { NavigatorContext, useNavigatorContext } from './contexts/NavigatorContext'
 import Card from './components/Card'
 import qs from 'qs'
 import { Environment } from '../types'
@@ -56,6 +56,8 @@ const Navigator: React.FC<NavigatorProps> = (props) => {
 const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) => {
   const location = useLocation()
   const history = useHistory()
+  
+  const navigator = useNavigatorContext()
 
   const [screens] = useRecoilState(AtomScreens)
   const [screenInstances, setScreenInstances] = useRecoilState(AtomScreenInstances)
@@ -202,7 +204,7 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
           const { Component } = screens[screenInstance.screenId]
 
           return (
-            <CSSTransition key={index} timeout={500}>
+            <CSSTransition key={index} timeout={navigator.animationDuration}>
               <Card
                 screenInstanceId={screenInstance.id}
                 isNavbar
