@@ -1,3 +1,12 @@
+html, body {
+  padding: 0;
+  margin: 0;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
 .container {
   width: 320px;
   height: 640px;

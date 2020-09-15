@@ -25,9 +25,6 @@ const Screen: React.FC<ScreenProps> = (props) => {
       [id]: {
         id,
         path: props.path,
-        navbar: {
-          title: '',
-        },
         Component: ({ screenInstanceId }) => {
           /**
            * ScreenContext를 통해 유저가 navbar를 바꿀때마다

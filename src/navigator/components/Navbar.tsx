@@ -26,27 +26,36 @@ const Navbar: React.FC<NavbarProps> = (props) => {
     history.goBack()
   }
 
+  console.log(screenInstance)
+
   return (
     <Container
       className='kf-navbar-container'
       environment={props.environment}
       animationDuration={navigator.animationDuration}
     >
-      {!props.isRoot &&
-        <Left>
-          <Back onClick={onBackClick}>
-            <IconBack />
-          </Back>
-        </Left>
+      {props.environment === 'Cupertino' &&
+        <Center environment={props.environment}>{screenInstance?.navbar.title}</Center>
       }
-      <Center environment={props.environment}>{screenInstance?.navbar.title}</Center>
-      <Right>
-        {props.isRoot &&
-          <Close onClick={props.onClose}>
-            <IconClose />
-          </Close>
+      <Buttons>
+        {!props.isRoot &&
+          <Left>
+            <Back onClick={onBackClick}>
+              <IconBack />
+            </Back>
+          </Left>
         }
-      </Right>
+        {(props.environment === 'Android' || props.environment === 'Web') &&
+          <Center environment={props.environment}>{screenInstance?.navbar.title}</Center>
+        }
+        <Right>
+          {props.isRoot &&
+            <Close onClick={props.onClose}>
+              <IconClose />
+            </Close>
+          }
+        </Right>
+      </Buttons>
     </Container>
   )
 }
@@ -54,12 +63,9 @@ const Navbar: React.FC<NavbarProps> = (props) => {
 export const Container = styled.div<{ environment: Environment, animationDuration: number }>`
   background-color: #fff;
   display: flex;
-  z-index: 1;
   position: absolute;
   width: 100%;
   top: 0;
-  transition: opacity ${(props) => props.animationDuration}ms;
-  opacity: 0;
 
   ${(props) => {
     switch (props.environment) {
@@ -72,19 +78,25 @@ export const Container = styled.div<{ environment: Environment, animationDuratio
       case 'Web':
         return css`
           height: 3.5rem;
-          box-shadow: 0px 1px 0 rgba(0, 0, 0, 0.07);
+          box-shadow: inset 0px -1px 0 rgba(0, 0, 0, 0.07);
         `
     }
   }}
+`
+
+const Buttons = styled.div`
+  display: flex;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 `
 
 const Left = styled.div`
   padding: 0 0.875rem;
   display: flex;
   align-items: center;
-  /* position: absolute; */
-  /* top: 0;
-  left: 0; */
   height: 100%;
 `
 
@@ -133,7 +145,6 @@ const Center = styled.div<{ environment: Environment }>`
           left: 0;
           width: 100%;
           height: 100%;
-          z-index: -1;
         `
     }
   }}
@@ -166,6 +177,5 @@ const Close = styled.div`
     height: 1.5rem;
   }
 `
-
 
 export default Navbar

@@ -10,6 +10,7 @@ const Helmet: React.FC<HelmetProps> = (props) => {
   useEffect(() => {
     screen.setNavbar({
       title: props.title,
+      visible: true,
     })
   }, [props])
 

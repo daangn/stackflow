@@ -96,6 +96,7 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
             screenId: matchedScreen.id,
             navbar: {
               title: '',
+              visible: false,
             }
           },
         ]))
@@ -121,6 +122,7 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
                 screenId: screen.id,
                 navbar: {
                   title: '',
+                  visible: false,
                 }
               },
             ])
@@ -145,6 +147,7 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
                 screenId: screen.id,
                 navbar: {
                   title: '',
+                  visible: false,
                 }
               },
             ])
@@ -172,6 +175,7 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
                   screenId: screen.id,
                   navbar: {
                     title: '',
+                    visible: false,
                   }
                 },
               ])

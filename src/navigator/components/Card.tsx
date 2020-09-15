@@ -4,6 +4,10 @@ import styled from '@emotion/styled'
 import Navbar from './Navbar'
 import { useNavigatorContext } from '../contexts/NavigatorContext'
 import { Environment } from '../../types'
+import { useRecoilState } from 'recoil'
+import { AtomScreenEdge } from '../atoms/ScreenEdge'
+import { useHistory } from 'react-router-dom'
+import { AtomScreenInstances } from '../atoms/ScreenInstances'
 
 interface CardProps {
   screenInstanceId: string
@@ -14,14 +18,60 @@ interface CardProps {
   onClose: () => void
 }
 const Card: React.FC<CardProps> = (props) => {
+  const history = useHistory()
+
   const navigator = useNavigatorContext()
+
+  const [screenInstances] = useRecoilState(AtomScreenInstances)
+  const [screenEdge, setScreenEdge] = useRecoilState(AtomScreenEdge)
+  
+  const screenInstance = screenInstances.find((instance) => instance.id === props.screenInstanceId)
+
+  const onEdgeTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    setScreenEdge({
+      ...screenEdge,
+      edgeStartX: e.touches[0].clientX,
+      edgeStartTime: Date.now(),
+    })
+  }
+
+  const onEdgeTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (screenEdge.edgeStartX) {
+      const computedEdgeX = e.touches[0].clientX - screenEdge.edgeStartX
+      if (computedEdgeX >= 0) {
+        setScreenEdge({
+          ...screenEdge,
+          edgeX: computedEdgeX,
+        })
+      } else {
+        setScreenEdge({
+          ...screenEdge,
+          edgeX: 0,
+        })
+      }
+    }
+  }
+
+  const onEdgeTouchEnd = () => {
+    const velocity = screenEdge.edgeX / (Date.now() - (screenEdge.edgeStartTime as number))
+
+    if (velocity > 1 || screenEdge.edgeX / window.screen.width > 0.4) {
+      history.goBack()
+    }
+
+    setScreenEdge({
+      edgeX: 0,
+      edgeStartX: null,
+      edgeStartTime: null,
+    })
+  }
 
   return (
     <Container
       environment={navigator.environment}
-      isNavbar={props.isNavbar}
+      navbarVisible={!!screenInstance?.navbar.visible}
     >
-      {props.isNavbar &&
+      {!!screenInstance?.navbar.visible &&
         <Navbar
           screenInstanceId={props.screenInstanceId}
           environment={navigator.environment}
@@ -33,15 +83,48 @@ const Card: React.FC<CardProps> = (props) => {
         className='kf-dim'
         isTop={props.isTop}
         animationDuration={navigator.animationDuration}
+        style={{
+          backgroundColor:
+            screenEdge.edgeStartX !== null && props.isTop
+              ? `rgba(0, 0, 0, ${
+                  0.2 - (screenEdge.edgeX / window.screen.width) * 0.2
+                })`
+              : undefined,
+          transform:
+            screenEdge.edgeStartX !== null && !props.isTop
+              ? `translateX(-${
+                  2 - (2 * screenEdge.edgeX) / window.screen.width
+                }rem)`
+              : undefined,
+          transition: screenEdge.edgeStartX !== null ? `0s` : undefined,
+        }}
       >
         <FrameContainer
           className='kf-frame-container'
           isRoot={props.isRoot}
           animationDuration={navigator.animationDuration}
+          style={{
+            overflowY: screenEdge.edgeStartX !== null ? 'hidden' : undefined,
+            transform:
+              screenEdge.edgeStartX !== null && props.isTop
+                ? `translateX(${screenEdge.edgeX}px)`
+                : undefined,
+            transition:
+              screenEdge.edgeStartX !== null && props.isTop
+                ? `transform 0s`
+                : undefined,
+          }}
         >
           <Frame>
             {props.children}
           </Frame>
+          {navigator.environment ==='Cupertino' && 
+            <Edge
+              onTouchStart={onEdgeTouchStart}
+              onTouchMove={onEdgeTouchMove}
+              onTouchEnd={onEdgeTouchEnd}
+            />
+          }
         </FrameContainer>
       </Dim>
     </Container>
@@ -91,8 +174,16 @@ const Frame = styled.div`
   background-color: #fff;
 `
 
+const Edge = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 1.25rem;
+`
+
 interface ContainerProps {
-  isNavbar?: boolean,
+  navbarVisible?: boolean,
   environment: Environment
 }
 const Container = styled.div<ContainerProps>`
@@ -104,7 +195,7 @@ const Container = styled.div<ContainerProps>`
   box-sizing: border-box;
   
   ${(props) => {
-    if (!props.isNavbar) {
+    if (!props.navbarVisible) {
       return css``
     }
 
@@ -128,9 +219,6 @@ const Container = styled.div<ContainerProps>`
     .kf-frame-container {
       transform: translateX(0);
     }
-    .kf-navbar-container {
-      opacity: 1;
-    }
   }
   &.exit-active {
     .kf-dim {
@@ -138,9 +226,6 @@ const Container = styled.div<ContainerProps>`
     }
     .kf-frame-container {
       transform: translateX(100%);
-    }
-    .kf-navbar-container {
-      opacity: 0;
     }
   }
 `

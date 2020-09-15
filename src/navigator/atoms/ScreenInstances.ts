@@ -2,6 +2,7 @@ import { atom } from 'recoil'
 
 export interface NavbarOptions {
   title: string
+  visible: boolean
 }
 
 interface ScreenInstance {
