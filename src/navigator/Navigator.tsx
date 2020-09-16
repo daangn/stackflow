@@ -3,14 +3,17 @@ import { HashRouter, useLocation, useHistory } from 'react-router-dom'
 import styled from '@emotion/styled'
 import { RecoilRoot, useRecoilState } from 'recoil' 
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
-import { AtomScreens } from './atoms/Screens'
-import { AtomScreenInstances, ScreenInstance } from './atoms/ScreenInstances'
-import { NavigatorOptionsProvider, useNavigatorOptions } from './contexts/ContextNavigatorOptions'
-import Card from './components/Card'
+import {
+  AtomScreens,
+  AtomScreenInstances,
+  AtomScreenInstancePointer,
+  ScreenInstance,
+  screenInstancePromises,
+} from './atoms'
+import { NavigatorOptionsProvider, useNavigatorOptions } from './contexts'
+import { Card } from './components'
 import qs from 'qs'
 import { Environment } from '../types'
-import { AtomScreenInstancePointer } from './atoms/ScreenInstancePointer'
-import { promises } from './promises'
 
 const DEFAULT_ANIMATION_DURATION = 350
 
@@ -125,7 +128,7 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
       depth: number,
       targetScreenInstanceId: string,
     }) {
-      promises[targetScreenInstanceId]?.(null)
+      screenInstancePromises[targetScreenInstanceId]?.(null)
       setScreenInstancePointer((pointer) => pointer - depth)
     }
 

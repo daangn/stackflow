@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { useScreenOptions } from './contexts/ContextScreenOptions'
+import { useScreenOptions } from './contexts'
 
 interface HelmetProps {
   title?: string

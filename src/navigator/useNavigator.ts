@@ -1,11 +1,13 @@
 import { useHistory } from "react-router-dom"
 import { useRecoilState } from "recoil"
-import { AtomScreenInstancePointer } from "./atoms/ScreenInstancePointer"
-import { AtomScreenInstances } from "./atoms/ScreenInstances"
 import short from 'short-uuid'
 import qs from 'qs'
-import { useScreenInfo } from "./contexts/ContextScreenInfo"
-import { promises } from "./promises"
+import { useScreenInfo } from "./contexts"
+import {
+  AtomScreenInstances,
+  AtomScreenInstancePointer,
+  screenInstancePromises,
+} from "./atoms"
 
 export function useNavigator() {
   const history = useHistory()
@@ -17,7 +19,7 @@ export function useNavigator() {
   return {
     push(to: string) {
       return new Promise<object | null>((resolve) => {
-        promises[screenInfo.screenInstanceId] = resolve
+        screenInstancePromises[screenInfo.screenInstanceId] = resolve
 
         const sid = short.generate().substr(0, 5)
 
@@ -51,7 +53,7 @@ export function useNavigator() {
       const targetScreenInstance = screenInstances.find((_, index) => index === screenInstancePointer - level)
 
       if (targetScreenInstance) {
-        promises[targetScreenInstance.id]?.(data)
+        screenInstancePromises[targetScreenInstance.id]?.(data)
       }
 
       for (let i = 0; i < level; i++) {

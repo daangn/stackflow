@@ -1,10 +1,8 @@
 import React, { useEffect, useMemo } from 'react'
 import { useSetRecoilState } from 'recoil'
-import { AtomScreens } from './atoms/Screens'
 import short from 'short-uuid'
-import { ScreenOptionsProvider } from './contexts/ContextScreenOptions'
-import { ScreenInfoProvider } from './contexts/ContextScreenInfo'
-import { AtomScreenInstanceOptions, NavbarOptions } from './atoms/ScreenInstanceOptions'
+import { ScreenOptionsProvider, ScreenInfoProvider } from './contexts'
+import { AtomScreens, AtomScreenInstanceOptions, NavbarOptions } from './atoms'
 
 interface ScreenProps {
   children: React.ReactNode

@@ -2,12 +2,11 @@ import React from 'react'
 import { useHistory } from 'react-router-dom'
 import { css } from '@emotion/core'
 import styled from '@emotion/styled'
-import IconBack from '../assets/IconBack'
-import IconClose from '../assets/IconClose'
+import { IconBack, IconClose } from '../assets'
 import { Environment } from '../../types'
-import { useNavigatorOptions } from '../contexts/ContextNavigatorOptions'
+import { useNavigatorOptions } from '../contexts'
 import { useRecoilState } from 'recoil'
-import { AtomScreenInstanceOptions } from '../atoms/ScreenInstanceOptions'
+import { AtomScreenInstanceOptions } from '../atoms'
 
 interface NavbarProps {
   screenInstanceId: string

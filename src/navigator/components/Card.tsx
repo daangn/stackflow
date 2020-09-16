@@ -2,12 +2,11 @@ import React, { useEffect, useRef, useState } from 'react'
 import { css } from '@emotion/core'
 import styled from '@emotion/styled'
 import Navbar from './Navbar'
-import { useNavigatorOptions } from '../contexts/ContextNavigatorOptions'
+import { useNavigatorOptions } from '../contexts'
 import { Environment } from '../../types'
 import { useRecoilState } from 'recoil'
-import { AtomScreenEdge } from '../atoms/ScreenEdge'
 import { useHistory } from 'react-router-dom'
-import { AtomScreenInstanceOptions } from '../atoms/ScreenInstanceOptions'
+import { AtomScreenInstanceOptions, AtomScreenEdge } from '../atoms'
 
 interface CardProps {
   screenInstanceId: string
