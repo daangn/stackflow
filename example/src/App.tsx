@@ -32,6 +32,8 @@ function App() {
 }
 
 const Home: React.FC = () => {
+  const { push } = useNavigator()
+
   return (
     <div>
       <Helmet

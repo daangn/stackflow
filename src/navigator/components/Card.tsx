@@ -7,7 +7,7 @@ import { Environment } from '../../types'
 import { useRecoilState } from 'recoil'
 import { AtomScreenEdge } from '../atoms/ScreenEdge'
 import { useHistory } from 'react-router-dom'
-import { AtomScreenInstances } from '../atoms/ScreenInstances'
+import { AtomScreenInstanceOptions } from '../atoms/ScreenInstanceOptions'
 
 interface CardProps {
   screenInstanceId: string
@@ -24,12 +24,12 @@ const Card: React.FC<CardProps> = (props) => {
 
   const navigatorOptions = useNavigatorOptions()
 
-  const [screenInstances] = useRecoilState(AtomScreenInstances)
+  const [screenInstanceOptions] = useRecoilState(AtomScreenInstanceOptions)
   const [screenEdge, setScreenEdge] = useRecoilState(AtomScreenEdge)
   
   const [loading, setLoading] = useState(true)
   
-  const screenInstance = screenInstances.find((instance) => instance.id === props.screenInstanceId)
+  const screenInstanceOption = screenInstanceOptions[props.screenInstanceId]
 
   const $dim = useRef<HTMLDivElement>(null)
   const $frameContainer = useRef<HTMLDivElement>(null)
@@ -131,14 +131,14 @@ const Card: React.FC<CardProps> = (props) => {
   return (
     <Container
       environment={navigatorOptions.environment}
-      navbarVisible={!!screenInstance?.navbar.visible}
+      navbarVisible={!!screenInstanceOption?.navbar.visible}
       enterActive={props.enterActive}
       enterDone={props.enterDone}
       exitActive={props.exitActive}
       exitDone={props.exitDone}
       isLoading={loading}
     >
-      {!!screenInstance?.navbar.visible &&
+      {!!screenInstanceOption?.navbar.visible &&
         <Navbar
           screenInstanceId={props.screenInstanceId}
           environment={navigatorOptions.environment}

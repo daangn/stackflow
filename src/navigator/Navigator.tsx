@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { memo, useEffect, useMemo, useState } from 'react'
 import { HashRouter, useLocation, useHistory } from 'react-router-dom'
 import styled from '@emotion/styled'
 import { RecoilRoot, useRecoilState } from 'recoil' 
@@ -10,6 +10,7 @@ import Card from './components/Card'
 import qs from 'qs'
 import { Environment } from '../types'
 import { AtomScreenInstancePointer } from './atoms/ScreenInstancePointer'
+import { promises } from './promises'
 
 const DEFAULT_ANIMATION_DURATION = 350
 
@@ -93,14 +94,6 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
           {
             id: screenInstanceId,
             screenId,
-            navbar: {
-              title: '',
-              visible: false,
-              left: null,
-              right: null,
-              center: null,
-            },
-            resolve: null,
           },
         ])
         setScreenInstancePointer((pointer) => pointer + 1)
@@ -121,29 +114,18 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
         {
           id: screenInstanceId,
           screenId,
-          navbar: {
-            title: '',
-            visible: false,
-            left: null,
-            right: null,
-            center: null,
-          },
-          resolve: null,
         },
       ])
     }
 
     function pop({
       depth,
+      targetScreenInstanceId,
     }: {
-      depth: number
+      depth: number,
+      targetScreenInstanceId: string,
     }) {
-      const targetScreenInstance = screenInstances.find((_, index) => index === screenInstancePointer - depth)
-
-      if (targetScreenInstance?.resolve) {
-        targetScreenInstance.resolve(null)
-      }
-
+      promises[targetScreenInstanceId]?.(null)
       setScreenInstancePointer((pointer) => pointer - depth)
     }
 
@@ -227,7 +209,8 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
               })
             } else {
               pop({
-                depth: screenInstancePointer - nextPointer
+                depth: screenInstancePointer - nextPointer,
+                targetScreenInstanceId: screenInstanceId,
               })
             }
           }
@@ -246,7 +229,7 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
     props.onClose?.()
   }
 
-  return (
+  return useMemo(() => (
     <Root>
       {props.children}
       <TransitionGroup>
@@ -262,7 +245,7 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
         }
       </TransitionGroup>
     </Root>
-  )
+  ), [screenInstances])
 }
 
 const Root = styled.div`
@@ -278,7 +261,7 @@ interface TransitionProps {
   index: number
   onClose: () => void
 }
-const Transition: React.FC<TransitionProps> = (props) => {
+const Transition: React.FC<TransitionProps> = memo((props) => {
   const navigatorOptions = useNavigatorOptions()
 
   type TransitionState = 'enter-active' | 'enter-done' | 'exit-active' | 'exit-done'
@@ -324,6 +307,6 @@ const Transition: React.FC<TransitionProps> = (props) => {
       </Card>
     </CSSTransition>
   )
-}
+})
 
 export default Navigator

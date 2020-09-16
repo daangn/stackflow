@@ -7,7 +7,7 @@ import IconClose from '../assets/IconClose'
 import { Environment } from '../../types'
 import { useNavigatorOptions } from '../contexts/ContextNavigatorOptions'
 import { useRecoilState } from 'recoil'
-import { AtomScreenInstances } from '../atoms/ScreenInstances'
+import { AtomScreenInstanceOptions } from '../atoms/ScreenInstanceOptions'
 
 interface NavbarProps {
   screenInstanceId: string
@@ -19,8 +19,9 @@ const Navbar: React.FC<NavbarProps> = (props) => {
   const history = useHistory()
   const navigatorOptions = useNavigatorOptions()
 
-  const [screenInstances] = useRecoilState(AtomScreenInstances)
-  const screenInstance = screenInstances.find((instance) => instance.id === props.screenInstanceId)
+  const [screenInstanceOptions] = useRecoilState(AtomScreenInstanceOptions)
+
+  const screenInstanceOption = screenInstanceOptions[props.screenInstanceId]
 
   const onBackClick = () => {
     history.goBack()
@@ -33,25 +34,25 @@ const Navbar: React.FC<NavbarProps> = (props) => {
       animationDuration={navigatorOptions.animationDuration}
     >
       {props.environment === 'Cupertino' &&
-        <Center environment={props.environment}>{screenInstance?.navbar.center || screenInstance?.navbar.title}</Center>
+        <Center environment={props.environment}>{screenInstanceOption?.navbar.center || screenInstanceOption?.navbar.title}</Center>
       }
       <Flex>
-        {(!props.isRoot || screenInstance?.navbar.left) &&
+        {(!props.isRoot || screenInstanceOption?.navbar.left) &&
           <Left>
             {!props.isRoot &&
               <Back onClick={onBackClick}>
                 <IconBack />
               </Back>
             }
-            {screenInstance?.navbar.left}
+            {screenInstanceOption?.navbar.left}
           </Left>
         }
         {(props.environment === 'Android' || props.environment === 'Web') &&
-          <Center environment={props.environment}>{screenInstance?.navbar.center || screenInstance?.navbar.title}</Center>
+          <Center environment={props.environment}>{screenInstanceOption?.navbar.center || screenInstanceOption?.navbar.title}</Center>
         }
-        {(props.isRoot || screenInstance?.navbar.right) &&
+        {(props.isRoot || screenInstanceOption?.navbar.right) &&
           <Right>
-            {screenInstance?.navbar.right}
+            {screenInstanceOption?.navbar.right}
             {props.isRoot &&
               <Close onClick={props.onClose}>
                 <IconClose />

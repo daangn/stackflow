@@ -3,7 +3,8 @@ import { useSetRecoilState } from 'recoil'
 import { AtomScreens } from './atoms/Screens'
 import short from 'short-uuid'
 import { ScreenOptionsProvider } from './contexts/ContextScreenOptions'
-import { AtomScreenInstances, NavbarOptions } from './atoms/ScreenInstances'
+import { ScreenInfoProvider } from './contexts/ContextScreenInfo'
+import { AtomScreenInstanceOptions, NavbarOptions } from './atoms/ScreenInstanceOptions'
 
 interface ScreenProps {
   children: React.ReactNode
@@ -17,7 +18,7 @@ const Screen: React.FC<ScreenProps> = (props) => {
   const id = useMemo(() => short.generate(), [])
 
   const setScreens = useSetRecoilState(AtomScreens)
-  const setScreenInstances = useSetRecoilState(AtomScreenInstances)
+  const setScreenInstanceOptions = useSetRecoilState(AtomScreenInstanceOptions)
 
   useEffect(() => {
     setScreens((screens) => ({
@@ -31,29 +32,30 @@ const Screen: React.FC<ScreenProps> = (props) => {
            * 실제 ScreenInstance의 navbar를 변경
            */
           const setNavbar = (navbar: NavbarOptions) => {
-            setScreenInstances((instances) => {
-              return instances.map((instance) => {
-                if (instance.id === screenInstanceId) {
-                  return {
-                    ...instance,
-                    navbar,
-                  }
-                } else {
-                  return instance
-                }
-              })
-            })
+
+            setScreenInstanceOptions((options) => ({
+              ...options,
+              [screenInstanceId]: {
+                ...options[screenInstanceId],
+                navbar,
+              }
+            }))
           }
 
           return (
-            <ScreenOptionsProvider
+            <ScreenInfoProvider
               value={{
-                setNavbar,
                 screenInstanceId,
               }}
             >
-              {props.children}
-            </ScreenOptionsProvider>
+              <ScreenOptionsProvider
+                value={{
+                  setNavbar,
+                }}
+              >
+                {props.children}
+              </ScreenOptionsProvider>
+            </ScreenInfoProvider>
           )
         },
       }
