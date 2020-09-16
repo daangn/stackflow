@@ -76,13 +76,16 @@ const Form: React.FC = () => {
   const params = useParams()
 
   const onPopClick = () => {
-    pop(2, {
+    pop(1, {
       hello: 'world',
     })
   }
 
   return (
     <div>
+      <ScreenHelmet
+        title='폼'
+      />
       form...
       <button onClick={onPopClick}>pop</button>
     </div>
