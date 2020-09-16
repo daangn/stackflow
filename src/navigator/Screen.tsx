@@ -3,7 +3,7 @@ import { useSetRecoilState } from 'recoil'
 import short from 'short-uuid'
 
 import { AtomScreens, AtomScreenInstanceOptions, NavbarOptions } from './atoms'
-import { ScreenOptionsProvider, ScreenInfoProvider } from './contexts'
+import { ScreenInstanceOptionsProvider, ScreenInstanceInfoProvider } from './contexts'
 
 interface ScreenProps {
   children: React.ReactNode
@@ -41,18 +41,18 @@ const Screen: React.FC<ScreenProps> = (props) => {
           }
 
           return (
-            <ScreenInfoProvider
+            <ScreenInstanceInfoProvider
               value={{
                 screenInstanceId,
                 path: props.path,
               }}>
-              <ScreenOptionsProvider
+              <ScreenInstanceOptionsProvider
                 value={{
                   setNavbar,
                 }}>
                 {props.children}
-              </ScreenOptionsProvider>
-            </ScreenInfoProvider>
+              </ScreenInstanceOptionsProvider>
+            </ScreenInstanceInfoProvider>
           )
         },
       },

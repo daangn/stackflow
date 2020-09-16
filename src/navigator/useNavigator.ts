@@ -4,11 +4,11 @@ import { useRecoilState } from 'recoil'
 import short from 'short-uuid'
 
 import { AtomScreenInstances, AtomScreenInstancePointer, screenInstancePromises } from './atoms'
-import { useScreenInfo } from './contexts'
+import { useScreenInstanceInfo } from './contexts'
 
 export function useNavigator() {
   const history = useHistory()
-  const screenInfo = useScreenInfo()
+  const screenInfo = useScreenInstanceInfo()
 
   const [screenInstances] = useRecoilState(AtomScreenInstances)
   const [screenInstancePointer] = useRecoilState(AtomScreenInstancePointer)

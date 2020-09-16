@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 
-import { useScreenOptions } from './contexts'
+import { useScreenInstanceOptions } from './contexts'
 
 interface ScreenHelmetProps {
   title?: string
@@ -9,7 +9,7 @@ interface ScreenHelmetProps {
   center?: React.ReactNode
 }
 const ScreenHelmet: React.FC<ScreenHelmetProps> = (props) => {
-  const screen = useScreenOptions()
+  const screen = useScreenInstanceOptions()
 
   useEffect(() => {
     screen.setNavbar({

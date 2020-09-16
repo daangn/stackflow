@@ -1,9 +1,9 @@
 import { useRouteMatch } from 'react-router-dom'
 
-import { useScreenInfo } from './contexts'
+import { useScreenInstanceInfo } from './contexts'
 
 export function useParams() {
-  const info = useScreenInfo()
+  const info = useScreenInstanceInfo()
   const match = useRouteMatch({
     path: info.path,
   })

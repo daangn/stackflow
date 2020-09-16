@@ -1,3 +1,3 @@
 export * from './ContextNavigatorOptions'
-export * from './ContextScreenInfo'
-export * from './ContextScreenOptions'
+export * from './ContextScreenInstanceInfo'
+export * from './ContextScreenInstanceOptions'
