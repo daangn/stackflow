@@ -11,10 +11,8 @@ import { AtomScreenInstances } from '../atoms/ScreenInstances'
 
 interface CardProps {
   screenInstanceId: string
-  isNavbar: boolean
   isRoot: boolean
   isTop: boolean
-  isUnderTop: boolean
   onClose: () => void
 }
 const Card: React.FC<CardProps> = (props) => {
@@ -248,9 +246,10 @@ const Container = styled.div<ContainerProps>`
       transform: translateX(0);
     }
   }
-  &.exit-active {
+  &.exit-active, &.exit-done {
     .kf-dim {
       background-color: rgba(0, 0, 0, 0);
+      transform: translateX(0);
     }
     .kf-frame-container {
       transform: translateX(100%);

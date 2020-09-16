@@ -82,9 +82,9 @@ const Why: React.FC = () => {
 
   return (
     <div>
-      <Helmet
+      {title && <Helmet
         title={title}
-      />
+      />}
       <input type='text' onChange={onChange}></input>
       <Link to='/me'>to_me</Link>
     </div>

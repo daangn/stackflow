@@ -1,6 +1,6 @@
 import { atom } from 'recoil'
 
-interface ScreenInstance {
+export interface ScreenInstance {
   id: string
   screenId: string
   navbar: NavbarOptions

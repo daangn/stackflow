@@ -129,7 +129,7 @@ const Center = styled.div<{ environment: Environment }>`
         return css`
           font-family: 'Noto Sans KR', sans-serif;
           justify-content: flex-start;
-          padding-left: 0.875rem;
+          padding-left: 0.75rem;
           font-size: 1.1875rem;
         `
       case 'Cupertino':
