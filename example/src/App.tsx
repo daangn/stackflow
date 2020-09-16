@@ -32,6 +32,19 @@ function App() {
 }
 
 const Home: React.FC = () => {
+  return (
+    <div>
+      <Helmet
+        title='홈'
+      />
+      home
+      <HomeButtons />
+    </div>
+  )
+}
+
+const HomeButtons: React.FC = () => {
+  // TODO: useNavigator랑 Helmet이 한 컴포넌트에 있으면 무한루프 발생
   const { push } = useNavigator()
 
   const onPushClick = async () => {
@@ -40,13 +53,7 @@ const Home: React.FC = () => {
   }
 
   return (
-    <div>
-      <Helmet
-        title='홈'
-      />
-      home
-      <button onClick={onPushClick}>push</button>
-    </div>
+    <button onClick={onPushClick}>push</button>
   )
 }
 
