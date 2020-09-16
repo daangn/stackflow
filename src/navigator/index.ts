@@ -1,4 +1,4 @@
-export { useLocation, useRouteMatch, useHistory } from 'react-router-dom'
+export { useLocation, useRouteMatch } from 'react-router-dom'
 
 export { default as Link } from './Link'
 export { default as Navigator } from './Navigator'
