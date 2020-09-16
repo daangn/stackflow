@@ -15,7 +15,21 @@ function App() {
         bridge.router.close()
       }}>
         <Screen path='/'>
-          <Helmet title='홈' />
+          <Helmet
+            title='홈'
+            left={
+              <>
+                <div>left</div>
+                <div>left2</div>
+              </>
+            }
+            right={
+              <div>right</div>
+            }
+            center={
+              <div style={{color: 'red'}}>wow</div>
+            }
+          />
           <Link to='/me'>to_me</Link>
           <Link to='/why'>to_why</Link>
           <div>hello, world</div>

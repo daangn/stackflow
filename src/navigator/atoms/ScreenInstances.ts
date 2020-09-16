@@ -8,6 +8,9 @@ export interface ScreenInstance {
 export interface NavbarOptions {
   title: string
   visible: boolean
+  left: React.ReactNode | null
+  right: React.ReactNode | null
+  center: React.ReactNode | null
 }
 
 export const AtomScreenInstances = atom<ScreenInstance[]>({

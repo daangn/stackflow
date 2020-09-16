@@ -96,6 +96,9 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
             navbar: {
               title: '',
               visible: false,
+              left: null,
+              right: null,
+              center: null,
             }
           },
         ])
@@ -120,6 +123,9 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
           navbar: {
             title: '',
             visible: false,
+            left: null,
+            right: null,
+            center: null,
           }
         },
       ])

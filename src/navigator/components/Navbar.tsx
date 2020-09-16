@@ -33,27 +33,33 @@ const Navbar: React.FC<NavbarProps> = (props) => {
       animationDuration={navigator.animationDuration}
     >
       {props.environment === 'Cupertino' &&
-        <Center environment={props.environment}>{screenInstance?.navbar.title}</Center>
+        <Center environment={props.environment}>{screenInstance?.navbar.center || screenInstance?.navbar.title}</Center>
       }
-      <Buttons>
-        {!props.isRoot &&
+      <Flex>
+        {(!props.isRoot || screenInstance?.navbar.left) &&
           <Left>
-            <Back onClick={onBackClick}>
-              <IconBack />
-            </Back>
+            {!props.isRoot &&
+              <Back onClick={onBackClick}>
+                <IconBack />
+              </Back>
+            }
+            {screenInstance?.navbar.left}
           </Left>
         }
         {(props.environment === 'Android' || props.environment === 'Web') &&
-          <Center environment={props.environment}>{screenInstance?.navbar.title}</Center>
+          <Center environment={props.environment}>{screenInstance?.navbar.center || screenInstance?.navbar.title}</Center>
         }
-        <Right>
-          {props.isRoot &&
-            <Close onClick={props.onClose}>
-              <IconClose />
-            </Close>
-          }
-        </Right>
-      </Buttons>
+        {(props.isRoot || screenInstance?.navbar.right) &&
+          <Right>
+            {screenInstance?.navbar.right}
+            {props.isRoot &&
+              <Close onClick={props.onClose}>
+                <IconClose />
+              </Close>
+            }
+          </Right>
+        }
+      </Flex>
     </Container>
   )
 }
@@ -82,7 +88,7 @@ export const Container = styled.div<{ environment: Environment, animationDuratio
   }}
 `
 
-const Buttons = styled.div`
+const Flex = styled.div`
   display: flex;
   position: absolute;
   top: 0;
