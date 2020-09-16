@@ -9,25 +9,19 @@ interface LinkProps {
   className?: string
 }
 const Link: React.FC<LinkProps> = forwardRef<HTMLAnchorElement, LinkProps>((props, ref) => {
-  const pathname = props.to.split('?')[0]
-  let search = props.to.split('?')[1]
-
   /**
    * 다음 화면의 ScreenInstance.id를 생성합니다
    */
   const sid = useMemo(() => short.generate().substr(0, 5), [])
 
-  if (search) {
-    const parsedSearch = qs.parse(search)
-    search = qs.stringify({
-      ...parsedSearch,
-      kf_sid: sid,
-    })
-  } else {
-    search = qs.stringify({
-      kf_sid: sid,
-    })
-  }
+  const pathname = props.to.split('?')[0]
+  let search = props.to.split('?')[1]
+  const parsedSearch = search ? qs.parse(search) : null
+
+  search = qs.stringify({
+    ...parsedSearch,
+    kf_sid: sid,
+  })
 
   return (
     <RouterLink
