@@ -259,7 +259,7 @@ const Transition: React.FC<TransitionProps> = memo((props) => {
       onEnter={() => {
         setTimeout(() => {
           setTransitionState('enter-active')
-        }, 50)
+        }, 70)
       }}
       onEntered={() => {
         setTransitionState('enter-done')
