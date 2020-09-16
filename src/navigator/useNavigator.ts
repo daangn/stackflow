@@ -14,8 +14,8 @@ export function useNavigator() {
   const [screenInstancePointer] = useRecoilState(AtomScreenInstancePointer)
 
   return {
-    push(to: string) {
-      return new Promise<object | null>((resolve) => {
+    push<T = object>(to: string) {
+      return new Promise<T | null>((resolve) => {
         screenInstancePromises[screenInfo.screenInstanceId] = resolve
 
         const sid = short.generate().substr(0, 5)
@@ -46,7 +46,7 @@ export function useNavigator() {
 
       history.replace(pathname + '?' + search)
     },
-    pop(depth: number, data?: object) {
+    pop<T = object>(depth: number, data?: T) {
       const targetScreenInstance = screenInstances.find((_, index) => index === screenInstancePointer - depth)
 
       if (targetScreenInstance) {

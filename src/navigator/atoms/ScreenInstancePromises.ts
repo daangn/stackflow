@@ -1,3 +1,3 @@
 export const screenInstancePromises: {
-  [screenInstanceId: string]: ((data: object | null) => void) | null
+  [screenInstanceId: string]: ((data: any | null) => void) | null
 } = {}
