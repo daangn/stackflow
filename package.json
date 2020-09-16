@@ -27,7 +27,7 @@
     "qs": "^6.9.4",
     "react-router-dom": "^5.2.0",
     "react-transition-group": "^4.4.1",
-    "recoil": "^0.0.10",
+    "recoil": "^0.0.11",
     "short-uuid": "^4.1.0"
   },
   "devDependencies": {

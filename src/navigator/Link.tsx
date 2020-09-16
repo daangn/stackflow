@@ -14,7 +14,7 @@ const Link: React.FC<LinkProps> = (props) => {
   /**
    * 다음 화면의 ScreenInstance.id를 생성합니다
    */
-  const sid = useMemo(() => short.generate().substr(0, 8), [])
+  const sid = useMemo(() => short.generate().substr(0, 5), [])
 
   if (search) {
     const parsedSearch = qs.parse(search)

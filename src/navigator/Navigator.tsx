@@ -242,7 +242,10 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
           const { Component } = screens[screenInstance.screenId]
 
           return (
-            <CSSTransition key={index} timeout={navigator.animationDuration}>
+            <CSSTransition
+              key={index}
+              timeout={navigator.animationDuration}
+            >
               <Card
                 screenInstanceId={screenInstance.id}
                 isNavbar
