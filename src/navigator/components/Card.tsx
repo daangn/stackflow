@@ -278,7 +278,7 @@ const Container = styled.div<ContainerProps>`
       transform: translateX(100%);
     }
     .kf-navbar-container {
-      opacity: 0;
+      display: none;
     }
   `}
 
