@@ -7,5 +7,5 @@ export function useParams() {
     path: info.path,
   })
 
-  return match?.params
+  return match?.params || {}
 }

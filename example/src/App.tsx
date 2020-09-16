@@ -59,7 +59,6 @@ const Home: React.FC = () => {
 }
 
 const HomeButtons: React.FC = () => {
-  // TODO: useNavigator랑 Helmet이 한 컴포넌트에 있으면 무한루프 발생
   const { push } = useNavigator()
 
   const onPushClick = async () => {
@@ -75,8 +74,6 @@ const HomeButtons: React.FC = () => {
 const Form: React.FC = () => {
   const { pop } = useNavigator()
   const params = useParams()
-
-  console.log(params)
 
   const onPopClick = () => {
     pop(2, {
