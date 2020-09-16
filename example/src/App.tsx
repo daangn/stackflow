@@ -2,14 +2,17 @@ import './App.css'
 
 import React, { useState } from "react";
 import { Navigator, Screen, Link, Helmet } from '@daangn/karrotframe/lib/navigator'
+import Bridge from '@daangn/webview-bridge'
+
+const bridge = new Bridge()
 
 function App() {
   return (
     <Navigator
-      environment='Cupertino'
+      environment={bridge.environment}
       animationDuration={350}
       onClose={() => {
-        window.alert('close!!')
+        bridge.router.close()
       }}>
         <Screen path='/'>
           <Helmet title='홈' />

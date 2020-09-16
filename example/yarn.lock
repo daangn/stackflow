@@ -1108,7 +1108,7 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
-"@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2", "@babel/runtime@^7.10.2", "@babel/runtime@^7.10.3", "@babel/runtime@^7.3.4", "@babel/runtime@^7.4.5", "@babel/runtime@^7.5.1", "@babel/runtime@^7.5.5", "@babel/runtime@^7.7.2", "@babel/runtime@^7.7.6", "@babel/runtime@^7.8.4":
+"@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2", "@babel/runtime@^7.10.2", "@babel/runtime@^7.10.3", "@babel/runtime@^7.3.4", "@babel/runtime@^7.4.5", "@babel/runtime@^7.5.1", "@babel/runtime@^7.5.5", "@babel/runtime@^7.7.2", "@babel/runtime@^7.8.4", "@babel/runtime@^7.8.7":
   version "7.11.2"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.11.2.tgz#f549c13c754cc40b87644b9fa9f09a6a95fe0736"
   integrity sha512-TeWkU52so0mPtDcaCTxNBI/IHiz0pZgr8VEFqXFtZWpYD08ZB6FaSwVAS8MKRQAP3bYKiVjwysOJgMFY28o6Tw==
@@ -1170,24 +1170,17 @@
   version "0.0.0"
   uid ""
 
-"@daangn/react-webview-bridge@^0.0.1":
-  version "0.0.1"
-  resolved "https://npm.pkg.github.com/download/@daangn/react-webview-bridge/0.0.1/eaa39ebc89989fe3175098efd7e4f810fdae659e83da36f072b7afd77772d802#bea69e0d78b2934c603647fa0f2f077064e50ba6"
-  integrity sha512-3M5a4g4vGG5C7+mT5c5b7lpZvvDZVCNHog4zoA4r2sA3XCI9SYkk8QhcsrG/IWg3d9hVRyIfN7BD9wSNSqnqtQ==
+"@daangn/webview-bridge@^3.3.2":
+  version "3.3.2"
+  resolved "https://npm.pkg.github.com/download/@daangn/webview-bridge/3.3.2/0b4fd91c6e220273b56be811b50831bd44a698091fc651afbb0b4be5a991f656#1777106d5131b6ade58692c56abceef22b974979"
+  integrity sha512-XdIIy42W1Nv1MuEjqHrssIDtbEUZ6+QZdEGGBvUyFsMwnMULYOTQcpGC/wf1FfGNl8rAmkq0ifZgoLJFhF5x+Q==
   dependencies:
-    "@daangn/webview-bridge" "^3.1.4"
+    "@daangn/webview-protocol" "^4.2.1"
 
-"@daangn/webview-bridge@^3.1.4":
-  version "3.1.4"
-  resolved "https://npm.pkg.github.com/download/@daangn/webview-bridge/3.1.4/c041eeab8bd5b7836fe34f364a491a4e424c6743854188f7f166dbf183952b16#f947fe032ee6b2b4295782317528b910e42408a2"
-  integrity sha512-6ZaeLXzRwq9VwbB6LcSoOYdXk9me6JJ4JYvkcvmqJNrJLZaTXd+04gj5Zi3VUbWlWsZYdnj/K5KW0+24+Evp+Q==
-  dependencies:
-    "@daangn/webview-protocol" "^4.1.0"
-
-"@daangn/webview-protocol@^4.1.0":
-  version "4.1.0"
-  resolved "https://npm.pkg.github.com/download/@daangn/webview-protocol/4.1.0/bf24fb626f8c2203056e90aa5be654ae285aecf80e7cbeaf570249a9e5853f10#82abcb0200ce24a2febafe2447d70d6d73aa11b4"
-  integrity sha512-3YsfnfN52H8AHsYzwPm6WKE+o274bkFDKOZxBvrdyj2wtoLTL/HU6c1sorxp/CB4UgEpXZyIwCe7lUcT83z7Xg==
+"@daangn/webview-protocol@^4.2.1":
+  version "4.2.1"
+  resolved "https://npm.pkg.github.com/download/@daangn/webview-protocol/4.2.1/2d0d301074045c8a7af1a844b31430f7afb7df951b010e6350c19b2ad287c6ef#924316ac34319f98721c0dd04f2a6ce1b6d3ba59"
+  integrity sha512-8MLmQ9lEUCi7SpkjoTW9rsj0E+y1RN1gavhAIepsoIFpBRwGsa7iKO33e8/gnm9ST+oosEQOCMkQF0Nkis54sA==
 
 "@emotion/cache@^10.0.27":
   version "10.0.29"
@@ -4007,6 +4000,14 @@ dom-converter@^0.2:
   dependencies:
     utila "~0.4"
 
+dom-helpers@^5.0.1:
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/dom-helpers/-/dom-helpers-5.2.0.tgz#57fd054c5f8f34c52a3eeffdb7e7e93cd357d95b"
+  integrity sha512-Ru5o9+V8CpunKnz5LGgWXkmrH/20cGKwcHwS4m73zIvs54CN9epEmT/HLqFJW3kXpakAFkEdzgy1hzlJe3E4OQ==
+  dependencies:
+    "@babel/runtime" "^7.8.7"
+    csstype "^3.0.2"
+
 dom-serializer@0:
   version "0.2.2"
   resolved "https://registry.yarnpkg.com/dom-serializer/-/dom-serializer-0.2.2.tgz#1afb81f533717175d478655debc5e332d9f9bb51"
@@ -5311,13 +5312,6 @@ history@^4.9.0:
     tiny-invariant "^1.0.2"
     tiny-warning "^1.0.0"
     value-equal "^1.0.1"
-
-history@^5.0.0:
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/history/-/history-5.0.0.tgz#0cabbb6c4bbf835addb874f8259f6d25101efd08"
-  integrity sha512-3NyRMKIiFSJmIPdq7FxkNMJkQ7ZEtVblOQ38VtKaA0zZMW1Eo6Q6W8oDKEflr1kNNTItSnk4JMCO1deeSgbLLg==
-  dependencies:
-    "@babel/runtime" "^7.7.6"
 
 hmac-drbg@^1.0.0:
   version "1.0.1"
@@ -7814,11 +7808,6 @@ path-to-regexp@^1.7.0:
   dependencies:
     isarray "0.0.1"
 
-path-to-regexp@^6.1.0:
-  version "6.1.0"
-  resolved "https://registry.yarnpkg.com/path-to-regexp/-/path-to-regexp-6.1.0.tgz#0b18f88b7a0ce0bfae6a25990c909ab86f512427"
-  integrity sha512-h9DqehX3zZZDCEm+xbfU0ZmwCGFCAAraPJWMXJ4+v32NjZJilVg3k1TcKsRgIb8IQ/izZSaydDc1OhJCZvs2Dw==
-
 path-type@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/path-type/-/path-type-2.0.0.tgz#f012ccb8415b7096fc2daa1054c3d72389594c73"
@@ -8792,6 +8781,11 @@ qs@6.7.0:
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.7.0.tgz#41dc1a015e3d581f1621776be31afb2876a9b1bc"
   integrity sha512-VCdBRNFTX1fyE7Nb6FYoURo/SPe62QCaAyzJvUjwRaIsc+NePBEniHlvxFmmX56+HZphIGtV0XeCirBtpDrTyQ==
 
+qs@^6.9.4:
+  version "6.9.4"
+  resolved "https://registry.yarnpkg.com/qs/-/qs-6.9.4.tgz#9090b290d1f91728d3c22e54843ca44aea5ab687"
+  integrity sha512-A1kFqHekCTM7cz0udomYUoYNWjBebHm/5wzU/XqrBRBNWectVH0QIiN+NEcZ0Dte5hvzHwbr8+XQmguPhJ6WdQ==
+
 qs@~6.5.2:
   version "6.5.2"
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.5.2.tgz#cb3ae806e8740444584ef154ce8ee98d403f3e36"
@@ -9007,6 +9001,16 @@ react-scripts@3.4.3:
     workbox-webpack-plugin "4.3.1"
   optionalDependencies:
     fsevents "2.1.2"
+
+react-transition-group@^4.4.1:
+  version "4.4.1"
+  resolved "https://registry.yarnpkg.com/react-transition-group/-/react-transition-group-4.4.1.tgz#63868f9325a38ea5ee9535d828327f85773345c9"
+  integrity sha512-Djqr7OQ2aPUiYurhPalTrVy9ddmFCCzwhqQmtN+J3+3DzLO209Fdr70QrN8Z3DsglWql6iY1lDWAfpFiBtuKGw==
+  dependencies:
+    "@babel/runtime" "^7.5.5"
+    dom-helpers "^5.0.1"
+    loose-envify "^1.4.0"
+    prop-types "^15.6.2"
 
 react@^16.13.1:
   version "16.13.1"
@@ -9430,7 +9434,7 @@ run-queue@^1.0.0, run-queue@^1.0.3:
   dependencies:
     aproba "^1.1.1"
 
-rxjs@^6.5.3, rxjs@^6.6.0, rxjs@^6.6.2:
+rxjs@^6.5.3, rxjs@^6.6.0:
   version "6.6.2"
   resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-6.6.2.tgz#8096a7ac03f2cc4fe5860ef6e572810d9e01c0d2"
   integrity sha512-BHdBMVoWC2sL26w//BCu3YzKT4s2jip/WhwsGEDmeKYBhKDZeYezVUnHatYB7L85v5xs0BAQmg6BEYJEKxBabg==
