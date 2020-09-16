@@ -17,7 +17,7 @@ interface NavbarProps {
 }
 const Navbar: React.FC<NavbarProps> = (props) => {
   const history = useHistory()
-  const navigator = useNavigatorOptions()
+  const navigatorOptions = useNavigatorOptions()
 
   const [screenInstances] = useRecoilState(AtomScreenInstances)
   const screenInstance = screenInstances.find((instance) => instance.id === props.screenInstanceId)
@@ -30,7 +30,7 @@ const Navbar: React.FC<NavbarProps> = (props) => {
     <Container
       className='kf-navbar-container'
       environment={props.environment}
-      animationDuration={navigator.animationDuration}
+      animationDuration={navigatorOptions.animationDuration}
     >
       {props.environment === 'Cupertino' &&
         <Center environment={props.environment}>{screenInstance?.navbar.center || screenInstance?.navbar.title}</Center>

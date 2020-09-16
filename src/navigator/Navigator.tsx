@@ -99,7 +99,8 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
               left: null,
               right: null,
               center: null,
-            }
+            },
+            resolve: null,
           },
         ])
         setScreenInstancePointer((pointer) => pointer + 1)
@@ -126,7 +127,8 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
             left: null,
             right: null,
             center: null,
-          }
+          },
+          resolve: null,
         },
       ])
     }
@@ -136,6 +138,12 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
     }: {
       depth: number
     }) {
+      const targetScreenInstance = screenInstances.find((_, index) => index === screenInstancePointer - depth)
+
+      if (targetScreenInstance?.resolve) {
+        targetScreenInstance.resolve(null)
+      }
+
       setScreenInstancePointer((pointer) => pointer - depth)
     }
 

@@ -1,7 +1,7 @@
 import './App.css'
 
 import React, { useState } from "react";
-import { Navigator, Screen, Link, Helmet } from '@daangn/karrotframe/lib/navigator'
+import { Navigator, Screen, Link, Helmet, useNavigator } from '@daangn/karrotframe/lib/navigator'
 import Bridge from '@daangn/webview-bridge'
 
 const bridge = new Bridge()
@@ -15,92 +15,54 @@ function App() {
         bridge.router.close()
       }}>
         <Screen path='/'>
-          <Helmet
-            title='홈'
-            left={
-              <>
-                <div>left</div>
-                <div>left2</div>
-              </>
-            }
-            right={
-              <div>right</div>
-            }
-            center={
-              <div style={{color: 'red'}}>wow</div>
-            }
-          />
-          <Link to='/me'>to_me</Link>
-          <Link to='/why'>to_why</Link>
-          <div>hello, world</div>
+          <Home />
         </Screen>
-        <Screen path='/me'>
-          {/* <Helmet title='나' /> */}
-          <Link to='/why'>to_why</Link>
-          <div>me</div>
-          <div>me</div>
-          <div>me</div>
-          <div>me</div>
-          <div>me</div>
-          <div>me</div>
-          <div>me</div>
-          <div>me</div>
-          <div>me</div>
-          <div>me</div>
-          <div>me</div>
-          <div>me</div>
-          <div>me</div>
-          <div>me</div>
-          <div>me</div>
-          <div>me</div>
-          <div>me</div>
-          <div>me</div>
-          <div>me</div>
-          <div>me</div>
-          <div>me</div>
-          <div>me</div>
-          <div>me</div>
-          <div>me</div>
-          <div>me</div>
-          <div>me</div>
-          <div>me</div>
-          <div>me</div>
-          <div>me</div>
-          <div>me</div>
-          <div>me</div>
-          <div>me</div>
-          <div>me</div>
-          <div>me</div>
-          <div>me</div>
-          <div>me</div>
-          <div>me</div>
-          <div>me</div>
-          <div>me</div>
-          <div>me</div>
-          <div>me</div>
-          <div>me</div>
+        <Screen path='/something'>
+          <div>
+            <Link to='/form'>
+              왜 무한루프 도는거지???
+            </Link>
+          </div>
         </Screen>
-        <Screen path='/why'>
-          <Why></Why>
+        <Screen path='/form'>
+          <Form />
         </Screen>
       </Navigator>
   );
 }
 
-const Why: React.FC = () => {
-  const [title, setTitle] = useState('')
+const Home: React.FC = () => {
+  const { push } = useNavigator()
 
-  const onChange = (e: any) => {
-    setTitle(e.target.value)
+  const onPushClick = async () => {
+    const data = await push('/something')
+    console.log(data)
   }
 
   return (
     <div>
-      {title && <Helmet
-        title={title}
-      />}
-      <input type='text' onChange={onChange}></input>
-      <Link to='/'>to_home</Link>
+      <Helmet
+        title='홈'
+      />
+      home
+      <button onClick={onPushClick}>push</button>
+    </div>
+  )
+}
+
+const Form: React.FC = () => {
+  const { pop } = useNavigator()
+
+  const onPopClick = () => {
+    pop(2, {
+      hello: 'world',
+    })
+  }
+
+  return (
+    <div>
+      form...
+      <button onClick={onPopClick}>pop</button>
     </div>
   )
 }

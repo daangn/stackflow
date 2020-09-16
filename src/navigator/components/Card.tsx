@@ -22,7 +22,7 @@ interface CardProps {
 const Card: React.FC<CardProps> = (props) => {
   const history = useHistory()
 
-  const navigator = useNavigatorOptions()
+  const navigatorOptions = useNavigatorOptions()
 
   const [screenInstances] = useRecoilState(AtomScreenInstances)
   const [screenEdge, setScreenEdge] = useRecoilState(AtomScreenEdge)
@@ -130,7 +130,7 @@ const Card: React.FC<CardProps> = (props) => {
 
   return (
     <Container
-      environment={navigator.environment}
+      environment={navigatorOptions.environment}
       navbarVisible={!!screenInstance?.navbar.visible}
       enterActive={props.enterActive}
       enterDone={props.enterDone}
@@ -141,7 +141,7 @@ const Card: React.FC<CardProps> = (props) => {
       {!!screenInstance?.navbar.visible &&
         <Navbar
           screenInstanceId={props.screenInstanceId}
-          environment={navigator.environment}
+          environment={navigatorOptions.environment}
           isRoot={props.isRoot}
           onClose={props.onClose}
         />
@@ -150,13 +150,13 @@ const Card: React.FC<CardProps> = (props) => {
         ref={$dim}
         className='kf-dim'
         isTop={props.isTop}
-        animationDuration={navigator.animationDuration}
+        animationDuration={navigatorOptions.animationDuration}
       >
         <FrameContainer
           ref={$frameContainer}
           className='kf-frame-container'
           isRoot={props.isRoot}
-          animationDuration={navigator.animationDuration}
+          animationDuration={navigatorOptions.animationDuration}
         >
           <Frame>
             {props.children}

@@ -4,6 +4,7 @@ export interface ScreenInstance {
   id: string
   screenId: string
   navbar: NavbarOptions
+  resolve: ((data: object | null) => void) | null
 }
 export interface NavbarOptions {
   title: string

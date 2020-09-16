@@ -49,6 +49,7 @@ const Screen: React.FC<ScreenProps> = (props) => {
             <ScreenOptionsProvider
               value={{
                 setNavbar,
+                screenInstanceId,
               }}
             >
               {props.children}
