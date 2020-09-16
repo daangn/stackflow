@@ -1,7 +1,13 @@
 import './App.css'
 
 import React, { useState } from "react";
-import { Navigator, Screen, Link, Helmet, useNavigator } from '@daangn/karrotframe/lib/navigator'
+import {
+  Link,
+  Navigator,
+  Screen,
+  ScreenHelmet,
+  useNavigator,
+} from '@daangn/karrotframe'
 import Bridge from '@daangn/webview-bridge'
 
 const bridge = new Bridge()
@@ -33,13 +39,19 @@ function App() {
 
 const Home: React.FC = () => {
   const { push } = useNavigator()
+  const [title, setTitle] = useState('홈')
+
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTitle(e.target.value)
+  }
 
   return (
     <div>
-      <Helmet
-        title='홈'
+      <ScreenHelmet
+        title={title}
       />
       home
+      <input type='text' onChange={onChange} value={title} />
       <HomeButtons />
     </div>
   )

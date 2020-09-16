@@ -49,14 +49,14 @@ export function useNavigator() {
 
       history.replace(pathname + '?' + search)
     },
-    pop(level: number, data: object) {
-      const targetScreenInstance = screenInstances.find((_, index) => index === screenInstancePointer - level)
+    pop(depth: number, data: object) {
+      const targetScreenInstance = screenInstances.find((_, index) => index === screenInstancePointer - depth)
 
       if (targetScreenInstance) {
         screenInstancePromises[targetScreenInstance.id]?.(data)
       }
 
-      for (let i = 0; i < level; i++) {
+      for (let i = 0; i < depth; i++) {
         history.goBack()
       }
     },
