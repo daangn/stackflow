@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { HashRouter, useLocation, useHistory } from 'react-router-dom'
 import styled from '@emotion/styled'
 import { RecoilRoot, useRecoilState } from 'recoil' 
@@ -238,7 +238,12 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
       <TransitionGroup>
         {screenInstances
           .map((screenInstance, index) => (
-            <Transition key={index} screenInstance={screenInstance} index={index} onClose={onClose} />
+            <Transition
+              key={index}
+              screenInstance={screenInstance}
+              index={index}
+              onClose={onClose}
+            />
           ))
         }
       </TransitionGroup>
@@ -261,6 +266,10 @@ interface TransitionProps {
 }
 const Transition: React.FC<TransitionProps> = (props) => {
   const navigatorOptions = useNavigatorOptions()
+
+  type TransitionState = 'enter-active' | 'enter-done' | 'exit-active' | 'exit-done'
+
+  const [transitionState, setTransitionState] = useState<TransitionState | null>(null)
   const [screens] = useRecoilState(AtomScreens)
   const [screenInstancePointer] = useRecoilState(AtomScreenInstancePointer)
 
@@ -272,12 +281,30 @@ const Transition: React.FC<TransitionProps> = (props) => {
       timeout={navigatorOptions.animationDuration}
       in={props.index <= screenInstancePointer}
       unmountOnExit
+      onEnter={() => {
+        setTimeout(() => {
+          setTransitionState('enter-active')
+        }, 50)
+      }}
+      onEntered={() => {
+        setTransitionState('enter-done')
+      }}
+      onExit={() => {
+        setTransitionState('exit-active')
+      }}
+      onExited={() => {
+        setTransitionState('exit-done')
+      }}
     >
       <Card
         screenInstanceId={props.screenInstance.id}
         isRoot={props.index === 0}
         isTop={props.index === screenInstancePointer}
         onClose={props.onClose}
+        enterActive={transitionState === 'enter-active'}
+        enterDone={transitionState === 'enter-done' }
+        exitActive={transitionState === 'exit-active'}
+        exitDone={transitionState === 'exit-done' }
       >
         <Component screenInstanceId={props.screenInstance.id} />
       </Card>

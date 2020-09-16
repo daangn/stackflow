@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { css } from '@emotion/core'
 import styled from '@emotion/styled'
 import Navbar from './Navbar'
@@ -14,6 +14,10 @@ interface CardProps {
   isRoot: boolean
   isTop: boolean
   onClose: () => void
+  enterActive: boolean
+  enterDone: boolean
+  exitActive: boolean
+  exitDone: boolean
 }
 const Card: React.FC<CardProps> = (props) => {
   const history = useHistory()
@@ -22,6 +26,8 @@ const Card: React.FC<CardProps> = (props) => {
 
   const [screenInstances] = useRecoilState(AtomScreenInstances)
   const [screenEdge, setScreenEdge] = useRecoilState(AtomScreenEdge)
+  
+  const [loading, setLoading] = useState(true)
   
   const screenInstance = screenInstances.find((instance) => instance.id === props.screenInstanceId)
 
@@ -116,10 +122,21 @@ const Card: React.FC<CardProps> = (props) => {
     }
   }, [props.isTop, screenEdge])
 
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false)
+    }, 0)
+  }, [])
+
   return (
     <Container
       environment={navigator.environment}
       navbarVisible={!!screenInstance?.navbar.visible}
+      enterActive={props.enterActive}
+      enterDone={props.enterDone}
+      exitActive={props.exitActive}
+      exitDone={props.exitDone}
+      isLoading={loading}
     >
       {!!screenInstance?.navbar.visible &&
         <Navbar
@@ -144,7 +161,7 @@ const Card: React.FC<CardProps> = (props) => {
           <Frame>
             {props.children}
           </Frame>
-          {navigator.environment ==='Cupertino' && !props.isRoot &&
+          {!props.isRoot &&
             <Edge
               onTouchStart={onEdgeTouchStart}
               onTouchMove={onEdgeTouchMove}
@@ -211,6 +228,11 @@ const Edge = styled.div`
 interface ContainerProps {
   navbarVisible?: boolean,
   environment: Environment
+  enterActive: boolean
+  enterDone: boolean
+  exitActive: boolean
+  exitDone: boolean
+  isLoading: boolean
 }
 const Container = styled.div<ContainerProps>`
   position: absolute;
@@ -238,15 +260,16 @@ const Container = styled.div<ContainerProps>`
     }
   }}
 
-  &.enter-active, &.enter-done {
+  ${(props) => (props.enterActive || props.enterDone) && css`
     .kf-dim {
       background-color: rgba(0, 0, 0, 0.2);
     }
     .kf-frame-container {
       transform: translateX(0);
     }
-  }
-  &.exit-active, &.exit-done {
+  `}
+
+  ${(props) => (props.exitActive || props.exitDone) && css`
     .kf-dim {
       background-color: rgba(0, 0, 0, 0);
       transform: translateX(0);
@@ -257,7 +280,11 @@ const Container = styled.div<ContainerProps>`
     .kf-navbar-container {
       opacity: 0;
     }
-  }
+  `}
+
+  ${(props) => props.isLoading && css`
+    display: none;
+  `}
 `
 
 export default Card

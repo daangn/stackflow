@@ -70,7 +70,7 @@ export const Container = styled.div<{ environment: Environment, animationDuratio
       case 'Cupertino':
         return css`
           height: 2.75rem;
-          box-shadow: inset 0px -0.5px 0 rgb(177, 178, 179);
+          box-shadow: inset 0px -0.5px 0 rgba(0, 0, 0, 0.12);
         `
       case 'Android':
       case 'Web':

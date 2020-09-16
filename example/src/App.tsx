@@ -86,7 +86,7 @@ const Why: React.FC = () => {
         title={title}
       />}
       <input type='text' onChange={onChange}></input>
-      <Link to='/me'>to_me</Link>
+      <Link to='/'>to_home</Link>
     </div>
   )
 }
