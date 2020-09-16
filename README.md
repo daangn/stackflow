@@ -96,7 +96,7 @@ const Home: React.FC = () => {
 `useLocation`, `useParams`, `useRouteMatch`를 활용할 수 있습니다
 
 ```tsx
-import { useLocation, useParams } from '@daangn/karrotframe'
+import { useLocation, useParams, useRouteMatch } from '@daangn/karrotframe'
 
 const Post: React.FC = () => {
   const location = useLocation()
