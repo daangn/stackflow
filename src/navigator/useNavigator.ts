@@ -46,11 +46,11 @@ export function useNavigator() {
 
       history.replace(pathname + '?' + search)
     },
-    pop(depth: number, data: object) {
+    pop(depth: number, data?: object) {
       const targetScreenInstance = screenInstances.find((_, index) => index === screenInstancePointer - depth)
 
       if (targetScreenInstance) {
-        screenInstancePromises[targetScreenInstance.id]?.(data)
+        screenInstancePromises[targetScreenInstance.id]?.(data ?? null)
       }
 
       for (let i = 0; i < depth; i++) {
