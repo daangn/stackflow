@@ -88,7 +88,7 @@ const Card: React.FC<CardProps> = (props) => {
             $dim.current.style.backgroundColor = `rgba(0, 0, 0, ${0.2 - (screenEdge.x / window.screen.width) * 0.2})`
           }
           if (!props.isTop) {
-            $dim.current.style.transform = `translateX(-${2 - (2 * screenEdge.x) / window.screen.width}rem)`
+            $dim.current.style.transform = `translateX(-${5 - (5 * screenEdge.x) / window.screen.width}rem)`
           }
           $dim.current.style.transition = '0s'
         }
@@ -169,7 +169,7 @@ const Dim = styled.div<DimProps>`
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0);
-  transform: translateX(-2rem);
+  transform: translateX(-5rem);
   transition: background-color ${(props) => props.animationDuration}ms,
     transform ${(props) => props.animationDuration}ms;
 
