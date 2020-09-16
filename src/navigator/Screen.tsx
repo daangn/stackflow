@@ -44,6 +44,7 @@ const Screen: React.FC<ScreenProps> = (props) => {
             <ScreenInfoProvider
               value={{
                 screenInstanceId,
+                path: props.path,
               }}
             >
               <ScreenOptionsProvider
