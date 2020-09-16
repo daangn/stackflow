@@ -7,6 +7,7 @@ import {
   Screen,
   ScreenHelmet,
   useNavigator,
+  useParams,
 } from '@daangn/karrotframe'
 import Bridge from '@daangn/webview-bridge'
 
@@ -23,15 +24,15 @@ function App() {
         <Screen path='/'>
           <Home />
         </Screen>
-        <Screen path='/something'>
+        <Screen path='/:form'>
+          <Form />
+        </Screen>
+        <Screen path='/:hello'>
           <div>
             <Link to='/form'>
               왜 무한루프 도는거지???
             </Link>
           </div>
-        </Screen>
-        <Screen path='/form'>
-          <Form />
         </Screen>
       </Navigator>
   );
@@ -73,6 +74,9 @@ const HomeButtons: React.FC = () => {
 
 const Form: React.FC = () => {
   const { pop } = useNavigator()
+  const params = useParams()
+
+  console.log(params)
 
   const onPopClick = () => {
     pop(2, {

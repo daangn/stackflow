@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useMemo, useState } from 'react'
-import { HashRouter, useLocation, useHistory } from 'react-router-dom'
+import { HashRouter, useLocation, useHistory, matchPath } from 'react-router-dom'
 import styled from '@emotion/styled'
 import { RecoilRoot, useRecoilState } from 'recoil' 
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
@@ -137,9 +137,10 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
        * 처음 Screen들이 초기화될 때,
        * 현재 path와 일치하는 스크린을 찾아서, 스택 맨 위로 넣어준다
        */
+
       const screen = Object
         .values(screens)
-        .find((screen) => screen.path === location.pathname)
+        .find((screen) => matchPath(location.pathname, { exact: true, path: screen.path }))
       
       if (screen) {
         /**
@@ -154,6 +155,7 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
     }
 
     const disposeListen = history.listen((location, action) => {
+
       switch (action) {
         /**
          * Link를 통해 push 했을 때,
@@ -161,7 +163,7 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
         case 'PUSH': {
           const screen = Object
             .values(screens)
-            .find((screen) => screen.path === location.pathname)
+            .find((screen) => matchPath(location.pathname, { exact: true, path: screen.path }))
           
           if (screen) {
             const screenInstanceId = qs.parse(location.search.split('?')[1])?.kf_sid as string
@@ -179,7 +181,7 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
         case 'REPLACE': {
           const screen = Object
             .values(screens)
-            .find((screen) => screen.path === location.pathname)
+            .find((screen) => matchPath(location.pathname, { exact: true, path: screen.path }))
           
           if (screen) {
             const screenInstanceId = qs.parse(location.search.split('?')[1])?.kf_sid as string
@@ -197,7 +199,7 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
         case 'POP': {
           const screen = Object
             .values(screens)
-            .find((screen) => screen.path === location.pathname)
+            .find((screen) => matchPath(location.pathname, { exact: true, path: screen.path }))
 
           if (screen) {
             const screenInstanceId = qs.parse(location.search.split('?')[1])?.kf_sid as string | undefined ?? ''
@@ -297,6 +299,7 @@ const Transition: React.FC<TransitionProps> = memo((props) => {
       }}
     >
       <Card
+        screenPath={screens[props.screenInstance.screenId].path}
         screenInstanceId={props.screenInstance.id}
         isRoot={props.index === 0}
         isTop={props.index === screenInstancePointer}

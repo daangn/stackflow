@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { forwardRef, useMemo } from 'react'
 import short from 'short-uuid'
 import { Link as RouterLink } from 'react-router-dom'
 import qs from 'qs'
@@ -6,8 +6,9 @@ import qs from 'qs'
 interface LinkProps {
   to: string
   replace?: boolean
+  className?: string
 }
-const Link: React.FC<LinkProps> = (props) => {
+const Link: React.FC<LinkProps> = forwardRef<HTMLAnchorElement, LinkProps>((props, ref) => {
   const pathname = props.to.split('?')[0]
   let search = props.to.split('?')[1]
 
@@ -29,13 +30,18 @@ const Link: React.FC<LinkProps> = (props) => {
   }
 
   return (
-    <RouterLink to={{
-      pathname,
-      search
-    }} replace={props.replace}>
+    <RouterLink
+      ref={ref}
+      to={{
+        pathname,
+        search
+      }}
+      replace={props.replace}
+      className={props.className}
+    >
       {props.children}
     </RouterLink>
   )
-}
+})
 
 export default Link

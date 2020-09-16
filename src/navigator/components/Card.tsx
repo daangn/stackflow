@@ -9,6 +9,7 @@ import { useHistory } from 'react-router-dom'
 import { AtomScreenInstanceOptions, AtomScreenEdge } from '../atoms'
 
 interface CardProps {
+  screenPath: string
   screenInstanceId: string
   isRoot: boolean
   isTop: boolean
