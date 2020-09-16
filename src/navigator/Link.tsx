@@ -1,7 +1,7 @@
-import React, { forwardRef, useMemo } from 'react'
-import short from 'short-uuid'
-import { Link as RouterLink } from 'react-router-dom'
 import qs from 'qs'
+import React, { forwardRef, useMemo } from 'react'
+import { Link as RouterLink } from 'react-router-dom'
+import short from 'short-uuid'
 
 interface LinkProps {
   to: string
@@ -28,11 +28,10 @@ const Link: React.FC<LinkProps> = forwardRef<HTMLAnchorElement, LinkProps>((prop
       ref={ref}
       to={{
         pathname,
-        search
+        search,
       }}
       replace={props.replace}
-      className={props.className}
-    >
+      className={props.className}>
       {props.children}
     </RouterLink>
   )

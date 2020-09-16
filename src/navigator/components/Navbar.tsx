@@ -1,12 +1,13 @@
 import React from 'react'
 import { useHistory } from 'react-router-dom'
+import { useRecoilState } from 'recoil'
 import { css } from '@emotion/core'
 import styled from '@emotion/styled'
+
 import { IconBack, IconClose } from '../assets'
-import { Environment } from '../../types'
-import { useNavigatorOptions } from '../contexts'
-import { useRecoilState } from 'recoil'
 import { AtomScreenInstanceOptions } from '../atoms'
+import { useNavigatorOptions } from '../contexts'
+import { Environment } from '../../types'
 
 interface NavbarProps {
   screenInstanceId: string
@@ -28,43 +29,46 @@ const Navbar: React.FC<NavbarProps> = (props) => {
 
   return (
     <Container
-      className='kf-navbar-container'
+      className="kf-navbar-container"
       environment={props.environment}
-      animationDuration={navigatorOptions.animationDuration}
-    >
-      {props.environment === 'Cupertino' &&
-        <Center environment={props.environment}>{screenInstanceOption?.navbar.center || screenInstanceOption?.navbar.title}</Center>
-      }
+      animationDuration={navigatorOptions.animationDuration}>
+      {props.environment === 'Cupertino' && (
+        <Center environment={props.environment}>
+          {screenInstanceOption?.navbar.center || screenInstanceOption?.navbar.title}
+        </Center>
+      )}
       <Flex>
-        {(!props.isRoot || screenInstanceOption?.navbar.left) &&
+        {(!props.isRoot || screenInstanceOption?.navbar.left) && (
           <Left>
-            {!props.isRoot &&
+            {!props.isRoot && (
               <Back onClick={onBackClick}>
                 <IconBack />
               </Back>
-            }
+            )}
             {screenInstanceOption?.navbar.left}
           </Left>
-        }
-        {(props.environment === 'Android' || props.environment === 'Web') &&
-          <Center environment={props.environment}>{screenInstanceOption?.navbar.center || screenInstanceOption?.navbar.title}</Center>
-        }
-        {(props.isRoot || screenInstanceOption?.navbar.right) &&
+        )}
+        {(props.environment === 'Android' || props.environment === 'Web') && (
+          <Center environment={props.environment}>
+            {screenInstanceOption?.navbar.center || screenInstanceOption?.navbar.title}
+          </Center>
+        )}
+        {(props.isRoot || screenInstanceOption?.navbar.right) && (
           <Right>
             {screenInstanceOption?.navbar.right}
-            {props.isRoot &&
+            {props.isRoot && (
               <Close onClick={props.onClose}>
                 <IconClose />
               </Close>
-            }
+            )}
           </Right>
-        }
+        )}
       </Flex>
     </Container>
   )
 }
 
-export const Container = styled.div<{ environment: Environment, animationDuration: number }>`
+export const Container = styled.div<{ environment: Environment; animationDuration: number }>`
   background-color: #fff;
   display: flex;
   position: absolute;

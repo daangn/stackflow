@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react'
+import { useHistory } from 'react-router-dom'
+import { useRecoilState } from 'recoil'
 import { css } from '@emotion/core'
 import styled from '@emotion/styled'
+
 import Navbar from './Navbar'
 import { useNavigatorOptions } from '../contexts'
 import { Environment } from '../../types'
-import { useRecoilState } from 'recoil'
-import { useHistory } from 'react-router-dom'
 import { AtomScreenInstanceOptions, AtomScreenEdge } from '../atoms'
 
 interface CardProps {
@@ -26,9 +27,9 @@ const Card: React.FC<CardProps> = (props) => {
 
   const [screenInstanceOptions] = useRecoilState(AtomScreenInstanceOptions)
   const [screenEdge, setScreenEdge] = useRecoilState(AtomScreenEdge)
-  
+
   const [loading, setLoading] = useState(true)
-  
+
   const screenInstanceOption = screenInstanceOptions[props.screenInstanceId]
 
   const $dim = useRef<HTMLDivElement>(null)
@@ -110,7 +111,6 @@ const Card: React.FC<CardProps> = (props) => {
             $frameContainer.current.style.transform = ''
             $frameContainer.current.style.transition = ''
           }
-
         } else {
           animate()
         }
@@ -136,38 +136,25 @@ const Card: React.FC<CardProps> = (props) => {
       enterDone={props.enterDone}
       exitActive={props.exitActive}
       exitDone={props.exitDone}
-      isLoading={loading}
-    >
-      {!!screenInstanceOption?.navbar.visible &&
+      isLoading={loading}>
+      {!!screenInstanceOption?.navbar.visible && (
         <Navbar
           screenInstanceId={props.screenInstanceId}
           environment={navigatorOptions.environment}
           isRoot={props.isRoot}
           onClose={props.onClose}
         />
-      }
-      <Dim
-        ref={$dim}
-        className='kf-dim'
-        isTop={props.isTop}
-        animationDuration={navigatorOptions.animationDuration}
-      >
+      )}
+      <Dim ref={$dim} className="kf-dim" isTop={props.isTop} animationDuration={navigatorOptions.animationDuration}>
         <FrameContainer
           ref={$frameContainer}
-          className='kf-frame-container'
+          className="kf-frame-container"
           isRoot={props.isRoot}
-          animationDuration={navigatorOptions.animationDuration}
-        >
-          <Frame>
-            {props.children}
-          </Frame>
-          {!props.isRoot &&
-            <Edge
-              onTouchStart={onEdgeTouchStart}
-              onTouchMove={onEdgeTouchMove}
-              onTouchEnd={onEdgeTouchEnd}
-            />
-          }
+          animationDuration={navigatorOptions.animationDuration}>
+          <Frame>{props.children}</Frame>
+          {!props.isRoot && (
+            <Edge onTouchStart={onEdgeTouchStart} onTouchMove={onEdgeTouchMove} onTouchEnd={onEdgeTouchEnd} />
+          )}
         </FrameContainer>
       </Dim>
     </Container>
@@ -226,7 +213,7 @@ const Edge = styled.div`
 `
 
 interface ContainerProps {
-  navbarVisible?: boolean,
+  navbarVisible?: boolean
   environment: Environment
   enterActive: boolean
   enterDone: boolean
@@ -241,7 +228,7 @@ const Container = styled.div<ContainerProps>`
   width: 100%;
   height: 100%;
   box-sizing: border-box;
-  
+
   ${(props) => {
     if (!props.navbarVisible) {
       return css``
@@ -260,31 +247,37 @@ const Container = styled.div<ContainerProps>`
     }
   }}
 
-  ${(props) => (props.enterActive || props.enterDone) && css`
-    .kf-dim {
-      background-color: rgba(0, 0, 0, 0.2);
-    }
-    .kf-frame-container {
-      transform: translateX(0);
-    }
-  `}
+  ${(props) =>
+    (props.enterActive || props.enterDone) &&
+    css`
+      .kf-dim {
+        background-color: rgba(0, 0, 0, 0.2);
+      }
+      .kf-frame-container {
+        transform: translateX(0);
+      }
+    `}
 
-  ${(props) => (props.exitActive || props.exitDone) && css`
-    .kf-dim {
-      background-color: rgba(0, 0, 0, 0);
-      transform: translateX(0);
-    }
-    .kf-frame-container {
-      transform: translateX(100%);
-    }
-    .kf-navbar-container {
+  ${(props) =>
+    (props.exitActive || props.exitDone) &&
+    css`
+      .kf-dim {
+        background-color: rgba(0, 0, 0, 0);
+        transform: translateX(0);
+      }
+      .kf-frame-container {
+        transform: translateX(100%);
+      }
+      .kf-navbar-container {
+        display: none;
+      }
+    `}
+
+  ${(props) =>
+    props.isLoading &&
+    css`
       display: none;
-    }
-  `}
-
-  ${(props) => props.isLoading && css`
-    display: none;
-  `}
+    `}
 `
 
 export default Card

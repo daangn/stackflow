@@ -8,6 +8,9 @@
     }
   },
   "rules": {
-    "no-restricted-imports": "off"
+    "no-restricted-imports": "off",
+    "import/no-unresolved": "off",
+    "react-hooks/exhaustive-deps": "off",
+    "@typescript-eslint/ban-types": "off"
   }
 }

@@ -1,5 +1,6 @@
-import { useRouteMatch } from "react-router-dom";
-import { useScreenInfo } from "./contexts";
+import { useRouteMatch } from 'react-router-dom'
+
+import { useScreenInfo } from './contexts'
 
 export function useParams() {
   const info = useScreenInfo()

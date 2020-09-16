@@ -1,8 +1,9 @@
 import React, { useEffect, useMemo } from 'react'
 import { useSetRecoilState } from 'recoil'
 import short from 'short-uuid'
-import { ScreenOptionsProvider, ScreenInfoProvider } from './contexts'
+
 import { AtomScreens, AtomScreenInstanceOptions, NavbarOptions } from './atoms'
+import { ScreenOptionsProvider, ScreenInfoProvider } from './contexts'
 
 interface ScreenProps {
   children: React.ReactNode
@@ -30,13 +31,12 @@ const Screen: React.FC<ScreenProps> = (props) => {
            * 실제 ScreenInstance의 navbar를 변경
            */
           const setNavbar = (navbar: NavbarOptions) => {
-
             setScreenInstanceOptions((options) => ({
               ...options,
               [screenInstanceId]: {
                 ...options[screenInstanceId],
                 navbar,
-              }
+              },
             }))
           }
 
@@ -45,19 +45,17 @@ const Screen: React.FC<ScreenProps> = (props) => {
               value={{
                 screenInstanceId,
                 path: props.path,
-              }}
-            >
+              }}>
               <ScreenOptionsProvider
                 value={{
                   setNavbar,
-                }}
-              >
+                }}>
                 {props.children}
               </ScreenOptionsProvider>
             </ScreenInfoProvider>
           )
         },
-      }
+      },
     }))
   }, [])
 

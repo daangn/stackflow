@@ -1,13 +1,10 @@
-import { useHistory } from "react-router-dom"
-import { useRecoilState } from "recoil"
-import short from 'short-uuid'
 import qs from 'qs'
-import { useScreenInfo } from "./contexts"
-import {
-  AtomScreenInstances,
-  AtomScreenInstancePointer,
-  screenInstancePromises,
-} from "./atoms"
+import { useHistory } from 'react-router-dom'
+import { useRecoilState } from 'recoil'
+import short from 'short-uuid'
+
+import { AtomScreenInstances, AtomScreenInstancePointer, screenInstancePromises } from './atoms'
+import { useScreenInfo } from './contexts'
 
 export function useNavigator() {
   const history = useHistory()

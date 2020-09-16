@@ -1,8 +1,10 @@
+import qs from 'qs'
 import React, { memo, useEffect, useMemo, useState } from 'react'
 import { HashRouter, useLocation, useHistory, matchPath } from 'react-router-dom'
-import styled from '@emotion/styled'
-import { RecoilRoot, useRecoilState } from 'recoil' 
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
+import { RecoilRoot, useRecoilState } from 'recoil'
+import styled from '@emotion/styled'
+
 import {
   AtomScreens,
   AtomScreenInstances,
@@ -10,9 +12,8 @@ import {
   ScreenInstance,
   screenInstancePromises,
 } from './atoms'
-import { NavigatorOptionsProvider, useNavigatorOptions } from './contexts'
 import { Card } from './components'
-import qs from 'qs'
+import { NavigatorOptionsProvider, useNavigatorOptions } from './contexts'
 import { Environment } from '../types'
 
 const DEFAULT_ANIMATION_DURATION = 350
@@ -47,13 +48,8 @@ const Navigator: React.FC<NavigatorProps> = (props) => {
           value={{
             environment: props.environment,
             animationDuration: props.animationDuration ?? DEFAULT_ANIMATION_DURATION,
-          }}
-        >
-          <NavigatorScreens
-            onClose={props.onClose}
-          >
-            {props.children}
-          </NavigatorScreens>
+          }}>
+          <NavigatorScreens onClose={props.onClose}>{props.children}</NavigatorScreens>
         </NavigatorOptionsProvider>
       </RecoilRoot>
     </HashRouter>
@@ -82,13 +78,7 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
   }, [])
 
   useEffect(() => {
-    function push({
-      screenId,
-      screenInstanceId,
-    }: {
-      screenId: string
-      screenInstanceId: string
-    }) {
+    function push({ screenId, screenInstanceId }: { screenId: string; screenInstanceId: string }) {
       const nextPointer = screenInstances.findIndex((screenInstance) => screenInstance.id === screenInstanceId)
 
       if (nextPointer === -1) {
@@ -105,13 +95,7 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
       }
     }
 
-    function replace({
-      screenId,
-      screenInstanceId,
-    }: {
-      screenId: string
-      screenInstanceId: string
-    }) {
+    function replace({ screenId, screenInstanceId }: { screenId: string; screenInstanceId: string }) {
       setScreenInstances((instances) => [
         ...instances.filter((_, index) => index < screenInstancePointer),
         {
@@ -121,13 +105,7 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
       ])
     }
 
-    function pop({
-      depth,
-      targetScreenInstanceId,
-    }: {
-      depth: number,
-      targetScreenInstanceId: string,
-    }) {
+    function pop({ depth, targetScreenInstanceId }: { depth: number; targetScreenInstanceId: string }) {
       screenInstancePromises[targetScreenInstanceId]?.(null)
       setScreenInstancePointer((pointer) => pointer - depth)
     }
@@ -138,15 +116,15 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
        * 현재 path와 일치하는 스크린을 찾아서, 스택 맨 위로 넣어준다
        */
 
-      const screen = Object
-        .values(screens)
-        .find((screen) => matchPath(location.pathname, { exact: true, path: screen.path }))
-      
+      const screen = Object.values(screens).find((screen) =>
+        matchPath(location.pathname, { exact: true, path: screen.path })
+      )
+
       if (screen) {
         /**
          * 앞으로 가기 기능 지원을 위한 ScreenInstance.id
          */
-        const screenInstanceId = qs.parse(location.search.split('?')[1])?.kf_sid as string | undefined ?? ''
+        const screenInstanceId = (qs.parse(location.search.split('?')[1])?.kf_sid as string | undefined) ?? ''
         push({
           screenId: screen.id,
           screenInstanceId,
@@ -155,16 +133,15 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
     }
 
     const disposeListen = history.listen((location, action) => {
-
       switch (action) {
         /**
          * Link를 통해 push 했을 때,
          */
         case 'PUSH': {
-          const screen = Object
-            .values(screens)
-            .find((screen) => matchPath(location.pathname, { exact: true, path: screen.path }))
-          
+          const screen = Object.values(screens).find((screen) =>
+            matchPath(location.pathname, { exact: true, path: screen.path })
+          )
+
           if (screen) {
             const screenInstanceId = qs.parse(location.search.split('?')[1])?.kf_sid as string
             push({
@@ -179,10 +156,10 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
          * Link를 통해 replace 했을 때,
          */
         case 'REPLACE': {
-          const screen = Object
-            .values(screens)
-            .find((screen) => matchPath(location.pathname, { exact: true, path: screen.path }))
-          
+          const screen = Object.values(screens).find((screen) =>
+            matchPath(location.pathname, { exact: true, path: screen.path })
+          )
+
           if (screen) {
             const screenInstanceId = qs.parse(location.search.split('?')[1])?.kf_sid as string
             replace({
@@ -197,12 +174,12 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
          * 뒤로가기, 앞으로 가기 했을 때,
          */
         case 'POP': {
-          const screen = Object
-            .values(screens)
-            .find((screen) => matchPath(location.pathname, { exact: true, path: screen.path }))
+          const screen = Object.values(screens).find((screen) =>
+            matchPath(location.pathname, { exact: true, path: screen.path })
+          )
 
           if (screen) {
-            const screenInstanceId = qs.parse(location.search.split('?')[1])?.kf_sid as string | undefined ?? ''
+            const screenInstanceId = (qs.parse(location.search.split('?')[1])?.kf_sid as string | undefined) ?? ''
             const nextPointer = screenInstances.findIndex((screenInstance) => screenInstance.id === screenInstanceId)
 
             const isForward = nextPointer > screenInstancePointer || nextPointer === -1
@@ -234,23 +211,19 @@ const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) 
     props.onClose?.()
   }
 
-  return useMemo(() => (
-    <Root>
-      {props.children}
-      <TransitionGroup>
-        {screenInstances
-          .map((screenInstance, index) => (
-            <Transition
-              key={index}
-              screenInstance={screenInstance}
-              index={index}
-              onClose={onClose}
-            />
-          ))
-        }
-      </TransitionGroup>
-    </Root>
-  ), [screenInstances])
+  return useMemo(
+    () => (
+      <Root>
+        {props.children}
+        <TransitionGroup>
+          {screenInstances.map((screenInstance, index) => (
+            <Transition key={index} screenInstance={screenInstance} index={index} onClose={onClose} />
+          ))}
+        </TransitionGroup>
+      </Root>
+    ),
+    [screenInstances]
+  )
 }
 
 const Root = styled.div`
@@ -296,8 +269,7 @@ const Transition: React.FC<TransitionProps> = memo((props) => {
       }}
       onExited={() => {
         setTransitionState('exit-done')
-      }}
-    >
+      }}>
       <Card
         screenPath={screens[props.screenInstance.screenId].path}
         screenInstanceId={props.screenInstance.id}
@@ -305,10 +277,9 @@ const Transition: React.FC<TransitionProps> = memo((props) => {
         isTop={props.index === screenInstancePointer}
         onClose={props.onClose}
         enterActive={transitionState === 'enter-active'}
-        enterDone={transitionState === 'enter-done' }
+        enterDone={transitionState === 'enter-done'}
         exitActive={transitionState === 'exit-active'}
-        exitDone={transitionState === 'exit-done' }
-      >
+        exitDone={transitionState === 'exit-done'}>
         <Component screenInstanceId={props.screenInstance.id} />
       </Card>
     </CSSTransition>
