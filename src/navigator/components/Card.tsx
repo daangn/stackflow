@@ -32,7 +32,7 @@ const Card: React.FC<CardProps> = (props) => {
 
   const screenInstanceOption = screenInstanceOptions[props.screenInstanceId]
 
-  const tempLastX = useRef<number>(0)
+  const x = useRef<number>(0)
 
   const $dim = useRef<HTMLDivElement>(null)
   const $frameContainer = useRef<HTMLDivElement>(null)
@@ -55,7 +55,60 @@ const Card: React.FC<CardProps> = (props) => {
   const onEdgeTouchMove = useCallback(
     (e: React.TouchEvent<HTMLDivElement>) => {
       if (screenEdge.startX) {
-        const computedEdgeX = e.touches[0].clientX - screenEdge.startX
+        x.current = e.touches[0].clientX as any
+      }
+    },
+    [screenEdge]
+  )
+
+  const onEdgeTouchEnd = useCallback(() => {
+    if (x.current) {
+      const velocity = x.current / (Date.now() - (screenEdge.startTime as number))
+
+      if (velocity > 1 || x.current / window.screen.width > 0.4) {
+        history.goBack()
+      }
+
+      setScreenEdge({
+        startX: null,
+        startTime: null,
+      })
+      x.current = 0
+    }
+  }, [screenEdge, setScreenEdge])
+
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false)
+    }, 0)
+  }, [])
+
+  useEffect(() => {
+    let stopped = false
+
+    if (screenEdge.startX === null) {
+      requestAnimationFrame(() => {
+        if ($dim.current) {
+          $dim.current.style.cssText = ''
+        }
+        if ($frameContainer.current) {
+          $frameContainer.current.style.cssText = ''
+        }
+        for (let i = 0; i < $hiddenDims.length; i++) {
+          $hiddenDims[i].style.cssText = ''
+        }
+      })
+    } else if (props.isTop) {
+      animate()
+
+      return () => {
+        stopped = true
+      }
+    }
+
+    function animate() {
+      requestAnimationFrame(() => {
+        const computedEdgeX = x.current - screenEdge.startX!
 
         if (computedEdgeX >= 0) {
           if ($dim.current) {
@@ -79,43 +132,13 @@ const Card: React.FC<CardProps> = (props) => {
             }
           }
         }
-        tempLastX.current = e.touches[0].clientX as any
-      }
-    },
-    [screenEdge]
-  )
 
-  const onEdgeTouchEnd = useCallback(() => {
-    if (tempLastX.current) {
-      const velocity = tempLastX.current / (Date.now() - (screenEdge.startTime as number))
-
-      if (velocity > 1 || tempLastX.current / window.screen.width > 0.4) {
-        history.goBack()
-      }
-
-      setScreenEdge({
-        startX: null,
-        startTime: null,
+        if (!stopped) {
+          animate()
+        }
       })
-      tempLastX.current = 0
-
-      if ($dim.current) {
-        $dim.current.style.cssText = ''
-      }
-      if ($frameContainer.current) {
-        $frameContainer.current.style.cssText = ''
-      }
-      for (let i = 0; i < $hiddenDims.length; i++) {
-        $hiddenDims[i].style.cssText = ''
-      }
     }
-  }, [screenEdge, setScreenEdge])
-
-  useEffect(() => {
-    setTimeout(() => {
-      setLoading(false)
-    }, 0)
-  }, [])
+  }, [screenEdge, props.isTop])
 
   return (
     <Container
