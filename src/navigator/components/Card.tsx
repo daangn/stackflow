@@ -38,7 +38,7 @@ const Card: React.FC<CardProps> = (props) => {
   const $frameContainer = useRef<HTMLDivElement>(null)
   const $hiddenDims = useMemo(
     // eslint-disable-next-line
-    () => document.getElementsByClassName('kf-dim_hidden') as HTMLCollectionOf<HTMLDivElement>,
+    () => document.getElementsByClassName('css-kf-dim_hidden') as HTMLCollectionOf<HTMLDivElement>,
     []
   )
 
@@ -159,12 +159,12 @@ const Card: React.FC<CardProps> = (props) => {
       )}
       <Dim
         ref={$dim}
-        className={'kf-dim' + (!props.isTop ? ' kf-dim_hidden' : '')}
+        className={'css-kf-dim' + (!props.isTop ? ' css-kf-dim_hidden' : '')}
         isTop={props.isTop}
         animationDuration={navigatorOptions.animationDuration}>
         <FrameContainer
           ref={$frameContainer}
-          className="kf-frame-container"
+          className="css-kf-frame-container"
           isRoot={props.isRoot}
           animationDuration={navigatorOptions.animationDuration}>
           <Frame>{props.children}</Frame>
@@ -266,10 +266,10 @@ const Container = styled.div<ContainerProps>`
   ${(props) =>
     (props.enterActive || props.enterDone) &&
     css`
-      .kf-dim {
+      .css-kf-dim {
         background-color: rgba(0, 0, 0, 0.2);
       }
-      .kf-frame-container {
+      .css-kf-frame-container {
         transform: translateX(0);
       }
     `}
@@ -277,14 +277,14 @@ const Container = styled.div<ContainerProps>`
   ${(props) =>
     (props.exitActive || props.exitDone) &&
     css`
-      .kf-dim {
+      .css-kf-dim {
         background-color: rgba(0, 0, 0, 0);
         transform: translateX(0);
       }
-      .kf-frame-container {
+      .css-kf-frame-container {
         transform: translateX(100%);
       }
-      .kf-navbar-container {
+      .css-kf-navbar-container {
         display: none;
       }
     `}

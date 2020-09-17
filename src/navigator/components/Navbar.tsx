@@ -25,7 +25,7 @@ const Navbar: React.FC<NavbarProps> = (props) => {
 
   return (
     <Container
-      className="kf-navbar-container"
+      className="css-kf-navbar-container"
       environment={props.environment}
       animationDuration={navigatorOptions.animationDuration}>
       {props.environment === 'Cupertino' && (
