@@ -26,14 +26,24 @@ let isNavigatorInitialized = false
 
 interface NavigatorProps {
   /**
-   * 환경
+   * 환경 (기본값: Web)
    */
-  environment: Environment
+  environment?: Environment
 
   /**
-   * 애니메이션 지속시간
+   * 애니메이션 지속시간 (기본값: 350)
    */
   animationDuration?: number
+
+  /**
+   * 빌트인 된 RecoilRoot를 없애고, 사용자가 직접 RecoilRoot를 셋팅합니다
+   */
+  useCustomRecoilRoot?: boolean
+
+  /**
+   * 빌트인 된 react-router-dom의 HashRouter를 없애고, 사용자가 직접 Router를 셋팅합니다
+   */
+  useCustomRouter?: boolean
 
   /**
    * 닫기 버튼을 눌렀을때 해당 콜백이 호출됩니다
@@ -41,19 +51,24 @@ interface NavigatorProps {
   onClose?: () => void
 }
 const Navigator: React.FC<NavigatorProps> = (props) => {
-  return (
-    <HashRouter>
-      <RecoilRoot>
-        <NavigatorOptionsProvider
-          value={{
-            environment: props.environment,
-            animationDuration: props.animationDuration ?? DEFAULT_ANIMATION_DURATION,
-          }}>
-          <NavigatorScreens onClose={props.onClose}>{props.children}</NavigatorScreens>
-        </NavigatorOptionsProvider>
-      </RecoilRoot>
-    </HashRouter>
+  let h = (
+    <NavigatorOptionsProvider
+      value={{
+        environment: props.environment ?? 'Web',
+        animationDuration: props.animationDuration ?? DEFAULT_ANIMATION_DURATION,
+      }}>
+      <NavigatorScreens onClose={props.onClose}>{props.children}</NavigatorScreens>
+    </NavigatorOptionsProvider>
   )
+
+  if (!props.useCustomRecoilRoot) {
+    h = <RecoilRoot>{h}</RecoilRoot>
+  }
+  if (!props.useCustomRouter) {
+    h = <HashRouter>{h}</HashRouter>
+  }
+
+  return h
 }
 
 const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) => {

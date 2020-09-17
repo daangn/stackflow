@@ -29,25 +29,24 @@ const Navbar: React.FC<NavbarProps> = (props) => {
       environment={props.environment}
       animationDuration={navigatorOptions.animationDuration}>
       {props.environment === 'Cupertino' && (
-        <Center environment={props.environment}>
-          {screenInstanceOption?.navbar.center || screenInstanceOption?.navbar.title}
-        </Center>
+        <Center environment={props.environment}>{screenInstanceOption?.navbar.title}</Center>
       )}
       <Flex>
         {(!props.isRoot || screenInstanceOption?.navbar.left) && (
           <Left>
-            {!props.isRoot && (
-              <Back onClick={history.goBack}>
-                <IconBack />
-              </Back>
-            )}
+            {!props.isRoot &&
+              (screenInstanceOption?.navbar.back ? (
+                <div onClick={history.goBack}>{screenInstanceOption.navbar.back}</div>
+              ) : (
+                <Back onClick={history.goBack}>
+                  <IconBack />
+                </Back>
+              ))}
             {screenInstanceOption?.navbar.left}
           </Left>
         )}
         {(props.environment === 'Android' || props.environment === 'Web') && (
-          <Center environment={props.environment}>
-            {screenInstanceOption?.navbar.center || screenInstanceOption?.navbar.title}
-          </Center>
+          <Center environment={props.environment}>{screenInstanceOption?.navbar.title}</Center>
         )}
         {(props.isRoot || screenInstanceOption?.navbar.right) && (
           <Right>

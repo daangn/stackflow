@@ -4,7 +4,7 @@ export const AtomScreenEdge = atom<{
   startX: number | null
   startTime: number | null
 }>({
-  key: 'ScreenEdge',
+  key: 'KFScreenEdge',
   default: {
     startX: null,
     startTime: null,

@@ -13,6 +13,6 @@ export interface Screen {
 export const AtomScreens = atom<{
   [id: string]: Screen
 }>({
-  key: 'Screens',
+  key: 'KFScreens',
   default: {},
 })

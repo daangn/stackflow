@@ -11,8 +11,12 @@ interface ScreenProps {
    */
   path: string
 
-  children?: React.ReactNode
+  /**
+   * 해당 스크린에 표시할 컴포넌트
+   */
   component?: React.ComponentType
+
+  children?: React.ReactNode
 }
 const Screen: React.FC<ScreenProps> = (props) => {
   const Component = props.component
