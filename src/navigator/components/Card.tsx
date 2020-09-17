@@ -312,13 +312,11 @@ const Container = styled.div<ContainerProps>`
   ${(props) =>
     (props.environment === 'Android' || props.environment === 'Web') &&
     css`
-      box-shadow: rgba(0, 0, 0, 0);
       opacity: 0;
       transform: translateY(10rem);
-      transition: transform ${props.animationDuration}ms, opacity ${props.animationDuration}ms,
-        box-shadow ${props.animationDuration}ms;
+      transition: transform ${props.animationDuration}ms, opacity ${props.animationDuration}ms;
       transition-timing-function: cubic-bezier(0.22, 0.67, 0.39, 0.83);
-      will-change: transform, opacity, box-shadow;
+      will-change: transform, opacity;
 
       ${props.isRoot &&
       css`
@@ -330,12 +328,6 @@ const Container = styled.div<ContainerProps>`
       css`
         opacity: 1;
         transform: translateY(0);
-        box-shadow: 0 0 0 20rem rgba(0, 0, 0, 0.2);
-      `}
-
-      ${props.enterDone &&
-      css`
-        box-shadow: 0 0 0 20rem rgba(0, 0, 0, 0);
       `}
 
       ${!props.isTop &&
