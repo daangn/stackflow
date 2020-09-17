@@ -12,9 +12,11 @@ interface ScreenProps {
   path: string
 
   children?: React.ReactNode
-  component?: React.ReactNode
+  component?: React.ComponentType
 }
 const Screen: React.FC<ScreenProps> = (props) => {
+  const Component = props.component
+
   const id = useMemo(() => short.generate(), [])
 
   const setScreens = useSetRecoilState(AtomScreens)
@@ -56,7 +58,7 @@ const Screen: React.FC<ScreenProps> = (props) => {
                 value={{
                   setNavbar,
                 }}>
-                {props.component || props.children}
+                {Component ? <Component /> : props.children}
               </ScreenInstanceOptionsProvider>
             </ScreenInstanceInfoProvider>
           )

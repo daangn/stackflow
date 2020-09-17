@@ -20,9 +20,9 @@ function App() {
       onClose={() => {
         bridge.router.close()
       }}>
-        <Screen path='/' component={<Home />} />
-        <Screen path='/page2' component={<Page2 />} />
-        <Screen path='/page3' component={<Page3 />} />
+        <Screen path='/' component={Home} />
+        <Screen path='/page2' component={Page2} />
+        <Screen path='/page3' component={Page3} />
       </Navigator>
   );
 }
