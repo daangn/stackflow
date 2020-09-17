@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useRecoilState } from 'recoil'
 import { css } from '@emotion/core'
@@ -8,6 +8,9 @@ import Navbar from './Navbar'
 import { useNavigatorOptions } from '../contexts'
 import { Environment } from '../../types'
 import { AtomScreenInstanceOptions, AtomScreenEdge } from '../atoms'
+
+// 한번에 하나의 touchmove만 가능하다고 판단해서, 전역변수로 설정 (렌더링 중 유실 방지)
+let tempLastX: number | null = null
 
 interface CardProps {
   screenPath: string
@@ -35,10 +38,15 @@ const Card: React.FC<CardProps> = (props) => {
   const $dim = useRef<HTMLDivElement>(null)
   const $frameContainer = useRef<HTMLDivElement>(null)
 
+  const $hiddenDims = useMemo(
+    // eslint-disable-next-line
+    () => document.getElementsByClassName('kf-dim_hidden') as HTMLCollectionOf<HTMLDivElement>,
+    []
+  )
+
   const onEdgeTouchStart = useCallback(
     (e: React.TouchEvent<HTMLDivElement>) => {
       setScreenEdge({
-        ...screenEdge,
         startX: e.touches[0].clientX,
         startTime: Date.now(),
       })
@@ -50,78 +58,59 @@ const Card: React.FC<CardProps> = (props) => {
     (e: React.TouchEvent<HTMLDivElement>) => {
       if (screenEdge.startX) {
         const computedEdgeX = e.touches[0].clientX - screenEdge.startX
+
         if (computedEdgeX >= 0) {
-          setScreenEdge({
-            ...screenEdge,
-            x: computedEdgeX,
-          })
-        } else {
-          setScreenEdge({
-            ...screenEdge,
-            x: 0,
-          })
+          if ($dim.current) {
+            $dim.current.style.cssText = `
+              background-color: rgba(0, 0, 0, ${0.2 - (computedEdgeX / window.screen.width) * 0.2});
+              transition: 0s;
+            `
+          }
+          if ($frameContainer.current) {
+            $frameContainer.current.style.cssText = `
+              overflow-y: hidden;
+              transform: translateX(${computedEdgeX}px); transition: transform 0s;
+            `
+          }
+          if ($hiddenDims[$hiddenDims.length - 1])
+            for (let i = 0; i < $hiddenDims.length; i++) {
+              $hiddenDims[i].style.cssText = `
+              transform: translateX(-${5 - (5 * computedEdgeX) / window.screen.width}rem);
+              transition: 0s;
+            `
+            }
         }
+        tempLastX = e.touches[0].clientX
       }
     },
     [screenEdge]
   )
 
   const onEdgeTouchEnd = useCallback(() => {
-    const velocity = screenEdge.x / (Date.now() - (screenEdge.startTime as number))
+    if (tempLastX) {
+      const velocity = tempLastX / (Date.now() - (screenEdge.startTime as number))
 
-    if (velocity > 1 || screenEdge.x / window.screen.width > 0.4) {
-      history.goBack()
-    }
+      if (velocity > 1 || tempLastX / window.screen.width > 0.4) {
+        history.goBack()
+      }
 
-    setScreenEdge({
-      x: 0,
-      startX: null,
-      startTime: null,
-    })
-  }, [screenEdge])
-
-  useEffect(() => {
-    let stopped = false
-
-    if (screenEdge.startX !== null) {
-      animate()
-    }
-
-    function animate() {
-      requestAnimationFrame(() => {
-        if ($dim.current) {
-          $dim.current.style.cssText = `
-            ${
-              props.isTop ? `background-color: rgba(0, 0, 0, ${0.2 - (screenEdge.x / window.screen.width) * 0.2});` : ''
-            }
-            ${!props.isTop ? `transform: translateX(-${5 - (5 * screenEdge.x) / window.screen.width}rem);` : ''}
-            transition: 0s;
-          `
-        }
-        if ($frameContainer.current) {
-          $frameContainer.current.style.cssText = `
-            overflow-y: hidden;
-            ${props.isTop ? `transform: translateX(${screenEdge.x}px); transition: transform 0s;` : ''}
-          `
-        }
-
-        if (stopped) {
-          if ($dim.current) {
-            $dim.current.style.cssText = ''
-          }
-          if ($frameContainer.current) {
-            $frameContainer.current.style.cssText = ''
-          }
-        } else {
-          animate()
-        }
+      setScreenEdge({
+        startX: null,
+        startTime: null,
       })
-    }
+      tempLastX = null
 
-    return () => {
-      stopped = true
+      if ($dim.current) {
+        $dim.current.style.cssText = ''
+      }
+      if ($frameContainer.current) {
+        $frameContainer.current.style.cssText = ''
+      }
+      for (let i = 0; i < $hiddenDims.length; i++) {
+        $hiddenDims[i].style.cssText = ''
+      }
     }
-  }, [props.isTop, screenEdge])
+  }, [screenEdge])
 
   useEffect(() => {
     setTimeout(() => {
@@ -146,7 +135,11 @@ const Card: React.FC<CardProps> = (props) => {
           onClose={props.onClose}
         />
       )}
-      <Dim ref={$dim} className="kf-dim" isTop={props.isTop} animationDuration={navigatorOptions.animationDuration}>
+      <Dim
+        ref={$dim}
+        className={'kf-dim' + (!props.isTop ? ' kf-dim_hidden' : '')}
+        isTop={props.isTop}
+        animationDuration={navigatorOptions.animationDuration}>
         <FrameContainer
           ref={$frameContainer}
           className="kf-frame-container"
