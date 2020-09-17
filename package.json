@@ -3,21 +3,15 @@
   "version": "0.0.1",
   "description": "당근 마켓 웹뷰 용 라이브러리",
   "repository": "https://github.com/daangn/karrotframe",
-  "author": "juyeong1260",
   "license": "MIT",
-  "main": "lib/index.js",
-  "module": "lib/index.js",
-  "types": "lib",
-  "source": "src/index.tsx",
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
-  },
-  "engines": {
-    "node": ">=12"
-  },
+  "author": "juyeong1260",
   "files": [
     "lib"
   ],
+  "main": "lib/index.js",
+  "module": "lib/index.js",
+  "source": "src/index.tsx",
+  "types": "lib",
   "scripts": {
     "build": "rm -rf lib && tsc",
     "lint": "eslint \"./src/*.{tsx,ts}\""
@@ -28,22 +22,22 @@
     }
   },
   "dependencies": {
+    "@types/react-router-dom": "^5.1.5",
     "emotion": "^10.0.27",
-    "history": "^5.0.0",
-    "path-to-regexp": "^6.1.0",
-    "rxjs": "^6.6.2"
-  },
-  "peerDependencies": {
-    "react": ">=16.8",
-    "react-dom": ">=16.8"
+    "qs": "^6.9.4",
+    "react-router-dom": "^5.2.0",
+    "react-transition-group": "^4.4.1",
+    "recoil": "^0.0.11",
+    "short-uuid": "^4.1.0"
   },
   "devDependencies": {
     "@daangn/eslint-config-karrot": "^1.1.0",
     "@emotion/core": "^10.0.35",
     "@emotion/styled": "^10.0.27",
-    "@types/history": "^4.7.7",
+    "@types/qs": "^6.9.4",
     "@types/react": "^16.9.46",
     "@types/react-dom": "^16.9.8",
+    "@types/react-transition-group": "^4.4.0",
     "@typescript-eslint/eslint-plugin": "^4.1.0",
     "@typescript-eslint/parser": "^4.1.0",
     "eslint": "^7.9.0",
@@ -57,5 +51,15 @@
     "husky": "^4.3.0",
     "prettier": "^2.1.1",
     "typescript": "^4.0.2"
+  },
+  "peerDependencies": {
+    "react": ">=16.8",
+    "react-dom": ">=16.8"
+  },
+  "engines": {
+    "node": ">=12"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
   }
 }

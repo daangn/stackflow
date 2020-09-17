@@ -1,26 +1,29 @@
-import React from "react";
-import { SwipeRouter, PageRoute } from "@daangn/react-swiper-webview";
-import { createHashHistory } from "history";
-import "./App.css";
-import { useBridgePop } from "@daangn/react-webview-bridge";
-import RootPage from "./pages";
-import DisabledPage from "./pages/disabled";
-import Test2Page from "./pages/test2";
-import IdPage from "./pages/id";
+import './App.css'
 
-const history = createHashHistory();
+import React from "react";
+import {
+  Navigator,
+  Screen,
+} from '@daangn/karrotframe'
+import Bridge from '@daangn/webview-bridge'
+import Home from './components/Home';
+import Page2 from './components/Page2';
+import Page3 from './components/Page3';
+
+const bridge = new Bridge()
 
 function App() {
-  const { pop } = useBridgePop();
   return (
-    <SwipeRouter history={history} onLastPagePop={pop}>
-      <PageRoute path="/" exact component={RootPage} />
-      <PageRoute exact path="/disabled" render={() => <DisabledPage />} />
-      <PageRoute exact path="/test2">
-        <Test2Page />
-      </PageRoute>
-      <PageRoute exact path="/id/:id" component={IdPage} />
-    </SwipeRouter>
+    <Navigator
+      environment={'Cupertino'}
+      animationDuration={350}
+      onClose={() => {
+        bridge.router.close()
+      }}>
+        <Screen path='/' component={Home} />
+        <Screen path='/page2' component={Page2} />
+        <Screen path='/page3' component={Page3} />
+      </Navigator>
   );
 }
 
