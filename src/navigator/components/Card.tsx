@@ -49,7 +49,7 @@ const Card: React.FC<CardProps> = (props) => {
         startTime: Date.now(),
       })
     },
-    [screenEdge]
+    [setScreenEdge]
   )
 
   const onEdgeTouchMove = useCallback(
@@ -108,7 +108,7 @@ const Card: React.FC<CardProps> = (props) => {
         $hiddenDims[i].style.cssText = ''
       }
     }
-  }, [screenEdge])
+  }, [screenEdge, setScreenEdge])
 
   useEffect(() => {
     setTimeout(() => {
