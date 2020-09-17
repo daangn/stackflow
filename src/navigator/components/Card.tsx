@@ -196,14 +196,9 @@ const Dim = styled.div<DimProps>`
 
   ${(props) =>
     props.environment === 'Cupertino' &&
+    !props.isTop &&
     css`
       transform: translateX(-5rem);
-    `}
-
-  ${(props) =>
-    props.isTop &&
-    css`
-      transform: translateX(0);
     `}
 `
 
@@ -221,8 +216,8 @@ const FrameContainer = styled.div<FrameContainerProps>`
   background-color: #fff;
 
   ${(props) =>
-    !props.isRoot &&
     props.environment === 'Cupertino' &&
+    !props.isRoot &&
     css`
       transform: translateX(100%);
     `};
