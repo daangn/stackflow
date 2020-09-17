@@ -9,9 +9,6 @@ import { useNavigatorOptions } from '../contexts'
 import { Environment } from '../../types'
 import { AtomScreenInstanceOptions, AtomScreenEdge } from '../atoms'
 
-// 한번에 하나의 touchmove만 가능하다고 판단해서, 전역변수로 설정 (렌더링 중 유실 방지)
-let tempLastX: number | null = null
-
 interface CardProps {
   screenPath: string
   screenInstanceId: string
@@ -35,9 +32,10 @@ const Card: React.FC<CardProps> = (props) => {
 
   const screenInstanceOption = screenInstanceOptions[props.screenInstanceId]
 
+  const tempLastX = useRef<number>(0)
+
   const $dim = useRef<HTMLDivElement>(null)
   const $frameContainer = useRef<HTMLDivElement>(null)
-
   const $hiddenDims = useMemo(
     // eslint-disable-next-line
     () => document.getElementsByClassName('kf-dim_hidden') as HTMLCollectionOf<HTMLDivElement>,
@@ -80,17 +78,17 @@ const Card: React.FC<CardProps> = (props) => {
             `
             }
         }
-        tempLastX = e.touches[0].clientX
+        tempLastX.current = e.touches[0].clientX as any
       }
     },
     [screenEdge]
   )
 
   const onEdgeTouchEnd = useCallback(() => {
-    if (tempLastX) {
-      const velocity = tempLastX / (Date.now() - (screenEdge.startTime as number))
+    if (tempLastX.current) {
+      const velocity = tempLastX.current / (Date.now() - (screenEdge.startTime as number))
 
-      if (velocity > 1 || tempLastX / window.screen.width > 0.4) {
+      if (velocity > 1 || tempLastX.current / window.screen.width > 0.4) {
         history.goBack()
       }
 
@@ -98,7 +96,7 @@ const Card: React.FC<CardProps> = (props) => {
         startX: null,
         startTime: null,
       })
-      tempLastX = null
+      tempLastX.current = 0
 
       if ($dim.current) {
         $dim.current.style.cssText = ''
