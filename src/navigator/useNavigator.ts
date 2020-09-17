@@ -20,16 +20,10 @@ export function useNavigator() {
 
         const sid = short.generate().substr(0, 5)
 
-        const pathname = to.split('?')[0]
-        let search = to.split('?')[1]
+        const [pathname, search] = to.split('?')
         const parsedSearch = search ? qs.parse(search) : null
 
-        search = qs.stringify({
-          ...parsedSearch,
-          kf_sid: sid,
-        })
-
-        history.push(pathname + '?' + search)
+        history.push(pathname + '?' + qs.stringify({ ...parsedSearch, kf_sid: sid }))
       })
     },
     replace(to: string) {

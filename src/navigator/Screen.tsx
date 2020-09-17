@@ -6,12 +6,13 @@ import { AtomScreens, AtomScreenInstanceOptions, NavbarOptions } from './atoms'
 import { ScreenInstanceOptionsProvider, ScreenInstanceInfoProvider } from './contexts'
 
 interface ScreenProps {
-  children: React.ReactNode
-
   /**
    * 해당 스크린의 URL Path
    */
   path: string
+
+  children?: React.ReactNode
+  component?: React.ReactNode
 }
 const Screen: React.FC<ScreenProps> = (props) => {
   const id = useMemo(() => short.generate(), [])
@@ -20,6 +21,11 @@ const Screen: React.FC<ScreenProps> = (props) => {
   const setScreenInstanceOptions = useSetRecoilState(AtomScreenInstanceOptions)
 
   useEffect(() => {
+    if (!props.children && !props.component) {
+      console.warn('component props, children 중 하나는 반드시 필요합니다')
+      return
+    }
+
     setScreens((screens) => ({
       ...screens,
       [id]: {
@@ -50,14 +56,14 @@ const Screen: React.FC<ScreenProps> = (props) => {
                 value={{
                   setNavbar,
                 }}>
-                {props.children}
+                {props.component || props.children}
               </ScreenInstanceOptionsProvider>
             </ScreenInstanceInfoProvider>
           )
         },
       },
     }))
-  }, [])
+  }, [props])
 
   return null
 }

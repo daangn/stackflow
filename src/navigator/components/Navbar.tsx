@@ -23,10 +23,6 @@ const Navbar: React.FC<NavbarProps> = (props) => {
 
   const screenInstanceOption = screenInstanceOptions[props.screenInstanceId]
 
-  const onBackClick = () => {
-    history.goBack()
-  }
-
   return (
     <Container
       className="kf-navbar-container"
@@ -41,7 +37,7 @@ const Navbar: React.FC<NavbarProps> = (props) => {
         {(!props.isRoot || screenInstanceOption?.navbar.left) && (
           <Left>
             {!props.isRoot && (
-              <Back onClick={onBackClick}>
+              <Back onClick={history.goBack}>
                 <IconBack />
               </Back>
             )}

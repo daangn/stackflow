@@ -15,20 +15,14 @@ const bridge = new Bridge()
 function App() {
   return (
     <Navigator
-      environment={bridge.environment}
+      environment={'Cupertino'}
       animationDuration={350}
       onClose={() => {
         bridge.router.close()
       }}>
-        <Screen path='/'>
-          <Home />
-        </Screen>
-        <Screen path='/page2'>
-          <Page2 />
-        </Screen>
-        <Screen path='/page3'>
-          <Page3 />
-        </Screen>
+        <Screen path='/' component={<Home />} />
+        <Screen path='/page2' component={<Page2 />} />
+        <Screen path='/page3' component={<Page3 />} />
       </Navigator>
   );
 }

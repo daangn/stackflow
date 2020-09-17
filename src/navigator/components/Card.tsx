@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useRecoilState } from 'recoil'
 import { css } from '@emotion/core'
@@ -35,32 +35,38 @@ const Card: React.FC<CardProps> = (props) => {
   const $dim = useRef<HTMLDivElement>(null)
   const $frameContainer = useRef<HTMLDivElement>(null)
 
-  const onEdgeTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
-    setScreenEdge({
-      ...screenEdge,
-      startX: e.touches[0].clientX,
-      startTime: Date.now(),
-    })
-  }
+  const onEdgeTouchStart = useCallback(
+    (e: React.TouchEvent<HTMLDivElement>) => {
+      setScreenEdge({
+        ...screenEdge,
+        startX: e.touches[0].clientX,
+        startTime: Date.now(),
+      })
+    },
+    [screenEdge]
+  )
 
-  const onEdgeTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
-    if (screenEdge.startX) {
-      const computedEdgeX = e.touches[0].clientX - screenEdge.startX
-      if (computedEdgeX >= 0) {
-        setScreenEdge({
-          ...screenEdge,
-          x: computedEdgeX,
-        })
-      } else {
-        setScreenEdge({
-          ...screenEdge,
-          x: 0,
-        })
+  const onEdgeTouchMove = useCallback(
+    (e: React.TouchEvent<HTMLDivElement>) => {
+      if (screenEdge.startX) {
+        const computedEdgeX = e.touches[0].clientX - screenEdge.startX
+        if (computedEdgeX >= 0) {
+          setScreenEdge({
+            ...screenEdge,
+            x: computedEdgeX,
+          })
+        } else {
+          setScreenEdge({
+            ...screenEdge,
+            x: 0,
+          })
+        }
       }
-    }
-  }
+    },
+    [screenEdge]
+  )
 
-  const onEdgeTouchEnd = () => {
+  const onEdgeTouchEnd = useCallback(() => {
     const velocity = screenEdge.x / (Date.now() - (screenEdge.startTime as number))
 
     if (velocity > 1 || screenEdge.x / window.screen.width > 0.4) {
@@ -72,7 +78,7 @@ const Card: React.FC<CardProps> = (props) => {
       startX: null,
       startTime: null,
     })
-  }
+  }, [screenEdge])
 
   useEffect(() => {
     let stopped = false
@@ -84,32 +90,27 @@ const Card: React.FC<CardProps> = (props) => {
     function animate() {
       requestAnimationFrame(() => {
         if ($dim.current) {
-          if (props.isTop) {
-            $dim.current.style.backgroundColor = `rgba(0, 0, 0, ${0.2 - (screenEdge.x / window.screen.width) * 0.2})`
-          }
-          if (!props.isTop) {
-            $dim.current.style.transform = `translateX(-${5 - (5 * screenEdge.x) / window.screen.width}rem)`
-          }
-          $dim.current.style.transition = '0s'
+          $dim.current.style.cssText = `
+            ${
+              props.isTop ? `background-color: rgba(0, 0, 0, ${0.2 - (screenEdge.x / window.screen.width) * 0.2});` : ''
+            }
+            ${!props.isTop ? `transform: translateX(-${5 - (5 * screenEdge.x) / window.screen.width}rem);` : ''}
+            transition: 0s;
+          `
         }
         if ($frameContainer.current) {
-          $frameContainer.current.style.overflowY = 'hidden'
-          if (props.isTop) {
-            $frameContainer.current.style.transform = `translateX(${screenEdge.x}px)`
-            $frameContainer.current.style.transition = 'transform 0s'
-          }
+          $frameContainer.current.style.cssText = `
+            overflow-y: hidden;
+            ${props.isTop ? `transform: translateX(${screenEdge.x}px); transition: transform 0s;` : ''}
+          `
         }
 
         if (stopped) {
           if ($dim.current) {
-            $dim.current.style.backgroundColor = ''
-            $dim.current.style.transform = ''
-            $dim.current.style.transition = ''
+            $dim.current.style.cssText = ''
           }
           if ($frameContainer.current) {
-            $frameContainer.current.style.overflowY = ''
-            $frameContainer.current.style.transform = ''
-            $frameContainer.current.style.transition = ''
+            $frameContainer.current.style.cssText = ''
           }
         } else {
           animate()
@@ -231,7 +232,7 @@ const Container = styled.div<ContainerProps>`
 
   ${(props) => {
     if (!props.navbarVisible) {
-      return css``
+      return null
     }
 
     switch (props.environment) {

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { memo } from 'react'
 
 const IconBack: React.FC = () => {
   return (
@@ -11,4 +11,4 @@ const IconBack: React.FC = () => {
   )
 }
 
-export default IconBack
+export default memo(IconBack)
