@@ -38,7 +38,7 @@ const Card: React.FC<CardProps> = (props) => {
   const $frameContainer = useRef<HTMLDivElement>(null)
   const $hiddenDims = useMemo(
     // eslint-disable-next-line
-    () => document.getElementsByClassName('css-kf-dim_hidden') as HTMLCollectionOf<HTMLDivElement>,
+    () => document.getElementsByClassName('css-kf-card-dim_hidden') as HTMLCollectionOf<HTMLDivElement>,
     []
   )
 
@@ -142,8 +142,11 @@ const Card: React.FC<CardProps> = (props) => {
 
   return (
     <Container
+      className="css-kf-card-container"
       environment={navigatorOptions.environment}
+      animationDuration={navigatorOptions.animationDuration}
       navbarVisible={!!screenInstanceOption?.navbar.visible}
+      isRoot={props.isRoot}
       enterActive={props.enterActive}
       enterDone={props.enterDone}
       exitActive={props.exitActive}
@@ -159,16 +162,18 @@ const Card: React.FC<CardProps> = (props) => {
       )}
       <Dim
         ref={$dim}
-        className={'css-kf-dim' + (!props.isTop ? ' css-kf-dim_hidden' : '')}
+        environment={navigatorOptions.environment}
+        className={'css-kf-card-dim' + (!props.isTop ? ' css-kf-card-dim_hidden' : '')}
         isTop={props.isTop}
         animationDuration={navigatorOptions.animationDuration}>
         <FrameContainer
           ref={$frameContainer}
-          className="css-kf-frame-container"
+          environment={navigatorOptions.environment}
+          className="css-card-kf-frame-container"
           isRoot={props.isRoot}
           animationDuration={navigatorOptions.animationDuration}>
           <Frame>{props.children}</Frame>
-          {!props.isRoot && (
+          {navigatorOptions.environment === 'Cupertino' && !props.isRoot && (
             <Edge onTouchStart={onEdgeTouchStart} onTouchMove={onEdgeTouchMove} onTouchEnd={onEdgeTouchEnd} />
           )}
         </FrameContainer>
@@ -178,6 +183,7 @@ const Card: React.FC<CardProps> = (props) => {
 }
 
 interface DimProps {
+  environment: Environment
   isTop: boolean
   animationDuration: number
 }
@@ -185,9 +191,14 @@ const Dim = styled.div<DimProps>`
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0);
-  transform: translateX(-5rem);
   transition: background-color ${(props) => props.animationDuration}ms,
     transform ${(props) => props.animationDuration}ms;
+
+  ${(props) =>
+    props.environment === 'Cupertino' &&
+    css`
+      transform: translateX(-5rem);
+    `}
 
   ${(props) =>
     props.isTop &&
@@ -197,6 +208,7 @@ const Dim = styled.div<DimProps>`
 `
 
 interface FrameContainerProps {
+  environment: Environment
   isRoot: boolean
   animationDuration: number
 }
@@ -210,6 +222,7 @@ const FrameContainer = styled.div<FrameContainerProps>`
 
   ${(props) =>
     !props.isRoot &&
+    props.environment === 'Cupertino' &&
     css`
       transform: translateX(100%);
     `};
@@ -231,6 +244,8 @@ const Edge = styled.div`
 interface ContainerProps {
   navbarVisible?: boolean
   environment: Environment
+  animationDuration: number
+  isRoot: boolean
   enterActive: boolean
   enterDone: boolean
   exitActive: boolean
@@ -264,29 +279,45 @@ const Container = styled.div<ContainerProps>`
   }}
 
   ${(props) =>
-    (props.enterActive || props.enterDone) &&
+    props.environment === 'Cupertino' &&
     css`
-      .css-kf-dim {
-        background-color: rgba(0, 0, 0, 0.2);
-      }
-      .css-kf-frame-container {
-        transform: translateX(0);
-      }
+      ${(props.enterActive || props.enterDone) &&
+      css`
+        .css-kf-card-dim {
+          background-color: rgba(0, 0, 0, 0.2);
+        }
+        .css-card-kf-frame-container {
+          transform: translateX(0);
+        }
+      `}
+      ${(props.exitActive || props.exitDone) &&
+      css`
+        .css-kf-card-dim {
+          background-color: rgba(0, 0, 0, 0);
+          transform: translateX(0);
+        }
+        .css-card-kf-frame-container {
+          transform: translateX(100%);
+        }
+        .css-kf-navbar-container {
+          display: none;
+        }
+      `}
     `}
 
   ${(props) =>
-    (props.exitActive || props.exitDone) &&
+    (props.environment === 'Android' || props.environment === 'Web') &&
+    !props.isRoot &&
     css`
-      .css-kf-dim {
-        background-color: rgba(0, 0, 0, 0);
-        transform: translateX(0);
-      }
-      .css-kf-frame-container {
-        transform: translateX(100%);
-      }
-      .css-kf-navbar-container {
-        display: none;
-      }
+      opacity: 0;
+      transform: translateY(3rem);
+      transition: transform ${props.animationDuration}ms, opacity ${props.animationDuration / 2}ms;
+
+      ${(props.enterActive || props.enterDone) &&
+      css`
+        opacity: 1;
+        transform: translateY(0);
+      `}
     `}
 
   ${(props) =>

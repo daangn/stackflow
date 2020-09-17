@@ -15,7 +15,7 @@ const bridge = new Bridge()
 function App() {
   return (
     <Navigator
-      environment={'Cupertino'}
+      environment={bridge.environment}
       animationDuration={350}
       onClose={() => {
         bridge.router.close()
