@@ -16,7 +16,9 @@ import { Card } from './components'
 import { NavigatorOptionsProvider, useNavigatorOptions } from './contexts'
 import { Environment } from '../types'
 
-const DEFAULT_ANIMATION_DURATION = 350
+const DEFAULT_CUPERTINO_ANIMATION_DURATION = 350
+const DEFAULT_WEB_ANIMATION_DURATION = 270
+const DEFAULT_ANDROID_ANIMATION_DURATION = 270
 
 /**
  * Navigator가 이미 초기화되었는지 확인
@@ -31,7 +33,7 @@ interface NavigatorProps {
   environment?: Environment
 
   /**
-   * 애니메이션 지속시간 (기본값: 350)
+   * 애니메이션 지속시간
    */
   animationDuration?: number
 
@@ -55,7 +57,18 @@ const Navigator: React.FC<NavigatorProps> = (props) => {
     <NavigatorOptionsProvider
       value={{
         environment: props.environment ?? 'Web',
-        animationDuration: props.animationDuration ?? DEFAULT_ANIMATION_DURATION,
+        animationDuration:
+          props.animationDuration ??
+          (() => {
+            switch (props.environment ?? 'Web') {
+              case 'Cupertino':
+                return DEFAULT_CUPERTINO_ANIMATION_DURATION
+              case 'Android':
+                return DEFAULT_ANDROID_ANIMATION_DURATION
+              case 'Web':
+                return DEFAULT_WEB_ANIMATION_DURATION
+            }
+          })(),
       }}>
       <NavigatorScreens onClose={props.onClose}>{props.children}</NavigatorScreens>
     </NavigatorOptionsProvider>

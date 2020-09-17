@@ -147,6 +147,7 @@ const Card: React.FC<CardProps> = (props) => {
       animationDuration={navigatorOptions.animationDuration}
       navbarVisible={!!screenInstanceOption?.navbar.visible}
       isRoot={props.isRoot}
+      isTop={props.isTop}
       enterActive={props.enterActive}
       enterDone={props.enterDone}
       exitActive={props.exitActive}
@@ -241,6 +242,7 @@ interface ContainerProps {
   environment: Environment
   animationDuration: number
   isRoot: boolean
+  isTop: boolean
   enterActive: boolean
   enterDone: boolean
   exitActive: boolean
@@ -302,16 +304,39 @@ const Container = styled.div<ContainerProps>`
 
   ${(props) =>
     (props.environment === 'Android' || props.environment === 'Web') &&
-    !props.isRoot &&
     css`
       opacity: 0;
-      transform: translateY(3rem);
-      transition: transform ${props.animationDuration}ms, opacity ${props.animationDuration / 2}ms;
+      transform: translateY(10rem);
+      transition: transform ${props.animationDuration}ms, opacity ${props.animationDuration / 1.5}ms,
+        box-shadow ${props.animationDuration / 1.5}ms;
+
+      ${props.isRoot &&
+      css`
+        opacity: 1;
+        transform: translateY(0);
+      `}
 
       ${(props.enterActive || props.enterDone) &&
       css`
         opacity: 1;
         transform: translateY(0);
+        box-shadow: 0 0 10rem 0 rgba(0, 0, 0, 0.3);
+      `}
+
+      ${props.enterDone &&
+      css`
+        box-shadow: none;
+      `}
+
+      ${!props.isTop &&
+      css`
+        transform: translateY(-2rem);
+      `}
+
+      ${(props.exitActive || props.exitActive) &&
+      css`
+        opacity: 0;
+        transform: translateY(10rem);
       `}
     `}
 

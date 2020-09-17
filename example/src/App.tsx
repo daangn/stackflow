@@ -16,7 +16,6 @@ function App() {
   return (
     <Navigator
       environment={bridge.environment}
-      animationDuration={350}
       onClose={() => {
         bridge.router.close()
       }}>
