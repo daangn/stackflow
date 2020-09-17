@@ -315,8 +315,9 @@ const Container = styled.div<ContainerProps>`
       box-shadow: rgba(0, 0, 0, 0);
       opacity: 0;
       transform: translateY(10rem);
-      transition: transform ${props.animationDuration}ms, opacity ${props.animationDuration / 1.5}ms,
-        box-shadow ${props.animationDuration / 1.5}ms;
+      transition: transform ${props.animationDuration}ms, opacity ${props.animationDuration}ms,
+        box-shadow ${props.animationDuration}ms;
+      transition-timing-function: cubic-bezier(0.22, 0.67, 0.39, 0.83);
       will-change: transform, opacity, box-shadow;
 
       ${props.isRoot &&
@@ -329,17 +330,18 @@ const Container = styled.div<ContainerProps>`
       css`
         opacity: 1;
         transform: translateY(0);
-        box-shadow: 0 0 10rem 0 rgba(0, 0, 0, 0.3);
+        box-shadow: 0 0 0 20rem rgba(0, 0, 0, 0.2);
       `}
 
       ${props.enterDone &&
       css`
-        box-shadow: rgba(0, 0, 0, 0);
+        box-shadow: 0 0 0 20rem rgba(0, 0, 0, 0);
       `}
 
       ${!props.isTop &&
       css`
         transform: translateY(-2rem);
+        transition-timing-function: cubic-bezier(0.29, 0.55, 0.36, 0.69);
       `}
 
       ${(props.exitActive || props.exitActive) &&
