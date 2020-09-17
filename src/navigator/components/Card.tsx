@@ -58,28 +58,26 @@ const Card: React.FC<CardProps> = (props) => {
         const computedEdgeX = e.touches[0].clientX - screenEdge.startX
 
         if (computedEdgeX >= 0) {
-          requestAnimationFrame(() => {
-            if ($dim.current) {
-              $dim.current.style.cssText = `
+          if ($dim.current) {
+            $dim.current.style.cssText = `
                 background-color: rgba(0, 0, 0, ${0.2 - (computedEdgeX / window.screen.width) * 0.2});
                 transition: 0s;
               `
-            }
-            if ($frameContainer.current) {
-              $frameContainer.current.style.cssText = `
+          }
+          if ($frameContainer.current) {
+            $frameContainer.current.style.cssText = `
                 overflow-y: hidden;
                 transform: translateX(${computedEdgeX}px); transition: transform 0s;
               `
-            }
-            if ($hiddenDims[$hiddenDims.length - 1]) {
-              for (let i = 0; i < $hiddenDims.length; i++) {
-                $hiddenDims[i].style.cssText = `
+          }
+          if ($hiddenDims[$hiddenDims.length - 1]) {
+            for (let i = 0; i < $hiddenDims.length; i++) {
+              $hiddenDims[i].style.cssText = `
                 transform: translateX(-${5 - (5 * computedEdgeX) / window.screen.width}rem);
                 transition: 0s;
               `
-              }
             }
-          })
+          }
         }
         tempLastX.current = e.touches[0].clientX as any
       }
@@ -101,17 +99,15 @@ const Card: React.FC<CardProps> = (props) => {
       })
       tempLastX.current = 0
 
-      setTimeout(() => {
-        if ($dim.current) {
-          $dim.current.style.cssText = ''
-        }
-        if ($frameContainer.current) {
-          $frameContainer.current.style.cssText = ''
-        }
-        for (let i = 0; i < $hiddenDims.length; i++) {
-          $hiddenDims[i].style.cssText = ''
-        }
-      }, 0)
+      if ($dim.current) {
+        $dim.current.style.cssText = ''
+      }
+      if ($frameContainer.current) {
+        $frameContainer.current.style.cssText = ''
+      }
+      for (let i = 0; i < $hiddenDims.length; i++) {
+        $hiddenDims[i].style.cssText = ''
+      }
     }
   }, [screenEdge, setScreenEdge])
 
