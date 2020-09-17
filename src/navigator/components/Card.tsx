@@ -191,15 +191,15 @@ interface DimProps {
 const Dim = styled.div<DimProps>`
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0);
-  transition: background-color ${(props) => props.animationDuration}ms,
-    transform ${(props) => props.animationDuration}ms;
 
   ${(props) =>
     props.environment === 'Cupertino' &&
     !props.isTop &&
     css`
+      background-color: rgba(0, 0, 0, 0);
       transform: translateX(-5rem);
+      transition: background-color ${props.animationDuration}ms, transform ${props.animationDuration}ms;
+      will-change: background-color, transform;
     `}
 `
 
@@ -211,16 +211,20 @@ interface FrameContainerProps {
 const FrameContainer = styled.div<FrameContainerProps>`
   width: 100%;
   height: 100%;
-  transition: transform ${(props) => props.animationDuration}ms;
-  transform: translateX(0);
   overflow-y: scroll;
   background-color: #fff;
 
   ${(props) =>
     props.environment === 'Cupertino' &&
-    !props.isRoot &&
     css`
-      transform: translateX(100%);
+      transform: translateX(0);
+      transition: transform ${props.animationDuration}ms;
+      will-change: transform;
+
+      ${!props.isRoot &&
+      css`
+        transform: translateX(100%);
+      `}
     `};
 `
 
@@ -305,10 +309,12 @@ const Container = styled.div<ContainerProps>`
   ${(props) =>
     (props.environment === 'Android' || props.environment === 'Web') &&
     css`
+      box-shadow: rgba(0, 0, 0, 0);
       opacity: 0;
       transform: translateY(10rem);
       transition: transform ${props.animationDuration}ms, opacity ${props.animationDuration / 1.5}ms,
         box-shadow ${props.animationDuration / 1.5}ms;
+      will-change: transform, opacity, box-shadow;
 
       ${props.isRoot &&
       css`
@@ -325,7 +331,7 @@ const Container = styled.div<ContainerProps>`
 
       ${props.enterDone &&
       css`
-        box-shadow: none;
+        box-shadow: rgba(0, 0, 0, 0);
       `}
 
       ${!props.isTop &&
