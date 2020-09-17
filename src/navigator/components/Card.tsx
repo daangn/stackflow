@@ -194,12 +194,15 @@ const Dim = styled.div<DimProps>`
 
   ${(props) =>
     props.environment === 'Cupertino' &&
-    !props.isTop &&
     css`
       background-color: rgba(0, 0, 0, 0);
-      transform: translateX(-5rem);
       transition: background-color ${props.animationDuration}ms, transform ${props.animationDuration}ms;
       will-change: background-color, transform;
+
+      ${!props.isTop &&
+      css`
+        transform: translateX(-5rem);
+      `}
     `}
 `
 
