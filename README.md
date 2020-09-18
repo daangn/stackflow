@@ -84,7 +84,6 @@ const App: React.FC = () => {
 
 ### 1-c. `ScreenHelmet`
 기본적으로 Screen은 상단 네비게이션 바를 포함하고 있지 않습니다. 기본 제공되는 상단 네비게이션 바를 추가, 수정하기 위해서는 `ScreenHelmet` 컴포넌트를 사용하세요.
-> `ScreenHelmet`을 화면을 구성하는 컴포넌트 트리에 포함하지 않으면, 상단바가 제공되지 않습니다.
 
 ```tsx
 import { ScreenHelmet } from '@daangn/karrotframe'
