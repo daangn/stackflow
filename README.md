@@ -76,15 +76,14 @@ const Home: React.FC = () => {
   return (
     <div>
       <ScreenHelmet
-        title='홈'
-        left={
+        title={
+          <div style={{ color: 'red' }}>홈</div>
+        }
+        appendLeft={
           <div>left</div>
         }
-        right={
+        appendRight={
           <div>right</div>
-        }
-        center={
-          <div style={{ color: 'red' }}>홈</div>
         }
       />
     </div>
