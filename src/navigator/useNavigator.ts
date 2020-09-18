@@ -40,15 +40,19 @@ export function useNavigator() {
 
       history.replace(pathname + '?' + search)
     },
-    pop<T = object>(depth: number, data?: T) {
-      const targetScreenInstance = screenInstances.find((_, index) => index === screenInstancePointer - depth)
-
-      if (targetScreenInstance) {
-        screenInstancePromises[targetScreenInstance.id]?.(data ?? null)
-      }
-
+    pop<T = object>(depth = 1) {
       for (let i = 0; i < depth; i++) {
         history.goBack()
+      }
+
+      return {
+        send(data: T) {
+          const targetScreenInstance = screenInstances.find((_, index) => index === screenInstancePointer - depth)
+
+          if (targetScreenInstance) {
+            screenInstancePromises[targetScreenInstance.id]?.(data ?? null)
+          }
+        },
       }
     },
   }

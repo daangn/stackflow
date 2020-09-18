@@ -6,7 +6,9 @@ const Page2: React.FC = () => {
   const navigator = useNavigator()
 
   const onPopClick = () => {
-    navigator.pop(1)
+    navigator.pop().send({
+      hello: 'world',
+    })
   }
   const onPage3Click = () => {
     navigator.push('/page3')

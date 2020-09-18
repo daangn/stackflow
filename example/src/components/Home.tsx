@@ -5,8 +5,9 @@ import styled from '@emotion/styled'
 const Home: React.FC = () => {
   const navigator = useNavigator()
 
-  const onPage2Click = () => {
-    navigator.push('/page2')
+  const onPage2Click = async () => {
+    const data = await navigator.push('/page2')
+    window.alert(JSON.stringify(data))
   }
 
   return (
