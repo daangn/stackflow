@@ -14,7 +14,7 @@ import {
 } from './atoms'
 import { Card } from './components'
 import { NavigatorOptionsProvider, useNavigatorOptions } from './contexts'
-import { Environment } from '../types'
+import { NavigatorTheme } from '../types'
 
 const DEFAULT_CUPERTINO_ANIMATION_DURATION = 350
 const DEFAULT_WEB_ANIMATION_DURATION = 270
@@ -28,9 +28,9 @@ let isNavigatorInitialized = false
 
 interface NavigatorProps {
   /**
-   * 환경 (기본값: Web)
+   * 테마 (기본값: Web)
    */
-  environment?: Environment
+  theme?: NavigatorTheme
 
   /**
    * 애니메이션 지속시간
@@ -56,11 +56,11 @@ const Navigator: React.FC<NavigatorProps> = (props) => {
   let h = (
     <NavigatorOptionsProvider
       value={{
-        environment: props.environment ?? 'Web',
+        theme: props.theme ?? 'Web',
         animationDuration:
           props.animationDuration ??
           (() => {
-            switch (props.environment ?? 'Web') {
+            switch (props.theme ?? 'Web') {
               case 'Cupertino':
                 return DEFAULT_CUPERTINO_ANIMATION_DURATION
               case 'Android':
@@ -84,7 +84,7 @@ const Navigator: React.FC<NavigatorProps> = (props) => {
   return h
 }
 
-const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) => {
+const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
   const location = useLocation()
   const history = useHistory()
 

@@ -6,7 +6,7 @@ import styled from '@emotion/styled'
 
 import Navbar from './Navbar'
 import { useNavigatorOptions } from '../contexts'
-import { Environment } from '../../types'
+import { NavigatorTheme } from '../../types'
 import { AtomScreenInstanceOptions, AtomScreenEdge } from '../atoms'
 
 interface CardProps {
@@ -143,7 +143,7 @@ const Card: React.FC<CardProps> = (props) => {
   return (
     <Container
       className="css-kf-card-container"
-      environment={navigatorOptions.environment}
+      navigatorTheme={navigatorOptions.theme}
       animationDuration={navigatorOptions.animationDuration}
       navbarVisible={!!screenInstanceOption?.navbar.visible}
       isRoot={props.isRoot}
@@ -156,25 +156,25 @@ const Card: React.FC<CardProps> = (props) => {
       {!!screenInstanceOption?.navbar.visible && (
         <Navbar
           screenInstanceId={props.screenInstanceId}
-          environment={navigatorOptions.environment}
+          theme={navigatorOptions.theme}
           isRoot={props.isRoot}
           onClose={props.onClose}
         />
       )}
       <Dim
         ref={$dim}
-        environment={navigatorOptions.environment}
+        navigatorTheme={navigatorOptions.theme}
         className={'css-kf-card-dim' + (!props.isTop ? ' css-kf-card-dim_hidden' : '')}
         isTop={props.isTop}
         animationDuration={navigatorOptions.animationDuration}>
         <FrameContainer
           ref={$frameContainer}
-          environment={navigatorOptions.environment}
+          navigatorTheme={navigatorOptions.theme}
           className="css-card-kf-frame-container"
           isRoot={props.isRoot}
           animationDuration={navigatorOptions.animationDuration}>
           <Frame>{props.children}</Frame>
-          {navigatorOptions.environment === 'Cupertino' && !props.isRoot && (
+          {navigatorOptions.theme === 'Cupertino' && !props.isRoot && (
             <Edge onTouchStart={onEdgeTouchStart} onTouchMove={onEdgeTouchMove} onTouchEnd={onEdgeTouchEnd} />
           )}
         </FrameContainer>
@@ -184,7 +184,7 @@ const Card: React.FC<CardProps> = (props) => {
 }
 
 interface DimProps {
-  environment: Environment
+  navigatorTheme: NavigatorTheme
   isTop: boolean
   animationDuration: number
 }
@@ -193,7 +193,7 @@ const Dim = styled.div<DimProps>`
   height: 100%;
 
   ${(props) =>
-    props.environment === 'Cupertino' &&
+    props.navigatorTheme === 'Cupertino' &&
     css`
       background-color: rgba(0, 0, 0, 0);
       transition: background-color ${props.animationDuration}ms, transform ${props.animationDuration}ms;
@@ -207,7 +207,7 @@ const Dim = styled.div<DimProps>`
 `
 
 interface FrameContainerProps {
-  environment: Environment
+  navigatorTheme: NavigatorTheme
   isRoot: boolean
   animationDuration: number
 }
@@ -218,7 +218,7 @@ const FrameContainer = styled.div<FrameContainerProps>`
   background-color: #fff;
 
   ${(props) =>
-    props.environment === 'Cupertino' &&
+    props.navigatorTheme === 'Cupertino' &&
     css`
       transform: translateX(0);
       transition: transform ${props.animationDuration}ms;
@@ -246,7 +246,7 @@ const Edge = styled.div`
 
 interface ContainerProps {
   navbarVisible?: boolean
-  environment: Environment
+  navigatorTheme: NavigatorTheme
   animationDuration: number
   isRoot: boolean
   isTop: boolean
@@ -269,7 +269,7 @@ const Container = styled.div<ContainerProps>`
       return null
     }
 
-    switch (props.environment) {
+    switch (props.navigatorTheme) {
       case 'Cupertino':
         return css`
           padding-top: 2.75rem;
@@ -283,7 +283,7 @@ const Container = styled.div<ContainerProps>`
   }}
 
   ${(props) =>
-    props.environment === 'Cupertino' &&
+    props.navigatorTheme === 'Cupertino' &&
     css`
       ${(props.enterActive || props.enterDone) &&
       css`
@@ -310,7 +310,7 @@ const Container = styled.div<ContainerProps>`
     `}
 
   ${(props) =>
-    (props.environment === 'Android' || props.environment === 'Web') &&
+    (props.navigatorTheme === 'Android' || props.navigatorTheme === 'Web') &&
     css`
       opacity: 0;
       transform: translateY(10rem);

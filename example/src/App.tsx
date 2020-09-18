@@ -15,11 +15,11 @@ const bridge = new Bridge()
 function App() {
   return (
     <Navigator
-      environment={bridge.environment}
+      theme={bridge.environment}
       onClose={() => {
         bridge.router.close()
       }}>
-        <Screen path='/' component={Home} />
+        <Screen path='/' component={Page2} />
         <Screen path='/page2' component={Page2} />
         <Screen path='/page3' component={Page3} />
       </Navigator>

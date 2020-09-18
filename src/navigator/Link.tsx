@@ -5,8 +5,19 @@ import short from 'short-uuid'
 import { appendSearch } from '../utils/appendSearch'
 
 interface LinkProps {
+  /**
+   * 이동할 path
+   */
   to: string
+
+  /**
+   * path 이동을 replace로 처리할 지 여부
+   */
   replace?: boolean
+
+  /**
+   * className
+   */
   className?: string
 }
 const Link: React.FC<LinkProps> = forwardRef<HTMLAnchorElement, LinkProps>((props, ref) => {

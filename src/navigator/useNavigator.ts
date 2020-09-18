@@ -42,13 +42,13 @@ export function useNavigator() {
           })
       )
     },
-    pop<T = object>(depth = 1) {
+    pop(depth = 1) {
       for (let i = 0; i < depth; i++) {
         history.goBack()
       }
 
       return {
-        send(data: T) {
+        send<T = object>(data: T) {
           const targetScreenInstance = screenInstances.find((_, index) => index === screenInstancePointer - depth)
 
           if (targetScreenInstance) {
