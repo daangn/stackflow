@@ -131,7 +131,7 @@ const Home: React.FC = () => {
 import { useNavigator } from '@daangn/karrotframe'
 
 const Home: React.FC = () => {
-  const { push } = useNavigator()
+  const { push, pop, replace } = useNavigator()
   return (
     <div>
       <button
@@ -147,7 +147,7 @@ const Home: React.FC = () => {
 ```
 
 ### 화면 간 데이터 전송
-`useNavigator`의 `pop()`과 `await push()`를 통해 화면간 데이터 전송을 할 수 있습니다.
+`useNavigator`의 `pop().send()`과 `await push()`를 통해 화면간 데이터 전송을 할 수 있습니다.
 
 `pop()` 함수 내 `depth` argument를 2 이상으로 부여할 시 여러 화면을 뛰어넘어서 전송도 가능합니다.
 
@@ -179,9 +179,14 @@ const Form: React.FC = () => {
   const { pop } = useNavigator()
 
   const onSubmit = () => {
-    pop(1, {
-      title: '안녕하세요',
-      content: '데이터 전송합니다.'
+    pop().send({
+      hello: 'world',
+    })
+
+    // 또는
+
+    pop(3).send({
+      foo: 'bar',
     })
   }
 

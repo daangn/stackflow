@@ -1,8 +1,8 @@
-import qs from 'qs'
 import { useHistory } from 'react-router-dom'
 import { useRecoilState } from 'recoil'
 import short from 'short-uuid'
 
+import { appendSearch } from '../utils/appendSearch'
 import { AtomScreenInstances, AtomScreenInstancePointer, screenInstancePromises } from './atoms'
 import { useScreenInstanceInfo } from './contexts'
 
@@ -16,29 +16,31 @@ export function useNavigator() {
   return {
     push<T = object>(to: string) {
       return new Promise<T | null>((resolve) => {
-        screenInstancePromises[screenInfo.screenInstanceId] = resolve
-
-        const sid = short.generate().substr(0, 5)
-
         const [pathname, search] = to.split('?')
-        const parsedSearch = search ? qs.parse(search) : null
+        const kf_sid = short.generate().substr(0, 5)
 
-        history.push(pathname + '?' + qs.stringify({ ...parsedSearch, kf_sid: sid }))
+        history.push(
+          pathname +
+            '?' +
+            appendSearch(search || null, {
+              kf_sid,
+            })
+        )
+
+        screenInstancePromises[screenInfo.screenInstanceId] = resolve
       })
     },
     replace(to: string) {
-      const sid = short.generate().substr(0, 5)
+      const [pathname, search] = to.split('?')
+      const kf_sid = short.generate().substr(0, 5)
 
-      const pathname = to.split('?')[0]
-      let search = to.split('?')[1]
-      const parsedSearch = search ? qs.parse(search) : null
-
-      search = qs.stringify({
-        ...parsedSearch,
-        kf_sid: sid,
-      })
-
-      history.replace(pathname + '?' + search)
+      history.replace(
+        pathname +
+          '?' +
+          appendSearch(search, {
+            kf_sid,
+          })
+      )
     },
     pop<T = object>(depth = 1) {
       for (let i = 0; i < depth; i++) {
