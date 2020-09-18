@@ -32,30 +32,33 @@ const Navbar: React.FC<NavbarProps> = (props) => {
         <Center environment={props.environment}>{screenInstanceOption?.navbar.title}</Center>
       )}
       <Flex>
-        {(!props.isRoot || screenInstanceOption?.navbar.left) && (
+        {(!props.isRoot || screenInstanceOption?.navbar.appendLeft) && (
           <Left>
             {!props.isRoot &&
-              (screenInstanceOption?.navbar.back ? (
-                <div onClick={history.goBack}>{screenInstanceOption.navbar.back}</div>
+              (screenInstanceOption?.navbar.customBackButton ? (
+                <div onClick={history.goBack}>{screenInstanceOption.navbar.customBackButton}</div>
               ) : (
                 <Back onClick={history.goBack}>
                   <IconBack />
                 </Back>
               ))}
-            {screenInstanceOption?.navbar.left}
+            {screenInstanceOption?.navbar.appendLeft}
           </Left>
         )}
         {(props.environment === 'Android' || props.environment === 'Web') && (
           <Center environment={props.environment}>{screenInstanceOption?.navbar.title}</Center>
         )}
-        {(props.isRoot || screenInstanceOption?.navbar.right) && (
+        {(props.isRoot || screenInstanceOption?.navbar.appendRight) && (
           <Right>
-            {screenInstanceOption?.navbar.right}
-            {props.isRoot && (
-              <Close onClick={props.onClose}>
-                <IconClose />
-              </Close>
-            )}
+            {screenInstanceOption?.navbar.appendRight}
+            {props.isRoot &&
+              (screenInstanceOption.navbar.customCloseButton ? (
+                <div onClick={props.onClose}>{screenInstanceOption.navbar.customCloseButton}</div>
+              ) : (
+                <Close onClick={props.onClose}>
+                  <IconClose />
+                </Close>
+              ))}
           </Right>
         )}
       </Flex>

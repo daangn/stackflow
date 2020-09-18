@@ -12,18 +12,23 @@ interface ScreenHelmetProps {
    * 네비게이션의 왼쪽에 요소를 추가
    * (이전 버튼 오른쪽에 표시됩니다)
    */
-  left?: React.ReactNode
+  appendLeft?: React.ReactNode
 
   /**
    * 네비게이션의 오른쪽 요소를 추가
    * (닫기 버튼 왼쪽에 표시됩니다)
    */
-  right?: React.ReactNode
+  appendRight?: React.ReactNode
 
   /**
    * 이전 버튼을 사용자화합니다
    */
-  back?: React.ReactNode
+  customBackButton?: React.ReactNode
+
+  /**
+   * 이전 버튼을 사용자화합니다
+   */
+  customCloseButton?: React.ReactNode
 }
 const ScreenHelmet: React.FC<ScreenHelmetProps> = (props) => {
   const screen = useScreenInstanceOptions()
@@ -32,9 +37,10 @@ const ScreenHelmet: React.FC<ScreenHelmetProps> = (props) => {
     screen.setNavbar({
       visible: true,
       title: props.title ?? null,
-      left: props.left ?? null,
-      right: props.right ?? null,
-      back: props.back ?? null,
+      appendLeft: props.appendLeft ?? null,
+      appendRight: props.appendRight ?? null,
+      customBackButton: props.customBackButton ?? null,
+      customCloseButton: props.customCloseButton ?? null,
     })
   }, [props])
 

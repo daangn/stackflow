@@ -4,9 +4,10 @@ import { atom } from 'recoil'
 export interface NavbarOptions {
   visible: boolean
   title: React.ReactNode | null
-  left: React.ReactNode | null
-  right: React.ReactNode | null
-  back: React.ReactNode | null
+  appendLeft: React.ReactNode | null
+  appendRight: React.ReactNode | null
+  customBackButton: React.ReactNode | null
+  customCloseButton: React.ReactNode | null
 }
 
 export const AtomScreenInstanceOptions = atom<{
