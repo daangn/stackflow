@@ -188,11 +188,6 @@ const Posts: React.FC = () => {
 
     // depth argument를 통해 여러단계를 pop 할 수 있습니다
     pop(1)
-
-    // .send() 함수를 통해 해당 화면으로 데이터를 전송할 수 있습니다
-    pop(1).send({
-      hello: 'world',
-    })
   }
 
   useEffect(() => {
