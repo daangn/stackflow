@@ -26,7 +26,7 @@ interface ScreenHelmetProps {
   customBackButton?: React.ReactNode
 
   /**
-   * 이전 버튼을 사용자화합니다
+   * 닫기 버튼을 사용자화합니다
    */
   customCloseButton?: React.ReactNode
 }
