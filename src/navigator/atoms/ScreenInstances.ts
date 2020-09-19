@@ -5,6 +5,6 @@ export interface ScreenInstance {
   screenId: string
 }
 export const AtomScreenInstances = atom<ScreenInstance[]>({
-  key: 'ScreenInstances',
+  key: 'KFScreenInstances',
   default: [],
 })

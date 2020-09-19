@@ -14,9 +14,11 @@ import {
 } from './atoms'
 import { Card } from './components'
 import { NavigatorOptionsProvider, useNavigatorOptions } from './contexts'
-import { Environment } from '../types'
+import { NavigatorTheme } from '../types'
 
-const DEFAULT_ANIMATION_DURATION = 350
+const DEFAULT_CUPERTINO_ANIMATION_DURATION = 350
+const DEFAULT_WEB_ANIMATION_DURATION = 270
+const DEFAULT_ANDROID_ANIMATION_DURATION = 270
 
 /**
  * Navigator가 이미 초기화되었는지 확인
@@ -26,9 +28,9 @@ let isNavigatorInitialized = false
 
 interface NavigatorProps {
   /**
-   * 환경
+   * 테마 (기본값: Web)
    */
-  environment: Environment
+  theme?: NavigatorTheme
 
   /**
    * 애니메이션 지속시간
@@ -36,27 +38,53 @@ interface NavigatorProps {
   animationDuration?: number
 
   /**
+   * 빌트인 된 RecoilRoot를 없애고, 사용자가 직접 RecoilRoot를 셋팅합니다
+   */
+  useCustomRecoilRoot?: boolean
+
+  /**
+   * 빌트인 된 react-router-dom의 HashRouter를 없애고, 사용자가 직접 Router를 셋팅합니다
+   */
+  useCustomRouter?: boolean
+
+  /**
    * 닫기 버튼을 눌렀을때 해당 콜백이 호출됩니다
    */
   onClose?: () => void
 }
 const Navigator: React.FC<NavigatorProps> = (props) => {
-  return (
-    <HashRouter>
-      <RecoilRoot>
-        <NavigatorOptionsProvider
-          value={{
-            environment: props.environment,
-            animationDuration: props.animationDuration ?? DEFAULT_ANIMATION_DURATION,
-          }}>
-          <NavigatorScreens onClose={props.onClose}>{props.children}</NavigatorScreens>
-        </NavigatorOptionsProvider>
-      </RecoilRoot>
-    </HashRouter>
+  let h = (
+    <NavigatorOptionsProvider
+      value={{
+        theme: props.theme ?? 'Web',
+        animationDuration:
+          props.animationDuration ??
+          (() => {
+            switch (props.theme ?? 'Web') {
+              case 'Cupertino':
+                return DEFAULT_CUPERTINO_ANIMATION_DURATION
+              case 'Android':
+                return DEFAULT_ANDROID_ANIMATION_DURATION
+              case 'Web':
+                return DEFAULT_WEB_ANIMATION_DURATION
+            }
+          })(),
+      }}>
+      <NavigatorScreens onClose={props.onClose}>{props.children}</NavigatorScreens>
+    </NavigatorOptionsProvider>
   )
+
+  if (!props.useCustomRecoilRoot) {
+    h = <RecoilRoot>{h}</RecoilRoot>
+  }
+  if (!props.useCustomRouter) {
+    h = <HashRouter>{h}</HashRouter>
+  }
+
+  return h
 }
 
-const NavigatorScreens: React.FC<Omit<NavigatorProps, 'environment'>> = (props) => {
+const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
   const location = useLocation()
   const history = useHistory()
 

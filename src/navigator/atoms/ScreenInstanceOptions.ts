@@ -2,11 +2,12 @@ import React from 'react'
 import { atom } from 'recoil'
 
 export interface NavbarOptions {
-  title: string
   visible: boolean
-  left: React.ReactNode | null
-  right: React.ReactNode | null
-  center: React.ReactNode | null
+  title: React.ReactNode | null
+  appendLeft: React.ReactNode | null
+  appendRight: React.ReactNode | null
+  customBackButton: React.ReactNode | null
+  customCloseButton: React.ReactNode | null
 }
 
 export const AtomScreenInstanceOptions = atom<{
@@ -14,6 +15,6 @@ export const AtomScreenInstanceOptions = atom<{
     navbar: NavbarOptions
   }
 }>({
-  key: 'ScreenInstanceOptions',
+  key: 'KFScreenInstanceOptions',
   default: {},
 })

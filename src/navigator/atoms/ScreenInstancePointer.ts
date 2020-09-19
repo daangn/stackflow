@@ -1,6 +1,6 @@
 import { atom } from 'recoil'
 
 export const AtomScreenInstancePointer = atom<number>({
-  key: 'ScreenInstancePointer',
+  key: 'KFScreenInstancePointer',
   default: -1,
 })

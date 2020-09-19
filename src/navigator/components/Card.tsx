@@ -6,7 +6,7 @@ import styled from '@emotion/styled'
 
 import Navbar from './Navbar'
 import { useNavigatorOptions } from '../contexts'
-import { Environment } from '../../types'
+import { NavigatorTheme } from '../../types'
 import { AtomScreenInstanceOptions, AtomScreenEdge } from '../atoms'
 
 interface CardProps {
@@ -38,7 +38,7 @@ const Card: React.FC<CardProps> = (props) => {
   const $frameContainer = useRef<HTMLDivElement>(null)
   const $hiddenDims = useMemo(
     // eslint-disable-next-line
-    () => document.getElementsByClassName('kf-dim_hidden') as HTMLCollectionOf<HTMLDivElement>,
+    () => document.getElementsByClassName('css-kf-card-dim_hidden') as HTMLCollectionOf<HTMLDivElement>,
     []
   )
 
@@ -142,8 +142,12 @@ const Card: React.FC<CardProps> = (props) => {
 
   return (
     <Container
-      environment={navigatorOptions.environment}
+      className="css-kf-card-container"
+      navigatorTheme={navigatorOptions.theme}
+      animationDuration={navigatorOptions.animationDuration}
       navbarVisible={!!screenInstanceOption?.navbar.visible}
+      isRoot={props.isRoot}
+      isTop={props.isTop}
       enterActive={props.enterActive}
       enterDone={props.enterDone}
       exitActive={props.exitActive}
@@ -152,23 +156,25 @@ const Card: React.FC<CardProps> = (props) => {
       {!!screenInstanceOption?.navbar.visible && (
         <Navbar
           screenInstanceId={props.screenInstanceId}
-          environment={navigatorOptions.environment}
+          theme={navigatorOptions.theme}
           isRoot={props.isRoot}
           onClose={props.onClose}
         />
       )}
       <Dim
         ref={$dim}
-        className={'kf-dim' + (!props.isTop ? ' kf-dim_hidden' : '')}
+        navigatorTheme={navigatorOptions.theme}
+        className={'css-kf-card-dim' + (!props.isTop ? ' css-kf-card-dim_hidden' : '')}
         isTop={props.isTop}
         animationDuration={navigatorOptions.animationDuration}>
         <FrameContainer
           ref={$frameContainer}
-          className="kf-frame-container"
+          navigatorTheme={navigatorOptions.theme}
+          className="css-card-kf-frame-container"
           isRoot={props.isRoot}
           animationDuration={navigatorOptions.animationDuration}>
           <Frame>{props.children}</Frame>
-          {!props.isRoot && (
+          {navigatorOptions.theme === 'Cupertino' && !props.isRoot && (
             <Edge onTouchStart={onEdgeTouchStart} onTouchMove={onEdgeTouchMove} onTouchEnd={onEdgeTouchEnd} />
           )}
         </FrameContainer>
@@ -178,40 +184,50 @@ const Card: React.FC<CardProps> = (props) => {
 }
 
 interface DimProps {
+  navigatorTheme: NavigatorTheme
   isTop: boolean
   animationDuration: number
 }
 const Dim = styled.div<DimProps>`
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0);
-  transform: translateX(-5rem);
-  transition: background-color ${(props) => props.animationDuration}ms,
-    transform ${(props) => props.animationDuration}ms;
 
   ${(props) =>
-    props.isTop &&
+    props.navigatorTheme === 'Cupertino' &&
     css`
-      transform: translateX(0);
+      background-color: rgba(0, 0, 0, 0);
+      transition: background-color ${props.animationDuration}ms, transform ${props.animationDuration}ms;
+      will-change: background-color, transform;
+
+      ${!props.isTop &&
+      css`
+        transform: translateX(-5rem);
+      `}
     `}
 `
 
 interface FrameContainerProps {
+  navigatorTheme: NavigatorTheme
   isRoot: boolean
   animationDuration: number
 }
 const FrameContainer = styled.div<FrameContainerProps>`
   width: 100%;
   height: 100%;
-  transition: transform ${(props) => props.animationDuration}ms;
-  transform: translateX(0);
   overflow-y: scroll;
   background-color: #fff;
 
   ${(props) =>
-    !props.isRoot &&
+    props.navigatorTheme === 'Cupertino' &&
     css`
-      transform: translateX(100%);
+      transform: translateX(0);
+      transition: transform ${props.animationDuration}ms;
+      will-change: transform;
+
+      ${!props.isRoot &&
+      css`
+        transform: translateX(100%);
+      `}
     `};
 `
 
@@ -230,7 +246,10 @@ const Edge = styled.div`
 
 interface ContainerProps {
   navbarVisible?: boolean
-  environment: Environment
+  navigatorTheme: NavigatorTheme
+  animationDuration: number
+  isRoot: boolean
+  isTop: boolean
   enterActive: boolean
   enterDone: boolean
   exitActive: boolean
@@ -250,7 +269,7 @@ const Container = styled.div<ContainerProps>`
       return null
     }
 
-    switch (props.environment) {
+    switch (props.navigatorTheme) {
       case 'Cupertino':
         return css`
           padding-top: 2.75rem;
@@ -264,29 +283,64 @@ const Container = styled.div<ContainerProps>`
   }}
 
   ${(props) =>
-    (props.enterActive || props.enterDone) &&
+    props.navigatorTheme === 'Cupertino' &&
     css`
-      .kf-dim {
-        background-color: rgba(0, 0, 0, 0.2);
-      }
-      .kf-frame-container {
-        transform: translateX(0);
-      }
+      ${(props.enterActive || props.enterDone) &&
+      css`
+        .css-kf-card-dim {
+          background-color: rgba(0, 0, 0, 0.2);
+        }
+        .css-card-kf-frame-container {
+          transform: translateX(0);
+        }
+      `}
+      ${(props.exitActive || props.exitDone) &&
+      css`
+        .css-kf-card-dim {
+          background-color: rgba(0, 0, 0, 0);
+          transform: translateX(0);
+        }
+        .css-card-kf-frame-container {
+          transform: translateX(100%);
+        }
+        .css-kf-navbar-container {
+          display: none;
+        }
+      `}
     `}
 
   ${(props) =>
-    (props.exitActive || props.exitDone) &&
+    (props.navigatorTheme === 'Android' || props.navigatorTheme === 'Web') &&
     css`
-      .kf-dim {
-        background-color: rgba(0, 0, 0, 0);
-        transform: translateX(0);
-      }
-      .kf-frame-container {
-        transform: translateX(100%);
-      }
-      .kf-navbar-container {
-        display: none;
-      }
+      opacity: 0;
+      transform: translateY(10rem);
+      transition: transform ${props.animationDuration}ms, opacity ${props.animationDuration}ms;
+      transition-timing-function: cubic-bezier(0.22, 0.67, 0.39, 0.83);
+      will-change: transform, opacity;
+
+      ${props.isRoot &&
+      css`
+        opacity: 1;
+        transform: translateY(0);
+      `}
+
+      ${(props.enterActive || props.enterDone) &&
+      css`
+        opacity: 1;
+        transform: translateY(0);
+      `}
+
+      ${!props.isTop &&
+      css`
+        transform: translateY(-2rem);
+        transition-timing-function: cubic-bezier(0.29, 0.55, 0.36, 0.69);
+      `}
+
+      ${(props.exitActive || props.exitActive) &&
+      css`
+        opacity: 0;
+        transform: translateY(10rem);
+      `}
     `}
 
   ${(props) =>

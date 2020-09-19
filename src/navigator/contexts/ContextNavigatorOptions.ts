@@ -1,9 +1,9 @@
 import { createContext, useContext } from 'react'
 
-import { Environment } from '../../types'
+import { NavigatorTheme } from '../../types'
 
 export const ContextNavigatorOptions = createContext<{
-  environment: Environment
+  theme: NavigatorTheme
   animationDuration: number
 }>(null as any)
 

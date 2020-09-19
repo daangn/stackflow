@@ -7,11 +7,11 @@ import styled from '@emotion/styled'
 import { IconBack, IconClose } from '../assets'
 import { AtomScreenInstanceOptions } from '../atoms'
 import { useNavigatorOptions } from '../contexts'
-import { Environment } from '../../types'
+import { NavigatorTheme } from '../../types'
 
 interface NavbarProps {
   screenInstanceId: string
-  environment: Environment
+  theme: NavigatorTheme
   isRoot: boolean
   onClose: () => void
 }
@@ -25,38 +25,40 @@ const Navbar: React.FC<NavbarProps> = (props) => {
 
   return (
     <Container
-      className="kf-navbar-container"
-      environment={props.environment}
+      className="css-kf-navbar-container"
+      navigatorTheme={props.theme}
       animationDuration={navigatorOptions.animationDuration}>
-      {props.environment === 'Cupertino' && (
-        <Center environment={props.environment}>
-          {screenInstanceOption?.navbar.center || screenInstanceOption?.navbar.title}
-        </Center>
+      {props.theme === 'Cupertino' && (
+        <Center navigatorTheme={props.theme}>{screenInstanceOption?.navbar.title}</Center>
       )}
       <Flex>
-        {(!props.isRoot || screenInstanceOption?.navbar.left) && (
+        {(!props.isRoot || screenInstanceOption?.navbar.appendLeft) && (
           <Left>
-            {!props.isRoot && (
-              <Back onClick={history.goBack}>
-                <IconBack />
-              </Back>
-            )}
-            {screenInstanceOption?.navbar.left}
+            {!props.isRoot &&
+              (screenInstanceOption?.navbar.customBackButton ? (
+                <div onClick={history.goBack}>{screenInstanceOption.navbar.customBackButton}</div>
+              ) : (
+                <Back onClick={history.goBack}>
+                  <IconBack />
+                </Back>
+              ))}
+            {screenInstanceOption?.navbar.appendLeft}
           </Left>
         )}
-        {(props.environment === 'Android' || props.environment === 'Web') && (
-          <Center environment={props.environment}>
-            {screenInstanceOption?.navbar.center || screenInstanceOption?.navbar.title}
-          </Center>
+        {(props.theme === 'Android' || props.theme === 'Web') && (
+          <Center navigatorTheme={props.theme}>{screenInstanceOption?.navbar.title}</Center>
         )}
-        {(props.isRoot || screenInstanceOption?.navbar.right) && (
+        {(props.isRoot || screenInstanceOption?.navbar.appendRight) && (
           <Right>
-            {screenInstanceOption?.navbar.right}
-            {props.isRoot && (
-              <Close onClick={props.onClose}>
-                <IconClose />
-              </Close>
-            )}
+            {screenInstanceOption?.navbar.appendRight}
+            {props.isRoot &&
+              (screenInstanceOption.navbar.customCloseButton ? (
+                <div onClick={props.onClose}>{screenInstanceOption.navbar.customCloseButton}</div>
+              ) : (
+                <Close onClick={props.onClose}>
+                  <IconClose />
+                </Close>
+              ))}
           </Right>
         )}
       </Flex>
@@ -64,7 +66,11 @@ const Navbar: React.FC<NavbarProps> = (props) => {
   )
 }
 
-export const Container = styled.div<{ environment: Environment; animationDuration: number }>`
+interface ContainerProps {
+  navigatorTheme: NavigatorTheme
+  animationDuration: number
+}
+export const Container = styled.div<ContainerProps>`
   background-color: #fff;
   display: flex;
   position: absolute;
@@ -72,7 +78,7 @@ export const Container = styled.div<{ environment: Environment; animationDuratio
   top: 0;
 
   ${(props) => {
-    switch (props.environment) {
+    switch (props.navigatorTheme) {
       case 'Cupertino':
         return css`
           height: 2.75rem;
@@ -122,14 +128,14 @@ const Back = styled.div`
   }
 `
 
-const Center = styled.div<{ environment: Environment }>`
+const Center = styled.div<{ navigatorTheme: NavigatorTheme }>`
   flex: 1;
   display: flex;
   align-items: center;
   font-weight: bold;
 
   ${(props) => {
-    switch (props.environment) {
+    switch (props.navigatorTheme) {
       case 'Android':
       case 'Web':
         return css`
