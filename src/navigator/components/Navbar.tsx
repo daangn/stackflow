@@ -25,7 +25,7 @@ const Navbar: React.FC<NavbarProps> = (props) => {
 
   return (
     <Container
-      className="css-kf-navbar-container"
+      className="css-nb-container"
       navigatorTheme={props.theme}
       animationDuration={navigatorOptions.animationDuration}>
       {props.theme === 'Cupertino' && (

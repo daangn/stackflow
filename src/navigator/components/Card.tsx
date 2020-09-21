@@ -30,7 +30,7 @@ const Card: React.FC<CardProps> = (props) => {
 
   const $allFrameOffsets = useMemo(
     // eslint-disable-next-line
-    () => document.getElementsByClassName('css-card-frame-offset') as HTMLCollectionOf<HTMLDivElement>,
+    () => document.getElementsByClassName('css-cd-frame-offset') as HTMLCollectionOf<HTMLDivElement>,
     []
   )
 
@@ -134,13 +134,13 @@ const Card: React.FC<CardProps> = (props) => {
     <TransitionNode ref={props.nodeRef} navigatorOptions={navigatorOptions}>
       <Dim
         ref={$dim}
-        className="css-card-dim"
+        className="css-cd-dim"
         navigatorOptions={navigatorOptions}
         navbarVisible={!!screenInstanceOption?.navbar.visible}
       />
       <MainOffset navigatorOptions={navigatorOptions} isTop={props.isTop}>
         <Main
-          className="css-card-main"
+          className="css-cd-main"
           navigatorOptions={navigatorOptions}
           navbarVisible={!!screenInstanceOption?.navbar.visible}
           isRoot={props.isRoot}
@@ -155,10 +155,10 @@ const Card: React.FC<CardProps> = (props) => {
           )}
           <FrameOffset
             ref={$frameOffset}
-            className="css-card-frame-offset"
+            className="css-cd-frame-offset"
             navigatorOptions={navigatorOptions}
             isTop={props.isTop}>
-            <Frame className="css-card-frame" ref={$frame} navigatorOptions={navigatorOptions} isRoot={props.isRoot}>
+            <Frame className="css-cd-frame" ref={$frame} navigatorOptions={navigatorOptions} isRoot={props.isRoot}>
               {props.children}
               {navigatorOptions.theme === 'Cupertino' && !props.isRoot && (
                 <Edge onTouchStart={onEdgeTouchStart} onTouchMove={onEdgeTouchMove} onTouchEnd={onEdgeTouchEnd} />
@@ -187,26 +187,26 @@ const TransitionNode = styled.div<LayerProps>`
     css`
       &.enter-active,
       &.enter-done {
-        .css-card-dim {
+        .css-cd-dim {
           opacity: 1;
         }
-        .css-card-frame {
+        .css-cd-frame {
           transform: translateX(0);
         }
       }
 
       &.exit-active,
       &.exit-done {
-        .css-card-dim {
+        .css-cd-dim {
           opacity: 0;
         }
-        .css-card-frame {
+        .css-cd-frame {
           transform: translateX(100%);
         }
-        .css-card-frame-offset {
+        .css-cd-frame-offset {
           transform: translateX(0);
         }
-        .css-kf-navbar-container {
+        .css-nb-container {
           display: none;
         }
       }
@@ -217,10 +217,10 @@ const TransitionNode = styled.div<LayerProps>`
     css`
       &.enter-active,
       &.enter-done {
-        .css-card-dim {
+        .css-cd-dim {
           opacity: 1;
         }
-        .css-card-main {
+        .css-cd-main {
           opacity: 1;
           transform: translateY(0);
         }
@@ -228,10 +228,10 @@ const TransitionNode = styled.div<LayerProps>`
 
       &.exit-active,
       &.exit-done {
-        .css-card-dim {
+        .css-cd-dim {
           opacity: 0;
         }
-        .css-card-main {
+        .css-cd-main {
           opacity: 0;
           transform: translateY(10rem);
         }
