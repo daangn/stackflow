@@ -1,5 +1,5 @@
 import qs from 'qs'
-import React, { memo, useEffect, useMemo, useRef, useState } from 'react'
+import React, { memo, useEffect, useMemo, useRef } from 'react'
 import { HashRouter, useLocation, useHistory, matchPath } from 'react-router-dom'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import { RecoilRoot, useRecoilState } from 'recoil'
@@ -17,7 +17,6 @@ import { NavigatorOptionsProvider, useNavigatorOptions } from './contexts'
 import { NavigatorTheme } from '../types'
 
 const DEFAULT_CUPERTINO_ANIMATION_DURATION = 350
-const DEFAULT_WEB_ANIMATION_DURATION = 270
 const DEFAULT_ANDROID_ANIMATION_DURATION = 270
 
 /**
@@ -56,17 +55,15 @@ const Navigator: React.FC<NavigatorProps> = (props) => {
   let h = (
     <NavigatorOptionsProvider
       value={{
-        theme: props.theme ?? 'Web',
+        theme: props.theme ?? 'Android',
         animationDuration:
           props.animationDuration ??
           (() => {
-            switch (props.theme ?? 'Web') {
+            switch (props.theme ?? 'Android') {
               case 'Cupertino':
                 return DEFAULT_CUPERTINO_ANIMATION_DURATION
               case 'Android':
                 return DEFAULT_ANDROID_ANIMATION_DURATION
-              case 'Web':
-                return DEFAULT_WEB_ANIMATION_DURATION
             }
           })(),
       }}>

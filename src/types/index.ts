@@ -1,1 +1,1 @@
-export type NavigatorTheme = 'Cupertino' | 'Android' | 'Web'
+export type NavigatorTheme = 'Cupertino' | 'Android'
