@@ -15,7 +15,7 @@ const bridge = new Bridge()
 function App() {
   return (
     <Navigator
-      theme={bridge.environment}
+      theme={'Cupertino'}
       onClose={() => {
         bridge.router.close()
       }}>

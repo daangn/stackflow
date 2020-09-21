@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useRecoilState } from 'recoil'
 import { css } from '@emotion/core'
@@ -10,15 +10,12 @@ import { NavigatorTheme } from '../../types'
 import { AtomScreenInstanceOptions, AtomScreenEdge } from '../atoms'
 
 interface CardProps {
+  nodeRef: React.RefObject<HTMLDivElement>
   screenPath: string
   screenInstanceId: string
   isRoot: boolean
   isTop: boolean
   onClose: () => void
-  enterActive: boolean
-  enterDone: boolean
-  exitActive: boolean
-  exitDone: boolean
 }
 const Card: React.FC<CardProps> = (props) => {
   const history = useHistory()
@@ -34,13 +31,7 @@ const Card: React.FC<CardProps> = (props) => {
 
   const x = useRef<number>(0)
 
-  const $dim = useRef<HTMLDivElement>(null)
   const $frameContainer = useRef<HTMLDivElement>(null)
-  const $hiddenDims = useMemo(
-    // eslint-disable-next-line
-    () => document.getElementsByClassName('css-kf-card-dim_hidden') as HTMLCollectionOf<HTMLDivElement>,
-    []
-  )
 
   const onEdgeTouchStart = useCallback(
     (e: React.TouchEvent<HTMLDivElement>) => {
@@ -88,14 +79,8 @@ const Card: React.FC<CardProps> = (props) => {
 
     if (screenEdge.startX === null) {
       requestAnimationFrame(() => {
-        if ($dim.current) {
-          $dim.current.style.cssText = ''
-        }
         if ($frameContainer.current) {
           $frameContainer.current.style.cssText = ''
-        }
-        for (let i = 0; i < $hiddenDims.length; i++) {
-          $hiddenDims[i].style.cssText = ''
         }
       })
     } else if (props.isTop) {
@@ -111,25 +96,11 @@ const Card: React.FC<CardProps> = (props) => {
         const computedEdgeX = x.current - screenEdge.startX!
 
         if (computedEdgeX >= 0) {
-          if ($dim.current) {
-            $dim.current.style.cssText = `
-                background-color: rgba(0, 0, 0, ${0.2 - (computedEdgeX / window.screen.width) * 0.2});
-                transition: 0s;
-              `
-          }
           if ($frameContainer.current) {
             $frameContainer.current.style.cssText = `
                 overflow-y: hidden;
                 transform: translateX(${computedEdgeX}px); transition: transform 0s;
               `
-          }
-          if ($hiddenDims[$hiddenDims.length - 1]) {
-            for (let i = 0; i < $hiddenDims.length; i++) {
-              $hiddenDims[i].style.cssText = `
-                transform: translateX(-${5 - (5 * computedEdgeX) / window.screen.width}rem);
-                transition: 0s;
-              `
-            }
           }
         }
 
@@ -141,17 +112,13 @@ const Card: React.FC<CardProps> = (props) => {
   }, [screenEdge, props.isTop])
 
   return (
-    <Container
-      className="css-kf-card-container"
+    <Main
+      ref={props.nodeRef}
       navigatorTheme={navigatorOptions.theme}
       animationDuration={navigatorOptions.animationDuration}
       navbarVisible={!!screenInstanceOption?.navbar.visible}
       isRoot={props.isRoot}
       isTop={props.isTop}
-      enterActive={props.enterActive}
-      enterDone={props.enterDone}
-      exitActive={props.exitActive}
-      exitDone={props.exitDone}
       isLoading={loading}>
       {!!screenInstanceOption?.navbar.visible && (
         <Navbar
@@ -161,50 +128,20 @@ const Card: React.FC<CardProps> = (props) => {
           onClose={props.onClose}
         />
       )}
-      <Dim
-        ref={$dim}
+      <FrameContainer
+        ref={$frameContainer}
         navigatorTheme={navigatorOptions.theme}
-        className={'css-kf-card-dim' + (!props.isTop ? ' css-kf-card-dim_hidden' : '')}
-        isTop={props.isTop}
+        className="css-card-kf-frame-container"
+        isRoot={props.isRoot}
         animationDuration={navigatorOptions.animationDuration}>
-        <FrameContainer
-          ref={$frameContainer}
-          navigatorTheme={navigatorOptions.theme}
-          className="css-card-kf-frame-container"
-          isRoot={props.isRoot}
-          animationDuration={navigatorOptions.animationDuration}>
-          <Frame>{props.children}</Frame>
-          {navigatorOptions.theme === 'Cupertino' && !props.isRoot && (
-            <Edge onTouchStart={onEdgeTouchStart} onTouchMove={onEdgeTouchMove} onTouchEnd={onEdgeTouchEnd} />
-          )}
-        </FrameContainer>
-      </Dim>
-    </Container>
+        <Frame>{props.children}</Frame>
+        {navigatorOptions.theme === 'Cupertino' && !props.isRoot && (
+          <Edge onTouchStart={onEdgeTouchStart} onTouchMove={onEdgeTouchMove} onTouchEnd={onEdgeTouchEnd} />
+        )}
+      </FrameContainer>
+    </Main>
   )
 }
-
-interface DimProps {
-  navigatorTheme: NavigatorTheme
-  isTop: boolean
-  animationDuration: number
-}
-const Dim = styled.div<DimProps>`
-  width: 100%;
-  height: 100%;
-
-  ${(props) =>
-    props.navigatorTheme === 'Cupertino' &&
-    css`
-      background-color: rgba(0, 0, 0, 0);
-      transition: background-color ${props.animationDuration}ms, transform ${props.animationDuration}ms;
-      will-change: background-color, transform;
-
-      ${!props.isTop &&
-      css`
-        transform: translateX(-5rem);
-      `}
-    `}
-`
 
 interface FrameContainerProps {
   navigatorTheme: NavigatorTheme
@@ -244,19 +181,15 @@ const Edge = styled.div`
   width: 1.25rem;
 `
 
-interface ContainerProps {
+interface MainProps {
   navbarVisible?: boolean
   navigatorTheme: NavigatorTheme
   animationDuration: number
   isRoot: boolean
   isTop: boolean
-  enterActive: boolean
-  enterDone: boolean
-  exitActive: boolean
-  exitDone: boolean
   isLoading: boolean
 }
-const Container = styled.div<ContainerProps>`
+const Main = styled.div<MainProps>`
   position: absolute;
   top: 0;
   left: 0;
@@ -285,7 +218,7 @@ const Container = styled.div<ContainerProps>`
   ${(props) =>
     props.navigatorTheme === 'Cupertino' &&
     css`
-      ${(props.enterActive || props.enterDone) &&
+      /* ${(props.enterActive || props.enterDone) &&
       css`
         .css-kf-card-dim {
           background-color: rgba(0, 0, 0, 0.2);
@@ -306,7 +239,7 @@ const Container = styled.div<ContainerProps>`
         .css-kf-navbar-container {
           display: none;
         }
-      `}
+      `} */
     `}
 
   ${(props) =>
@@ -324,23 +257,21 @@ const Container = styled.div<ContainerProps>`
         transform: translateY(0);
       `}
 
-      ${(props.enterActive || props.enterDone) &&
+      /* ${(props.enterActive || props.enterDone) &&
       css`
         opacity: 1;
         transform: translateY(0);
-      `}
+      `} */
 
       ${!props.isTop &&
       css`
         transform: translateY(-2rem);
         transition-timing-function: cubic-bezier(0.29, 0.55, 0.36, 0.69);
-      `}
-
-      ${(props.exitActive || props.exitActive) &&
+      `} /* ${(props.exitActive || props.exitActive) &&
       css`
         opacity: 0;
         transform: translateY(10rem);
-      `}
+      `} */
     `}
 
   ${(props) =>
