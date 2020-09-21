@@ -2,7 +2,7 @@ import { useHistory } from 'react-router-dom'
 import { useRecoilState } from 'recoil'
 import short from 'short-uuid'
 
-import { appendSearch } from '../utils/appendSearch'
+import { appendSearch } from '../utils'
 import { AtomScreenInstances, AtomScreenInstancePointer, screenInstancePromises } from './atoms'
 import { useScreenInstanceInfo } from './contexts'
 

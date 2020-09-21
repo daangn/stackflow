@@ -2,7 +2,7 @@ import React, { forwardRef, useMemo } from 'react'
 import { Link as RouterLink } from 'react-router-dom'
 import short from 'short-uuid'
 
-import { appendSearch } from '../utils/appendSearch'
+import { appendSearch } from '../utils'
 
 interface LinkProps {
   /**

@@ -1,12 +1,13 @@
-import React, { useCallback, useEffect, useMemo, useRef } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useRecoilState } from 'recoil'
 import { css } from '@emotion/core'
 import styled from '@emotion/styled'
 
-import Navbar from './Navbar'
-import { NavigatorOptions, useNavigatorOptions } from '../contexts'
+import { getDivElementsByClassName } from '../../utils'
 import { AtomScreenInstanceOptions, AtomScreenEdge } from '../atoms'
+import { NavigatorOptions, useNavigatorOptions } from '../contexts'
+import Navbar from './Navbar'
 
 interface CardProps {
   nodeRef: React.RefObject<HTMLDivElement>
@@ -18,25 +19,27 @@ interface CardProps {
 }
 const Card: React.FC<CardProps> = (props) => {
   const history = useHistory()
-
   const navigatorOptions = useNavigatorOptions()
-
   const [screenInstanceOptions] = useRecoilState(AtomScreenInstanceOptions)
-  const [screenEdge, setScreenEdge] = useRecoilState(AtomScreenEdge)
-
   const screenInstanceOption = screenInstanceOptions[props.screenInstanceId]
 
+  // 플리커링 방지를 위한 loading state
+  const [loading, setLoading] = useState(props.isRoot)
+
+  useEffect(() => {
+    setTimeout(() => setLoading(false), 0)
+  }, [])
+
+  // 스와이프 백 애니메이션 처리
   const x = useRef<number>(0)
 
-  const $allFrameOffsets = useMemo(
-    // eslint-disable-next-line
-    () => document.getElementsByClassName('css-cd-frame-offset') as HTMLCollectionOf<HTMLDivElement>,
-    []
-  )
+  const [screenEdge, setScreenEdge] = useRecoilState(AtomScreenEdge)
 
   const $dim = useRef<HTMLDivElement>(null)
   const $frame = useRef<HTMLDivElement>(null)
   const $frameOffset = useRef<HTMLDivElement>(null)
+
+  const $allFrameOffsets = useMemo(() => getDivElementsByClassName('css-cd-frame-offset'), [])
 
   const onEdgeTouchStart = useCallback(
     (e: React.TouchEvent<HTMLDivElement>) => {
@@ -47,7 +50,6 @@ const Card: React.FC<CardProps> = (props) => {
     },
     [setScreenEdge]
   )
-
   const onEdgeTouchMove = useCallback(
     (e: React.TouchEvent<HTMLDivElement>) => {
       if (screenEdge.startX) {
@@ -56,7 +58,6 @@ const Card: React.FC<CardProps> = (props) => {
     },
     [screenEdge]
   )
-
   const onEdgeTouchEnd = useCallback(() => {
     if (x.current) {
       const velocity = x.current / (Date.now() - (screenEdge.startTime as number))
@@ -76,6 +77,8 @@ const Card: React.FC<CardProps> = (props) => {
   useEffect(() => {
     let stopped = false
 
+    // 현재 스와이프 중이라면, requestAnimFrame 무한 recursive 루프를 돌면서,
+    // x 값을 이용해 스타일을 계산 및 할당
     if (screenEdge.startX === null) {
       requestAnimationFrame(() => {
         if ($dim.current) {
@@ -136,13 +139,14 @@ const Card: React.FC<CardProps> = (props) => {
         ref={$dim}
         className="css-cd-dim"
         navigatorOptions={navigatorOptions}
-        navbarVisible={!!screenInstanceOption?.navbar.visible}
+        isNavbarVisible={!!screenInstanceOption?.navbar.visible}
+        isLoading={loading}
       />
-      <MainOffset navigatorOptions={navigatorOptions} isTop={props.isTop}>
+      <MainOffset navigatorOptions={navigatorOptions} isTop={props.isTop} isLoading={loading}>
         <Main
           className="css-cd-main"
           navigatorOptions={navigatorOptions}
-          navbarVisible={!!screenInstanceOption?.navbar.visible}
+          isNavbarVisible={!!screenInstanceOption?.navbar.visible}
           isRoot={props.isRoot}
           isTop={props.isTop}>
           {!!screenInstanceOption?.navbar.visible && (
@@ -241,7 +245,8 @@ const TransitionNode = styled.div<LayerProps>`
 
 interface DimProps {
   navigatorOptions: NavigatorOptions
-  navbarVisible: boolean
+  isNavbarVisible: boolean
+  isLoading: boolean
 }
 const Dim = styled.div<DimProps>`
   background-color: rgba(0, 0, 0, 0.15);
@@ -255,9 +260,15 @@ const Dim = styled.div<DimProps>`
   will-change: opacity;
 
   ${(props) =>
+    props.isLoading &&
+    css`
+      display: none;
+    `}
+
+  ${(props) =>
     props.navigatorOptions.theme === 'Cupertino' &&
     css`
-      ${props.navbarVisible &&
+      ${props.isNavbarVisible &&
       css`
         top: 2.75rem;
       `}
@@ -274,6 +285,7 @@ const Dim = styled.div<DimProps>`
 interface MainOffsetProps {
   navigatorOptions: NavigatorOptions
   isTop: boolean
+  isLoading: boolean
 }
 const MainOffset = styled.div<MainOffsetProps>`
   width: 100%;
@@ -289,11 +301,17 @@ const MainOffset = styled.div<MainOffsetProps>`
         transform: translateY(-2rem);
       `}
     `}
+
+  ${(props) =>
+    props.isLoading &&
+    css`
+      display: none;
+    `}
 `
 
 interface MainProps {
   navigatorOptions: NavigatorOptions
-  navbarVisible?: boolean
+  isNavbarVisible?: boolean
   isRoot: boolean
   isTop: boolean
 }
@@ -308,7 +326,7 @@ const Main = styled.div<MainProps>`
   ${(props) =>
     props.navigatorOptions.theme === 'Cupertino' &&
     css`
-      ${props.navbarVisible &&
+      ${props.isNavbarVisible &&
       css`
         padding-top: 2.75rem;
       `}
@@ -324,7 +342,7 @@ const Main = styled.div<MainProps>`
       transition-timing-function: cubic-bezier(0.22, 0.67, 0.39, 0.83);
       will-change: transform, opacity;
 
-      ${props.navbarVisible &&
+      ${props.isNavbarVisible &&
       css`
         padding-top: 3.5rem;
       `}

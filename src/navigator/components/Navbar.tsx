@@ -4,10 +4,10 @@ import { useRecoilState } from 'recoil'
 import { css } from '@emotion/core'
 import styled from '@emotion/styled'
 
+import { NavigatorTheme } from '../../types'
 import { IconBack, IconClose } from '../assets'
 import { AtomScreenInstanceOptions } from '../atoms'
 import { useNavigatorOptions } from '../contexts'
-import { NavigatorTheme } from '../../types'
 
 interface NavbarProps {
   screenInstanceId: string

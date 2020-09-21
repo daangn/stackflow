@@ -5,6 +5,8 @@ import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import { RecoilRoot, useRecoilState } from 'recoil'
 import styled from '@emotion/styled'
 
+import { NavigatorOptionsProvider, useNavigatorOptions } from './contexts'
+import { NavigatorTheme } from '../types'
 import {
   AtomScreens,
   AtomScreenInstances,
@@ -13,8 +15,6 @@ import {
   screenInstancePromises,
 } from './atoms'
 import { Card } from './components'
-import { NavigatorOptionsProvider, useNavigatorOptions } from './contexts'
-import { NavigatorTheme } from '../types'
 
 const DEFAULT_CUPERTINO_ANIMATION_DURATION = 350
 const DEFAULT_ANDROID_ANIMATION_DURATION = 270
