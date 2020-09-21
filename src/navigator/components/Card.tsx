@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useRecoilState } from 'recoil'
 import { css } from '@emotion/core'
@@ -28,7 +28,13 @@ const Card: React.FC<CardProps> = (props) => {
 
   const x = useRef<number>(0)
 
-  const $frameContainer = useRef<HTMLDivElement>(null)
+  const $frame = useRef<HTMLDivElement>(null)
+  const $frameOffset = useRef<HTMLDivElement>(null)
+  const $frameOffsets = useMemo(
+    // eslint-disable-next-line
+    () => document.getElementsByClassName('css-card-frame-offset') as HTMLCollectionOf<HTMLDivElement>,
+    []
+  )
 
   const onEdgeTouchStart = useCallback(
     (e: React.TouchEvent<HTMLDivElement>) => {
@@ -70,8 +76,11 @@ const Card: React.FC<CardProps> = (props) => {
 
     if (screenEdge.startX === null) {
       requestAnimationFrame(() => {
-        if ($frameContainer.current) {
-          $frameContainer.current.style.cssText = ''
+        if ($frame.current) {
+          $frame.current.style.cssText = ''
+        }
+        for (let i = 0; i < $frameOffsets.length; i++) {
+          $frameOffsets[i].style.cssText = ``
         }
       })
     } else if (props.isTop) {
@@ -87,11 +96,19 @@ const Card: React.FC<CardProps> = (props) => {
         const computedEdgeX = x.current - screenEdge.startX!
 
         if (computedEdgeX >= 0) {
-          if ($frameContainer.current) {
-            $frameContainer.current.style.cssText = `
+          if ($frame.current) {
+            $frame.current.style.cssText = `
                 overflow-y: hidden;
                 transform: translateX(${computedEdgeX}px); transition: transform 0s;
               `
+          }
+          for (let i = 0; i < $frameOffsets.length; i++) {
+            if ($frameOffsets[i] !== $frameOffset.current) {
+              $frameOffsets[i].style.cssText = `
+                transform: translateX(-${5 - (5 * computedEdgeX) / window.screen.width}rem);
+                transition: 0s;
+              `
+            }
           }
         }
 
@@ -119,12 +136,12 @@ const Card: React.FC<CardProps> = (props) => {
               onClose={props.onClose}
             />
           )}
-          <FrameOffset className="css-card-frame-offset" navigatorOptions={navigatorOptions} isTop={props.isTop}>
-            <Frame
-              className="css-card-frame"
-              ref={$frameContainer}
-              navigatorOptions={navigatorOptions}
-              isRoot={props.isRoot}>
+          <FrameOffset
+            ref={$frameOffset}
+            className="css-card-frame-offset"
+            navigatorOptions={navigatorOptions}
+            isTop={props.isTop}>
+            <Frame className="css-card-frame" ref={$frame} navigatorOptions={navigatorOptions} isRoot={props.isRoot}>
               {props.children}
               {navigatorOptions.theme === 'Cupertino' && !props.isRoot && (
                 <Edge onTouchStart={onEdgeTouchStart} onTouchMove={onEdgeTouchMove} onTouchEnd={onEdgeTouchEnd} />
@@ -162,6 +179,9 @@ const TransitionNode = styled.div<LayerProps>`
           &.exit-done {
             .css-card-frame {
               transform: translateX(100%);
+            }
+            .css-card-frame-offset {
+              transform: translateX(0);
             }
             .css-kf-navbar-container {
               display: none;
@@ -269,7 +289,7 @@ const FrameOffset = styled.div<FrameOffsetProps>`
     props.navigatorOptions.theme === 'Cupertino' &&
     !props.isTop &&
     css`
-      transform: translateX(-2rem);
+      transform: translateX(-5rem);
     `}
 `
 
