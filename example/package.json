@@ -3,9 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "SKIP_PREFLIGHT_CHECK=true PUBLIC_URL=./ react-scripts build && webview-zipper ./build -o ./build/webview",
-    "eject": "react-scripts eject",
-    "start": "SKIP_PREFLIGHT_CHECK=true react-scripts start",
+    "build": "SKIP_PREFLIGHT_CHECK=true PUBLIC_URL=./ react-app-rewired build && webview-zipper ./build -o ./build/webview",
+    "start": "SKIP_PREFLIGHT_CHECK=true react-app-rewired start",
     "test": "react-scripts test"
   },
   "browserslist": {
@@ -43,6 +42,9 @@
     "@types/react": "^16.9.0",
     "@types/react-dom": "^16.9.0",
     "@types/react-router-dom": "^5.1.5",
+    "babel-plugin-emotion": "^10.0.33",
+    "customize-cra": "^1.0.0",
+    "react-app-rewired": "^2.1.6",
     "react-scripts": "3.4.3",
     "typescript": "~3.7.2"
   }
