@@ -1,10 +1,10 @@
 {
   "name": "@daangn/karrotframe",
-  "version": "0.0.1",
-  "description": "당근 마켓 웹뷰 용 라이브러리",
+  "version": "0.1.0",
+  "description": "UX Enhancer",
   "repository": "https://github.com/daangn/karrotframe",
   "license": "MIT",
-  "author": "juyeong1260",
+  "author": "Danggeun Market Inc.",
   "files": [
     "lib"
   ],
