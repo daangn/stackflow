@@ -1,10 +1,12 @@
 import qs from 'qs'
-import React, { memo, useEffect, useMemo, useState } from 'react'
+import React, { memo, useEffect, useMemo, useRef } from 'react'
 import { HashRouter, useLocation, useHistory, matchPath } from 'react-router-dom'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import { RecoilRoot, useRecoilState } from 'recoil'
 import styled from '@emotion/styled'
 
+import { NavigatorOptionsProvider, useNavigatorOptions } from './contexts'
+import { NavigatorTheme } from '../types'
 import {
   AtomScreens,
   AtomScreenInstances,
@@ -13,11 +15,8 @@ import {
   screenInstancePromises,
 } from './atoms'
 import { Card } from './components'
-import { NavigatorOptionsProvider, useNavigatorOptions } from './contexts'
-import { NavigatorTheme } from '../types'
 
 const DEFAULT_CUPERTINO_ANIMATION_DURATION = 350
-const DEFAULT_WEB_ANIMATION_DURATION = 270
 const DEFAULT_ANDROID_ANIMATION_DURATION = 270
 
 /**
@@ -56,17 +55,15 @@ const Navigator: React.FC<NavigatorProps> = (props) => {
   let h = (
     <NavigatorOptionsProvider
       value={{
-        theme: props.theme ?? 'Web',
+        theme: props.theme ?? 'Android',
         animationDuration:
           props.animationDuration ??
           (() => {
-            switch (props.theme ?? 'Web') {
+            switch (props.theme ?? 'Android') {
               case 'Cupertino':
                 return DEFAULT_CUPERTINO_ANIMATION_DURATION
               case 'Android':
                 return DEFAULT_ANDROID_ANIMATION_DURATION
-              case 'Web':
-                return DEFAULT_WEB_ANIMATION_DURATION
             }
           })(),
       }}>
@@ -245,7 +242,7 @@ const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
         {props.children}
         <TransitionGroup>
           {screenInstances.map((screenInstance, index) => (
-            <Transition key={index} screenInstance={screenInstance} index={index} onClose={onClose} />
+            <Transition key={index} screenInstance={screenInstance} screenInstanceIndex={index} onClose={onClose} />
           ))}
         </TransitionGroup>
       </Root>
@@ -264,50 +261,33 @@ const Root = styled.div`
 
 interface TransitionProps {
   screenInstance: ScreenInstance
-  index: number
+  screenInstanceIndex: number
   onClose: () => void
 }
 const Transition: React.FC<TransitionProps> = memo((props) => {
   const navigatorOptions = useNavigatorOptions()
 
-  type TransitionState = 'enter-active' | 'enter-done' | 'exit-active' | 'exit-done'
-
-  const [transitionState, setTransitionState] = useState<TransitionState | null>(null)
   const [screens] = useRecoilState(AtomScreens)
   const [screenInstancePointer] = useRecoilState(AtomScreenInstancePointer)
+
+  const nodeRef = useRef<HTMLDivElement>(null)
 
   const { Component } = screens[props.screenInstance.screenId]
 
   return (
     <CSSTransition
       key={props.screenInstance.id}
+      nodeRef={nodeRef}
       timeout={navigatorOptions.animationDuration}
-      in={props.index <= screenInstancePointer}
-      unmountOnExit
-      onEnter={() => {
-        setTimeout(() => {
-          setTransitionState('enter-active')
-        }, 70)
-      }}
-      onEntered={() => {
-        setTransitionState('enter-done')
-      }}
-      onExit={() => {
-        setTransitionState('exit-active')
-      }}
-      onExited={() => {
-        setTransitionState('exit-done')
-      }}>
+      in={props.screenInstanceIndex <= screenInstancePointer}
+      unmountOnExit>
       <Card
+        nodeRef={nodeRef}
         screenPath={screens[props.screenInstance.screenId].path}
         screenInstanceId={props.screenInstance.id}
-        isRoot={props.index === 0}
-        isTop={props.index === screenInstancePointer}
-        onClose={props.onClose}
-        enterActive={transitionState === 'enter-active'}
-        enterDone={transitionState === 'enter-done'}
-        exitActive={transitionState === 'exit-active'}
-        exitDone={transitionState === 'exit-done'}>
+        isRoot={props.screenInstanceIndex === 0}
+        isTop={props.screenInstanceIndex === screenInstancePointer}
+        onClose={props.onClose}>
         <Component screenInstanceId={props.screenInstance.id} />
       </Card>
     </CSSTransition>

@@ -13,9 +13,18 @@ import Page3 from './components/Page3';
 const bridge = new Bridge()
 
 function App() {
+  const environment = (() => {
+    switch (bridge.environment) {
+      case 'Web':
+        return 'Android' as const
+      default:
+        return bridge.environment
+    }
+  })()
+
   return (
     <Navigator
-      theme={bridge.environment}
+      theme={environment}
       onClose={() => {
         bridge.router.close()
       }}>

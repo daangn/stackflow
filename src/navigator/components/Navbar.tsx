@@ -4,10 +4,10 @@ import { useRecoilState } from 'recoil'
 import { css } from '@emotion/core'
 import styled from '@emotion/styled'
 
+import { NavigatorTheme } from '../../types'
 import { IconBack, IconClose } from '../assets'
 import { AtomScreenInstanceOptions } from '../atoms'
 import { useNavigatorOptions } from '../contexts'
-import { NavigatorTheme } from '../../types'
 
 interface NavbarProps {
   screenInstanceId: string
@@ -25,7 +25,7 @@ const Navbar: React.FC<NavbarProps> = (props) => {
 
   return (
     <Container
-      className="css-kf-navbar-container"
+      className="css-nb-container"
       navigatorTheme={props.theme}
       animationDuration={navigatorOptions.animationDuration}>
       {props.theme === 'Cupertino' && (
@@ -45,7 +45,7 @@ const Navbar: React.FC<NavbarProps> = (props) => {
             {screenInstanceOption?.navbar.appendLeft}
           </Left>
         )}
-        {(props.theme === 'Android' || props.theme === 'Web') && (
+        {props.theme === 'Android' && (
           <Center navigatorTheme={props.theme}>{screenInstanceOption?.navbar.title}</Center>
         )}
         {(props.isRoot || screenInstanceOption?.navbar.appendRight) && (
@@ -85,7 +85,6 @@ export const Container = styled.div<ContainerProps>`
           box-shadow: inset 0px -0.5px 0 rgba(0, 0, 0, 0.12);
         `
       case 'Android':
-      case 'Web':
         return css`
           height: 3.5rem;
           box-shadow: inset 0px -1px 0 rgba(0, 0, 0, 0.07);
@@ -137,7 +136,6 @@ const Center = styled.div<{ navigatorTheme: NavigatorTheme }>`
   ${(props) => {
     switch (props.navigatorTheme) {
       case 'Android':
-      case 'Web':
         return css`
           font-family: 'Noto Sans KR', sans-serif;
           justify-content: flex-start;

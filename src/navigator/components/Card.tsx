@@ -4,43 +4,42 @@ import { useRecoilState } from 'recoil'
 import { css } from '@emotion/core'
 import styled from '@emotion/styled'
 
-import Navbar from './Navbar'
-import { useNavigatorOptions } from '../contexts'
-import { NavigatorTheme } from '../../types'
+import { getDivElementsByClassName } from '../../utils'
 import { AtomScreenInstanceOptions, AtomScreenEdge } from '../atoms'
+import { NavigatorOptions, useNavigatorOptions } from '../contexts'
+import Navbar from './Navbar'
 
 interface CardProps {
+  nodeRef: React.RefObject<HTMLDivElement>
   screenPath: string
   screenInstanceId: string
   isRoot: boolean
   isTop: boolean
   onClose: () => void
-  enterActive: boolean
-  enterDone: boolean
-  exitActive: boolean
-  exitDone: boolean
 }
 const Card: React.FC<CardProps> = (props) => {
   const history = useHistory()
-
   const navigatorOptions = useNavigatorOptions()
-
   const [screenInstanceOptions] = useRecoilState(AtomScreenInstanceOptions)
-  const [screenEdge, setScreenEdge] = useRecoilState(AtomScreenEdge)
-
-  const [loading, setLoading] = useState(true)
-
   const screenInstanceOption = screenInstanceOptions[props.screenInstanceId]
 
+  // 플리커링 방지를 위한 loading state
+  const [loading, setLoading] = useState(props.isRoot)
+
+  useEffect(() => {
+    setTimeout(() => setLoading(false), 0)
+  }, [])
+
+  // 스와이프 백 애니메이션 처리
   const x = useRef<number>(0)
 
+  const [screenEdge, setScreenEdge] = useRecoilState(AtomScreenEdge)
+
   const $dim = useRef<HTMLDivElement>(null)
-  const $frameContainer = useRef<HTMLDivElement>(null)
-  const $hiddenDims = useMemo(
-    // eslint-disable-next-line
-    () => document.getElementsByClassName('css-kf-card-dim_hidden') as HTMLCollectionOf<HTMLDivElement>,
-    []
-  )
+  const $frame = useRef<HTMLDivElement>(null)
+  const $frameOffset = useRef<HTMLDivElement>(null)
+
+  const $allFrameOffsets = useMemo(() => getDivElementsByClassName('css-cd-frame-offset'), [])
 
   const onEdgeTouchStart = useCallback(
     (e: React.TouchEvent<HTMLDivElement>) => {
@@ -51,7 +50,6 @@ const Card: React.FC<CardProps> = (props) => {
     },
     [setScreenEdge]
   )
-
   const onEdgeTouchMove = useCallback(
     (e: React.TouchEvent<HTMLDivElement>) => {
       if (screenEdge.startX) {
@@ -60,7 +58,6 @@ const Card: React.FC<CardProps> = (props) => {
     },
     [screenEdge]
   )
-
   const onEdgeTouchEnd = useCallback(() => {
     if (x.current) {
       const velocity = x.current / (Date.now() - (screenEdge.startTime as number))
@@ -78,24 +75,20 @@ const Card: React.FC<CardProps> = (props) => {
   }, [screenEdge, setScreenEdge])
 
   useEffect(() => {
-    setTimeout(() => {
-      setLoading(false)
-    }, 0)
-  }, [])
-
-  useEffect(() => {
     let stopped = false
 
+    // 현재 스와이프 중이라면, requestAnimFrame 무한 recursive 루프를 돌면서,
+    // x 값을 이용해 스타일을 계산 및 할당
     if (screenEdge.startX === null) {
       requestAnimationFrame(() => {
         if ($dim.current) {
           $dim.current.style.cssText = ''
         }
-        if ($frameContainer.current) {
-          $frameContainer.current.style.cssText = ''
+        if ($frame.current) {
+          $frame.current.style.cssText = ''
         }
-        for (let i = 0; i < $hiddenDims.length; i++) {
-          $hiddenDims[i].style.cssText = ''
+        for (let i = 0; i < $allFrameOffsets.length; i++) {
+          $allFrameOffsets[i].style.cssText = ``
         }
       })
     } else if (props.isTop) {
@@ -113,19 +106,19 @@ const Card: React.FC<CardProps> = (props) => {
         if (computedEdgeX >= 0) {
           if ($dim.current) {
             $dim.current.style.cssText = `
-                background-color: rgba(0, 0, 0, ${0.2 - (computedEdgeX / window.screen.width) * 0.2});
-                transition: 0s;
-              `
+              opacity: ${1 - computedEdgeX / window.screen.width};
+              transition: opacity 0s;
+            `
           }
-          if ($frameContainer.current) {
-            $frameContainer.current.style.cssText = `
+          if ($frame.current) {
+            $frame.current.style.cssText = `
                 overflow-y: hidden;
                 transform: translateX(${computedEdgeX}px); transition: transform 0s;
               `
           }
-          if ($hiddenDims[$hiddenDims.length - 1]) {
-            for (let i = 0; i < $hiddenDims.length; i++) {
-              $hiddenDims[i].style.cssText = `
+          for (let i = 0; i < $allFrameOffsets.length; i++) {
+            if ($allFrameOffsets[i] !== $frameOffset.current) {
+              $allFrameOffsets[i].style.cssText = `
                 transform: translateX(-${5 - (5 * computedEdgeX) / window.screen.width}rem);
                 transition: 0s;
               `
@@ -141,64 +134,240 @@ const Card: React.FC<CardProps> = (props) => {
   }, [screenEdge, props.isTop])
 
   return (
-    <Container
-      className="css-kf-card-container"
-      navigatorTheme={navigatorOptions.theme}
-      animationDuration={navigatorOptions.animationDuration}
-      navbarVisible={!!screenInstanceOption?.navbar.visible}
-      isRoot={props.isRoot}
-      isTop={props.isTop}
-      enterActive={props.enterActive}
-      enterDone={props.enterDone}
-      exitActive={props.exitActive}
-      exitDone={props.exitDone}
-      isLoading={loading}>
-      {!!screenInstanceOption?.navbar.visible && (
-        <Navbar
-          screenInstanceId={props.screenInstanceId}
-          theme={navigatorOptions.theme}
-          isRoot={props.isRoot}
-          onClose={props.onClose}
-        />
-      )}
+    <TransitionNode ref={props.nodeRef} navigatorOptions={navigatorOptions}>
       <Dim
         ref={$dim}
-        navigatorTheme={navigatorOptions.theme}
-        className={'css-kf-card-dim' + (!props.isTop ? ' css-kf-card-dim_hidden' : '')}
-        isTop={props.isTop}
-        animationDuration={navigatorOptions.animationDuration}>
-        <FrameContainer
-          ref={$frameContainer}
-          navigatorTheme={navigatorOptions.theme}
-          className="css-card-kf-frame-container"
+        className="css-cd-dim"
+        navigatorOptions={navigatorOptions}
+        isNavbarVisible={!!screenInstanceOption?.navbar.visible}
+        isLoading={loading}
+      />
+      <MainOffset navigatorOptions={navigatorOptions} isTop={props.isTop} isLoading={loading}>
+        <Main
+          className="css-cd-main"
+          navigatorOptions={navigatorOptions}
+          isNavbarVisible={!!screenInstanceOption?.navbar.visible}
           isRoot={props.isRoot}
-          animationDuration={navigatorOptions.animationDuration}>
-          <Frame>{props.children}</Frame>
-          {navigatorOptions.theme === 'Cupertino' && !props.isRoot && (
-            <Edge onTouchStart={onEdgeTouchStart} onTouchMove={onEdgeTouchMove} onTouchEnd={onEdgeTouchEnd} />
+          isTop={props.isTop}>
+          {!!screenInstanceOption?.navbar.visible && (
+            <Navbar
+              screenInstanceId={props.screenInstanceId}
+              theme={navigatorOptions.theme}
+              isRoot={props.isRoot}
+              onClose={props.onClose}
+            />
           )}
-        </FrameContainer>
-      </Dim>
-    </Container>
+          <FrameOffset
+            ref={$frameOffset}
+            className="css-cd-frame-offset"
+            navigatorOptions={navigatorOptions}
+            isTop={props.isTop}>
+            <Frame className="css-cd-frame" ref={$frame} navigatorOptions={navigatorOptions} isRoot={props.isRoot}>
+              {props.children}
+              {navigatorOptions.theme === 'Cupertino' && !props.isRoot && (
+                <Edge onTouchStart={onEdgeTouchStart} onTouchMove={onEdgeTouchMove} onTouchEnd={onEdgeTouchEnd} />
+              )}
+            </Frame>
+          </FrameOffset>
+        </Main>
+      </MainOffset>
+    </TransitionNode>
   )
 }
 
-interface DimProps {
-  navigatorTheme: NavigatorTheme
-  isTop: boolean
-  animationDuration: number
+interface LayerProps {
+  navigatorOptions: NavigatorOptions
 }
-const Dim = styled.div<DimProps>`
+const TransitionNode = styled.div<LayerProps>`
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
+  overflow: hidden;
 
   ${(props) =>
-    props.navigatorTheme === 'Cupertino' &&
+    props.navigatorOptions.theme === 'Cupertino' &&
     css`
-      background-color: rgba(0, 0, 0, 0);
-      transition: background-color ${props.animationDuration}ms, transform ${props.animationDuration}ms;
-      will-change: background-color, transform;
+      &.enter-active,
+      &.enter-done {
+        .css-cd-dim {
+          opacity: 1;
+        }
+        .css-cd-frame {
+          transform: translateX(0);
+        }
+      }
 
+      &.exit-active,
+      &.exit-done {
+        .css-cd-dim {
+          opacity: 0;
+        }
+        .css-cd-frame {
+          transform: translateX(100%);
+        }
+        .css-cd-frame-offset {
+          transform: translateX(0);
+        }
+        .css-nb-container {
+          display: none;
+        }
+      }
+    `}
+
+  ${(props) =>
+    props.navigatorOptions.theme === 'Android' &&
+    css`
+      &.enter-active,
+      &.enter-done {
+        .css-cd-dim {
+          opacity: 1;
+        }
+        .css-cd-main {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      &.exit-active,
+      &.exit-done {
+        .css-cd-dim {
+          opacity: 0;
+        }
+        .css-cd-main {
+          opacity: 0;
+          transform: translateY(10rem);
+        }
+      }
+    `}
+`
+
+interface DimProps {
+  navigatorOptions: NavigatorOptions
+  isNavbarVisible: boolean
+  isLoading: boolean
+}
+const Dim = styled.div<DimProps>`
+  background-color: rgba(0, 0, 0, 0.15);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity ${(props) => props.navigatorOptions.animationDuration}ms;
+  will-change: opacity;
+
+  ${(props) =>
+    props.isLoading &&
+    css`
+      display: none;
+    `}
+
+  ${(props) =>
+    props.navigatorOptions.theme === 'Cupertino' &&
+    css`
+      ${props.isNavbarVisible &&
+      css`
+        top: 2.75rem;
+      `}
+    `}
+
+  ${(props) =>
+    props.navigatorOptions.theme === 'Android' &&
+    css`
+      height: 10rem;
+      background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0));
+    `}
+`
+
+interface MainOffsetProps {
+  navigatorOptions: NavigatorOptions
+  isTop: boolean
+  isLoading: boolean
+}
+const MainOffset = styled.div<MainOffsetProps>`
+  width: 100%;
+  height: 100%;
+  transition: transform ${(props) => props.navigatorOptions.animationDuration}ms;
+  will-change: transform;
+
+  ${(props) =>
+    props.navigatorOptions.theme === 'Android' &&
+    css`
+      ${!props.isTop &&
+      css`
+        transform: translateY(-2rem);
+      `}
+    `}
+
+  ${(props) =>
+    props.isLoading &&
+    css`
+      display: none;
+    `}
+`
+
+interface MainProps {
+  navigatorOptions: NavigatorOptions
+  isNavbarVisible?: boolean
+  isRoot: boolean
+  isTop: boolean
+}
+const Main = styled.div<MainProps>`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+
+  ${(props) =>
+    props.navigatorOptions.theme === 'Cupertino' &&
+    css`
+      ${props.isNavbarVisible &&
+      css`
+        padding-top: 2.75rem;
+      `}
+    `}
+
+  ${(props) =>
+    props.navigatorOptions.theme === 'Android' &&
+    css`
+      opacity: 0;
+      transform: translateY(10rem);
+      transition: transform ${props.navigatorOptions.animationDuration}ms,
+        opacity ${props.navigatorOptions.animationDuration}ms;
+      transition-timing-function: cubic-bezier(0.22, 0.67, 0.39, 0.83);
+      will-change: transform, opacity;
+
+      ${props.isNavbarVisible &&
+      css`
+        padding-top: 3.5rem;
+      `}
+
+      ${props.isRoot &&
+      css`
+        opacity: 1;
+        transform: translateY(0);
+      `}
+    `}
+`
+
+interface FrameOffsetProps {
+  navigatorOptions: NavigatorOptions
+  isTop: boolean
+}
+const FrameOffset = styled.div<FrameOffsetProps>`
+  width: 100%;
+  height: 100%;
+  transition: transform ${(props) => props.navigatorOptions.animationDuration}ms;
+  will-change: transition;
+
+  ${(props) =>
+    props.navigatorOptions.theme === 'Cupertino' &&
+    css`
       ${!props.isTop &&
       css`
         transform: translateX(-5rem);
@@ -206,22 +375,22 @@ const Dim = styled.div<DimProps>`
     `}
 `
 
-interface FrameContainerProps {
-  navigatorTheme: NavigatorTheme
+interface FrameProps {
+  navigatorOptions: NavigatorOptions
   isRoot: boolean
-  animationDuration: number
 }
-const FrameContainer = styled.div<FrameContainerProps>`
+const Frame = styled.div<FrameProps>`
   width: 100%;
   height: 100%;
   overflow-y: scroll;
   background-color: #fff;
+  --webkit-overflow-scrolling: touch;
 
   ${(props) =>
-    props.navigatorTheme === 'Cupertino' &&
+    props.navigatorOptions.theme === 'Cupertino' &&
     css`
       transform: translateX(0);
-      transition: transform ${props.animationDuration}ms;
+      transition: transform ${props.navigatorOptions.animationDuration}ms;
       will-change: transform;
 
       ${!props.isRoot &&
@@ -231,123 +400,12 @@ const FrameContainer = styled.div<FrameContainerProps>`
     `};
 `
 
-const Frame = styled.div`
-  width: 100%;
-  min-height: 100%;
-`
-
 const Edge = styled.div`
   position: absolute;
   top: 0;
   left: 0;
   height: 100%;
   width: 1.25rem;
-`
-
-interface ContainerProps {
-  navbarVisible?: boolean
-  navigatorTheme: NavigatorTheme
-  animationDuration: number
-  isRoot: boolean
-  isTop: boolean
-  enterActive: boolean
-  enterDone: boolean
-  exitActive: boolean
-  exitDone: boolean
-  isLoading: boolean
-}
-const Container = styled.div<ContainerProps>`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  box-sizing: border-box;
-
-  ${(props) => {
-    if (!props.navbarVisible) {
-      return null
-    }
-
-    switch (props.navigatorTheme) {
-      case 'Cupertino':
-        return css`
-          padding-top: 2.75rem;
-        `
-      case 'Android':
-      case 'Web':
-        return css`
-          padding-top: 3.5rem;
-        `
-    }
-  }}
-
-  ${(props) =>
-    props.navigatorTheme === 'Cupertino' &&
-    css`
-      ${(props.enterActive || props.enterDone) &&
-      css`
-        .css-kf-card-dim {
-          background-color: rgba(0, 0, 0, 0.2);
-        }
-        .css-card-kf-frame-container {
-          transform: translateX(0);
-        }
-      `}
-      ${(props.exitActive || props.exitDone) &&
-      css`
-        .css-kf-card-dim {
-          background-color: rgba(0, 0, 0, 0);
-          transform: translateX(0);
-        }
-        .css-card-kf-frame-container {
-          transform: translateX(100%);
-        }
-        .css-kf-navbar-container {
-          display: none;
-        }
-      `}
-    `}
-
-  ${(props) =>
-    (props.navigatorTheme === 'Android' || props.navigatorTheme === 'Web') &&
-    css`
-      opacity: 0;
-      transform: translateY(10rem);
-      transition: transform ${props.animationDuration}ms, opacity ${props.animationDuration}ms;
-      transition-timing-function: cubic-bezier(0.22, 0.67, 0.39, 0.83);
-      will-change: transform, opacity;
-
-      ${props.isRoot &&
-      css`
-        opacity: 1;
-        transform: translateY(0);
-      `}
-
-      ${(props.enterActive || props.enterDone) &&
-      css`
-        opacity: 1;
-        transform: translateY(0);
-      `}
-
-      ${!props.isTop &&
-      css`
-        transform: translateY(-2rem);
-        transition-timing-function: cubic-bezier(0.29, 0.55, 0.36, 0.69);
-      `}
-
-      ${(props.exitActive || props.exitActive) &&
-      css`
-        opacity: 0;
-        transform: translateY(10rem);
-      `}
-    `}
-
-  ${(props) =>
-    props.isLoading &&
-    css`
-      display: none;
-    `}
 `
 
 export default Card
