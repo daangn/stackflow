@@ -241,7 +241,7 @@ const Posts: React.FC = () => {
         onClick={writePost}
       >
         글 작성하기
-      </Link>
+      </button>
     </div>
   )
 }
