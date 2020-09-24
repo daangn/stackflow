@@ -36,7 +36,7 @@ const Navbar: React.FC<NavbarProps> = (props) => {
           <Left>
             {!props.isRoot &&
               (screenInstanceOption?.navbar.customBackButton ? (
-                <div onClick={history.goBack}>{screenInstanceOption.navbar.customBackButton}</div>
+                <Back onClick={history.goBack}>{screenInstanceOption.navbar.customBackButton}</Back>
               ) : (
                 <Back onClick={history.goBack}>
                   <IconBack />
@@ -53,7 +53,7 @@ const Navbar: React.FC<NavbarProps> = (props) => {
             {screenInstanceOption?.navbar.appendRight}
             {props.isRoot &&
               (screenInstanceOption.navbar.customCloseButton ? (
-                <div onClick={props.onClose}>{screenInstanceOption.navbar.customCloseButton}</div>
+                <Close onClick={props.onClose}>{screenInstanceOption.navbar.customCloseButton}</Close>
               ) : (
                 <Close onClick={props.onClose}>
                   <IconClose />
@@ -103,18 +103,22 @@ const Flex = styled.div`
 `
 
 const Left = styled.div`
-  padding: 0 0.875rem;
+  padding: 0 0.5rem;
   display: flex;
   align-items: center;
   height: 100%;
 `
 
 const Back = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-  display: flex;
   opacity: 1;
   transition: opacity 300ms;
+  width: 2.25rem;
+  height: 2.75rem;
 
   &:active {
     opacity: 0.2;
@@ -159,7 +163,7 @@ const Center = styled.div<{ navigatorTheme: NavigatorTheme }>`
 `
 
 const Right = styled.div`
-  padding: 0 0.875rem;
+  padding: 0 0.5rem;
   display: flex;
   align-items: center;
   position: absolute;
@@ -169,11 +173,16 @@ const Right = styled.div`
 `
 
 const Close = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   display: flex;
   opacity: 1;
   transition: opacity 300ms;
+  width: 2.25rem;
+  height: 2.75rem;
 
   &:active {
     opacity: 0.2;

@@ -96,14 +96,19 @@ const Container = styled.div`
 `
 
 const HamburgerIcon = styled.div`
-  width: 1.5rem;
-  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.75rem;
 `
 
 const SearchIcon = styled.div`
-  margin-right: .75rem;
-  width: 1.5rem;
-  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.75rem;
 `
 
 export default Home
