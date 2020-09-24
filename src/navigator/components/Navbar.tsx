@@ -23,44 +23,55 @@ const Navbar: React.FC<NavbarProps> = (props) => {
 
   const screenInstanceOption = screenInstanceOptions[props.screenInstanceId]
 
+  const closeButton =
+    props.isRoot &&
+    (screenInstanceOption.navbar.customCloseButton ? (
+      <Close onClick={props.onClose}>{screenInstanceOption.navbar.customCloseButton}</Close>
+    ) : (
+      <Close onClick={props.onClose}>
+        <IconClose />
+      </Close>
+    ))
+
+  const backButton =
+    !props.isRoot &&
+    (screenInstanceOption?.navbar.customBackButton ? (
+      <Back onClick={history.goBack}>{screenInstanceOption.navbar.customBackButton}</Back>
+    ) : (
+      <Back onClick={history.goBack}>
+        <IconBack />
+      </Back>
+    ))
+
+  const isLeft = !!(
+    (screenInstanceOption.navbar.closeButtonLocation === 'left' && closeButton) ||
+    backButton ||
+    screenInstanceOption?.navbar.appendLeft
+  )
+
+  const center = (
+    <Center isLeft={isLeft} navigatorTheme={props.theme}>
+      {screenInstanceOption?.navbar.title}
+    </Center>
+  )
+
   return (
     <Container
       className="css-nb-container"
       navigatorTheme={props.theme}
       animationDuration={navigatorOptions.animationDuration}>
-      {props.theme === 'Cupertino' && (
-        <Center navigatorTheme={props.theme}>{screenInstanceOption?.navbar.title}</Center>
-      )}
+      {props.theme === 'Cupertino' && center}
       <Flex>
-        {(!props.isRoot || screenInstanceOption?.navbar.appendLeft) && (
-          <Left>
-            {!props.isRoot &&
-              (screenInstanceOption?.navbar.customBackButton ? (
-                <div onClick={history.goBack}>{screenInstanceOption.navbar.customBackButton}</div>
-              ) : (
-                <Back onClick={history.goBack}>
-                  <IconBack />
-                </Back>
-              ))}
-            {screenInstanceOption?.navbar.appendLeft}
-          </Left>
-        )}
-        {props.theme === 'Android' && (
-          <Center navigatorTheme={props.theme}>{screenInstanceOption?.navbar.title}</Center>
-        )}
-        {(props.isRoot || screenInstanceOption?.navbar.appendRight) && (
-          <Right>
-            {screenInstanceOption?.navbar.appendRight}
-            {props.isRoot &&
-              (screenInstanceOption.navbar.customCloseButton ? (
-                <div onClick={props.onClose}>{screenInstanceOption.navbar.customCloseButton}</div>
-              ) : (
-                <Close onClick={props.onClose}>
-                  <IconClose />
-                </Close>
-              ))}
-          </Right>
-        )}
+        <Left>
+          {screenInstanceOption.navbar.closeButtonLocation === 'left' && closeButton}
+          {backButton}
+          {screenInstanceOption?.navbar.appendLeft}
+        </Left>
+        {props.theme === 'Android' && center}
+        <Right>
+          {screenInstanceOption?.navbar.appendRight}
+          {screenInstanceOption.navbar.closeButtonLocation === 'right' && closeButton}
+        </Right>
       </Flex>
     </Container>
   )
@@ -103,18 +114,26 @@ const Flex = styled.div`
 `
 
 const Left = styled.div`
-  padding: 0 0.875rem;
+  padding: 0 0.5rem;
   display: flex;
   align-items: center;
   height: 100%;
+
+  &:empty {
+    display: none;
+  }
 `
 
 const Back = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-  display: flex;
   opacity: 1;
   transition: opacity 300ms;
+  width: 2.25rem;
+  height: 2.75rem;
 
   &:active {
     opacity: 0.2;
@@ -127,7 +146,11 @@ const Back = styled.div`
   }
 `
 
-const Center = styled.div<{ navigatorTheme: NavigatorTheme }>`
+interface CenterProps {
+  navigatorTheme: NavigatorTheme
+  isLeft: boolean
+}
+const Center = styled.div<CenterProps>`
   flex: 1;
   display: flex;
   align-items: center;
@@ -139,8 +162,13 @@ const Center = styled.div<{ navigatorTheme: NavigatorTheme }>`
         return css`
           font-family: 'Noto Sans KR', sans-serif;
           justify-content: flex-start;
-          padding-left: 0.75rem;
+          padding-left: 1rem;
           font-size: 1.1875rem;
+
+          ${props.isLeft &&
+          css`
+            padding-left: 0.375rem;
+          `}
         `
       case 'Cupertino':
         return css`
@@ -159,21 +187,30 @@ const Center = styled.div<{ navigatorTheme: NavigatorTheme }>`
 `
 
 const Right = styled.div`
-  padding: 0 0.875rem;
+  padding: 0 0.5rem;
   display: flex;
   align-items: center;
   position: absolute;
   top: 0;
   right: 0;
   height: 100%;
+
+  &:empty {
+    display: none;
+  }
 `
 
 const Close = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   display: flex;
   opacity: 1;
   transition: opacity 300ms;
+  width: 2.25rem;
+  height: 2.75rem;
 
   &:active {
     opacity: 0.2;

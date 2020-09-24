@@ -4,6 +4,8 @@ import React from "react";
 import {
   Navigator,
   Screen,
+  HashRouter,
+  MemoryRouter,
 } from '@daangn/karrotframe'
 import Bridge from '@daangn/webview-bridge'
 import Home from './components/Home';
@@ -22,17 +24,28 @@ function App() {
     }
   })()
 
-  return (
+
+  let h = (
     <Navigator
       theme={environment}
       onClose={() => {
         bridge.router.close()
-      }}>
+      }}
+      useCustomRouter
+      >
         <Screen path='/' component={Home} />
         <Screen path='/page2' component={Page2} />
         <Screen path='/page3' component={Page3} />
       </Navigator>
-  );
+  )
+
+  if (bridge.environment === 'Cupertino') {
+    h = <MemoryRouter>{h}</MemoryRouter>
+  } else {
+    h = <HashRouter>{h}</HashRouter>
+  }
+
+  return h
 }
 
 export default App;

@@ -30,6 +30,7 @@ const Home: React.FC = () => {
             </svg>
           </SearchIcon>
         }
+        closeButtonLocation='right'
       />
       위와 같이 상단바를 Customizing 할 수 있습니다 <br />
       <button
@@ -96,14 +97,19 @@ const Container = styled.div`
 `
 
 const HamburgerIcon = styled.div`
-  width: 1.5rem;
-  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.75rem;
 `
 
 const SearchIcon = styled.div`
-  margin-right: .75rem;
-  width: 1.5rem;
-  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.75rem;
 `
 
 export default Home

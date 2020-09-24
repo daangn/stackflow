@@ -21,6 +21,11 @@ interface ScreenHelmetProps {
   appendRight?: React.ReactNode
 
   /**
+   * 닫기 버튼의 위치
+   */
+  closeButtonLocation?: 'left' | 'right'
+
+  /**
    * 이전 버튼을 사용자화합니다
    */
   customBackButton?: React.ReactNode
@@ -39,6 +44,7 @@ const ScreenHelmet: React.FC<ScreenHelmetProps> = (props) => {
       title: props.title ?? null,
       appendLeft: props.appendLeft ?? null,
       appendRight: props.appendRight ?? null,
+      closeButtonLocation: props.closeButtonLocation ?? 'left',
       customBackButton: props.customBackButton ?? null,
       customCloseButton: props.customCloseButton ?? null,
     })
