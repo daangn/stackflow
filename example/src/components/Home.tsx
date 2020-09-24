@@ -30,6 +30,7 @@ const Home: React.FC = () => {
             </svg>
           </SearchIcon>
         }
+        closeButtonLocation='right'
       />
       위와 같이 상단바를 Customizing 할 수 있습니다 <br />
       <button

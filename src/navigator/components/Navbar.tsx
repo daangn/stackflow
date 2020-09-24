@@ -23,44 +23,55 @@ const Navbar: React.FC<NavbarProps> = (props) => {
 
   const screenInstanceOption = screenInstanceOptions[props.screenInstanceId]
 
+  const closeButton =
+    props.isRoot &&
+    (screenInstanceOption.navbar.customCloseButton ? (
+      <Close onClick={props.onClose}>{screenInstanceOption.navbar.customCloseButton}</Close>
+    ) : (
+      <Close onClick={props.onClose}>
+        <IconClose />
+      </Close>
+    ))
+
+  const backButton =
+    !props.isRoot &&
+    (screenInstanceOption?.navbar.customBackButton ? (
+      <Back onClick={history.goBack}>{screenInstanceOption.navbar.customBackButton}</Back>
+    ) : (
+      <Back onClick={history.goBack}>
+        <IconBack />
+      </Back>
+    ))
+
+  const isLeft = !!(
+    (screenInstanceOption.navbar.closeButtonLocation === 'left' && closeButton) ||
+    backButton ||
+    screenInstanceOption?.navbar.appendLeft
+  )
+
+  const center = (
+    <Center isLeft={isLeft} navigatorTheme={props.theme}>
+      {screenInstanceOption?.navbar.title}
+    </Center>
+  )
+
   return (
     <Container
       className="css-nb-container"
       navigatorTheme={props.theme}
       animationDuration={navigatorOptions.animationDuration}>
-      {props.theme === 'Cupertino' && (
-        <Center navigatorTheme={props.theme}>{screenInstanceOption?.navbar.title}</Center>
-      )}
+      {props.theme === 'Cupertino' && center}
       <Flex>
-        {(!props.isRoot || screenInstanceOption?.navbar.appendLeft) && (
-          <Left>
-            {!props.isRoot &&
-              (screenInstanceOption?.navbar.customBackButton ? (
-                <Back onClick={history.goBack}>{screenInstanceOption.navbar.customBackButton}</Back>
-              ) : (
-                <Back onClick={history.goBack}>
-                  <IconBack />
-                </Back>
-              ))}
-            {screenInstanceOption?.navbar.appendLeft}
-          </Left>
-        )}
-        {props.theme === 'Android' && (
-          <Center navigatorTheme={props.theme}>{screenInstanceOption?.navbar.title}</Center>
-        )}
-        {(props.isRoot || screenInstanceOption?.navbar.appendRight) && (
-          <Right>
-            {screenInstanceOption?.navbar.appendRight}
-            {props.isRoot &&
-              (screenInstanceOption.navbar.customCloseButton ? (
-                <Close onClick={props.onClose}>{screenInstanceOption.navbar.customCloseButton}</Close>
-              ) : (
-                <Close onClick={props.onClose}>
-                  <IconClose />
-                </Close>
-              ))}
-          </Right>
-        )}
+        <Left>
+          {screenInstanceOption.navbar.closeButtonLocation === 'left' && closeButton}
+          {backButton}
+          {screenInstanceOption?.navbar.appendLeft}
+        </Left>
+        {props.theme === 'Android' && center}
+        <Right>
+          {screenInstanceOption?.navbar.appendRight}
+          {screenInstanceOption.navbar.closeButtonLocation === 'right' && closeButton}
+        </Right>
       </Flex>
     </Container>
   )
@@ -107,6 +118,10 @@ const Left = styled.div`
   display: flex;
   align-items: center;
   height: 100%;
+
+  &:empty {
+    display: none;
+  }
 `
 
 const Back = styled.div`
@@ -131,7 +146,11 @@ const Back = styled.div`
   }
 `
 
-const Center = styled.div<{ navigatorTheme: NavigatorTheme }>`
+interface CenterProps {
+  navigatorTheme: NavigatorTheme
+  isLeft: boolean
+}
+const Center = styled.div<CenterProps>`
   flex: 1;
   display: flex;
   align-items: center;
@@ -143,8 +162,13 @@ const Center = styled.div<{ navigatorTheme: NavigatorTheme }>`
         return css`
           font-family: 'Noto Sans KR', sans-serif;
           justify-content: flex-start;
-          padding-left: 0.75rem;
+          padding-left: 1rem;
           font-size: 1.1875rem;
+
+          ${props.isLeft &&
+          css`
+            padding-left: 0.375rem;
+          `}
         `
       case 'Cupertino':
         return css`
@@ -170,6 +194,10 @@ const Right = styled.div`
   top: 0;
   right: 0;
   height: 100%;
+
+  &:empty {
+    display: none;
+  }
 `
 
 const Close = styled.div`
