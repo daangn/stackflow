@@ -53,6 +53,7 @@ const Card: React.FC<CardProps> = (props) => {
   const onEdgeTouchMove = useCallback(
     (e: React.TouchEvent<HTMLDivElement>) => {
       if (screenEdge.startX) {
+        e.cancelable && e.preventDefault()
         x.current = e.touches[0].clientX as any
       }
     },
