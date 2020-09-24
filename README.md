@@ -47,10 +47,10 @@ const App: React.FC = () => {
 
 | Props | 타입 | 역할 | 기본값 |
 | ------------- | ------------- | ------------- | ------------- | 
-| `theme` | `Cupertino`, `Android`, `Web` | UI 테마 | `Web` |
-| `animationDuration` | number | 애니메이션 지속시간  | 테마별로 다름 |
-| `useCustomRecoilRoot` | boolean | `true`인 경우 `Navigator` 내에 포함된 `<RecoilRoot/>` 을 제거합니다  | `false` |
-| `useCustomRouter` | boolean | `true`인 경우 `Navigator` 내에 포함된 `<HashRouter/>` 을 제거합니다  | `false` |
+| `theme` | `Cupertino` 또는 `Android` | UI 테마 | `Android` |
+| `animationDuration` | number | 애니메이션 지속시간  | `theme` 별로 다름 |
+| `useCustomRecoilRoot` | boolean | `true`인 경우 `Navigator` 내에 포함된 `<RecoilRoot/>` 을 제거합니다  | |
+| `useCustomRouter` | boolean | `true`인 경우 `Navigator` 내에 포함된 `<HashRouter/>` 을 제거합니다  | |
 
 ### 1-b. `Screen`
 `Screen` 컴포넌트는 화면을 선언하는데 사용합니다. `Navigator` 안에 선언합니다.
@@ -112,11 +112,12 @@ const MyComponent: React.FC = () => {
 ```
 | Props | 타입 | 역할 | 기본값 |
 | ------------- | ------------- | ------------- | ------------- | 
-| `title` | `React.ReactNode` | 타이틀 부분에 출력할 요소 | `undefined` |
-| `appendLeft` | `React.ReactNode` | 왼쪽에 요소를 추가 (이전 버튼 오른쪽에 표시됩니다) | `undefined` |
-| `appendRight` | `React.ReactNode` | 오른쪽에 요소를 추가 (닫기 버튼 왼쪽에 표시됩니다) | `undefined` |
-| `customBackButton` | `React.ReactNode` | 이전 버튼을 사용자화합니다 | `undefined` |
-| `customCloseButton` | `React.ReactNode` | 닫기 버튼을 사용자화합니다 | `undefined` |
+| `title` | `React.ReactNode` | 타이틀 부분에 출력할 요소 |  |
+| `appendLeft` | `React.ReactNode` | 왼쪽에 요소를 추가 (이전 버튼 오른쪽에 표시됩니다) |  |
+| `appendRight` | `React.ReactNode` | 오른쪽에 요소를 추가 (닫기 버튼 왼쪽에 표시됩니다) |  |
+| `closeButtonLocation` | `left` 또는 `right` | 이전 버튼을 사용자화합니다 | `left` |
+| `customBackButton` | `React.ReactNode` | 이전 버튼을 사용자화합니다 |  |
+| `customCloseButton` | `React.ReactNode` | 닫기 버튼을 사용자화합니다 |  |
 
 ### 1-d. `Link`
 특정 path로 이동할 수 있는 링크를 생성하는 컴포넌트입니다.
