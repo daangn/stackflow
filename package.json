@@ -14,7 +14,7 @@
   "types": "lib",
   "scripts": {
     "build": "yarn clean && yarn build:runtime && yarn build:type",
-    "build:runtime": "babel src -x .ts,.tsx --out-dir lib",
+    "build:runtime": "NODE_ENV=production babel src -x .ts,.tsx --out-dir lib",
     "build:type": "tsc --emitDeclarationOnly",
     "clean": "rimraf lib",
     "lint": "eslint \"./src/*.{tsx,ts}\""
