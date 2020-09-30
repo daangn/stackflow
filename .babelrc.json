@@ -1,0 +1,15 @@
+{
+  "presets": [
+    "@babel/typescript"
+  ],
+  "plugins": [
+    "@babel/transform-modules-commonjs",
+    "@babel/transform-react-jsx",
+    "@babel/proposal-optional-chaining",
+    "@babel/proposal-nullish-coalescing-operator",
+    ["emotion", {
+      "sourceMap": false,
+      "autoLabel": false
+    }]
+  ]
+}

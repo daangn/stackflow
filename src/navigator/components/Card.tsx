@@ -1,13 +1,14 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useRecoilState } from 'recoil'
 import { css } from '@emotion/core'
 import styled from '@emotion/styled'
 
-import { getDivElementsByClassName } from '../../utils'
 import { AtomScreenInstanceOptions, AtomScreenEdge } from '../atoms'
 import { NavigatorOptions, useNavigatorOptions } from '../contexts'
-import Navbar from './Navbar'
+import Navbar, { Container as NavbarContainer } from './Navbar'
+
+const $allFrameOffsetElements = new Set<HTMLDivElement>()
 
 interface CardProps {
   nodeRef: React.RefObject<HTMLDivElement>
@@ -35,11 +36,21 @@ const Card: React.FC<CardProps> = (props) => {
 
   const [screenEdge, setScreenEdge] = useRecoilState(AtomScreenEdge)
 
-  const $dim = useRef<HTMLDivElement>(null)
-  const $frame = useRef<HTMLDivElement>(null)
-  const $frameOffset = useRef<HTMLDivElement>(null)
+  const dimRef = useRef<HTMLDivElement>(null)
+  const frameRef = useRef<HTMLDivElement>(null)
+  const frameOffsetRef = useRef<HTMLDivElement>(null)
 
-  const $allFrameOffsets = useMemo(() => getDivElementsByClassName('css-cd-frame-offset'), [])
+  useEffect(() => {
+    const $frameOffset = frameOffsetRef.current
+
+    if ($frameOffset) {
+      $allFrameOffsetElements.add($frameOffset)
+
+      return () => {
+        $allFrameOffsetElements.delete($frameOffset)
+      }
+    }
+  }, [frameOffsetRef.current])
 
   const onEdgeTouchStart = useCallback(
     (e: React.TouchEvent<HTMLDivElement>) => {
@@ -82,15 +93,18 @@ const Card: React.FC<CardProps> = (props) => {
     // x 값을 이용해 스타일을 계산 및 할당
     if (screenEdge.startX === null) {
       requestAnimationFrame(() => {
-        if ($dim.current) {
-          $dim.current.style.cssText = ''
+        const $dim = dimRef.current
+        const $frame = frameRef.current
+
+        if ($dim) {
+          $dim.style.cssText = ''
         }
-        if ($frame.current) {
-          $frame.current.style.cssText = ''
+        if ($frame) {
+          $frame.style.cssText = ''
         }
-        for (let i = 0; i < $allFrameOffsets.length; i++) {
-          $allFrameOffsets[i].style.cssText = ``
-        }
+        $allFrameOffsetElements.forEach(($frameOffset) => {
+          $frameOffset.style.cssText = ''
+        })
       })
     } else if (props.isTop) {
       animate()
@@ -104,27 +118,30 @@ const Card: React.FC<CardProps> = (props) => {
       requestAnimationFrame(() => {
         const computedEdgeX = x.current - screenEdge.startX!
 
+        const $dim = dimRef.current
+        const $frame = frameRef.current
+
         if (computedEdgeX >= 0) {
-          if ($dim.current) {
-            $dim.current.style.cssText = `
+          if ($dim) {
+            $dim.style.cssText = `
               opacity: ${1 - computedEdgeX / window.screen.width};
               transition: opacity 0s;
             `
           }
-          if ($frame.current) {
-            $frame.current.style.cssText = `
-                overflow-y: hidden;
-                transform: translateX(${computedEdgeX}px); transition: transform 0s;
-              `
+          if ($frame) {
+            $frame.style.cssText = `
+              overflow-y: hidden;
+              transform: translateX(${computedEdgeX}px); transition: transform 0s;
+            `
           }
-          for (let i = 0; i < $allFrameOffsets.length; i++) {
-            if ($allFrameOffsets[i] !== $frameOffset.current) {
-              $allFrameOffsets[i].style.cssText = `
+          $allFrameOffsetElements.forEach(($frameOffset) => {
+            if ($frameOffset !== frameOffsetRef.current) {
+              $frameOffset.style.cssText = `
                 transform: translateX(-${5 - (5 * computedEdgeX) / window.screen.width}rem);
                 transition: 0s;
               `
             }
-          }
+          })
         }
 
         if (!stopped) {
@@ -137,15 +154,13 @@ const Card: React.FC<CardProps> = (props) => {
   return (
     <TransitionNode ref={props.nodeRef} navigatorOptions={navigatorOptions}>
       <Dim
-        ref={$dim}
-        className="css-cd-dim"
+        ref={dimRef}
         navigatorOptions={navigatorOptions}
         isNavbarVisible={!!screenInstanceOption?.navbar.visible}
         isLoading={loading}
       />
       <MainOffset navigatorOptions={navigatorOptions} isTop={props.isTop} isLoading={loading}>
         <Main
-          className="css-cd-main"
           navigatorOptions={navigatorOptions}
           isNavbarVisible={!!screenInstanceOption?.navbar.visible}
           isRoot={props.isRoot}
@@ -158,12 +173,8 @@ const Card: React.FC<CardProps> = (props) => {
               onClose={props.onClose}
             />
           )}
-          <FrameOffset
-            ref={$frameOffset}
-            className="css-cd-frame-offset"
-            navigatorOptions={navigatorOptions}
-            isTop={props.isTop}>
-            <Frame className="css-cd-frame" ref={$frame} navigatorOptions={navigatorOptions} isRoot={props.isRoot}>
+          <FrameOffset ref={frameOffsetRef} navigatorOptions={navigatorOptions} isTop={props.isTop}>
+            <Frame ref={frameRef} navigatorOptions={navigatorOptions} isRoot={props.isRoot}>
               {props.children}
               {navigatorOptions.theme === 'Cupertino' && !props.isRoot && (
                 <Edge onTouchStart={onEdgeTouchStart} onTouchMove={onEdgeTouchMove} onTouchEnd={onEdgeTouchEnd} />
@@ -175,74 +186,6 @@ const Card: React.FC<CardProps> = (props) => {
     </TransitionNode>
   )
 }
-
-interface LayerProps {
-  navigatorOptions: NavigatorOptions
-}
-const TransitionNode = styled.div<LayerProps>`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-
-  ${(props) =>
-    props.navigatorOptions.theme === 'Cupertino' &&
-    css`
-      &.enter-active,
-      &.enter-done {
-        .css-cd-dim {
-          opacity: 1;
-        }
-        .css-cd-frame {
-          transform: translateX(0);
-        }
-      }
-
-      &.exit-active,
-      &.exit-done {
-        .css-cd-dim {
-          opacity: 0;
-        }
-        .css-cd-frame {
-          transform: translateX(100%);
-        }
-        .css-cd-frame-offset {
-          transform: translateX(0);
-        }
-        .css-nb-container {
-          display: none;
-        }
-      }
-    `}
-
-  ${(props) =>
-    props.navigatorOptions.theme === 'Android' &&
-    css`
-      &.enter-active,
-      &.enter-done {
-        .css-cd-dim {
-          opacity: 1;
-        }
-        .css-cd-main {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      &.exit-active,
-      &.exit-done {
-        .css-cd-dim {
-          opacity: 0;
-        }
-        .css-cd-main {
-          opacity: 0;
-          transform: translateY(10rem);
-        }
-      }
-    `}
-`
 
 interface DimProps {
   navigatorOptions: NavigatorOptions
@@ -407,6 +350,74 @@ const Edge = styled.div`
   left: 0;
   height: 100%;
   width: 1.25rem;
+`
+
+interface LayerProps {
+  navigatorOptions: NavigatorOptions
+}
+const TransitionNode = styled.div<LayerProps>`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+
+  ${(props) =>
+    props.navigatorOptions.theme === 'Cupertino' &&
+    css`
+      &.enter-active,
+      &.enter-done {
+        ${Dim} {
+          opacity: 1;
+        }
+        ${Frame} {
+          transform: translateX(0);
+        }
+      }
+
+      &.exit-active,
+      &.exit-done {
+        ${Dim} {
+          opacity: 0;
+        }
+        ${Frame} {
+          transform: translateX(100%);
+        }
+        ${FrameOffset} {
+          transform: translateX(0);
+        }
+        ${NavbarContainer} {
+          display: none;
+        }
+      }
+    `}
+
+  ${(props) =>
+    props.navigatorOptions.theme === 'Android' &&
+    css`
+      &.enter-active,
+      &.enter-done {
+        ${Dim} {
+          opacity: 1;
+        }
+        ${Main} {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      &.exit-active,
+      &.exit-done {
+        ${Dim} {
+          opacity: 0;
+        }
+        ${Main} {
+          opacity: 0;
+          transform: translateY(10rem);
+        }
+      }
+    `}
 `
 
 export default Card
