@@ -352,10 +352,10 @@ const Edge = styled.div`
   width: 1.25rem;
 `
 
-interface LayerProps {
+interface TransitionNodeProps {
   navigatorOptions: NavigatorOptions
 }
-const TransitionNode = styled.div<LayerProps>`
+const TransitionNode = styled.div<TransitionNodeProps>`
   position: absolute;
   top: 0;
   left: 0;
