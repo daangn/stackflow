@@ -181,6 +181,24 @@ const Card: React.FC<CardProps> = (props) => {
               )}
             </Frame>
           </FrameOffset>
+          {screenInstanceOption?.fixed?.top && (
+            <Fixed
+              position="top"
+              navigatorOptions={navigatorOptions}
+              isNavbarVisible={!!screenInstanceOption?.navbar.visible}
+              style={screenInstanceOption.fixed.top.style}>
+              {screenInstanceOption.fixed.top.node}
+            </Fixed>
+          )}
+          {screenInstanceOption?.fixed?.bottom && (
+            <Fixed
+              position="bottom"
+              navigatorOptions={navigatorOptions}
+              isNavbarVisible={!!screenInstanceOption?.navbar.visible}
+              style={screenInstanceOption.fixed.bottom.style}>
+              {screenInstanceOption.fixed.bottom.node}
+            </Fixed>
+          )}
         </Main>
       </MainOffset>
     </TransitionNode>
@@ -328,7 +346,7 @@ const Frame = styled.div<FrameProps>`
   height: 100%;
   overflow-y: scroll;
   background-color: #fff;
-  --webkit-overflow-scrolling: touch;
+  -webkit-overflow-scrolling: touch;
 
   ${(props) =>
     props.navigatorOptions.theme === 'Cupertino' &&
@@ -342,6 +360,40 @@ const Frame = styled.div<FrameProps>`
         transform: translateX(100%);
       `}
     `};
+`
+
+interface FixedProps {
+  navigatorOptions: NavigatorOptions
+  position: 'top' | 'bottom'
+  isNavbarVisible: boolean
+}
+const Fixed = styled.div<FixedProps>`
+  position: absolute;
+
+  ${(props) =>
+    props.position === 'top' &&
+    css`
+      ${!props.isNavbarVisible &&
+      css`
+        top: 0;
+      `}
+      ${props.isNavbarVisible &&
+      props.navigatorOptions.theme === 'Cupertino' &&
+      css`
+        top: 2.75rem;
+      `}
+      ${props.isNavbarVisible &&
+      props.navigatorOptions.theme === 'Android' &&
+      css`
+        top: 3.5rem;
+      `}
+    `}
+
+  ${(props) =>
+    props.position === 'bottom' &&
+    css`
+      bottom: 0;
+    `}
 `
 
 const Edge = styled.div`
@@ -374,6 +426,9 @@ const TransitionNode = styled.div<TransitionNodeProps>`
         ${Frame} {
           transform: translateX(0);
         }
+        ${Fixed} {
+          opacity: 1;
+        }
       }
 
       &.exit-active,
@@ -390,6 +445,9 @@ const TransitionNode = styled.div<TransitionNodeProps>`
         ${NavbarContainer} {
           display: none;
         }
+        ${Fixed} {
+          opacity: 0;
+        }
       }
     `}
 
@@ -405,6 +463,9 @@ const TransitionNode = styled.div<TransitionNodeProps>`
           opacity: 1;
           transform: translateY(0);
         }
+        ${Fixed} {
+          opacity: 1;
+        }
       }
 
       &.exit-active,
@@ -415,6 +476,9 @@ const TransitionNode = styled.div<TransitionNodeProps>`
         ${Main} {
           opacity: 0;
           transform: translateY(10rem);
+        }
+        ${Fixed} {
+          opacity: 0;
         }
       }
     `}
