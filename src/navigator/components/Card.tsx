@@ -426,9 +426,6 @@ const TransitionNode = styled.div<TransitionNodeProps>`
         ${Frame} {
           transform: translateX(0);
         }
-        ${Fixed} {
-          opacity: 1;
-        }
       }
 
       &.exit-active,
@@ -446,7 +443,7 @@ const TransitionNode = styled.div<TransitionNodeProps>`
           display: none;
         }
         ${Fixed} {
-          opacity: 0;
+          display: none;
         }
       }
     `}
@@ -463,9 +460,6 @@ const TransitionNode = styled.div<TransitionNodeProps>`
           opacity: 1;
           transform: translateY(0);
         }
-        ${Fixed} {
-          opacity: 1;
-        }
       }
 
       &.exit-active,
@@ -476,9 +470,6 @@ const TransitionNode = styled.div<TransitionNodeProps>`
         ${Main} {
           opacity: 0;
           transform: translateY(10rem);
-        }
-        ${Fixed} {
-          opacity: 0;
         }
       }
     `}
