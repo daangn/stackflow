@@ -56,10 +56,7 @@ const Navbar: React.FC<NavbarProps> = (props) => {
   )
 
   return (
-    <Container
-      className="css-nb-container"
-      navigatorTheme={props.theme}
-      animationDuration={navigatorOptions.animationDuration}>
+    <Container navigatorTheme={props.theme} animationDuration={navigatorOptions.animationDuration}>
       {props.theme === 'Cupertino' && center}
       <Flex>
         <Left>
