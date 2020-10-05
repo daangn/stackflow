@@ -22,9 +22,6 @@ interface FixedProps {
 }
 const Fixed: React.FC<FixedProps> = (props) => {
   const screen = useScreenInstanceOptions()
-  useEffect(() => {
-    console.log('dma')
-  }, [])
 
   useEffect(() => {
     if (props.top) {
