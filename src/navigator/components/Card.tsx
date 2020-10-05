@@ -176,11 +176,17 @@ const Card: React.FC<CardProps> = (props) => {
           <FrameOffset ref={frameOffsetRef} navigatorOptions={navigatorOptions} isTop={props.isTop}>
             <Frame ref={frameRef} navigatorOptions={navigatorOptions} isRoot={props.isRoot}>
               {props.children}
-              {navigatorOptions.theme === 'Cupertino' && !props.isRoot && (
-                <Edge onTouchStart={onEdgeTouchStart} onTouchMove={onEdgeTouchMove} onTouchEnd={onEdgeTouchEnd} />
-              )}
             </Frame>
           </FrameOffset>
+          {navigatorOptions.theme === 'Cupertino' && !props.isRoot && (
+            <Edge
+              navigatorOptions={navigatorOptions}
+              isNavbarVisible={!!screenInstanceOption?.navbar.visible}
+              onTouchStart={onEdgeTouchStart}
+              onTouchMove={onEdgeTouchMove}
+              onTouchEnd={onEdgeTouchEnd}
+            />
+          )}
           {screenInstanceOption?.fixed?.top && (
             <Fixed
               position="top"
@@ -396,12 +402,33 @@ const Fixed = styled.div<FixedProps>`
     `}
 `
 
-const Edge = styled.div`
+interface EdgeProps {
+  navigatorOptions: NavigatorOptions
+  isNavbarVisible: boolean
+}
+const Edge = styled.div<EdgeProps>`
   position: absolute;
-  top: 0;
   left: 0;
   height: 100%;
   width: 1.25rem;
+
+  ${(props) =>
+    !props.isNavbarVisible &&
+    css`
+      top: 0;
+    `}
+  ${(props) =>
+    props.isNavbarVisible &&
+    props.navigatorOptions.theme === 'Cupertino' &&
+    css`
+      top: 2.75rem;
+    `}
+      ${(props) =>
+    props.isNavbarVisible &&
+    props.navigatorOptions.theme === 'Android' &&
+    css`
+      top: 3.5rem;
+    `}
 `
 
 interface TransitionNodeProps {
