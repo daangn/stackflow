@@ -1,5 +1,5 @@
 import React from 'react'
-import { ScreenHelmet, useNavigator, Fixed } from '@daangn/karrotframe'
+import { ScreenHelmet, useNavigator } from '@daangn/karrotframe'
 import styled from '@emotion/styled'
 
 const Home: React.FC = () => {
@@ -32,10 +32,6 @@ const Home: React.FC = () => {
         }
         closeButtonLocation='right'
       />
-      <Fixed top style={{ width: '100%'}}>
-        <div style={{background: '#fff', width: '100%'}}>상단고정</div>
-      </Fixed>
-      <Fixed bottom>하단고정</Fixed>
       위와 같이 상단바를 Customizing 할 수 있습니다 <br />
       <button
         onClick={onPage2Click}

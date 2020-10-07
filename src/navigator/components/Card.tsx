@@ -187,24 +187,6 @@ const Card: React.FC<CardProps> = (props) => {
               onTouchEnd={onEdgeTouchEnd}
             />
           )}
-          {screenInstanceOption?.fixed?.top && (
-            <Fixed
-              position="top"
-              navigatorOptions={navigatorOptions}
-              isNavbarVisible={!!screenInstanceOption?.navbar.visible}
-              style={screenInstanceOption.fixed.top.style}>
-              {screenInstanceOption.fixed.top.node}
-            </Fixed>
-          )}
-          {screenInstanceOption?.fixed?.bottom && (
-            <Fixed
-              position="bottom"
-              navigatorOptions={navigatorOptions}
-              isNavbarVisible={!!screenInstanceOption?.navbar.visible}
-              style={screenInstanceOption.fixed.bottom.style}>
-              {screenInstanceOption.fixed.bottom.node}
-            </Fixed>
-          )}
         </Main>
       </MainOffset>
     </TransitionNode>
@@ -368,40 +350,6 @@ const Frame = styled.div<FrameProps>`
     `};
 `
 
-interface FixedProps {
-  navigatorOptions: NavigatorOptions
-  position: 'top' | 'bottom'
-  isNavbarVisible: boolean
-}
-const Fixed = styled.div<FixedProps>`
-  position: absolute;
-
-  ${(props) =>
-    props.position === 'top' &&
-    css`
-      ${!props.isNavbarVisible &&
-      css`
-        top: 0;
-      `}
-      ${props.isNavbarVisible &&
-      props.navigatorOptions.theme === 'Cupertino' &&
-      css`
-        top: 2.75rem;
-      `}
-      ${props.isNavbarVisible &&
-      props.navigatorOptions.theme === 'Android' &&
-      css`
-        top: 3.5rem;
-      `}
-    `}
-
-  ${(props) =>
-    props.position === 'bottom' &&
-    css`
-      bottom: 0;
-    `}
-`
-
 interface EdgeProps {
   navigatorOptions: NavigatorOptions
   isNavbarVisible: boolean
@@ -467,9 +415,6 @@ const TransitionNode = styled.div<TransitionNodeProps>`
           transform: translateX(0);
         }
         ${NavbarContainer} {
-          display: none;
-        }
-        ${Fixed} {
           display: none;
         }
       }

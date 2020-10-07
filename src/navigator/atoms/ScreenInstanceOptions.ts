@@ -11,21 +11,9 @@ export interface NavbarOptions {
   customCloseButton: React.ReactNode | null
 }
 
-export interface FixedOptions {
-  top: {
-    node: React.ReactNode
-    style: React.CSSProperties
-  } | null
-  bottom: {
-    node: React.ReactNode
-    style: React.CSSProperties
-  } | null
-}
-
 export const AtomScreenInstanceOptions = atom<{
   [screenInstanceId: string]: {
     navbar: NavbarOptions
-    fixed: FixedOptions
   }
 }>({
   key: 'KFScreenInstanceOptions',
