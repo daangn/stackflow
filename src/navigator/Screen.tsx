@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from 'react'
 import { useSetRecoilState } from 'recoil'
-import short from 'short-uuid'
 
+import { generateScreenId } from '../utils'
 import { AtomScreens, AtomScreenInstanceOptions, NavbarOptions } from './atoms'
 import { ScreenInstanceOptionsProvider, ScreenInstanceInfoProvider } from './contexts'
 
@@ -19,7 +19,7 @@ interface ScreenProps {
 const Screen: React.FC<ScreenProps> = (props) => {
   const Component = props.component
 
-  const id = useMemo(() => short.generate(), [])
+  const id = useMemo(() => generateScreenId(), [])
 
   const setScreens = useSetRecoilState(AtomScreens)
   const setScreenInstanceOptions = useSetRecoilState(AtomScreenInstanceOptions)

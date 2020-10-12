@@ -1,8 +1,7 @@
 import React, { forwardRef, useMemo } from 'react'
 import { Link as RouterLink } from 'react-router-dom'
-import short from 'short-uuid'
 
-import { appendSearch } from '../utils'
+import { appendSearch, generateScreenInstanceId } from '../utils'
 
 interface LinkProps {
   /**
@@ -23,7 +22,7 @@ interface LinkProps {
 const Link: React.FC<LinkProps> = forwardRef<HTMLAnchorElement, LinkProps>((props, ref) => {
   const { pathname, search } = useMemo(() => {
     const [pathname, search] = props.to.split('?')
-    const _si = short.generate().substr(0, 5)
+    const _si = generateScreenInstanceId()
 
     return {
       pathname,

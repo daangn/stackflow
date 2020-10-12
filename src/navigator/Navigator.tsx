@@ -1,14 +1,13 @@
-import qs from 'qs'
+import qs from 'querystring'
 import React, { memo, useEffect, useMemo, useRef } from 'react'
 import { HashRouter, useLocation, useHistory, matchPath } from 'react-router-dom'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import { RecoilRoot, useRecoilState } from 'recoil'
-import short from 'short-uuid'
 import styled from '@emotion/styled'
 
 import { NavigatorOptionsProvider, useNavigatorOptions } from './contexts'
 import { NavigatorTheme } from '../types'
-import { appendSearch } from '../utils'
+import { appendSearch, generateScreenInstanceId } from '../utils'
 import {
   AtomScreens,
   AtomScreenInstances,
@@ -103,7 +102,7 @@ const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
         location.pathname +
           '?' +
           appendSearch(search, {
-            _si: short.generate().substr(0, 5),
+            _si: generateScreenInstanceId(),
           })
       )
     }
