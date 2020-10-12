@@ -8,7 +8,7 @@ import {
 import {
   HashRouter,
   MemoryRouter,
-} from '@daangn/karrotframe/lib/router'
+} from '@daangn/karrotframe/lib/react-router'
 import Bridge from '@daangn/webview-bridge'
 import Home from './components/Home'
 import Page2 from './components/Page2'

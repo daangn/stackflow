@@ -270,7 +270,7 @@ Navigator 구현으로 감싸지 않은 `react-router`의 기본 컴포넌트와
 #### 라우터 교체하기
 ```tsx
 import { Navigator } from '@daangn/karrotframe'
-import { HashRouter } from '@daangn/karrotframe/lib/router'
+import { HashRouter } from '@daangn/karrotframe/lib/react-router'
 
 const App = () => {
   return (
@@ -288,7 +288,7 @@ const App = () => {
 ```tsx
 // <Screen path={ExampleScreen} />
 
-import { Route, useHistory } from '@daangn/karrotframe/lib/router'
+import { Route, useHistory } from '@daangn/karrotframe/lib/react-router'
 
 const ExampleScreen = () => {
   const history = useHistory()
