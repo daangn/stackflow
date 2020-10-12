@@ -1,8 +1,7 @@
 import { useHistory } from 'react-router-dom'
 import { useRecoilState } from 'recoil'
-import short from 'short-uuid'
 
-import { appendSearch } from '../utils'
+import { appendSearch, generateScreenInstanceId } from '../utils'
 import { AtomScreenInstances, AtomScreenInstancePointer, screenInstancePromises } from './atoms'
 import { useScreenInstanceInfo } from './contexts'
 
@@ -17,13 +16,13 @@ export function useNavigator() {
     push<T = object>(to: string) {
       return new Promise<T | null>((resolve) => {
         const [pathname, search] = to.split('?')
-        const kf_sid = short.generate().substr(0, 5)
+        const _si = generateScreenInstanceId()
 
         history.push(
           pathname +
             '?' +
             appendSearch(search || null, {
-              kf_sid,
+              _si,
             })
         )
 
@@ -32,13 +31,13 @@ export function useNavigator() {
     },
     replace(to: string) {
       const [pathname, search] = to.split('?')
-      const kf_sid = short.generate().substr(0, 5)
+      const _si = generateScreenInstanceId()
 
       history.replace(
         pathname +
           '?' +
           appendSearch(search, {
-            kf_sid,
+            _si,
           })
       )
     },

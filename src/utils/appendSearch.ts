@@ -1,4 +1,4 @@
-import qs from 'qs'
+import qs from 'querystring'
 
 export function appendSearch(
   search: string | null,

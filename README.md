@@ -264,6 +264,57 @@ const PostWriteForm: React.FC = () => {
   return /* ... */
 }
 ```
+### 1-e. `/lib/react-router-dom`
+Navigator 구현으로 감싸지 않은 `react-router-dom`의 기본 컴포넌트와 함수들을 다음과 같이 사용할 수 있습니다.
+
+#### 라우터 교체하기
+```tsx
+import { Navigator } from '@daangn/karrotframe'
+import { HashRouter } from '@daangn/karrotframe/lib/react-router'
+
+const App = () => {
+  return (
+    <HashRouter>
+      <Navigator useCustomRouter>
+        ...
+      </Navigator>
+    </HashRouter>
+  )
+}
+```
+
+#### Screen 내부에서 라우팅하기
+
+```tsx
+// <Screen path={ExampleScreen} />
+
+import { Route, useHistory } from '@daangn/karrotframe/lib/react-router'
+
+const ExampleScreen = () => {
+  const history = useHistory()
+
+  const moveToInside2 = () => {
+    history.push('/.../inside2')
+  }
+  const goBack = () => {
+    history.goBack()
+  }
+  const goBackFurther = () => {
+    // 현재 내부 라우팅과 이전 Karrotframe 스크린 전환을 통합해서
+    // 뒤로가기 할 수 있습니다.
+    history.go(-4)
+  }
+
+  return (
+    <div>
+      <Route path='/.../inside1'>...</Route>
+      <Route path='/.../inside2'>...</Route>
+    </div>
+  )
+}
+```
+
+> path 내에 `_si` 쿼리스트링이 포함되어있지 않으면 Karrotframe은 내부 라우팅으로 인식해 별도의 애니메이션 처리를 위한 작업을 하지 않습니다
 
 ## 2. 추가 예정인 기능
 - [ ] 하프뷰
