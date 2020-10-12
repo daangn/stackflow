@@ -1,6 +1,6 @@
 {
   "name": "@daangn/karrotframe",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "UX Enhancer",
   "repository": "https://github.com/daangn/karrotframe",
   "license": "MIT",
@@ -13,9 +13,9 @@
   "source": "src/index.tsx",
   "types": "lib",
   "scripts": {
-    "build": "yarn clean && yarn build:runtime && yarn build:type",
+    "build": "yarn clean && yarn build:runtime && yarn build:dts",
     "build:runtime": "NODE_ENV=production babel src -x .ts,.tsx --out-dir lib",
-    "build:type": "tsc --emitDeclarationOnly",
+    "build:dts": "tsc --emitDeclarationOnly",
     "clean": "rimraf lib",
     "lint": "eslint \"./src/*.{tsx,ts}\""
   },
