@@ -264,8 +264,8 @@ const PostWriteForm: React.FC = () => {
   return /* ... */
 }
 ```
-### 1-e. `lib/router`
-Navigator 구현으로 감싸지 않은 `react-router`의 기본 컴포넌트와 함수들을 다음과 같이 사용할 수 있습니다.
+### 1-e. `/lib/react-router-dom`
+Navigator 구현으로 감싸지 않은 `react-router-dom`의 기본 컴포넌트와 함수들을 다음과 같이 사용할 수 있습니다.
 
 #### 라우터 교체하기
 ```tsx
