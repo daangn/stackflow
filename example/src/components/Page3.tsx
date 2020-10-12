@@ -16,6 +16,9 @@ const Page3: React.FC = () => {
   const goBack = () => {
     history.goBack()
   }
+  const goBack2 = () => {
+    history.go(-4)
+  }
 
   return (
     <Container>
@@ -31,6 +34,7 @@ const Page3: React.FC = () => {
       <Route path='/page3/inside2'>
         <div>inside2</div>
         <button onClick={goBack}>goBack</button>
+        <button onClick={goBack2}>goback x 4</button>
         <button onClick={onPopClick}>이전 페이지로</button>
       </Route>
     </Container>
