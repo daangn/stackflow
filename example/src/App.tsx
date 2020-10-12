@@ -1,16 +1,18 @@
 import './App.css'
 
-import React from "react";
+import React from "react"
 import {
   Navigator,
   Screen,
+} from '@daangn/karrotframe'
+import {
   HashRouter,
   MemoryRouter,
-} from '@daangn/karrotframe'
+} from '@daangn/karrotframe/lib/router'
 import Bridge from '@daangn/webview-bridge'
-import Home from './components/Home';
-import Page2 from './components/Page2';
-import Page3 from './components/Page3';
+import Home from './components/Home'
+import Page2 from './components/Page2'
+import Page3 from './components/Page3'
 
 const bridge = new Bridge()
 

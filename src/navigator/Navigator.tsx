@@ -3,10 +3,12 @@ import React, { memo, useEffect, useMemo, useRef } from 'react'
 import { HashRouter, useLocation, useHistory, matchPath } from 'react-router-dom'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import { RecoilRoot, useRecoilState } from 'recoil'
+import short from 'short-uuid'
 import styled from '@emotion/styled'
 
 import { NavigatorOptionsProvider, useNavigatorOptions } from './contexts'
 import { NavigatorTheme } from '../types'
+import { appendSearch } from '../utils'
 import {
   AtomScreens,
   AtomScreenInstances,
@@ -95,6 +97,15 @@ const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
     } else {
       // 초기화 작업
       isNavigatorInitialized = true
+
+      const search = location.search.split('?')[1]
+      history.replace(
+        location.pathname +
+          '?' +
+          appendSearch(search, {
+            _si: short.generate().substr(0, 5),
+          })
+      )
     }
 
     return () => {
@@ -149,7 +160,7 @@ const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
         /**
          * 앞으로 가기 기능 지원을 위한 ScreenInstance.id
          */
-        const screenInstanceId = (qs.parse(location.search.split('?')[1])?.kf_sid as string | undefined) ?? ''
+        const screenInstanceId = (qs.parse(location.search.split('?')[1])?._si as string | undefined) ?? ''
         push({
           screenId: screen.id,
           screenInstanceId,
@@ -168,11 +179,14 @@ const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
           )
 
           if (screen) {
-            const screenInstanceId = qs.parse(location.search.split('?')[1])?.kf_sid as string
-            push({
-              screenId: screen.id,
-              screenInstanceId,
-            })
+            const screenInstanceId = qs.parse(location.search.split('?')[1])?._si as string
+
+            if (screenInstanceId) {
+              push({
+                screenId: screen.id,
+                screenInstanceId,
+              })
+            }
           }
           break
         }
@@ -186,11 +200,14 @@ const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
           )
 
           if (screen) {
-            const screenInstanceId = qs.parse(location.search.split('?')[1])?.kf_sid as string
-            replace({
-              screenId: screen.id,
-              screenInstanceId,
-            })
+            const screenInstanceId = qs.parse(location.search.split('?')[1])?._si as string
+
+            if (screenInstanceId) {
+              replace({
+                screenId: screen.id,
+                screenInstanceId,
+              })
+            }
           }
           break
         }
@@ -204,10 +221,14 @@ const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
           )
 
           if (screen) {
-            const screenInstanceId = (qs.parse(location.search.split('?')[1])?.kf_sid as string | undefined) ?? ''
+            const screenInstanceId = (qs.parse(location.search.split('?')[1])?._si as string | undefined) ?? ''
             const nextPointer = screenInstances.findIndex((screenInstance) => screenInstance.id === screenInstanceId)
 
             const isForward = nextPointer > screenInstancePointer || nextPointer === -1
+
+            if (!screenInstanceId) {
+              return
+            }
 
             if (isForward) {
               push({

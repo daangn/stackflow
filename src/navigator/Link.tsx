@@ -23,12 +23,12 @@ interface LinkProps {
 const Link: React.FC<LinkProps> = forwardRef<HTMLAnchorElement, LinkProps>((props, ref) => {
   const { pathname, search } = useMemo(() => {
     const [pathname, search] = props.to.split('?')
-    const kf_sid = short.generate().substr(0, 5)
+    const _si = short.generate().substr(0, 5)
 
     return {
       pathname,
       search: appendSearch(search || null, {
-        kf_sid,
+        _si,
       }),
     }
   }, [props.to])
