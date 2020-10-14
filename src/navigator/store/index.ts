@@ -37,14 +37,14 @@ export interface ScreenEdge {
 const store = observable<{
   screens: ObservableMap<string, Screen>
   screenInstances: ScreenInstance[]
-  screenInstancePointer: number
+  screenInstancePtr: number
   screenInstanceOptions: ObservableMap<string, ScreenInstanceOption>
   screenInstancePromises: ObservableMap<string, ScreenInstancePromise>
   screenEdge: ScreenEdge
 }>({
   screens: observable.map<string, Screen>({}, { deep: false }),
   screenInstances: [],
-  screenInstancePointer: -1,
+  screenInstancePtr: -1,
   screenInstanceOptions: observable.map<string, ScreenInstanceOption>({}, { deep: false }),
   screenInstancePromises: observable.map<string, ScreenInstancePromise>({}, { deep: false }),
   screenEdge: {
@@ -53,22 +53,20 @@ const store = observable<{
   },
 })
 
-export const setScreenInstanceIn = action(
-  (pointer: number, setter: (screenInstance: ScreenInstance) => ScreenInstance) => {
-    store.screenInstances = store.screenInstances.map((screenInstance, screenInstanceIndex) => {
-      if (screenInstanceIndex === pointer) {
-        return setter(screenInstance)
-      } else {
-        return screenInstance
-      }
-    })
-  }
-)
+export const setScreenInstanceIn = action((ptr: number, setter: (screenInstance: ScreenInstance) => ScreenInstance) => {
+  store.screenInstances = store.screenInstances.map((screenInstance, screenInstanceIndex) => {
+    if (screenInstanceIndex === ptr) {
+      return setter(screenInstance)
+    } else {
+      return screenInstance
+    }
+  })
+})
 
-export const pushScreenInstanceAfter = action(
-  (pointer: number, { screenId, screenInstanceId }: { screenId: string; screenInstanceId: string }) => {
+export const addScreenInstanceAfter = action(
+  (ptr: number, { screenId, screenInstanceId }: { screenId: string; screenInstanceId: string }) => {
     store.screenInstances = [
-      ...store.screenInstances.filter((_, index) => index <= pointer),
+      ...store.screenInstances.filter((_, index) => index <= ptr),
       {
         id: screenInstanceId,
         screenId,
@@ -78,12 +76,12 @@ export const pushScreenInstanceAfter = action(
   }
 )
 
-export const increaseScreenInstancePointer = action(() => {
-  store.screenInstancePointer = store.screenInstancePointer + 1
+export const increaseScreenInstancePtr = action(() => {
+  store.screenInstancePtr = store.screenInstancePtr + 1
 })
 
-export const setScreenInstancePointer = action((newPointer: number) => {
-  store.screenInstancePointer = newPointer
+export const setScreenInstancePtr = action((ptr: number) => {
+  store.screenInstancePtr = ptr
 })
 
 export const setScreenEdge = action((screenEdge: ScreenEdge) => {
