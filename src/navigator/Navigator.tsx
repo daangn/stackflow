@@ -90,6 +90,8 @@ const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
   const [screenInstances, setScreenInstances] = useRecoilState(AtomScreenInstances)
   const [screenInstancePointer, setScreenInstancePointer] = useRecoilState(AtomScreenInstancePointer)
 
+  console.log(screenInstances)
+
   useEffect(() => {
     if (isNavigatorInitialized) {
       throw new Error('한 개의 앱에는 한 개의 Navigator만 허용됩니다')
@@ -113,6 +115,101 @@ const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
   }, [])
 
   useEffect(() => {
+    if (screenInstances.length === 0) {
+      const screen = Object.values(screens).find((screen) =>
+        matchPath(location.pathname, { exact: true, path: screen.path })
+      )
+
+      if (screen) {
+        const screenInstanceId = (qs.parse(location.search.split('?')[1])?._si as string | undefined) ?? ''
+        push({
+          screenId: screen.id,
+          screenInstanceId,
+        })
+      }
+    }
+
+    const disposeHistoryListen = history.listen((location, action) => {
+      const screen = Object.values(screens).find((screen) =>
+        matchPath(location.pathname, { exact: true, path: screen.path })
+      )
+      const screenInstanceId = (qs.parse(location.search.split('?')[1])?._si as string) ?? ''
+
+      switch (action) {
+        /**
+         * Link를 통해 push 했을 때,
+         */
+        case 'PUSH': {
+          if (screen && screenInstanceId) {
+            push({
+              screenId: screen.id,
+              screenInstanceId,
+            })
+          } else {
+            setScreenInstanceOf(screenInstancePointer, (screenInstance) => ({
+              ...screenInstance,
+              nestedRouteCount: screenInstance.nestedRouteCount + 1,
+            }))
+          }
+          break
+        }
+
+        /**
+         * Link를 통해 replace 했을 때,
+         */
+        case 'REPLACE': {
+          if (screen && screenInstanceId) {
+            replace({
+              screenId: screen.id,
+              screenInstanceId,
+            })
+          }
+          break
+        }
+
+        /**
+         * 뒤로가기, 앞으로 가기 했을 때,
+         */
+        case 'POP': {
+          if (screen && screenInstanceId) {
+            const nextPointer = screenInstances.findIndex((screenInstance) => screenInstance.id === screenInstanceId)
+            const isForward = nextPointer > screenInstancePointer || nextPointer === -1
+
+            console.log(1)
+
+            if (isForward) {
+              push({
+                screenId: screen.id,
+                screenInstanceId,
+              })
+            } else {
+              pop({
+                depth: screenInstancePointer - nextPointer,
+                targetScreenInstanceId: screenInstanceId,
+              })
+              setScreenInstanceOf(screenInstancePointer, (screenInstance) => ({
+                ...screenInstance,
+                nestedRouteCount: 0,
+              }))
+            }
+          } else if (screenInstances[screenInstancePointer]?.nestedRouteCount === 0) {
+            console.log(2)
+            pop({
+              depth: 1,
+              // targetScreenInstanceId: screenInstanceId,
+            })
+          } else {
+            setScreenInstanceOf(screenInstancePointer, (screenInstance) => ({
+              ...screenInstance,
+              nestedRouteCount: screenInstance.nestedRouteCount - 1,
+            }))
+          }
+
+          break
+        }
+      }
+    })
+
     function push({ screenId, screenInstanceId }: { screenId: string; screenInstanceId: string }) {
       const nextPointer = screenInstances.findIndex((screenInstance) => screenInstance.id === screenInstanceId)
 
@@ -122,6 +219,7 @@ const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
           {
             id: screenInstanceId,
             screenId,
+            nestedRouteCount: 0,
           },
         ])
         setScreenInstancePointer((pointer) => pointer + 1)
@@ -136,119 +234,32 @@ const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
         {
           id: screenInstanceId,
           screenId,
+          nestedRouteCount: 0,
         },
       ])
     }
 
-    function pop({ depth, targetScreenInstanceId }: { depth: number; targetScreenInstanceId: string }) {
-      screenInstancePromises[targetScreenInstanceId]?.(null)
+    function pop({ depth, targetScreenInstanceId }: { depth: number; targetScreenInstanceId?: string }) {
+      if (targetScreenInstanceId) {
+        screenInstancePromises[targetScreenInstanceId]?.(null)
+      }
       setScreenInstancePointer((pointer) => pointer - depth)
     }
 
-    if (screenInstances.length === 0) {
-      /**
-       * 처음 Screen들이 초기화될 때,
-       * 현재 path와 일치하는 스크린을 찾아서, 스택 맨 위로 넣어준다
-       */
-
-      const screen = Object.values(screens).find((screen) =>
-        matchPath(location.pathname, { exact: true, path: screen.path })
-      )
-
-      if (screen) {
-        /**
-         * 앞으로 가기 기능 지원을 위한 ScreenInstance.id
-         */
-        const screenInstanceId = (qs.parse(location.search.split('?')[1])?._si as string | undefined) ?? ''
-        push({
-          screenId: screen.id,
-          screenInstanceId,
+    function setScreenInstanceOf(pointer: number, setter: (screenInstance: ScreenInstance) => ScreenInstance) {
+      setScreenInstances((screenInstances) =>
+        screenInstances.map((screenInstance, screenInstanceIndex) => {
+          if (screenInstanceIndex === pointer) {
+            return setter(screenInstance)
+          } else {
+            return screenInstance
+          }
         })
-      }
+      )
     }
 
-    const disposeListen = history.listen((location, action) => {
-      switch (action) {
-        /**
-         * Link를 통해 push 했을 때,
-         */
-        case 'PUSH': {
-          const screen = Object.values(screens).find((screen) =>
-            matchPath(location.pathname, { exact: true, path: screen.path })
-          )
-
-          if (screen) {
-            const screenInstanceId = qs.parse(location.search.split('?')[1])?._si as string
-
-            if (screenInstanceId) {
-              push({
-                screenId: screen.id,
-                screenInstanceId,
-              })
-            }
-          }
-          break
-        }
-
-        /**
-         * Link를 통해 replace 했을 때,
-         */
-        case 'REPLACE': {
-          const screen = Object.values(screens).find((screen) =>
-            matchPath(location.pathname, { exact: true, path: screen.path })
-          )
-
-          if (screen) {
-            const screenInstanceId = qs.parse(location.search.split('?')[1])?._si as string
-
-            if (screenInstanceId) {
-              replace({
-                screenId: screen.id,
-                screenInstanceId,
-              })
-            }
-          }
-          break
-        }
-
-        /**
-         * 뒤로가기, 앞으로 가기 했을 때,
-         */
-        case 'POP': {
-          const screen = Object.values(screens).find((screen) =>
-            matchPath(location.pathname, { exact: true, path: screen.path })
-          )
-
-          if (screen) {
-            const screenInstanceId = (qs.parse(location.search.split('?')[1])?._si as string | undefined) ?? ''
-            const nextPointer = screenInstances.findIndex((screenInstance) => screenInstance.id === screenInstanceId)
-
-            const isForward = nextPointer > screenInstancePointer || nextPointer === -1
-
-            if (!screenInstanceId) {
-              return
-            }
-
-            if (isForward) {
-              push({
-                screenId: screen.id,
-                screenInstanceId,
-              })
-            } else {
-              pop({
-                depth: screenInstancePointer - nextPointer,
-                targetScreenInstanceId: screenInstanceId,
-              })
-            }
-          }
-
-          break
-        }
-      }
-    })
-
     return () => {
-      disposeListen()
+      disposeHistoryListen()
     }
   }, [screens, screenInstances, screenInstancePointer])
 
