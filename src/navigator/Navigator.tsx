@@ -227,6 +227,8 @@ const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
         )
         const screenInstanceId = qs.parse(location.search.split('?')[1])?._si as string | undefined
 
+        console.log(screen, screenInstanceId)
+
         if (screen && screenInstanceId) {
           pushScreen({
             screenId: screen.id,

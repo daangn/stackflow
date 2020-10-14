@@ -42,9 +42,20 @@ export function useNavigator() {
       )
     },
     pop(depth = 1) {
-      for (let i = 0; i < depth; i++) {
-        history.goBack()
-      }
+      const nestedRouteCounts = screenInstances.map(({ nestedRouteCount }) => nestedRouteCount)
+      const totalCount = nestedRouteCounts
+        .filter((_, i) => i > screenInstancePointer - depth && i <= screenInstancePointer)
+        .reduce((acc, current) => {
+          return acc + current + 1
+        }, 0)
+
+      ;(async () => {
+        for (let i = 0; i < totalCount; i++) {
+          console.log('pop')
+          history.goBack()
+          // await delay(50)
+        }
+      })()
 
       return {
         send<T = object>(data: T) {
@@ -58,3 +69,9 @@ export function useNavigator() {
     },
   }
 }
+
+// function delay(ms: number) {
+//   return new Promise((resolve) => {
+//     setTimeout(() => resolve(), ms)
+//   })
+// }

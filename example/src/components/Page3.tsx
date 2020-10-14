@@ -8,7 +8,10 @@ const Page3: React.FC = () => {
   const navigator = useNavigator()
 
   const onPopClick = () => {
-    navigator.pop(3)
+    navigator.pop(2)
+  }
+  const onPop = () => {
+    navigator.pop(1)
   }
   const onNext = () => {
     navigator.push('/page2')
@@ -26,7 +29,7 @@ const Page3: React.FC = () => {
   return (
     <Container>
       <button onClick={onPopClick}>이전 페이지로</button>
-      <button onClick={goBack}>goBack</button>
+      <button onClick={onPop}>pop</button>
       <button onClick={startForm}>start</button>
       <Route path='/page3/inside1'>
         <div>inside1</div>

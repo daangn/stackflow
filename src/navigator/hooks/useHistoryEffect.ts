@@ -13,8 +13,11 @@ export function useHistoryPopEffect(
   const [locationKeys, setLocationKeys] = useState<string[]>([])
 
   useEffect(() => {
+    console.log('listen')
     const unlisten = history.listen((location, action) => {
       const key = location.pathname + location.search
+
+      console.log(locationKeys, key)
 
       switch (action) {
         case 'PUSH': {
@@ -35,6 +38,7 @@ export function useHistoryPopEffect(
     })
 
     return () => {
+      console.log('unlisten')
       unlisten()
     }
   }, [locationKeys, ...(deps ?? [])])
