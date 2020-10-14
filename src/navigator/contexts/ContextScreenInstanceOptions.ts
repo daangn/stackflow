@@ -1,6 +1,6 @@
 import { createContext, useContext } from 'react'
 
-import { NavbarOptions } from '../atoms'
+import { NavbarOptions } from '../store'
 
 export const ContextScreenInstanceOptions = createContext<{
   setNavbar: (navbar: NavbarOptions) => void

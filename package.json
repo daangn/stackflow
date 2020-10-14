@@ -1,6 +1,6 @@
 {
   "name": "@daangn/karrotframe",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "UX Enhancer",
   "repository": "https://github.com/daangn/karrotframe",
   "license": "MIT",
@@ -29,10 +29,11 @@
     "@emotion/styled": "^10.0.27",
     "@emotion/styled-base": "^10.0.31",
     "@types/react-router-dom": "^5.1.5",
+    "mobx": "^6.0.1",
+    "mobx-react-lite": "^3.0.0",
     "querystring": "^0.2.0",
     "react-router-dom": "^5.2.0",
-    "react-transition-group": "^4.4.1",
-    "recoil": "^0.0.11"
+    "react-transition-group": "^4.4.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.11.6",

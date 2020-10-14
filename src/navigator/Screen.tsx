@@ -1,9 +1,9 @@
+import { action } from 'mobx'
 import React, { useEffect, useMemo } from 'react'
-import { useSetRecoilState } from 'recoil'
 
 import { generateScreenId } from '../utils'
-import { AtomScreens, AtomScreenInstanceOptions, NavbarOptions } from './atoms'
 import { ScreenInstanceOptionsProvider, ScreenInstanceInfoProvider } from './contexts'
+import store, { NavbarOptions } from './store'
 
 interface ScreenProps {
   /**
@@ -21,52 +21,42 @@ const Screen: React.FC<ScreenProps> = (props) => {
 
   const id = useMemo(() => generateScreenId(), [])
 
-  const setScreens = useSetRecoilState(AtomScreens)
-  const setScreenInstanceOptions = useSetRecoilState(AtomScreenInstanceOptions)
-
   useEffect(() => {
     if (!props.children && !props.component) {
       console.warn('component props, children 중 하나는 반드시 필요합니다')
       return
     }
 
-    setScreens((screens) => ({
-      ...screens,
-      [id]: {
-        id,
-        path: props.path,
-        Component: ({ screenInstanceId }) => {
-          /**
-           * ScreenContext를 통해 유저가 navbar를 바꿀때마다
-           * 실제 ScreenInstance의 navbar를 변경
-           */
-          const setNavbar = (navbar: NavbarOptions) => {
-            setScreenInstanceOptions((options) => ({
-              ...options,
-              [screenInstanceId]: {
-                ...options[screenInstanceId],
-                navbar,
-              },
-            }))
-          }
+    store.screens.set(id, {
+      id,
+      path: props.path,
+      Component: ({ screenInstanceId }) => {
+        /**
+         * ScreenContext를 통해 유저가 navbar를 바꿀때마다
+         * 실제 ScreenInstance의 navbar를 변경
+         */
+        const setNavbar = action((navbar: NavbarOptions) => {
+          store.screenInstanceOptions.set(screenInstanceId, {
+            navbar,
+          })
+        })
 
-          return (
-            <ScreenInstanceInfoProvider
+        return (
+          <ScreenInstanceInfoProvider
+            value={{
+              screenInstanceId,
+              path: props.path,
+            }}>
+            <ScreenInstanceOptionsProvider
               value={{
-                screenInstanceId,
-                path: props.path,
+                setNavbar,
               }}>
-              <ScreenInstanceOptionsProvider
-                value={{
-                  setNavbar,
-                }}>
-                {Component ? <Component /> : props.children}
-              </ScreenInstanceOptionsProvider>
-            </ScreenInstanceInfoProvider>
-          )
-        },
+              {Component ? <Component /> : props.children}
+            </ScreenInstanceOptionsProvider>
+          </ScreenInstanceInfoProvider>
+        )
       },
-    }))
+    })
   }, [props])
 
   return null

@@ -20,7 +20,7 @@ function App() {
   const environment = (() => {
     switch (bridge.environment) {
       case 'Web':
-        return 'Android' as const
+        return 'Cupertino' as const
       default:
         return bridge.environment
     }

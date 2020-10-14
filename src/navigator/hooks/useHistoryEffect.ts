@@ -1,47 +1,52 @@
-import { DependencyList, useEffect, useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { DependencyList, useEffect, useRef } from 'react'
+import { useHistory, useLocation } from 'react-router-dom'
 import { Location, Action, History } from 'history'
 
 export function useHistoryPopEffect(
   callbacks: {
     forward: (location: Location<History.UnknownFacade>, action: Action) => void
-    backward: (location: Location<History.UnknownFacade>, action: Action) => void
+    backward: (location: Location<History.UnknownFacade>, action: Action, depth: number) => void
   },
   deps?: DependencyList | undefined
 ) {
   const history = useHistory()
-  const [locationKeys, setLocationKeys] = useState<string[]>([])
+  const location = useLocation()
+
+  const locationKeyStack = useRef<string[]>([])
 
   useEffect(() => {
-    console.log('listen')
-    const unlisten = history.listen((location, action) => {
-      const key = location.pathname + location.search
+    locationKeyStack.current = [location.pathname + location.search]
+  }, [])
 
-      console.log(locationKeys, key)
+  useEffect(() => {
+    return history.listen((location, action) => {
+      const locationKey = location.pathname + location.search
 
       switch (action) {
         case 'PUSH': {
-          setLocationKeys([key])
-          return
+          if (locationKeyStack.current[locationKeyStack.current.length - 1] !== locationKey) {
+            locationKeyStack.current.push(locationKey)
+          }
+          break
+        }
+        case 'REPLACE': {
+          locationKeyStack.current[locationKeyStack.current.length - 1] = locationKey
+          break
         }
         case 'POP': {
-          if (locationKeys[1] === key) {
-            setLocationKeys(([, ...keys]) => keys)
-            callbacks.forward?.(location, action)
+          const ptr = locationKeyStack.current.findIndex((key) => key === locationKey)
+          if (ptr > -1) {
+            const depth = locationKeyStack.current.length - ptr
+            locationKeyStack.current = locationKeyStack.current.filter((_, idx) => idx <= ptr)
+            callbacks.backward?.(location, action, depth)
           } else {
-            setLocationKeys((keys) => [key, ...keys])
-            callbacks.backward?.(location, action)
+            locationKeyStack.current.push(locationKey)
+            callbacks.forward?.(location, action)
           }
-          return
         }
       }
     })
-
-    return () => {
-      console.log('unlisten')
-      unlisten()
-    }
-  }, [locationKeys, ...(deps ?? [])])
+  }, deps)
 }
 
 export function useHistoryPushEffect(
@@ -49,11 +54,22 @@ export function useHistoryPushEffect(
   deps?: DependencyList | undefined
 ) {
   const history = useHistory()
+  const location = useLocation()
+  const locationKeyStack = useRef<string[]>([])
+
+  useEffect(() => {
+    locationKeyStack.current = [location.pathname + location.search]
+  }, [])
 
   useEffect(() => {
     return history.listen((location, action) => {
+      const locationKey = location.pathname + location.search
+
       if (action === 'PUSH') {
-        callback(location, action)
+        if (locationKeyStack.current[locationKeyStack.current.length - 1] !== locationKey) {
+          locationKeyStack.current.push(locationKey)
+          callback(location, action)
+        }
       }
     })
   }, deps)
