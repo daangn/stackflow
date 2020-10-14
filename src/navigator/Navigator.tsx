@@ -1,5 +1,5 @@
 import qs from 'querystring'
-import React, { memo, useEffect, useMemo, useRef } from 'react'
+import React, { memo, useCallback, useEffect, useMemo, useRef } from 'react'
 import { HashRouter, useLocation, useHistory, matchPath } from 'react-router-dom'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import { RecoilRoot, useRecoilState } from 'recoil'
@@ -8,14 +8,11 @@ import styled from '@emotion/styled'
 import { NavigatorOptionsProvider, useNavigatorOptions } from './contexts'
 import { NavigatorTheme } from '../types'
 import { appendSearch, generateScreenInstanceId } from '../utils'
-import {
-  AtomScreens,
-  AtomScreenInstances,
-  AtomScreenInstancePointer,
-  ScreenInstance,
-  screenInstancePromises,
-} from './atoms'
+import { AtomScreens, AtomScreenInstancePointer, ScreenInstance, screenInstancePromises } from './atoms'
 import { Card } from './components'
+import { useScreenInstances } from './hooks/useScreenInstances'
+import { useScreenInstancePointer } from './hooks/useScreenInstancePointer'
+import { useHistoryPopEffect, useHistoryPushEffect, useHistoryReplaceEffect } from './hooks/useHistoryEffect'
 
 const DEFAULT_CUPERTINO_ANIMATION_DURATION = 350
 const DEFAULT_ANDROID_ANIMATION_DURATION = 270
@@ -87,27 +84,52 @@ const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
   const history = useHistory()
 
   const [screens] = useRecoilState(AtomScreens)
-  const [screenInstances, setScreenInstances] = useRecoilState(AtomScreenInstances)
-  const [screenInstancePointer, setScreenInstancePointer] = useRecoilState(AtomScreenInstancePointer)
+  const { screenInstancePointer, setScreenInstancePointer, increaseScreenInstancePointer } = useScreenInstancePointer()
 
-  console.log(screenInstances)
+  const { screenInstances, setScreenInstanceIn, pushScreenInstanceAfter } = useScreenInstances()
+
+  const pushScreen = useCallback(
+    ({ screenId, screenInstanceId }: { screenId: string; screenInstanceId: string }) => {
+      const nextPointer = screenInstances.findIndex((screenInstance) => screenInstance.id === screenInstanceId)
+
+      if (nextPointer === -1) {
+        pushScreenInstanceAfter(screenInstancePointer, { screenId, screenInstanceId })
+        increaseScreenInstancePointer()
+      } else {
+        setScreenInstancePointer(() => nextPointer)
+      }
+    },
+    [screenInstances, setScreenInstancePointer, screenInstancePointer]
+  )
+
+  const replaceScreen = useCallback(
+    ({ screenId, screenInstanceId }: { screenId: string; screenInstanceId: string }) => {
+      pushScreenInstanceAfter(screenInstancePointer - 1, { screenId, screenInstanceId })
+    },
+    [pushScreenInstanceAfter]
+  )
+
+  const popScreen = useCallback(
+    ({ depth, targetScreenInstanceId }: { depth: number; targetScreenInstanceId?: string }) => {
+      if (targetScreenInstanceId) {
+        screenInstancePromises[targetScreenInstanceId]?.(null)
+      }
+      setScreenInstancePointer((pointer) => pointer - depth)
+    },
+    [setScreenInstancePointer]
+  )
 
   useEffect(() => {
     if (isNavigatorInitialized) {
       throw new Error('한 개의 앱에는 한 개의 Navigator만 허용됩니다')
-    } else {
-      // 초기화 작업
-      isNavigatorInitialized = true
-
-      const search = location.search.split('?')[1]
-      history.replace(
-        location.pathname +
-          '?' +
-          appendSearch(search, {
-            _si: generateScreenInstanceId(),
-          })
-      )
     }
+
+    const search = location.search.split('?')[1]
+    const _si = generateScreenInstanceId()
+
+    history.replace(location.pathname + '?' + appendSearch(search, { _si }))
+
+    isNavigatorInitialized = true
 
     return () => {
       isNavigatorInitialized = false
@@ -122,146 +144,104 @@ const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
 
       if (screen) {
         const screenInstanceId = (qs.parse(location.search.split('?')[1])?._si as string | undefined) ?? ''
-        push({
+        pushScreen({
           screenId: screen.id,
           screenInstanceId,
         })
       }
     }
+  }, [screens, screenInstances, screenInstancePointer])
 
-    const disposeHistoryListen = history.listen((location, action) => {
+  useHistoryPushEffect(
+    (location) => {
       const screen = Object.values(screens).find((screen) =>
         matchPath(location.pathname, { exact: true, path: screen.path })
       )
-      const screenInstanceId = (qs.parse(location.search.split('?')[1])?._si as string) ?? ''
+      const screenInstanceId = qs.parse(location.search.split('?')[1])?._si as string | undefined
 
-      switch (action) {
-        /**
-         * Link를 통해 push 했을 때,
-         */
-        case 'PUSH': {
-          if (screen && screenInstanceId) {
-            push({
-              screenId: screen.id,
-              screenInstanceId,
-            })
-          } else {
-            setScreenInstanceOf(screenInstancePointer, (screenInstance) => ({
-              ...screenInstance,
-              nestedRouteCount: screenInstance.nestedRouteCount + 1,
-            }))
-          }
-          break
-        }
-
-        /**
-         * Link를 통해 replace 했을 때,
-         */
-        case 'REPLACE': {
-          if (screen && screenInstanceId) {
-            replace({
-              screenId: screen.id,
-              screenInstanceId,
-            })
-          }
-          break
-        }
-
-        /**
-         * 뒤로가기, 앞으로 가기 했을 때,
-         */
-        case 'POP': {
-          if (screen && screenInstanceId) {
-            const nextPointer = screenInstances.findIndex((screenInstance) => screenInstance.id === screenInstanceId)
-            const isForward = nextPointer > screenInstancePointer || nextPointer === -1
-
-            console.log(1)
-
-            if (isForward) {
-              push({
-                screenId: screen.id,
-                screenInstanceId,
-              })
-            } else {
-              pop({
-                depth: screenInstancePointer - nextPointer,
-                targetScreenInstanceId: screenInstanceId,
-              })
-              setScreenInstanceOf(screenInstancePointer, (screenInstance) => ({
-                ...screenInstance,
-                nestedRouteCount: 0,
-              }))
-            }
-          } else if (screenInstances[screenInstancePointer]?.nestedRouteCount === 0) {
-            console.log(2)
-            pop({
-              depth: 1,
-              // targetScreenInstanceId: screenInstanceId,
-            })
-          } else {
-            setScreenInstanceOf(screenInstancePointer, (screenInstance) => ({
-              ...screenInstance,
-              nestedRouteCount: screenInstance.nestedRouteCount - 1,
-            }))
-          }
-
-          break
-        }
-      }
-    })
-
-    function push({ screenId, screenInstanceId }: { screenId: string; screenInstanceId: string }) {
-      const nextPointer = screenInstances.findIndex((screenInstance) => screenInstance.id === screenInstanceId)
-
-      if (nextPointer === -1) {
-        setScreenInstances((instances) => [
-          ...instances.filter((_, index) => index <= screenInstancePointer),
-          {
-            id: screenInstanceId,
-            screenId,
-            nestedRouteCount: 0,
-          },
-        ])
-        setScreenInstancePointer((pointer) => pointer + 1)
-      } else {
-        setScreenInstancePointer(() => nextPointer)
-      }
-    }
-
-    function replace({ screenId, screenInstanceId }: { screenId: string; screenInstanceId: string }) {
-      setScreenInstances((instances) => [
-        ...instances.filter((_, index) => index < screenInstancePointer),
-        {
-          id: screenInstanceId,
-          screenId,
-          nestedRouteCount: 0,
-        },
-      ])
-    }
-
-    function pop({ depth, targetScreenInstanceId }: { depth: number; targetScreenInstanceId?: string }) {
-      if (targetScreenInstanceId) {
-        screenInstancePromises[targetScreenInstanceId]?.(null)
-      }
-      setScreenInstancePointer((pointer) => pointer - depth)
-    }
-
-    function setScreenInstanceOf(pointer: number, setter: (screenInstance: ScreenInstance) => ScreenInstance) {
-      setScreenInstances((screenInstances) =>
-        screenInstances.map((screenInstance, screenInstanceIndex) => {
-          if (screenInstanceIndex === pointer) {
-            return setter(screenInstance)
-          } else {
-            return screenInstance
-          }
+      if (screen && screenInstanceId) {
+        pushScreen({
+          screenId: screen.id,
+          screenInstanceId,
         })
-      )
-    }
+      } else {
+        setScreenInstanceIn(screenInstancePointer, (screenInstance) => ({
+          ...screenInstance,
+          nestedRouteCount: screenInstance.nestedRouteCount + 1,
+        }))
+      }
+    },
+    [screens, pushScreen, setScreenInstanceIn, screenInstancePointer]
+  )
 
-    return () => {
-      disposeHistoryListen()
-    }
-  }, [screens, screenInstances, screenInstancePointer])
+  useHistoryReplaceEffect(
+    (location) => {
+      const screen = Object.values(screens).find((screen) =>
+        matchPath(location.pathname, { exact: true, path: screen.path })
+      )
+      const screenInstanceId = qs.parse(location.search.split('?')[1])?._si as string | undefined
+
+      if (screen && screenInstanceId) {
+        replaceScreen({
+          screenId: screen.id,
+          screenInstanceId,
+        })
+      }
+    },
+    [screens, replaceScreen]
+  )
+
+  useHistoryPopEffect(
+    {
+      backward(location) {
+        const screen = Object.values(screens).find((screen) =>
+          matchPath(location.pathname, { exact: true, path: screen.path })
+        )
+        const screenInstanceId = qs.parse(location.search.split('?')[1])?._si as string | undefined
+
+        if (screen && screenInstanceId) {
+          const nextPointer = screenInstances.findIndex((screenInstance) => screenInstance.id === screenInstanceId)
+
+          popScreen({
+            depth: screenInstancePointer - nextPointer,
+            targetScreenInstanceId: screenInstanceId,
+          })
+          setScreenInstanceIn(screenInstancePointer, (screenInstance) => ({
+            ...screenInstance,
+            nestedRouteCount: 0,
+          }))
+        } else if (screenInstances[screenInstancePointer]?.nestedRouteCount === 0) {
+          popScreen({
+            depth: 1,
+          })
+        } else {
+          setScreenInstanceIn(screenInstancePointer, (screenInstance) => ({
+            ...screenInstance,
+            nestedRouteCount: screenInstance.nestedRouteCount - 1,
+          }))
+        }
+      },
+      forward(location) {
+        const screen = Object.values(screens).find((screen) =>
+          matchPath(location.pathname, { exact: true, path: screen.path })
+        )
+        const screenInstanceId = qs.parse(location.search.split('?')[1])?._si as string | undefined
+
+        if (screen && screenInstanceId) {
+          pushScreen({
+            screenId: screen.id,
+            screenInstanceId,
+          })
+        } else if (screenInstances[screenInstancePointer]?.nestedRouteCount === 0) {
+          setScreenInstanceIn(screenInstancePointer, (screenInstance) => ({
+            ...screenInstance,
+            nestedRouteCount: screenInstance.nestedRouteCount + 1,
+          }))
+        }
+      },
+    },
+    [screens, screenInstances, popScreen, pushScreen, screenInstancePointer, setScreenInstanceIn]
+  )
 
   const onClose = () => {
     props.onClose?.()
