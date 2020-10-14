@@ -2,7 +2,7 @@ import React from 'react'
 import { useHistory } from 'react-router-dom'
 import { css } from '@emotion/core'
 import styled from '@emotion/styled'
-import { useObserver } from 'mobx-react-lite'
+import { Observer } from 'mobx-react-lite'
 
 import { NavigatorTheme } from '../../types'
 import { IconBack, IconClose } from '../assets'
@@ -18,56 +18,62 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = (props) => {
   const history = useHistory()
   const navigatorOptions = useNavigatorOptions()
-  const screenInstanceOption = useObserver(() => store.screenInstanceOptions.get(props.screenInstanceId))
-
-  const closeButton =
-    props.isRoot &&
-    (screenInstanceOption?.navbar.customCloseButton ? (
-      <Close onClick={props.onClose}>{screenInstanceOption.navbar.customCloseButton}</Close>
-    ) : (
-      <Close onClick={props.onClose}>
-        <IconClose />
-      </Close>
-    ))
-
-  const backButton =
-    !props.isRoot &&
-    (screenInstanceOption?.navbar.customBackButton ? (
-      <Back onClick={history.goBack}>{screenInstanceOption.navbar.customBackButton}</Back>
-    ) : (
-      <Back onClick={history.goBack}>
-        <IconBack />
-      </Back>
-    ))
-
-  const isLeft = !!(
-    (screenInstanceOption?.navbar.closeButtonLocation === 'left' && closeButton) ||
-    backButton ||
-    screenInstanceOption?.navbar.appendLeft
-  )
-
-  const center = (
-    <Center isLeft={isLeft} navigatorTheme={props.theme}>
-      {screenInstanceOption?.navbar.title}
-    </Center>
-  )
 
   return (
-    <Container navigatorTheme={props.theme} animationDuration={navigatorOptions.animationDuration}>
-      {props.theme === 'Cupertino' && center}
-      <Flex>
-        <Left>
-          {screenInstanceOption?.navbar.closeButtonLocation === 'left' && closeButton}
-          {backButton}
-          {screenInstanceOption?.navbar.appendLeft}
-        </Left>
-        {props.theme === 'Android' && center}
-        <Right>
-          {screenInstanceOption?.navbar.appendRight}
-          {screenInstanceOption?.navbar.closeButtonLocation === 'right' && closeButton}
-        </Right>
-      </Flex>
-    </Container>
+    <Observer>
+      {() => {
+        const screenInstanceOption = store.screenInstanceOptions.get(props.screenInstanceId)
+        const closeButton =
+          props.isRoot &&
+          (screenInstanceOption?.navbar.customCloseButton ? (
+            <Close onClick={props.onClose}>{screenInstanceOption.navbar.customCloseButton}</Close>
+          ) : (
+            <Close onClick={props.onClose}>
+              <IconClose />
+            </Close>
+          ))
+
+        const backButton =
+          !props.isRoot &&
+          (screenInstanceOption?.navbar.customBackButton ? (
+            <Back onClick={history.goBack}>{screenInstanceOption.navbar.customBackButton}</Back>
+          ) : (
+            <Back onClick={history.goBack}>
+              <IconBack />
+            </Back>
+          ))
+
+        const isLeft = !!(
+          (screenInstanceOption?.navbar.closeButtonLocation === 'left' && closeButton) ||
+          backButton ||
+          screenInstanceOption?.navbar.appendLeft
+        )
+
+        const center = (
+          <Center isLeft={isLeft} navigatorTheme={props.theme}>
+            {screenInstanceOption?.navbar.title}
+          </Center>
+        )
+
+        return (
+          <Container navigatorTheme={props.theme} animationDuration={navigatorOptions.animationDuration}>
+            {props.theme === 'Cupertino' && center}
+            <Flex>
+              <Left>
+                {screenInstanceOption?.navbar.closeButtonLocation === 'left' && closeButton}
+                {backButton}
+                {screenInstanceOption?.navbar.appendLeft}
+              </Left>
+              {props.theme === 'Android' && center}
+              <Right>
+                {screenInstanceOption?.navbar.appendRight}
+                {screenInstanceOption?.navbar.closeButtonLocation === 'right' && closeButton}
+              </Right>
+            </Flex>
+          </Container>
+        )
+      }}
+    </Observer>
   )
 }
 

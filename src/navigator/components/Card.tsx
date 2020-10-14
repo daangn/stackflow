@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { css } from '@emotion/core'
 import styled from '@emotion/styled'
-import { useObserver } from 'mobx-react-lite'
+import { Observer } from 'mobx-react-lite'
+import { reaction } from 'mobx'
 
 import { NavigatorOptions, useNavigatorOptions } from '../contexts'
 import Navbar, { Container as NavbarContainer } from './Navbar'
@@ -21,10 +22,6 @@ interface CardProps {
 const Card: React.FC<CardProps> = (props) => {
   const navigator = useNavigator()
   const navigatorOptions = useNavigatorOptions()
-  const screenInstanceOptions = useObserver(() => store.screenInstanceOptions)
-  const screenEdge = useObserver(() => store.screenEdge)
-
-  const screenInstanceOption = screenInstanceOptions.get(props.screenInstanceId)
 
   const [loading, setLoading] = useState(props.isRoot)
 
@@ -80,105 +77,118 @@ const Card: React.FC<CardProps> = (props) => {
   useEffect(() => {
     let stopped = false
 
-    if (screenEdge.startX === null) {
-      requestAnimationFrame(() => {
-        const $dim = dimRef.current
-        const $frame = frameRef.current
+    const dispose = reaction(
+      () => [store.screenEdge],
+      () => {
+        const animate = () => {
+          requestAnimationFrame(() => {
+            const computedEdgeX = x.current - store.screenEdge.startX!
 
-        if ($dim) {
-          $dim.style.cssText = ''
-        }
-        if ($frame) {
-          $frame.style.cssText = ''
-        }
-        $allFrameOffsetElements.forEach(($frameOffset) => {
-          $frameOffset.style.cssText = ''
-        })
-      })
-    } else if (props.isTop) {
-      animate()
+            const $dim = dimRef.current
+            const $frame = frameRef.current
 
-      return () => {
-        stopped = true
-      }
-    }
+            if (computedEdgeX >= 0) {
+              if ($dim) {
+                $dim.style.cssText = `
+                  opacity: ${1 - computedEdgeX / window.screen.width};
+                  transition: opacity 0s;
+                `
+              }
+              if ($frame) {
+                $frame.style.cssText = `
+                  overflow-y: hidden;
+                  transform: translateX(${computedEdgeX}px); transition: transform 0s;
+                `
+              }
+              $allFrameOffsetElements.forEach(($frameOffset) => {
+                if ($frameOffset !== frameOffsetRef.current) {
+                  $frameOffset.style.cssText = `
+                    transform: translateX(-${5 - (5 * computedEdgeX) / window.screen.width}rem);
+                    transition: 0s;
+                  `
+                }
+              })
+            }
 
-    function animate() {
-      requestAnimationFrame(() => {
-        const computedEdgeX = x.current - store.screenEdge.startX!
-
-        const $dim = dimRef.current
-        const $frame = frameRef.current
-
-        if (computedEdgeX >= 0) {
-          if ($dim) {
-            $dim.style.cssText = `
-              opacity: ${1 - computedEdgeX / window.screen.width};
-              transition: opacity 0s;
-            `
-          }
-          if ($frame) {
-            $frame.style.cssText = `
-              overflow-y: hidden;
-              transform: translateX(${computedEdgeX}px); transition: transform 0s;
-            `
-          }
-          $allFrameOffsetElements.forEach(($frameOffset) => {
-            if ($frameOffset !== frameOffsetRef.current) {
-              $frameOffset.style.cssText = `
-                transform: translateX(-${5 - (5 * computedEdgeX) / window.screen.width}rem);
-                transition: 0s;
-              `
+            if (!stopped) {
+              animate()
             }
           })
         }
 
-        if (!stopped) {
+        if (store.screenEdge.startX === null) {
+          requestAnimationFrame(() => {
+            const $dim = dimRef.current
+            const $frame = frameRef.current
+
+            if ($dim) {
+              $dim.style.cssText = ''
+            }
+            if ($frame) {
+              $frame.style.cssText = ''
+            }
+            $allFrameOffsetElements.forEach(($frameOffset) => {
+              $frameOffset.style.cssText = ''
+            })
+          })
+        } else if (props.isTop) {
           animate()
         }
-      })
+      }
+    )
+
+    return () => {
+      dispose()
+      stopped = true
     }
-  }, [props.isTop, screenEdge])
+  }, [props.isTop])
 
   return (
-    <TransitionNode ref={props.nodeRef} navigatorOptions={navigatorOptions}>
-      <Dim
-        ref={dimRef}
-        navigatorOptions={navigatorOptions}
-        isNavbarVisible={!!screenInstanceOption?.navbar.visible}
-        isLoading={loading}
-      />
-      <MainOffset navigatorOptions={navigatorOptions} isTop={props.isTop} isLoading={loading}>
-        <Main
-          navigatorOptions={navigatorOptions}
-          isNavbarVisible={!!screenInstanceOption?.navbar.visible}
-          isRoot={props.isRoot}
-          isTop={props.isTop}>
-          {!!screenInstanceOption?.navbar.visible && (
-            <Navbar
-              screenInstanceId={props.screenInstanceId}
-              theme={navigatorOptions.theme}
-              isRoot={props.isRoot}
-              onClose={props.onClose}
-            />
-          )}
-          <FrameOffset ref={frameOffsetRef} navigatorOptions={navigatorOptions} isTop={props.isTop}>
-            <Frame ref={frameRef} navigatorOptions={navigatorOptions} isRoot={props.isRoot}>
-              {props.children}
-            </Frame>
-          </FrameOffset>
-          {navigatorOptions.theme === 'Cupertino' && !props.isRoot && (
-            <Edge
+    <Observer>
+      {() => {
+        const screenInstanceOption = store.screenInstanceOptions.get(props.screenInstanceId)
+        return (
+          <TransitionNode ref={props.nodeRef} navigatorOptions={navigatorOptions}>
+            <Dim
+              ref={dimRef}
               navigatorOptions={navigatorOptions}
               isNavbarVisible={!!screenInstanceOption?.navbar.visible}
-              onTouchStart={onEdgeTouchStart}
-              onTouchMove={onEdgeTouchMove}
-              onTouchEnd={onEdgeTouchEnd}
+              isLoading={loading}
             />
-          )}
-        </Main>
-      </MainOffset>
-    </TransitionNode>
+            <MainOffset navigatorOptions={navigatorOptions} isTop={props.isTop} isLoading={loading}>
+              <Main
+                navigatorOptions={navigatorOptions}
+                isNavbarVisible={!!screenInstanceOption?.navbar.visible}
+                isRoot={props.isRoot}
+                isTop={props.isTop}>
+                {!!screenInstanceOption?.navbar.visible && (
+                  <Navbar
+                    screenInstanceId={props.screenInstanceId}
+                    theme={navigatorOptions.theme}
+                    isRoot={props.isRoot}
+                    onClose={props.onClose}
+                  />
+                )}
+                <FrameOffset ref={frameOffsetRef} navigatorOptions={navigatorOptions} isTop={props.isTop}>
+                  <Frame ref={frameRef} navigatorOptions={navigatorOptions} isRoot={props.isRoot}>
+                    {props.children}
+                  </Frame>
+                </FrameOffset>
+                {navigatorOptions.theme === 'Cupertino' && !props.isRoot && (
+                  <Edge
+                    navigatorOptions={navigatorOptions}
+                    isNavbarVisible={!!screenInstanceOption?.navbar.visible}
+                    onTouchStart={onEdgeTouchStart}
+                    onTouchMove={onEdgeTouchMove}
+                    onTouchEnd={onEdgeTouchEnd}
+                  />
+                )}
+              </Main>
+            </MainOffset>
+          </TransitionNode>
+        )
+      }}
+    </Observer>
   )
 }
 

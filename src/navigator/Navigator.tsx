@@ -1,9 +1,10 @@
 import qs from 'querystring'
-import React, { memo, useCallback, useEffect, useMemo, useRef } from 'react'
+import React, { memo, useCallback, useEffect, useRef } from 'react'
 import { HashRouter, useLocation, useHistory, matchPath } from 'react-router-dom'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import styled from '@emotion/styled'
-import { useObserver } from 'mobx-react-lite'
+import { Observer } from 'mobx-react-lite'
+import { reaction } from 'mobx'
 
 import { NavigatorOptionsProvider, useNavigatorOptions } from './contexts'
 import { NavigatorTheme } from '../types'
@@ -80,10 +81,6 @@ const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
   const location = useLocation()
   const history = useHistory()
 
-  const screens = useObserver(() => store.screens)
-  const screenInstancePtr = useObserver(() => store.screenInstancePtr)
-  const screenInstances = useObserver(() => store.screenInstances)
-
   const pushScreen = useCallback(({ screenId, screenInstanceId }: { screenId: string; screenInstanceId: string }) => {
     const nextPtr = store.screenInstances.findIndex((screenInstance) => screenInstance.id === screenInstanceId)
 
@@ -130,25 +127,35 @@ const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
   }, [])
 
   useEffect(() => {
-    if (screenInstances.length === 0) {
-      let matchScreen: Screen | null = null
+    const effect = () => {
+      if (store.screenInstances.length === 0) {
+        let matchScreen: Screen | null = null
 
-      for (const screen of screens.values()) {
-        if (matchPath(location.pathname, { exact: true, path: screen.path })) {
-          matchScreen = screen
-          break
+        for (const screen of store.screens.values()) {
+          if (matchPath(location.pathname, { exact: true, path: screen.path })) {
+            matchScreen = screen
+            break
+          }
+        }
+
+        if (matchScreen) {
+          const screenInstanceId = (qs.parse(location.search.split('?')[1])?._si as string | undefined) ?? ''
+          pushScreen({
+            screenId: matchScreen.id,
+            screenInstanceId,
+          })
         }
       }
-
-      if (matchScreen) {
-        const screenInstanceId = (qs.parse(location.search.split('?')[1])?._si as string | undefined) ?? ''
-        pushScreen({
-          screenId: matchScreen.id,
-          screenInstanceId,
-        })
-      }
     }
-  }, [screens, screenInstances, screenInstancePtr])
+
+    effect()
+    return reaction(
+      () => [store.screens, store.screenInstances, store.screenInstancePtr],
+      () => {
+        effect()
+      }
+    )
+  }, [])
 
   useHistoryPushEffect(
     (location) => {
@@ -269,18 +276,21 @@ const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
     props.onClose?.()
   }
 
-  return useMemo(
-    () => (
-      <Root>
-        {props.children}
-        <TransitionGroup>
-          {screenInstances.map((screenInstance, index) => (
-            <Transition key={index} screenInstance={screenInstance} screenInstanceIndex={index} onClose={onClose} />
-          ))}
-        </TransitionGroup>
-      </Root>
-    ),
-    [screenInstances]
+  return (
+    <Root>
+      {props.children}
+      <TransitionGroup>
+        <Observer>
+          {() => (
+            <>
+              {store.screenInstances.map((screenInstance, index) => (
+                <Transition key={index} screenInstance={screenInstance} screenInstanceIndex={index} onClose={onClose} />
+              ))}
+            </>
+          )}
+        </Observer>
+      </TransitionGroup>
+    </Root>
   )
 }
 
@@ -300,30 +310,32 @@ interface TransitionProps {
 const Transition: React.FC<TransitionProps> = memo((props) => {
   const navigatorOptions = useNavigatorOptions()
 
-  const screens = useObserver(() => store.screens)
-  const screenInstancePtr = useObserver(() => store.screenInstancePtr)
-
   const nodeRef = useRef<HTMLDivElement>(null)
 
-  const { Component } = screens.get(props.screenInstance.screenId)!
-
   return (
-    <CSSTransition
-      key={props.screenInstance.id}
-      nodeRef={nodeRef}
-      timeout={navigatorOptions.animationDuration}
-      in={props.screenInstanceIndex <= screenInstancePtr}
-      unmountOnExit>
-      <Card
-        nodeRef={nodeRef}
-        screenPath={screens.get(props.screenInstance.screenId)!.path}
-        screenInstanceId={props.screenInstance.id}
-        isRoot={props.screenInstanceIndex === 0}
-        isTop={props.screenInstanceIndex === screenInstancePtr}
-        onClose={props.onClose}>
-        <Component screenInstanceId={props.screenInstance.id} />
-      </Card>
-    </CSSTransition>
+    <Observer>
+      {() => {
+        const { Component } = store.screens.get(props.screenInstance.screenId)!
+        return (
+          <CSSTransition
+            key={props.screenInstance.id}
+            nodeRef={nodeRef}
+            timeout={navigatorOptions.animationDuration}
+            in={props.screenInstanceIndex <= store.screenInstancePtr}
+            unmountOnExit>
+            <Card
+              nodeRef={nodeRef}
+              screenPath={store.screens.get(props.screenInstance.screenId)!.path}
+              screenInstanceId={props.screenInstance.id}
+              isRoot={props.screenInstanceIndex === 0}
+              isTop={props.screenInstanceIndex === store.screenInstancePtr}
+              onClose={props.onClose}>
+              <Component screenInstanceId={props.screenInstance.id} />
+            </Card>
+          </CSSTransition>
+        )
+      }}
+    </Observer>
   )
 })
 
