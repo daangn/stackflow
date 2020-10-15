@@ -34,10 +34,10 @@ export function useHistoryPopEffect(
           break
         }
         case 'POP': {
-          const ptr = locationKeyStack.current.findIndex((key) => key === locationKey)
-          if (ptr > -1) {
-            const depth = locationKeyStack.current.length - ptr
-            locationKeyStack.current = locationKeyStack.current.filter((_, idx) => idx <= ptr)
+          const pointer = locationKeyStack.current.findIndex((key) => key === locationKey)
+          if (pointer > -1) {
+            const depth = locationKeyStack.current.length - pointer
+            locationKeyStack.current = locationKeyStack.current.filter((_, idx) => idx <= pointer)
             callbacks.backward?.(location, action, depth)
           } else {
             locationKeyStack.current.push(locationKey)

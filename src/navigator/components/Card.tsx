@@ -1,8 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { css } from '@emotion/core'
 import styled from '@emotion/styled'
-import { Observer } from 'mobx-react-lite'
-import { reaction } from 'mobx'
+import { Observer, useObserver } from 'mobx-react-lite'
 
 import { NavigatorOptions, useNavigatorOptions } from '../contexts'
 import Navbar, { Container as NavbarContainer } from './Navbar'
@@ -22,6 +21,7 @@ interface CardProps {
 const Card: React.FC<CardProps> = (props) => {
   const navigator = useNavigator()
   const navigatorOptions = useNavigatorOptions()
+  const screenEdge = useObserver(() => store.screenEdge)
 
   const [loading, setLoading] = useState(props.isRoot)
 
@@ -77,71 +77,64 @@ const Card: React.FC<CardProps> = (props) => {
   useEffect(() => {
     let stopped = false
 
-    const dispose = reaction(
-      () => [store.screenEdge],
-      () => {
-        const animate = () => {
-          requestAnimationFrame(() => {
-            const computedEdgeX = x.current - store.screenEdge.startX!
+    const animate = () =>
+      requestAnimationFrame(() => {
+        const computedEdgeX = x.current - store.screenEdge.startX!
 
-            const $dim = dimRef.current
-            const $frame = frameRef.current
+        const $dim = dimRef.current
+        const $frame = frameRef.current
 
-            if (computedEdgeX >= 0) {
-              if ($dim) {
-                $dim.style.cssText = `
-                  opacity: ${1 - computedEdgeX / window.screen.width};
-                  transition: opacity 0s;
-                `
-              }
-              if ($frame) {
-                $frame.style.cssText = `
-                  overflow-y: hidden;
-                  transform: translateX(${computedEdgeX}px); transition: transform 0s;
-                `
-              }
-              $allFrameOffsetElements.forEach(($frameOffset) => {
-                if ($frameOffset !== frameOffsetRef.current) {
-                  $frameOffset.style.cssText = `
-                    transform: translateX(-${5 - (5 * computedEdgeX) / window.screen.width}rem);
-                    transition: 0s;
-                  `
-                }
-              })
-            }
-
-            if (!stopped) {
-              animate()
+        if (computedEdgeX >= 0) {
+          if ($dim) {
+            $dim.style.cssText = `
+              opacity: ${1 - computedEdgeX / window.screen.width};
+              transition: opacity 0s;
+            `
+          }
+          if ($frame) {
+            $frame.style.cssText = `
+              overflow-y: hidden;
+              transform: translateX(${computedEdgeX}px); transition: transform 0s;
+            `
+          }
+          $allFrameOffsetElements.forEach(($frameOffset) => {
+            if ($frameOffset !== frameOffsetRef.current) {
+              $frameOffset.style.cssText = `
+                transform: translateX(-${5 - (5 * computedEdgeX) / window.screen.width}rem);
+                transition: 0s;
+              `
             }
           })
         }
 
-        if (store.screenEdge.startX === null) {
-          requestAnimationFrame(() => {
-            const $dim = dimRef.current
-            const $frame = frameRef.current
-
-            if ($dim) {
-              $dim.style.cssText = ''
-            }
-            if ($frame) {
-              $frame.style.cssText = ''
-            }
-            $allFrameOffsetElements.forEach(($frameOffset) => {
-              $frameOffset.style.cssText = ''
-            })
-          })
-        } else if (props.isTop) {
+        if (!stopped) {
           animate()
         }
-      }
-    )
+      })
+
+    if (store.screenEdge.startX === null) {
+      requestAnimationFrame(() => {
+        const $dim = dimRef.current
+        const $frame = frameRef.current
+
+        if ($dim) {
+          $dim.style.cssText = ''
+        }
+        if ($frame) {
+          $frame.style.cssText = ''
+        }
+        $allFrameOffsetElements.forEach(($frameOffset) => {
+          $frameOffset.style.cssText = ''
+        })
+      })
+    } else if (props.isTop) {
+      animate()
+    }
 
     return () => {
-      dispose()
       stopped = true
     }
-  }, [props.isTop])
+  }, [props.isTop, screenEdge])
 
   return (
     <Observer>
