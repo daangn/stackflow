@@ -8,7 +8,7 @@ const Page3: React.FC = () => {
   const navigator = useNavigator()
 
   const onPopClick = () => {
-    navigator.pop(2)
+    navigator.pop(2).send({wow: 'wowowow!'})
   }
   const onPop = () => {
     navigator.pop(1)
