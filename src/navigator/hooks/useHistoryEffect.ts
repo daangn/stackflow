@@ -65,10 +65,25 @@ export function useHistoryPushEffect(
     return history.listen((location, action) => {
       const locationKey = location.pathname + location.search
 
-      if (action === 'PUSH') {
-        if (locationKeyStack.current[locationKeyStack.current.length - 1] !== locationKey) {
-          locationKeyStack.current.push(locationKey)
-          callback(location, action)
+      switch (action) {
+        case 'PUSH': {
+          if (locationKeyStack.current[locationKeyStack.current.length - 1] !== locationKey) {
+            locationKeyStack.current.push(locationKey)
+            callback(location, action)
+          }
+          break
+        }
+        case 'REPLACE': {
+          locationKeyStack.current[locationKeyStack.current.length - 1] = locationKey
+          break
+        }
+        case 'POP': {
+          const pointer = locationKeyStack.current.findIndex((key) => key === locationKey)
+          if (pointer > -1) {
+            locationKeyStack.current = locationKeyStack.current.filter((_, idx) => idx <= pointer)
+          } else {
+            locationKeyStack.current.push(locationKey)
+          }
         }
       }
     })
