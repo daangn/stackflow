@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { useHistory } from 'react-router-dom'
-import { useRecoilState } from 'recoil'
 import { css } from '@emotion/core'
 import styled from '@emotion/styled'
+import { Observer, useObserver } from 'mobx-react-lite'
 
-import { AtomScreenInstanceOptions, AtomScreenEdge } from '../atoms'
 import { NavigatorOptions, useNavigatorOptions } from '../contexts'
 import Navbar, { Container as NavbarContainer } from './Navbar'
+import store, { setScreenEdge } from '../store'
+import { useNavigator } from '../useNavigator'
 
 const $allFrameOffsetElements = new Set<HTMLDivElement>()
 
@@ -19,22 +19,17 @@ interface CardProps {
   onClose: () => void
 }
 const Card: React.FC<CardProps> = (props) => {
-  const history = useHistory()
+  const navigator = useNavigator()
   const navigatorOptions = useNavigatorOptions()
-  const [screenInstanceOptions] = useRecoilState(AtomScreenInstanceOptions)
-  const screenInstanceOption = screenInstanceOptions[props.screenInstanceId]
+  const screenEdge = useObserver(() => store.screenEdge)
 
-  // 플리커링 방지를 위한 loading state
   const [loading, setLoading] = useState(props.isRoot)
 
   useEffect(() => {
     setTimeout(() => setLoading(false), 0)
   }, [])
 
-  // 스와이프 백 애니메이션 처리
   const x = useRef<number>(0)
-
-  const [screenEdge, setScreenEdge] = useRecoilState(AtomScreenEdge)
 
   const dimRef = useRef<HTMLDivElement>(null)
   const frameRef = useRef<HTMLDivElement>(null)
@@ -52,30 +47,23 @@ const Card: React.FC<CardProps> = (props) => {
     }
   }, [frameOffsetRef.current])
 
-  const onEdgeTouchStart = useCallback(
-    (e: React.TouchEvent<HTMLDivElement>) => {
-      setScreenEdge({
-        startX: e.touches[0].clientX,
-        startTime: Date.now(),
-      })
-    },
-    [setScreenEdge]
-  )
-  const onEdgeTouchMove = useCallback(
-    (e: React.TouchEvent<HTMLDivElement>) => {
-      e.preventDefault()
-      if (screenEdge.startX) {
-        x.current = e.touches[0].clientX as any
-      }
-    },
-    [screenEdge]
-  )
+  const onEdgeTouchStart = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
+    setScreenEdge({
+      startX: e.touches[0].clientX,
+      startTime: Date.now(),
+    })
+  }, [])
+  const onEdgeTouchMove = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
+    if (store.screenEdge.startX) {
+      x.current = e.touches[0].clientX as any
+    }
+  }, [])
   const onEdgeTouchEnd = useCallback(() => {
     if (x.current) {
-      const velocity = x.current / (Date.now() - (screenEdge.startTime as number))
+      const velocity = x.current / (Date.now() - (store.screenEdge.startTime as number))
 
       if (velocity > 1 || x.current / window.screen.width > 0.4) {
-        history.goBack()
+        navigator.pop()
       }
 
       setScreenEdge({
@@ -84,39 +72,14 @@ const Card: React.FC<CardProps> = (props) => {
       })
       x.current = 0
     }
-  }, [screenEdge, setScreenEdge])
+  }, [])
 
   useEffect(() => {
     let stopped = false
 
-    // 현재 스와이프 중이라면, requestAnimFrame 무한 recursive 루프를 돌면서,
-    // x 값을 이용해 스타일을 계산 및 할당
-    if (screenEdge.startX === null) {
+    const animate = () =>
       requestAnimationFrame(() => {
-        const $dim = dimRef.current
-        const $frame = frameRef.current
-
-        if ($dim) {
-          $dim.style.cssText = ''
-        }
-        if ($frame) {
-          $frame.style.cssText = ''
-        }
-        $allFrameOffsetElements.forEach(($frameOffset) => {
-          $frameOffset.style.cssText = ''
-        })
-      })
-    } else if (props.isTop) {
-      animate()
-
-      return () => {
-        stopped = true
-      }
-    }
-
-    function animate() {
-      requestAnimationFrame(() => {
-        const computedEdgeX = x.current - screenEdge.startX!
+        const computedEdgeX = x.current - store.screenEdge.startX!
 
         const $dim = dimRef.current
         const $frame = frameRef.current
@@ -148,48 +111,77 @@ const Card: React.FC<CardProps> = (props) => {
           animate()
         }
       })
+
+    if (store.screenEdge.startX === null) {
+      requestAnimationFrame(() => {
+        const $dim = dimRef.current
+        const $frame = frameRef.current
+
+        if ($dim) {
+          $dim.style.cssText = ''
+        }
+        if ($frame) {
+          $frame.style.cssText = ''
+        }
+        $allFrameOffsetElements.forEach(($frameOffset) => {
+          $frameOffset.style.cssText = ''
+        })
+      })
+    } else if (props.isTop) {
+      animate()
     }
-  }, [screenEdge, props.isTop])
+
+    return () => {
+      stopped = true
+    }
+  }, [props.isTop, screenEdge])
 
   return (
-    <TransitionNode ref={props.nodeRef} navigatorOptions={navigatorOptions}>
-      <Dim
-        ref={dimRef}
-        navigatorOptions={navigatorOptions}
-        isNavbarVisible={!!screenInstanceOption?.navbar.visible}
-        isLoading={loading}
-      />
-      <MainOffset navigatorOptions={navigatorOptions} isTop={props.isTop} isLoading={loading}>
-        <Main
-          navigatorOptions={navigatorOptions}
-          isNavbarVisible={!!screenInstanceOption?.navbar.visible}
-          isRoot={props.isRoot}
-          isTop={props.isTop}>
-          {!!screenInstanceOption?.navbar.visible && (
-            <Navbar
-              screenInstanceId={props.screenInstanceId}
-              theme={navigatorOptions.theme}
-              isRoot={props.isRoot}
-              onClose={props.onClose}
-            />
-          )}
-          <FrameOffset ref={frameOffsetRef} navigatorOptions={navigatorOptions} isTop={props.isTop}>
-            <Frame ref={frameRef} navigatorOptions={navigatorOptions} isRoot={props.isRoot}>
-              {props.children}
-            </Frame>
-          </FrameOffset>
-          {navigatorOptions.theme === 'Cupertino' && !props.isRoot && (
-            <Edge
+    <Observer>
+      {() => {
+        const screenInstanceOption = store.screenInstanceOptions.get(props.screenInstanceId)
+        return (
+          <TransitionNode ref={props.nodeRef} navigatorOptions={navigatorOptions}>
+            <Dim
+              ref={dimRef}
               navigatorOptions={navigatorOptions}
               isNavbarVisible={!!screenInstanceOption?.navbar.visible}
-              onTouchStart={onEdgeTouchStart}
-              onTouchMove={onEdgeTouchMove}
-              onTouchEnd={onEdgeTouchEnd}
+              isLoading={loading}
             />
-          )}
-        </Main>
-      </MainOffset>
-    </TransitionNode>
+            <MainOffset navigatorOptions={navigatorOptions} isTop={props.isTop} isLoading={loading}>
+              <Main
+                navigatorOptions={navigatorOptions}
+                isNavbarVisible={!!screenInstanceOption?.navbar.visible}
+                isRoot={props.isRoot}
+                isTop={props.isTop}>
+                {!!screenInstanceOption?.navbar.visible && (
+                  <Navbar
+                    screenInstanceId={props.screenInstanceId}
+                    theme={navigatorOptions.theme}
+                    isRoot={props.isRoot}
+                    onClose={props.onClose}
+                  />
+                )}
+                <FrameOffset ref={frameOffsetRef} navigatorOptions={navigatorOptions} isTop={props.isTop}>
+                  <Frame ref={frameRef} navigatorOptions={navigatorOptions} isRoot={props.isRoot}>
+                    {props.children}
+                  </Frame>
+                </FrameOffset>
+                {navigatorOptions.theme === 'Cupertino' && !props.isRoot && (
+                  <Edge
+                    navigatorOptions={navigatorOptions}
+                    isNavbarVisible={!!screenInstanceOption?.navbar.visible}
+                    onTouchStart={onEdgeTouchStart}
+                    onTouchMove={onEdgeTouchMove}
+                    onTouchEnd={onEdgeTouchEnd}
+                  />
+                )}
+              </Main>
+            </MainOffset>
+          </TransitionNode>
+        )
+      }}
+    </Observer>
   )
 }
 

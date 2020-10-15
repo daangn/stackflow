@@ -22,7 +22,8 @@
     "noUnusedParameters": true,
     "allowSyntheticDefaultImports": true,
     "jsxFactory": "",
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "downlevelIteration": true
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist", "example"]

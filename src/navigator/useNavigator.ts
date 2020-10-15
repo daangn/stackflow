@@ -1,16 +1,12 @@
 import { useHistory } from 'react-router-dom'
-import { useRecoilState } from 'recoil'
 
 import { appendSearch, generateScreenInstanceId } from '../utils'
-import { AtomScreenInstances, AtomScreenInstancePointer, screenInstancePromises } from './atoms'
+import store from './store'
 import { useScreenInstanceInfo } from './contexts'
 
 export function useNavigator() {
   const history = useHistory()
   const screenInfo = useScreenInstanceInfo()
-
-  const [screenInstances] = useRecoilState(AtomScreenInstances)
-  const [screenInstancePointer] = useRecoilState(AtomScreenInstancePointer)
 
   return {
     push<T = object>(to: string) {
@@ -26,7 +22,7 @@ export function useNavigator() {
             })
         )
 
-        screenInstancePromises[screenInfo.screenInstanceId] = resolve
+        store.screenInstancePromises.set(screenInfo.screenInstanceId, resolve)
       })
     },
     replace(to: string) {
@@ -42,16 +38,23 @@ export function useNavigator() {
       )
     },
     pop(depth = 1) {
-      for (let i = 0; i < depth; i++) {
-        history.goBack()
-      }
+      const nestedRouteCounts = store.screenInstances.map(({ nestedRouteCount }) => nestedRouteCount)
+      const totalCount = nestedRouteCounts
+        .filter((_, i) => i > store.screenInstancePointer - depth && i <= store.screenInstancePointer)
+        .reduce((acc, current) => {
+          return acc + current + 1
+        }, 0)
+
+      history.go(-totalCount)
 
       return {
         send<T = object>(data: T) {
-          const targetScreenInstance = screenInstances.find((_, index) => index === screenInstancePointer - depth)
+          const targetScreenInstance = store.screenInstances.find(
+            (_, index) => index === store.screenInstancePointer - depth
+          )
 
           if (targetScreenInstance) {
-            screenInstancePromises[targetScreenInstance.id]?.(data ?? null)
+            store.screenInstancePromises.get(targetScreenInstance.id)?.(data ?? null)
           }
         },
       }

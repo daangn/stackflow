@@ -23,7 +23,7 @@ import * as kf from '@daangn/karrotframe'
 - 각 플랫폼에 맞게 디자인된 네비게이션 바
 - 상황에 맞는 이전, 닫기 버튼
 
-> 네비게이터의 핵심 로직은 `react-router-dom`과 `recoil`에 의존하고 있습니다.
+> 네비게이터의 핵심 로직은 `react-router-dom`에 의존하고 있습니다.
 
 ### 1-a. `Navigator`
 `Navigator` 컴포넌트는 화면을 표현하는데 반드시 필요한 요소들이 포함됩니다. 컴포넌트 트리 상단에 포함해주세요
@@ -49,7 +49,6 @@ const App: React.FC = () => {
 | ------------- | ------------- | ------------- | ------------- | 
 | `theme` | `Cupertino` 또는 `Android` | UI 테마 | `Android` |
 | `animationDuration` | number | 애니메이션 지속시간  | `theme` 별로 다름 |
-| `useCustomRecoilRoot` | boolean | `true`인 경우 `Navigator` 내에 포함된 `<RecoilRoot/>` 을 제거합니다  | |
 | `useCustomRouter` | boolean | `true`인 경우 `Navigator` 내에 포함된 `<HashRouter/>` 을 제거합니다  | |
 
 ### 1-b. `Screen`

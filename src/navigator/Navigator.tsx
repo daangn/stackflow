@@ -1,21 +1,24 @@
 import qs from 'querystring'
-import React, { memo, useEffect, useMemo, useRef } from 'react'
+import React, { memo, useCallback, useEffect, useRef } from 'react'
 import { HashRouter, useLocation, useHistory, matchPath } from 'react-router-dom'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
-import { RecoilRoot, useRecoilState } from 'recoil'
 import styled from '@emotion/styled'
+import { Observer } from 'mobx-react-lite'
+import { reaction } from 'mobx'
 
 import { NavigatorOptionsProvider, useNavigatorOptions } from './contexts'
 import { NavigatorTheme } from '../types'
 import { appendSearch, generateScreenInstanceId } from '../utils'
-import {
-  AtomScreens,
-  AtomScreenInstances,
-  AtomScreenInstancePointer,
+import store, {
+  increaseScreenInstancePointer,
+  addScreenInstanceAfter,
+  Screen,
   ScreenInstance,
-  screenInstancePromises,
-} from './atoms'
+  setScreenInstanceIn,
+  setScreenInstancePointer,
+} from './store'
 import { Card } from './components'
+import { useHistoryPopEffect, useHistoryPushEffect, useHistoryReplaceEffect } from './hooks/useHistoryEffect'
 
 const DEFAULT_CUPERTINO_ANIMATION_DURATION = 350
 const DEFAULT_ANDROID_ANIMATION_DURATION = 270
@@ -36,11 +39,6 @@ interface NavigatorProps {
    * 애니메이션 지속시간
    */
   animationDuration?: number
-
-  /**
-   * 빌트인 된 RecoilRoot를 없애고, 사용자가 직접 RecoilRoot를 셋팅합니다
-   */
-  useCustomRecoilRoot?: boolean
 
   /**
    * 빌트인 된 react-router-dom의 HashRouter를 없애고, 사용자가 직접 Router를 셋팅합니다
@@ -72,9 +70,6 @@ const Navigator: React.FC<NavigatorProps> = (props) => {
     </NavigatorOptionsProvider>
   )
 
-  if (!props.useCustomRecoilRoot) {
-    h = <RecoilRoot>{h}</RecoilRoot>
-  }
   if (!props.useCustomRouter) {
     h = <HashRouter>{h}</HashRouter>
   }
@@ -86,26 +81,45 @@ const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
   const location = useLocation()
   const history = useHistory()
 
-  const [screens] = useRecoilState(AtomScreens)
-  const [screenInstances, setScreenInstances] = useRecoilState(AtomScreenInstances)
-  const [screenInstancePointer, setScreenInstancePointer] = useRecoilState(AtomScreenInstancePointer)
+  const pushScreen = useCallback(({ screenId, screenInstanceId }: { screenId: string; screenInstanceId: string }) => {
+    const nextPointer = store.screenInstances.findIndex((screenInstance) => screenInstance.id === screenInstanceId)
+
+    if (nextPointer === -1) {
+      addScreenInstanceAfter(store.screenInstancePointer, { screenId, screenInstanceId })
+      increaseScreenInstancePointer()
+    } else {
+      setScreenInstancePointer(nextPointer)
+    }
+  }, [])
+
+  const replaceScreen = useCallback(
+    ({ screenId, screenInstanceId }: { screenId: string; screenInstanceId: string }) => {
+      addScreenInstanceAfter(store.screenInstancePointer - 1, { screenId, screenInstanceId })
+    },
+    []
+  )
+
+  const popScreen = useCallback(
+    ({ depth, targetScreenInstanceId }: { depth: number; targetScreenInstanceId?: string }) => {
+      if (targetScreenInstanceId) {
+        store.screenInstancePromises.get(targetScreenInstanceId)?.(null)
+      }
+      setScreenInstancePointer(store.screenInstancePointer - depth)
+    },
+    []
+  )
 
   useEffect(() => {
     if (isNavigatorInitialized) {
       throw new Error('한 개의 앱에는 한 개의 Navigator만 허용됩니다')
-    } else {
-      // 초기화 작업
-      isNavigatorInitialized = true
-
-      const search = location.search.split('?')[1]
-      history.replace(
-        location.pathname +
-          '?' +
-          appendSearch(search, {
-            _si: generateScreenInstanceId(),
-          })
-      )
     }
+
+    const search = location.search.split('?')[1]
+    const _si = generateScreenInstanceId()
+
+    history.replace(location.pathname + '?' + appendSearch(search, { _si }))
+
+    isNavigatorInitialized = true
 
     return () => {
       isNavigatorInitialized = false
@@ -113,161 +127,172 @@ const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
   }, [])
 
   useEffect(() => {
-    function push({ screenId, screenInstanceId }: { screenId: string; screenInstanceId: string }) {
-      const nextPointer = screenInstances.findIndex((screenInstance) => screenInstance.id === screenInstanceId)
+    const effect = () => {
+      if (store.screenInstances.length === 0) {
+        let matchScreen: Screen | null = null
 
-      if (nextPointer === -1) {
-        setScreenInstances((instances) => [
-          ...instances.filter((_, index) => index <= screenInstancePointer),
-          {
-            id: screenInstanceId,
-            screenId,
-          },
-        ])
-        setScreenInstancePointer((pointer) => pointer + 1)
-      } else {
-        setScreenInstancePointer(() => nextPointer)
+        for (const screen of store.screens.values()) {
+          if (matchPath(location.pathname, { exact: true, path: screen.path })) {
+            matchScreen = screen
+            break
+          }
+        }
+
+        if (matchScreen) {
+          const screenInstanceId = (qs.parse(location.search.split('?')[1])?._si as string | undefined) ?? ''
+          pushScreen({
+            screenId: matchScreen.id,
+            screenInstanceId,
+          })
+        }
       }
     }
 
-    function replace({ screenId, screenInstanceId }: { screenId: string; screenInstanceId: string }) {
-      setScreenInstances((instances) => [
-        ...instances.filter((_, index) => index < screenInstancePointer),
-        {
-          id: screenInstanceId,
-          screenId,
-        },
-      ])
-    }
+    effect()
+    return reaction(
+      () => [store.screens, store.screenInstances, store.screenInstancePointer],
+      () => {
+        effect()
+      }
+    )
+  }, [])
 
-    function pop({ depth, targetScreenInstanceId }: { depth: number; targetScreenInstanceId: string }) {
-      screenInstancePromises[targetScreenInstanceId]?.(null)
-      setScreenInstancePointer((pointer) => pointer - depth)
-    }
+  useHistoryPushEffect(
+    (location) => {
+      let matchScreen: Screen | null = null
 
-    if (screenInstances.length === 0) {
-      /**
-       * 처음 Screen들이 초기화될 때,
-       * 현재 path와 일치하는 스크린을 찾아서, 스택 맨 위로 넣어준다
-       */
+      for (const screen of store.screens.values()) {
+        if (matchPath(location.pathname, { exact: true, path: screen.path })) {
+          matchScreen = screen
+          break
+        }
+      }
 
-      const screen = Object.values(screens).find((screen) =>
-        matchPath(location.pathname, { exact: true, path: screen.path })
-      )
+      const screenInstanceId = qs.parse(location.search.split('?')[1])?._si as string | undefined
 
-      if (screen) {
-        /**
-         * 앞으로 가기 기능 지원을 위한 ScreenInstance.id
-         */
-        const screenInstanceId = (qs.parse(location.search.split('?')[1])?._si as string | undefined) ?? ''
-        push({
-          screenId: screen.id,
+      if (matchScreen && screenInstanceId) {
+        pushScreen({
+          screenId: matchScreen.id,
+          screenInstanceId,
+        })
+      } else {
+        setScreenInstanceIn(store.screenInstancePointer, (screenInstance) => ({
+          ...screenInstance,
+          nestedRouteCount: screenInstance.nestedRouteCount + 1,
+        }))
+      }
+    },
+    [pushScreen]
+  )
+
+  useHistoryReplaceEffect(
+    (location) => {
+      let matchScreen: Screen | null = null
+
+      for (const screen of store.screens.values()) {
+        if (matchPath(location.pathname, { exact: true, path: screen.path })) {
+          matchScreen = screen
+          break
+        }
+      }
+
+      const screenInstanceId = qs.parse(location.search.split('?')[1])?._si as string | undefined
+
+      if (matchScreen && screenInstanceId) {
+        replaceScreen({
+          screenId: matchScreen.id,
           screenInstanceId,
         })
       }
-    }
+    },
+    [replaceScreen]
+  )
 
-    const disposeListen = history.listen((location, action) => {
-      switch (action) {
-        /**
-         * Link를 통해 push 했을 때,
-         */
-        case 'PUSH': {
-          const screen = Object.values(screens).find((screen) =>
-            matchPath(location.pathname, { exact: true, path: screen.path })
-          )
+  useHistoryPopEffect(
+    {
+      backward(location) {
+        let matchScreen: Screen | null = null
 
-          if (screen) {
-            const screenInstanceId = qs.parse(location.search.split('?')[1])?._si as string
-
-            if (screenInstanceId) {
-              push({
-                screenId: screen.id,
-                screenInstanceId,
-              })
-            }
+        for (const screen of store.screens.values()) {
+          if (matchPath(location.pathname, { exact: true, path: screen.path })) {
+            matchScreen = screen
+            break
           }
-          break
         }
 
-        /**
-         * Link를 통해 replace 했을 때,
-         */
-        case 'REPLACE': {
-          const screen = Object.values(screens).find((screen) =>
-            matchPath(location.pathname, { exact: true, path: screen.path })
+        const screenInstanceId = qs.parse(location.search.split('?')[1])?._si as string | undefined
+
+        if (matchScreen && screenInstanceId) {
+          const nextPointer = store.screenInstances.findIndex(
+            (screenInstance) => screenInstance.id === screenInstanceId
           )
 
-          if (screen) {
-            const screenInstanceId = qs.parse(location.search.split('?')[1])?._si as string
+          setScreenInstanceIn(store.screenInstancePointer, (screenInstance) => ({
+            ...screenInstance,
+            nestedRouteCount: 0,
+          }))
+          popScreen({
+            depth: store.screenInstancePointer - nextPointer,
+            targetScreenInstanceId: screenInstanceId,
+          })
+        } else if (store.screenInstances[store.screenInstancePointer]?.nestedRouteCount === 0) {
+          popScreen({
+            depth: 1,
+          })
+        } else {
+          setScreenInstanceIn(store.screenInstancePointer, (screenInstance) => ({
+            ...screenInstance,
+            nestedRouteCount: screenInstance.nestedRouteCount - 1,
+          }))
+        }
+      },
+      forward(location) {
+        let screen: Screen | null = null
 
-            if (screenInstanceId) {
-              replace({
-                screenId: screen.id,
-                screenInstanceId,
-              })
-            }
+        for (const s of store.screens.values()) {
+          if (matchPath(location.pathname, { exact: true, path: s.path })) {
+            screen = s
+            break
           }
-          break
         }
 
-        /**
-         * 뒤로가기, 앞으로 가기 했을 때,
-         */
-        case 'POP': {
-          const screen = Object.values(screens).find((screen) =>
-            matchPath(location.pathname, { exact: true, path: screen.path })
-          )
+        const screenInstanceId = qs.parse(location.search.split('?')[1])?._si as string | undefined
 
-          if (screen) {
-            const screenInstanceId = (qs.parse(location.search.split('?')[1])?._si as string | undefined) ?? ''
-            const nextPointer = screenInstances.findIndex((screenInstance) => screenInstance.id === screenInstanceId)
-
-            const isForward = nextPointer > screenInstancePointer || nextPointer === -1
-
-            if (!screenInstanceId) {
-              return
-            }
-
-            if (isForward) {
-              push({
-                screenId: screen.id,
-                screenInstanceId,
-              })
-            } else {
-              pop({
-                depth: screenInstancePointer - nextPointer,
-                targetScreenInstanceId: screenInstanceId,
-              })
-            }
-          }
-
-          break
+        if (screen && screenInstanceId) {
+          pushScreen({
+            screenId: screen.id,
+            screenInstanceId,
+          })
+        } else {
+          setScreenInstanceIn(store.screenInstancePointer, (screenInstance) => ({
+            ...screenInstance,
+            nestedRouteCount: screenInstance.nestedRouteCount + 1,
+          }))
         }
-      }
-    })
-
-    return () => {
-      disposeListen()
-    }
-  }, [screens, screenInstances, screenInstancePointer])
+      },
+    },
+    [popScreen, pushScreen]
+  )
 
   const onClose = () => {
     props.onClose?.()
   }
 
-  return useMemo(
-    () => (
-      <Root>
-        {props.children}
-        <TransitionGroup>
-          {screenInstances.map((screenInstance, index) => (
-            <Transition key={index} screenInstance={screenInstance} screenInstanceIndex={index} onClose={onClose} />
-          ))}
-        </TransitionGroup>
-      </Root>
-    ),
-    [screenInstances]
+  return (
+    <Root>
+      {props.children}
+      <TransitionGroup>
+        <Observer>
+          {() => (
+            <>
+              {store.screenInstances.map((screenInstance, index) => (
+                <Transition key={index} screenInstance={screenInstance} screenInstanceIndex={index} onClose={onClose} />
+              ))}
+            </>
+          )}
+        </Observer>
+      </TransitionGroup>
+    </Root>
   )
 }
 
@@ -287,30 +312,32 @@ interface TransitionProps {
 const Transition: React.FC<TransitionProps> = memo((props) => {
   const navigatorOptions = useNavigatorOptions()
 
-  const [screens] = useRecoilState(AtomScreens)
-  const [screenInstancePointer] = useRecoilState(AtomScreenInstancePointer)
-
   const nodeRef = useRef<HTMLDivElement>(null)
 
-  const { Component } = screens[props.screenInstance.screenId]
-
   return (
-    <CSSTransition
-      key={props.screenInstance.id}
-      nodeRef={nodeRef}
-      timeout={navigatorOptions.animationDuration}
-      in={props.screenInstanceIndex <= screenInstancePointer}
-      unmountOnExit>
-      <Card
-        nodeRef={nodeRef}
-        screenPath={screens[props.screenInstance.screenId].path}
-        screenInstanceId={props.screenInstance.id}
-        isRoot={props.screenInstanceIndex === 0}
-        isTop={props.screenInstanceIndex === screenInstancePointer}
-        onClose={props.onClose}>
-        <Component screenInstanceId={props.screenInstance.id} />
-      </Card>
-    </CSSTransition>
+    <Observer>
+      {() => {
+        const { Component } = store.screens.get(props.screenInstance.screenId)!
+        return (
+          <CSSTransition
+            key={props.screenInstance.id}
+            nodeRef={nodeRef}
+            timeout={navigatorOptions.animationDuration}
+            in={props.screenInstanceIndex <= store.screenInstancePointer}
+            unmountOnExit>
+            <Card
+              nodeRef={nodeRef}
+              screenPath={store.screens.get(props.screenInstance.screenId)!.path}
+              screenInstanceId={props.screenInstance.id}
+              isRoot={props.screenInstanceIndex === 0}
+              isTop={props.screenInstanceIndex === store.screenInstancePointer}
+              onClose={props.onClose}>
+              <Component screenInstanceId={props.screenInstance.id} />
+            </Card>
+          </CSSTransition>
+        )
+      }}
+    </Observer>
   )
 })
 
