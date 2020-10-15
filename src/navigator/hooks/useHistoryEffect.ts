@@ -1,6 +1,6 @@
+import { Action, History, Location } from 'history'
 import { DependencyList, useEffect, useRef } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
-import { Location, Action, History } from 'history'
 
 export function useHistoryPopEffect(
   callbacks: {

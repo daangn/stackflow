@@ -1,12 +1,12 @@
+import { Observer, useObserver } from 'mobx-react-lite'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { css } from '@emotion/core'
 import styled from '@emotion/styled'
-import { Observer, useObserver } from 'mobx-react-lite'
 
 import { NavigatorOptions, useNavigatorOptions } from '../contexts'
-import Navbar, { Container as NavbarContainer } from './Navbar'
 import store, { setScreenEdge } from '../store'
 import { useNavigator } from '../useNavigator'
+import Navbar, { Container as NavbarContainer } from './Navbar'
 
 const $allFrameOffsetElements = new Set<HTMLDivElement>()
 

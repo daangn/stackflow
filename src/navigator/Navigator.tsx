@@ -1,24 +1,23 @@
+import { Observer } from 'mobx-react-lite'
 import qs from 'querystring'
 import React, { memo, useCallback, useEffect, useRef } from 'react'
-import { HashRouter, useLocation, useHistory, matchPath } from 'react-router-dom'
+import { HashRouter, matchPath, useHistory, useLocation } from 'react-router-dom'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import styled from '@emotion/styled'
-import { Observer } from 'mobx-react-lite'
-import { reaction } from 'mobx'
 
-import { NavigatorOptionsProvider, useNavigatorOptions } from './contexts'
 import { NavigatorTheme } from '../types'
 import { appendSearch, generateScreenInstanceId } from '../utils'
+import { Card } from './components'
+import { NavigatorOptionsProvider, useNavigatorOptions } from './contexts'
+import { useHistoryPopEffect, useHistoryPushEffect, useHistoryReplaceEffect } from './hooks/useHistoryEffect'
 import store, {
-  increaseScreenInstancePointer,
   addScreenInstanceAfter,
+  increaseScreenInstancePointer,
   Screen,
   ScreenInstance,
   setScreenInstanceIn,
   setScreenInstancePointer,
 } from './store'
-import { Card } from './components'
-import { useHistoryPopEffect, useHistoryPushEffect, useHistoryReplaceEffect } from './hooks/useHistoryEffect'
 
 const DEFAULT_CUPERTINO_ANIMATION_DURATION = 350
 const DEFAULT_ANDROID_ANIMATION_DURATION = 270
@@ -127,35 +126,26 @@ const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
   }, [])
 
   useEffect(() => {
-    const effect = () => {
-      if (store.screenInstances.length === 0) {
-        let matchScreen: Screen | null = null
+    if (location.search && store.screenInstances.length === 0) {
+      let matchScreen: Screen | null = null
 
-        for (const screen of store.screens.values()) {
-          if (matchPath(location.pathname, { exact: true, path: screen.path })) {
-            matchScreen = screen
-            break
-          }
+      for (const screen of store.screens.values()) {
+        if (matchPath(location.pathname, { exact: true, path: screen.path })) {
+          matchScreen = screen
+          break
         }
+      }
 
-        if (matchScreen) {
-          const screenInstanceId = (qs.parse(location.search.split('?')[1])?._si as string | undefined) ?? ''
-          pushScreen({
-            screenId: matchScreen.id,
-            screenInstanceId,
-          })
-        }
+      if (matchScreen) {
+        const screenInstanceId = (qs.parse(location.search.split('?')[1])?._si as string | undefined) ?? ''
+
+        pushScreen({
+          screenId: matchScreen.id,
+          screenInstanceId,
+        })
       }
     }
-
-    effect()
-    return reaction(
-      () => [store.screens, store.screenInstances, store.screenInstancePointer],
-      () => {
-        effect()
-      }
-    )
-  }, [])
+  }, [location.search])
 
   useHistoryPushEffect(
     (location) => {

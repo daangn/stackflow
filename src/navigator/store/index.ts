@@ -1,5 +1,5 @@
-import React from 'react'
 import { action, observable, ObservableMap } from 'mobx'
+import React from 'react'
 
 export interface Screen {
   id: string

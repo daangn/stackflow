@@ -1,13 +1,13 @@
+import { Observer } from 'mobx-react-lite'
 import React from 'react'
 import { useHistory } from 'react-router-dom'
 import { css } from '@emotion/core'
 import styled from '@emotion/styled'
-import { Observer } from 'mobx-react-lite'
 
 import { NavigatorTheme } from '../../types'
 import { IconBack, IconClose } from '../assets'
-import store from '../store'
 import { useNavigatorOptions } from '../contexts'
+import store from '../store'
 
 interface NavbarProps {
   screenInstanceId: string

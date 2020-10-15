@@ -1,8 +1,8 @@
 import { useHistory } from 'react-router-dom'
 
 import { appendSearch, generateScreenInstanceId } from '../utils'
-import store from './store'
 import { useScreenInstanceInfo } from './contexts'
+import store from './store'
 
 export function useNavigator() {
   const history = useHistory()
