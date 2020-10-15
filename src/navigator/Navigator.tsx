@@ -101,7 +101,7 @@ const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
   const popScreen = useCallback(
     ({ depth, targetScreenInstanceId }: { depth: number; targetScreenInstanceId?: string }) => {
       if (targetScreenInstanceId) {
-        store.screenInstancePromises.get(targetScreenInstanceId)?.(null)
+        setTimeout(() => store.screenInstancePromises.get(targetScreenInstanceId)?.(null), 0)
       }
       setScreenInstancePointer(store.screenInstancePointer - depth)
     },

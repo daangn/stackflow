@@ -38,6 +38,7 @@ export function useNavigator() {
       )
     },
     pop(depth = 1) {
+      const targetScreenInstance = store.screenInstances[store.screenInstancePointer - depth]
       const nestedRouteCounts = store.screenInstances.map(({ nestedRouteCount }) => nestedRouteCount)
       const totalCount = nestedRouteCounts
         .filter((_, i) => i > store.screenInstancePointer - depth && i <= store.screenInstancePointer)
@@ -49,10 +50,6 @@ export function useNavigator() {
 
       return {
         send<T = object>(data: T) {
-          const targetScreenInstance = store.screenInstances.find(
-            (_, index) => index === store.screenInstancePointer - depth
-          )
-
           if (targetScreenInstance) {
             store.screenInstancePromises.get(targetScreenInstance.id)?.(data ?? null)
           }
