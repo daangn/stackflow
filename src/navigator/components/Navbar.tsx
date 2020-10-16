@@ -1,6 +1,5 @@
 import { Observer } from 'mobx-react-lite'
 import React from 'react'
-import { useHistory } from 'react-router-dom'
 import { css } from '@emotion/core'
 import styled from '@emotion/styled'
 
@@ -8,6 +7,7 @@ import { NavigatorTheme } from '../../types'
 import { IconBack, IconClose } from '../assets'
 import { useNavigatorOptions } from '../contexts'
 import store from '../store'
+import { useNavigator } from '../useNavigator'
 
 interface NavbarProps {
   screenInstanceId: string
@@ -16,8 +16,12 @@ interface NavbarProps {
   onClose: () => void
 }
 const Navbar: React.FC<NavbarProps> = (props) => {
-  const history = useHistory()
+  const { pop } = useNavigator()
   const navigatorOptions = useNavigatorOptions()
+
+  const onBackClick = () => {
+    pop()
+  }
 
   return (
     <Observer>
@@ -36,9 +40,9 @@ const Navbar: React.FC<NavbarProps> = (props) => {
         const backButton =
           !props.isRoot &&
           (screenInstanceOption?.navbar.customBackButton ? (
-            <Back onClick={history.goBack}>{screenInstanceOption.navbar.customBackButton}</Back>
+            <Back onClick={onBackClick}>{screenInstanceOption.navbar.customBackButton}</Back>
           ) : (
-            <Back onClick={history.goBack}>
+            <Back onClick={onBackClick}>
               <IconBack />
             </Back>
           ))
