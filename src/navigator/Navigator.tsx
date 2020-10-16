@@ -126,25 +126,33 @@ const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
   }, [])
 
   useEffect(() => {
-    if (location.search && store.screenInstances.length === 0) {
-      let matchScreen: Screen | null = null
+    if (!location.search) {
+      return
+    }
+    const [, search] = location.search.split('?')
+    const _si = qs.parse(search)?._si as string | undefined
 
-      for (const screen of store.screens.values()) {
-        if (matchPath(location.pathname, { exact: true, path: screen.path })) {
-          matchScreen = screen
-          break
-        }
+    if (!_si) {
+      return
+    }
+    if (store.screenInstances.length > 0) {
+      return
+    }
+
+    let matchScreen: Screen | null = null
+
+    for (const screen of store.screens.values()) {
+      if (matchPath(location.pathname, { exact: true, path: screen.path })) {
+        matchScreen = screen
+        break
       }
+    }
 
-      if (matchScreen) {
-        const [, search] = location.search.split('?')
-        const screenInstanceId = (qs.parse(search)?._si as string | undefined) ?? ''
-
-        pushScreen({
-          screenId: matchScreen.id,
-          screenInstanceId,
-        })
-      }
+    if (matchScreen) {
+      pushScreen({
+        screenId: matchScreen.id,
+        screenInstanceId: _si,
+      })
     }
   }, [location.search])
 
