@@ -8,7 +8,7 @@ import store, { setScreenEdge } from '../store'
 import { useNavigator } from '../useNavigator'
 import Navbar, { Container as NavbarContainer } from './Navbar'
 
-const $allFrameOffsetElements = new Set<HTMLDivElement>()
+const $frameOffsetSet = new Set<HTMLDivElement>()
 
 interface CardProps {
   nodeRef: React.RefObject<HTMLDivElement>
@@ -39,10 +39,10 @@ const Card: React.FC<CardProps> = (props) => {
     const $frameOffset = frameOffsetRef.current
 
     if ($frameOffset) {
-      $allFrameOffsetElements.add($frameOffset)
+      $frameOffsetSet.add($frameOffset)
 
       return () => {
-        $allFrameOffsetElements.delete($frameOffset)
+        $frameOffsetSet.delete($frameOffset)
       }
     }
   }, [frameOffsetRef.current])
@@ -97,7 +97,7 @@ const Card: React.FC<CardProps> = (props) => {
               transform: translateX(${computedEdgeX}px); transition: transform 0s;
             `
           }
-          $allFrameOffsetElements.forEach(($frameOffset) => {
+          $frameOffsetSet.forEach(($frameOffset) => {
             if ($frameOffset !== frameOffsetRef.current) {
               $frameOffset.style.cssText = `
                 transform: translateX(-${5 - (5 * computedEdgeX) / window.screen.width}rem);
@@ -123,7 +123,7 @@ const Card: React.FC<CardProps> = (props) => {
         if ($frame) {
           $frame.style.cssText = ''
         }
-        $allFrameOffsetElements.forEach(($frameOffset) => {
+        $frameOffsetSet.forEach(($frameOffset) => {
           $frameOffset.style.cssText = ''
         })
       })

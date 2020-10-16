@@ -113,7 +113,7 @@ const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
       throw new Error('한 개의 앱에는 한 개의 Navigator만 허용됩니다')
     }
 
-    const search = location.search.split('?')[1]
+    const [, search] = location.search.split('?')
     const _si = generateScreenInstanceId()
 
     history.replace(location.pathname + '?' + appendSearch(search, { _si }))
@@ -137,7 +137,8 @@ const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
       }
 
       if (matchScreen) {
-        const screenInstanceId = (qs.parse(location.search.split('?')[1])?._si as string | undefined) ?? ''
+        const [, search] = location.search.split('?')
+        const screenInstanceId = (qs.parse(search)?._si as string | undefined) ?? ''
 
         pushScreen({
           screenId: matchScreen.id,
@@ -158,7 +159,8 @@ const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
         }
       }
 
-      const screenInstanceId = qs.parse(location.search.split('?')[1])?._si as string | undefined
+      const [, search] = location.search.split('?')
+      const screenInstanceId = qs.parse(search)?._si as string | undefined
 
       if (matchScreen && screenInstanceId) {
         pushScreen({
@@ -186,7 +188,8 @@ const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
         }
       }
 
-      const screenInstanceId = qs.parse(location.search.split('?')[1])?._si as string | undefined
+      const [, search] = location.search.split('?')
+      const screenInstanceId = qs.parse(search)?._si as string | undefined
 
       if (matchScreen && screenInstanceId) {
         replaceScreen({
@@ -210,7 +213,8 @@ const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
           }
         }
 
-        const screenInstanceId = qs.parse(location.search.split('?')[1])?._si as string | undefined
+        const [, search] = location.search.split('?')
+        const screenInstanceId = qs.parse(search)?._si as string | undefined
 
         if (matchScreen && screenInstanceId) {
           const nextPointer = store.screenInstances.findIndex(
@@ -246,7 +250,8 @@ const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
           }
         }
 
-        const screenInstanceId = qs.parse(location.search.split('?')[1])?._si as string | undefined
+        const [, search] = location.search.split('?')
+        const screenInstanceId = qs.parse(search)?._si as string | undefined
 
         if (screen && screenInstanceId) {
           pushScreen({
