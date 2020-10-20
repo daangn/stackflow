@@ -15,8 +15,10 @@ export function useHistoryPopEffect(
   const locationKeyStack = useRef<string[]>([])
 
   useEffect(() => {
-    locationKeyStack.current = [location.pathname + location.search]
-  }, [])
+    if (locationKeyStack.current.length === 0 && location.search) {
+      locationKeyStack.current = [location.pathname + location.search]
+    }
+  }, [location.search])
 
   useEffect(() => {
     return history.listen((location, action) => {
