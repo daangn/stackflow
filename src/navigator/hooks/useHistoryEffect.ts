@@ -1,5 +1,6 @@
 import { Action, History, Location } from 'history'
 import { DependencyList, useEffect, useRef } from 'react'
+import qs from 'querystring'
 import { useHistory, useLocation } from 'react-router-dom'
 
 export function useHistoryPopEffect(
@@ -15,9 +16,18 @@ export function useHistoryPopEffect(
   const locationKeyStack = useRef<string[]>([])
 
   useEffect(() => {
-    if (locationKeyStack.current.length === 0 && location.search) {
-      locationKeyStack.current = [location.pathname + location.search]
+    if (locationKeyStack.current.length > 0 || !location.search) {
+      return
     }
+
+    const [, search] = location.search.split('?')
+    const { _si } = qs.parse(search)
+
+    if (!_si) {
+      return
+    }
+
+    locationKeyStack.current = [location.pathname + location.search]
   }, [location.search])
 
   useEffect(() => {

@@ -1,2 +1,2 @@
-export * from './appendSearch'
+export * from './search'
 export * from './id'
