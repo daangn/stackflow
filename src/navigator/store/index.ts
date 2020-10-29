@@ -1,10 +1,12 @@
 import { action, observable, ObservableMap } from 'mobx'
 import React from 'react'
 
+import { ScreenComponentProps } from '../ScreenComponentProps'
+
 export interface Screen {
   id: string
   path: string
-  Component: React.FC<{ screenInstanceId: string }>
+  Component: React.FC<{ screenInstanceId: string } & ScreenComponentProps>
 }
 
 export interface ScreenInstance {

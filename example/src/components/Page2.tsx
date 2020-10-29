@@ -1,9 +1,9 @@
 import React from 'react'
 import styled from '@emotion/styled'
-import { ScreenHelmet, useNavigator } from '@daangn/karrotframe'
+import { ScreenComponentProps, ScreenHelmet, useNavigator } from '@daangn/karrotframe'
 import { useState } from 'react'
 
-const Page2: React.FC = () => {
+const Page2: React.FC<ScreenComponentProps> = ({ isTop, isRoot }) => {
   const navigator = useNavigator()
   const [title, setTitle] = useState('')
 

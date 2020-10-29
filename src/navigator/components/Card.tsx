@@ -79,32 +79,34 @@ const Card: React.FC<CardProps> = (props) => {
 
     const animate = () =>
       requestAnimationFrame(() => {
-        const computedEdgeX = x.current - store.screenEdge.startX!
+        if (x.current > 0) {
+          const computedEdgeX = x.current - store.screenEdge.startX!
 
-        const $dim = dimRef.current
-        const $frame = frameRef.current
+          const $dim = dimRef.current
+          const $frame = frameRef.current
 
-        if (computedEdgeX >= 0) {
-          if ($dim) {
-            $dim.style.cssText = `
-              opacity: ${1 - computedEdgeX / window.screen.width};
-              transition: opacity 0s;
-            `
-          }
-          if ($frame) {
-            $frame.style.cssText = `
-              overflow-y: hidden;
-              transform: translateX(${computedEdgeX}px); transition: transform 0s;
-            `
-          }
-          $frameOffsetSet.forEach(($frameOffset) => {
-            if ($frameOffset !== frameOffsetRef.current) {
-              $frameOffset.style.cssText = `
-                transform: translateX(-${5 - (5 * computedEdgeX) / window.screen.width}rem);
-                transition: 0s;
+          if (computedEdgeX >= 0) {
+            if ($dim) {
+              $dim.style.cssText = `
+                opacity: ${1 - computedEdgeX / window.screen.width};
+                transition: opacity 0s;
               `
             }
-          })
+            if ($frame) {
+              $frame.style.cssText = `
+                overflow-y: hidden;
+                transform: translateX(${computedEdgeX}px); transition: transform 0s;
+              `
+            }
+            $frameOffsetSet.forEach(($frameOffset) => {
+              if ($frameOffset !== frameOffsetRef.current) {
+                $frameOffset.style.cssText = `
+                  transform: translateX(-${5 - (5 * computedEdgeX) / window.screen.width}rem);
+                  transition: 0s;
+                `
+              }
+            })
+          }
         }
 
         if (!stopped) {

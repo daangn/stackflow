@@ -289,7 +289,14 @@ const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
           {() => (
             <>
               {store.screenInstances.map((screenInstance, index) => (
-                <Transition key={index} screenInstance={screenInstance} screenInstanceIndex={index} onClose={onClose} />
+                <Transition
+                  key={index}
+                  screenInstance={screenInstance}
+                  screenInstanceIndex={index}
+                  isRoot={index === 0}
+                  isTop={index === store.screenInstancePointer}
+                  onClose={onClose}
+                />
               ))}
             </>
           )}
@@ -310,11 +317,12 @@ const Root = styled.div`
 interface TransitionProps {
   screenInstance: ScreenInstance
   screenInstanceIndex: number
+  isRoot: boolean
+  isTop: boolean
   onClose: () => void
 }
 const Transition: React.FC<TransitionProps> = memo((props) => {
   const navigatorOptions = useNavigatorOptions()
-
   const nodeRef = useRef<HTMLDivElement>(null)
 
   return (
@@ -335,7 +343,7 @@ const Transition: React.FC<TransitionProps> = memo((props) => {
               isRoot={props.screenInstanceIndex === 0}
               isTop={props.screenInstanceIndex === store.screenInstancePointer}
               onClose={props.onClose}>
-              <Component screenInstanceId={props.screenInstance.id} />
+              <Component screenInstanceId={props.screenInstance.id} isTop={props.isTop} isRoot={props.isRoot} />
             </Card>
           </CSSTransition>
         )
