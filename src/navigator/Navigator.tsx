@@ -352,10 +352,9 @@ const Transition: React.FC<TransitionProps> = memo((props) => {
               screenInstanceId={props.screenInstance.id}
               isRoot={props.screenInstanceIndex === 0}
               isTop={
-                props.screenInstanceIndex === store.screenInstancePointer ||
+                props.screenInstanceIndex >= store.screenInstancePointer ||
                 (store.screenInstances.length > props.screenInstanceIndex + 1 &&
-                  store.screenInstances[props.screenInstanceIndex + 1].present) ||
-                props.screenInstance.present
+                  store.screenInstances[props.screenInstanceIndex + 1].present)
               }
               isPresent={props.screenInstance.present}
               onClose={props.onClose}>
