@@ -77,9 +77,20 @@ const App: React.FC = () => {
 | Props | 타입 | 역할 | 기본값 |
 | ------------- | ------------- | ------------- | ------------- | 
 | `path` | string | 해당 화면을 표현할 Path | required |
-| `component` | `React.ComponentType` | 렌더링 할 컴포넌트 | |
+| `component` | `React.ComponentType<ScreenComponentProps>` | 렌더링 할 컴포넌트 | |
 | `children` | `React.ReactNode` | 렌더링 할 요소  | |
 > `component` 또는 `children`은 반드시 사용하세요 (만약 두 props가 동시에 선언되는 경우, `component`가 우선권을 갖습니다)
+
+> `ScreenComponentProps`를 통해 스크린에 대한 정보를 받아올 수 있습니다
+
+  ```tsx
+  import { ScreenComponentProps } from '@daangn/karrotframe'
+
+  const MyComponent: React.FC<ScreenComponentProps> = (props) => {
+    console.log(isTop) // 현재 최상단인지 여부
+    console.log(isRoot) // 현재 첫 페이지인지 여부
+  }
+  ```
 
 ### 1-c. `ScreenHelmet`
 기본적으로 Screen은 상단 네비게이션 바를 포함하고 있지 않습니다. 기본 제공되는 상단 네비게이션 바를 추가, 수정하기 위해서는 `ScreenHelmet` 컴포넌트를 사용하세요.
@@ -135,8 +146,9 @@ const Home: React.FC = () => {
 | Props | 타입 | 역할 | 기본값 |
 | ------------- | ------------- | ------------- | ------------- | 
 | `to` | string | 이동 할 path | required |
-| `replace` | boolean | path 이동을 replace로 처리할 지 여부 | `undefined` |
 | `className` | string | className | `undefined` |
+| `replace` | boolean | path 이동을 replace로 처리할 지 여부 | `undefined` |
+| `present` | boolean | 스와이프 백이 불가능한 새 창으로 엽니다 (Cupertino Only) | `undefined` |
 
 ### 1-e. `useLocation`, `useParams`, `useRouteMatch`
 react-router-dom에 존재하는 `useLocation`, `useParams`, `useRouteMatch`를 그대로 사용할 수 있습니다
@@ -179,6 +191,11 @@ const Posts: React.FC = () => {
   const goPost = (postId: string) => () => {
     // 특정 path로 이동합니다
     push(`/posts/${postId}`)
+
+    // 특정 path을 스와이프 백이 불가능한 새 창으로 띄웁니다 (Cupertino Only)
+    push(`/posts/${postId}`, {
+      present: true,
+    })
   }
 
   const goBack = () => {
@@ -316,7 +333,6 @@ const ExampleScreen = () => {
 > path 내에 `_si` 쿼리스트링이 포함되어있지 않으면 Karrotframe은 내부 라우팅으로 인식해 별도의 애니메이션 처리를 위한 작업을 하지 않습니다
 
 ## 2. 추가 예정인 기능
-- [ ] 하프뷰
 - [ ] 모달
 - [ ] 토스트
 > 추가적으로 Karrotframe에 추가되었으면하는 기능이 있으시다면, 꼭 이슈에 남겨주세요.
