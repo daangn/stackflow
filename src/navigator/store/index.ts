@@ -13,6 +13,7 @@ export interface ScreenInstance {
   id: string
   screenId: string
   nestedRouteCount: number
+  present: boolean
 }
 
 export interface ScreenInstanceOption {
@@ -68,13 +69,17 @@ export const setScreenInstanceIn = action(
 )
 
 export const addScreenInstanceAfter = action(
-  (pointer: number, { screenId, screenInstanceId }: { screenId: string; screenInstanceId: string }) => {
+  (
+    pointer: number,
+    { screenId, screenInstanceId, present }: { screenId: string; screenInstanceId: string; present: boolean }
+  ) => {
     store.screenInstances = [
       ...store.screenInstances.filter((_, index) => index <= pointer),
       {
         id: screenInstanceId,
         screenId,
         nestedRouteCount: 0,
+        present,
       },
     ]
   }

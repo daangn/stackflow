@@ -10,25 +10,39 @@ interface LinkProps {
   to: string
 
   /**
+   * className
+   */
+  className?: string
+
+  /**
    * path 이동을 replace로 처리할 지 여부
    */
   replace?: boolean
 
   /**
-   * className
+   * present 방식으로 띄우기 (replace와 함께 쓸 수 없음)
    */
-  className?: string
+  present?: boolean
 }
 const Link: React.FC<LinkProps> = forwardRef<HTMLAnchorElement, LinkProps>((props, ref) => {
   const { pathname, search } = useMemo(() => {
     const [pathname, search] = props.to.split('?')
     const _si = generateScreenInstanceId()
 
+    const params: {
+      _si: string
+      _present?: 'true'
+    } = {
+      _si,
+    }
+
+    if (props.present) {
+      params._present = 'true'
+    }
+
     return {
       pathname,
-      search: appendSearch(search || null, {
-        _si,
-      }),
+      search: appendSearch(search || null, params),
     }
   }, [props.to])
 

@@ -10,12 +10,28 @@ export function useNavigator() {
   const screenInfo = useScreenInstanceInfo()
 
   const push = useCallback(
-    <T = object>(to: string): Promise<T | null> =>
+    <T = object>(
+      to: string,
+      options?: {
+        present?: boolean
+      }
+    ): Promise<T | null> =>
       new Promise((resolve) => {
         const [pathname, search] = to.split('?')
         const _si = generateScreenInstanceId()
 
-        history.push(pathname + '?' + appendSearch(search || null, { _si }))
+        const params: {
+          _si: string
+          _present?: 'true'
+        } = {
+          _si,
+        }
+
+        if (options?.present) {
+          params._present = 'true'
+        }
+
+        history.push(pathname + '?' + appendSearch(search || null, params))
 
         store.screenInstancePromises.set(screenInfo.screenInstanceId, resolve)
       }),

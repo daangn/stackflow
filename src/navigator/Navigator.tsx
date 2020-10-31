@@ -80,20 +80,23 @@ const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
   const location = useLocation()
   const history = useHistory()
 
-  const pushScreen = useCallback(({ screenId, screenInstanceId }: { screenId: string; screenInstanceId: string }) => {
-    const nextPointer = store.screenInstances.findIndex((screenInstance) => screenInstance.id === screenInstanceId)
+  const pushScreen = useCallback(
+    ({ screenId, screenInstanceId, present }: { screenId: string; screenInstanceId: string; present: boolean }) => {
+      const nextPointer = store.screenInstances.findIndex((screenInstance) => screenInstance.id === screenInstanceId)
 
-    if (nextPointer === -1) {
-      addScreenInstanceAfter(store.screenInstancePointer, { screenId, screenInstanceId })
-      increaseScreenInstancePointer()
-    } else {
-      setScreenInstancePointer(nextPointer)
-    }
-  }, [])
+      if (nextPointer === -1) {
+        addScreenInstanceAfter(store.screenInstancePointer, { screenId, screenInstanceId, present })
+        increaseScreenInstancePointer()
+      } else {
+        setScreenInstancePointer(nextPointer)
+      }
+    },
+    []
+  )
 
   const replaceScreen = useCallback(
     ({ screenId, screenInstanceId }: { screenId: string; screenInstanceId: string }) => {
-      addScreenInstanceAfter(store.screenInstancePointer - 1, { screenId, screenInstanceId })
+      addScreenInstanceAfter(store.screenInstancePointer - 1, { screenId, screenInstanceId, present: false })
     },
     []
   )
@@ -152,6 +155,7 @@ const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
       pushScreen({
         screenId: matchScreen.id,
         screenInstanceId: _si,
+        present: false,
       })
     }
   }, [location.search])
@@ -168,12 +172,15 @@ const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
       }
 
       const [, search] = location.search.split('?')
+
       const screenInstanceId = qs.parse(search)?._si as string | undefined
+      const present = qs.parse(search)?._present as string | undefined
 
       if (matchScreen && screenInstanceId) {
         pushScreen({
           screenId: matchScreen.id,
           screenInstanceId,
+          present: present === 'true',
         })
       } else {
         setScreenInstanceIn(store.screenInstancePointer, (screenInstance) => ({
@@ -259,12 +266,15 @@ const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
         }
 
         const [, search] = location.search.split('?')
+
         const screenInstanceId = qs.parse(search)?._si as string | undefined
+        const present = qs.parse(search)?._present as string | undefined
 
         if (screen && screenInstanceId) {
           pushScreen({
             screenId: screen.id,
             screenInstanceId,
+            present: present === 'true',
           })
         } else {
           setScreenInstanceIn(store.screenInstancePointer, (screenInstance) => ({
@@ -341,7 +351,12 @@ const Transition: React.FC<TransitionProps> = memo((props) => {
               screenPath={store.screens.get(props.screenInstance.screenId)!.path}
               screenInstanceId={props.screenInstance.id}
               isRoot={props.screenInstanceIndex === 0}
-              isTop={props.screenInstanceIndex === store.screenInstancePointer}
+              isTop={
+                props.screenInstanceIndex >= store.screenInstancePointer ||
+                (store.screenInstances.length > props.screenInstanceIndex + 1 &&
+                  store.screenInstances[props.screenInstanceIndex + 1].present)
+              }
+              isPresent={props.screenInstance.present}
               onClose={props.onClose}>
               <Component screenInstanceId={props.screenInstance.id} isTop={props.isTop} isRoot={props.isRoot} />
             </Card>

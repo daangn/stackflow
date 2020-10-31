@@ -16,6 +16,7 @@ interface CardProps {
   screenInstanceId: string
   isRoot: boolean
   isTop: boolean
+  isPresent: boolean
   onClose: () => void
 }
 const Card: React.FC<CardProps> = (props) => {
@@ -142,34 +143,42 @@ const Card: React.FC<CardProps> = (props) => {
     <Observer>
       {() => {
         const screenInstanceOption = store.screenInstanceOptions.get(props.screenInstanceId)
+
         return (
-          <TransitionNode ref={props.nodeRef} navigatorOptions={navigatorOptions}>
+          <TransitionNode ref={props.nodeRef} navigatorOptions={navigatorOptions} isPresent={props.isPresent}>
             <Dim
               ref={dimRef}
               navigatorOptions={navigatorOptions}
               isNavbarVisible={!!screenInstanceOption?.navbar.visible}
               isLoading={loading}
+              isPresent={props.isPresent}
             />
             <MainOffset navigatorOptions={navigatorOptions} isTop={props.isTop} isLoading={loading}>
               <Main
                 navigatorOptions={navigatorOptions}
                 isNavbarVisible={!!screenInstanceOption?.navbar.visible}
                 isRoot={props.isRoot}
-                isTop={props.isTop}>
+                isTop={props.isTop}
+                isPresent={props.isPresent}>
                 {!!screenInstanceOption?.navbar.visible && (
                   <Navbar
                     screenInstanceId={props.screenInstanceId}
                     theme={navigatorOptions.theme}
                     isRoot={props.isRoot}
+                    isPresent={props.isPresent}
                     onClose={props.onClose}
                   />
                 )}
                 <FrameOffset ref={frameOffsetRef} navigatorOptions={navigatorOptions} isTop={props.isTop}>
-                  <Frame ref={frameRef} navigatorOptions={navigatorOptions} isRoot={props.isRoot}>
+                  <Frame
+                    ref={frameRef}
+                    navigatorOptions={navigatorOptions}
+                    isRoot={props.isRoot}
+                    isPresent={props.isPresent}>
                     {props.children}
                   </Frame>
                 </FrameOffset>
-                {navigatorOptions.theme === 'Cupertino' && !props.isRoot && (
+                {navigatorOptions.theme === 'Cupertino' && !props.isRoot && !props.isPresent && (
                   <Edge
                     navigatorOptions={navigatorOptions}
                     isNavbarVisible={!!screenInstanceOption?.navbar.visible}
@@ -191,6 +200,7 @@ interface DimProps {
   navigatorOptions: NavigatorOptions
   isNavbarVisible: boolean
   isLoading: boolean
+  isPresent: boolean
 }
 const Dim = styled.div<DimProps>`
   background-color: rgba(0, 0, 0, 0.15);
@@ -215,6 +225,11 @@ const Dim = styled.div<DimProps>`
       ${props.isNavbarVisible &&
       css`
         top: 2.75rem;
+      `}
+
+      ${props.isPresent &&
+      css`
+        top: 0;
       `}
     `}
 
@@ -258,6 +273,7 @@ interface MainProps {
   isNavbarVisible?: boolean
   isRoot: boolean
   isTop: boolean
+  isPresent: boolean
 }
 const Main = styled.div<MainProps>`
   position: absolute;
@@ -273,6 +289,13 @@ const Main = styled.div<MainProps>`
       ${props.isNavbarVisible &&
       css`
         padding-top: 2.75rem;
+      `}
+
+      ${props.isPresent &&
+      css`
+        transition: transform ${props.navigatorOptions.animationDuration}ms;
+        transform: translateY(100%);
+        will-change: transform;
       `}
     `}
 
@@ -322,6 +345,7 @@ const FrameOffset = styled.div<FrameOffsetProps>`
 interface FrameProps {
   navigatorOptions: NavigatorOptions
   isRoot: boolean
+  isPresent: boolean
 }
 const Frame = styled.div<FrameProps>`
   width: 100%;
@@ -340,6 +364,11 @@ const Frame = styled.div<FrameProps>`
       ${!props.isRoot &&
       css`
         transform: translateX(100%);
+      `}
+
+      ${props.isPresent &&
+      css`
+        transform: translateX(0);
       `}
     `};
 `
@@ -375,6 +404,7 @@ const Edge = styled.div<EdgeProps>`
 
 interface TransitionNodeProps {
   navigatorOptions: NavigatorOptions
+  isPresent: boolean
 }
 const TransitionNode = styled.div<TransitionNodeProps>`
   position: absolute;
@@ -386,6 +416,7 @@ const TransitionNode = styled.div<TransitionNodeProps>`
 
   ${(props) =>
     props.navigatorOptions.theme === 'Cupertino' &&
+    !props.isPresent &&
     css`
       &.enter-active,
       &.enter-done {
@@ -410,6 +441,31 @@ const TransitionNode = styled.div<TransitionNodeProps>`
         }
         ${NavbarContainer} {
           display: none;
+        }
+      }
+    `}
+
+  ${(props) =>
+    props.navigatorOptions.theme === 'Cupertino' &&
+    props.isPresent &&
+    css`
+      &.enter-active,
+      &.enter-done {
+        ${Dim} {
+          opacity: 1;
+        }
+        ${Main} {
+          transform: translateY(0);
+        }
+      }
+
+      &.exit-active,
+      &.exit-done {
+        ${Dim} {
+          opacity: 0;
+        }
+        ${Main} {
+          transform: translateY(100%);
         }
       }
     `}

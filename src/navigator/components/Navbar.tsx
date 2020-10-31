@@ -13,6 +13,7 @@ interface NavbarProps {
   screenInstanceId: string
   theme: NavigatorTheme
   isRoot: boolean
+  isPresent: boolean
   onClose: () => void
 }
 const Navbar: React.FC<NavbarProps> = (props) => {
@@ -43,7 +44,7 @@ const Navbar: React.FC<NavbarProps> = (props) => {
             <Back onClick={onBackClick}>{screenInstanceOption.navbar.customBackButton}</Back>
           ) : (
             <Back onClick={onBackClick}>
-              <IconBack />
+              {navigatorOptions.theme === 'Cupertino' && props.isPresent ? <IconClose /> : <IconBack />}
             </Back>
           ))
 
