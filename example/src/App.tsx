@@ -13,6 +13,7 @@ import Bridge from '@daangn/webview-bridge'
 import Home from './components/Home'
 import Page2 from './components/Page2'
 import Page3 from './components/Page3'
+import Page4 from './components/Page4'
 
 const bridge = new Bridge()
 
@@ -38,6 +39,7 @@ function App() {
         <Screen path='/' component={Home} />
         <Screen path='/page2' component={Page2} />
         <Screen path='/page3' component={Page3} />
+        <Screen path='/page/:id/params_page' component={Page4} />
       </Navigator>
   )
 

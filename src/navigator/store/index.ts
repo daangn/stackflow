@@ -6,7 +6,7 @@ import { ScreenComponentProps } from '../ScreenComponentProps'
 export interface Screen {
   id: string
   path: string
-  Component: React.FC<{ screenInstanceId: string } & ScreenComponentProps>
+  Component: React.FC<{ screenInstanceId: string; as: string } & ScreenComponentProps>
 }
 
 export interface ScreenInstance {
@@ -14,6 +14,7 @@ export interface ScreenInstance {
   screenId: string
   nestedRouteCount: number
   present: boolean
+  as: string
 }
 
 export interface ScreenInstanceOption {
@@ -71,7 +72,12 @@ export const setScreenInstanceIn = action(
 export const addScreenInstanceAfter = action(
   (
     pointer: number,
-    { screenId, screenInstanceId, present }: { screenId: string; screenInstanceId: string; present: boolean }
+    {
+      screenId,
+      screenInstanceId,
+      present,
+      as,
+    }: { screenId: string; screenInstanceId: string; present: boolean; as: string }
   ) => {
     store.screenInstances = [
       ...store.screenInstances.filter((_, index) => index <= pointer),
@@ -80,6 +86,7 @@ export const addScreenInstanceAfter = action(
         screenId,
         nestedRouteCount: 0,
         present,
+        as,
       },
     ]
   }
