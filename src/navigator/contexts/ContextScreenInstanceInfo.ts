@@ -3,7 +3,7 @@ import { createContext, useContext } from 'react'
 export const ContextScreenInstanceInfo = createContext<{
   screenInstanceId: string
   path: string
-  location: string
+  as: string
 }>(null as any)
 
 export const ScreenInstanceInfoProvider = ContextScreenInstanceInfo.Provider
