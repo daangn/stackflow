@@ -31,7 +31,7 @@ const Screen: React.FC<Props> = (props) => {
     store.screens.set(id, {
       id,
       path: props.path,
-      Component: ({ screenInstanceId, isTop, isRoot }) => {
+      Component: ({ screenInstanceId, isTop, isRoot, location }) => {
         /**
          * ScreenContext를 통해 유저가 navbar를 바꿀때마다
          * 실제 ScreenInstance의 navbar를 변경
@@ -46,6 +46,7 @@ const Screen: React.FC<Props> = (props) => {
           <ScreenInstanceInfoProvider
             value={{
               screenInstanceId,
+              location,
               path: props.path,
             }}>
             <ScreenInstanceOptionsProvider
