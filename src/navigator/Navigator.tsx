@@ -105,12 +105,12 @@ const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
   )
 
   const replaceScreen = useCallback(
-    ({ screenId, screenInstanceId, location }: { screenId: string; screenInstanceId: string; location: string }) => {
+    ({ screenId, screenInstanceId, as }: { screenId: string; screenInstanceId: string; as: string }) => {
       addScreenInstanceAfter(store.screenInstancePointer - 1, {
         screenId,
         screenInstanceId,
         present: false,
-        as: location,
+        as,
       })
     },
     []
@@ -227,7 +227,7 @@ const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
         replaceScreen({
           screenId: matchScreen.id,
           screenInstanceId,
-          location: location.pathname,
+          as: location.pathname,
         })
       }
     },
