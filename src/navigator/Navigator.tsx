@@ -386,7 +386,8 @@ const Transition: React.FC<TransitionProps> = memo((props) => {
               isRoot={props.screenInstanceIndex === 0}
               isTop={
                 props.screenInstanceIndex >= store.screenInstancePointer ||
-                (store.screenInstances.length > props.screenInstanceIndex + 1 &&
+                (navigatorOptions.theme === 'Cupertino' &&
+                  store.screenInstances.length > props.screenInstanceIndex + 1 &&
                   store.screenInstances[props.screenInstanceIndex + 1].present)
               }
               isPresent={props.screenInstance.present}
