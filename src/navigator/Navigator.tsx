@@ -1,4 +1,4 @@
-import { Observer } from 'mobx-react-lite'
+import { Observer, useObserver } from 'mobx-react-lite'
 import qs from 'querystring'
 import React, { memo, useCallback, useEffect, useRef } from 'react'
 import { HashRouter, matchPath, useHistory, useLocation } from 'react-router-dom'
@@ -48,6 +48,11 @@ interface NavigatorProps {
    * 닫기 버튼을 눌렀을때 해당 콜백이 호출됩니다
    */
   onClose?: () => void
+
+  /**
+   * 네비게이션의 깊이가 변할때마다 해당 콜백이 호출됩니다
+   */
+  onDepthChange?: (depth: number) => void
 }
 const Navigator: React.FC<NavigatorProps> = (props) => {
   let h = (
@@ -65,7 +70,9 @@ const Navigator: React.FC<NavigatorProps> = (props) => {
             }
           })(),
       }}>
-      <NavigatorScreens onClose={props.onClose}>{props.children}</NavigatorScreens>
+      <NavigatorScreens onClose={props.onClose} onDepthChange={props.onDepthChange}>
+        {props.children}
+      </NavigatorScreens>
     </NavigatorOptionsProvider>
   )
 
@@ -79,6 +86,7 @@ const Navigator: React.FC<NavigatorProps> = (props) => {
 const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
   const location = useLocation()
   const history = useHistory()
+  const depth = useObserver(() => store.screenInstancePointer)
 
   const pushScreen = useCallback(
     ({
@@ -175,6 +183,12 @@ const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
       })
     }
   }, [location.search])
+
+  useEffect(() => {
+    if (depth > -1) {
+      props.onDepthChange?.(depth)
+    }
+  }, [depth])
 
   useHistoryPushEffect(
     (location) => {

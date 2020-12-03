@@ -31,10 +31,13 @@ function App() {
   let h = (
     <Navigator
       theme={environment}
+      useCustomRouter
       onClose={() => {
         bridge.router.close()
       }}
-      useCustomRouter
+      onDepthChange={(depth) => {
+        console.log(depth)
+      }}
       >
         <Screen path='/' component={Home} />
         <Screen path='/page2' component={Page2} />
