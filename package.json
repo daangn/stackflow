@@ -25,12 +25,12 @@
     }
   },
   "dependencies": {
-    "@emotion/core": "^10.0.35",
+    "@emotion/core": "^10.1.1",
     "@emotion/styled": "^10.0.27",
     "@emotion/styled-base": "^10.0.31",
     "@types/react-router-dom": "^5.1.5",
-    "mobx": "^6.0.1",
-    "mobx-react-lite": "^3.0.0",
+    "mobx": "^6.0.4",
+    "mobx-react-lite": "^3.1.6",
     "querystring": "^0.2.0",
     "react-router-dom": "^5.2.0",
     "react-transition-group": "^4.4.1"
