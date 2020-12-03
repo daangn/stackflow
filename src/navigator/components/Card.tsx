@@ -25,6 +25,7 @@ const Card: React.FC<CardProps> = (props) => {
   const screenEdge = useObserver(() => store.screenEdge)
 
   const [loading, setLoading] = useState(props.isRoot)
+  const [popped, setPopped] = useState(false)
 
   useEffect(() => {
     setTimeout(() => setLoading(false), 0)
@@ -56,7 +57,7 @@ const Card: React.FC<CardProps> = (props) => {
   }, [])
   const onEdgeTouchMove = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
     if (store.screenEdge.startX) {
-      x.current = e.touches[0].clientX as any
+      x.current = e.touches[0].clientX
     }
   }, [])
   const onEdgeTouchEnd = useCallback(() => {
@@ -64,6 +65,7 @@ const Card: React.FC<CardProps> = (props) => {
       const velocity = x.current / (Date.now() - (store.screenEdge.startTime as number))
 
       if (velocity > 1 || x.current / window.screen.width > 0.4) {
+        setPopped(true)
         navigator.pop()
       }
 
@@ -178,7 +180,7 @@ const Card: React.FC<CardProps> = (props) => {
                     {props.children}
                   </Frame>
                 </FrameOffset>
-                {navigatorOptions.theme === 'Cupertino' && !props.isRoot && !props.isPresent && (
+                {navigatorOptions.theme === 'Cupertino' && !props.isRoot && !props.isPresent && !popped && (
                   <Edge
                     navigatorOptions={navigatorOptions}
                     isNavbarVisible={!!screenInstanceOption?.navbar.visible}
