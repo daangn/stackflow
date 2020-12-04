@@ -4,7 +4,6 @@ import { Link, useScreenParams } from '@daangn/karrotframe';
 
 interface Props {}
 
-console.log(useScreenParams)
 const useGetIdOnParams = () => {
   const params = useScreenParams<{ id: string }>()
   // eslint-disable-next-line
