@@ -1,15 +1,16 @@
-import { Observer, useObserver } from 'mobx-react-lite'
+import { autorun } from 'mobx'
+import { Observer } from 'mobx-react-lite'
 import qs from 'querystring'
 import React, { memo, useCallback, useEffect, useRef } from 'react'
 import { HashRouter, matchPath, useHistory, useLocation } from 'react-router-dom'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
-import styled from '@emotion/styled'
 
 import { NavigatorTheme } from '../types'
 import { appendSearch, generateScreenInstanceId } from '../utils'
 import { Card } from './components'
 import { NavigatorOptionsProvider, useNavigatorOptions } from './contexts'
 import { useHistoryPopEffect, useHistoryPushEffect, useHistoryReplaceEffect } from './hooks/useHistoryEffect'
+import styles from './index.css'
 import store, {
   addScreenInstanceAfter,
   increaseScreenInstancePointer,
@@ -86,7 +87,6 @@ const Navigator: React.FC<NavigatorProps> = (props) => {
 const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
   const location = useLocation()
   const history = useHistory()
-  const depth = useObserver(() => store.screenInstancePointer)
 
   const pushScreen = useCallback(
     ({
@@ -184,11 +184,15 @@ const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
     }
   }, [location.search])
 
-  useEffect(() => {
-    if (depth > -1) {
-      props.onDepthChange?.(depth)
-    }
-  }, [depth])
+  useEffect(
+    () =>
+      autorun(() => {
+        if (store.screenInstancePointer > -1) {
+          props.onDepthChange?.(store.screenInstancePointer)
+        }
+      }),
+    [props.onDepthChange]
+  )
 
   useHistoryPushEffect(
     (location) => {
@@ -325,7 +329,7 @@ const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
   }
 
   return (
-    <Root>
+    <div className={styles.navigatorRoot}>
       {props.children}
       <TransitionGroup>
         <Observer>
@@ -345,17 +349,9 @@ const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
           )}
         </Observer>
       </TransitionGroup>
-    </Root>
+    </div>
   )
 }
-
-const Root = styled.div`
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  position: relative;
-  user-select: none;
-`
 
 interface TransitionProps {
   screenInstance: ScreenInstance
@@ -378,7 +374,13 @@ const Transition: React.FC<TransitionProps> = memo((props) => {
             nodeRef={nodeRef}
             timeout={navigatorOptions.animationDuration}
             in={props.screenInstanceIndex <= store.screenInstancePointer}
-            unmountOnExit>
+            unmountOnExit
+            classNames={{
+              enterActive: styles.enterActive,
+              enterDone: styles.enterDone,
+              exitActive: styles.exitActive,
+              exitDone: styles.exitDone,
+            }}>
             <Card
               nodeRef={nodeRef}
               screenPath={store.screens.get(props.screenInstance.screenId)!.path}

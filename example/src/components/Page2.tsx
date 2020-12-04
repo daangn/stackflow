@@ -1,7 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
+
+import {
+  ScreenComponentProps,
+  ScreenHelmet,
+  useNavigator,
+} from '@daangn/karrotframe'
 import styled from '@emotion/styled'
-import { ScreenComponentProps, ScreenHelmet, useNavigator } from '@daangn/karrotframe'
-import { useState } from 'react'
 
 const Page2: React.FC<ScreenComponentProps> = ({ isTop, isRoot }) => {
   const navigator = useNavigator()

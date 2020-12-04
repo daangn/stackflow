@@ -1,7 +1,8 @@
 import React from 'react'
-import styled from '@emotion/styled'
+import { Link, Route, useHistory } from 'react-router-dom'
+
 import { useNavigator } from '@daangn/karrotframe'
-import { Route, useHistory, Link } from '@daangn/karrotframe/lib/react-router-dom'
+import styled from '@emotion/styled'
 
 const Page3: React.FC = () => {
   const history = useHistory()

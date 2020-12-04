@@ -1,15 +1,11 @@
 import './App.css'
 
-import React from "react"
-import {
-  Navigator,
-  Screen,
-} from '@daangn/karrotframe'
-import {
-  HashRouter,
-  MemoryRouter,
-} from '@daangn/karrotframe/lib/react-router-dom'
+import React from 'react'
+import { HashRouter, MemoryRouter } from 'react-router-dom'
+
+import { Navigator, Screen } from '@daangn/karrotframe'
 import Bridge from '@daangn/webview-bridge'
+
 import Home from './components/Home'
 import Page2 from './components/Page2'
 import Page3 from './components/Page3'
@@ -21,7 +17,7 @@ function App() {
   const environment = (() => {
     switch (bridge.environment) {
       case 'Web':
-        return 'Cupertino' as const
+        return 'Android' as const
       default:
         return bridge.environment
     }
@@ -34,9 +30,6 @@ function App() {
       useCustomRouter
       onClose={() => {
         bridge.router.close()
-      }}
-      onDepthChange={(depth) => {
-        console.log(depth)
       }}
       >
         <Screen path='/' component={Home} />

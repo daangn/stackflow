@@ -13,6 +13,7 @@
   },
   "i18n-ally.localesPaths": "src/locales",
   "i18n-ally.keystyle": "nested",
+  "importSorter.generalConfiguration.sortOnBeforeSave": true,
   "importSorter.importStringConfiguration.trailingComma": "multiLine",
   "importSorter.importStringConfiguration.hasSemicolon": false,
   "importSorter.importStringConfiguration.maximumNumberOfImportExpressionsPerLine.type": "newLineEachExpressionAfterCountLimitExceptIfOnlyOne",

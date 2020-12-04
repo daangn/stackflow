@@ -1,10 +1,10 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import styled from '@emotion/styled';
-import { Link, useScreenParams } from '@daangn/karrotframe';
+import React, { useEffect, useMemo, useState } from 'react'
+
+import { Link, useScreenParams } from '@daangn/karrotframe'
+import styled from '@emotion/styled'
 
 interface Props {}
 
-console.log(useScreenParams)
 const useGetIdOnParams = () => {
   const params = useScreenParams<{ id: string }>()
   // eslint-disable-next-line
