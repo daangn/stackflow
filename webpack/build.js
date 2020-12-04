@@ -36,7 +36,7 @@ module.exports = {
             loader: 'css-loader',
             options: {
               sourceMap: false,
-              modules: true,
+              modules: { localIdentName: 'kf-[hash:base64:5]' },
             },
           },
         ],
