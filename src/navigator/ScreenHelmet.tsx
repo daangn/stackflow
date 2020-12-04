@@ -50,6 +50,21 @@ const ScreenHelmet: React.FC<ScreenHelmetProps> = (props) => {
     })
   }, [props])
 
+  useEffect(
+    () => () => {
+      screen.setNavbar({
+        visible: false,
+        title: null,
+        appendLeft: null,
+        appendRight: null,
+        closeButtonLocation: 'left',
+        customBackButton: null,
+        customCloseButton: null,
+      })
+    },
+    []
+  )
+
   return null
 }
 
