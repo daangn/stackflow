@@ -1,10 +1,5 @@
 ![](./cover.png)
 
-## Demo
-아래 QR 코드를 카메라로 찍어보세요. 당근마켓 앱 내에서 데모를 볼 수 있어요. 아래 데모에서는 각 플랫폼 (Android/iOS) 환경에 맞게 UI가 표현됩니다.
-
-![](./demo-qr.png)
-
 ## 시작하기
 
 ```bash
@@ -12,7 +7,7 @@ $ yarn add @daangn/karrotframe
 ```
 
 ```typescript
-import * as kf from '@daangn/karrotframe'
+import { ... } from '@daangn/karrotframe'
 ```
 
 ## 1. 네비게이터
@@ -50,6 +45,8 @@ const App: React.FC = () => {
 | `theme` | `Cupertino` 또는 `Android` | UI 테마 | `Android` |
 | `animationDuration` | number | 애니메이션 지속시간  | `theme` 별로 다름 |
 | `useCustomRouter` | boolean | `true`인 경우 `Navigator` 내에 포함된 `<HashRouter/>` 을 제거합니다  | |
+| `onClose` | `() => void` | 루트의 닫기 버튼이 클릭될때 해당 함수가 호출됩니다 ||
+| `onDepthChange` | `(height: number) => void` | 네비게이션 깊이가 변경될때마다 해당 함수가 호출됩니다 ||
 
 ### 1-b. `Screen`
 `Screen` 컴포넌트는 화면을 선언하는데 사용합니다. `Navigator` 안에 선언합니다.
@@ -280,13 +277,13 @@ const PostWriteForm: React.FC = () => {
   return /* ... */
 }
 ```
-### 1-e. `/lib/react-router-dom`
-Navigator 구현으로 감싸지 않은 `react-router-dom`의 기본 컴포넌트와 함수들을 다음과 같이 사용할 수 있습니다.
+### 1-e. `react-router-dom`
+`react-router-dom`의 기본 컴포넌트와 함수들을 다음과 같이 함께 사용할 수 있습니다.
 
 #### 라우터 교체하기
 ```tsx
 import { Navigator } from '@daangn/karrotframe'
-import { HashRouter } from '@daangn/karrotframe/lib/react-router'
+import { HashRouter } from 'react-router-dom'
 
 const App = () => {
   return (
@@ -304,7 +301,7 @@ const App = () => {
 ```tsx
 // <Screen path={ExampleScreen} />
 
-import { Route, useHistory } from '@daangn/karrotframe/lib/react-router'
+import { Route, useHistory } from 'react-router-dom'
 
 const ExampleScreen = () => {
   const history = useHistory()
@@ -332,14 +329,6 @@ const ExampleScreen = () => {
 
 > path 내에 `_si` 쿼리스트링이 포함되어있지 않으면 Karrotframe은 내부 라우팅으로 인식해 별도의 애니메이션 처리를 위한 작업을 하지 않습니다
 
-## 2. 추가 예정인 기능
-- [ ] 모달
-- [ ] 토스트
-> 추가적으로 Karrotframe에 추가되었으면하는 기능이 있으시다면, 꼭 이슈에 남겨주세요.
-
 ## Contributor
 - Bucky (bucky@daangn.com)
 - Tony (tony@daangn.com)
-
-## Help
-당근마켓 Slack 내 `#dev-frontend`로 언제든지 편하게 문의해주세요!
