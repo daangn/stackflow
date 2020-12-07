@@ -1,12 +1,13 @@
 {
-  "name": "@daangn/karrotframe",
+  "name": "karrotframe",
   "version": "0.10.2",
   "description": "UX Enhancer",
   "repository": "https://github.com/daangn/karrotframe",
   "license": "MIT",
   "author": "Danggeun Market Inc.",
   "files": [
-    "lib"
+    "lib",
+    "README.md"
   ],
   "main": "lib/index.js",
   "module": "lib/index.js",
