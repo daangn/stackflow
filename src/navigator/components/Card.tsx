@@ -146,19 +146,21 @@ const Card: React.FC<CardProps> = (props) => {
               [styles.isNotPresent]: !props.isPresent,
               [styles.isPresent]: props.isPresent,
             })}>
-            <div
-              ref={dimRef}
-              className={classnames(styles.cardDim, {
-                [styles.cupertino]: navigatorOptions.theme === 'Cupertino',
-                [styles.android]: navigatorOptions.theme === 'Android',
-                [styles.isLoading]: loading,
-                [styles.isNavbarVisible]: !!screenInstanceOption?.navbar.visible,
-                [styles.isPresent]: props.isPresent,
-              })}
-              style={{
-                transition: `opacity ${navigatorOptions.animationDuration}ms`,
-              }}
-            />
+            {!props.isRoot && (
+              <div
+                ref={dimRef}
+                className={classnames(styles.cardDim, {
+                  [styles.cupertino]: navigatorOptions.theme === 'Cupertino',
+                  [styles.android]: navigatorOptions.theme === 'Android',
+                  [styles.isLoading]: loading,
+                  [styles.isNavbarVisible]: !!screenInstanceOption?.navbar.visible,
+                  [styles.isPresent]: props.isPresent,
+                })}
+                style={{
+                  transition: `opacity ${navigatorOptions.animationDuration}ms`,
+                }}
+              />
+            )}
             <div
               className={classnames(styles.cardMainOffset, {
                 [styles.android]: navigatorOptions.theme === 'Android',
