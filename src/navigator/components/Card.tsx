@@ -50,6 +50,8 @@ const Card: React.FC<CardProps> = (props) => {
   }, [frameOffsetRef.current])
 
   const onEdgeTouchStart = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
+    ;(document.activeElement as any)?.blur?.()
+
     setScreenEdge({
       startX: e.touches[0].clientX,
       startTime: Date.now(),
