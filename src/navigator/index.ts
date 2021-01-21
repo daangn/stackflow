@@ -8,4 +8,5 @@ export { default as ScreenHelmet } from './ScreenHelmet'
 
 export { useNavigator } from './useNavigator'
 export { useParams } from './useParams'
+export { useQueryParams } from './useQueryParams'
 export { useScreenParams } from './useScreenParams'
