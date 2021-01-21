@@ -4,12 +4,15 @@ import {
   ScreenComponentProps,
   ScreenHelmet,
   useNavigator,
+  useQueryParams,
 } from '@daangn/karrotframe'
 import styled from '@emotion/styled'
 
 const Page2: React.FC<ScreenComponentProps> = ({ isTop, isRoot }) => {
   const navigator = useNavigator()
   const [title, setTitle] = useState('')
+
+  const query = useQueryParams<{ id: string }>()
 
   const onPopClick = () => {
     navigator.pop().send({
@@ -39,6 +42,7 @@ const Page2: React.FC<ScreenComponentProps> = ({ isTop, isRoot }) => {
         }
       />
       두번째페이지
+      {query?.id}
       <button onClick={onPopClick}>홈으로 돌아가기</button>
       <button onClick={onPage3Click}>상단바가 없는 페이지3으로 가기</button>
       <input type='text' value={title} onChange={(e) => {
