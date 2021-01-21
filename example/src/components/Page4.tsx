@@ -1,12 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react'
 
-import { Link, useQueryParams, useScreenParams } from '@daangn/karrotframe'
+import { Link, useParams, useQueryParams } from '@daangn/karrotframe'
 import styled from '@emotion/styled'
 
 interface Props {}
 
 const useGetIdOnParams = () => {
-  const params = useScreenParams<{ id: string }>()
+  const params = useParams<{ id: string }>()
   // eslint-disable-next-line
   return useMemo(() => params?.id, [])
 }
