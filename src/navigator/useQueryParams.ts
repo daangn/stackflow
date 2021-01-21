@@ -10,10 +10,10 @@ export function useQueryParams<T extends {} = {}>(): match<T>['params'] {
 
   const search: T = qs.parse(location.search.split('?')[1]) as any
 
-  const [state, setState] = useState<T>({} as T)
+  const [state, setState] = useState<T>(search as T)
 
   useEffect(() => {
-    if (location.pathname === info.path) {
+    if (location.pathname === info.as) {
       setState(search)
     }
   }, [location.pathname, location.search])
