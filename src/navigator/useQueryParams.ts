@@ -4,7 +4,7 @@ import { match, useLocation } from 'react-router-dom'
 
 import { useScreenInstanceInfo } from './contexts'
 
-export function useQueryParams<T extends {} = {}>(): match<T>['params'] | null {
+export function useQueryParams<T extends {} = {}>(): match<T>['params'] {
   const location = useLocation()
   const info = useScreenInstanceInfo()
 
