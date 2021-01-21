@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 
-import { Link, useScreenParams } from '@daangn/karrotframe'
+import { Link, useQueryParams, useScreenParams } from '@daangn/karrotframe'
 import styled from '@emotion/styled'
 
 interface Props {}
@@ -23,8 +23,11 @@ const LazyLoadedComponent: React.FC = () => {
 
 const Page4: React.FC<Props> = () => {
   const [loading, setLoading] = useState(true)
+  const query = useQueryParams()
 
   const randomId = useMemo(() => `${Math.random()}`, [])
+
+  console.log(query)
 
   useEffect(() => {
     const timerId = setTimeout(() => {
@@ -37,7 +40,8 @@ const Page4: React.FC<Props> = () => {
   return (
     <Base>
       {loading ? 'Loading...' : <LazyLoadedComponent />}
-
+      {/* {query?.id} */}
+      
       <Link to={`/page2`}>페이지 전환</Link>
       <Link replace to={`/page/${randomId}/params_page`}>페이지 전환</Link>
     </Base>
