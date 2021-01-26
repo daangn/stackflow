@@ -5,6 +5,7 @@ import { HashRouter, MemoryRouter } from 'react-router-dom'
 
 import { Navigator, Screen } from '@daangn/karrotframe'
 import Bridge from '@daangn/webview-bridge'
+import styled from '@emotion/styled'
 
 import Home from './components/Home'
 import Page2 from './components/Page2'
@@ -49,5 +50,6 @@ function App() {
 
   return h
 }
+
 
 export default App;

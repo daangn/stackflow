@@ -51,7 +51,7 @@
   box-sizing: border-box;
 }
 .cardMain.cupertino.isNavbarVisible {
-  padding-top: 2.75rem;
+  padding-top: calc(2.75rem + env(safe-area-inset-top));
 }
 .cardMain.cupertino.isPresent {
   transform: translateY(100%);
@@ -227,12 +227,13 @@
 .navbarContainer.cupertino {
   height: 2.75rem;
   box-shadow: inset 0px -0.5px 0 rgba(0, 0, 0, 0.12);
+  margin-top: constant(safe-area-inset-top);
+  margin-top: env(safe-area-inset-top);
 }
 
 .navbarFlex {
   display: flex;
   position: absolute;
-  top: 0;
   left: 0;
   width: 100%;
   height: 100%;

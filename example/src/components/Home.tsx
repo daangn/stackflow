@@ -11,7 +11,7 @@ const Home: React.FC<ScreenComponentProps> = ({ isTop, isRoot }) => {
   const navigator = useNavigator()
 
   const onPage2Click = async () => {
-    const data = await navigator.push('/page/hello/params_page?id=1234', {
+    const data = await navigator.push('/page2', {
       present: true,
     })
     console.log(data)
