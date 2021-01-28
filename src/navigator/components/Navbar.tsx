@@ -70,22 +70,24 @@ const Navbar: React.FC<NavbarProps> = (props) => {
         )
 
         return (
-          <div
-            className={classnames(styles.navbarContainer, {
-              [styles.android]: props.theme === 'Android',
-              [styles.cupertino]: props.theme === 'Cupertino',
-            })}>
-            {props.theme === 'Cupertino' && center}
-            <div className={styles.navbarFlex}>
-              <div className={styles.navbarLeft}>
-                {screenInstanceOption?.navbar.closeButtonLocation === 'left' && closeButton}
-                {backButton}
-                {screenInstanceOption?.navbar.appendLeft}
-              </div>
-              {props.theme === 'Android' && center}
-              <div className={styles.navbarRight}>
-                {screenInstanceOption?.navbar.appendRight}
-                {screenInstanceOption?.navbar.closeButtonLocation === 'right' && closeButton}
+          <div className={styles.navbarContainer}>
+            <div
+              className={classnames(styles.navbarMain, {
+                [styles.android]: props.theme === 'Android',
+                [styles.cupertino]: props.theme === 'Cupertino',
+              })}>
+              {props.theme === 'Cupertino' && center}
+              <div className={styles.navbarFlex}>
+                <div className={styles.navbarLeft}>
+                  {screenInstanceOption?.navbar.closeButtonLocation === 'left' && closeButton}
+                  {backButton}
+                  {screenInstanceOption?.navbar.appendLeft}
+                </div>
+                {props.theme === 'Android' && center}
+                <div className={styles.navbarRight}>
+                  {screenInstanceOption?.navbar.appendRight}
+                  {screenInstanceOption?.navbar.closeButtonLocation === 'right' && closeButton}
+                </div>
               </div>
             </div>
           </div>
