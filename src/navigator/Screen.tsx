@@ -2,7 +2,10 @@ import { action } from 'mobx'
 import React, { useEffect, useMemo } from 'react'
 
 import { generateScreenId } from '../utils'
-import { ScreenInstanceInfoProvider, ScreenInstanceOptionsProvider } from './contexts'
+import {
+  ScreenInstanceInfoProvider,
+  ScreenInstanceOptionsProvider,
+} from './contexts'
 import { ScreenComponentProps } from './ScreenComponentProps'
 import store, { NavbarOptions } from './store'
 
@@ -59,7 +62,7 @@ const Screen: React.FC<Props> = (props) => {
         )
       },
     })
-  }, [props])
+  }, [])
 
   return null
 }
