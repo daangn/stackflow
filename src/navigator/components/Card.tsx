@@ -17,7 +17,7 @@ interface CardProps {
   isRoot: boolean
   isTop: boolean
   isPresent: boolean
-  onClose: () => void
+  onClose?: () => void
 }
 const Card: React.FC<CardProps> = (props) => {
   const navigator = useNavigator()

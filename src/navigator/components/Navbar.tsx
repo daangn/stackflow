@@ -14,7 +14,7 @@ interface NavbarProps {
   theme: NavigatorTheme
   isRoot: boolean
   isPresent: boolean
-  onClose: () => void
+  onClose?: () => void
 }
 const Navbar: React.FC<NavbarProps> = (props) => {
   const { pop } = useNavigator()
@@ -29,6 +29,7 @@ const Navbar: React.FC<NavbarProps> = (props) => {
       {() => {
         const screenInstanceOption = store.screenInstanceOptions.get(props.screenInstanceId)
         const closeButton =
+          props.onClose &&
           props.isRoot &&
           (screenInstanceOption?.navbar.customCloseButton ? (
             <div className={styles.navbarClose} onClick={props.onClose}>

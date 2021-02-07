@@ -2,14 +2,23 @@ import { autorun } from 'mobx'
 import { Observer } from 'mobx-react-lite'
 import qs from 'querystring'
 import React, { memo, useCallback, useEffect, useRef } from 'react'
-import { HashRouter, matchPath, useHistory, useLocation } from 'react-router-dom'
+import {
+  HashRouter,
+  matchPath,
+  useHistory,
+  useLocation,
+} from 'react-router-dom'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 
 import { NavigatorTheme } from '../types'
 import { appendSearch, generateScreenInstanceId } from '../utils'
 import { Card } from './components'
 import { NavigatorOptionsProvider, useNavigatorOptions } from './contexts'
-import { useHistoryPopEffect, useHistoryPushEffect, useHistoryReplaceEffect } from './hooks/useHistoryEffect'
+import {
+  useHistoryPopEffect,
+  useHistoryPushEffect,
+  useHistoryReplaceEffect,
+} from './hooks/useHistoryEffect'
 import styles from './index.css'
 import store, {
   addScreenInstanceAfter,
@@ -324,10 +333,6 @@ const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
     [popScreen, pushScreen]
   )
 
-  const onClose = () => {
-    props.onClose?.()
-  }
-
   return (
     <div className={styles.navigatorRoot}>
       {props.children}
@@ -342,7 +347,7 @@ const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
                   screenInstanceIndex={index}
                   isRoot={index === 0}
                   isTop={index === store.screenInstancePointer}
-                  onClose={onClose}
+                  onClose={props.onClose}
                 />
               ))}
             </>
@@ -358,7 +363,7 @@ interface TransitionProps {
   screenInstanceIndex: number
   isRoot: boolean
   isTop: boolean
-  onClose: () => void
+  onClose?: () => void
 }
 const Transition: React.FC<TransitionProps> = memo((props) => {
   const navigatorOptions = useNavigatorOptions()
