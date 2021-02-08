@@ -3,11 +3,11 @@
 ## 시작하기
 
 ```bash
-$ yarn add @daangn/karrotframe
+$ yarn add karrotframe
 ```
 
 ```typescript
-import { ... } from '@daangn/karrotframe'
+import { ... } from 'karrotframe'
 ```
 
 ## 1. 네비게이터
@@ -24,7 +24,7 @@ import { ... } from '@daangn/karrotframe'
 `Navigator` 컴포넌트는 화면을 표현하는데 반드시 필요한 요소들이 포함됩니다. 컴포넌트 트리 상단에 포함해주세요
 
 ```tsx
-import { Navigator } from '@daangn/karrotframe'
+import { Navigator } from 'karrotframe'
 
 const App: React.FC = () => {
   return (
@@ -44,7 +44,7 @@ const App: React.FC = () => {
 | ------------- | ------------- | ------------- | ------------- | 
 | `theme` | `Cupertino` 또는 `Android` | UI 테마 | `Android` |
 | `animationDuration` | number | 애니메이션 지속시간  | `theme` 별로 다름 |
-| `useCustomRouter` | boolean | `true`인 경우 `Navigator` 내에 포함된 `<HashRouter/>` 을 제거합니다  | |
+| `useCustomRouter` | boolean | `true`인 경우 `Navigator` 내에 포함된 `<HashRouter/>` 을 제거합니다  ||
 | `onClose` | `() => void` | 루트의 닫기 버튼이 클릭될때 해당 함수가 호출됩니다 ||
 | `onDepthChange` | `(height: number) => void` | 네비게이션 깊이가 변경될때마다 해당 함수가 호출됩니다 ||
 
@@ -52,7 +52,7 @@ const App: React.FC = () => {
 `Screen` 컴포넌트는 화면을 선언하는데 사용합니다. `Navigator` 안에 선언합니다.
 
 ```tsx
-import { Navigator, Screen } from '@daangn/karrotframe'
+import { Navigator, Screen } from 'karrotframe'
 
 const App: React.FC = () => {
   return (
@@ -74,14 +74,14 @@ const App: React.FC = () => {
 | Props | 타입 | 역할 | 기본값 |
 | ------------- | ------------- | ------------- | ------------- | 
 | `path` | string | 해당 화면을 표현할 Path | required |
-| `component` | `React.ComponentType<ScreenComponentProps>` | 렌더링 할 컴포넌트 | |
-| `children` | `React.ReactNode` | 렌더링 할 요소  | |
+| `component` | `React.ComponentType<ScreenComponentProps>` | 렌더링 할 컴포넌트 ||
+| `children` | `React.ReactNode` | 렌더링 할 요소  ||
 > `component` 또는 `children`은 반드시 사용하세요 (만약 두 props가 동시에 선언되는 경우, `component`가 우선권을 갖습니다)
 
 > `ScreenComponentProps`를 통해 스크린에 대한 정보를 받아올 수 있습니다
 
   ```tsx
-  import { ScreenComponentProps } from '@daangn/karrotframe'
+  import { ScreenComponentProps } from 'karrotframe'
 
   const MyComponent: React.FC<ScreenComponentProps> = (props) => {
     console.log(isTop) // 현재 최상단인지 여부
@@ -93,7 +93,7 @@ const App: React.FC = () => {
 기본적으로 Screen은 상단 네비게이션 바를 포함하고 있지 않습니다. 기본 제공되는 상단 네비게이션 바를 추가, 수정하기 위해서는 `ScreenHelmet` 컴포넌트를 사용하세요.
 
 ```tsx
-import { ScreenHelmet } from '@daangn/karrotframe'
+import { ScreenHelmet } from 'karrotframe'
 
 const MyComponent: React.FC = () => {
   return (
@@ -119,18 +119,18 @@ const MyComponent: React.FC = () => {
 ```
 | Props | 타입 | 역할 | 기본값 |
 | ------------- | ------------- | ------------- | ------------- | 
-| `title` | `React.ReactNode` | 타이틀 부분에 출력할 요소 |  |
-| `appendLeft` | `React.ReactNode` | 왼쪽에 요소를 추가 (이전 버튼 오른쪽에 표시됩니다) |  |
-| `appendRight` | `React.ReactNode` | 오른쪽에 요소를 추가 (닫기 버튼 왼쪽에 표시됩니다) |  |
+| `title` | `React.ReactNode` | 타이틀 부분에 출력할 요소 ||
+| `appendLeft` | `React.ReactNode` | 왼쪽에 요소를 추가 (이전 버튼 오른쪽에 표시됩니다) ||
+| `appendRight` | `React.ReactNode` | 오른쪽에 요소를 추가 (닫기 버튼 왼쪽에 표시됩니다) ||
 | `closeButtonLocation` | `left` 또는 `right` | 이전 버튼을 사용자화합니다 | `left` |
-| `customBackButton` | `React.ReactNode` | 이전 버튼을 사용자화합니다 |  |
-| `customCloseButton` | `React.ReactNode` | 닫기 버튼을 사용자화합니다 |  |
+| `customBackButton` | `React.ReactNode` | 이전 버튼을 사용자화합니다 ||
+| `customCloseButton` | `React.ReactNode` | 닫기 버튼을 사용자화합니다 ||
 
 ### 1-d. `Link`
 특정 path로 이동할 수 있는 링크를 생성하는 컴포넌트입니다.
 
 ```tsx
-import { Link } from '@daangn/karrotframe'
+import { Link } from 'karrotframe'
 
 const Home: React.FC = () => {
   return (
@@ -148,10 +148,10 @@ const Home: React.FC = () => {
 | `present` | boolean | 스와이프 백이 불가능한 새 창으로 엽니다 (Cupertino Only) | `undefined` |
 
 ### 1-e. `useLocation`, `useParams`, `useRouteMatch`
-react-router-dom에 존재하는 `useLocation`, `useParams`, `useRouteMatch`를 그대로 사용할 수 있습니다
+react-router-dom에 존재하는 `useLocation`, `useParams`, `useRouteMatch`를 사용할 수 있습니다
 
 ```tsx
-import { useLocation, useParams, useRouteMatch } from '@daangn/karrotframe'
+import { useLocation, useParams, useRouteMatch } from 'react-router-dom'
 
 const Post: React.FC = () => {
   /**
@@ -176,11 +176,32 @@ const Post: React.FC = () => {
 }
 ```
 
-### 1-f. `useNavigator`
+### 1-f. `useQueryParams`, `useParams`
+화면의 전환간 path의 변경으로 인해 의도하지 않은 화면의 변경이 발생하지 않도록 하기 위해, `useQueryParam`을 통해 querystring을 사용하고, `useParams`를 통해 path parameter를 사용할 수 있습니다.
+
+```tsx
+import { useQueryParams, useParams } from 'karrotframe'
+
+const Post: React.FC = () => {
+  /**
+   * querystring으로 들어온 값 (화면 전환간 불변)
+   */
+  const querystring = useQueryParams()
+
+  /**
+   * path parameter로 들어온 값 (화면 전환간 불변)
+   */
+  const params = useParams()
+
+  return /* ... */
+}
+```
+
+### 1-g. `useNavigator`
 화면 전환을 수행합니다.
 
 ```tsx
-import { useNavigator } from '@daangn/karrotframe'
+import { useNavigator } from 'karrotframe'
 
 const Posts: React.FC = () => {
   const { push, pop, replace } = useNavigator()
@@ -235,7 +256,7 @@ const Posts: React.FC = () => {
 > `pop()` 함수 내 `depth` argument를 2 이상으로 부여할 시 여러 화면을 뛰어넘어서 전송도 가능합니다.
 
 ```tsx
-import { useNavigator } from '@daangn/karrotframe'
+import { useNavigator } from 'karrotframe'
 
 const Posts: React.FC = () => {
   const { push } = useNavigator()
@@ -282,7 +303,7 @@ const PostWriteForm: React.FC = () => {
 
 #### 라우터 교체하기
 ```tsx
-import { Navigator } from '@daangn/karrotframe'
+import { Navigator } from 'karrotframe'
 import { HashRouter } from 'react-router-dom'
 
 const App = () => {
@@ -332,3 +353,5 @@ const ExampleScreen = () => {
 ## Contributor
 - Bucky (bucky@daangn.com)
 - Tony (tony@daangn.com)
+- Victor (victor@daangn.com)
+- Steve (steve@daangn.com)
