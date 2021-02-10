@@ -1,6 +1,6 @@
 import classnames from 'classnames'
 import { Observer } from 'mobx-react-lite'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { CSSProperties, useEffect, useRef, useState } from 'react'
 
 import { NavigatorTheme } from '../../types'
 import { IconBack, IconClose } from '../assets'
@@ -20,26 +20,28 @@ const Navbar: React.FC<NavbarProps> = (props) => {
   const { pop } = useNavigator()
   const navigatorOptions = useNavigatorOptions()
   const centerRef = useRef<HTMLDivElement>(null)
-  const [centerTextMaxWidth, setCenterTextMaxWidth] = useState(0)
+  const [centerTextStyle, setCenterTextStyle] = useState<CSSProperties>({})
 
   useEffect(() => {
-    let currentClientWidth = 0
-    let animationFrameId: number
+    if (props.theme === 'Cupertino') {
+      let currentClientWidth = 0
+      let animationFrameId: number
 
-    const detectMaxWidth = () => {
-      animationFrameId = requestAnimationFrame(() => {
-        const clientWidth = centerRef.current?.clientWidth
-        if (clientWidth && clientWidth !== currentClientWidth) {
-          currentClientWidth = clientWidth
-          setCenterTextMaxWidth(clientWidth - 32)
-        }
-        detectMaxWidth()
-      })
-    }
-    detectMaxWidth()
+      const detectMaxWidth = () => {
+        animationFrameId = requestAnimationFrame(() => {
+          const clientWidth = centerRef.current?.clientWidth
+          if (clientWidth && clientWidth !== currentClientWidth) {
+            currentClientWidth = clientWidth
+            setCenterTextStyle({ maxWidth: clientWidth - 32 })
+          }
+          detectMaxWidth()
+        })
+      }
+      detectMaxWidth()
 
-    return () => {
-      cancelAnimationFrame(animationFrameId)
+      return () => {
+        cancelAnimationFrame(animationFrameId)
+      }
     }
   }, [])
 
@@ -84,14 +86,14 @@ const Navbar: React.FC<NavbarProps> = (props) => {
 
         const center = (
           <div className={styles.navbarCenter} ref={centerRef}>
-            <h1
+            <div
               className={classnames(styles.navbarCenterText, {
                 [styles.isLeft]: isLeft,
                 [styles.android]: props.theme === 'Android',
                 [styles.cupertino]: props.theme === 'Cupertino',
               })}>
-              <span style={{ maxWidth: centerTextMaxWidth }}>{screenInstanceOption?.navbar.title}</span>
-            </h1>
+              <div style={centerTextStyle}>{screenInstanceOption?.navbar.title}</div>
+            </div>
           </div>
         )
 
