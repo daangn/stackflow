@@ -19,8 +19,7 @@
     "build": "yarn clean && yarn build:runtime && yarn build:dts",
     "build:dts": "tsc --emitDeclarationOnly",
     "build:runtime": "webpack --config ./webpack/build.js",
-    "clean": "rimraf lib",
-    "lint": "eslint \"./src/*.{tsx,ts}\""
+    "clean": "rimraf lib && rimraf node_modules"
   },
   "dependencies": {
     "@types/react-router-dom": "^5.1.5",
