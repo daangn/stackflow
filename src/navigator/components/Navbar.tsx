@@ -1,6 +1,6 @@
 import classnames from 'classnames'
 import { Observer } from 'mobx-react-lite'
-import React, { CSSProperties, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef } from 'react'
 
 import { NavigatorTheme } from '../../types'
 import { IconBack, IconClose } from '../assets'
@@ -20,20 +20,27 @@ const Navbar: React.FC<NavbarProps> = (props) => {
   const { pop } = useNavigator()
   const navigatorOptions = useNavigatorOptions()
   const centerRef = useRef<HTMLDivElement>(null)
-  const [centerTextStyle, setCenterTextStyle] = useState<CSSProperties>({})
 
   useEffect(() => {
     if (props.theme === 'Cupertino') {
-      let currentClientWidth = 0
+      let prevClientWidth = 0
       let animationFrameId: number
 
       const detectMaxWidth = () => {
         animationFrameId = requestAnimationFrame(() => {
-          const clientWidth = centerRef.current?.clientWidth
-          if (clientWidth && clientWidth !== currentClientWidth) {
-            currentClientWidth = clientWidth
-            setCenterTextStyle({ maxWidth: clientWidth - 32 })
+          if (!centerRef.current) {
+            return
           }
+          const { offsetLeft, clientWidth } = centerRef.current
+          if (clientWidth && clientWidth !== prevClientWidth) {
+            prevClientWidth = clientWidth
+            const screenWidth = window.innerWidth
+            const right = screenWidth - (offsetLeft + clientWidth)
+            const max = Math.max(right, offsetLeft)
+            ;((centerRef.current.firstElementChild as HTMLDivElement)
+              .firstElementChild as HTMLDivElement)!.style.maxWidth = `${screenWidth - max * 2}px`
+          }
+
           detectMaxWidth()
         })
       }
@@ -92,7 +99,7 @@ const Navbar: React.FC<NavbarProps> = (props) => {
                 [styles.android]: props.theme === 'Android',
                 [styles.cupertino]: props.theme === 'Cupertino',
               })}>
-              <div style={centerTextStyle}>{screenInstanceOption?.navbar.title}</div>
+              <div className={styles.navbarCenterEllipsisText}>{screenInstanceOption?.navbar.title}</div>
             </div>
           </div>
         )
