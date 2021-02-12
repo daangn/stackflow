@@ -1,0 +1,8 @@
+{
+  "presets": ["@babel/typescript"],
+  "plugins": [
+    "@babel/transform-react-jsx",
+    "@babel/proposal-optional-chaining",
+    "@babel/proposal-nullish-coalescing-operator"
+  ]
+}
