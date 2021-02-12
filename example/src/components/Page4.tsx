@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 
-import { Link, useParams, useQueryParams } from 'karrotframe'
+import { useParams, useQueryParams } from 'karrotframe'
 import styled from '@emotion/styled'
 
 interface Props {}
@@ -36,12 +36,6 @@ const Page4: React.FC<Props> = () => {
   return (
     <Base>
       {loading ? 'Loading...' : <LazyLoadedComponent />}
-      {/* {query?.id} */}
-
-      <Link to={`/page2`}>페이지 전환</Link>
-      <Link replace to={`/page/${randomId}/params_page`}>
-        페이지 전환
-      </Link>
     </Base>
   )
 }

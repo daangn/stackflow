@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link, Route, useHistory } from 'react-router-dom'
+import { Route, useHistory } from 'react-router-dom'
 
 import { useNavigator } from 'karrotframe'
 import styled from '@emotion/styled'
@@ -34,10 +34,6 @@ const Page3: React.FC = () => {
       <button onClick={startForm}>start</button>
       <Route path="/page3/inside1">
         <div>inside1</div>
-        <Link to="/page3/inside2">inside2</Link>
-        <Link to="/page3/inside2" replace>
-          inside2 replace
-        </Link>
         <button onClick={goBack}>goBack</button>
       </Route>
       <Route path="/page3/inside2">

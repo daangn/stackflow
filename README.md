@@ -125,30 +125,7 @@ const MyComponent: React.FC = () => {
 | `customBackButton`    | `React.ReactNode`   | 이전 버튼을 사용자화합니다                         |        |
 | `customCloseButton`   | `React.ReactNode`   | 닫기 버튼을 사용자화합니다                         |        |
 
-### 1-d. `Link`
-
-특정 path로 이동할 수 있는 링크를 생성하는 컴포넌트입니다.
-
-```tsx
-import { Link } from 'karrotframe'
-
-const Home: React.FC = () => {
-  return (
-    <div>
-      <Link to="/posts">글 목록</Link>
-    </div>
-  )
-}
-```
-
-| Props       | 타입    | 역할                                                     | 기본값      |
-| ----------- | ------- | -------------------------------------------------------- | ----------- |
-| `to`        | string  | 이동 할 path                                             | required    |
-| `className` | string  | className                                                | `undefined` |
-| `replace`   | boolean | path 이동을 replace로 처리할 지 여부                     | `undefined` |
-| `present`   | boolean | 스와이프 백이 불가능한 새 창으로 엽니다 (Cupertino Only) | `undefined` |
-
-### 1-e. `useLocation`, `useParams`, `useRouteMatch`
+### 1-d. `useLocation`, `useParams`, `useRouteMatch`
 
 react-router-dom에 존재하는 `useLocation`, `useParams`, `useRouteMatch`를 사용할 수 있습니다
 
@@ -178,7 +155,7 @@ const Post: React.FC = () => {
 }
 ```
 
-### 1-f. `useQueryParams`, `useParams`
+### 1-e. `useQueryParams`, `useParams`
 
 화면의 전환간 path의 변경으로 인해 의도하지 않은 화면의 변경이 발생하지 않도록 하기 위해, `useQueryParam`을 통해 querystring을 사용하고, `useParams`를 통해 path parameter를 사용할 수 있습니다.
 
@@ -200,7 +177,7 @@ const Post: React.FC = () => {
 }
 ```
 
-### 1-g. `useNavigator`
+### 1-f. `useNavigator`
 
 화면 전환을 수행합니다.
 
@@ -297,7 +274,7 @@ const PostWriteForm: React.FC = () => {
 }
 ```
 
-### 1-e. `react-router-dom`
+### 1-g. `react-router-dom`
 
 `react-router-dom`의 기본 컴포넌트와 함수들을 다음과 같이 함께 사용할 수 있습니다.
 

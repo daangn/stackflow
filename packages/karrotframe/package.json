@@ -1,13 +1,13 @@
 {
   "name": "karrotframe",
-  "version": "0.12.1",
+  "version": "0.13.0",
   "description": "UX Enhancer",
   "repository": "https://github.com/daangn/karrotframe",
   "license": "Apache-2.0",
   "author": "Danggeun Market Inc.",
   "main": "lib/index.js",
   "module": "lib/index.js",
-  "source": "src/index.tsx",
+  "source": "src/index.ts",
   "types": "lib",
   "files": [
     "lib",
