@@ -1,8 +1,11 @@
 {
-  "presets": ["@babel/typescript"],
+  "presets": [
+    "@babel/typescript",
+    ["@babel/env", {
+      "targets": "> 0.25%, not dead"
+    }]
+  ],
   "plugins": [
-    "@babel/transform-react-jsx",
-    "@babel/proposal-optional-chaining",
-    "@babel/proposal-nullish-coalescing-operator"
+    "@babel/transform-react-jsx"
   ]
 }
