@@ -8,6 +8,7 @@ import { useNavigatorOptions } from '../contexts'
 import styles from './Navbar.scss'
 import store from '../store'
 import { useNavigator } from '../useNavigator'
+import { autorun } from 'mobx'
 
 interface NavbarProps {
   screenInstanceId: string
@@ -45,10 +46,16 @@ const Navbar: React.FC<NavbarProps> = (props) => {
 
     if (props.theme === 'Cupertino') {
       onResize()
+
       window.addEventListener('resize', onResize)
+      const dispose = autorun(() => {
+        store.screenInstanceOptions.get(props.screenInstanceId)
+        onResize()
+      })
 
       return () => {
         window.removeEventListener('resize', onResize)
+        dispose()
       }
     }
   }, [])

@@ -13,7 +13,7 @@ import Page5 from './components/Page5'
 function App() {
   let h = (
     <Navigator
-      theme="Android"
+      theme="Cupertino"
       onClose={() => {
         window.alert('닫기 버튼이 눌렸습니다')
       }}
