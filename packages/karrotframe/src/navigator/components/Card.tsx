@@ -3,9 +3,9 @@ import { Observer } from 'mobx-react-lite'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import { useNavigatorOptions } from '../contexts'
-import styles from './Card.scss'
 import store, { setScreenEdge } from '../store'
 import { useNavigator } from '../useNavigator'
+import styles from './Card.scss'
 import Navbar from './Navbar'
 
 const $frameOffsetSet = new Set<HTMLDivElement>()
