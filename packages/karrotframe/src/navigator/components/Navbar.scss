@@ -72,15 +72,13 @@
   align-items: center;
   overflow: hidden;
 }
-.navbarCenterText {
+.navbarCenterMain {
   white-space: nowrap;
   overflow: hidden;
-  margin: 0;
   width: 100%;
-  display: block;
 }
 :global(.kf-android) {
-  .navbarCenterText {
+  .navbarCenterMain {
     font-family: 'Noto Sans KR', sans-serif;
     justify-content: flex-start;
     padding-left: 1rem;
@@ -94,7 +92,7 @@
   }
 }
 :global(.kf-cupertino) {
-  .navbarCenterText {
+  .navbarCenterMain {
     font-family: -apple-system, BlinkMacSystemFont;
     text-align: center;
     font-weight: 600;
@@ -110,7 +108,7 @@
   }
 }
 
-.navbarCenterEllipsisText {
+.navbarCenterMainText {
   overflow: hidden;
   text-overflow: ellipsis;
   font-size: inherit;

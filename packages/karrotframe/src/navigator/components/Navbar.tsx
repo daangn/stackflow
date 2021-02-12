@@ -20,36 +20,35 @@ const Navbar: React.FC<NavbarProps> = (props) => {
   const { pop } = useNavigator()
   const navigatorOptions = useNavigatorOptions()
   const centerRef = useRef<HTMLDivElement>(null)
+  const centerTextRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (props.theme === 'Cupertino') {
-      let prevClientWidth = 0
-      let animationFrameId: number
-
-      const detectMaxWidth = () => {
-        animationFrameId = requestAnimationFrame(() => {
-          if (!centerRef.current) {
-            return
-          }
-          const { offsetLeft, clientWidth } = centerRef.current
-          if (clientWidth && clientWidth !== prevClientWidth) {
-            prevClientWidth = clientWidth
-            const screenWidth = window.innerWidth
-            const right = screenWidth - (offsetLeft + clientWidth)
-            const max = Math.max(right, offsetLeft)
-            ;((centerRef.current.firstElementChild as HTMLDivElement)
-              .firstElementChild as HTMLDivElement)!.style.maxWidth = `${
-              screenWidth - max * 2
-            }px`
-          }
-
-          detectMaxWidth()
-        })
+    const onResize = () => {
+      if (!centerRef.current) {
+        return
       }
-      detectMaxWidth()
+
+      const screenWidth = window.innerWidth
+
+      const {
+        offsetLeft: leftWidth,
+        clientWidth: centerWidth,
+      } = centerRef.current
+      const rightWidth = screenWidth - leftWidth - centerWidth
+
+      const margin = Math.max(leftWidth, rightWidth)
+
+      if (centerTextRef.current) {
+        centerTextRef.current.style.maxWidth = screenWidth - 2 * margin + 'px'
+      }
+    }
+
+    if (props.theme === 'Cupertino') {
+      onResize()
+      window.addEventListener('resize', onResize)
 
       return () => {
-        cancelAnimationFrame(animationFrameId)
+        window.removeEventListener('resize', onResize)
       }
     }
   }, [])
@@ -100,20 +99,6 @@ const Navbar: React.FC<NavbarProps> = (props) => {
           screenInstanceOption?.navbar.appendLeft
         )
 
-        const center = (
-          <div className={styles.navbarCenter} ref={centerRef}>
-            <div
-              className={classnames(styles.navbarCenterText, {
-                [styles.isLeft]: isLeft,
-              })}
-            >
-              <div className={styles.navbarCenterEllipsisText}>
-                {screenInstanceOption?.navbar.title}
-              </div>
-            </div>
-          </div>
-        )
-
         return (
           <div className={styles.navbarContainer}>
             <div className={styles.navbarMain}>
@@ -124,7 +109,24 @@ const Navbar: React.FC<NavbarProps> = (props) => {
                   {backButton}
                   {screenInstanceOption?.navbar.appendLeft}
                 </div>
-                {center}
+                <div className={styles.navbarCenter} ref={centerRef}>
+                  <div
+                    className={classnames(styles.navbarCenterMain, {
+                      [styles.isLeft]: isLeft,
+                    })}
+                  >
+                    {typeof screenInstanceOption?.navbar.title === 'string' ? (
+                      <div
+                        ref={centerTextRef}
+                        className={styles.navbarCenterMainText}
+                      >
+                        {screenInstanceOption?.navbar.title}
+                      </div>
+                    ) : (
+                      screenInstanceOption?.navbar.title
+                    )}
+                  </div>
+                </div>
                 <div className={styles.navbarRight}>
                   {screenInstanceOption?.navbar.appendRight}
                   {screenInstanceOption?.navbar.closeButtonLocation ===

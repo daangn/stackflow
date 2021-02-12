@@ -16,46 +16,7 @@ const Home: React.FC<ScreenComponentProps> = ({ isTop, isRoot }) => {
   return (
     <Container>
       <ScreenHelmet
-        title="당근알바당근알바당근알바당근알바당근알바당근알바당근알바"
-        appendLeft={
-          <HamburgerIcon>
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <line
-                x1="3.8"
-                y1="5.2"
-                x2="20.2"
-                y2="5.2"
-                stroke="#212529"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-              />
-              <line
-                x1="3.8"
-                y1="12.2"
-                x2="20.2"
-                y2="12.2"
-                stroke="#212529"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-              />
-              <line
-                x1="3.8"
-                y1="19.2"
-                x2="20.2"
-                y2="19.2"
-                stroke="#212529"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-              />
-            </svg>
-          </HamburgerIcon>
-        }
+        title={'당근당근당근당근당근당근당근당근당근'}
         appendRight={
           <SearchIcon>
             <svg
