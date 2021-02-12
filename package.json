@@ -1,83 +1,10 @@
 {
-  "name": "karrotframe",
-  "version": "0.12.1",
-  "description": "UX Enhancer",
-  "repository": "https://github.com/daangn/karrotframe",
-  "license": "MIT",
-  "author": "Danggeun Market Inc.",
-  "files": [
-    "lib",
-    "README.md",
-    "cover.png"
+  "name": "karrotframe-repo",
+  "workspaces": [
+    "packages/*"
   ],
-  "main": "lib/index.js",
-  "module": "lib/index.js",
-  "source": "src/index.tsx",
-  "types": "lib",
-  "scripts": {
-    "build": "yarn clean && yarn build:runtime && yarn build:dts",
-    "build:runtime": "webpack --config ./webpack/build.js",
-    "build:dts": "tsc --emitDeclarationOnly",
-    "clean": "rimraf lib",
-    "lint": "eslint \"./src/*.{tsx,ts}\""
-  },
-  "husky": {
-    "hooks": {
-      "pre-push": "yarn lint"
-    }
-  },
-  "dependencies": {
-    "@types/react-router-dom": "^5.1.5",
-    "classnames": "^2.2.6",
-    "mobx": "^6.0.4",
-    "mobx-react-lite": "^3.1.6",
-    "querystring": "^0.2.0",
-    "react-transition-group": "^4.4.1"
-  },
   "devDependencies": {
-    "@babel/cli": "^7.11.6",
-    "@babel/core": "^7.11.6",
-    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.10.4",
-    "@babel/plugin-proposal-optional-chaining": "^7.11.0",
-    "@babel/plugin-transform-modules-commonjs": "^7.10.4",
-    "@babel/plugin-transform-react-jsx": "^7.10.4",
-    "@babel/preset-env": "^7.12.7",
-    "@babel/preset-typescript": "^7.10.4",
-    "@daangn/eslint-config-karrot": "^1.1.0",
-    "@types/classnames": "^2.2.11",
-    "@types/node": "^14.11.8",
-    "@types/react": "^16.9.46",
-    "@types/react-dom": "^16.9.8",
-    "@types/react-transition-group": "^4.4.0",
-    "@typescript-eslint/eslint-plugin": "^4.1.0",
-    "@typescript-eslint/parser": "^4.1.0",
-    "babel-loader": "^8.2.2",
-    "babel-plugin-emotion": "^10.0.33",
-    "css-loader": "^5.0.1",
-    "eslint": "^7.9.0",
-    "eslint-config-prettier": "^6.11.0",
-    "eslint-import-resolver-typescript": "^2.3.0",
-    "eslint-plugin-import": "^2.22.0",
-    "eslint-plugin-prettier": "^3.1.4",
-    "eslint-plugin-react": "^7.20.6",
-    "eslint-plugin-react-hooks": "^4.1.2",
-    "eslint-plugin-standard": "^4.0.1",
-    "fork-ts-checker-webpack-plugin": "^6.0.5",
-    "husky": "^4.3.0",
-    "prettier": "^2.1.1",
-    "rimraf": "^3.0.2",
-    "style-loader": "^2.0.0",
-    "typescript": "^4.0.2",
-    "webpack": "^5.9.0",
-    "webpack-bundle-analyzer": "^4.2.0",
-    "webpack-cli": "^4.2.0"
-  },
-  "peerDependencies": {
-    "react": "^16.8",
-    "react-dom": "^16.8",
-    "react-router-dom": "^5.2.0"
-  },
-  "engines": {
-    "node": ">=12"
+    "prettier": "^2.2.1",
+    "typescript": "^4.1.5"
   }
 }
