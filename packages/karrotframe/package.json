@@ -16,6 +16,7 @@
     "cover.png"
   ],
   "scripts": {
+    "dev": "webpack --config ./webpack/build.js --watch",
     "build": "yarn clean && yarn build:runtime && yarn build:dts",
     "build:dts": "tsc --emitDeclarationOnly",
     "build:runtime": "webpack --config ./webpack/build.js",
