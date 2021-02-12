@@ -20,7 +20,7 @@ const Home: React.FC<ScreenComponentProps> = ({ isTop, isRoot }) => {
   return (
     <Container>
       <ScreenHelmet
-        title='당근알바'
+        title='당근알바당근알바당근알바당근알바당근알바당근알바당근알바'
         appendLeft={
           <HamburgerIcon>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
