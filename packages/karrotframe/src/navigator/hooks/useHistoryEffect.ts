@@ -6,7 +6,11 @@ import { useHistory, useLocation } from 'react-router-dom'
 export function useHistoryPopEffect(
   callbacks: {
     forward: (location: Location<unknown>, action: Action) => void
-    backward: (location: Location<unknown>, action: Action, depth: number) => void
+    backward: (
+      location: Location<unknown>,
+      action: Action,
+      depth: number
+    ) => void
   },
   deps?: DependencyList | undefined
 ) {
@@ -36,20 +40,29 @@ export function useHistoryPopEffect(
 
       switch (action) {
         case 'PUSH': {
-          if (locationKeyStack.current[locationKeyStack.current.length - 1] !== locationKey) {
+          if (
+            locationKeyStack.current[locationKeyStack.current.length - 1] !==
+            locationKey
+          ) {
             locationKeyStack.current.push(locationKey)
           }
           break
         }
         case 'REPLACE': {
-          locationKeyStack.current[locationKeyStack.current.length - 1] = locationKey
+          locationKeyStack.current[
+            locationKeyStack.current.length - 1
+          ] = locationKey
           break
         }
         case 'POP': {
-          const pointer = locationKeyStack.current.findIndex((key) => key === locationKey)
+          const pointer = locationKeyStack.current.findIndex(
+            (key) => key === locationKey
+          )
           if (pointer > -1) {
             const depth = locationKeyStack.current.length - pointer
-            locationKeyStack.current = locationKeyStack.current.filter((_, idx) => idx <= pointer)
+            locationKeyStack.current = locationKeyStack.current.filter(
+              (_, idx) => idx <= pointer
+            )
             callbacks.backward?.(location, action, depth)
           } else {
             locationKeyStack.current.push(locationKey)
@@ -79,20 +92,29 @@ export function useHistoryPushEffect(
 
       switch (action) {
         case 'PUSH': {
-          if (locationKeyStack.current[locationKeyStack.current.length - 1] !== locationKey) {
+          if (
+            locationKeyStack.current[locationKeyStack.current.length - 1] !==
+            locationKey
+          ) {
             locationKeyStack.current.push(locationKey)
             callback(location, action)
           }
           break
         }
         case 'REPLACE': {
-          locationKeyStack.current[locationKeyStack.current.length - 1] = locationKey
+          locationKeyStack.current[
+            locationKeyStack.current.length - 1
+          ] = locationKey
           break
         }
         case 'POP': {
-          const pointer = locationKeyStack.current.findIndex((key) => key === locationKey)
+          const pointer = locationKeyStack.current.findIndex(
+            (key) => key === locationKey
+          )
           if (pointer > -1) {
-            locationKeyStack.current = locationKeyStack.current.filter((_, idx) => idx <= pointer)
+            locationKeyStack.current = locationKeyStack.current.filter(
+              (_, idx) => idx <= pointer
+            )
           } else {
             locationKeyStack.current.push(locationKey)
           }

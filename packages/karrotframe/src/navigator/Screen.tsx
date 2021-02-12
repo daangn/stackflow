@@ -51,12 +51,18 @@ const Screen: React.FC<Props> = (props) => {
               screenInstanceId,
               as,
               path: props.path,
-            }}>
+            }}
+          >
             <ScreenInstanceOptionsProvider
               value={{
                 setNavbar,
-              }}>
-              {Component ? <Component isTop={isTop} isRoot={isRoot} /> : props.children}
+              }}
+            >
+              {Component ? (
+                <Component isTop={isTop} isRoot={isRoot} />
+              ) : (
+                props.children
+              )}
             </ScreenInstanceOptionsProvider>
           </ScreenInstanceInfoProvider>
         )

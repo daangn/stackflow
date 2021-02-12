@@ -79,8 +79,12 @@ const Navigator: React.FC<NavigatorProps> = (props) => {
                 return DEFAULT_ANDROID_ANIMATION_DURATION
             }
           })(),
-      }}>
-      <NavigatorScreens onClose={props.onClose} onDepthChange={props.onDepthChange}>
+      }}
+    >
+      <NavigatorScreens
+        onClose={props.onClose}
+        onDepthChange={props.onDepthChange}
+      >
         {props.children}
       </NavigatorScreens>
     </NavigatorOptionsProvider>
@@ -109,10 +113,17 @@ const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
       present: boolean
       as: string
     }) => {
-      const nextPointer = store.screenInstances.findIndex((screenInstance) => screenInstance.id === screenInstanceId)
+      const nextPointer = store.screenInstances.findIndex(
+        (screenInstance) => screenInstance.id === screenInstanceId
+      )
 
       if (nextPointer === -1) {
-        addScreenInstanceAfter(store.screenInstancePointer, { screenId, screenInstanceId, present, as })
+        addScreenInstanceAfter(store.screenInstancePointer, {
+          screenId,
+          screenInstanceId,
+          present,
+          as,
+        })
         increaseScreenInstancePointer()
       } else {
         setScreenInstancePointer(nextPointer)
@@ -122,7 +133,15 @@ const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
   )
 
   const replaceScreen = useCallback(
-    ({ screenId, screenInstanceId, as }: { screenId: string; screenInstanceId: string; as: string }) => {
+    ({
+      screenId,
+      screenInstanceId,
+      as,
+    }: {
+      screenId: string
+      screenInstanceId: string
+      as: string
+    }) => {
       addScreenInstanceAfter(store.screenInstancePointer - 1, {
         screenId,
         screenInstanceId,
@@ -134,9 +153,19 @@ const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
   )
 
   const popScreen = useCallback(
-    ({ depth, targetScreenInstanceId }: { depth: number; targetScreenInstanceId?: string }) => {
+    ({
+      depth,
+      targetScreenInstanceId,
+    }: {
+      depth: number
+      targetScreenInstanceId?: string
+    }) => {
       if (targetScreenInstanceId) {
-        setTimeout(() => store.screenInstancePromises.get(targetScreenInstanceId)?.(null), 0)
+        setTimeout(
+          () =>
+            store.screenInstancePromises.get(targetScreenInstanceId)?.(null),
+          0
+        )
       }
       setScreenInstancePointer(store.screenInstancePointer - depth)
     },
@@ -267,7 +296,9 @@ const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
         let matchScreen: Screen | null = null
 
         for (const screen of store.screens.values()) {
-          if (matchPath(location.pathname, { exact: true, path: screen.path })) {
+          if (
+            matchPath(location.pathname, { exact: true, path: screen.path })
+          ) {
             matchScreen = screen
             break
           }
@@ -281,23 +312,32 @@ const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
             (screenInstance) => screenInstance.id === screenInstanceId
           )
 
-          setScreenInstanceIn(store.screenInstancePointer, (screenInstance) => ({
-            ...screenInstance,
-            nestedRouteCount: 0,
-          }))
+          setScreenInstanceIn(
+            store.screenInstancePointer,
+            (screenInstance) => ({
+              ...screenInstance,
+              nestedRouteCount: 0,
+            })
+          )
           popScreen({
             depth: store.screenInstancePointer - nextPointer,
             targetScreenInstanceId: screenInstanceId,
           })
-        } else if (store.screenInstances[store.screenInstancePointer]?.nestedRouteCount === 0) {
+        } else if (
+          store.screenInstances[store.screenInstancePointer]
+            ?.nestedRouteCount === 0
+        ) {
           popScreen({
             depth: 1,
           })
         } else {
-          setScreenInstanceIn(store.screenInstancePointer, (screenInstance) => ({
-            ...screenInstance,
-            nestedRouteCount: screenInstance.nestedRouteCount - 1,
-          }))
+          setScreenInstanceIn(
+            store.screenInstancePointer,
+            (screenInstance) => ({
+              ...screenInstance,
+              nestedRouteCount: screenInstance.nestedRouteCount - 1,
+            })
+          )
         }
       },
       forward(location) {
@@ -323,10 +363,13 @@ const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
             as: location.pathname,
           })
         } else {
-          setScreenInstanceIn(store.screenInstancePointer, (screenInstance) => ({
-            ...screenInstance,
-            nestedRouteCount: screenInstance.nestedRouteCount + 1,
-          }))
+          setScreenInstanceIn(
+            store.screenInstancePointer,
+            (screenInstance) => ({
+              ...screenInstance,
+              nestedRouteCount: screenInstance.nestedRouteCount + 1,
+            })
+          )
         }
       },
     },
@@ -385,20 +428,25 @@ const Transition: React.FC<TransitionProps> = memo((props) => {
               enterDone: styles.enterDone,
               exitActive: styles.exitActive,
               exitDone: styles.exitDone,
-            }}>
+            }}
+          >
             <Card
               nodeRef={nodeRef}
-              screenPath={store.screens.get(props.screenInstance.screenId)!.path}
+              screenPath={
+                store.screens.get(props.screenInstance.screenId)!.path
+              }
               screenInstanceId={props.screenInstance.id}
               isRoot={props.screenInstanceIndex === 0}
               isTop={
                 props.screenInstanceIndex >= store.screenInstancePointer ||
                 (navigatorOptions.theme === 'Cupertino' &&
-                  store.screenInstances.length > props.screenInstanceIndex + 1 &&
+                  store.screenInstances.length >
+                    props.screenInstanceIndex + 1 &&
                   store.screenInstances[props.screenInstanceIndex + 1].present)
               }
               isPresent={props.screenInstance.present}
-              onClose={props.onClose}>
+              onClose={props.onClose}
+            >
               <Component
                 as={props.screenInstance.as}
                 screenInstanceId={props.screenInstance.id}

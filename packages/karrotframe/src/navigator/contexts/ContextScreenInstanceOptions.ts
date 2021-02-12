@@ -6,7 +6,8 @@ export const ContextScreenInstanceOptions = createContext<{
   setNavbar: (navbar: NavbarOptions) => void
 }>(null as any)
 
-export const ScreenInstanceOptionsProvider = ContextScreenInstanceOptions.Provider
+export const ScreenInstanceOptionsProvider =
+  ContextScreenInstanceOptions.Provider
 
 export function useScreenInstanceOptions() {
   return useContext(ContextScreenInstanceOptions)

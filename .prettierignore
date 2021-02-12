@@ -1,0 +1,10 @@
+/.vscode
+/.yarn
+/.pnp.js
+
+/packages/karrotframe/node_modules
+/packages/karrotframe/lib
+
+/example/node_modules
+/example/build
+

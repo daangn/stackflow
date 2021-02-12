@@ -49,14 +49,17 @@ const Card: React.FC<CardProps> = (props) => {
     }
   }, [frameOffsetRef.current])
 
-  const onEdgeTouchStart = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
-    ;(document.activeElement as any)?.blur?.()
+  const onEdgeTouchStart = useCallback(
+    (e: React.TouchEvent<HTMLDivElement>) => {
+      ;(document.activeElement as any)?.blur?.()
 
-    setScreenEdge({
-      startX: e.touches[0].clientX,
-      startTime: Date.now(),
-    })
-  }, [])
+      setScreenEdge({
+        startX: e.touches[0].clientX,
+        startTime: Date.now(),
+      })
+    },
+    []
+  )
 
   const onEdgeTouchMove = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
     if (store.screenEdge.startX) {
@@ -74,7 +77,9 @@ const Card: React.FC<CardProps> = (props) => {
 
             if (computedEdgeX >= 0) {
               if ($dim) {
-                $dim.style.opacity = `${1 - computedEdgeX / window.screen.width}`
+                $dim.style.opacity = `${
+                  1 - computedEdgeX / window.screen.width
+                }`
                 $dim.style.transition = '0s'
               }
               if ($frame) {
@@ -84,7 +89,9 @@ const Card: React.FC<CardProps> = (props) => {
               }
               $frameOffsetSet.forEach(($frameOffset) => {
                 if ($frameOffset !== frameOffsetRef.current) {
-                  $frameOffset.style.transform = `translateX(-${5 - (5 * computedEdgeX) / window.screen.width}rem)`
+                  $frameOffset.style.transform = `translateX(-${
+                    5 - (5 * computedEdgeX) / window.screen.width
+                  }rem)`
                   $frameOffset.style.transition = '0s'
                 }
               })
@@ -99,7 +106,8 @@ const Card: React.FC<CardProps> = (props) => {
 
   const onEdgeTouchEnd = useCallback(() => {
     if (x.current) {
-      const velocity = x.current / (Date.now() - (store.screenEdge.startTime as number))
+      const velocity =
+        x.current / (Date.now() - (store.screenEdge.startTime as number))
 
       if (velocity > 1 || x.current / window.screen.width > 0.4) {
         setPopped(true)
@@ -124,7 +132,9 @@ const Card: React.FC<CardProps> = (props) => {
           $frame.style.overflowY = ''
           $frame.style.transform = ''
           $frame.style.transition =
-            navigatorOptions.theme === 'Cupertino' ? `transform ${navigatorOptions.animationDuration}ms` : ''
+            navigatorOptions.theme === 'Cupertino'
+              ? `transform ${navigatorOptions.animationDuration}ms`
+              : ''
         }
         $frameOffsetSet.forEach(($frameOffset) => {
           $frameOffset.style.transform = ''
@@ -137,7 +147,9 @@ const Card: React.FC<CardProps> = (props) => {
   return (
     <Observer>
       {() => {
-        const screenInstanceOption = store.screenInstanceOptions.get(props.screenInstanceId)
+        const screenInstanceOption = store.screenInstanceOptions.get(
+          props.screenInstanceId
+        )
 
         return (
           <div
@@ -147,7 +159,8 @@ const Card: React.FC<CardProps> = (props) => {
               [styles.android]: navigatorOptions.theme === 'Android',
               [styles.isNotPresent]: !props.isPresent,
               [styles.isPresent]: props.isPresent,
-            })}>
+            })}
+          >
             {!props.isRoot && (
               <div
                 ref={dimRef}
@@ -155,7 +168,8 @@ const Card: React.FC<CardProps> = (props) => {
                   [styles.cupertino]: navigatorOptions.theme === 'Cupertino',
                   [styles.android]: navigatorOptions.theme === 'Android',
                   [styles.isLoading]: loading,
-                  [styles.isNavbarVisible]: !!screenInstanceOption?.navbar.visible,
+                  [styles.isNavbarVisible]: !!screenInstanceOption?.navbar
+                    .visible,
                   [styles.isPresent]: props.isPresent,
                 })}
                 style={{
@@ -169,12 +183,16 @@ const Card: React.FC<CardProps> = (props) => {
                 [styles.isNotTop]: !props.isTop,
                 [styles.isLoading]: loading,
               })}
-              style={{ transition: `transform ${navigatorOptions.animationDuration}ms` }}>
+              style={{
+                transition: `transform ${navigatorOptions.animationDuration}ms`,
+              }}
+            >
               <div
                 className={classnames(styles.cardMain, {
                   [styles.cupertino]: navigatorOptions.theme === 'Cupertino',
                   [styles.android]: navigatorOptions.theme === 'Android',
-                  [styles.isNavbarVisible]: !!screenInstanceOption?.navbar.visible,
+                  [styles.isNavbarVisible]: !!screenInstanceOption?.navbar
+                    .visible,
                   [styles.isPresent]: props.isPresent,
                   [styles.isRoot]: props.isRoot,
                 })}
@@ -185,7 +203,8 @@ const Card: React.FC<CardProps> = (props) => {
                       : navigatorOptions.theme === 'Android'
                       ? `transform ${navigatorOptions.animationDuration}ms, opacity ${navigatorOptions.animationDuration}ms`
                       : undefined,
-                }}>
+                }}
+              >
                 {!!screenInstanceOption?.navbar.visible && (
                   <Navbar
                     screenInstanceId={props.screenInstanceId}
@@ -203,11 +222,13 @@ const Card: React.FC<CardProps> = (props) => {
                   })}
                   style={{
                     transition: `transform ${navigatorOptions.animationDuration}ms`,
-                  }}>
+                  }}
+                >
                   <div
                     ref={frameRef}
                     className={classnames(styles.cardFrame, {
-                      [styles.cupertino]: navigatorOptions.theme === 'Cupertino',
+                      [styles.cupertino]:
+                        navigatorOptions.theme === 'Cupertino',
                       [styles.isNotRoot]: !props.isRoot,
                       [styles.isPresent]: props.isPresent,
                     })}
@@ -216,22 +237,29 @@ const Card: React.FC<CardProps> = (props) => {
                         navigatorOptions.theme === 'Cupertino'
                           ? `transform ${navigatorOptions.animationDuration}ms`
                           : undefined,
-                    }}>
+                    }}
+                  >
                     {props.children}
                   </div>
                 </div>
-                {navigatorOptions.theme === 'Cupertino' && !props.isRoot && !props.isPresent && !popped && (
-                  <div
-                    className={classnames(styles.cardEdge, {
-                      [styles.cupertino]: navigatorOptions.theme === 'Cupertino',
-                      [styles.isNavbarNotVisible]: !screenInstanceOption?.navbar.visible,
-                      [styles.isNavbarVisible]: !!screenInstanceOption?.navbar.visible,
-                    })}
-                    onTouchStart={onEdgeTouchStart}
-                    onTouchMove={onEdgeTouchMove}
-                    onTouchEnd={onEdgeTouchEnd}
-                  />
-                )}
+                {navigatorOptions.theme === 'Cupertino' &&
+                  !props.isRoot &&
+                  !props.isPresent &&
+                  !popped && (
+                    <div
+                      className={classnames(styles.cardEdge, {
+                        [styles.cupertino]:
+                          navigatorOptions.theme === 'Cupertino',
+                        [styles.isNavbarNotVisible]: !screenInstanceOption
+                          ?.navbar.visible,
+                        [styles.isNavbarVisible]: !!screenInstanceOption?.navbar
+                          .visible,
+                      })}
+                      onTouchStart={onEdgeTouchStart}
+                      onTouchMove={onEdgeTouchMove}
+                      onTouchEnd={onEdgeTouchEnd}
+                    />
+                  )}
               </div>
             </div>
           </div>

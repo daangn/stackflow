@@ -24,40 +24,43 @@ interface LinkProps {
    */
   present?: boolean
 }
-const Link: React.FC<LinkProps> = forwardRef<HTMLAnchorElement, LinkProps>((props, ref) => {
-  const { pathname, search } = useMemo(() => {
-    const [pathname, search] = props.to.split('?')
-    const _si = generateScreenInstanceId()
+const Link: React.FC<LinkProps> = forwardRef<HTMLAnchorElement, LinkProps>(
+  (props, ref) => {
+    const { pathname, search } = useMemo(() => {
+      const [pathname, search] = props.to.split('?')
+      const _si = generateScreenInstanceId()
 
-    const params: {
-      _si: string
-      _present?: 'true'
-    } = {
-      _si,
-    }
+      const params: {
+        _si: string
+        _present?: 'true'
+      } = {
+        _si,
+      }
 
-    if (props.present) {
-      params._present = 'true'
-    }
+      if (props.present) {
+        params._present = 'true'
+      }
 
-    return {
-      pathname,
-      search: appendSearch(search || null, params),
-    }
-  }, [props.to])
-
-  return (
-    <RouterLink
-      ref={ref}
-      to={{
+      return {
         pathname,
-        search,
-      }}
-      replace={props.replace}
-      className={props.className}>
-      {props.children}
-    </RouterLink>
-  )
-})
+        search: appendSearch(search || null, params),
+      }
+    }, [props.to])
+
+    return (
+      <RouterLink
+        ref={ref}
+        to={{
+          pathname,
+          search,
+        }}
+        replace={props.replace}
+        className={props.className}
+      >
+        {props.children}
+      </RouterLink>
+    )
+  }
+)
 
 export default Link

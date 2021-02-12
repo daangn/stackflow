@@ -1,7 +1,5 @@
 {
-  "presets": [
-    "@babel/typescript"
-  ],
+  "presets": ["@babel/typescript"],
   "plugins": [
     "@babel/transform-react-jsx",
     "@babel/proposal-optional-chaining",

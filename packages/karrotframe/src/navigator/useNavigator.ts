@@ -46,10 +46,15 @@ export function useNavigator() {
   }, [])
 
   const pop = useCallback((depth = 1) => {
-    const targetScreenInstance = store.screenInstances[store.screenInstancePointer - depth]
+    const targetScreenInstance =
+      store.screenInstances[store.screenInstancePointer - depth]
 
     const n = store.screenInstances
-      .filter((_, idx) => idx > store.screenInstancePointer - depth && idx <= store.screenInstancePointer)
+      .filter(
+        (_, idx) =>
+          idx > store.screenInstancePointer - depth &&
+          idx <= store.screenInstancePointer
+      )
       .map((screenInstance) => screenInstance.nestedRouteCount)
       .reduce((acc, current) => acc + current + 1, 0)
 
@@ -57,7 +62,9 @@ export function useNavigator() {
 
     const send = <T = object>(data: T) => {
       if (targetScreenInstance) {
-        store.screenInstancePromises.get(targetScreenInstance.id)?.(data ?? null)
+        store.screenInstancePromises.get(targetScreenInstance.id)?.(
+          data ?? null
+        )
       }
     }
 

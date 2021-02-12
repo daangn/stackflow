@@ -6,7 +6,9 @@ import { ScreenComponentProps } from '../ScreenComponentProps'
 export interface Screen {
   id: string
   path: string
-  Component: React.FC<{ screenInstanceId: string; as: string } & ScreenComponentProps>
+  Component: React.FC<
+    { screenInstanceId: string; as: string } & ScreenComponentProps
+  >
 }
 
 export interface ScreenInstance {
@@ -49,8 +51,14 @@ const store = observable<{
   screens: observable.map<string, Screen>({}, { deep: false }),
   screenInstances: [],
   screenInstancePointer: -1,
-  screenInstanceOptions: observable.map<string, ScreenInstanceOption>({}, { deep: false }),
-  screenInstancePromises: observable.map<string, ScreenInstancePromise>({}, { deep: false }),
+  screenInstanceOptions: observable.map<string, ScreenInstanceOption>(
+    {},
+    { deep: false }
+  ),
+  screenInstancePromises: observable.map<string, ScreenInstancePromise>(
+    {},
+    { deep: false }
+  ),
   screenEdge: {
     startX: null,
     startTime: null,
@@ -58,14 +66,19 @@ const store = observable<{
 })
 
 export const setScreenInstanceIn = action(
-  (pointer: number, setter: (screenInstance: ScreenInstance) => ScreenInstance) => {
-    store.screenInstances = store.screenInstances.map((screenInstance, screenInstanceIndex) => {
-      if (screenInstanceIndex === pointer) {
-        return setter(screenInstance)
-      } else {
-        return screenInstance
+  (
+    pointer: number,
+    setter: (screenInstance: ScreenInstance) => ScreenInstance
+  ) => {
+    store.screenInstances = store.screenInstances.map(
+      (screenInstance, screenInstanceIndex) => {
+        if (screenInstanceIndex === pointer) {
+          return setter(screenInstance)
+        } else {
+          return screenInstance
+        }
       }
-    })
+    )
   }
 )
 
@@ -77,7 +90,12 @@ export const addScreenInstanceAfter = action(
       screenInstanceId,
       present,
       as,
-    }: { screenId: string; screenInstanceId: string; present: boolean; as: string }
+    }: {
+      screenId: string
+      screenInstanceId: string
+      present: boolean
+      as: string
+    }
   ) => {
     store.screenInstances = [
       ...store.screenInstances.filter((_, index) => index <= pointer),

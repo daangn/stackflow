@@ -1,6 +1,9 @@
 {
   "name": "karrotframe-repo",
   "license": "Apache-2.0",
+  "scripts": {
+    "prettify": "prettier --write ."
+  },
   "workspaces": [
     "packages/*",
     "example"

@@ -14,12 +14,8 @@ const useGetIdOnParams = () => {
 const LazyLoadedComponent: React.FC = () => {
   const id = useGetIdOnParams()
 
-  return (
-    <LazyCompBase>
-      {id}
-    </LazyCompBase>
-  );
-};
+  return <LazyCompBase>{id}</LazyCompBase>
+}
 
 const Page4: React.FC<Props> = () => {
   const [loading, setLoading] = useState(true)
@@ -41,24 +37,26 @@ const Page4: React.FC<Props> = () => {
     <Base>
       {loading ? 'Loading...' : <LazyLoadedComponent />}
       {/* {query?.id} */}
-      
+
       <Link to={`/page2`}>페이지 전환</Link>
-      <Link replace to={`/page/${randomId}/params_page`}>페이지 전환</Link>
+      <Link replace to={`/page/${randomId}/params_page`}>
+        페이지 전환
+      </Link>
     </Base>
-  );
-};
+  )
+}
 
 const Base = styled.div`
-a {
-  margin: 40px 0 0;
-  padding: 16px;
-  border: 1px solid #212529;
-  border-radius: 5px;
-}
-`;
-const LazyCompBase= styled.p`
-  color: #FF8A3D;
+  a {
+    margin: 40px 0 0;
+    padding: 16px;
+    border: 1px solid #212529;
+    border-radius: 5px;
+  }
+`
+const LazyCompBase = styled.p`
+  color: #ff8a3d;
   font-weight: bold;
 `
 
-export default Page4;
+export default Page4
