@@ -3,7 +3,7 @@ import { Observer } from 'mobx-react-lite'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import { useNavigatorOptions } from '../contexts'
-import styles from '../index.css'
+import styles from './Card.scss'
 import store, { setScreenEdge } from '../store'
 import { useNavigator } from '../useNavigator'
 import Navbar from './Navbar'
@@ -155,8 +155,6 @@ const Card: React.FC<CardProps> = (props) => {
           <div
             ref={props.nodeRef}
             className={classnames(styles.cardTransitionNode, {
-              [styles.cupertino]: navigatorOptions.theme === 'Cupertino',
-              [styles.android]: navigatorOptions.theme === 'Android',
               [styles.isNotPresent]: !props.isPresent,
               [styles.isPresent]: props.isPresent,
             })}
@@ -165,8 +163,6 @@ const Card: React.FC<CardProps> = (props) => {
               <div
                 ref={dimRef}
                 className={classnames(styles.cardDim, {
-                  [styles.cupertino]: navigatorOptions.theme === 'Cupertino',
-                  [styles.android]: navigatorOptions.theme === 'Android',
                   [styles.isLoading]: loading,
                   [styles.isNavbarVisible]: !!screenInstanceOption?.navbar
                     .visible,
@@ -179,7 +175,6 @@ const Card: React.FC<CardProps> = (props) => {
             )}
             <div
               className={classnames(styles.cardMainOffset, {
-                [styles.android]: navigatorOptions.theme === 'Android',
                 [styles.isNotTop]: !props.isTop,
                 [styles.isLoading]: loading,
               })}
@@ -189,8 +184,6 @@ const Card: React.FC<CardProps> = (props) => {
             >
               <div
                 className={classnames(styles.cardMain, {
-                  [styles.cupertino]: navigatorOptions.theme === 'Cupertino',
-                  [styles.android]: navigatorOptions.theme === 'Android',
                   [styles.isNavbarVisible]: !!screenInstanceOption?.navbar
                     .visible,
                   [styles.isPresent]: props.isPresent,
@@ -217,7 +210,6 @@ const Card: React.FC<CardProps> = (props) => {
                 <div
                   ref={frameOffsetRef}
                   className={classnames(styles.cardFrameOffset, {
-                    [styles.cupertino]: navigatorOptions.theme === 'Cupertino',
                     [styles.isNotTop]: !props.isTop,
                   })}
                   style={{
@@ -227,8 +219,6 @@ const Card: React.FC<CardProps> = (props) => {
                   <div
                     ref={frameRef}
                     className={classnames(styles.cardFrame, {
-                      [styles.cupertino]:
-                        navigatorOptions.theme === 'Cupertino',
                       [styles.isNotRoot]: !props.isRoot,
                       [styles.isPresent]: props.isPresent,
                     })}
@@ -248,8 +238,6 @@ const Card: React.FC<CardProps> = (props) => {
                   !popped && (
                     <div
                       className={classnames(styles.cardEdge, {
-                        [styles.cupertino]:
-                          navigatorOptions.theme === 'Cupertino',
                         [styles.isNavbarNotVisible]: !screenInstanceOption
                           ?.navbar.visible,
                         [styles.isNavbarVisible]: !!screenInstanceOption?.navbar

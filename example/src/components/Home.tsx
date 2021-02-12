@@ -17,45 +17,45 @@ const Home: React.FC<ScreenComponentProps> = ({ isTop, isRoot }) => {
     <Container>
       <ScreenHelmet
         title="당근알바"
-        appendLeft={
-          <HamburgerIcon>
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <line
-                x1="3.8"
-                y1="5.2"
-                x2="20.2"
-                y2="5.2"
-                stroke="#212529"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-              />
-              <line
-                x1="3.8"
-                y1="12.2"
-                x2="20.2"
-                y2="12.2"
-                stroke="#212529"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-              />
-              <line
-                x1="3.8"
-                y1="19.2"
-                x2="20.2"
-                y2="19.2"
-                stroke="#212529"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-              />
-            </svg>
-          </HamburgerIcon>
-        }
+        // appendLeft={
+        //   <HamburgerIcon>
+        //     <svg
+        //       width="24"
+        //       height="24"
+        //       viewBox="0 0 24 24"
+        //       fill="none"
+        //       xmlns="http://www.w3.org/2000/svg"
+        //     >
+        //       <line
+        //         x1="3.8"
+        //         y1="5.2"
+        //         x2="20.2"
+        //         y2="5.2"
+        //         stroke="#212529"
+        //         strokeWidth="1.6"
+        //         strokeLinecap="round"
+        //       />
+        //       <line
+        //         x1="3.8"
+        //         y1="12.2"
+        //         x2="20.2"
+        //         y2="12.2"
+        //         stroke="#212529"
+        //         strokeWidth="1.6"
+        //         strokeLinecap="round"
+        //       />
+        //       <line
+        //         x1="3.8"
+        //         y1="19.2"
+        //         x2="20.2"
+        //         y2="19.2"
+        //         stroke="#212529"
+        //         strokeWidth="1.6"
+        //         strokeLinecap="round"
+        //       />
+        //     </svg>
+        //   </HamburgerIcon>
+        // }
         appendRight={
           <SearchIcon>
             <svg
@@ -74,7 +74,7 @@ const Home: React.FC<ScreenComponentProps> = ({ isTop, isRoot }) => {
             </svg>
           </SearchIcon>
         }
-        closeButtonLocation="right"
+        // closeButtonLocation="right"
       />
       위와 같이 상단바를 Customizing 할 수 있습니다 <br />
       <button onClick={onPage2Click}>상단바가 있는 페이지2로 이동</button>

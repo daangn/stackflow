@@ -5,7 +5,7 @@ import React from 'react'
 import { NavigatorTheme } from '../../types'
 import { IconBack, IconClose } from '../assets'
 import { useNavigatorOptions } from '../contexts'
-import styles from '../index.css'
+import styles from './Navbar.scss'
 import store from '../store'
 import { useNavigator } from '../useNavigator'
 
@@ -70,8 +70,6 @@ const Navbar: React.FC<NavbarProps> = (props) => {
           <div
             className={classnames(styles.navbarCenter, {
               [styles.isLeft]: isLeft,
-              [styles.android]: props.theme === 'Android',
-              [styles.cupertino]: props.theme === 'Cupertino',
             })}
           >
             {screenInstanceOption?.navbar.title}
@@ -79,13 +77,8 @@ const Navbar: React.FC<NavbarProps> = (props) => {
         )
 
         return (
-          <div className={styles.navbarContainer}>
-            <div
-              className={classnames(styles.navbarMain, {
-                [styles.android]: props.theme === 'Android',
-                [styles.cupertino]: props.theme === 'Cupertino',
-              })}
-            >
+          <div className={classnames(styles.navbarContainer, 'kf-navbar')}>
+            <div className={styles.navbarMain}>
               {props.theme === 'Cupertino' && center}
               <div className={styles.navbarFlex}>
                 <div className={styles.navbarLeft}>

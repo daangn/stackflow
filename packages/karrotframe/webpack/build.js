@@ -29,7 +29,7 @@ module.exports = {
         type: 'javascript/auto',
       },
       {
-        test: /\.css$/,
+        test: /\.(sa|sc|c)ss$/,
         use: [
           'style-loader',
           {
@@ -39,6 +39,7 @@ module.exports = {
               modules: { localIdentName: 'kf-[hash:base64:5]' },
             },
           },
+          'sass-loader',
         ],
       },
     ],

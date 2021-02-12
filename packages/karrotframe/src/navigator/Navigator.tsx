@@ -1,3 +1,4 @@
+import classnames from 'classnames'
 import { autorun } from 'mobx'
 import { Observer } from 'mobx-react-lite'
 import qs from 'querystring'
@@ -19,7 +20,7 @@ import {
   useHistoryPushEffect,
   useHistoryReplaceEffect,
 } from './hooks/useHistoryEffect'
-import styles from './index.css'
+import styles from './Navigator.scss'
 import store, {
   addScreenInstanceAfter,
   increaseScreenInstancePointer,
@@ -82,6 +83,7 @@ const Navigator: React.FC<NavigatorProps> = (props) => {
       }}
     >
       <NavigatorScreens
+        theme={props.theme ?? 'Android'}
         onClose={props.onClose}
         onDepthChange={props.onDepthChange}
       >
@@ -97,7 +99,12 @@ const Navigator: React.FC<NavigatorProps> = (props) => {
   return h
 }
 
-const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
+interface NavigatorScreensProps {
+  theme: NavigatorTheme
+  onClose?: () => void
+  onDepthChange?: (depth: number) => void
+}
+const NavigatorScreens: React.FC<NavigatorScreensProps> = (props) => {
   const location = useLocation()
   const history = useHistory()
 
@@ -377,7 +384,12 @@ const NavigatorScreens: React.FC<NavigatorProps> = (props) => {
   )
 
   return (
-    <div className={styles.navigatorRoot}>
+    <div
+      className={classnames(styles.navigatorRoot, {
+        'kf-android': props.theme === 'Android',
+        'kf-cupertino': props.theme === 'Cupertino',
+      })}
+    >
       {props.children}
       <TransitionGroup>
         <Observer>
@@ -423,12 +435,6 @@ const Transition: React.FC<TransitionProps> = memo((props) => {
             timeout={navigatorOptions.animationDuration}
             in={props.screenInstanceIndex <= store.screenInstancePointer}
             unmountOnExit
-            classNames={{
-              enterActive: styles.enterActive,
-              enterDone: styles.enterDone,
-              exitActive: styles.exitActive,
-              exitDone: styles.exitDone,
-            }}
           >
             <Card
               nodeRef={nodeRef}
