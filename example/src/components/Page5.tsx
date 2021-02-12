@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-import { ScreenHelmet } from '@daangn/karrotframe'
+import { ScreenHelmet } from 'karrotframe'
 import styled from '@emotion/styled'
 
 interface Props {}

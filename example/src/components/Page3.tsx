@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link, Route, useHistory } from 'react-router-dom'
 
-import { useNavigator } from '@daangn/karrotframe'
+import { useNavigator } from 'karrotframe'
 import styled from '@emotion/styled'
 
 const Page3: React.FC = () => {

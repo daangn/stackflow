@@ -5,7 +5,7 @@ import {
   ScreenHelmet,
   useNavigator,
   useQueryParams,
-} from '@daangn/karrotframe'
+} from 'karrotframe'
 import styled from '@emotion/styled'
 
 const Page2: React.FC<ScreenComponentProps> = ({ isTop, isRoot }) => {

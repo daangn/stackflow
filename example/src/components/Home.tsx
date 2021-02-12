@@ -4,7 +4,7 @@ import {
   ScreenComponentProps,
   ScreenHelmet,
   useNavigator,
-} from '@daangn/karrotframe'
+} from 'karrotframe'
 import styled from '@emotion/styled'
 
 const Home: React.FC<ScreenComponentProps> = ({ isTop, isRoot }) => {

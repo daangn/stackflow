@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 
-import { Link, useParams, useQueryParams } from '@daangn/karrotframe'
+import { Link, useParams, useQueryParams } from 'karrotframe'
 import styled from '@emotion/styled'
 
 interface Props {}

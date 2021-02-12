@@ -3,21 +3,22 @@
   "version": "0.12.1",
   "description": "UX Enhancer",
   "repository": "https://github.com/daangn/karrotframe",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "author": "Danggeun Market Inc.",
-  "files": [
-    "lib",
-    "README.md",
-    "cover.png"
-  ],
   "main": "lib/index.js",
   "module": "lib/index.js",
   "source": "src/index.tsx",
   "types": "lib",
+  "files": [
+    "lib",
+    "README.md",
+    "LICENSE",
+    "cover.png"
+  ],
   "scripts": {
     "build": "yarn clean && yarn build:runtime && yarn build:dts",
-    "build:runtime": "webpack --config ./webpack/build.js",
     "build:dts": "tsc --emitDeclarationOnly",
+    "build:runtime": "webpack --config ./webpack/build.js",
     "clean": "rimraf lib",
     "lint": "eslint \"./src/*.{tsx,ts}\""
   },
@@ -56,9 +57,9 @@
     "webpack-cli": "^4.2.0"
   },
   "peerDependencies": {
-    "react": "^16.8",
-    "react-dom": "^16.8",
-    "react-router-dom": "^5.2.0"
+    "react": ">=16.8",
+    "react-dom": ">=16.8",
+    "react-router-dom": ">=5.2.0"
   },
   "engines": {
     "node": ">=12"
