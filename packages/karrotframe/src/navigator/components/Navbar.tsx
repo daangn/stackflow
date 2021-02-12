@@ -1,6 +1,6 @@
 import classnames from 'classnames'
 import { Observer } from 'mobx-react-lite'
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 
 import { NavigatorTheme } from '../../types'
 import { IconBack, IconClose } from '../assets'
@@ -19,6 +19,40 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = (props) => {
   const { pop } = useNavigator()
   const navigatorOptions = useNavigatorOptions()
+  const centerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (props.theme === 'Cupertino') {
+      let prevClientWidth = 0
+      let animationFrameId: number
+
+      const detectMaxWidth = () => {
+        animationFrameId = requestAnimationFrame(() => {
+          if (!centerRef.current) {
+            return
+          }
+          const { offsetLeft, clientWidth } = centerRef.current
+          if (clientWidth && clientWidth !== prevClientWidth) {
+            prevClientWidth = clientWidth
+            const screenWidth = window.innerWidth
+            const right = screenWidth - (offsetLeft + clientWidth)
+            const max = Math.max(right, offsetLeft)
+            ;((centerRef.current.firstElementChild as HTMLDivElement)
+              .firstElementChild as HTMLDivElement)!.style.maxWidth = `${
+              screenWidth - max * 2
+            }px`
+          }
+
+          detectMaxWidth()
+        })
+      }
+      detectMaxWidth()
+
+      return () => {
+        cancelAnimationFrame(animationFrameId)
+      }
+    }
+  }, [])
 
   const onBackClick = () => {
     pop()
@@ -67,19 +101,29 @@ const Navbar: React.FC<NavbarProps> = (props) => {
         )
 
         const center = (
-          <div
-            className={classnames(styles.navbarCenter, {
-              [styles.isLeft]: isLeft,
-            })}
-          >
-            {screenInstanceOption?.navbar.title}
+          <div className={styles.navbarCenter} ref={centerRef}>
+            <div
+              className={classnames(styles.navbarCenterText, {
+                [styles.isLeft]: isLeft,
+                [styles.android]: props.theme === 'Android',
+                [styles.cupertino]: props.theme === 'Cupertino',
+              })}
+            >
+              <div className={styles.navbarCenterEllipsisText}>
+                {screenInstanceOption?.navbar.title}
+              </div>
+            </div>
           </div>
         )
 
         return (
-          <div className={classnames(styles.navbarContainer, 'kf-navbar')}>
-            <div className={styles.navbarMain}>
-              {props.theme === 'Cupertino' && center}
+          <div className={styles.navbarContainer}>
+            <div
+              className={classnames(styles.navbarMain, {
+                [styles.android]: props.theme === 'Android',
+                [styles.cupertino]: props.theme === 'Cupertino',
+              })}
+            >
               <div className={styles.navbarFlex}>
                 <div className={styles.navbarLeft}>
                   {screenInstanceOption?.navbar.closeButtonLocation ===
@@ -87,7 +131,7 @@ const Navbar: React.FC<NavbarProps> = (props) => {
                   {backButton}
                   {screenInstanceOption?.navbar.appendLeft}
                 </div>
-                {props.theme === 'Android' && center}
+                {center}
                 <div className={styles.navbarRight}>
                   {screenInstanceOption?.navbar.appendRight}
                   {screenInstanceOption?.navbar.closeButtonLocation ===
