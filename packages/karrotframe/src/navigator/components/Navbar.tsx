@@ -105,8 +105,6 @@ const Navbar: React.FC<NavbarProps> = (props) => {
             <div
               className={classnames(styles.navbarCenterText, {
                 [styles.isLeft]: isLeft,
-                [styles.android]: props.theme === 'Android',
-                [styles.cupertino]: props.theme === 'Cupertino',
               })}
             >
               <div className={styles.navbarCenterEllipsisText}>
@@ -118,12 +116,7 @@ const Navbar: React.FC<NavbarProps> = (props) => {
 
         return (
           <div className={styles.navbarContainer}>
-            <div
-              className={classnames(styles.navbarMain, {
-                [styles.android]: props.theme === 'Android',
-                [styles.cupertino]: props.theme === 'Cupertino',
-              })}
-            >
+            <div className={styles.navbarMain}>
               <div className={styles.navbarFlex}>
                 <div className={styles.navbarLeft}>
                   {screenInstanceOption?.navbar.closeButtonLocation ===
