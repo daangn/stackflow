@@ -33,11 +33,7 @@ const Page4: React.FC<Props> = () => {
       clearTimeout(timerId)
     }
   }, [])
-  return (
-    <Base>
-      {loading ? 'Loading...' : <LazyLoadedComponent />}
-    </Base>
-  )
+  return <Base>{loading ? 'Loading...' : <LazyLoadedComponent />}</Base>
 }
 
 const Base = styled.div`
