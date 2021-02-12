@@ -332,3 +332,7 @@ const ExampleScreen = () => {
 - Tony (tony@daangn.com)
 - Victor (victor@daangn.com)
 - Steve (steve@daangn.com)
+
+## Contributing
+
+Karrotframe에 새 기능 또는 옵션을 Contribute 하시려면 [Contribution Guide](./CONTRIBUTING.md)를 확인하세요
