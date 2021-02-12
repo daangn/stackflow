@@ -66,7 +66,7 @@ const Page2: React.FC<ScreenComponentProps> = ({ isTop, isRoot }) => {
             </svg>
           </HamburgerIcon>
         }
-        appendRight={<div>{title}</div>}
+        // appendRight={<div>{title}</div>}
       />
       두번째페이지
       {query?.id}

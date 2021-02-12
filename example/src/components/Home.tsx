@@ -9,13 +9,13 @@ const Home: React.FC<ScreenComponentProps> = ({ isTop, isRoot }) => {
 
   const onPage2Click = async () => {
     const data = await navigator.push('/page2', {
-      present: true,
+      present: false,
     })
     console.log(data)
   }
 
   const onAppendClick = () => {
-    setRight(right + '1')
+    setRight(right + '11111')
   }
 
   return (
@@ -23,7 +23,7 @@ const Home: React.FC<ScreenComponentProps> = ({ isTop, isRoot }) => {
       <ScreenHelmet
         title={'당근당근당근당근당근당근당근당근당근'}
         appendRight={right}
-        // closeButtonLocation="right"
+        closeButtonLocation="right"
       />
       위와 같이 상단바를 Customizing 할 수 있습니다 <br />
       <button onClick={onPage2Click}>상단바가 있는 페이지2로 이동</button>
