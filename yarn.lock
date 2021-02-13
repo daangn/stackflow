@@ -2539,6 +2539,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/zenscroll@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "@types/zenscroll@npm:4.0.0"
+  checksum: 92a5efebb4b51a8b6990d7311e009966d7504da9a4cf9eccbb5bd316094e24ade7ee63bd8969272cf469666cbc20ea7b116dc79c3721d715272631434aa2a576
+  languageName: node
+  linkType: hard
+
 "@typescript-eslint/eslint-plugin@npm:^2.10.0":
   version: 2.34.0
   resolution: "@typescript-eslint/eslint-plugin@npm:2.34.0"
@@ -9507,6 +9514,7 @@ fsevents@~2.3.1:
     "@types/react-dom": ^16.9.8
     "@types/react-router-dom": ^5.1.5
     "@types/react-transition-group": ^4.4.0
+    "@types/zenscroll": ^4.0.0
     babel-loader: ^8.2.2
     classnames: ^2.2.6
     css-loader: ^5.0.1
@@ -9524,6 +9532,7 @@ fsevents@~2.3.1:
     typescript: ^4.0.2
     webpack: ^5.9.0
     webpack-cli: ^4.2.0
+    zenscroll: ^4.0.2
   peerDependencies:
     react: ">=16.8"
     react-dom: ">=16.8"
@@ -16314,5 +16323,12 @@ typescript@~3.7.2:
   version: 0.1.0
   resolution: "yocto-queue@npm:0.1.0"
   checksum: 096c3b40beb2804659539be1605a35c58eb0c85285f94b77b3e924f42ee265c1a40bf9f4153770039517146b469a964d51742395f35ca8135fc9f7e4982b785d
+  languageName: node
+  linkType: hard
+
+"zenscroll@npm:^4.0.2":
+  version: 4.0.2
+  resolution: "zenscroll@npm:4.0.2"
+  checksum: 97a52dceee8beb4ece38de73aebe53af84d9009e54bba02a2a940479dad9a73665425530cc9e93937e3d7dccdca3cd6b03f5993bae02eb8148c8c2a70ba3678e
   languageName: node
   linkType: hard

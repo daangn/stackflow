@@ -101,6 +101,7 @@
   overflow-y: scroll;
   background-color: #fff;
   -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
 }
 :global(.kf-cupertino) {
   .cardFrame {

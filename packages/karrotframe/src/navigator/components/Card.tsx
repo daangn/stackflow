@@ -1,6 +1,7 @@
 import classnames from 'classnames'
 import { Observer } from 'mobx-react-lite'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
+import zenscroll from 'zenscroll'
 
 import { useNavigatorOptions } from '../contexts'
 import store, { setScreenEdge } from '../store'
@@ -149,11 +150,9 @@ const Card: React.FC<CardProps> = (props) => {
       props.screenInstanceId
     )
 
-    if (!screenInstanceOption?.navbar.disableScrollToTop) {
-      frameRef.current?.scroll({
-        top: 0,
-        behavior: 'smooth',
-      })
+    if (!screenInstanceOption?.navbar.disableScrollToTop && frameRef.current) {
+      const scroller = zenscroll.createScroller(frameRef.current)
+      scroller.toY(0)
     }
 
     screenInstanceOption?.navbar.onTopClick?.()

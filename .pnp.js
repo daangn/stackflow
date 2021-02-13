@@ -4743,6 +4743,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["@types/zenscroll", [
+        ["npm:4.0.0", {
+          "packageLocation": "./.yarn/cache/@types-zenscroll-npm-4.0.0-25a46aaa75-92a5efebb4.zip/node_modules/@types/zenscroll/",
+          "packageDependencies": [
+            ["@types/zenscroll", "npm:4.0.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["@typescript-eslint/eslint-plugin", [
         ["npm:2.34.0", {
           "packageLocation": "./.yarn/cache/@typescript-eslint-eslint-plugin-npm-2.34.0-f789694d5f-8d800f4726.zip/node_modules/@typescript-eslint/eslint-plugin/",
@@ -12948,6 +12957,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/react-dom", "npm:16.9.10"],
             ["@types/react-router-dom", "npm:5.1.7"],
             ["@types/react-transition-group", "npm:4.4.0"],
+            ["@types/zenscroll", "npm:4.0.0"],
             ["babel-loader", "virtual:fe00e3a15bfb3a9e9024ee610099908811d1f62b019f798edfaa883a257baf7f1cad455084f1a46f89a6d77bd22a3804e2cc8683e75e17ba84e0c50707365fb0#npm:8.2.2"],
             ["classnames", "npm:2.2.6"],
             ["css-loader", "virtual:fe00e3a15bfb3a9e9024ee610099908811d1f62b019f798edfaa883a257baf7f1cad455084f1a46f89a6d77bd22a3804e2cc8683e75e17ba84e0c50707365fb0#npm:5.0.2"],
@@ -12967,7 +12977,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["style-loader", "virtual:fe00e3a15bfb3a9e9024ee610099908811d1f62b019f798edfaa883a257baf7f1cad455084f1a46f89a6d77bd22a3804e2cc8683e75e17ba84e0c50707365fb0#npm:2.0.0"],
             ["typescript", "patch:typescript@npm%3A4.1.5#builtin<compat/typescript>::version=4.1.5&hash=cc6730"],
             ["webpack", "virtual:fe00e3a15bfb3a9e9024ee610099908811d1f62b019f798edfaa883a257baf7f1cad455084f1a46f89a6d77bd22a3804e2cc8683e75e17ba84e0c50707365fb0#npm:5.21.2"],
-            ["webpack-cli", "virtual:fe00e3a15bfb3a9e9024ee610099908811d1f62b019f798edfaa883a257baf7f1cad455084f1a46f89a6d77bd22a3804e2cc8683e75e17ba84e0c50707365fb0#npm:4.5.0"]
+            ["webpack-cli", "virtual:fe00e3a15bfb3a9e9024ee610099908811d1f62b019f798edfaa883a257baf7f1cad455084f1a46f89a6d77bd22a3804e2cc8683e75e17ba84e0c50707365fb0#npm:4.5.0"],
+            ["zenscroll", "npm:4.0.2"]
           ],
           "packagePeers": [
             "@types/react-dom",
@@ -12995,6 +13006,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/react-dom", "npm:16.9.10"],
             ["@types/react-router-dom", "npm:5.1.7"],
             ["@types/react-transition-group", "npm:4.4.0"],
+            ["@types/zenscroll", "npm:4.0.0"],
             ["babel-loader", "virtual:44240c59a92239afc147d2e3436820f442b334695940ee834809ffea919c88e86c2ba6b80694bf288c306842e76b9b59d66dd280b8c4a67d34c0c6e3d8902b93#npm:8.2.2"],
             ["classnames", "npm:2.2.6"],
             ["css-loader", "virtual:44240c59a92239afc147d2e3436820f442b334695940ee834809ffea919c88e86c2ba6b80694bf288c306842e76b9b59d66dd280b8c4a67d34c0c6e3d8902b93#npm:5.0.2"],
@@ -13011,7 +13023,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["style-loader", "virtual:44240c59a92239afc147d2e3436820f442b334695940ee834809ffea919c88e86c2ba6b80694bf288c306842e76b9b59d66dd280b8c4a67d34c0c6e3d8902b93#npm:2.0.0"],
             ["typescript", "patch:typescript@npm%3A4.1.5#builtin<compat/typescript>::version=4.1.5&hash=cc6730"],
             ["webpack", "virtual:44240c59a92239afc147d2e3436820f442b334695940ee834809ffea919c88e86c2ba6b80694bf288c306842e76b9b59d66dd280b8c4a67d34c0c6e3d8902b93#npm:5.21.2"],
-            ["webpack-cli", "virtual:44240c59a92239afc147d2e3436820f442b334695940ee834809ffea919c88e86c2ba6b80694bf288c306842e76b9b59d66dd280b8c4a67d34c0c6e3d8902b93#npm:4.5.0"]
+            ["webpack-cli", "virtual:44240c59a92239afc147d2e3436820f442b334695940ee834809ffea919c88e86c2ba6b80694bf288c306842e76b9b59d66dd280b8c4a67d34c0c6e3d8902b93#npm:4.5.0"],
+            ["zenscroll", "npm:4.0.2"]
           ],
           "linkType": "SOFT",
         }]
@@ -20966,6 +20979,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/yocto-queue-npm-0.1.0-c6c9a7db29-096c3b40be.zip/node_modules/yocto-queue/",
           "packageDependencies": [
             ["yocto-queue", "npm:0.1.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["zenscroll", [
+        ["npm:4.0.2", {
+          "packageLocation": "./.yarn/cache/zenscroll-npm-4.0.2-8ae60740aa-97a52dceee.zip/node_modules/zenscroll/",
+          "packageDependencies": [
+            ["zenscroll", "npm:4.0.2"]
           ],
           "linkType": "HARD",
         }]
