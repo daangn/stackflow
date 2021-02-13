@@ -72,15 +72,13 @@
   align-items: center;
   overflow: hidden;
 }
-.navbarCenterText {
+.navbarCenterMain {
   white-space: nowrap;
   overflow: hidden;
-  margin: 0;
   width: 100%;
-  display: block;
 }
 :global(.kf-android) {
-  .navbarCenterText {
+  .navbarCenterMain {
     font-family: 'Noto Sans KR', sans-serif;
     justify-content: flex-start;
     padding-left: 1rem;
@@ -94,7 +92,7 @@
   }
 }
 :global(.kf-cupertino) {
-  .navbarCenterText {
+  .navbarCenterMain {
     font-family: -apple-system, BlinkMacSystemFont;
     text-align: center;
     font-weight: 600;
@@ -104,17 +102,19 @@
     align-items: center;
     position: absolute;
     top: 0;
-    left: 0;
+    left: 50%;
     width: 100%;
     height: 100%;
+    transform: translate(-50%);
   }
 }
 
-.navbarCenterEllipsisText {
+.navbarCenterMainText {
   overflow: hidden;
   text-overflow: ellipsis;
   font-size: inherit;
   font-weight: inherit;
+  width: 100%;
 }
 
 .navbarRight {

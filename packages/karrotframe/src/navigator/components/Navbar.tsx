@@ -1,13 +1,14 @@
 import classnames from 'classnames'
+import { autorun } from 'mobx'
 import { Observer } from 'mobx-react-lite'
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 import { NavigatorTheme } from '../../types'
 import { IconBack, IconClose } from '../assets'
 import { useNavigatorOptions } from '../contexts'
-import styles from './Navbar.scss'
 import store from '../store'
 import { useNavigator } from '../useNavigator'
+import styles from './Navbar.scss'
 
 interface NavbarProps {
   screenInstanceId: string
@@ -19,37 +20,46 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = (props) => {
   const { pop } = useNavigator()
   const navigatorOptions = useNavigatorOptions()
+
+  const [centerMainMaxWidth, setCenterMainMaxWidth] = useState<
+    string | undefined
+  >(undefined)
+
+  const navbarRef = useRef<HTMLDivElement>(null)
   const centerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    const onResize = () =>
+      requestAnimationFrame(() => {
+        if (!navbarRef.current || !centerRef.current) {
+          return
+        }
+
+        const screenWidth = navbarRef.current.clientWidth
+
+        const {
+          offsetLeft: leftWidth,
+          clientWidth: centerWidth,
+        } = centerRef.current
+        const rightWidth = screenWidth - leftWidth - centerWidth
+
+        const sideMaxMargin = Math.max(leftWidth, rightWidth)
+
+        setCenterMainMaxWidth(screenWidth - 2 * sideMaxMargin + 'px')
+      })
+
     if (props.theme === 'Cupertino') {
-      let prevClientWidth = 0
-      let animationFrameId: number
+      onResize()
 
-      const detectMaxWidth = () => {
-        animationFrameId = requestAnimationFrame(() => {
-          if (!centerRef.current) {
-            return
-          }
-          const { offsetLeft, clientWidth } = centerRef.current
-          if (clientWidth && clientWidth !== prevClientWidth) {
-            prevClientWidth = clientWidth
-            const screenWidth = window.innerWidth
-            const right = screenWidth - (offsetLeft + clientWidth)
-            const max = Math.max(right, offsetLeft)
-            ;((centerRef.current.firstElementChild as HTMLDivElement)
-              .firstElementChild as HTMLDivElement)!.style.maxWidth = `${
-              screenWidth - max * 2
-            }px`
-          }
-
-          detectMaxWidth()
-        })
-      }
-      detectMaxWidth()
+      window.addEventListener('resize', onResize)
+      const dispose = autorun(() => {
+        store.screenInstanceOptions.get(props.screenInstanceId)
+        onResize()
+      })
 
       return () => {
-        cancelAnimationFrame(animationFrameId)
+        window.removeEventListener('resize', onResize)
+        dispose()
       }
     }
   }, [])
@@ -100,22 +110,11 @@ const Navbar: React.FC<NavbarProps> = (props) => {
           screenInstanceOption?.navbar.appendLeft
         )
 
-        const center = (
-          <div className={styles.navbarCenter} ref={centerRef}>
-            <div
-              className={classnames(styles.navbarCenterText, {
-                [styles.isLeft]: isLeft,
-              })}
-            >
-              <div className={styles.navbarCenterEllipsisText}>
-                {screenInstanceOption?.navbar.title}
-              </div>
-            </div>
-          </div>
-        )
-
         return (
-          <div className={styles.navbarContainer}>
+          <div
+            ref={navbarRef}
+            className={classnames(styles.navbarContainer, 'kf-navbar')}
+          >
             <div className={styles.navbarMain}>
               <div className={styles.navbarFlex}>
                 <div className={styles.navbarLeft}>
@@ -124,7 +123,24 @@ const Navbar: React.FC<NavbarProps> = (props) => {
                   {backButton}
                   {screenInstanceOption?.navbar.appendLeft}
                 </div>
-                {center}
+                <div ref={centerRef} className={styles.navbarCenter}>
+                  <div
+                    className={classnames(styles.navbarCenterMain, {
+                      [styles.isLeft]: isLeft,
+                    })}
+                    style={{
+                      maxWidth: centerMainMaxWidth,
+                    }}
+                  >
+                    {typeof screenInstanceOption?.navbar.title === 'string' ? (
+                      <div className={styles.navbarCenterMainText}>
+                        {screenInstanceOption?.navbar.title}
+                      </div>
+                    ) : (
+                      screenInstanceOption?.navbar.title
+                    )}
+                  </div>
+                </div>
                 <div className={styles.navbarRight}>
                   {screenInstanceOption?.navbar.appendRight}
                   {screenInstanceOption?.navbar.closeButtonLocation ===
