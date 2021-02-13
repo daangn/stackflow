@@ -73,8 +73,7 @@
   overflow: hidden;
 }
 .navbarCenterMain {
-  white-space: nowrap;
-  overflow: hidden;
+  display: block;
 }
 :global(.kf-android) {
   .navbarCenterMain {
@@ -84,6 +83,8 @@
     font-size: 1.1875rem;
     line-height: 1.5;
     font-weight: bold;
+    width: 100%;
+    box-sizing: border-box;
 
     &.isLeft {
       padding-left: 0.375rem;
@@ -122,6 +123,12 @@
   height: 1.25rem;
   transform: translate(-50%);
   max-width: 5rem;
+  display: none;
+}
+:global(.kf-cupertino) {
+  .navbarCenterMainEdge {
+    display: block;
+  }
 }
 
 .navbarRight {
