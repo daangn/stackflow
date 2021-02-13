@@ -34,6 +34,16 @@ interface ScreenHelmetProps {
    * 닫기 버튼을 사용자화합니다
    */
   customCloseButton?: React.ReactNode
+
+  /**
+   * 상단바를 클릭했을때 상단으로 스크롤되는 기능을 비활성화합니다
+   */
+  disableScrollToTop?: boolean
+
+  /**
+   * 상단바를 클릭했을때 호출될 콜백을 설정합니다
+   */
+  onTopClick?: () => void
 }
 const ScreenHelmet: React.FC<ScreenHelmetProps> = (props) => {
   const screen = useScreenInstanceOptions()
@@ -47,6 +57,8 @@ const ScreenHelmet: React.FC<ScreenHelmetProps> = (props) => {
       closeButtonLocation: props.closeButtonLocation ?? 'left',
       customBackButton: props.customBackButton ?? null,
       customCloseButton: props.customCloseButton ?? null,
+      disableScrollToTop: props.disableScrollToTop ?? false,
+      onTopClick: props.onTopClick,
     })
   }, [props])
 
@@ -60,6 +72,8 @@ const ScreenHelmet: React.FC<ScreenHelmetProps> = (props) => {
         closeButtonLocation: 'left',
         customBackButton: null,
         customCloseButton: null,
+        disableScrollToTop: false,
+        onTopClick: undefined,
       })
     },
     []

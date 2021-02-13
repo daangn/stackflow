@@ -15,15 +15,16 @@ interface NavbarProps {
   theme: NavigatorTheme
   isRoot: boolean
   isPresent: boolean
+  onTopClick: () => void
   onClose?: () => void
 }
 const Navbar: React.FC<NavbarProps> = (props) => {
   const { pop } = useNavigator()
   const navigatorOptions = useNavigatorOptions()
 
-  const [centerMainMaxWidth, setCenterMainMaxWidth] = useState<
-    string | undefined
-  >(undefined)
+  const [centerMainWidth, setCenterMainWidth] = useState<string | undefined>(
+    undefined
+  )
 
   const navbarRef = useRef<HTMLDivElement>(null)
   const centerRef = useRef<HTMLDivElement>(null)
@@ -43,9 +44,9 @@ const Navbar: React.FC<NavbarProps> = (props) => {
         } = centerRef.current
         const rightWidth = screenWidth - leftWidth - centerWidth
 
-        const sideMaxMargin = Math.max(leftWidth, rightWidth)
+        const sideMargin = Math.max(leftWidth, rightWidth)
 
-        setCenterMainMaxWidth(screenWidth - 2 * sideMaxMargin + 'px')
+        setCenterMainWidth(screenWidth - 2 * sideMargin + 'px')
       })
 
     if (props.theme === 'Cupertino') {
@@ -129,7 +130,7 @@ const Navbar: React.FC<NavbarProps> = (props) => {
                       [styles.isLeft]: isLeft,
                     })}
                     style={{
-                      maxWidth: centerMainMaxWidth,
+                      width: centerMainWidth,
                     }}
                   >
                     {typeof screenInstanceOption?.navbar.title === 'string' ? (
@@ -140,6 +141,13 @@ const Navbar: React.FC<NavbarProps> = (props) => {
                       screenInstanceOption?.navbar.title
                     )}
                   </div>
+                  <div
+                    className={styles.navbarCenterMainEdge}
+                    style={{
+                      width: centerMainWidth,
+                    }}
+                    onClick={props.onTopClick}
+                  />
                 </div>
                 <div className={styles.navbarRight}>
                   {screenInstanceOption?.navbar.appendRight}

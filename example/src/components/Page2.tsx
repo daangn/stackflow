@@ -26,7 +26,7 @@ const Page2: React.FC<ScreenComponentProps> = ({ isTop, isRoot }) => {
   return (
     <Container>
       <ScreenHelmet
-        title={title}
+        // title={title}
         appendLeft={
           <HamburgerIcon>
             <svg

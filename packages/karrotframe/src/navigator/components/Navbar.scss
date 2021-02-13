@@ -75,7 +75,6 @@
 .navbarCenterMain {
   white-space: nowrap;
   overflow: hidden;
-  width: 100%;
 }
 :global(.kf-android) {
   .navbarCenterMain {
@@ -103,7 +102,6 @@
     position: absolute;
     top: 0;
     left: 50%;
-    width: 100%;
     height: 100%;
     transform: translate(-50%);
   }
@@ -115,6 +113,15 @@
   font-size: inherit;
   font-weight: inherit;
   width: 100%;
+}
+
+.navbarCenterMainEdge {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  height: 1.25rem;
+  transform: translate(-50%);
+  max-width: 5rem;
 }
 
 .navbarRight {

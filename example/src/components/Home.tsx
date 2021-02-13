@@ -21,7 +21,7 @@ const Home: React.FC<ScreenComponentProps> = ({ isTop, isRoot }) => {
   return (
     <Container>
       <ScreenHelmet
-        title={'당근당근당근당근당근당근당근당근당근'}
+        title={'ekdrmsekdmrmasklfaslkfsa'}
         appendRight={right}
         closeButtonLocation="right"
       />

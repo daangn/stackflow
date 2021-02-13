@@ -31,6 +31,8 @@ export interface NavbarOptions {
   closeButtonLocation: 'left' | 'right'
   customBackButton: React.ReactNode | null
   customCloseButton: React.ReactNode | null
+  disableScrollToTop: boolean
+  onTopClick?: () => void
 }
 
 export type ScreenInstancePromise = (data: any | null) => void

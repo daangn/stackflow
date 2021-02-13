@@ -144,6 +144,21 @@ const Card: React.FC<CardProps> = (props) => {
     }
   }, [])
 
+  const onTopClick = useCallback(() => {
+    const screenInstanceOption = store.screenInstanceOptions.get(
+      props.screenInstanceId
+    )
+
+    if (!screenInstanceOption?.navbar.disableScrollToTop) {
+      frameRef.current?.scroll({
+        top: 0,
+        behavior: 'smooth',
+      })
+    }
+
+    screenInstanceOption?.navbar.onTopClick?.()
+  }, [])
+
   return (
     <Observer>
       {() => {
@@ -205,6 +220,7 @@ const Card: React.FC<CardProps> = (props) => {
                     isRoot={props.isRoot}
                     isPresent={props.isPresent}
                     onClose={props.onClose}
+                    onTopClick={onTopClick}
                   />
                 )}
                 <div
