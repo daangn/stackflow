@@ -124,6 +124,8 @@
   transform: translate(-50%);
   max-width: 5rem;
   display: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
 :global(.kf-cupertino) {
