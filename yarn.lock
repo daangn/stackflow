@@ -6489,7 +6489,7 @@ __metadata:
     "@types/react-dom": ^16.9.0
     "@types/react-router-dom": ^5.1.5
     customize-cra: ^1.0.0
-    karrotframe: ^0.13.0
+    karrotframe: ^0.13.1
     react: ^16.13.1
     react-app-rewired: ^2.1.6
     react-dom: ^16.13.1
@@ -9498,7 +9498,7 @@ fsevents@~2.3.1:
   languageName: unknown
   linkType: soft
 
-"karrotframe@^0.13.0, karrotframe@workspace:packages/karrotframe":
+"karrotframe@^0.13.1, karrotframe@workspace:packages/karrotframe":
   version: 0.0.0-use.local
   resolution: "karrotframe@workspace:packages/karrotframe"
   dependencies:
