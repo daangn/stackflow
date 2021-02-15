@@ -1,11 +1,12 @@
 {
   "presets": [
     "@babel/typescript",
-    ["@babel/env", {
-      "targets": "> 0.25%, not dead"
-    }]
+    [
+      "@babel/env",
+      {
+        "targets": "> 0.25%, not dead"
+      }
+    ]
   ],
-  "plugins": [
-    "@babel/transform-react-jsx"
-  ]
+  "plugins": ["@babel/transform-react-jsx"]
 }
