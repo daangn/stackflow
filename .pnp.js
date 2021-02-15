@@ -27,6 +27,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:examples/playground"
       },
       {
+        "name": "with-cra",
+        "reference": "workspace:examples/with-cra"
+      },
+      {
         "name": "karrotframe",
         "reference": "workspace:packages/karrotframe"
       }
@@ -36,7 +40,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
     "fallbackExclusionList": [
       ["karrotframe", ["virtual:9f47500effb1331415751322b0fb858f7cf046bbcfd41a2c409a1acb593c5b92e9b4662705ad940206d59eacc93ef7c4db283ec5f803929e6b5ba35c243f0b5e#workspace:packages/karrotframe", "workspace:packages/karrotframe"]],
       ["karrotframe-repo", ["workspace:."]],
-      ["playground", ["workspace:examples/playground"]]
+      ["playground", ["workspace:examples/playground"]],
+      ["with-cra", ["workspace:examples/with-cra"]]
     ],
     "fallbackPool": [
     ],
@@ -20549,6 +20554,29 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["wildcard", "npm:2.0.0"]
           ],
           "linkType": "HARD",
+        }]
+      ]],
+      ["with-cra", [
+        ["workspace:examples/with-cra", {
+          "packageLocation": "./examples/with-cra/",
+          "packageDependencies": [
+            ["with-cra", "workspace:examples/with-cra"],
+            ["@testing-library/jest-dom", "npm:4.2.4"],
+            ["@testing-library/react", "virtual:9f47500effb1331415751322b0fb858f7cf046bbcfd41a2c409a1acb593c5b92e9b4662705ad940206d59eacc93ef7c4db283ec5f803929e6b5ba35c243f0b5e#npm:9.5.0"],
+            ["@testing-library/user-event", "virtual:9f47500effb1331415751322b0fb858f7cf046bbcfd41a2c409a1acb593c5b92e9b4662705ad940206d59eacc93ef7c4db283ec5f803929e6b5ba35c243f0b5e#npm:7.2.1"],
+            ["@types/jest", "npm:24.9.1"],
+            ["@types/node", "npm:12.20.0"],
+            ["@types/react", "npm:16.14.3"],
+            ["@types/react-dom", "npm:16.9.10"],
+            ["@types/react-router-dom", "npm:5.1.7"],
+            ["karrotframe", "virtual:9f47500effb1331415751322b0fb858f7cf046bbcfd41a2c409a1acb593c5b92e9b4662705ad940206d59eacc93ef7c4db283ec5f803929e6b5ba35c243f0b5e#workspace:packages/karrotframe"],
+            ["react", "npm:16.14.0"],
+            ["react-dom", "virtual:9f47500effb1331415751322b0fb858f7cf046bbcfd41a2c409a1acb593c5b92e9b4662705ad940206d59eacc93ef7c4db283ec5f803929e6b5ba35c243f0b5e#npm:16.14.0"],
+            ["react-router-dom", "virtual:9f47500effb1331415751322b0fb858f7cf046bbcfd41a2c409a1acb593c5b92e9b4662705ad940206d59eacc93ef7c4db283ec5f803929e6b5ba35c243f0b5e#npm:5.2.0"],
+            ["react-scripts", "virtual:9f47500effb1331415751322b0fb858f7cf046bbcfd41a2c409a1acb593c5b92e9b4662705ad940206d59eacc93ef7c4db283ec5f803929e6b5ba35c243f0b5e#npm:3.4.3"],
+            ["typescript", "patch:typescript@npm%3A3.7.7#builtin<compat/typescript>::version=3.7.7&hash=cc6730"]
+          ],
+          "linkType": "SOFT",
         }]
       ]],
       ["word-wrap", [
