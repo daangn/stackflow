@@ -6472,9 +6472,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"example@workspace:example":
+"example@workspace:examples/playground":
   version: 0.0.0-use.local
-  resolution: "example@workspace:example"
+  resolution: "example@workspace:examples/playground"
   dependencies:
     "@emotion/babel-plugin": ^11.2.0
     "@emotion/core": ^11.0.0

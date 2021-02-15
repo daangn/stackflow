@@ -6,7 +6,7 @@
   },
   "workspaces": [
     "packages/*",
-    "example"
+    "examples/*"
   ],
   "devDependencies": {
     "@types/jest": "^26.0.20",
