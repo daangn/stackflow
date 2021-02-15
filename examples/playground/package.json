@@ -1,10 +1,10 @@
 {
-  "name": "example",
+  "name": "playground",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "SKIP_PREFLIGHT_CHECK=true PUBLIC_URL=./ react-app-rewired build && webview-zipper ./build -o ./build/webview",
-    "start": "SKIP_PREFLIGHT_CHECK=true react-app-rewired start",
+    "build": "react-app-rewired build",
+    "start": "react-app-rewired start",
     "test": "react-scripts test"
   },
   "browserslist": {
@@ -26,7 +26,7 @@
     "@emotion/core": "^11.0.0",
     "@emotion/react": "^11.1.5",
     "@emotion/styled": "^11.1.5",
-    "karrotframe": "^0.13.1",
+    "karrotframe": "workspace:*",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.2.0"

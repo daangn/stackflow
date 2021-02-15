@@ -136,20 +136,4 @@ const Container = styled.div`
   padding: 1rem;
 `
 
-const HamburgerIcon = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.25rem;
-  height: 2.75rem;
-`
-
-const SearchIcon = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.25rem;
-  height: 2.75rem;
-`
-
 export default Home

@@ -6472,33 +6472,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"example@workspace:examples/playground":
-  version: 0.0.0-use.local
-  resolution: "example@workspace:examples/playground"
-  dependencies:
-    "@emotion/babel-plugin": ^11.2.0
-    "@emotion/core": ^11.0.0
-    "@emotion/react": ^11.1.5
-    "@emotion/styled": ^11.1.5
-    "@testing-library/jest-dom": ^4.2.4
-    "@testing-library/react": ^9.3.2
-    "@testing-library/user-event": ^7.1.2
-    "@types/jest": ^24.0.0
-    "@types/node": ^12.0.0
-    "@types/react": ^16.9.0
-    "@types/react-dom": ^16.9.0
-    "@types/react-router-dom": ^5.1.5
-    customize-cra: ^1.0.0
-    karrotframe: ^0.13.1
-    react: ^16.13.1
-    react-app-rewired: ^2.1.6
-    react-dom: ^16.13.1
-    react-router-dom: ^5.2.0
-    react-scripts: 3.4.3
-    typescript: ~3.7.2
-  languageName: unknown
-  linkType: soft
-
 "exec-sh@npm:^0.3.2":
   version: 0.3.4
   resolution: "exec-sh@npm:0.3.4"
@@ -9498,7 +9471,7 @@ fsevents@~2.3.1:
   languageName: unknown
   linkType: soft
 
-"karrotframe@^0.13.1, karrotframe@workspace:packages/karrotframe":
+"karrotframe@workspace:*, karrotframe@workspace:packages/karrotframe":
   version: 0.0.0-use.local
   resolution: "karrotframe@workspace:packages/karrotframe"
   dependencies:
@@ -11470,6 +11443,33 @@ fsevents@~2.3.1:
   checksum: df82763250b5283c175918f9410f9651afc1750f951249b31c7c49a6918d9faf13a9ef11e9355cbb0d4d5039a5c9d4c7162755b3e6c26235d2e3baea086e4a54
   languageName: node
   linkType: hard
+
+"playground@workspace:examples/playground":
+  version: 0.0.0-use.local
+  resolution: "playground@workspace:examples/playground"
+  dependencies:
+    "@emotion/babel-plugin": ^11.2.0
+    "@emotion/core": ^11.0.0
+    "@emotion/react": ^11.1.5
+    "@emotion/styled": ^11.1.5
+    "@testing-library/jest-dom": ^4.2.4
+    "@testing-library/react": ^9.3.2
+    "@testing-library/user-event": ^7.1.2
+    "@types/jest": ^24.0.0
+    "@types/node": ^12.0.0
+    "@types/react": ^16.9.0
+    "@types/react-dom": ^16.9.0
+    "@types/react-router-dom": ^5.1.5
+    customize-cra: ^1.0.0
+    karrotframe: "workspace:*"
+    react: ^16.13.1
+    react-app-rewired: ^2.1.6
+    react-dom: ^16.13.1
+    react-router-dom: ^5.2.0
+    react-scripts: 3.4.3
+    typescript: ~3.7.2
+  languageName: unknown
+  linkType: soft
 
 "pn@npm:^1.1.0":
   version: 1.1.0

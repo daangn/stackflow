@@ -21,8 +21,6 @@ const Page4: React.FC<Props> = () => {
   const [loading, setLoading] = useState(true)
   const query = useQueryParams()
 
-  const randomId = useMemo(() => `${Math.random()}`, [])
-
   console.log(query)
 
   useEffect(() => {
