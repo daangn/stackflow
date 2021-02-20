@@ -1,3 +1,4 @@
+import 'karrotframe/lib/index.css'
 import './index.css'
 
 import React from 'react'

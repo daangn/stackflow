@@ -1,3 +1,7 @@
-const { override, addBabelPlugin } = require('customize-cra')
+const {
+  override,
+  addBabelPlugin,
+  removeModuleScopePlugin,
+} = require('customize-cra')
 
-module.exports = override(addBabelPlugin('@emotion'))
+module.exports = override(addBabelPlugin('@emotion'), removeModuleScopePlugin())
