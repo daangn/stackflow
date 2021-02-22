@@ -72,6 +72,12 @@
   align-items: center;
   overflow: hidden;
 }
+:global(.kf-android) {
+  .navbarCenter {
+    padding-right: 1rem;
+  }
+}
+
 .navbarCenterMain {
   display: block;
 }
@@ -113,6 +119,7 @@
   text-overflow: ellipsis;
   font-size: inherit;
   font-weight: inherit;
+  white-space: nowrap;
   width: 100%;
 }
 
@@ -145,6 +152,11 @@
 
   &:empty {
     display: none;
+  }
+}
+:global(.kf-android) {
+  .navbarRight {
+    padding: 0 0.5rem 0 0;
   }
 }
 
