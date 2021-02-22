@@ -22,7 +22,7 @@ $ yarn build
 
 ### Example 프로젝트 시작하기
 
-`/example` 폴더에서 다음 명령어로 Example 프로젝트를 시작할 수 있습니다
+`/examples/playground` 폴더에서 다음 명령어로 Example 프로젝트를 시작할 수 있습니다
 
 ```bash
 $ yarn start
@@ -31,7 +31,7 @@ $ yarn start
 ### Karrotframe을 수정하면서 Example 프로젝트의 변화를 봅니다
 
 ```bash
-# /example
+# /examples/playground
 $ yarn start
 
 # 새 터미널 창의 /packages/karrotframe
