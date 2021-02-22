@@ -142,6 +142,7 @@
 }
 
 .navbarRight {
+  padding: 0 0.5rem;
   display: flex;
   align-items: center;
   height: 100%;
@@ -156,11 +157,6 @@
 :global(.kf-android) {
   .navbarRight {
     padding-right: 0.5rem;
-  }
-}
-:global(.kf-cupertino) {
-  .navbarRight {
-    padding: 0 0.5rem;
   }
 }
 
