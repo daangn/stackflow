@@ -7,6 +7,8 @@ $ yarn add karrotframe
 ```
 
 ```typescript
+import 'karrotframe/lib/index.css'
+
 import { ... } from 'karrotframe'
 ```
 
