@@ -61,13 +61,13 @@ export function useNavigator() {
     history.go(-n)
 
     const send = <T = object>(data: T) => {
+      const resolve = store.screenInstancePromises.get(targetScreenInstance.id)
+
       const popStateHandler = () => {
         window.removeEventListener('onpopstate', popStateHandler)
 
         if (targetScreenInstance) {
-          store.screenInstancePromises.get(targetScreenInstance.id)?.(
-            data ?? null
-          )
+          resolve?.(data ?? null)
         }
       }
 
