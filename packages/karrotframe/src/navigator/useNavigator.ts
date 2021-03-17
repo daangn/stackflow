@@ -64,14 +64,14 @@ export function useNavigator() {
       const resolve = store.screenInstancePromises.get(targetScreenInstance.id)
 
       const popStateHandler = () => {
-        window.removeEventListener('onpopstate', popStateHandler)
+        window.removeEventListener('popstate', popStateHandler)
 
         if (targetScreenInstance) {
           resolve?.(data ?? null)
         }
       }
 
-      window.addEventListener('onpopstate', popStateHandler)
+      window.addEventListener('popstate', popStateHandler)
     }
 
     return { send }
