@@ -30,29 +30,26 @@ const Navbar: React.FC<NavbarProps> = (props) => {
   const centerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const onResize = () =>
-      setTimeout(() => {
-        requestAnimationFrame(() => {
-          if (!navbarRef.current || !centerRef.current) {
-            return
-          }
+    const onResize = () => {
+      if (!navbarRef.current || !centerRef.current) {
+        return
+      }
 
-          const screenWidth = navbarRef.current.clientWidth
+      const screenWidth = navbarRef.current.clientWidth
 
-          const {
-            offsetLeft: leftWidth,
-            clientWidth: centerWidth,
-          } = centerRef.current
-          const rightWidth = screenWidth - leftWidth - centerWidth
+      const {
+        offsetLeft: leftWidth,
+        clientWidth: centerWidth,
+      } = centerRef.current
+      const rightWidth = screenWidth - leftWidth - centerWidth
 
-          const sideMargin = Math.max(leftWidth, rightWidth)
+      const sideMargin = Math.max(leftWidth, rightWidth)
 
-          setCenterMainWidth(screenWidth - 2 * sideMargin + 'px')
-        })
-      }, 0)
+      setCenterMainWidth(screenWidth - 2 * sideMargin + 'px')
+    }
 
     if (props.theme === 'Cupertino') {
-      onResize()
+      setTimeout(onResize, 0)
 
       window.addEventListener('resize', onResize)
       const dispose = autorun(() => {

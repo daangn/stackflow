@@ -24,6 +24,16 @@ const Home: React.FC<ScreenComponentProps> = ({ isTop, isRoot }) => {
         title={'ekdrmsekdmrmasklfaslkfsa'}
         appendRight={right}
         closeButtonLocation="right"
+        appendLeft={
+          <div
+            style={{ cursor: 'pointer' }}
+            onClick={() => {
+              window.alert(1)
+            }}
+          >
+            qwrqwrqww
+          </div>
+        }
       />
       위와 같이 상단바를 Customizing 할 수 있습니다 <br />
       <button onClick={onPage2Click}>상단바가 있는 페이지2로 이동</button>
