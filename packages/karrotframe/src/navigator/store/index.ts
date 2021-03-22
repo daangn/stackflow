@@ -35,7 +35,10 @@ export interface NavbarOptions {
   onTopClick?: () => void
 }
 
-export type ScreenInstancePromise = (data: any | null) => void
+export type ScreenInstancePromise = {
+  resolve: (data: any | null) => void
+  popped: boolean
+}
 
 export interface ScreenEdge {
   startTime: number | null

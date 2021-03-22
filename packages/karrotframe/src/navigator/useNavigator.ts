@@ -33,7 +33,10 @@ export function useNavigator() {
 
         history.push(pathname + '?' + appendSearch(search || null, params))
 
-        store.screenInstancePromises.set(screenInfo.screenInstanceId, resolve)
+        store.screenInstancePromises.set(screenInfo.screenInstanceId, {
+          resolve,
+          popped: false,
+        })
       }),
     []
   )
@@ -58,20 +61,24 @@ export function useNavigator() {
       .map((screenInstance) => screenInstance.nestedRouteCount)
       .reduce((acc, current) => acc + current + 1, 0)
 
+    const promise = store.screenInstancePromises.get(targetScreenInstance.id)
+    let data: any = null
+
+    const dispose = history.listen(() => {
+      dispose()
+
+      if (targetScreenInstance) {
+        promise?.resolve(data ?? null)
+      }
+    })
+
     history.go(-n)
 
-    const send = <T = object>(data: T) => {
-      const resolve = store.screenInstancePromises.get(targetScreenInstance.id)
-
-      const popStateHandler = () => {
-        window.removeEventListener('popstate', popStateHandler)
-
-        if (targetScreenInstance) {
-          resolve?.(data ?? null)
-        }
+    const send = <T = object>(d: T) => {
+      data = d as any
+      if (promise) {
+        promise.popped = true
       }
-
-      window.addEventListener('popstate', popStateHandler)
     }
 
     return { send }

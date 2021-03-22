@@ -168,11 +168,11 @@ const NavigatorScreens: React.FC<NavigatorScreensProps> = (props) => {
       targetScreenInstanceId?: string
     }) => {
       if (targetScreenInstanceId) {
-        setTimeout(
-          () =>
-            store.screenInstancePromises.get(targetScreenInstanceId)?.(null),
-          0
-        )
+        const promise = store.screenInstancePromises.get(targetScreenInstanceId)
+
+        if (promise && !promise.popped) {
+          promise.resolve(null)
+        }
       }
       setScreenInstancePointer(store.screenInstancePointer - depth)
     },
