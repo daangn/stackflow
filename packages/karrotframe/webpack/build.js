@@ -11,7 +11,7 @@ module.exports = {
   output: {
     path: path.resolve('./lib'),
     filename: '[name].js',
-    libraryTarget: 'commonjs',
+    libraryTarget: 'umd',
   },
   module: {
     rules: [
@@ -60,7 +60,9 @@ module.exports = {
     /react-dom/,
     /react-router-dom/,
   ],
-  externalsType: 'commonjs-module',
   devtool: 'source-map',
+  optimization: {
+    minimize: false,
+  },
   plugins: [new ForkTsCheckerWebpackPlugin(), new MiniCssExtractPlugin()],
 }

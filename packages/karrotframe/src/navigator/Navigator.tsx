@@ -144,15 +144,17 @@ const NavigatorScreens: React.FC<NavigatorScreensProps> = (props) => {
       screenId,
       screenInstanceId,
       as,
+      present,
     }: {
       screenId: string
       screenInstanceId: string
       as: string
+      present: boolean
     }) => {
       addScreenInstanceAfter(store.screenInstancePointer - 1, {
         screenId,
         screenInstanceId,
-        present: false,
+        present,
         as,
       })
     },
@@ -168,11 +170,11 @@ const NavigatorScreens: React.FC<NavigatorScreensProps> = (props) => {
       targetScreenInstanceId?: string
     }) => {
       if (targetScreenInstanceId) {
-        setTimeout(
-          () =>
-            store.screenInstancePromises.get(targetScreenInstanceId)?.(null),
-          0
-        )
+        const promise = store.screenInstancePromises.get(targetScreenInstanceId)
+
+        if (promise && !promise.popped) {
+          promise.resolve(null)
+        }
       }
       setScreenInstancePointer(store.screenInstancePointer - depth)
     },
@@ -284,13 +286,17 @@ const NavigatorScreens: React.FC<NavigatorScreensProps> = (props) => {
       }
 
       const [, search] = location.search.split('?')
-      const screenInstanceId = qs.parse(search)?._si as string | undefined
+      const { _si, _present } = qs.parse(search) as {
+        _si?: string
+        _present?: 'true'
+      }
 
-      if (matchScreen && screenInstanceId) {
+      if (matchScreen && _si) {
         replaceScreen({
           screenId: matchScreen.id,
-          screenInstanceId,
+          screenInstanceId: _si,
           as: location.pathname,
+          present: !!_present,
         })
       }
     },

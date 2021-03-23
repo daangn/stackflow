@@ -1,13 +1,19 @@
 import { useCallback } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
 
 import { appendSearch, generateScreenInstanceId } from '../utils'
 import { useScreenInstanceInfo } from './contexts'
 import store from './store'
+import qs from 'querystring'
 
 export function useNavigator() {
   const history = useHistory()
+  const location = useLocation()
   const screenInfo = useScreenInstanceInfo()
+
+  const queryParams = qs.parse(location.search.split('?')[1]) as {
+    _present?: 'true'
+  }
 
   const push = useCallback(
     <T = object>(
@@ -33,7 +39,10 @@ export function useNavigator() {
 
         history.push(pathname + '?' + appendSearch(search || null, params))
 
-        store.screenInstancePromises.set(screenInfo.screenInstanceId, resolve)
+        store.screenInstancePromises.set(screenInfo.screenInstanceId, {
+          resolve,
+          popped: false,
+        })
       }),
     []
   )
@@ -42,7 +51,18 @@ export function useNavigator() {
     const [pathname, search] = to.split('?')
     const _si = generateScreenInstanceId()
 
-    history.replace(pathname + '?' + appendSearch(search, { _si }))
+    history.replace(
+      pathname +
+        '?' +
+        appendSearch(search, {
+          _si,
+          ...(queryParams._present
+            ? {
+                _present: 'true',
+              }
+            : null),
+        })
+    )
   }, [])
 
   const pop = useCallback((depth = 1) => {
@@ -58,21 +78,25 @@ export function useNavigator() {
       .map((screenInstance) => screenInstance.nestedRouteCount)
       .reduce((acc, current) => acc + current + 1, 0)
 
-    history.go(-n)
+    const promise = store.screenInstancePromises.get(targetScreenInstance.id)
+    let data: any = null
 
-    const send = <T = object>(data: T) => {
-      const resolve = store.screenInstancePromises.get(targetScreenInstance.id)
+    const dispose = history.listen(() => {
+      dispose()
 
-      const popStateHandler = () => {
-        window.removeEventListener('popstate', popStateHandler)
-
-        if (targetScreenInstance) {
-          resolve?.(data ?? null)
-        }
+      if (targetScreenInstance) {
+        promise?.resolve(data ?? null)
       }
+    })
 
-      window.addEventListener('popstate', popStateHandler)
+    const send = <T = object>(d: T) => {
+      data = d as any
+      if (promise) {
+        promise.popped = true
+      }
     }
+
+    setTimeout(() => history.go(-n), 0)
 
     return { send }
   }, [])
