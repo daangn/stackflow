@@ -1,13 +1,19 @@
 import { useCallback } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
 
 import { appendSearch, generateScreenInstanceId } from '../utils'
 import { useScreenInstanceInfo } from './contexts'
 import store from './store'
+import qs from 'querystring'
 
 export function useNavigator() {
   const history = useHistory()
+  const location = useLocation()
   const screenInfo = useScreenInstanceInfo()
+
+  const queryParams = qs.parse(location.search.split('?')[1]) as {
+    _present?: 'true'
+  }
 
   const push = useCallback(
     <T = object>(
@@ -45,7 +51,18 @@ export function useNavigator() {
     const [pathname, search] = to.split('?')
     const _si = generateScreenInstanceId()
 
-    history.replace(pathname + '?' + appendSearch(search, { _si }))
+    history.replace(
+      pathname +
+        '?' +
+        appendSearch(search, {
+          _si,
+          ...(queryParams._present
+            ? {
+                _present: 'true',
+              }
+            : null),
+        })
+    )
   }, [])
 
   const pop = useCallback((depth = 1) => {
@@ -72,14 +89,14 @@ export function useNavigator() {
       }
     })
 
-    history.go(-n)
-
     const send = <T = object>(d: T) => {
       data = d as any
       if (promise) {
         promise.popped = true
       }
     }
+
+    setTimeout(() => history.go(-n), 0)
 
     return { send }
   }, [])
