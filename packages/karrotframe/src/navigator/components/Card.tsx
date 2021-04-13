@@ -177,7 +177,6 @@ const Card: React.FC<CardProps> = (props) => {
               <div
                 ref={dimRef}
                 className={classnames(styles.cardDim, {
-                  [styles.isLoading]: loading,
                   [styles.isNavbarVisible]: !!screenInstanceOption?.navbar
                     .visible,
                   [styles.isPresent]: props.isPresent,
