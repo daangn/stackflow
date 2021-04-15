@@ -397,7 +397,7 @@ const NavigatorScreens: React.FC<NavigatorScreensProps> = (props) => {
       })}
     >
       {props.children}
-      <TransitionGroup>
+      <TransitionGroup component={null}>
         <Observer>
           {() => (
             <>
