@@ -7,10 +7,6 @@
   height: 100%;
   opacity: 0;
   will-change: opacity;
-
-  &.isLoading {
-    display: none;
-  }
 }
 :global(.kf-cupertino) {
   .cardDim {
@@ -35,7 +31,7 @@
   will-change: transform;
 
   &.isLoading {
-    display: none;
+    visibility: hidden;
   }
 }
 :global(.kf-android) {
