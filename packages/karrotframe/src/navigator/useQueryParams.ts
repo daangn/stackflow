@@ -1,10 +1,10 @@
 import qs from 'querystring'
 import { useMemo } from 'react'
-import { match, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 
 import { useScreenInstanceInfo } from './contexts'
 
-const getParsedQuerystring = <T extends {} = {}>({
+const getParsedQuerystring = <T extends { [key in keyof T]: string } = {}>({
   screenPath,
 }: {
   screenPath: string
@@ -27,7 +27,9 @@ const getParsedQuerystring = <T extends {} = {}>({
   }
 }
 
-export function useQueryParams<T extends {} = {}>(): match<T>['params'] {
+export function useQueryParams<
+  T extends { [key in keyof T]: string } = {}
+>(): Partial<T> {
   const location = useLocation()
   const info = useScreenInstanceInfo()
 
