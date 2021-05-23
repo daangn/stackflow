@@ -37,7 +37,7 @@ export function useNavigator() {
           params._present = 'true'
         }
 
-        history.push(pathname + '?' + appendSearch(search || null, params))
+        history.push(`${pathname}?${appendSearch(search || null, params)}`)
 
         store.screenInstancePromises.set(screenInfo.screenInstanceId, {
           resolve,

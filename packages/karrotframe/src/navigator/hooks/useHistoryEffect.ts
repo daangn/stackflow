@@ -68,6 +68,11 @@ export function useHistoryPopEffect(
             locationKeyStack.current.push(locationKey)
             callbacks.forward?.(location, action)
           }
+          break
+        }
+        default: {
+          // nothing..
+          break
         }
       }
     })
@@ -118,6 +123,11 @@ export function useHistoryPushEffect(
           } else {
             locationKeyStack.current.push(locationKey)
           }
+          break
+        }
+        default: {
+          // nothing..
+          break
         }
       }
     })
