@@ -55,6 +55,8 @@
   transition: opacity 300ms;
   width: 2.25rem;
   height: 2.75rem;
+  text-decoration: none;
+  outline: none;
 
   &:active {
     opacity: 0.2;
@@ -172,6 +174,9 @@
   transition: opacity 300ms;
   width: 2.25rem;
   height: 2.75rem;
+
+  text-decoration: none;
+  outline: none;
 
   &:active {
     opacity: 0.2;
