@@ -75,29 +75,49 @@ const Navbar: React.FC<NavbarProps> = (props) => {
           props.onClose &&
           props.isRoot &&
           (screenInstanceOption?.navbar.customCloseButton ? (
-            <div className={styles.navbarClose} onClick={props.onClose}>
+            <a
+              role="text"
+              aria-label="닫기"
+              className={styles.navbarClose}
+              onClick={props.onClose}
+            >
               {screenInstanceOption.navbar.customCloseButton}
-            </div>
+            </a>
           ) : (
-            <div className={styles.navbarClose} onClick={props.onClose}>
+            <a
+              role="text"
+              aria-label="닫기"
+              className={styles.navbarClose}
+              onClick={props.onClose}
+            >
               <IconClose />
-            </div>
+            </a>
           ))
 
         const backButton =
           !props.isRoot &&
           (screenInstanceOption?.navbar.customBackButton ? (
-            <div className={styles.navbarBack} onClick={onBackClick}>
+            <a
+              role="text"
+              aria-label="뒤로가기"
+              className={styles.navbarBack}
+              onClick={onBackClick}
+            >
               {screenInstanceOption.navbar.customBackButton}
-            </div>
+            </a>
           ) : (
-            <div className={styles.navbarBack} onClick={onBackClick}>
+            <a
+              role="text"
+              aria-label="뒤로가기"
+              className={styles.navbarBack}
+              onClick={onBackClick}
+            >
               {navigatorOptions.theme === 'Cupertino' && props.isPresent ? (
                 <IconClose />
               ) : (
                 <IconBack />
               )}
-            </div>
+            </a>
           ))
 
         const isLeft = !!(
