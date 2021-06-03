@@ -232,7 +232,7 @@ const Card: React.FC<CardProps> = (props) => {
                 >
                   <div
                     ref={frameRef}
-                    className={classnames(styles.cardFrame, {
+                    className={classnames('kf-frame', styles.cardFrame, {
                       [styles.isNotRoot]: !props.isRoot,
                       [styles.isPresent]: props.isPresent,
                     })}

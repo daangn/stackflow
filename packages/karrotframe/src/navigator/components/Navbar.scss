@@ -1,10 +1,11 @@
-.navbarContainer {
-  background-color: #fff;
+.navbar {
   position: absolute;
   width: 100%;
   top: 0;
   padding-top: constant(safe-area-inset-top);
   padding-top: env(safe-area-inset-top);
+  background-color: #fff;
+  color: #212529;
 }
 
 .navbarMain {

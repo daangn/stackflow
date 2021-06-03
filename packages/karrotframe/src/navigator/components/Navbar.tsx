@@ -22,9 +22,8 @@ const Navbar: React.FC<NavbarProps> = (props) => {
   const { pop } = useNavigator()
   const navigatorOptions = useNavigatorOptions()
 
-  const [centerMainWidth, setCenterMainWidth] = useState<string | undefined>(
-    undefined
-  )
+  const [centerMainWidth, setCenterMainWidth] =
+    useState<string | undefined>(undefined)
 
   const navbarRef = useRef<HTMLDivElement>(null)
   const centerRef = useRef<HTMLDivElement>(null)
@@ -37,10 +36,8 @@ const Navbar: React.FC<NavbarProps> = (props) => {
 
       const screenWidth = navbarRef.current.clientWidth
 
-      const {
-        offsetLeft: leftWidth,
-        clientWidth: centerWidth,
-      } = centerRef.current
+      const { offsetLeft: leftWidth, clientWidth: centerWidth } =
+        centerRef.current
       const rightWidth = screenWidth - leftWidth - centerWidth
 
       const sideMargin = Math.max(leftWidth, rightWidth)
@@ -113,7 +110,7 @@ const Navbar: React.FC<NavbarProps> = (props) => {
         return (
           <div
             ref={navbarRef}
-            className={classnames(styles.navbarContainer, 'kf-navbar')}
+            className={classnames('kf-navbar', styles.navbar)}
           >
             <div className={styles.navbarMain}>
               <div className={styles.navbarFlex}>

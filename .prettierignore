@@ -5,6 +5,8 @@
 /packages/karrotframe/node_modules
 /packages/karrotframe/lib
 
-/example/node_modules
-/example/build
+/examples/playground/node_modules
+/examples/playground/build
+/examples/with-cra/node_modules
+/examples/with-cra/build
 
