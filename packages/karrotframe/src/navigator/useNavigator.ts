@@ -11,7 +11,9 @@ export function useNavigator() {
   const location = useLocation()
   const screenInfo = useScreenInstanceInfo()
 
-  const queryParams = qs.parse(location.search.split('?')[1]) as {
+  const [, search] = location.search.split('?')
+  const queryParams = qs.parse(search) as {
+    _si?: string
     _present?: 'true'
   }
 
@@ -47,23 +49,36 @@ export function useNavigator() {
     []
   )
 
-  const replace = useCallback((to: string) => {
-    const [pathname, search] = to.split('?')
-    const _si = generateScreenInstanceId()
+  const replace = useCallback(
+    (
+      to: string,
+      options?: {
+        animated?: boolean
+      }
+    ) => {
+      const [pathname, search] = to.split('?')
 
-    history.replace(
-      pathname +
-        '?' +
-        appendSearch(search, {
-          _si,
-          ...(queryParams._present
-            ? {
-                _present: 'true',
-              }
-            : null),
-        })
-    )
-  }, [])
+      history.replace(
+        pathname +
+          '?' +
+          appendSearch(search, {
+            ...(queryParams._si
+              ? {
+                  _si: options?.animated
+                    ? generateScreenInstanceId()
+                    : queryParams._si,
+                }
+              : null),
+            ...(queryParams._present
+              ? {
+                  _present: 'true',
+                }
+              : null),
+          })
+      )
+    },
+    [queryParams]
+  )
 
   const pop = useCallback((depth = 1) => {
     const targetScreenInstance =
