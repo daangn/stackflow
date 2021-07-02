@@ -53,7 +53,7 @@ export function useNavigator() {
     (
       to: string,
       options?: {
-        animated?: boolean
+        animate?: boolean
       }
     ) => {
       const [pathname, search] = to.split('?')
@@ -64,7 +64,7 @@ export function useNavigator() {
           appendSearch(search, {
             ...(queryParams._si
               ? {
-                  _si: options?.animated
+                  _si: options?.animate
                     ? generateScreenInstanceId()
                     : queryParams._si,
                 }
