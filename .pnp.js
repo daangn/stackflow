@@ -12851,8 +12851,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["fork-ts-checker-webpack-plugin", "virtual:1bc77eaaf1aa2c981b5bd7aa007f7d9442ea72a0b725be6658ec8c70f0551a871ba010f76813aa495ba9ca83d3cc59da4116bdfbf993e8dbd269f1f99f3913fc#npm:6.1.0"],
             ["history", "npm:4.10.1"],
             ["mini-css-extract-plugin", "virtual:1bc77eaaf1aa2c981b5bd7aa007f7d9442ea72a0b725be6658ec8c70f0551a871ba010f76813aa495ba9ca83d3cc59da4116bdfbf993e8dbd269f1f99f3913fc#npm:1.3.8"],
-            ["mobx", "npm:6.1.6"],
-            ["mobx-react-lite", "virtual:1bc77eaaf1aa2c981b5bd7aa007f7d9442ea72a0b725be6658ec8c70f0551a871ba010f76813aa495ba9ca83d3cc59da4116bdfbf993e8dbd269f1f99f3913fc#npm:3.2.0"],
             ["prettier", "npm:2.2.1"],
             ["querystring", "npm:0.2.0"],
             ["react", "npm:16.14.0"],
@@ -12902,8 +12900,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["fork-ts-checker-webpack-plugin", "virtual:44240c59a92239afc147d2e3436820f442b334695940ee834809ffea919c88e86c2ba6b80694bf288c306842e76b9b59d66dd280b8c4a67d34c0c6e3d8902b93#npm:6.1.0"],
             ["history", "npm:4.10.1"],
             ["mini-css-extract-plugin", "virtual:44240c59a92239afc147d2e3436820f442b334695940ee834809ffea919c88e86c2ba6b80694bf288c306842e76b9b59d66dd280b8c4a67d34c0c6e3d8902b93#npm:1.3.8"],
-            ["mobx", "npm:6.1.6"],
-            ["mobx-react-lite", "virtual:44240c59a92239afc147d2e3436820f442b334695940ee834809ffea919c88e86c2ba6b80694bf288c306842e76b9b59d66dd280b8c4a67d34c0c6e3d8902b93#npm:3.2.0"],
             ["prettier", "npm:2.2.1"],
             ["querystring", "npm:0.2.0"],
             ["react-transition-group", "virtual:44240c59a92239afc147d2e3436820f442b334695940ee834809ffea919c88e86c2ba6b80694bf288c306842e76b9b59d66dd280b8c4a67d34c0c6e3d8902b93#npm:4.4.1"],
@@ -13809,66 +13805,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/mkdirp-npm-1.0.4-37f6ef56b9-1aa3a6a2d7.zip/node_modules/mkdirp/",
           "packageDependencies": [
             ["mkdirp", "npm:1.0.4"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
-      ["mobx", [
-        ["npm:6.1.6", {
-          "packageLocation": "./.yarn/cache/mobx-npm-6.1.6-41f299e1c8-14bd87974a.zip/node_modules/mobx/",
-          "packageDependencies": [
-            ["mobx", "npm:6.1.6"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
-      ["mobx-react-lite", [
-        ["npm:3.2.0", {
-          "packageLocation": "./.yarn/cache/mobx-react-lite-npm-3.2.0-aa5d9c3d91-80d782f9e3.zip/node_modules/mobx-react-lite/",
-          "packageDependencies": [
-            ["mobx-react-lite", "npm:3.2.0"]
-          ],
-          "linkType": "SOFT",
-        }],
-        ["virtual:1bc77eaaf1aa2c981b5bd7aa007f7d9442ea72a0b725be6658ec8c70f0551a871ba010f76813aa495ba9ca83d3cc59da4116bdfbf993e8dbd269f1f99f3913fc#npm:3.2.0", {
-          "packageLocation": "./.yarn/$$virtual/mobx-react-lite-virtual-091b4412b5/0/cache/mobx-react-lite-npm-3.2.0-aa5d9c3d91-80d782f9e3.zip/node_modules/mobx-react-lite/",
-          "packageDependencies": [
-            ["mobx-react-lite", "virtual:1bc77eaaf1aa2c981b5bd7aa007f7d9442ea72a0b725be6658ec8c70f0551a871ba010f76813aa495ba9ca83d3cc59da4116bdfbf993e8dbd269f1f99f3913fc#npm:3.2.0"],
-            ["@types/mobx", null],
-            ["@types/react", "npm:16.14.3"],
-            ["mobx", "npm:6.1.6"],
-            ["react", "npm:16.14.0"],
-            ["react-dom", "virtual:9f47500effb1331415751322b0fb858f7cf046bbcfd41a2c409a1acb593c5b92e9b4662705ad940206d59eacc93ef7c4db283ec5f803929e6b5ba35c243f0b5e#npm:16.14.0"],
-            ["react-native", null]
-          ],
-          "packagePeers": [
-            "@types/mobx",
-            "@types/react",
-            "mobx",
-            "react-dom",
-            "react-native",
-            "react"
-          ],
-          "linkType": "HARD",
-        }],
-        ["virtual:44240c59a92239afc147d2e3436820f442b334695940ee834809ffea919c88e86c2ba6b80694bf288c306842e76b9b59d66dd280b8c4a67d34c0c6e3d8902b93#npm:3.2.0", {
-          "packageLocation": "./.yarn/$$virtual/mobx-react-lite-virtual-22cea2b580/0/cache/mobx-react-lite-npm-3.2.0-aa5d9c3d91-80d782f9e3.zip/node_modules/mobx-react-lite/",
-          "packageDependencies": [
-            ["mobx-react-lite", "virtual:44240c59a92239afc147d2e3436820f442b334695940ee834809ffea919c88e86c2ba6b80694bf288c306842e76b9b59d66dd280b8c4a67d34c0c6e3d8902b93#npm:3.2.0"],
-            ["@types/mobx", null],
-            ["@types/react", "npm:16.14.3"],
-            ["mobx", "npm:6.1.6"],
-            ["react", null],
-            ["react-dom", null],
-            ["react-native", null]
-          ],
-          "packagePeers": [
-            "@types/mobx",
-            "@types/react",
-            "mobx",
-            "react-dom",
-            "react-native",
-            "react"
           ],
           "linkType": "HARD",
         }]

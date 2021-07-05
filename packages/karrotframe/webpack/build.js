@@ -51,10 +51,9 @@ module.exports = {
   externals: [
     /classnames/,
     /history/,
-    /mobx/,
-    /mobx-react-lite/,
     /querystring/,
     /react-transition-group/,
+    /sagen/,
     /zenscroll/,
     /react/,
     /react-dom/,
