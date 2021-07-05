@@ -187,4 +187,12 @@ export const action = store.setAction((prevStore) => ({
   },
 }))
 
-export const dispatch = createDispatch(store)
+const dispatcher = createDispatch(store)
+
+export const dispatch = (
+  actionFunc: Parameters<typeof dispatcher>[0],
+  value?: any
+) => {
+  console.log(actionFunc)
+  return dispatcher(actionFunc, value)
+}
