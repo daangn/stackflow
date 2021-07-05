@@ -12860,6 +12860,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react-router-dom", "virtual:9f47500effb1331415751322b0fb858f7cf046bbcfd41a2c409a1acb593c5b92e9b4662705ad940206d59eacc93ef7c4db283ec5f803929e6b5ba35c243f0b5e#npm:5.2.0"],
             ["react-transition-group", "virtual:1bc77eaaf1aa2c981b5bd7aa007f7d9442ea72a0b725be6658ec8c70f0551a871ba010f76813aa495ba9ca83d3cc59da4116bdfbf993e8dbd269f1f99f3913fc#npm:4.4.1"],
             ["rimraf", "npm:3.0.2"],
+            ["sagen", "virtual:1bc77eaaf1aa2c981b5bd7aa007f7d9442ea72a0b725be6658ec8c70f0551a871ba010f76813aa495ba9ca83d3cc59da4116bdfbf993e8dbd269f1f99f3913fc#npm:2.2.2"],
             ["sass", "npm:1.35.1"],
             ["sass-loader", "virtual:1bc77eaaf1aa2c981b5bd7aa007f7d9442ea72a0b725be6658ec8c70f0551a871ba010f76813aa495ba9ca83d3cc59da4116bdfbf993e8dbd269f1f99f3913fc#npm:11.0.1"],
             ["style-loader", "virtual:1bc77eaaf1aa2c981b5bd7aa007f7d9442ea72a0b725be6658ec8c70f0551a871ba010f76813aa495ba9ca83d3cc59da4116bdfbf993e8dbd269f1f99f3913fc#npm:2.0.0"],
@@ -12907,6 +12908,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["querystring", "npm:0.2.0"],
             ["react-transition-group", "virtual:44240c59a92239afc147d2e3436820f442b334695940ee834809ffea919c88e86c2ba6b80694bf288c306842e76b9b59d66dd280b8c4a67d34c0c6e3d8902b93#npm:4.4.1"],
             ["rimraf", "npm:3.0.2"],
+            ["sagen", "virtual:44240c59a92239afc147d2e3436820f442b334695940ee834809ffea919c88e86c2ba6b80694bf288c306842e76b9b59d66dd280b8c4a67d34c0c6e3d8902b93#npm:2.2.2"],
             ["sass", "npm:1.35.1"],
             ["sass-loader", "virtual:44240c59a92239afc147d2e3436820f442b334695940ee834809ffea919c88e86c2ba6b80694bf288c306842e76b9b59d66dd280b8c4a67d34c0c6e3d8902b93#npm:11.0.1"],
             ["style-loader", "virtual:44240c59a92239afc147d2e3436820f442b334695940ee834809ffea919c88e86c2ba6b80694bf288c306842e76b9b59d66dd280b8c4a67d34c0c6e3d8902b93#npm:2.0.0"],
@@ -17545,6 +17547,52 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/safer-buffer-npm-2.1.2-8d5c0b705e-549ba83f5b.zip/node_modules/safer-buffer/",
           "packageDependencies": [
             ["safer-buffer", "npm:2.1.2"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["sagen", [
+        ["npm:2.2.2", {
+          "packageLocation": "./.yarn/cache/sagen-npm-2.2.2-2a30daaf8c-d4b00c3b29.zip/node_modules/sagen/",
+          "packageDependencies": [
+            ["sagen", "npm:2.2.2"]
+          ],
+          "linkType": "SOFT",
+        }],
+        ["virtual:1bc77eaaf1aa2c981b5bd7aa007f7d9442ea72a0b725be6658ec8c70f0551a871ba010f76813aa495ba9ca83d3cc59da4116bdfbf993e8dbd269f1f99f3913fc#npm:2.2.2", {
+          "packageLocation": "./.yarn/$$virtual/sagen-virtual-c38769bbf9/0/cache/sagen-npm-2.2.2-2a30daaf8c-d4b00c3b29.zip/node_modules/sagen/",
+          "packageDependencies": [
+            ["sagen", "virtual:1bc77eaaf1aa2c981b5bd7aa007f7d9442ea72a0b725be6658ec8c70f0551a871ba010f76813aa495ba9ca83d3cc59da4116bdfbf993e8dbd269f1f99f3913fc#npm:2.2.2"],
+            ["@types/react", "npm:16.14.3"],
+            ["react", "npm:16.14.0"],
+            ["sagen-core", "npm:0.4.3"]
+          ],
+          "packagePeers": [
+            "@types/react",
+            "react"
+          ],
+          "linkType": "HARD",
+        }],
+        ["virtual:44240c59a92239afc147d2e3436820f442b334695940ee834809ffea919c88e86c2ba6b80694bf288c306842e76b9b59d66dd280b8c4a67d34c0c6e3d8902b93#npm:2.2.2", {
+          "packageLocation": "./.yarn/$$virtual/sagen-virtual-32ef01e350/0/cache/sagen-npm-2.2.2-2a30daaf8c-d4b00c3b29.zip/node_modules/sagen/",
+          "packageDependencies": [
+            ["sagen", "virtual:44240c59a92239afc147d2e3436820f442b334695940ee834809ffea919c88e86c2ba6b80694bf288c306842e76b9b59d66dd280b8c4a67d34c0c6e3d8902b93#npm:2.2.2"],
+            ["@types/react", "npm:16.14.3"],
+            ["react", null],
+            ["sagen-core", "npm:0.4.3"]
+          ],
+          "packagePeers": [
+            "@types/react",
+            "react"
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["sagen-core", [
+        ["npm:0.4.3", {
+          "packageLocation": "./.yarn/cache/sagen-core-npm-0.4.3-e499c67180-2570dff667.zip/node_modules/sagen-core/",
+          "packageDependencies": [
+            ["sagen-core", "npm:0.4.3"]
           ],
           "linkType": "HARD",
         }]

@@ -30,6 +30,7 @@
     "mobx-react-lite": "^3.1.6",
     "querystring": "^0.2.0",
     "react-transition-group": "^4.4.1",
+    "sagen": "^2.2.2",
     "zenscroll": "^4.0.2"
   },
   "devDependencies": {
