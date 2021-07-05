@@ -66,7 +66,17 @@ const ScreenHelmet: React.FC<ScreenHelmetProps> = (props) => {
       noBorder: props.noBorder ?? false,
       onTopClick: props.onTopClick,
     })
-  }, [])
+  }, [
+    props.title,
+    props.appendLeft,
+    props.appendRight,
+    props.closeButtonLocation,
+    props.customBackButton,
+    props.customCloseButton,
+    props.disableScrollToTop,
+    props.noBorder,
+    props.onTopClick,
+  ])
 
   useEffect(() => {
     return () => {

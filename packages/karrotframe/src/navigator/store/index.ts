@@ -48,15 +48,15 @@ export interface ScreenEdge {
 
 export interface Store {
   screens: {
-    [screenId: string]: Screen
+    [screenId: string]: Screen | undefined
   }
   screenInstances: ScreenInstance[]
   screenInstancePointer: number
   screenInstanceOptions: {
-    [screenInstanceId: string]: ScreenInstanceOption
+    [screenInstanceId: string]: ScreenInstanceOption | undefined
   }
   screenInstancePromises: {
-    [screenInstanceId: string]: ScreenInstancePromise
+    [screenInstanceId: string]: ScreenInstancePromise | undefined
   }
   screenEdge: ScreenEdge
 }
@@ -72,6 +72,11 @@ export const store = createStore<Store>({
     startTime: null,
   },
 })
+
+store.onSubscribe(() => {
+  // console.log(next, prev)
+})
+;(window as any).store = store
 
 export const action = store.setAction((prevStore) => ({
   SET_SCREEN: ({ screen }: { screen: Screen }) => {

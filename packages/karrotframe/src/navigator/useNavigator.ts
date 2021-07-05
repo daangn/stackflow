@@ -1,6 +1,5 @@
 import { useCallback } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
-import { useGlobalStore } from 'sagen'
 
 import { appendSearch, generateScreenInstanceId } from '../utils'
 import { useScreenInstanceInfo } from './contexts'
@@ -11,7 +10,6 @@ export function useNavigator() {
   const history = useHistory()
   const location = useLocation()
   const screenInfo = useScreenInstanceInfo()
-  const [state] = useGlobalStore(store)
 
   const [, search] = location.search.split('?')
   const queryParams = qs.parse(search) as {
@@ -85,44 +83,43 @@ export function useNavigator() {
     [queryParams]
   )
 
-  const pop = useCallback(
-    (depth = 1) => {
-      const targetScreenInstance =
-        state.screenInstances[state.screenInstancePointer - depth]
+  const pop = useCallback((depth = 1) => {
+    const state = store.getState()
 
-      const n = state.screenInstances
-        .filter(
-          (_, idx) =>
-            idx > state.screenInstancePointer - depth &&
-            idx <= state.screenInstancePointer
-        )
-        .map((screenInstance) => screenInstance.nestedRouteCount)
-        .reduce((acc, current) => acc + current + 1, 0)
+    const targetScreenInstance =
+      state.screenInstances[state.screenInstancePointer - depth]
 
-      const promise = state.screenInstancePromises[targetScreenInstance.id]
-      let data: any = null
+    const n = state.screenInstances
+      .filter(
+        (_, idx) =>
+          idx > state.screenInstancePointer - depth &&
+          idx <= state.screenInstancePointer
+      )
+      .map((screenInstance) => screenInstance.nestedRouteCount)
+      .reduce((acc, current) => acc + current + 1, 0)
 
-      const dispose = history.listen(() => {
-        dispose()
+    const promise = state.screenInstancePromises[targetScreenInstance.id]
+    let data: any = null
 
-        if (targetScreenInstance) {
-          promise?.resolve(data ?? null)
-        }
-      })
+    const dispose = history.listen(() => {
+      dispose()
 
-      const send = <T = object>(d: T) => {
-        data = d as any
-        if (promise) {
-          promise.popped = true
-        }
+      if (targetScreenInstance) {
+        promise?.resolve(data ?? null)
       }
+    })
 
-      setTimeout(() => history.go(-n), 0)
+    const send = <T = object>(d: T) => {
+      data = d as any
+      if (promise) {
+        promise.popped = true
+      }
+    }
 
-      return { send }
-    },
-    [state]
-  )
+    setTimeout(() => history.go(-n), 0)
+
+    return { send }
+  }, [])
 
   return { push, replace, pop }
 }

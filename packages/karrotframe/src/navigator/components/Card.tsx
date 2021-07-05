@@ -26,7 +26,13 @@ const Card: React.FC<CardProps> = (props) => {
 
   const [loading, setLoading] = useState(props.isRoot)
   const [popped, setPopped] = useState(false)
-  const [state] = useGlobalStore(store)
+
+  const [screenEdge] = useGlobalStore(store, (state) => state.screenEdge)
+  const [isNavbarVisible] = useGlobalStore(
+    store,
+    (state) =>
+      state.screenInstanceOptions[props.screenInstanceId]?.navbar.visible
+  )
 
   useEffect(() => {
     setTimeout(() => setLoading(false), 0)
@@ -65,53 +71,56 @@ const Card: React.FC<CardProps> = (props) => {
     []
   )
 
-  const onEdgeTouchMove = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
-    if (state.screenEdge.startX) {
-      x.current = e.touches[0].clientX
+  const onEdgeTouchMove = useCallback(
+    (e: React.TouchEvent<HTMLDivElement>) => {
+      if (screenEdge.startX) {
+        x.current = e.touches[0].clientX
 
-      if (!requestAnimationFrameLock.current) {
-        requestAnimationFrameLock.current = true
+        if (!requestAnimationFrameLock.current) {
+          requestAnimationFrameLock.current = true
 
-        requestAnimationFrame(() => {
-          if (x.current > 0) {
-            const computedEdgeX = x.current - state.screenEdge.startX!
+          requestAnimationFrame(() => {
+            if (x.current > 0) {
+              const computedEdgeX = x.current - screenEdge.startX!
 
-            const $dim = dimRef.current
-            const $frame = frameRef.current
+              const $dim = dimRef.current
+              const $frame = frameRef.current
 
-            if (computedEdgeX >= 0) {
-              if ($dim) {
-                $dim.style.opacity = `${
-                  1 - computedEdgeX / window.screen.width
-                }`
-                $dim.style.transition = '0s'
-              }
-              if ($frame) {
-                $frame.style.overflowY = 'hidden'
-                $frame.style.transform = `translateX(${computedEdgeX}px)`
-                $frame.style.transition = '0s'
-              }
-              $frameOffsetSet.forEach(($frameOffset) => {
-                if ($frameOffset !== frameOffsetRef.current) {
-                  $frameOffset.style.transform = `translateX(-${
-                    5 - (5 * computedEdgeX) / window.screen.width
-                  }rem)`
-                  $frameOffset.style.transition = '0s'
+              if (computedEdgeX >= 0) {
+                if ($dim) {
+                  $dim.style.opacity = `${
+                    1 - computedEdgeX / window.screen.width
+                  }`
+                  $dim.style.transition = '0s'
                 }
-              })
+                if ($frame) {
+                  $frame.style.overflowY = 'hidden'
+                  $frame.style.transform = `translateX(${computedEdgeX}px)`
+                  $frame.style.transition = '0s'
+                }
+                $frameOffsetSet.forEach(($frameOffset) => {
+                  if ($frameOffset !== frameOffsetRef.current) {
+                    $frameOffset.style.transform = `translateX(-${
+                      5 - (5 * computedEdgeX) / window.screen.width
+                    }rem)`
+                    $frameOffset.style.transition = '0s'
+                  }
+                })
+              }
             }
-          }
 
-          requestAnimationFrameLock.current = false
-        })
+            requestAnimationFrameLock.current = false
+          })
+        }
       }
-    }
-  }, [])
+    },
+    [screenEdge]
+  )
 
   const onEdgeTouchEnd = useCallback(() => {
     if (x.current) {
       const velocity =
-        x.current / (Date.now() - (state.screenEdge.startTime as number))
+        x.current / (Date.now() - (screenEdge.startTime as number))
 
       if (velocity > 1 || x.current / window.screen.width > 0.4) {
         setPopped(true)
@@ -149,11 +158,11 @@ const Card: React.FC<CardProps> = (props) => {
         })
       })
     }
-  }, [state.screenEdge])
+  }, [screenEdge])
 
   const onTopClick = useCallback(() => {
     const screenInstanceOption =
-      state.screenInstanceOptions[props.screenInstanceId]
+      store.getState().screenInstanceOptions[props.screenInstanceId]
 
     if (!screenInstanceOption?.navbar.disableScrollToTop && frameRef.current) {
       const scroller = zenscroll.createScroller(frameRef.current)
@@ -161,10 +170,7 @@ const Card: React.FC<CardProps> = (props) => {
     }
 
     screenInstanceOption?.navbar.onTopClick?.()
-  }, [state])
-
-  const screenInstanceOption =
-    state.screenInstanceOptions[props.screenInstanceId]
+  }, [])
 
   return (
     <div
@@ -178,7 +184,7 @@ const Card: React.FC<CardProps> = (props) => {
         <div
           ref={dimRef}
           className={classnames(styles.cardDim, {
-            [styles.isNavbarVisible]: !!screenInstanceOption?.navbar.visible,
+            [styles.isNavbarVisible]: !!isNavbarVisible,
             [styles.isPresent]: props.isPresent,
           })}
           style={{
@@ -197,7 +203,7 @@ const Card: React.FC<CardProps> = (props) => {
       >
         <div
           className={classnames(styles.cardMain, {
-            [styles.isNavbarVisible]: !!screenInstanceOption?.navbar.visible,
+            [styles.isNavbarVisible]: !!isNavbarVisible,
             [styles.isPresent]: props.isPresent,
             [styles.isRoot]: props.isRoot,
           })}
@@ -210,7 +216,7 @@ const Card: React.FC<CardProps> = (props) => {
                 : undefined,
           }}
         >
-          {!!screenInstanceOption?.navbar.visible && (
+          {!!isNavbarVisible && (
             <Navbar
               screenInstanceId={props.screenInstanceId}
               theme={navigatorOptions.theme}
@@ -251,10 +257,8 @@ const Card: React.FC<CardProps> = (props) => {
             !popped && (
               <div
                 className={classnames(styles.cardEdge, {
-                  [styles.isNavbarNotVisible]:
-                    !screenInstanceOption?.navbar.visible,
-                  [styles.isNavbarVisible]:
-                    !!screenInstanceOption?.navbar.visible,
+                  [styles.isNavbarNotVisible]: !isNavbarVisible,
+                  [styles.isNavbarVisible]: !!isNavbarVisible,
                 })}
                 onTouchStart={onEdgeTouchStart}
                 onTouchMove={onEdgeTouchMove}
