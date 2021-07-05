@@ -1,15 +1,17 @@
 import { useCallback } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
+import { useGlobalStore } from 'sagen'
 
 import { appendSearch, generateScreenInstanceId } from '../utils'
 import { useScreenInstanceInfo } from './contexts'
-import store from './store'
+import { action, dispatch, store } from './store'
 import qs from 'querystring'
 
 export function useNavigator() {
   const history = useHistory()
   const location = useLocation()
   const screenInfo = useScreenInstanceInfo()
+  const [state] = useGlobalStore(store)
 
   const [, search] = location.search.split('?')
   const queryParams = qs.parse(search) as {
@@ -41,12 +43,15 @@ export function useNavigator() {
 
         history.push(pathname + '?' + appendSearch(search || null, params))
 
-        store.screenInstancePromises.set(screenInfo.screenInstanceId, {
-          resolve,
-          popped: false,
+        dispatch(action.SET_SCREEN_INSTANCE_PROMISE, {
+          screenInstanceId: screenInfo.screenInstanceId,
+          screenInstancePromise: {
+            resolve,
+            popped: false,
+          },
         })
       }),
-    []
+    [screenInfo]
   )
 
   const replace = useCallback(
@@ -80,41 +85,44 @@ export function useNavigator() {
     [queryParams]
   )
 
-  const pop = useCallback((depth = 1) => {
-    const targetScreenInstance =
-      store.screenInstances[store.screenInstancePointer - depth]
+  const pop = useCallback(
+    (depth = 1) => {
+      const targetScreenInstance =
+        state.screenInstances[state.screenInstancePointer - depth]
 
-    const n = store.screenInstances
-      .filter(
-        (_, idx) =>
-          idx > store.screenInstancePointer - depth &&
-          idx <= store.screenInstancePointer
-      )
-      .map((screenInstance) => screenInstance.nestedRouteCount)
-      .reduce((acc, current) => acc + current + 1, 0)
+      const n = state.screenInstances
+        .filter(
+          (_, idx) =>
+            idx > state.screenInstancePointer - depth &&
+            idx <= state.screenInstancePointer
+        )
+        .map((screenInstance) => screenInstance.nestedRouteCount)
+        .reduce((acc, current) => acc + current + 1, 0)
 
-    const promise = store.screenInstancePromises.get(targetScreenInstance.id)
-    let data: any = null
+      const promise = state.screenInstancePromises[targetScreenInstance.id]
+      let data: any = null
 
-    const dispose = history.listen(() => {
-      dispose()
+      const dispose = history.listen(() => {
+        dispose()
 
-      if (targetScreenInstance) {
-        promise?.resolve(data ?? null)
+        if (targetScreenInstance) {
+          promise?.resolve(data ?? null)
+        }
+      })
+
+      const send = <T = object>(d: T) => {
+        data = d as any
+        if (promise) {
+          promise.popped = true
+        }
       }
-    })
 
-    const send = <T = object>(d: T) => {
-      data = d as any
-      if (promise) {
-        promise.popped = true
-      }
-    }
+      setTimeout(() => history.go(-n), 0)
 
-    setTimeout(() => history.go(-n), 0)
-
-    return { send }
-  }, [])
+      return { send }
+    },
+    [state]
+  )
 
   return { push, replace, pop }
 }

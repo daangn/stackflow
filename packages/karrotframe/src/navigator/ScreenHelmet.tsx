@@ -66,7 +66,7 @@ const ScreenHelmet: React.FC<ScreenHelmetProps> = (props) => {
       noBorder: props.noBorder ?? false,
       onTopClick: props.onTopClick,
     })
-  }, [props])
+  }, [])
 
   useEffect(() => {
     return () => {

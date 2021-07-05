@@ -1,5 +1,5 @@
-import { action, observable, ObservableMap } from 'mobx'
 import React from 'react'
+import { createStore, createDispatch } from 'sagen'
 
 import { ScreenComponentProps } from '../ScreenComponentProps'
 
@@ -46,86 +46,140 @@ export interface ScreenEdge {
   startX: number | null
 }
 
-const store = observable<{
-  screens: ObservableMap<string, Screen>
+export interface Store {
+  screens: {
+    [screenId: string]: Screen
+  }
   screenInstances: ScreenInstance[]
   screenInstancePointer: number
-  screenInstanceOptions: ObservableMap<string, ScreenInstanceOption>
-  screenInstancePromises: ObservableMap<string, ScreenInstancePromise>
+  screenInstanceOptions: {
+    [screenInstanceId: string]: ScreenInstanceOption
+  }
+  screenInstancePromises: {
+    [screenInstanceId: string]: ScreenInstancePromise
+  }
   screenEdge: ScreenEdge
-}>({
-  screens: observable.map<string, Screen>({}, { deep: false }),
+}
+
+export const store = createStore<Store>({
+  screens: {},
   screenInstances: [],
   screenInstancePointer: -1,
-  screenInstanceOptions: observable.map<string, ScreenInstanceOption>(
-    {},
-    { deep: false }
-  ),
-  screenInstancePromises: observable.map<string, ScreenInstancePromise>(
-    {},
-    { deep: false }
-  ),
+  screenInstanceOptions: {},
+  screenInstancePromises: {},
   screenEdge: {
     startX: null,
     startTime: null,
   },
 })
 
-export const setScreenInstanceIn = action(
-  (
-    pointer: number,
-    setter: (screenInstance: ScreenInstance) => ScreenInstance
-  ) => {
-    store.screenInstances = store.screenInstances.map(
-      (screenInstance, screenInstanceIndex) => {
-        if (screenInstanceIndex === pointer) {
-          return setter(screenInstance)
-        } else {
-          return screenInstance
-        }
-      }
-    )
-  }
-)
+export const action = store.setAction((prevStore) => ({
+  SET_SCREEN: ({ screen }: { screen: Screen }) => {
+    const store = prevStore()
 
-export const addScreenInstanceAfter = action(
-  (
-    pointer: number,
-    {
-      screenId,
-      screenInstanceId,
-      present,
-      as,
-    }: {
+    return {
+      ...store,
+      screens: {
+        ...store.screens,
+        [screen.id]: screen,
+      },
+    }
+  },
+  SET_SCREEN_INSTANCE_OPTION: ({
+    screenInstanceId,
+    screenInstanceOption,
+  }: {
+    screenInstanceId: string
+    screenInstanceOption: ScreenInstanceOption
+  }) => {
+    const store = prevStore()
+
+    return {
+      ...store,
+      screenInstanceOptions: {
+        ...store.screenInstanceOptions,
+        [screenInstanceId]: screenInstanceOption,
+      },
+    }
+  },
+  SET_SCREEN_INSTANCE_PROMISE: ({
+    screenInstanceId,
+    screenInstancePromise,
+  }: {
+    screenInstanceId: string
+    screenInstancePromise: ScreenInstancePromise
+  }) => {
+    const store = prevStore()
+
+    return {
+      ...store,
+      screenInstancePromises: {
+        ...store.screenInstancePromises,
+        [screenInstanceId]: screenInstancePromise,
+      },
+    }
+  },
+  MAP_SCREEN_INSTANCE: ({
+    ptr,
+    mapper,
+  }: {
+    ptr: number
+    mapper: (screenInstance: ScreenInstance) => ScreenInstance
+  }) => {
+    const store = prevStore()
+
+    return {
+      ...store,
+      screenInstances: store.screenInstances.map((si, i) =>
+        i === ptr ? mapper(si) : si
+      ),
+    }
+  },
+  INSERT_SCREEN_INSTANCE: ({
+    ptr,
+    screenInstance,
+  }: {
+    ptr: number
+    screenInstance: {
+      id: string
       screenId: string
-      screenInstanceId: string
       present: boolean
       as: string
     }
-  ) => {
-    store.screenInstances = [
-      ...store.screenInstances.filter((_, index) => index <= pointer),
-      {
-        id: screenInstanceId,
-        screenId,
-        nestedRouteCount: 0,
-        present,
-        as,
-      },
-    ]
-  }
-)
+  }) => {
+    const store = prevStore()
 
-export const increaseScreenInstancePointer = action(() => {
-  store.screenInstancePointer = store.screenInstancePointer + 1
-})
+    return {
+      ...store,
+      screenInstances: [
+        ...store.screenInstances.filter((_, i) => i <= ptr),
+        {
+          ...screenInstance,
+          nestedRouteCount: 0,
+        },
+      ],
+    }
+  },
+  INC_SCREEN_INSTANCE_PTR: () => {
+    const store = prevStore()
 
-export const setScreenInstancePointer = action((pointer: number) => {
-  store.screenInstancePointer = pointer
-})
+    return {
+      ...store,
+      screenInstancePointer: store.screenInstancePointer + 1,
+    }
+  },
+  SET_SCREEN_INSTANCE_PTR: ({ ptr }: { ptr: number }) => {
+    return {
+      ...prevStore(),
+      screenInstancePointer: ptr,
+    }
+  },
+  SET_SCREEN_EDGE: ({ screenEdge }: { screenEdge: ScreenEdge }) => {
+    return {
+      ...prevStore(),
+      screenEdge,
+    }
+  },
+}))
 
-export const setScreenEdge = action((screenEdge: ScreenEdge) => {
-  store.screenEdge = screenEdge
-})
-
-export default store
+export const dispatch = createDispatch(store)
