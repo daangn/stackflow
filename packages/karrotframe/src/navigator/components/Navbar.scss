@@ -16,12 +16,20 @@
   .navbarMain {
     height: 3.5rem;
     box-shadow: inset 0px -1px 0 rgba(0, 0, 0, 0.07);
+
+    &.noBorder {
+      box-shadow: none;
+    }
   }
 }
 :global(.kf-cupertino) {
   .navbarMain {
     height: 2.75rem;
     box-shadow: inset 0px -0.5px 0 rgba(0, 0, 0, 0.12);
+
+    &.noBorder {
+      box-shadow: none;
+    }
   }
 }
 
