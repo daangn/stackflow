@@ -32,6 +32,7 @@ export interface NavbarOptions {
   customBackButton: React.ReactNode | null
   customCloseButton: React.ReactNode | null
   disableScrollToTop: boolean
+  noBorder: boolean
   onTopClick?: () => void
 }
 

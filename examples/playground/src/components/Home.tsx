@@ -24,6 +24,7 @@ const Home: React.FC<ScreenComponentProps> = ({ isTop, isRoot }) => {
         title={'ekdrmsekdmrmasklfaslkfsa'}
         appendRight={right}
         closeButtonLocation="right"
+        noBorder={true}
         appendLeft={
           <div
             style={{ cursor: 'pointer' }}

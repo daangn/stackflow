@@ -41,6 +41,11 @@ interface ScreenHelmetProps {
   disableScrollToTop?: boolean
 
   /**
+   * 상단바 아래 회색선을 제거합니다
+   */
+  noBorder?: boolean
+
+  /**
    * 상단바를 클릭했을때 호출될 콜백을 설정합니다
    */
   onTopClick?: () => void
@@ -58,12 +63,13 @@ const ScreenHelmet: React.FC<ScreenHelmetProps> = (props) => {
       customBackButton: props.customBackButton ?? null,
       customCloseButton: props.customCloseButton ?? null,
       disableScrollToTop: props.disableScrollToTop ?? false,
+      noBorder: props.noBorder ?? false,
       onTopClick: props.onTopClick,
     })
   }, [props])
 
-  useEffect(
-    () => () => {
+  useEffect(() => {
+    return () => {
       screen.setNavbar({
         visible: false,
         title: null,
@@ -73,11 +79,11 @@ const ScreenHelmet: React.FC<ScreenHelmetProps> = (props) => {
         customBackButton: null,
         customCloseButton: null,
         disableScrollToTop: false,
+        noBorder: false,
         onTopClick: undefined,
       })
-    },
-    []
-  )
+    }
+  }, [])
 
   return null
 }

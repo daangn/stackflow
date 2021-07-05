@@ -22,8 +22,9 @@ const Navbar: React.FC<NavbarProps> = (props) => {
   const { pop } = useNavigator()
   const navigatorOptions = useNavigatorOptions()
 
-  const [centerMainWidth, setCenterMainWidth] =
-    useState<string | undefined>(undefined)
+  const [centerMainWidth, setCenterMainWidth] = useState<string | undefined>(
+    undefined
+  )
 
   const navbarRef = useRef<HTMLDivElement>(null)
   const centerRef = useRef<HTMLDivElement>(null)
@@ -127,12 +128,18 @@ const Navbar: React.FC<NavbarProps> = (props) => {
           screenInstanceOption?.navbar.appendLeft
         )
 
+        const noBorder = screenInstanceOption?.navbar.noBorder
+
         return (
           <div
             ref={navbarRef}
             className={classnames('kf-navbar', styles.navbar)}
           >
-            <div className={styles.navbarMain}>
+            <div
+              className={classnames(styles.navbarMain, {
+                [styles.noBorder]: noBorder,
+              })}
+            >
               <div className={styles.navbarFlex}>
                 <div className={styles.navbarLeft}>
                   {screenInstanceOption?.navbar.closeButtonLocation ===
