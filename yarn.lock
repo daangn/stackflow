@@ -9432,7 +9432,7 @@ fsevents@^1.2.7:
     querystring: ^0.2.0
     react-transition-group: ^4.4.1
     rimraf: ^3.0.2
-    sagen: ^2.2.2
+    sagen: ^2.2.3
     sass: ^1.35.1
     sass-loader: ^11.0.1
     style-loader: ^2.0.0
@@ -13408,21 +13408,21 @@ resolve@1.15.0:
   languageName: node
   linkType: hard
 
-"sagen-core@npm:^0.4.3":
-  version: 0.4.3
-  resolution: "sagen-core@npm:0.4.3"
-  checksum: 2570dff667157a0c8403df8fd35253308d2dc1dd7506a81dec48e3a5d1b5947294e7a8bc0f5003e13b7498b5a01616da1a96e439ff6fb14300f13106714fabd6
+"sagen-core@npm:^0.4.5":
+  version: 0.4.5
+  resolution: "sagen-core@npm:0.4.5"
+  checksum: 24d599d7997ce58a1dc81462339f420d48ebfd1b20ee83178425975a9f6297e56f3085fce061dc609f153490cc10546beec56905a02fe0ca284f75c5626b2fa8
   languageName: node
   linkType: hard
 
-"sagen@npm:^2.2.2":
-  version: 2.2.2
-  resolution: "sagen@npm:2.2.2"
+"sagen@npm:^2.2.3":
+  version: 2.2.3
+  resolution: "sagen@npm:2.2.3"
   dependencies:
-    sagen-core: ^0.4.3
+    sagen-core: ^0.4.5
   peerDependencies:
     react: ">=16.8"
-  checksum: d4b00c3b29336c86eab04398908060afc0273413161103afd4641da87e003ed4903ea7773e2ce68c4dfc1fc993ce090ded9e1790ec8dbe0ca2f9c44a8cbbf0ea
+  checksum: f2b0a566047bc95b78771ef1150e7d03e1cd1c3dec3c3acbb6eaf025c8b9e73297b21b26321954a8cef843537cadd0e4a689dc80362cd50b14a3b896e67130b8
   languageName: node
   linkType: hard
 

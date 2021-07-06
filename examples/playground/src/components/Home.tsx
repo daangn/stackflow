@@ -1,11 +1,10 @@
-import React, { useMemo, useState } from 'react'
+import React, { useState } from 'react'
 
 import { ScreenComponentProps, ScreenHelmet, useNavigator } from 'karrotframe'
 import styled from '@emotion/styled'
 
 const Home: React.FC<ScreenComponentProps> = ({ isTop, isRoot }) => {
   const navigator = useNavigator()
-  // console.log('HOME')
   const [right, setRight] = useState('')
 
   const onPage2Click = async () => {
