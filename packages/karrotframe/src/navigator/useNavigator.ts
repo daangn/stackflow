@@ -12,7 +12,7 @@ export function useNavigator() {
   const screenInfo = useScreenInstanceInfo()
 
   const [, search] = location.search.split('?')
-  const queryParams = qs.parse(search) as {
+  const prevQueryParams = qs.parse(search) as {
     _si?: string
     _present?: 'true'
   }
@@ -39,7 +39,9 @@ export function useNavigator() {
           params._present = 'true'
         }
 
-        history.push(pathname + '?' + appendSearch(search || null, params))
+        setTimeout(() => {
+          history.push(pathname + '?' + appendSearch(search || null, params))
+        }, 0)
 
         dispatch(action.SET_SCREEN_INSTANCE_PROMISE, {
           screenInstanceId: screenInfo.screenInstanceId,
@@ -61,26 +63,28 @@ export function useNavigator() {
     ) => {
       const [pathname, search] = to.split('?')
 
-      history.replace(
-        pathname +
-          '?' +
-          appendSearch(search, {
-            ...(queryParams._si
-              ? {
-                  _si: options?.animate
-                    ? generateScreenInstanceId()
-                    : queryParams._si,
-                }
-              : null),
-            ...(queryParams._present
-              ? {
-                  _present: 'true',
-                }
-              : null),
-          })
-      )
+      setTimeout(() => {
+        history.replace(
+          pathname +
+            '?' +
+            appendSearch(search, {
+              ...(prevQueryParams._si
+                ? {
+                    _si: options?.animate
+                      ? generateScreenInstanceId()
+                      : prevQueryParams._si,
+                  }
+                : null),
+              ...(prevQueryParams._present
+                ? {
+                    _present: 'true',
+                  }
+                : null),
+            })
+        )
+      }, 0)
     },
-    [queryParams]
+    [prevQueryParams]
   )
 
   const pop = useCallback((depth = 1) => {
