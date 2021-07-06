@@ -73,11 +73,6 @@ export const store = createStore<Store>({
   },
 })
 
-store.onSubscribe(() => {
-  // console.log(next, prev)
-})
-;(window as any).store = store
-
 export const action = store.setAction((prevStore) => ({
   SET_SCREEN: ({ screen }: { screen: Screen }) => {
     const store = prevStore()
@@ -187,12 +182,4 @@ export const action = store.setAction((prevStore) => ({
   },
 }))
 
-const dispatcher = createDispatch(store)
-
-export const dispatch = (
-  actionFunc: Parameters<typeof dispatcher>[0],
-  value?: any
-) => {
-  console.log(actionFunc)
-  return dispatcher(actionFunc, value)
-}
+export const dispatch = createDispatch(store)

@@ -329,8 +329,6 @@ const NavigatorScreens: React.FC<NavigatorScreensProps> = (props) => {
             (screenInstance) => screenInstance.id === _si
           )
 
-          console.log(screenInstancePointer - nextPointer)
-
           dispatch(action.MAP_SCREEN_INSTANCE, {
             ptr: screenInstancePointer,
             mapper(screenInstance: ScreenInstance): ScreenInstance {
@@ -398,13 +396,6 @@ const NavigatorScreens: React.FC<NavigatorScreensProps> = (props) => {
     [screens, screenInstances, screenInstancePointer, popScreen, pushScreen]
   )
 
-  console.log(
-    'screenInstances',
-    screenInstances.length,
-    screenInstancePointer,
-    store.getState().screenInstancePointer
-  )
-
   return (
     <div
       className={classnames(styles.navigatorRoot, {
@@ -452,8 +443,6 @@ const Transition: React.FC<TransitionProps> = memo((props) => {
     store,
     (state) => state.screenInstances
   )
-
-  console.log(screenInstancePointer)
 
   if (!screen) {
     return null
