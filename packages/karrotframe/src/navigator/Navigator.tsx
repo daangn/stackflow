@@ -1,5 +1,4 @@
 import classnames from 'clsx'
-import qs from 'querystring'
 import React, { memo, useCallback, useEffect, useRef } from 'react'
 import {
   HashRouter,
@@ -11,7 +10,6 @@ import { useGlobalStore } from 'sagen'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 
 import { NavigatorTheme } from '../types'
-import { appendSearch, generateScreenInstanceId } from '../utils'
 import { Card } from './components'
 import { NavigatorOptionsProvider, useNavigatorOptions } from './contexts'
 import {
@@ -199,10 +197,7 @@ const NavigatorScreens: React.FC<NavigatorScreensProps> = (props) => {
       throw new Error('한 개의 앱에는 한 개의 Navigator만 허용됩니다')
     }
 
-    const [, search] = location.search.split('?')
-    const _si = generateScreenInstanceId()
-
-    history.replace(location.pathname + '?' + appendSearch(search, { _si }))
+    history.replace(location.pathname + location.search)
 
     isNavigatorInitialized = true
 
@@ -215,14 +210,13 @@ const NavigatorScreens: React.FC<NavigatorScreensProps> = (props) => {
     if (!location.search) {
       return
     }
+
     if (screenInstances.length > 0) {
       return
     }
 
-    const [, search] = location.search.split('?')
-    const { _si } = qs.parse(search) as {
-      _si?: string
-    }
+    const searchParams = new URLSearchParams(location.search)
+    const _si = searchParams.get('_si')
 
     const matchScreen = Object.values(screens).find(
       (screen) =>
@@ -250,11 +244,10 @@ const NavigatorScreens: React.FC<NavigatorScreensProps> = (props) => {
 
   useHistoryPushEffect(
     (location) => {
-      const [, search] = location.search.split('?')
-      const { _si, _present } = qs.parse(search) as {
-        _si?: string
-        _present?: 'true'
-      }
+      const searchParams = new URLSearchParams(location.search)
+
+      const screenInstanceId = searchParams.get('_si')
+      const present = searchParams.get('_present')
 
       const matchScreen = Object.values(screens).find(
         (screen) =>
@@ -262,11 +255,11 @@ const NavigatorScreens: React.FC<NavigatorScreensProps> = (props) => {
           matchPath(location.pathname, { exact: true, path: screen.path })
       )
 
-      if (_si && matchScreen) {
+      if (screenInstanceId && matchScreen) {
         pushScreen({
           screenId: matchScreen.id,
-          screenInstanceId: _si,
-          present: _present === 'true',
+          screenInstanceId,
+          present: present === 'true',
           as: location.pathname,
         })
       } else {
@@ -286,10 +279,10 @@ const NavigatorScreens: React.FC<NavigatorScreensProps> = (props) => {
 
   useHistoryReplaceEffect(
     (location) => {
-      const [, search] = location.search.split('?')
-      const { _si, _present } = qs.parse(search) as {
-        _si?: string
-        _present?: 'true'
+      const searchParams = new URLSearchParams(location.search)
+      const { _si, _present } = {
+        _si: searchParams.get('_si'),
+        _present: searchParams.get('_present'),
       }
 
       const matchScreen = Object.values(screens).find(
@@ -313,20 +306,18 @@ const NavigatorScreens: React.FC<NavigatorScreensProps> = (props) => {
   useHistoryPopEffect(
     {
       backward(location) {
-        const [, search] = location.search.split('?')
-        const { _si } = qs.parse(search) as {
-          _si?: string
-        }
-
         const matchScreen = Object.values(screens).find(
           (screen) =>
             screen &&
             matchPath(location.pathname, { exact: true, path: screen.path })
         )
 
-        if (_si && matchScreen) {
+        const searchParams = new URLSearchParams(location.search)
+        const screenInstanceId = searchParams.get('_si') 
+
+        if (screenInstanceId && matchScreen) {
           const nextPointer = screenInstances.findIndex(
-            (screenInstance) => screenInstance.id === _si
+            (screenInstance) => screenInstance.id === screenInstanceId
           )
 
           dispatch(action.MAP_SCREEN_INSTANCE, {
@@ -340,7 +331,7 @@ const NavigatorScreens: React.FC<NavigatorScreensProps> = (props) => {
           })
           popScreen({
             depth: screenInstancePointer - nextPointer,
-            targetScreenInstanceId: _si,
+            targetScreenInstanceId: screenInstanceId,
           })
         } else if (
           screenInstances[screenInstancePointer]?.nestedRouteCount === 0
@@ -361,10 +352,11 @@ const NavigatorScreens: React.FC<NavigatorScreensProps> = (props) => {
         }
       },
       forward(location) {
-        const [, search] = location.search.split('?')
-        const { _si, _present } = qs.parse(search) as {
-          _si?: string
-          _present?: 'true'
+        const searchParams = new URLSearchParams(location.search)
+
+        const { screenInstanceId, present } = {
+          screenInstanceId: searchParams.get('_si'),
+          present: searchParams.get('_present'),
         }
 
         const matchScreen = Object.values(screens).find(
@@ -373,11 +365,11 @@ const NavigatorScreens: React.FC<NavigatorScreensProps> = (props) => {
             matchPath(location.pathname, { exact: true, path: screen.path })
         )
 
-        if (_si && matchScreen) {
+        if (screenInstanceId && matchScreen) {
           pushScreen({
             screenId: matchScreen.id,
-            screenInstanceId: _si,
-            present: _present === 'true',
+            screenInstanceId,
+            present: present === 'true',
             as: location.pathname,
           })
         } else {

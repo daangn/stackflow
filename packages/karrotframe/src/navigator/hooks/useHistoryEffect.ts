@@ -1,6 +1,5 @@
 import { Action, Location } from 'history'
 import { DependencyList, useEffect, useRef } from 'react'
-import qs from 'querystring'
 import { useHistory, useLocation } from 'react-router-dom'
 
 export function useHistoryPopEffect(
@@ -24,9 +23,8 @@ export function useHistoryPopEffect(
       return
     }
 
-    const [, search] = location.search.split('?')
-    const { _si } = qs.parse(search)
-
+    const searchParams = new URLSearchParams(location.search)
+    const _si = searchParams.get('_si')
     if (!_si) {
       return
     }
