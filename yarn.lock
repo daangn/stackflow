@@ -4499,13 +4499,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"classnames@npm:^2.2.6":
-  version: 2.2.6
-  resolution: "classnames@npm:2.2.6"
-  checksum: 490eaeca5931846737ffd33e472a701d268d5b8bc5717dd4cf108a127b06e86e05350e06799abbbe763a0e4c945b4217f6700b7ae00ddc703505682c370e5cf2
-  languageName: node
-  linkType: hard
-
 "clean-css@npm:^4.2.3":
   version: 4.2.3
   resolution: "clean-css@npm:4.2.3"
@@ -4577,6 +4570,13 @@ __metadata:
     kind-of: ^6.0.2
     shallow-clone: ^3.0.0
   checksum: b0146d66cabc7e609d23d10155dcc88e2f74b03539b3b65f8a05f889500e2a78b6c6265a744445d009d512a1afa16836f62aa5737d462027142984c2d41130c8
+  languageName: node
+  linkType: hard
+
+"clsx@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "clsx@npm:1.1.1"
+  checksum: d8ae10ac0546da19fe8c9516886f6582a64a382cf4d09ea7d36d5287cafbdab1192ab249adc2cdf0310e0b0aeac4f4142cf7c738c98d9cb68c19ba24b6f673d5
   languageName: node
   linkType: hard
 
@@ -9423,7 +9423,7 @@ fsevents@^1.2.7:
     "@types/react-transition-group": ^4.4.0
     "@types/zenscroll": ^4.0.0
     babel-loader: ^8.2.2
-    classnames: ^2.2.6
+    clsx: ^1.1.1
     css-loader: ^5.0.1
     fork-ts-checker-webpack-plugin: ^6.0.5
     history: ^4.7.8

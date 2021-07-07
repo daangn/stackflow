@@ -1,4 +1,4 @@
-import classnames from 'classnames'
+import classnames from 'clsx'
 import { Observer } from 'mobx-react-lite'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import zenscroll from 'zenscroll'
