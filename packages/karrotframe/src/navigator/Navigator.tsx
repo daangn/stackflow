@@ -1,4 +1,4 @@
-import classnames from 'classnames'
+import classnames from 'clsx'
 import { autorun } from 'mobx'
 import { Observer } from 'mobx-react-lite'
 import qs from 'querystring'
