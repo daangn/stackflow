@@ -1,3 +1,3 @@
-export * from './ScreenId'
-export * from './NavigatorParams'
+export * from './generateScreenInstanceId'
+export * from './getNavigatorParams'
 export * from './NavigatorTheme'

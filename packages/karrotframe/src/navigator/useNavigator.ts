@@ -7,7 +7,7 @@ import {
   getNavigatorParams,
   NavigatorParamKeys,
 } from './helpers'
-import { setScreenInstancePromise, store } from './store'
+import { addScreenInstancePromise, store } from './store'
 
 export function useNavigator() {
   const history = useHistory()
@@ -36,7 +36,7 @@ export function useNavigator() {
           searchParams.set(NavigatorParamKeys.present, 'true')
         }
 
-        setScreenInstancePromise({
+        addScreenInstancePromise({
           screenInstanceId: screenInfo.screenInstanceId,
           screenInstancePromise: {
             resolve,
@@ -95,7 +95,8 @@ export function useNavigator() {
         .map((screenInstance) => screenInstance.nestedRouteCount)
         .reduce((acc, current) => acc + current + 1, 0)
 
-      const targetPromise = screenInstancePromises[targetScreenInstance.id]
+      const targetPromise =
+        targetScreenInstance && screenInstancePromises[targetScreenInstance.id]
       let _data: any = null
 
       const dispose = history.listen(() => {

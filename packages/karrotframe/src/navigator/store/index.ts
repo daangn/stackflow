@@ -76,7 +76,7 @@ export const store = createStore<GlobalState>(() => ({
   },
 }))
 
-export function setScreen({ screen }: { screen: Screen }) {
+export function addScreen({ screen }: { screen: Screen }) {
   store.setState((prevState) => ({
     ...prevState,
     screens: {
@@ -86,7 +86,17 @@ export function setScreen({ screen }: { screen: Screen }) {
   }))
 }
 
-export function setScreenInstanceOption({
+export function removeScreen({ screenId }: { screenId: string }) {
+  store.setState((prevState) => ({
+    ...prevState,
+    screens: {
+      ...prevState.screens,
+      [screenId]: undefined,
+    },
+  }))
+}
+
+export function addScreenInstanceOption({
   screenInstanceId,
   screenInstanceOption,
 }: {
@@ -102,7 +112,7 @@ export function setScreenInstanceOption({
   }))
 }
 
-export function setScreenInstancePromise({
+export function addScreenInstancePromise({
   screenInstanceId,
   screenInstancePromise,
 }: {
