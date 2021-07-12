@@ -1,7 +1,8 @@
 import { Action, Location } from 'history'
 import { DependencyList, useEffect, useRef } from 'react'
-import qs from 'querystring'
 import { useHistory, useLocation } from 'react-router-dom'
+
+import { getNavigatorParams } from '../../utils/navigator'
 
 export function useHistoryPopEffect(
   callbacks: {
@@ -24,10 +25,9 @@ export function useHistoryPopEffect(
       return
     }
 
-    const [, search] = location.search.split('?')
-    const { _si } = qs.parse(search)
-
-    if (!_si) {
+    const searchParams = new URLSearchParams(location.search)
+    const { screenInstanceId } = getNavigatorParams(searchParams)
+    if (!screenInstanceId) {
       return
     }
 

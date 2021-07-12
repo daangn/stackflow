@@ -1,21 +1,14 @@
 import { useCallback } from 'react'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 
-import { appendSearch, generateScreenInstanceId } from '../utils'
+import { generateScreenInstanceId } from '../utils'
+import { NavigatorParamKeys } from '../utils/navigator'
 import { useScreenInstanceInfo } from './contexts'
 import { action, dispatch, store } from './store'
-import qs from 'querystring'
 
 export function useNavigator() {
   const history = useHistory()
-  const location = useLocation()
   const screenInfo = useScreenInstanceInfo()
-
-  const [, search] = location.search.split('?')
-  const prevQueryParams = qs.parse(search) as {
-    _si?: string
-    _present?: 'true'
-  }
 
   const push = useCallback(
     <T = object>(
@@ -25,22 +18,16 @@ export function useNavigator() {
       }
     ): Promise<T | null> =>
       new Promise((resolve) => {
-        const [pathname, search] = to.split('?')
-        const _si = generateScreenInstanceId()
+        const { pathname, searchParams } = new URL(to, /* dummy */ 'file://')
 
-        const params: {
-          _si: string
-          _present?: 'true'
-        } = {
-          _si,
-        }
+        searchParams.set(NavigatorParamKeys.screenInstanceId, generateScreenInstanceId())
 
         if (options?.present) {
-          params._present = 'true'
+          searchParams.set(NavigatorParamKeys.present, 'true')
         }
 
         setTimeout(() => {
-          history.push(pathname + '?' + appendSearch(search || null, params))
+          history.push(`${pathname}?${searchParams.toString()}`)
         }, 0)
 
         dispatch(action.SET_SCREEN_INSTANCE_PROMISE, {
@@ -51,7 +38,7 @@ export function useNavigator() {
           },
         })
       }),
-    [screenInfo]
+    [history, screenInfo],
   )
 
   const replace = useCallback(
@@ -61,30 +48,17 @@ export function useNavigator() {
         animate?: boolean
       }
     ) => {
-      const [pathname, search] = to.split('?')
+      const { pathname, searchParams } = new URL(to, /* dummy */ 'a://')
+
+      if (options?.animate) {
+        searchParams.set(NavigatorParamKeys.screenInstanceId, generateScreenInstanceId())
+      }
 
       setTimeout(() => {
-        history.replace(
-          pathname +
-            '?' +
-            appendSearch(search, {
-              ...(prevQueryParams._si
-                ? {
-                    _si: options?.animate
-                      ? generateScreenInstanceId()
-                      : prevQueryParams._si,
-                  }
-                : null),
-              ...(prevQueryParams._present
-                ? {
-                    _present: 'true',
-                  }
-                : null),
-            })
-        )
+        history.replace(`${pathname}?${searchParams.toString()}`)
       }, 0)
     },
-    [prevQueryParams]
+    [history],
   )
 
   const pop = useCallback((depth = 1) => {
@@ -123,7 +97,7 @@ export function useNavigator() {
     setTimeout(() => history.go(-n), 0)
 
     return { send }
-  }, [])
+  }, [history])
 
   return { push, replace, pop }
 }

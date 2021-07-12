@@ -9429,7 +9429,6 @@ fsevents@^1.2.7:
     history: ^4.7.8
     mini-css-extract-plugin: ^1.3.8
     prettier: ^2.1.1
-    querystring: ^0.2.0
     react-transition-group: ^4.4.1
     rimraf: ^3.0.2
     sagen: ^2.2.3
@@ -12476,7 +12475,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"querystring@npm:0.2.0, querystring@npm:^0.2.0":
+"querystring@npm:0.2.0":
   version: 0.2.0
   resolution: "querystring@npm:0.2.0"
   checksum: 1e76c51462f0ffb148e0b2fdeb811f61377800298605229d32efcdaaaf0a8fd4314a4b4405e1fbf130a5ca421c0e51f926fab5bb9f8b9b3b8c394f4e2d33d3d1

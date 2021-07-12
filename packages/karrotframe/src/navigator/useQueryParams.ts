@@ -1,4 +1,3 @@
-import qs from 'querystring'
 import { useMemo } from 'react'
 import { useLocation } from 'react-router-dom'
 
@@ -10,7 +9,7 @@ const getParsedQuerystring = <T extends { [key in keyof T]: string } = {}>({
   screenPath: string
 }) => {
   let prevSearch = ''
-  let prevResult: T = {} as any
+  let prevResult = {} as T
 
   return ({
     currentPath,
@@ -20,7 +19,7 @@ const getParsedQuerystring = <T extends { [key in keyof T]: string } = {}>({
     search: string
   }): T => {
     if (currentPath === screenPath && prevSearch !== search) {
-      prevResult = qs.parse(search.split('?')[1]) as T
+      prevResult = Object.fromEntries(new URLSearchParams(search).entries()) as T
       prevSearch = search
     }
     return prevResult
@@ -33,13 +32,11 @@ export function useQueryParams<
   const location = useLocation()
   const info = useScreenInstanceInfo()
 
-  const _parseQuery = useMemo(
-    () => getParsedQuerystring<T>({ screenPath: info.as }),
-    [info.as]
-  )
   return useMemo(
-    () =>
-      _parseQuery({ currentPath: location.pathname, search: location.search }),
-    [location.pathname, location.search]
+    () => {
+      const parseQuery = getParsedQuerystring<T>({ screenPath: info.as })
+      return parseQuery({ currentPath: location.pathname, search: location.search })
+    },
+    [info.as, location.pathname, location.search]
   )
 }
