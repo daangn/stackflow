@@ -1,12 +1,10 @@
-import { useEffect, useState } from 'react'
+type Listener<T extends {}> = (prevState: T, nextState: T) => void
 
-type Store<T extends {}> = {
+export type Store<T extends {}> = {
   getState(): T
   setState(setter: (prevState: T) => T): void
   listen(fn: (prevState: T, nextState: T) => void): () => void
 }
-
-type Listener<T extends {}> = (prevState: T, nextState: T) => void
 
 export function createStore<T extends {}>(initialState: () => T): Store<T> {
   let _state = initialState()
@@ -52,30 +50,4 @@ export function createStore<T extends {}>(initialState: () => T): Store<T> {
       return dispose
     },
   }
-}
-
-export function useStore<T extends {}, V>(
-  store: Store<T>,
-  selector: (state: T) => V
-): V {
-  const [value, setValue] = useState(() => {
-    return selector(store.getState())
-  })
-
-  useEffect(() => {
-    const dispose = store.listen((prevState, nextState) => {
-      const prevValue = selector(prevState)
-      const nextValue = selector(nextState)
-
-      if (prevValue !== nextValue || value !== nextValue) {
-        setValue(nextValue)
-      }
-    })
-
-    return () => {
-      dispose()
-    }
-  }, [store, selector, setValue])
-
-  return value
 }

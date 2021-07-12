@@ -1,11 +1,10 @@
 import classnames from 'clsx'
 import React, { useEffect, useRef, useState } from 'react'
-import { useStore } from '../../lib/simple-store'
 
 import { IconBack, IconClose } from '../assets'
 import { useNavigatorOptions } from '../contexts'
 import { NavigatorTheme } from '../helpers'
-import { store } from '../store'
+import { store, useStore } from '../store'
 import { useNavigator } from '../useNavigator'
 import styles from './Navbar.scss'
 

@@ -1,10 +1,9 @@
 import classnames from 'clsx'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import zenscroll from 'zenscroll'
-import { useStore } from '../../lib/simple-store'
 
 import { useNavigatorOptions } from '../contexts'
-import { setScreenEdge, store } from '../store'
+import { setScreenEdge, store, useStore } from '../store'
 import { useNavigator } from '../useNavigator'
 import styles from './Card.scss'
 import Navbar from './Navbar'
@@ -163,9 +162,8 @@ const Card: React.FC<CardProps> = (props) => {
   }, [screenEdge])
 
   const onTopClick = useCallback(() => {
-    const screenInstanceOption = store.getState().screenInstanceOptions[
-      props.screenInstanceId
-    ]
+    const screenInstanceOption =
+      store.getState().screenInstanceOptions[props.screenInstanceId]
 
     if (!screenInstanceOption?.navbar.disableScrollToTop && frameRef.current) {
       const scroller = zenscroll.createScroller(frameRef.current)

@@ -82,11 +82,8 @@ export function useNavigator() {
 
   const pop = useCallback(
     (depth = 1) => {
-      const {
-        screenInstances,
-        screenInstancePtr,
-        screenInstancePromises,
-      } = store.getState()
+      const { screenInstances, screenInstancePtr, screenInstancePromises } =
+        store.getState()
 
       const targetScreenInstance = screenInstances[screenInstancePtr - depth]
 

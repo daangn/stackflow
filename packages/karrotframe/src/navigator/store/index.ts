@@ -1,7 +1,10 @@
 import React from 'react'
-import { createStore } from '../../lib/simple-store'
+import { createStore } from './createStore'
 
 import { ScreenComponentProps } from '../ScreenComponentProps'
+
+export * from './createStore'
+export * from './useStore'
 
 export interface Screen {
   id: string

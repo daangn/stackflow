@@ -7,7 +7,6 @@ import {
   useLocation,
 } from 'react-router-dom'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
-import { useStore } from '../lib/simple-store'
 
 import { Card } from './components'
 import { NavigatorOptionsProvider, useNavigatorOptions } from './contexts'
@@ -30,6 +29,7 @@ import {
   ScreenInstance,
   setScreenInstancePtr,
   store,
+  useStore,
 } from './store'
 
 const DEFAULT_CUPERTINO_ANIMATION_DURATION = 350
