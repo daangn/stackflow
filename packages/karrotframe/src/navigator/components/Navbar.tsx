@@ -20,7 +20,10 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = (props) => {
   const { pop } = useNavigator()
   const navigatorOptions = useNavigatorOptions()
-  const state = useStore(store, (h) => h)
+  const screenInstanceOptions = useStore(
+    store,
+    (state) => state.screenInstanceOptions
+  )
 
   const [centerMainWidth, setCenterMainWidth] = useState<string | undefined>(
     undefined
@@ -37,10 +40,8 @@ const Navbar: React.FC<NavbarProps> = (props) => {
 
       const screenWidth = navbarRef.current.clientWidth
 
-      const {
-        offsetLeft: leftWidth,
-        clientWidth: centerWidth,
-      } = centerRef.current
+      const { offsetLeft: leftWidth, clientWidth: centerWidth } =
+        centerRef.current
       const rightWidth = screenWidth - leftWidth - centerWidth
 
       const sideMargin = Math.max(leftWidth, rightWidth)
@@ -49,18 +50,13 @@ const Navbar: React.FC<NavbarProps> = (props) => {
     }
 
     if (props.theme === 'Cupertino') {
-      const t = setTimeout(onResize, 0)
       window.addEventListener('resize', onResize)
-
-      const dispose = store.listen((_, state) => {
-        state.screenInstanceOptions[props.screenInstanceId]
-        onResize()
-      })
+      const t = setTimeout(onResize, 0)
+      const dispose = store.listen(onResize)
 
       return () => {
-        clearTimeout(t)
         window.removeEventListener('resize', onResize)
-
+        clearTimeout(t)
         dispose()
       }
     }
@@ -70,8 +66,7 @@ const Navbar: React.FC<NavbarProps> = (props) => {
     pop()
   }
 
-  const screenInstanceOption =
-    state.screenInstanceOptions[props.screenInstanceId]
+  const screenInstanceOption = screenInstanceOptions[props.screenInstanceId]
 
   const closeButton =
     props.onClose &&

@@ -75,50 +75,53 @@ export function useNavigator() {
         }
       }
 
-      // setTimeout(() => {
       history.replace(`${pathname}?${searchParams.toString()}`)
-      // }, 0)
     },
     [history, screenInstanceId, present]
   )
 
   const pop = useCallback(
     (depth = 1) => {
-      const state = store.getState()
+      const {
+        screenInstances,
+        screenInstancePtr,
+        screenInstancePromises,
+      } = store.getState()
 
-      const targetScreenInstance =
-        state.screenInstances[state.screenInstancePointer - depth]
+      const targetScreenInstance = screenInstances[screenInstancePtr - depth]
 
-      const n = state.screenInstances
+      const backwardCount = screenInstances
         .filter(
           (_, idx) =>
-            idx > state.screenInstancePointer - depth &&
-            idx <= state.screenInstancePointer
+            idx > screenInstancePtr - depth && idx <= screenInstancePtr
         )
         .map((screenInstance) => screenInstance.nestedRouteCount)
         .reduce((acc, current) => acc + current + 1, 0)
 
-      const promise = state.screenInstancePromises[targetScreenInstance.id]
-      let data: any = null
+      const targetPromise = screenInstancePromises[targetScreenInstance.id]
+      let _data: any = null
 
       const dispose = history.listen(() => {
         dispose()
 
         if (targetScreenInstance) {
-          promise?.resolve(data ?? null)
+          targetPromise?.resolve(_data ?? null)
         }
       })
 
-      const send = <T = object>(d: T) => {
-        data = d as any
-        if (promise) {
-          promise.popped = true
-        }
+      setTimeout(() => {
+        history.go(-backwardCount)
+      }, 0)
+
+      return {
+        send<T = object>(d: T) {
+          _data = d
+
+          if (targetPromise) {
+            targetPromise.popped = true
+          }
+        },
       }
-
-      setTimeout(() => history.go(-n), 0)
-
-      return { send }
     },
     [history]
   )

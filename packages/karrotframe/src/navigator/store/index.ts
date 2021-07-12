@@ -51,7 +51,7 @@ export interface Store {
     [screenId: string]: Screen | undefined
   }
   screenInstances: ScreenInstance[]
-  screenInstancePointer: number
+  screenInstancePtr: number
   screenInstanceOptions: {
     [screenInstanceId: string]: ScreenInstanceOption | undefined
   }
@@ -64,7 +64,7 @@ export interface Store {
 export const store = createStore<Store>(() => ({
   screens: {},
   screenInstances: [],
-  screenInstancePointer: -1,
+  screenInstancePtr: -1,
   screenInstanceOptions: {},
   screenInstancePromises: {},
   screenEdge: {
@@ -157,14 +157,14 @@ export function insertScreenInstance({
 export function increaseScreenInstancePtr() {
   store.setState((prevState) => ({
     ...prevState,
-    screenInstancePointer: prevState.screenInstancePointer + 1,
+    screenInstancePtr: prevState.screenInstancePtr + 1,
   }))
 }
 
 export function setScreenInstancePtr({ ptr }: { ptr: number }) {
   store.setState((prevState) => ({
     ...prevState,
-    screenInstancePointer: ptr,
+    screenInstancePtr: ptr,
   }))
 }
 

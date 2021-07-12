@@ -32,12 +32,10 @@ export function createStore<T extends {}>(initialState: () => T): Store<T> {
         _awaiting = true
 
         setTimeout(() => {
-          const nowState = _state
-
           _awaiting = false
 
+          const nowState = _state
           Object.values(_listeners).map((fn) => fn(_prevState, nowState))
-
           _prevState = nowState
         }, 0)
       }
