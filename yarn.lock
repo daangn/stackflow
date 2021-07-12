@@ -6498,6 +6498,54 @@ __metadata:
   languageName: node
   linkType: hard
 
+"example-spec@workspace:examples/spec":
+  version: 0.0.0-use.local
+  resolution: "example-spec@workspace:examples/spec"
+  dependencies:
+    "@emotion/babel-plugin": ^11.2.0
+    "@emotion/core": ^11.0.0
+    "@emotion/react": ^11.1.5
+    "@emotion/styled": ^11.1.5
+    "@testing-library/jest-dom": ^4.2.4
+    "@testing-library/react": ^9.3.2
+    "@testing-library/user-event": ^7.1.2
+    "@types/jest": ^24.0.0
+    "@types/node": ^12.0.0
+    "@types/react": ^16.9.0
+    "@types/react-dom": ^16.9.0
+    "@types/react-router-dom": ^5.1.5
+    customize-cra: ^1.0.0
+    karrotframe: "workspace:*"
+    react: ^16.13.1
+    react-app-rewired: ^2.1.6
+    react-dom: ^16.13.1
+    react-router-dom: ^5.2.0
+    react-scripts: 3.4.3
+    typescript: ^4.3.5
+  languageName: unknown
+  linkType: soft
+
+"example-with-cra@workspace:examples/with-cra":
+  version: 0.0.0-use.local
+  resolution: "example-with-cra@workspace:examples/with-cra"
+  dependencies:
+    "@testing-library/jest-dom": ^4.2.4
+    "@testing-library/react": ^9.3.2
+    "@testing-library/user-event": ^7.1.2
+    "@types/jest": ^24.0.0
+    "@types/node": ^12.0.0
+    "@types/react": ^16.9.0
+    "@types/react-dom": ^16.9.0
+    "@types/react-router-dom": ^5.1.5
+    karrotframe: "workspace:*"
+    react: ^16.13.1
+    react-dom: ^16.13.1
+    react-router-dom: ^5.2.0
+    react-scripts: 3.4.3
+    typescript: ^4.3.5
+  languageName: unknown
+  linkType: soft
+
 "exec-sh@npm:^0.3.2":
   version: 0.3.4
   resolution: "exec-sh@npm:0.3.4"
@@ -11328,33 +11376,6 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"playground@workspace:examples/playground":
-  version: 0.0.0-use.local
-  resolution: "playground@workspace:examples/playground"
-  dependencies:
-    "@emotion/babel-plugin": ^11.2.0
-    "@emotion/core": ^11.0.0
-    "@emotion/react": ^11.1.5
-    "@emotion/styled": ^11.1.5
-    "@testing-library/jest-dom": ^4.2.4
-    "@testing-library/react": ^9.3.2
-    "@testing-library/user-event": ^7.1.2
-    "@types/jest": ^24.0.0
-    "@types/node": ^12.0.0
-    "@types/react": ^16.9.0
-    "@types/react-dom": ^16.9.0
-    "@types/react-router-dom": ^5.1.5
-    customize-cra: ^1.0.0
-    karrotframe: "workspace:*"
-    react: ^16.13.1
-    react-app-rewired: ^2.1.6
-    react-dom: ^16.13.1
-    react-router-dom: ^5.2.0
-    react-scripts: 3.4.3
-    typescript: ^4.3.5
-  languageName: unknown
-  linkType: soft
-
 "pn@npm:^1.1.0":
   version: 1.1.0
   resolution: "pn@npm:1.1.0"
@@ -15768,27 +15789,6 @@ resolve@1.15.0:
   checksum: 207baede4d6d41fc1aefcc4727c95ca6f29eaaf4d66478665fe0ac17232709637426ae96fd79deb3b68da3564e7bde7f2be63e5c3665ac8f63ee92364c0a2dd3
   languageName: node
   linkType: hard
-
-"with-cra@workspace:examples/with-cra":
-  version: 0.0.0-use.local
-  resolution: "with-cra@workspace:examples/with-cra"
-  dependencies:
-    "@testing-library/jest-dom": ^4.2.4
-    "@testing-library/react": ^9.3.2
-    "@testing-library/user-event": ^7.1.2
-    "@types/jest": ^24.0.0
-    "@types/node": ^12.0.0
-    "@types/react": ^16.9.0
-    "@types/react-dom": ^16.9.0
-    "@types/react-router-dom": ^5.1.5
-    karrotframe: "workspace:*"
-    react: ^16.13.1
-    react-dom: ^16.13.1
-    react-router-dom: ^5.2.0
-    react-scripts: 3.4.3
-    typescript: ^4.3.5
-  languageName: unknown
-  linkType: soft
 
 "word-wrap@npm:~1.2.3":
   version: 1.2.3
