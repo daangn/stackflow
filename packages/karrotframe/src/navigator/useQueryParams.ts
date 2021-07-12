@@ -11,9 +11,9 @@ export function useQueryParams<
 
   return useMemo(
     () =>
-      (Object.fromEntries(
+      Object.fromEntries(
         new URLSearchParams(location.search).entries()
-      ) as Partial<T>) ?? {},
+      ) as Partial<T>,
     [as, path]
   )
 }
