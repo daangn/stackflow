@@ -1,10 +1,10 @@
 import classnames from 'clsx'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { useGlobalStore } from 'sagen'
 import zenscroll from 'zenscroll'
+import { useStore } from '../../lib/simple-store'
 
 import { useNavigatorOptions } from '../contexts'
-import { action, dispatch, store } from '../store'
+import { setScreenEdge, store } from '../store'
 import { useNavigator } from '../useNavigator'
 import styles from './Card.scss'
 import Navbar from './Navbar'
@@ -27,15 +27,17 @@ const Card: React.FC<CardProps> = (props) => {
   const [loading, setLoading] = useState(props.isRoot)
   const [popped, setPopped] = useState(false)
 
-  const [screenEdge] = useGlobalStore(store, (state) => state.screenEdge)
-  const [isNavbarVisible] = useGlobalStore(
-    store,
-    (state) =>
-      state.screenInstanceOptions[props.screenInstanceId]?.navbar.visible
-  )
+  const screenEdge = useStore(store, (state) => state.screenEdge)
+  const isNavbarVisible = useStore(store, (state) => {
+    return state.screenInstanceOptions[props.screenInstanceId]?.navbar.visible
+  })
 
   useEffect(() => {
-    setTimeout(() => setLoading(false), 0)
+    const t = setTimeout(() => setLoading(false), 0)
+
+    return () => {
+      clearTimeout(t)
+    }
   }, [])
 
   const x = useRef<number>(0)
@@ -61,7 +63,7 @@ const Card: React.FC<CardProps> = (props) => {
     (e: React.TouchEvent<HTMLDivElement>) => {
       ;(document.activeElement as any)?.blur?.()
 
-      dispatch(action.SET_SCREEN_EDGE, {
+      setScreenEdge({
         screenEdge: {
           startX: e.touches[0].clientX,
           startTime: Date.now(),
@@ -127,7 +129,7 @@ const Card: React.FC<CardProps> = (props) => {
         navigator.pop()
       }
 
-      dispatch(action.SET_SCREEN_EDGE, {
+      setScreenEdge({
         screenEdge: {
           startX: null,
           startTime: null,

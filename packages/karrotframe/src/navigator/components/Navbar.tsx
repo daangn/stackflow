@@ -1,6 +1,6 @@
 import classnames from 'clsx'
 import React, { useEffect, useRef, useState } from 'react'
-import { useGlobalStore } from 'sagen'
+import { useStore } from '../../lib/simple-store'
 
 import { IconBack, IconClose } from '../assets'
 import { useNavigatorOptions } from '../contexts'
@@ -20,7 +20,7 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = (props) => {
   const { pop } = useNavigator()
   const navigatorOptions = useNavigatorOptions()
-  const [state] = useGlobalStore(store)
+  const state = useStore(store, (h) => h)
 
   const [centerMainWidth, setCenterMainWidth] = useState<string | undefined>(
     undefined
@@ -49,17 +49,18 @@ const Navbar: React.FC<NavbarProps> = (props) => {
     }
 
     if (props.theme === 'Cupertino') {
-      setTimeout(onResize, 0)
-
+      const t = setTimeout(onResize, 0)
       window.addEventListener('resize', onResize)
 
-      const dispose = store.onSubscribe((state) => {
+      const dispose = store.listen((_, state) => {
         state.screenInstanceOptions[props.screenInstanceId]
         onResize()
       })
 
       return () => {
+        clearTimeout(t)
         window.removeEventListener('resize', onResize)
+
         dispose()
       }
     }

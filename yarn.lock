@@ -9431,7 +9431,6 @@ fsevents@^1.2.7:
     prettier: ^2.1.1
     react-transition-group: ^4.4.1
     rimraf: ^3.0.2
-    sagen: ^2.2.3
     sass: ^1.35.1
     sass-loader: ^11.0.1
     style-loader: ^2.0.0
@@ -13404,24 +13403,6 @@ resolve@1.15.0:
   version: 2.1.2
   resolution: "safer-buffer@npm:2.1.2"
   checksum: 549ba83f5b314b59898efe3422120ce1ca7987a6eae5925a5fa5db930dc414d4a9dde0a5594f89638cd6ea60b6840ea961872908933ac2428d1726489db46fa5
-  languageName: node
-  linkType: hard
-
-"sagen-core@npm:^0.4.5":
-  version: 0.4.5
-  resolution: "sagen-core@npm:0.4.5"
-  checksum: 24d599d7997ce58a1dc81462339f420d48ebfd1b20ee83178425975a9f6297e56f3085fce061dc609f153490cc10546beec56905a02fe0ca284f75c5626b2fa8
-  languageName: node
-  linkType: hard
-
-"sagen@npm:^2.2.3":
-  version: 2.2.3
-  resolution: "sagen@npm:2.2.3"
-  dependencies:
-    sagen-core: ^0.4.5
-  peerDependencies:
-    react: ">=16.8"
-  checksum: f2b0a566047bc95b78771ef1150e7d03e1cd1c3dec3c3acbb6eaf025c8b9e73297b21b26321954a8cef843537cadd0e4a689dc80362cd50b14a3b896e67130b8
   languageName: node
   linkType: hard
 

@@ -7,7 +7,7 @@ import {
   getNavigatorParams,
   NavigatorParamKeys,
 } from './helpers'
-import { action, dispatch, store } from './store'
+import { setScreenInstancePromise, store } from './store'
 
 export function useNavigator() {
   const history = useHistory()
@@ -36,17 +36,15 @@ export function useNavigator() {
           searchParams.set(NavigatorParamKeys.present, 'true')
         }
 
-        setTimeout(() => {
-          history.push(`${pathname}?${searchParams.toString()}`)
-        }, 0)
-
-        dispatch(action.SET_SCREEN_INSTANCE_PROMISE, {
+        setScreenInstancePromise({
           screenInstanceId: screenInfo.screenInstanceId,
           screenInstancePromise: {
             resolve,
             popped: false,
           },
         })
+
+        history.push(`${pathname}?${searchParams.toString()}`)
       }),
     [history, screenInfo]
   )
@@ -77,9 +75,9 @@ export function useNavigator() {
         }
       }
 
-      setTimeout(() => {
-        history.replace(`${pathname}?${searchParams.toString()}`)
-      }, 0)
+      // setTimeout(() => {
+      history.replace(`${pathname}?${searchParams.toString()}`)
+      // }, 0)
     },
     [history, screenInstanceId, present]
   )

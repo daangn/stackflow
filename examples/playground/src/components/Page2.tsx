@@ -9,24 +9,25 @@ import {
 import styled from '@emotion/styled'
 
 const Page2: React.FC<ScreenComponentProps> = ({ isTop, isRoot }) => {
-  const navigator = useNavigator()
+  const { replace, pop, push } = useNavigator()
+
   const [title, setTitle] = useState('')
 
   const query = useQueryParams<{ id: string }>()
 
   useEffect(() => {
-    navigator.replace('/page3', {
+    replace('/page3', {
       animate: false,
     })
   }, [navigator])
 
   const onPopClick = () => {
-    navigator.pop().send({
+    pop().send({
       hello: 'world',
     })
   }
   const onPage3Click = () => {
-    navigator.push('/page3')
+    push('/page3')
   }
 
   return (

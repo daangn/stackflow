@@ -49,10 +49,9 @@ module.exports = {
     extensions: ['.js', '.mjs', '.ts', '.tsx'],
   },
   externals: [
-    /classnames/,
+    /clsx/,
     /history/,
     /react-transition-group/,
-    /sagen/,
     /zenscroll/,
     /react/,
     /react-dom/,

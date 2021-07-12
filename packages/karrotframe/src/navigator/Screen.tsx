@@ -6,7 +6,12 @@ import {
 } from './contexts'
 import { generateScreenId } from './helpers'
 import { ScreenComponentProps } from './ScreenComponentProps'
-import { action, dispatch, NavbarOptions, Screen as IScreen } from './store'
+import {
+  NavbarOptions,
+  Screen as IScreen,
+  setScreen,
+  setScreenInstanceOption,
+} from './store'
 
 interface Props {
   /**
@@ -37,7 +42,7 @@ const Screen: React.FC<Props> = (props) => {
          * 실제 ScreenInstance의 navbar를 변경
          */
         const setNavbar = (navbar: NavbarOptions) => {
-          dispatch(action.SET_SCREEN_INSTANCE_OPTION, {
+          setScreenInstanceOption({
             screenInstanceId,
             screenInstanceOption: {
               navbar,
@@ -69,7 +74,7 @@ const Screen: React.FC<Props> = (props) => {
       }
     )
 
-    dispatch(action.SET_SCREEN, {
+    setScreen({
       screen: {
         id,
         path: props.path,
