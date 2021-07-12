@@ -1,11 +1,10 @@
 {
-  "name": "playground",
+  "name": "example-spec",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "build": "react-app-rewired build",
-    "start": "react-app-rewired start",
-    "test": "react-scripts test"
+    "start": "react-app-rewired start"
   },
   "browserslist": {
     "production": [
