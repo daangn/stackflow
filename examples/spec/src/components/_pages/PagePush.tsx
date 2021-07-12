@@ -32,6 +32,13 @@ const PagePush: React.FC = () => {
       >
         await push() {data && <code>{data}</code>}
       </ListItem>
+      <ListItem
+        onClick={() => {
+          push('/somethingnotfound')
+        }}
+      >
+        push() to 404
+      </ListItem>
     </Container>
   )
 }
