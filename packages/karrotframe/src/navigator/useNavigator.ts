@@ -18,7 +18,7 @@ export function useNavigator() {
       }
     ): Promise<T | null> =>
       new Promise((resolve) => {
-        const { pathname, searchParams } = new URL(to, /* dummy */ 'a://')
+        const { pathname, searchParams } = new URL(to, /* dummy */ 'file://')
 
         searchParams.set(NavigatorParamKeys.screenInstanceId, generateScreenInstanceId())
 
