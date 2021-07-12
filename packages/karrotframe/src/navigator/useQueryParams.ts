@@ -19,7 +19,9 @@ const getParsedQuerystring = <T extends { [key in keyof T]: string } = {}>({
     search: string
   }): T => {
     if (currentPath === screenPath && prevSearch !== search) {
-      prevResult = Object.fromEntries(new URLSearchParams(search).entries()) as T
+      prevResult = Object.fromEntries(
+        new URLSearchParams(search).entries()
+      ) as T
       prevSearch = search
     }
     return prevResult
@@ -32,11 +34,11 @@ export function useQueryParams<
   const location = useLocation()
   const info = useScreenInstanceInfo()
 
-  return useMemo(
-    () => {
-      const parseQuery = getParsedQuerystring<T>({ screenPath: info.as })
-      return parseQuery({ currentPath: location.pathname, search: location.search })
-    },
-    [info.as, location.pathname, location.search]
-  )
+  return useMemo(() => {
+    const parseQuery = getParsedQuerystring<T>({ screenPath: info.as })
+    return parseQuery({
+      currentPath: location.pathname,
+      search: location.search,
+    })
+  }, [info.as, location.pathname, location.search])
 }

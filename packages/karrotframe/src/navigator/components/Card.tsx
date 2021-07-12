@@ -161,8 +161,9 @@ const Card: React.FC<CardProps> = (props) => {
   }, [screenEdge])
 
   const onTopClick = useCallback(() => {
-    const screenInstanceOption =
-      store.getState().screenInstanceOptions[props.screenInstanceId]
+    const screenInstanceOption = store.getState().screenInstanceOptions[
+      props.screenInstanceId
+    ]
 
     if (!screenInstanceOption?.navbar.disableScrollToTop && frameRef.current) {
       const scroller = zenscroll.createScroller(frameRef.current)

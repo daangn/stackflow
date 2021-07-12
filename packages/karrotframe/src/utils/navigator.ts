@@ -4,11 +4,13 @@ export const NavigatorParamKeys = {
 }
 
 export type NavigatorParams = {
-  screenInstanceId: string | null,
-  present: boolean,
+  screenInstanceId: string | null
+  present: boolean
 }
 
-export function getNavigatorParams(searchParams: URLSearchParams): NavigatorParams {
+export function getNavigatorParams(
+  searchParams: URLSearchParams
+): NavigatorParams {
   return {
     screenInstanceId: searchParams.get(NavigatorParamKeys.screenInstanceId),
     present: searchParams.get(NavigatorParamKeys.present) === 'true',

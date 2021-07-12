@@ -37,8 +37,10 @@ const Navbar: React.FC<NavbarProps> = (props) => {
 
       const screenWidth = navbarRef.current.clientWidth
 
-      const { offsetLeft: leftWidth, clientWidth: centerWidth } =
-        centerRef.current
+      const {
+        offsetLeft: leftWidth,
+        clientWidth: centerWidth,
+      } = centerRef.current
       const rightWidth = screenWidth - leftWidth - centerWidth
 
       const sideMargin = Math.max(leftWidth, rightWidth)

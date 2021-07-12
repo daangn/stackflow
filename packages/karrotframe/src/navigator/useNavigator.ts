@@ -20,7 +20,10 @@ export function useNavigator() {
       new Promise((resolve) => {
         const { pathname, searchParams } = new URL(to, /* dummy */ 'file://')
 
-        searchParams.set(NavigatorParamKeys.screenInstanceId, generateScreenInstanceId())
+        searchParams.set(
+          NavigatorParamKeys.screenInstanceId,
+          generateScreenInstanceId()
+        )
 
         if (options?.present) {
           searchParams.set(NavigatorParamKeys.present, 'true')
@@ -38,7 +41,7 @@ export function useNavigator() {
           },
         })
       }),
-    [history, screenInfo],
+    [history, screenInfo]
   )
 
   const replace = useCallback(
@@ -48,56 +51,62 @@ export function useNavigator() {
         animate?: boolean
       }
     ) => {
-      const { pathname, searchParams } = new URL(to, /* dummy */ 'a://')
+      const { pathname, searchParams } = new URL(to, /* dummy */ 'file://')
 
       if (options?.animate) {
-        searchParams.set(NavigatorParamKeys.screenInstanceId, generateScreenInstanceId())
+        searchParams.set(
+          NavigatorParamKeys.screenInstanceId,
+          generateScreenInstanceId()
+        )
       }
 
       setTimeout(() => {
         history.replace(`${pathname}?${searchParams.toString()}`)
       }, 0)
     },
-    [history],
+    [history]
   )
 
-  const pop = useCallback((depth = 1) => {
-    const state = store.getState()
+  const pop = useCallback(
+    (depth = 1) => {
+      const state = store.getState()
 
-    const targetScreenInstance =
-      state.screenInstances[state.screenInstancePointer - depth]
+      const targetScreenInstance =
+        state.screenInstances[state.screenInstancePointer - depth]
 
-    const n = state.screenInstances
-      .filter(
-        (_, idx) =>
-          idx > state.screenInstancePointer - depth &&
-          idx <= state.screenInstancePointer
-      )
-      .map((screenInstance) => screenInstance.nestedRouteCount)
-      .reduce((acc, current) => acc + current + 1, 0)
+      const n = state.screenInstances
+        .filter(
+          (_, idx) =>
+            idx > state.screenInstancePointer - depth &&
+            idx <= state.screenInstancePointer
+        )
+        .map((screenInstance) => screenInstance.nestedRouteCount)
+        .reduce((acc, current) => acc + current + 1, 0)
 
-    const promise = state.screenInstancePromises[targetScreenInstance.id]
-    let data: any = null
+      const promise = state.screenInstancePromises[targetScreenInstance.id]
+      let data: any = null
 
-    const dispose = history.listen(() => {
-      dispose()
+      const dispose = history.listen(() => {
+        dispose()
 
-      if (targetScreenInstance) {
-        promise?.resolve(data ?? null)
+        if (targetScreenInstance) {
+          promise?.resolve(data ?? null)
+        }
+      })
+
+      const send = <T = object>(d: T) => {
+        data = d as any
+        if (promise) {
+          promise.popped = true
+        }
       }
-    })
 
-    const send = <T = object>(d: T) => {
-      data = d as any
-      if (promise) {
-        promise.popped = true
-      }
-    }
+      setTimeout(() => history.go(-n), 0)
 
-    setTimeout(() => history.go(-n), 0)
-
-    return { send }
-  }, [history])
+      return { send }
+    },
+    [history]
+  )
 
   return { push, replace, pop }
 }

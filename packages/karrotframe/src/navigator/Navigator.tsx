@@ -200,7 +200,11 @@ const NavigatorScreens: React.FC<NavigatorScreensProps> = (props) => {
     }
 
     const searchParams = new URLSearchParams(location.search)
-    searchParams.set(NavigatorParamKeys.screenInstanceId, generateScreenInstanceId())
+
+    searchParams.set(
+      NavigatorParamKeys.screenInstanceId,
+      generateScreenInstanceId()
+    )
 
     history.replace(`${location.pathname}?${searchParams.toString()}`)
 
