@@ -2439,6 +2439,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/react-router-dom@npm:^5.1.8":
+  version: 5.1.8
+  resolution: "@types/react-router-dom@npm:5.1.8"
+  dependencies:
+    "@types/history": "*"
+    "@types/react": "*"
+    "@types/react-router": "*"
+  checksum: f647bc32a7b13614375714890521327168fb54f41d2acf726f5a9a16f75335da376bd399db99e8e2865dbeb6035ec2af5769936f3b76550095340d956cf4a6c6
+  languageName: node
+  linkType: hard
+
 "@types/react-router@npm:*":
   version: 5.1.11
   resolution: "@types/react-router@npm:5.1.11"
@@ -9453,7 +9464,7 @@ fsevents@^1.2.7:
     "@types/react": ^16.9.46
     "@types/react-dom": ^16.9.8
     "@types/react-router": ^5.1.16
-    "@types/react-router-dom": ^5.1.5
+    "@types/react-router-dom": ^5.1.8
     "@types/react-transition-group": ^4.4.2
     "@types/zenscroll": ^4.0.0
     babel-loader: ^8.2.2

@@ -4677,6 +4677,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/react-router", "npm:5.1.11"]
           ],
           "linkType": "HARD",
+        }],
+        ["npm:5.1.8", {
+          "packageLocation": "./.yarn/cache/@types-react-router-dom-npm-5.1.8-e62427075e-f647bc32a7.zip/node_modules/@types/react-router-dom/",
+          "packageDependencies": [
+            ["@types/react-router-dom", "npm:5.1.8"],
+            ["@types/history", "npm:4.7.8"],
+            ["@types/react", "npm:17.0.1"],
+            ["@types/react-router", "npm:5.1.11"]
+          ],
+          "linkType": "HARD",
         }]
       ]],
       ["@types/react-transition-group", [
@@ -12920,7 +12930,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/react", "npm:16.14.3"],
             ["@types/react-dom", "npm:16.9.10"],
             ["@types/react-router", "npm:5.1.16"],
-            ["@types/react-router-dom", "npm:5.1.7"],
+            ["@types/react-router-dom", "npm:5.1.8"],
             ["@types/react-transition-group", "npm:4.4.2"],
             ["@types/zenscroll", "npm:4.0.0"],
             ["babel-loader", "virtual:44240c59a92239afc147d2e3436820f442b334695940ee834809ffea919c88e86c2ba6b80694bf288c306842e76b9b59d66dd280b8c4a67d34c0c6e3d8902b93#npm:8.2.2"],
