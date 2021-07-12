@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 
 import { ScreenComponentProps, ScreenHelmet, useNavigator } from 'karrotframe'
 import styled from '@emotion/styled'
@@ -6,7 +6,6 @@ import ListItem from '../ListItem'
 
 const PageHome: React.FC<ScreenComponentProps> = ({ isTop, isRoot }) => {
   const { push } = useNavigator()
-  const [right, setRight] = useState('')
 
   return (
     <Container>
@@ -41,14 +40,14 @@ const PageHome: React.FC<ScreenComponentProps> = ({ isTop, isRoot }) => {
       </ListItem>
       <ListItem
         onClick={() => {
-          push('/useParams')
+          push('/useParams/1234')
         }}
       >
         useParams()
       </ListItem>
       <ListItem
         onClick={() => {
-          push('/useQueryParams')
+          push('/useQueryParams?hello=world')
         }}
       >
         useQueryParams()

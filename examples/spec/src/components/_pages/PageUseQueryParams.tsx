@@ -1,11 +1,14 @@
 import React from 'react'
 import styled from '@emotion/styled'
-import { ScreenHelmet } from 'karrotframe'
+import { ScreenHelmet, useQueryParams } from 'karrotframe'
 
 const PageUseQueryParams: React.FC = () => {
+  const { hello } = useQueryParams<{ hello: 'world' }>()
+
   return (
     <Container>
       <ScreenHelmet title="useQueryParams" />
+      hello: {hello}
     </Container>
   )
 }

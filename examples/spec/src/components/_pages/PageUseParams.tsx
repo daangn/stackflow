@@ -1,11 +1,14 @@
 import React from 'react'
 import styled from '@emotion/styled'
-import { ScreenHelmet } from 'karrotframe'
+import { ScreenHelmet, useParams } from 'karrotframe'
 
 const PageUseParams: React.FC = () => {
+  const { param } = useParams<{ param: string }>()
+
   return (
     <Container>
       <ScreenHelmet title="useParams" />
+      param: {param}
     </Container>
   )
 }

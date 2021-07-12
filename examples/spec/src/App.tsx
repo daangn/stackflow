@@ -11,6 +11,7 @@ import PagePop from './components/_pages/PagePop'
 import PageReplace from './components/_pages/PageReplace'
 import PageUseParams from './components/_pages/PageUseParams'
 import PageUseQueryParams from './components/_pages/PageUseQueryParams'
+import PageReplaceInUseEffect from './components/_pages/PageReplaceInUseEffect'
 
 function App() {
   let h = (
@@ -25,7 +26,8 @@ function App() {
       <Screen path="/push" component={PagePush} />
       <Screen path="/pop" component={PagePop} />
       <Screen path="/replace" component={PageReplace} />
-      <Screen path="/useParams" component={PageUseParams} />
+      <Screen path="/replaceInUseEffect" component={PageReplaceInUseEffect} />
+      <Screen path="/useParams/:param" component={PageUseParams} />
       <Screen path="/useQueryParams" component={PageUseQueryParams} />
       {/* <Screen path="/page3" component={Page3} />
       <Screen path="/page/:id/params_page" component={Page4} />

@@ -1,18 +1,42 @@
 import React from 'react'
-import { ScreenHelmet } from 'karrotframe'
+import { ScreenHelmet, useNavigator } from 'karrotframe'
 import styled from '@emotion/styled'
+import ListItem from '../ListItem'
 
 const PageReplace: React.FC = () => {
+  const { replace, push } = useNavigator()
   return (
     <Container>
       <ScreenHelmet title="Replace" />
-      replace
+      <ListItem
+        onClick={() => {
+          replace('/pop')
+        }}
+      >
+        replace()
+      </ListItem>
+      <ListItem
+        onClick={() => {
+          replace('/pop', {
+            animate: true,
+          })
+        }}
+      >
+        replace() w/ animate: true
+      </ListItem>
+      <ListItem
+        onClick={() => {
+          push('/replaceInUseEffect', {
+            // present: true,
+          })
+        }}
+      >
+        replace() in useEffect
+      </ListItem>
     </Container>
   )
 }
 
-const Container = styled.div`
-  padding: 1rem;
-`
+const Container = styled.div``
 
 export default PageReplace

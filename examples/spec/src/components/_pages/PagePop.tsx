@@ -1,18 +1,34 @@
 import React from 'react'
 import styled from '@emotion/styled'
-import { ScreenHelmet } from 'karrotframe'
+import { ScreenHelmet, useNavigator } from 'karrotframe'
+import ListItem from '../ListItem'
 
 const PagePop: React.FC = () => {
+  const { pop } = useNavigator()
+
   return (
     <Container>
-      {/* <ScreenHelmet title="Pop" /> */}
-      pop
+      <ScreenHelmet title="Pop" />
+      <ListItem
+        onClick={() => {
+          pop()
+        }}
+      >
+        pop()
+      </ListItem>
+      <ListItem
+        onClick={() => {
+          pop().send({
+            hello: 'world',
+          })
+        }}
+      >
+        pop() w/ send()
+      </ListItem>
     </Container>
   )
 }
 
-const Container = styled.div`
-  padding: 1rem;
-`
+const Container = styled.div``
 
 export default PagePop
