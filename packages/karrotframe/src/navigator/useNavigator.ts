@@ -2,6 +2,7 @@ import { useCallback } from 'react'
 import { useHistory } from 'react-router-dom'
 
 import { generateScreenInstanceId } from '../utils'
+import { NavigatorParamKeys } from '../utils/navigator'
 import { useScreenInstanceInfo } from './contexts'
 import { action, dispatch, store } from './store'
 
@@ -19,10 +20,10 @@ export function useNavigator() {
       new Promise((resolve) => {
         const { pathname, searchParams } = new URL(to, /* dummy */ 'a://')
 
-        searchParams.set('_si', generateScreenInstanceId())
+        searchParams.set(NavigatorParamKeys.screenInstanceId, generateScreenInstanceId())
 
         if (options?.present) {
-          searchParams.set('_present', 'true')
+          searchParams.set(NavigatorParamKeys.present, 'true')
         }
 
         setTimeout(() => {
@@ -50,7 +51,7 @@ export function useNavigator() {
       const { pathname, searchParams } = new URL(to, /* dummy */ 'a://')
 
       if (options?.animate) {
-        searchParams.set('_si', generateScreenInstanceId())
+        searchParams.set(NavigatorParamKeys.screenInstanceId, generateScreenInstanceId())
       }
 
       setTimeout(() => {

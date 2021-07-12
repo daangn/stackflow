@@ -19,6 +19,7 @@ import {
 } from './hooks/useHistoryEffect'
 import styles from './Navigator.scss'
 import { store, dispatch, action, ScreenInstance } from './store'
+import { getNavigatorParams } from '../utils/navigator'
 
 const DEFAULT_CUPERTINO_ANIMATION_DURATION = 350
 const DEFAULT_ANDROID_ANIMATION_DURATION = 270
@@ -216,7 +217,7 @@ const NavigatorScreens: React.FC<NavigatorScreensProps> = (props) => {
     }
 
     const searchParams = new URLSearchParams(location.search)
-    const _si = searchParams.get('_si')
+    const { screenInstanceId } = getNavigatorParams(searchParams)
 
     const matchScreen = Object.values(screens).find(
       (screen) =>
@@ -224,10 +225,10 @@ const NavigatorScreens: React.FC<NavigatorScreensProps> = (props) => {
         matchPath(location.pathname, { exact: true, path: screen.path })
     )
 
-    if (_si && matchScreen) {
+    if (screenInstanceId && matchScreen) {
       pushScreen({
         screenId: matchScreen.id,
-        screenInstanceId: _si,
+        screenInstanceId,
         present: false,
         as: location.pathname,
       })
@@ -245,9 +246,7 @@ const NavigatorScreens: React.FC<NavigatorScreensProps> = (props) => {
   useHistoryPushEffect(
     (location) => {
       const searchParams = new URLSearchParams(location.search)
-
-      const screenInstanceId = searchParams.get('_si')
-      const present = searchParams.get('_present')
+      const { screenInstanceId, present } = getNavigatorParams(searchParams)
 
       const matchScreen = Object.values(screens).find(
         (screen) =>
@@ -259,7 +258,7 @@ const NavigatorScreens: React.FC<NavigatorScreensProps> = (props) => {
         pushScreen({
           screenId: matchScreen.id,
           screenInstanceId,
-          present: present === 'true',
+          present,
           as: location.pathname,
         })
       } else {
@@ -280,10 +279,7 @@ const NavigatorScreens: React.FC<NavigatorScreensProps> = (props) => {
   useHistoryReplaceEffect(
     (location) => {
       const searchParams = new URLSearchParams(location.search)
-      const { _si, _present } = {
-        _si: searchParams.get('_si'),
-        _present: searchParams.get('_present'),
-      }
+      const { screenInstanceId, present } = getNavigatorParams(searchParams)
 
       const matchScreen = Object.values(screens).find(
         (screen) =>
@@ -291,12 +287,12 @@ const NavigatorScreens: React.FC<NavigatorScreensProps> = (props) => {
           matchPath(location.pathname, { exact: true, path: screen.path })
       )
 
-      if (_si && matchScreen) {
+      if (screenInstanceId && matchScreen) {
         replaceScreen({
           screenId: matchScreen.id,
-          screenInstanceId: _si,
+          screenInstanceId,
+          present,
           as: location.pathname,
-          present: !!_present,
         })
       }
     },
@@ -313,7 +309,7 @@ const NavigatorScreens: React.FC<NavigatorScreensProps> = (props) => {
         )
 
         const searchParams = new URLSearchParams(location.search)
-        const screenInstanceId = searchParams.get('_si') 
+        const { screenInstanceId } = getNavigatorParams(searchParams)
 
         if (screenInstanceId && matchScreen) {
           const nextPointer = screenInstances.findIndex(
@@ -353,11 +349,7 @@ const NavigatorScreens: React.FC<NavigatorScreensProps> = (props) => {
       },
       forward(location) {
         const searchParams = new URLSearchParams(location.search)
-
-        const { screenInstanceId, present } = {
-          screenInstanceId: searchParams.get('_si'),
-          present: searchParams.get('_present'),
-        }
+        const { screenInstanceId, present } = getNavigatorParams(searchParams)
 
         const matchScreen = Object.values(screens).find(
           (screen) =>
@@ -369,7 +361,7 @@ const NavigatorScreens: React.FC<NavigatorScreensProps> = (props) => {
           pushScreen({
             screenId: matchScreen.id,
             screenInstanceId,
-            present: present === 'true',
+            present,
             as: location.pathname,
           })
         } else {
