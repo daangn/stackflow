@@ -19,7 +19,8 @@ import {
 } from './hooks/useHistoryEffect'
 import styles from './Navigator.scss'
 import { store, dispatch, action, ScreenInstance } from './store'
-import { getNavigatorParams } from '../utils/navigator'
+import { generateScreenInstanceId } from '../utils/id'
+import { getNavigatorParams, NavigatorParamKeys } from '../utils/navigator'
 
 const DEFAULT_CUPERTINO_ANIMATION_DURATION = 350
 const DEFAULT_ANDROID_ANIMATION_DURATION = 270
@@ -198,7 +199,10 @@ const NavigatorScreens: React.FC<NavigatorScreensProps> = (props) => {
       throw new Error('한 개의 앱에는 한 개의 Navigator만 허용됩니다')
     }
 
-    history.replace(location.pathname + location.search)
+    const searchParams = new URLSearchParams(location.search)
+    searchParams.set(NavigatorParamKeys.screenInstanceId, generateScreenInstanceId())
+
+    history.replace(`${location.pathname}?${searchParams.toString()}`)
 
     isNavigatorInitialized = true
 
