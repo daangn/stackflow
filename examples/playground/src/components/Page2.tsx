@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import {
   ScreenComponentProps,
@@ -13,6 +13,12 @@ const Page2: React.FC<ScreenComponentProps> = ({ isTop, isRoot }) => {
   const [title, setTitle] = useState('')
 
   const query = useQueryParams<{ id: string }>()
+
+  useEffect(() => {
+    navigator.replace('/page3', {
+      animate: false,
+    })
+  }, [navigator])
 
   const onPopClick = () => {
     navigator.pop().send({
