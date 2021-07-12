@@ -16,7 +16,7 @@ import PageReplaceInUseEffect from './components/_pages/PageReplaceInUseEffect'
 function App() {
   let h = (
     <Navigator
-      theme="Cupertino"
+      theme="Android"
       onClose={() => {
         window.alert('Close button clicked!')
       }}
@@ -29,9 +29,6 @@ function App() {
       <Screen path="/replaceInUseEffect" component={PageReplaceInUseEffect} />
       <Screen path="/useParams/:param" component={PageUseParams} />
       <Screen path="/useQueryParams" component={PageUseQueryParams} />
-      {/* <Screen path="/page3" component={Page3} />
-      <Screen path="/page/:id/params_page" component={Page4} />
-      <Screen path="/page5" component={Page5} /> */}
     </Navigator>
   )
   return h
