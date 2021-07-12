@@ -51,15 +51,13 @@ const Navbar: React.FC<NavbarProps> = (props) => {
     if (props.theme === 'Cupertino') {
       window.addEventListener('resize', onResize)
       const t = setTimeout(onResize, 0)
-      const dispose = store.listen(onResize)
 
       return () => {
         window.removeEventListener('resize', onResize)
         clearTimeout(t)
-        dispose()
       }
     }
-  }, [])
+  }, [screenInstanceOption])
 
   const onBackClick = () => {
     pop()
