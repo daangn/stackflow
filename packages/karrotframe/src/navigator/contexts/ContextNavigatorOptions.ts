@@ -1,6 +1,6 @@
 import { createContext, useContext } from 'react'
 
-import { NavigatorTheme } from '../../types'
+import { NavigatorTheme } from '../helpers'
 
 export interface NavigatorOptions {
   theme: NavigatorTheme

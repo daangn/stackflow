@@ -1,12 +1,12 @@
 import React, { useEffect, useMemo } from 'react'
 
-import { generateScreenId } from '../utils'
 import {
   ScreenInstanceInfoProvider,
   ScreenInstanceOptionsProvider,
 } from './contexts'
+import { generateScreenId } from './helpers'
 import { ScreenComponentProps } from './ScreenComponentProps'
-import { NavbarOptions, Screen as IScreen, dispatch, action } from './store'
+import { action, dispatch, NavbarOptions, Screen as IScreen } from './store'
 
 interface Props {
   /**

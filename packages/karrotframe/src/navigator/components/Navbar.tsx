@@ -1,10 +1,10 @@
 import classnames from 'clsx'
-import { useGlobalStore } from 'sagen'
 import React, { useEffect, useRef, useState } from 'react'
+import { useGlobalStore } from 'sagen'
 
-import { NavigatorTheme } from '../../types'
 import { IconBack, IconClose } from '../assets'
 import { useNavigatorOptions } from '../contexts'
+import { NavigatorTheme } from '../helpers'
 import { store } from '../store'
 import { useNavigator } from '../useNavigator'
 import styles from './Navbar.scss'

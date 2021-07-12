@@ -2,7 +2,7 @@ import { Action, Location } from 'history'
 import { DependencyList, useEffect, useRef } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 
-import { getNavigatorParams } from '../../utils/navigator'
+import { getNavigatorParams } from '../helpers'
 
 export function useHistoryPopEffect(
   callbacks: {

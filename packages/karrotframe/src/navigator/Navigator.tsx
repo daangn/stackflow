@@ -6,21 +6,24 @@ import {
   useHistory,
   useLocation,
 } from 'react-router-dom'
-import { useGlobalStore } from 'sagen'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
+import { useGlobalStore } from 'sagen'
 
-import { NavigatorTheme } from '../types'
 import { Card } from './components'
 import { NavigatorOptionsProvider, useNavigatorOptions } from './contexts'
+import {
+  generateScreenInstanceId,
+  getNavigatorParams,
+  NavigatorParamKeys,
+  NavigatorTheme,
+} from './helpers'
 import {
   useHistoryPopEffect,
   useHistoryPushEffect,
   useHistoryReplaceEffect,
 } from './hooks/useHistoryEffect'
 import styles from './Navigator.scss'
-import { store, dispatch, action, ScreenInstance } from './store'
-import { generateScreenInstanceId } from '../utils/id'
-import { getNavigatorParams, NavigatorParamKeys } from '../utils/navigator'
+import { action, dispatch, ScreenInstance, store } from './store'
 
 const DEFAULT_CUPERTINO_ANIMATION_DURATION = 350
 const DEFAULT_ANDROID_ANIMATION_DURATION = 270

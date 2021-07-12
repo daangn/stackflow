@@ -1,5 +1,5 @@
 import React from 'react'
-import { createStore, createDispatch } from 'sagen'
+import { createDispatch, createStore } from 'sagen'
 
 import { ScreenComponentProps } from '../ScreenComponentProps'
 

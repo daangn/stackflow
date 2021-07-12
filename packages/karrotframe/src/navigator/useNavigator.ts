@@ -1,9 +1,12 @@
 import { useCallback } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 
-import { generateScreenInstanceId } from '../utils'
-import { getNavigatorParams, NavigatorParamKeys } from '../utils/navigator'
 import { useScreenInstanceInfo } from './contexts'
+import {
+  generateScreenInstanceId,
+  getNavigatorParams,
+  NavigatorParamKeys,
+} from './helpers'
 import { action, dispatch, store } from './store'
 
 export function useNavigator() {

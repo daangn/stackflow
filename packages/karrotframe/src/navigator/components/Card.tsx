@@ -1,10 +1,10 @@
 import classnames from 'clsx'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { useGlobalStore } from 'sagen'
 import zenscroll from 'zenscroll'
 
-import { useGlobalStore } from 'sagen'
 import { useNavigatorOptions } from '../contexts'
-import { store, dispatch, action } from '../store'
+import { action, dispatch, store } from '../store'
 import { useNavigator } from '../useNavigator'
 import styles from './Card.scss'
 import Navbar from './Navbar'
