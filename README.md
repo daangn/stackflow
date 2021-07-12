@@ -328,12 +328,14 @@ const ExampleScreen = () => {
 
 > path 내에 `_si` 쿼리스트링이 포함되어있지 않으면 Karrotframe은 내부 라우팅으로 인식해 별도의 애니메이션 처리를 위한 작업을 하지 않습니다
 
-## Contributor
+## Contributors
 
 - Bucky (bucky@daangn.com)
 - Tony (tony@daangn.com)
 - Victor (victor@daangn.com)
 - Steve (steve@daangn.com)
+- Tim (tim@daangn.com)
+- [woochanleee](https://github.com/woochanleee)
 
 ## Contributing
 
