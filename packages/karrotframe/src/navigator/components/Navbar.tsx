@@ -19,9 +19,9 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = (props) => {
   const { pop } = useNavigator()
   const navigatorOptions = useNavigatorOptions()
-  const screenInstanceOptions = useStore(
+  const screenInstanceOption = useStore(
     store,
-    (state) => state.screenInstanceOptions
+    (state) => state.screenInstanceOptions[props.screenInstanceId]
   )
 
   const [centerMainWidth, setCenterMainWidth] = useState<string | undefined>(
@@ -64,8 +64,6 @@ const Navbar: React.FC<NavbarProps> = (props) => {
   const onBackClick = () => {
     pop()
   }
-
-  const screenInstanceOption = screenInstanceOptions[props.screenInstanceId]
 
   const closeButton =
     props.onClose &&

@@ -26,10 +26,11 @@ const Card: React.FC<CardProps> = (props) => {
   const [loading, setLoading] = useState(props.isRoot)
   const [popped, setPopped] = useState(false)
 
-  const screenEdge = useStore(store, (state) => state.screenEdge)
-  const isNavbarVisible = useStore(store, (state) => {
-    return state.screenInstanceOptions[props.screenInstanceId]?.navbar.visible
-  })
+  const { screenEdge, isNavbarVisible } = useStore(store, (state) => ({
+    screenEdge: state.screenEdge,
+    isNavbarVisible:
+      state.screenInstanceOptions[props.screenInstanceId]?.navbar.visible,
+  }))
 
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 0)

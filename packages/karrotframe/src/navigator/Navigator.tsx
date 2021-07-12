@@ -110,8 +110,10 @@ const NavigatorScreens: React.FC<NavigatorScreensProps> = (props) => {
   const location = useLocation()
   const history = useHistory()
 
-  const screenInstances = useStore(store, (state) => state.screenInstances)
-  const screenInstancePtr = useStore(store, (state) => state.screenInstancePtr)
+  const { screenInstances, screenInstancePtr } = useStore(store, (state) => ({
+    screenInstances: state.screenInstances,
+    screenInstancePtr: state.screenInstancePtr,
+  }))
 
   const pushScreen = useCallback(
     ({
@@ -429,14 +431,14 @@ const Transition: React.FC<TransitionProps> = memo((props) => {
   const navigatorOptions = useNavigatorOptions()
   const nodeRef = useRef<HTMLDivElement>(null)
 
-  const screen = useStore(
+  const { screen, screenInstancePtr, screenInstances } = useStore(
     store,
-    (state) => state.screens[props.screenInstance.screenId]
+    (state) => ({
+      screen: state.screens[props.screenInstance.screenId],
+      screenInstancePtr: state.screenInstancePtr,
+      screenInstances: state.screenInstances,
+    })
   )
-  const screenInstancePtr = useStore(store, (state) => state.screenInstancePtr)
-  const screenInstances = useStore(store, (state) => {
-    return state.screenInstances
-  })
 
   if (!screen) {
     return null

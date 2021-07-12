@@ -49,7 +49,7 @@ export interface ScreenEdge {
   startX: number | null
 }
 
-export interface Store {
+export interface GlobalState {
   screens: {
     [screenId: string]: Screen | undefined
   }
@@ -64,7 +64,7 @@ export interface Store {
   screenEdge: ScreenEdge
 }
 
-export const store = createStore<Store>(() => ({
+export const store = createStore<GlobalState>(() => ({
   screens: {},
   screenInstances: [],
   screenInstancePtr: -1,

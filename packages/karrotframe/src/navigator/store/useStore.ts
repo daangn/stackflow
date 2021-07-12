@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Store } from './createStore'
+import deepEqual from 'fast-deep-equal'
 
 export function useStore<T extends {}, V>(
   store: Store<T>,
@@ -10,14 +11,20 @@ export function useStore<T extends {}, V>(
   })
 
   useEffect(() => {
-    const dispose = store.listen((prevState, nextState) => {
-      const prevValue = selector(prevState)
+    const fn = (prevState: T | null, nextState: T) => {
+      const prevValue = prevState && selector(prevState)
       const nextValue = selector(nextState)
 
-      if (prevValue !== nextValue || value !== nextValue) {
+      if (
+        (prevValue && !deepEqual(prevValue, nextValue)) ||
+        !deepEqual(value, nextValue)
+      ) {
         setValue(nextValue)
       }
-    })
+    }
+
+    fn(null, store.getState())
+    const dispose = store.listen(fn, true)
 
     return () => {
       dispose()
