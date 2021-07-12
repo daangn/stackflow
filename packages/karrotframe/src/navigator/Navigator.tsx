@@ -1,5 +1,5 @@
 import classnames from 'clsx'
-import React, { memo, useCallback, useEffect, useRef } from 'react'
+import React, { useCallback, useEffect, useRef } from 'react'
 import {
   HashRouter,
   matchPath,
@@ -427,7 +427,7 @@ interface TransitionProps {
   isTop: boolean
   onClose?: () => void
 }
-const Transition: React.FC<TransitionProps> = memo((props) => {
+const Transition: React.FC<TransitionProps> = (props) => {
   const navigatorOptions = useNavigatorOptions()
   const nodeRef = useRef<HTMLDivElement>(null)
 
@@ -477,6 +477,6 @@ const Transition: React.FC<TransitionProps> = memo((props) => {
       </Card>
     </CSSTransition>
   )
-})
+}
 
 export default Navigator
