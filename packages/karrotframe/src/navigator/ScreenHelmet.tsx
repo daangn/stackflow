@@ -54,6 +54,7 @@ const ScreenHelmet: React.FC<ScreenHelmetProps> = (props) => {
   const screen = useScreenInstanceOptions()
 
   useEffect(() => {
+    console.log('setNavbar')
     screen.setNavbar({
       visible: true,
       title: props.title ?? null,

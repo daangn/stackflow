@@ -107,18 +107,20 @@ export function useNavigator() {
         }
       })
 
-      setTimeout(() => {
+      function send<T = object>(data: T) {
+        _data = data
+
+        if (targetPromise) {
+          targetPromise.popped = true
+        }
+      }
+
+      Promise.resolve().then(() => {
         history.go(-backwardCount)
-      }, 0)
+      })
 
       return {
-        send<T = object>(d: T) {
-          _data = d
-
-          if (targetPromise) {
-            targetPromise.popped = true
-          }
-        },
+        send,
       }
     },
     [history]

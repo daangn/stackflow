@@ -23,7 +23,6 @@ const Card: React.FC<CardProps> = (props) => {
   const navigator = useNavigator()
   const navigatorOptions = useNavigatorOptions()
 
-  const [loading, setLoading] = useState(props.isRoot)
   const [popped, setPopped] = useState(false)
 
   const { screenEdge, isNavbarVisible } = useStore(store, (state) => ({
@@ -31,14 +30,6 @@ const Card: React.FC<CardProps> = (props) => {
     isNavbarVisible:
       state.screenInstanceOptions[props.screenInstanceId]?.navbar.visible,
   }))
-
-  useEffect(() => {
-    const t = setTimeout(() => setLoading(false), 0)
-
-    return () => {
-      clearTimeout(t)
-    }
-  }, [])
 
   const x = useRef<number>(0)
   const requestAnimationFrameLock = useRef<boolean>(false)
@@ -197,7 +188,6 @@ const Card: React.FC<CardProps> = (props) => {
       <div
         className={classnames(styles.cardMainOffset, {
           [styles.isNotTop]: !props.isTop,
-          [styles.isLoading]: loading,
         })}
         style={{
           transition: `transform ${navigatorOptions.animationDuration}ms`,

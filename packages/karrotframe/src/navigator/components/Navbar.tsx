@@ -1,5 +1,6 @@
 import classnames from 'clsx'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
+import { useLayoutEffect } from 'react'
 
 import { IconBack, IconClose } from '../assets'
 import { useNavigatorOptions } from '../contexts'
@@ -31,7 +32,7 @@ const Navbar: React.FC<NavbarProps> = (props) => {
   const navbarRef = useRef<HTMLDivElement>(null)
   const centerRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const onResize = () => {
       if (!navbarRef.current || !centerRef.current) {
         return
@@ -49,12 +50,11 @@ const Navbar: React.FC<NavbarProps> = (props) => {
     }
 
     if (props.theme === 'Cupertino') {
+      onResize()
       window.addEventListener('resize', onResize)
-      const t = setTimeout(onResize, 0)
 
       return () => {
         window.removeEventListener('resize', onResize)
-        clearTimeout(t)
       }
     }
   }, [screenInstanceOption])
