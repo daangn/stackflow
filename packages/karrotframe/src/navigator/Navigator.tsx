@@ -1,8 +1,5 @@
 import classnames from 'clsx'
-import { autorun } from 'mobx'
-import { Observer } from 'mobx-react-lite'
-import qs from 'querystring'
-import React, { memo, useCallback, useEffect, useRef } from 'react'
+import React, { useCallback, useEffect, useRef } from 'react'
 import {
   HashRouter,
   matchPath,
@@ -11,57 +8,59 @@ import {
 } from 'react-router-dom'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 
-import { NavigatorTheme } from '../types'
-import { appendSearch, generateScreenInstanceId } from '../utils'
 import { Card } from './components'
 import { NavigatorOptionsProvider, useNavigatorOptions } from './contexts'
+import {
+  generateScreenInstanceId,
+  getNavigatorParams,
+  NavigatorParamKeys,
+  NavigatorTheme,
+} from './helpers'
 import {
   useHistoryPopEffect,
   useHistoryPushEffect,
   useHistoryReplaceEffect,
 } from './hooks/useHistoryEffect'
 import styles from './Navigator.scss'
-import store, {
-  addScreenInstanceAfter,
-  increaseScreenInstancePointer,
-  Screen,
+import {
+  increaseScreenInstancePtr,
+  insertScreenInstance,
+  mapScreenInstance,
   ScreenInstance,
-  setScreenInstanceIn,
-  setScreenInstancePointer,
+  setScreenInstancePtr,
+  store,
+  useStore,
 } from './store'
 
 const DEFAULT_CUPERTINO_ANIMATION_DURATION = 350
 const DEFAULT_ANDROID_ANIMATION_DURATION = 270
 
-/**
- * Navigator가 이미 초기화되었는지 확인
- * 한 개의 history stack을 사용하기 때문에, 한 개의 앱에는 한 개의 Navigator만 허용
- */
 let isNavigatorInitialized = false
 
 interface NavigatorProps {
   /**
-   * 테마 (기본값: Web)
+   * Theme (default: `Web`)
    */
   theme?: NavigatorTheme
 
   /**
-   * 애니메이션 지속시간
+   * Transition animation duration
    */
   animationDuration?: number
 
   /**
-   * 빌트인 된 react-router-dom의 HashRouter를 없애고, 사용자가 직접 Router를 셋팅합니다
+   * Remove built-in `<HashRouter />`
+   * and use your own custom `<Router />`
    */
   useCustomRouter?: boolean
 
   /**
-   * 닫기 버튼을 눌렀을때 해당 콜백이 호출됩니다
+   * When close button clicked
    */
   onClose?: () => void
 
   /**
-   * 네비게이션의 깊이가 변할때마다 해당 콜백이 호출됩니다
+   * When navigation depth changed
    */
   onDepthChange?: (depth: number) => void
 }
@@ -108,6 +107,11 @@ const NavigatorScreens: React.FC<NavigatorScreensProps> = (props) => {
   const location = useLocation()
   const history = useHistory()
 
+  const { screenInstances, screenInstancePtr } = useStore(store, (state) => ({
+    screenInstances: state.screenInstances,
+    screenInstancePtr: state.screenInstancePtr,
+  }))
+
   const pushScreen = useCallback(
     ({
       screenId,
@@ -120,20 +124,25 @@ const NavigatorScreens: React.FC<NavigatorScreensProps> = (props) => {
       present: boolean
       as: string
     }) => {
-      const nextPointer = store.screenInstances.findIndex(
+      const { screenInstances, screenInstancePtr } = store.getState()
+
+      const nextPtr = screenInstances.findIndex(
         (screenInstance) => screenInstance.id === screenInstanceId
       )
 
-      if (nextPointer === -1) {
-        addScreenInstanceAfter(store.screenInstancePointer, {
-          screenId,
-          screenInstanceId,
-          present,
-          as,
+      if (nextPtr === -1) {
+        insertScreenInstance({
+          ptr: screenInstancePtr,
+          screenInstance: {
+            id: screenInstanceId,
+            screenId,
+            present,
+            as,
+          },
         })
-        increaseScreenInstancePointer()
+        increaseScreenInstancePtr()
       } else {
-        setScreenInstancePointer(nextPointer)
+        setScreenInstancePtr({ ptr: nextPtr })
       }
     },
     []
@@ -151,11 +160,16 @@ const NavigatorScreens: React.FC<NavigatorScreensProps> = (props) => {
       as: string
       present: boolean
     }) => {
-      addScreenInstanceAfter(store.screenInstancePointer - 1, {
-        screenId,
-        screenInstanceId,
-        present,
-        as,
+      const { screenInstancePtr } = store.getState()
+
+      insertScreenInstance({
+        ptr: screenInstancePtr - 1,
+        screenInstance: {
+          id: screenInstanceId,
+          screenId,
+          present,
+          as,
+        },
       })
     },
     []
@@ -169,14 +183,17 @@ const NavigatorScreens: React.FC<NavigatorScreensProps> = (props) => {
       depth: number
       targetScreenInstanceId?: string
     }) => {
+      const { screenInstancePromises, screenInstancePtr } = store.getState()
       if (targetScreenInstanceId) {
-        const promise = store.screenInstancePromises.get(targetScreenInstanceId)
+        const promise = screenInstancePromises[targetScreenInstanceId]
 
         if (promise && !promise.popped) {
           promise.resolve(null)
         }
       }
-      setScreenInstancePointer(store.screenInstancePointer - depth)
+      setScreenInstancePtr({
+        ptr: screenInstancePtr - depth,
+      })
     },
     []
   )
@@ -186,10 +203,14 @@ const NavigatorScreens: React.FC<NavigatorScreensProps> = (props) => {
       throw new Error('한 개의 앱에는 한 개의 Navigator만 허용됩니다')
     }
 
-    const [, search] = location.search.split('?')
-    const _si = generateScreenInstanceId()
+    const searchParams = new URLSearchParams(location.search)
 
-    history.replace(location.pathname + '?' + appendSearch(search, { _si }))
+    searchParams.set(
+      NavigatorParamKeys.screenInstanceId,
+      generateScreenInstanceId()
+    )
+
+    history.replace(`${location.pathname}?${searchParams.toString()}`)
 
     isNavigatorInitialized = true
 
@@ -202,73 +223,68 @@ const NavigatorScreens: React.FC<NavigatorScreensProps> = (props) => {
     if (!location.search) {
       return
     }
-    const [, search] = location.search.split('?')
-    const _si = qs.parse(search)?._si as string | undefined
 
-    if (!_si) {
-      return
-    }
-    if (store.screenInstances.length > 0) {
+    const { screens, screenInstances } = store.getState()
+
+    if (screenInstances.length > 0) {
       return
     }
 
-    let matchScreen: Screen | null = null
+    const searchParams = new URLSearchParams(location.search)
+    const { screenInstanceId } = getNavigatorParams(searchParams)
 
-    for (const screen of store.screens.values()) {
-      if (matchPath(location.pathname, { exact: true, path: screen.path })) {
-        matchScreen = screen
-        break
-      }
-    }
+    const matchScreen = Object.values(screens).find(
+      (screen) =>
+        screen &&
+        matchPath(location.pathname, { exact: true, path: screen.path })
+    )
 
-    if (matchScreen) {
+    if (screenInstanceId && matchScreen) {
       pushScreen({
         screenId: matchScreen.id,
-        screenInstanceId: _si,
+        screenInstanceId,
         present: false,
         as: location.pathname,
       })
     }
   }, [location.search])
 
-  useEffect(
-    () =>
-      autorun(() => {
-        if (store.screenInstancePointer > -1) {
-          props.onDepthChange?.(store.screenInstancePointer)
-        }
-      }),
-    [props.onDepthChange]
-  )
+  useEffect(() => {
+    return store.listen((_, state) => {
+      if (state.screenInstancePtr > -1) {
+        props.onDepthChange?.(state.screenInstancePtr)
+      }
+    })
+  }, [props.onDepthChange])
 
   useHistoryPushEffect(
     (location) => {
-      let matchScreen: Screen | null = null
+      const { screens, screenInstancePtr } = store.getState()
 
-      for (const screen of store.screens.values()) {
-        if (matchPath(location.pathname, { exact: true, path: screen.path })) {
-          matchScreen = screen
-          break
-        }
-      }
+      const searchParams = new URLSearchParams(location.search)
+      const { screenInstanceId, present } = getNavigatorParams(searchParams)
 
-      const [, search] = location.search.split('?')
+      const matchScreen = Object.values(screens).find(
+        (screen) =>
+          !!screen &&
+          matchPath(location.pathname, { exact: true, path: screen.path })
+      )
 
-      const screenInstanceId = qs.parse(search)?._si as string | undefined
-      const present = qs.parse(search)?._present as string | undefined
-
-      if (matchScreen && screenInstanceId) {
+      if (screenInstanceId && matchScreen) {
         pushScreen({
           screenId: matchScreen.id,
           screenInstanceId,
-          present: present === 'true',
+          present,
           as: location.pathname,
         })
       } else {
-        setScreenInstanceIn(store.screenInstancePointer, (screenInstance) => ({
-          ...screenInstance,
-          nestedRouteCount: screenInstance.nestedRouteCount + 1,
-        }))
+        mapScreenInstance({
+          ptr: screenInstancePtr,
+          mapper: (screenInstance) => ({
+            ...screenInstance,
+            nestedRouteCount: screenInstance.nestedRouteCount + 1,
+          }),
+        })
       }
     },
     [pushScreen]
@@ -276,27 +292,23 @@ const NavigatorScreens: React.FC<NavigatorScreensProps> = (props) => {
 
   useHistoryReplaceEffect(
     (location) => {
-      let matchScreen: Screen | null = null
+      const { screens } = store.getState()
 
-      for (const screen of store.screens.values()) {
-        if (matchPath(location.pathname, { exact: true, path: screen.path })) {
-          matchScreen = screen
-          break
-        }
-      }
+      const searchParams = new URLSearchParams(location.search)
+      const { screenInstanceId, present } = getNavigatorParams(searchParams)
 
-      const [, search] = location.search.split('?')
-      const { _si, _present } = qs.parse(search) as {
-        _si?: string
-        _present?: 'true'
-      }
+      const matchScreen = Object.values(screens).find(
+        (screen) =>
+          screen &&
+          matchPath(location.pathname, { exact: true, path: screen.path })
+      )
 
-      if (matchScreen && _si) {
+      if (screenInstanceId && matchScreen) {
         replaceScreen({
           screenId: matchScreen.id,
-          screenInstanceId: _si,
+          screenInstanceId,
+          present,
           as: location.pathname,
-          present: !!_present,
         })
       }
     },
@@ -306,83 +318,75 @@ const NavigatorScreens: React.FC<NavigatorScreensProps> = (props) => {
   useHistoryPopEffect(
     {
       backward(location) {
-        let matchScreen: Screen | null = null
+        const { screens, screenInstances, screenInstancePtr } = store.getState()
 
-        for (const screen of store.screens.values()) {
-          if (
+        const matchScreen = Object.values(screens).find(
+          (screen) =>
+            screen &&
             matchPath(location.pathname, { exact: true, path: screen.path })
-          ) {
-            matchScreen = screen
-            break
-          }
-        }
+        )
 
-        const [, search] = location.search.split('?')
-        const screenInstanceId = qs.parse(search)?._si as string | undefined
+        const searchParams = new URLSearchParams(location.search)
+        const { screenInstanceId } = getNavigatorParams(searchParams)
 
-        if (matchScreen && screenInstanceId) {
-          const nextPointer = store.screenInstances.findIndex(
+        if (screenInstanceId && matchScreen) {
+          const nextPtr = screenInstances.findIndex(
             (screenInstance) => screenInstance.id === screenInstanceId
           )
 
-          setScreenInstanceIn(
-            store.screenInstancePointer,
-            (screenInstance) => ({
+          mapScreenInstance({
+            ptr: screenInstancePtr,
+            mapper: (screenInstance) => ({
               ...screenInstance,
               nestedRouteCount: 0,
-            })
-          )
+            }),
+          })
           popScreen({
-            depth: store.screenInstancePointer - nextPointer,
+            depth: screenInstancePtr - nextPtr,
             targetScreenInstanceId: screenInstanceId,
           })
-        } else if (
-          store.screenInstances[store.screenInstancePointer]
-            ?.nestedRouteCount === 0
-        ) {
+        } else if (screenInstances[screenInstancePtr]?.nestedRouteCount === 0) {
           popScreen({
             depth: 1,
           })
         } else {
-          setScreenInstanceIn(
-            store.screenInstancePointer,
-            (screenInstance) => ({
+          mapScreenInstance({
+            ptr: screenInstancePtr,
+            mapper: (screenInstance) => ({
               ...screenInstance,
               nestedRouteCount: screenInstance.nestedRouteCount - 1,
-            })
-          )
+            }),
+          })
         }
       },
       forward(location) {
-        let screen: Screen | null = null
+        const { screens, screenInstancePtr } = store.getState()
+        const searchParams = new URLSearchParams(location.search)
+        const { screenInstanceId, present } = getNavigatorParams(searchParams)
 
-        for (const s of store.screens.values()) {
-          if (matchPath(location.pathname, { exact: true, path: s.path })) {
-            screen = s
-            break
-          }
-        }
+        const matchScreen = Object.values(screens).find(
+          (screen) =>
+            screen &&
+            matchPath(location.pathname, { exact: true, path: screen.path })
+        )
 
-        const [, search] = location.search.split('?')
-
-        const screenInstanceId = qs.parse(search)?._si as string | undefined
-        const present = qs.parse(search)?._present as string | undefined
-
-        if (screen && screenInstanceId) {
+        if (screenInstanceId && matchScreen) {
           pushScreen({
-            screenId: screen.id,
+            screenId: matchScreen.id,
             screenInstanceId,
-            present: present === 'true',
+            present,
             as: location.pathname,
           })
         } else {
-          setScreenInstanceIn(
-            store.screenInstancePointer,
-            (screenInstance) => ({
-              ...screenInstance,
-              nestedRouteCount: screenInstance.nestedRouteCount + 1,
-            })
-          )
+          mapScreenInstance({
+            ptr: screenInstancePtr,
+            mapper(screenInstance: ScreenInstance): ScreenInstance {
+              return {
+                ...screenInstance,
+                nestedRouteCount: screenInstance.nestedRouteCount + 1,
+              }
+            },
+          })
         }
       },
     },
@@ -398,22 +402,16 @@ const NavigatorScreens: React.FC<NavigatorScreensProps> = (props) => {
     >
       {props.children}
       <TransitionGroup component={null}>
-        <Observer>
-          {() => (
-            <>
-              {store.screenInstances.map((screenInstance, index) => (
-                <Transition
-                  key={index}
-                  screenInstance={screenInstance}
-                  screenInstanceIndex={index}
-                  isRoot={index === 0}
-                  isTop={index === store.screenInstancePointer}
-                  onClose={props.onClose}
-                />
-              ))}
-            </>
-          )}
-        </Observer>
+        {screenInstances.map((screenInstance, index) => (
+          <Transition
+            key={index}
+            screenInstance={screenInstance}
+            screenInstanceIndex={index}
+            isRoot={index === 0}
+            isTop={index === screenInstancePtr}
+            onClose={props.onClose}
+          />
+        ))}
       </TransitionGroup>
     </div>
   )
@@ -426,51 +424,56 @@ interface TransitionProps {
   isTop: boolean
   onClose?: () => void
 }
-const Transition: React.FC<TransitionProps> = memo((props) => {
+const Transition: React.FC<TransitionProps> = (props) => {
   const navigatorOptions = useNavigatorOptions()
   const nodeRef = useRef<HTMLDivElement>(null)
 
-  return (
-    <Observer>
-      {() => {
-        const { Component } = store.screens.get(props.screenInstance.screenId)!
-        return (
-          <CSSTransition
-            key={props.screenInstance.id}
-            nodeRef={nodeRef}
-            timeout={navigatorOptions.animationDuration}
-            in={props.screenInstanceIndex <= store.screenInstancePointer}
-            unmountOnExit
-          >
-            <Card
-              nodeRef={nodeRef}
-              screenPath={
-                store.screens.get(props.screenInstance.screenId)!.path
-              }
-              screenInstanceId={props.screenInstance.id}
-              isRoot={props.screenInstanceIndex === 0}
-              isTop={
-                props.screenInstanceIndex >= store.screenInstancePointer ||
-                (navigatorOptions.theme === 'Cupertino' &&
-                  store.screenInstances.length >
-                    props.screenInstanceIndex + 1 &&
-                  store.screenInstances[props.screenInstanceIndex + 1].present)
-              }
-              isPresent={props.screenInstance.present}
-              onClose={props.onClose}
-            >
-              <Component
-                as={props.screenInstance.as}
-                screenInstanceId={props.screenInstance.id}
-                isTop={props.isTop}
-                isRoot={props.isRoot}
-              />
-            </Card>
-          </CSSTransition>
-        )
-      }}
-    </Observer>
+  const { screen, screenInstancePtr, screenInstances } = useStore(
+    store,
+    (state) => ({
+      screen: state.screens[props.screenInstance.screenId],
+      screenInstancePtr: state.screenInstancePtr,
+      screenInstances: state.screenInstances,
+    })
   )
-})
+
+  if (!screen) {
+    return null
+  }
+
+  const { Component } = screen
+
+  return (
+    <CSSTransition
+      key={props.screenInstance.id}
+      nodeRef={nodeRef}
+      timeout={navigatorOptions.animationDuration}
+      in={props.screenInstanceIndex <= screenInstancePtr}
+      unmountOnExit
+    >
+      <Card
+        nodeRef={nodeRef}
+        screenPath={screen.path}
+        screenInstanceId={props.screenInstance.id}
+        isRoot={props.screenInstanceIndex === 0}
+        isTop={
+          props.screenInstanceIndex >= screenInstancePtr ||
+          (navigatorOptions.theme === 'Cupertino' &&
+            screenInstances.length > props.screenInstanceIndex + 1 &&
+            screenInstances[props.screenInstanceIndex + 1].present)
+        }
+        isPresent={props.screenInstance.present}
+        onClose={props.onClose}
+      >
+        <Component
+          as={props.screenInstance.as}
+          screenInstanceId={props.screenInstance.id}
+          isTop={props.isTop}
+          isRoot={props.isRoot}
+        />
+      </Card>
+    </CSSTransition>
+  )
+}
 
 export default Navigator

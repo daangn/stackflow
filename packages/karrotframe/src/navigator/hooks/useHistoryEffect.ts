@@ -1,7 +1,8 @@
 import { Action, Location } from 'history'
 import { DependencyList, useEffect, useRef } from 'react'
-import qs from 'querystring'
 import { useHistory, useLocation } from 'react-router-dom'
+
+import { getNavigatorParams } from '../helpers'
 
 export function useHistoryPopEffect(
   callbacks: {
@@ -24,10 +25,9 @@ export function useHistoryPopEffect(
       return
     }
 
-    const [, search] = location.search.split('?')
-    const { _si } = qs.parse(search)
-
-    if (!_si) {
+    const searchParams = new URLSearchParams(location.search)
+    const { screenInstanceId } = getNavigatorParams(searchParams)
+    if (!screenInstanceId) {
       return
     }
 
@@ -55,13 +55,13 @@ export function useHistoryPopEffect(
           break
         }
         case 'POP': {
-          const pointer = locationKeyStack.current.findIndex(
+          const ptr = locationKeyStack.current.findIndex(
             (key) => key === locationKey
           )
-          if (pointer > -1) {
-            const depth = locationKeyStack.current.length - pointer
+          if (ptr > -1) {
+            const depth = locationKeyStack.current.length - ptr
             locationKeyStack.current = locationKeyStack.current.filter(
-              (_, idx) => idx <= pointer
+              (_, idx) => idx <= ptr
             )
             callbacks.backward?.(location, action, depth)
           } else {
@@ -108,12 +108,12 @@ export function useHistoryPushEffect(
           break
         }
         case 'POP': {
-          const pointer = locationKeyStack.current.findIndex(
+          const ptr = locationKeyStack.current.findIndex(
             (key) => key === locationKey
           )
-          if (pointer > -1) {
+          if (ptr > -1) {
             locationKeyStack.current = locationKeyStack.current.filter(
-              (_, idx) => idx <= pointer
+              (_, idx) => idx <= ptr
             )
           } else {
             locationKeyStack.current.push(locationKey)

@@ -1,4 +1,4 @@
-![](./cover.png)
+<img src="./cover.svg" style="width: 100%" />
 
 ## 시작하기
 

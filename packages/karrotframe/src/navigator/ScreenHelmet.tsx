@@ -4,49 +4,49 @@ import { useScreenInstanceOptions } from './contexts'
 
 interface ScreenHelmetProps {
   /**
-   * 네비게이션의 타이틀
+   * title
    */
   title?: React.ReactNode
 
   /**
-   * 네비게이션의 왼쪽에 요소를 추가
-   * (이전 버튼 오른쪽에 표시됩니다)
+   * Append elements in left side
+   * (It'll be displayed in right side of back button)
    */
   appendLeft?: React.ReactNode
 
   /**
-   * 네비게이션의 오른쪽 요소를 추가
-   * (닫기 버튼 왼쪽에 표시됩니다)
+   * Append elements in right side
+   * (It'll be displayed in left side of close button when `closeButtonLocation` is `right`)
    */
   appendRight?: React.ReactNode
 
   /**
-   * 닫기 버튼의 위치
+   * Location of close button (default: `left`)
    */
   closeButtonLocation?: 'left' | 'right'
 
   /**
-   * 이전 버튼을 사용자화합니다
+   * Replace back button
    */
   customBackButton?: React.ReactNode
 
   /**
-   * 닫기 버튼을 사용자화합니다
+   * Replace close button
    */
   customCloseButton?: React.ReactNode
 
   /**
-   * 상단바를 클릭했을때 상단으로 스크롤되는 기능을 비활성화합니다
-   */
-  disableScrollToTop?: boolean
-
-  /**
-   * 상단바 아래 회색선을 제거합니다
+   * Remove border
    */
   noBorder?: boolean
 
   /**
-   * 상단바를 클릭했을때 호출될 콜백을 설정합니다
+   * Disable scroll to top feature (iOS Only)
+   */
+  disableScrollToTop?: boolean
+
+  /**
+   * When top part clicked (iOS Only)
    */
   onTopClick?: () => void
 }
@@ -66,7 +66,17 @@ const ScreenHelmet: React.FC<ScreenHelmetProps> = (props) => {
       noBorder: props.noBorder ?? false,
       onTopClick: props.onTopClick,
     })
-  }, [props])
+  }, [
+    props.title,
+    props.appendLeft,
+    props.appendRight,
+    props.closeButtonLocation,
+    props.customBackButton,
+    props.customCloseButton,
+    props.disableScrollToTop,
+    props.noBorder,
+    props.onTopClick,
+  ])
 
   useEffect(() => {
     return () => {

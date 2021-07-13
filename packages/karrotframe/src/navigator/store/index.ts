@@ -1,7 +1,10 @@
-import { action, observable, ObservableMap } from 'mobx'
 import React from 'react'
+import { createStore } from './createStore'
 
 import { ScreenComponentProps } from '../ScreenComponentProps'
+
+export * from './createStore'
+export * from './useStore'
 
 export interface Screen {
   id: string
@@ -46,86 +49,141 @@ export interface ScreenEdge {
   startX: number | null
 }
 
-const store = observable<{
-  screens: ObservableMap<string, Screen>
+export interface GlobalState {
+  screens: {
+    [screenId: string]: Screen | undefined
+  }
   screenInstances: ScreenInstance[]
-  screenInstancePointer: number
-  screenInstanceOptions: ObservableMap<string, ScreenInstanceOption>
-  screenInstancePromises: ObservableMap<string, ScreenInstancePromise>
+  screenInstancePtr: number
+  screenInstanceOptions: {
+    [screenInstanceId: string]: ScreenInstanceOption | undefined
+  }
+  screenInstancePromises: {
+    [screenInstanceId: string]: ScreenInstancePromise | undefined
+  }
   screenEdge: ScreenEdge
-}>({
-  screens: observable.map<string, Screen>({}, { deep: false }),
+}
+
+export const store = createStore<GlobalState>(() => ({
+  screens: {},
   screenInstances: [],
-  screenInstancePointer: -1,
-  screenInstanceOptions: observable.map<string, ScreenInstanceOption>(
-    {},
-    { deep: false }
-  ),
-  screenInstancePromises: observable.map<string, ScreenInstancePromise>(
-    {},
-    { deep: false }
-  ),
+  screenInstancePtr: -1,
+  screenInstanceOptions: {},
+  screenInstancePromises: {},
   screenEdge: {
     startX: null,
     startTime: null,
   },
-})
+}))
 
-export const setScreenInstanceIn = action(
-  (
-    pointer: number,
-    setter: (screenInstance: ScreenInstance) => ScreenInstance
-  ) => {
-    store.screenInstances = store.screenInstances.map(
-      (screenInstance, screenInstanceIndex) => {
-        if (screenInstanceIndex === pointer) {
-          return setter(screenInstance)
-        } else {
-          return screenInstance
-        }
-      }
-    )
+export function addScreen({ screen }: { screen: Screen }) {
+  store.setState((prevState) => ({
+    ...prevState,
+    screens: {
+      ...prevState.screens,
+      [screen.id]: screen,
+    },
+  }))
+}
+
+export function removeScreen({ screenId }: { screenId: string }) {
+  store.setState((prevState) => ({
+    ...prevState,
+    screens: {
+      ...prevState.screens,
+      [screenId]: undefined,
+    },
+  }))
+}
+
+export function addScreenInstanceOption({
+  screenInstanceId,
+  screenInstanceOption,
+}: {
+  screenInstanceId: string
+  screenInstanceOption: ScreenInstanceOption
+}) {
+  store.setState((prevState) => ({
+    ...prevState,
+    screenInstanceOptions: {
+      ...prevState.screenInstanceOptions,
+      [screenInstanceId]: screenInstanceOption,
+    },
+  }))
+}
+
+export function addScreenInstancePromise({
+  screenInstanceId,
+  screenInstancePromise,
+}: {
+  screenInstanceId: string
+  screenInstancePromise: ScreenInstancePromise
+}) {
+  store.setState((prevState) => ({
+    ...prevState,
+    screenInstancePromises: {
+      ...prevState.screenInstancePromises,
+      [screenInstanceId]: screenInstancePromise,
+    },
+  }))
+}
+
+export function mapScreenInstance({
+  ptr,
+  mapper,
+}: {
+  ptr: number
+  mapper: (screenInstance: ScreenInstance) => ScreenInstance
+}) {
+  store.setState((prevState) => ({
+    ...prevState,
+    screenInstances: prevState.screenInstances.map((si, i) =>
+      i === ptr ? mapper(si) : si
+    ),
+  }))
+}
+
+export function insertScreenInstance({
+  ptr,
+  screenInstance,
+}: {
+  ptr: number
+  screenInstance: {
+    id: string
+    screenId: string
+    present: boolean
+    as: string
   }
-)
-
-export const addScreenInstanceAfter = action(
-  (
-    pointer: number,
-    {
-      screenId,
-      screenInstanceId,
-      present,
-      as,
-    }: {
-      screenId: string
-      screenInstanceId: string
-      present: boolean
-      as: string
-    }
-  ) => {
-    store.screenInstances = [
-      ...store.screenInstances.filter((_, index) => index <= pointer),
+}) {
+  store.setState((prevState) => ({
+    ...prevState,
+    screenInstances: [
+      ...prevState.screenInstances.filter((_, i) => i <= ptr),
       {
-        id: screenInstanceId,
-        screenId,
+        ...screenInstance,
         nestedRouteCount: 0,
-        present,
-        as,
       },
-    ]
-  }
-)
+    ],
+  }))
+}
 
-export const increaseScreenInstancePointer = action(() => {
-  store.screenInstancePointer = store.screenInstancePointer + 1
-})
+export function increaseScreenInstancePtr() {
+  store.setState((prevState) => ({
+    ...prevState,
+    screenInstancePtr: prevState.screenInstancePtr + 1,
+  }))
+}
 
-export const setScreenInstancePointer = action((pointer: number) => {
-  store.screenInstancePointer = pointer
-})
+export function setScreenInstancePtr({ ptr }: { ptr: number }) {
+  store.setState((prevState) => ({
+    ...prevState,
+    screenInstancePtr: ptr,
+  }))
+}
 
-export const setScreenEdge = action((screenEdge: ScreenEdge) => {
-  store.screenEdge = screenEdge
-})
-
-export default store
+export function setScreenEdge({ screenEdge }: { screenEdge: ScreenEdge }) {
+  store.setState((prevState) => ({
+    ...prevState,
+    screenEdge,
+  }))
+}

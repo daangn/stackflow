@@ -10,7 +10,8 @@
   ],
   "devDependencies": {
     "@types/jest": "^26.0.20",
-    "prettier": "^2.2.1",
-    "typescript": "^4.1.5"
+    "playwright": "^1.12.3",
+    "prettier": "^2.3.2",
+    "typescript": "^4.3.5"
   }
 }

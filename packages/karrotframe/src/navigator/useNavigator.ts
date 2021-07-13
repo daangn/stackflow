@@ -1,120 +1,144 @@
 import { useCallback } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 
-import { appendSearch, generateScreenInstanceId } from '../utils'
 import { useScreenInstanceInfo } from './contexts'
-import store from './store'
-import qs from 'querystring'
+import {
+  generateScreenInstanceId,
+  getNavigatorParams,
+  NavigatorParamKeys,
+} from './helpers'
+import { addScreenInstancePromise, store } from './store'
 
 export function useNavigator() {
   const history = useHistory()
   const location = useLocation()
   const screenInfo = useScreenInstanceInfo()
 
-  const [, search] = location.search.split('?')
-  const queryParams = qs.parse(search) as {
-    _si?: string
-    _present?: 'true'
-  }
+  const searchParams = new URLSearchParams(location.search)
+  const { present, screenInstanceId } = getNavigatorParams(searchParams)
 
   const push = useCallback(
     <T = object>(
       to: string,
       options?: {
+        /**
+         * Bottom to top animation (iOS only)
+         */
         present?: boolean
       }
     ): Promise<T | null> =>
       new Promise((resolve) => {
-        const [pathname, search] = to.split('?')
-        const _si = generateScreenInstanceId()
+        const { pathname, searchParams } = new URL(to, /* dummy */ 'file://')
 
-        const params: {
-          _si: string
-          _present?: 'true'
-        } = {
-          _si,
-        }
+        searchParams.set(
+          NavigatorParamKeys.screenInstanceId,
+          generateScreenInstanceId()
+        )
 
         if (options?.present) {
-          params._present = 'true'
+          searchParams.set(NavigatorParamKeys.present, 'true')
         }
 
-        history.push(pathname + '?' + appendSearch(search || null, params))
-
-        store.screenInstancePromises.set(screenInfo.screenInstanceId, {
-          resolve,
-          popped: false,
+        addScreenInstancePromise({
+          screenInstanceId: screenInfo.screenInstanceId,
+          screenInstancePromise: {
+            resolve,
+            popped: false,
+          },
         })
+
+        history.push(`${pathname}?${searchParams.toString()}`)
       }),
-    []
+    [history, screenInfo]
   )
 
   const replace = useCallback(
     (
       to: string,
       options?: {
+        /**
+         * Animate when replaced
+         */
         animate?: boolean
       }
     ) => {
-      const [pathname, search] = to.split('?')
+      const { pathname, searchParams } = new URL(to, /* dummy */ 'file://')
 
-      history.replace(
-        pathname +
-          '?' +
-          appendSearch(search, {
-            ...(queryParams._si
-              ? {
-                  _si: options?.animate
-                    ? generateScreenInstanceId()
-                    : queryParams._si,
-                }
-              : null),
-            ...(queryParams._present
-              ? {
-                  _present: 'true',
-                }
-              : null),
-          })
-      )
+      if (options?.animate) {
+        searchParams.set(
+          NavigatorParamKeys.screenInstanceId,
+          generateScreenInstanceId()
+        )
+      } else {
+        if (screenInstanceId) {
+          searchParams.set(
+            NavigatorParamKeys.screenInstanceId,
+            screenInstanceId
+          )
+        }
+        if (present) {
+          searchParams.set(NavigatorParamKeys.present, 'true')
+        }
+      }
+
+      history.replace(`${pathname}?${searchParams.toString()}`)
     },
-    [queryParams]
+    [history, screenInstanceId, present]
   )
 
-  const pop = useCallback((depth = 1) => {
-    const targetScreenInstance =
-      store.screenInstances[store.screenInstancePointer - depth]
+  const pop = useCallback(
+    (depth = 1) => {
+      const { screenInstances, screenInstancePtr, screenInstancePromises } =
+        store.getState()
 
-    const n = store.screenInstances
-      .filter(
-        (_, idx) =>
-          idx > store.screenInstancePointer - depth &&
-          idx <= store.screenInstancePointer
-      )
-      .map((screenInstance) => screenInstance.nestedRouteCount)
-      .reduce((acc, current) => acc + current + 1, 0)
+      const targetScreenInstance = screenInstances[screenInstancePtr - depth]
 
-    const promise = store.screenInstancePromises.get(targetScreenInstance.id)
-    let data: any = null
+      const backwardCount = screenInstances
+        .filter(
+          (_, idx) =>
+            idx > screenInstancePtr - depth && idx <= screenInstancePtr
+        )
+        .map((screenInstance) => screenInstance.nestedRouteCount)
+        .reduce((acc, current) => acc + current + 1, 0)
 
-    const dispose = history.listen(() => {
-      dispose()
+      const targetPromise =
+        targetScreenInstance && screenInstancePromises[targetScreenInstance.id]
+      let _data: any = null
 
-      if (targetScreenInstance) {
-        promise?.resolve(data ?? null)
+      const dispose = history.listen(() => {
+        dispose()
+
+        if (targetScreenInstance) {
+          targetPromise?.resolve(_data ?? null)
+        }
+      })
+
+      /**
+       * Send data to `await push()`
+       */
+      function send<T = object>(
+        /**
+         * Payload
+         */
+        data: T
+      ) {
+        _data = data
+
+        if (targetPromise) {
+          targetPromise.popped = true
+        }
       }
-    })
 
-    const send = <T = object>(d: T) => {
-      data = d as any
-      if (promise) {
-        promise.popped = true
+      Promise.resolve().then(() => {
+        history.go(-backwardCount)
+      })
+
+      return {
+        send,
       }
-    }
-
-    setTimeout(() => history.go(-n), 0)
-
-    return { send }
-  }, [])
+    },
+    [history]
+  )
 
   return { push, replace, pop }
 }
