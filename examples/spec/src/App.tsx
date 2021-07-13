@@ -17,7 +17,7 @@ import Page404 from './components/_pages/Page404'
 const App: React.FC = () => {
   return (
     <Navigator
-      theme="Android"
+      theme="Cupertino"
       onClose={() => {
         window.alert('Close button clicked!')
       }}
