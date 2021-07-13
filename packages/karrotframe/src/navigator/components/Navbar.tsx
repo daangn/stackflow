@@ -19,9 +19,9 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = (props) => {
   const { pop } = useNavigator()
   const navigatorOptions = useNavigatorOptions()
-  const screenInstanceOption = useStore(
+  const screenInstanceOptions = useStore(
     store,
-    (state) => state.screenInstanceOptions[props.screenInstanceId]
+    (state) => state.screenInstanceOptions
   )
 
   const [centerMainWidth, setCenterMainWidth] = useState<string | undefined>(
@@ -30,6 +30,8 @@ const Navbar: React.FC<NavbarProps> = (props) => {
 
   const navbarRef = useRef<HTMLDivElement>(null)
   const centerRef = useRef<HTMLDivElement>(null)
+
+  const screenInstanceOption = screenInstanceOptions[props.screenInstanceId]
 
   useLayoutEffect(() => {
     const onResize = () => {

@@ -25,10 +25,9 @@ const Card: React.FC<CardProps> = (props) => {
 
   const [popped, setPopped] = useState(false)
 
-  const { screenEdge, isNavbarVisible } = useStore(store, (state) => ({
+  const { screenEdge, screenInstanceOptions } = useStore(store, (state) => ({
     screenEdge: state.screenEdge,
-    isNavbarVisible:
-      state.screenInstanceOptions[props.screenInstanceId]?.navbar.visible,
+    screenInstanceOptions: state.screenInstanceOptions,
   }))
 
   const x = useRef<number>(0)
@@ -37,6 +36,9 @@ const Card: React.FC<CardProps> = (props) => {
   const dimRef = useRef<HTMLDivElement>(null)
   const frameRef = useRef<HTMLDivElement>(null)
   const frameOffsetRef = useRef<HTMLDivElement>(null)
+
+  const isNavbarVisible =
+    screenInstanceOptions[props.screenInstanceId]?.navbar.visible
 
   useEffect(() => {
     const $frameOffset = frameOffsetRef.current

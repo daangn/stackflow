@@ -428,23 +428,20 @@ const Transition: React.FC<TransitionProps> = (props) => {
   const navigatorOptions = useNavigatorOptions()
   const nodeRef = useRef<HTMLDivElement>(null)
 
-  const { screen, screenInstancePtr, screenInstances } = useStore(
+  const { screens, screenInstancePtr, screenInstances } = useStore(
     store,
     (state) => ({
-      screen: state.screens[props.screenInstance.screenId],
+      screens: state.screens,
       screenInstancePtr: state.screenInstancePtr,
       screenInstances: state.screenInstances,
     })
   )
 
+  const screen = screens[props.screenInstance.screenId]
+
   if (!screen) {
     return null
   }
-  if (screen.id !== props.screenInstance.screenId) {
-    return null
-  }
-
-  const { Component } = screen
 
   return (
     <CSSTransition
@@ -468,7 +465,7 @@ const Transition: React.FC<TransitionProps> = (props) => {
         isPresent={props.screenInstance.present}
         onClose={props.onClose}
       >
-        <Component
+        <screen.Component
           as={props.screenInstance.as}
           screenInstanceId={props.screenInstance.id}
           isTop={props.isTop}
