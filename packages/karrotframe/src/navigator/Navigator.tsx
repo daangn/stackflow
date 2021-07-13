@@ -440,6 +440,9 @@ const Transition: React.FC<TransitionProps> = (props) => {
   if (!screen) {
     return null
   }
+  if (screen.id !== props.screenInstance.screenId) {
+    return null
+  }
 
   const { Component } = screen
 
