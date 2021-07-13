@@ -49,9 +49,8 @@ export function useHistoryPopEffect(
           break
         }
         case 'REPLACE': {
-          locationKeyStack.current[
-            locationKeyStack.current.length - 1
-          ] = locationKey
+          locationKeyStack.current[locationKeyStack.current.length - 1] =
+            locationKey
           break
         }
         case 'POP': {
@@ -102,9 +101,8 @@ export function useHistoryPushEffect(
           break
         }
         case 'REPLACE': {
-          locationKeyStack.current[
-            locationKeyStack.current.length - 1
-          ] = locationKey
+          locationKeyStack.current[locationKeyStack.current.length - 1] =
+            locationKey
           break
         }
         case 'POP': {

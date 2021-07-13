@@ -1,6 +1,5 @@
 import classnames from 'clsx'
-import React, { useRef, useState } from 'react'
-import { useLayoutEffect } from 'react'
+import React, { useLayoutEffect, useRef, useState } from 'react'
 
 import { IconBack, IconClose } from '../assets'
 import { useNavigatorOptions } from '../contexts'

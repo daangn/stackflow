@@ -6,10 +6,10 @@ import {
 } from './contexts'
 import { ScreenComponentProps } from './ScreenComponentProps'
 import {
-  NavbarOptions,
-  removeScreen,
   addScreen,
   addScreenInstanceOption,
+  NavbarOptions,
+  removeScreen,
 } from './store'
 
 interface Props {

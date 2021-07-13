@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react'
-import { Store } from './createStore'
 import deepEqual from 'fast-deep-equal'
+import { useEffect, useState } from 'react'
+
+import { Store } from './createStore'
 
 export function useStore<T extends {}, V>(
   store: Store<T>,
