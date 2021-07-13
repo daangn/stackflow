@@ -21,6 +21,9 @@ export function useNavigator() {
     <T = object>(
       to: string,
       options?: {
+        /**
+         * Bottom to top animation (iOS only)
+         */
         present?: boolean
       }
     ): Promise<T | null> =>
@@ -53,6 +56,9 @@ export function useNavigator() {
     (
       to: string,
       options?: {
+        /**
+         * Animate when replaced
+         */
         animate?: boolean
       }
     ) => {
@@ -107,7 +113,15 @@ export function useNavigator() {
         }
       })
 
-      function send<T = object>(data: T) {
+      /**
+       * Send data to `await push()`
+       */
+      function send<T = object>(
+        /**
+         * Payload
+         */
+        data: T
+      ) {
         _data = data
 
         if (targetPromise) {

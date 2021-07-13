@@ -14,12 +14,12 @@ import {
 
 interface Props {
   /**
-   * 해당 스크린의 URL Path
+   * URL path
    */
   path: string
 
   /**
-   * 해당 스크린에 표시할 컴포넌트
+   * Component
    */
   component?: React.ComponentType<ScreenComponentProps>
 }

@@ -35,35 +35,32 @@ import {
 const DEFAULT_CUPERTINO_ANIMATION_DURATION = 350
 const DEFAULT_ANDROID_ANIMATION_DURATION = 270
 
-/**
- * Navigator가 이미 초기화되었는지 확인
- * 한 개의 history stack을 사용하기 때문에, 한 개의 앱에는 한 개의 Navigator만 허용
- */
 let isNavigatorInitialized = false
 
 interface NavigatorProps {
   /**
-   * 테마 (기본값: Web)
+   * Theme (default: `Web`)
    */
   theme?: NavigatorTheme
 
   /**
-   * 애니메이션 지속시간
+   * Transition animation duration
    */
   animationDuration?: number
 
   /**
-   * 빌트인 된 react-router-dom의 HashRouter를 없애고, 사용자가 직접 Router를 셋팅합니다
+   * Remove built-in `<HashRouter />`
+   * and use your own custom `<Router />`
    */
   useCustomRouter?: boolean
 
   /**
-   * 닫기 버튼을 눌렀을때 해당 콜백이 호출됩니다
+   * When close button clicked
    */
   onClose?: () => void
 
   /**
-   * 네비게이션의 깊이가 변할때마다 해당 콜백이 호출됩니다
+   * When navigation depth changed
    */
   onDepthChange?: (depth: number) => void
 }
