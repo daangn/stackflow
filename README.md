@@ -1,4 +1,4 @@
-![](./cover.png)
+![](./cover.svg)
 
 ## 시작하기
 

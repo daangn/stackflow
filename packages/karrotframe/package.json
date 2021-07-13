@@ -13,7 +13,7 @@
     "lib",
     "README.md",
     "LICENSE",
-    "cover.png"
+    "cover.svg"
   ],
   "scripts": {
     "dev": "webpack --config ./webpack/build.js --watch",
