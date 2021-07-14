@@ -23,7 +23,6 @@ import {
 } from './hooks/useHistoryEffect'
 import styles from './Navigator.scss'
 import {
-  GlobalState,
   increaseScreenInstancePtr,
   insertScreenInstance,
   mapScreenInstance,
@@ -63,7 +62,7 @@ interface NavigatorProps {
   /**
    * When navigation depth changed
    */
-  onDepthChange?: (depth: number, info: { screenPath: string }) => void
+  onDepthChange?: (depth: number) => void
 }
 const Navigator: React.FC<NavigatorProps> = (props) => {
   let h = (
@@ -99,8 +98,11 @@ const Navigator: React.FC<NavigatorProps> = (props) => {
   return h
 }
 
-type NavigatorScreensProps = Required<Pick<NavigatorProps, 'theme'>> &
-  Pick<NavigatorProps, 'onDepthChange' | 'onClose'>
+interface NavigatorScreensProps {
+  theme: NavigatorTheme
+  onClose?: () => void
+  onDepthChange?: (depth: number) => void
+}
 const NavigatorScreens: React.FC<NavigatorScreensProps> = (props) => {
   const location = useLocation()
   const history = useHistory()
@@ -248,24 +250,12 @@ const NavigatorScreens: React.FC<NavigatorScreensProps> = (props) => {
   }, [location.search])
 
   useEffect(() => {
-    const getCurrentScreen = (state: GlobalState) => {
-      const screenInstance = state.screenInstances[state.screenInstancePtr]
-      return state.screens[screenInstance.screenId]
-    }
-
-    const state = store.getState()
-    props.onDepthChange?.(state.screenInstancePtr, {
-      screenPath: getCurrentScreen(state)!.path,
-    })
-
     return store.listen((prevState, nextState) => {
       if (
         nextState.screenInstancePtr > -1 &&
         prevState.screenInstancePtr !== nextState.screenInstancePtr
       ) {
-        props.onDepthChange?.(nextState.screenInstancePtr, {
-          screenPath: getCurrentScreen(nextState)!.path,
-        })
+        props.onDepthChange?.(nextState.screenInstancePtr)
       }
     })
   }, [props.onDepthChange])
