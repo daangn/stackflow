@@ -18,8 +18,8 @@ const App: React.FC = () => {
   return (
     <Navigator
       theme="Cupertino"
-      onDepthChange={(depth) => {
-        console.log(depth)
+      onDepthChange={(depth, { screenPath }) => {
+        console.log(depth, screenPath)
       }}
       onClose={() => {
         window.alert('Close button clicked!')
