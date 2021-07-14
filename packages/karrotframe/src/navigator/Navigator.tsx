@@ -250,9 +250,12 @@ const NavigatorScreens: React.FC<NavigatorScreensProps> = (props) => {
   }, [location.search])
 
   useEffect(() => {
-    return store.listen((_, state) => {
-      if (state.screenInstancePtr > -1) {
-        props.onDepthChange?.(state.screenInstancePtr)
+    return store.listen((prevState, nextState) => {
+      if (
+        nextState.screenInstancePtr > -1 &&
+        prevState.screenInstancePtr !== nextState.screenInstancePtr
+      ) {
+        props.onDepthChange?.(nextState.screenInstancePtr)
       }
     })
   }, [props.onDepthChange])
