@@ -50,8 +50,8 @@ module.exports = {
   },
   externals: [
     /clsx/,
-    /fast-deep-equal/,
     /history/,
+    /react-fast-compare/,
     /react-transition-group/,
     /zenscroll/,
     /react/,

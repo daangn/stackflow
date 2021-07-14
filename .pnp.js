@@ -13035,6 +13035,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["prettier", "npm:2.2.1"],
             ["react", "npm:16.14.0"],
             ["react-dom", "virtual:f1f17cd4dad23d97d3274d4240aabf5c79c7702d5d0a0f2803d8b3dccf5be49ec01e4ddff04a2bb33e6bbf93b5cb9f48958c566805538889d2586f9617b3166a#npm:16.14.0"],
+            ["react-fast-compare", "npm:3.2.0"],
             ["react-router-dom", "virtual:f1f17cd4dad23d97d3274d4240aabf5c79c7702d5d0a0f2803d8b3dccf5be49ec01e4ddff04a2bb33e6bbf93b5cb9f48958c566805538889d2586f9617b3166a#npm:5.2.0"],
             ["react-transition-group", "virtual:3bafbe17d1a25dcb81b90db42c3e5b2362ef4869fc7399d7e11fcb6246a5919713e38f19bc3a79d2b4a68f0d001cd992887a339f4183e11923389712779eb47b#npm:4.4.2"],
             ["rimraf", "npm:3.0.2"],
@@ -13083,6 +13084,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["history", "npm:4.10.1"],
             ["mini-css-extract-plugin", "virtual:44240c59a92239afc147d2e3436820f442b334695940ee834809ffea919c88e86c2ba6b80694bf288c306842e76b9b59d66dd280b8c4a67d34c0c6e3d8902b93#npm:1.3.8"],
             ["prettier", "npm:2.2.1"],
+            ["react-fast-compare", "npm:3.2.0"],
             ["react-transition-group", "virtual:44240c59a92239afc147d2e3436820f442b334695940ee834809ffea919c88e86c2ba6b80694bf288c306842e76b9b59d66dd280b8c4a67d34c0c6e3d8902b93#npm:4.4.2"],
             ["rimraf", "npm:3.0.2"],
             ["sass", "npm:1.35.1"],
@@ -16810,6 +16812,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/react-error-overlay-npm-6.0.9-96e7e1e53a-5e971284cc.zip/node_modules/react-error-overlay/",
           "packageDependencies": [
             ["react-error-overlay", "npm:6.0.9"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["react-fast-compare", [
+        ["npm:3.2.0", {
+          "packageLocation": "./.yarn/cache/react-fast-compare-npm-3.2.0-fbfa6627d9-6fe65c889e.zip/node_modules/react-fast-compare/",
+          "packageDependencies": [
+            ["react-fast-compare", "npm:3.2.0"]
           ],
           "linkType": "HARD",
         }]

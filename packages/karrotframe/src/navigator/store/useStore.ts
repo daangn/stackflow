@@ -1,4 +1,4 @@
-import deepEqual from 'fast-deep-equal'
+import compare from 'react-fast-compare'
 import { useEffect, useState } from 'react'
 
 import { Store } from './createStore'
@@ -17,8 +17,8 @@ export function useStore<T extends {}, V>(
       const nextValue = selector(nextState)
 
       if (
-        (prevValue && !deepEqual(prevValue, nextValue)) ||
-        !deepEqual(value, nextValue)
+        (prevValue && !compare(prevValue, nextValue)) ||
+        !compare(value, nextValue)
       ) {
         setValue(nextValue)
       }

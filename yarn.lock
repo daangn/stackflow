@@ -9609,6 +9609,7 @@ fsevents@^1.2.7:
     history: ^4.7.8
     mini-css-extract-plugin: ^1.3.8
     prettier: ^2.1.1
+    react-fast-compare: ^3.2.0
     react-transition-group: ^4.4.2
     rimraf: ^3.0.2
     sass: ^1.35.1
@@ -12839,6 +12840,13 @@ fsevents@^1.2.7:
   version: 6.0.9
   resolution: "react-error-overlay@npm:6.0.9"
   checksum: 5e971284cc76af684940d78a91c8eac639f16b3b9500a03423ae177392cdaf320788b9c9112f58a2dde4f5a80688acdbc89334827354e95493244968af94830f
+  languageName: node
+  linkType: hard
+
+"react-fast-compare@npm:^3.2.0":
+  version: 3.2.0
+  resolution: "react-fast-compare@npm:3.2.0"
+  checksum: 6fe65c889eb4f326e97769135f97b3d63ac68737866f9c37f9625c9de4f5eaa9abed6f748eb3fd6a66808392118842916309cab7cfa99c67991f0c837433d6d2
   languageName: node
   linkType: hard
 
