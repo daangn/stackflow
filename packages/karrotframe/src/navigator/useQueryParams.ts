@@ -7,13 +7,27 @@ export function useQueryParams<
   T extends { [key in keyof T]: string } = {}
 >(): Partial<T> {
   const location = useLocation()
-  const { as, path } = useScreenInstanceInfo()
+  const { as } = useScreenInstanceInfo()
+
+  const parse = useMemo(() => {
+    let prevParams: Partial<T> = {}
+
+    return ({ pathname, search }: { pathname: string; search: string }) => {
+      if (pathname === as) {
+        prevParams = Object.fromEntries(
+          new URLSearchParams(search).entries()
+        ) as Partial<T>
+      }
+      return prevParams
+    }
+  }, [as])
 
   return useMemo(
     () =>
-      Object.fromEntries(
-        new URLSearchParams(location.search).entries()
-      ) as Partial<T>,
-    [as, path]
+      parse({
+        pathname: location.pathname,
+        search: location.search,
+      }),
+    [location.pathname, location.search]
   )
 }
