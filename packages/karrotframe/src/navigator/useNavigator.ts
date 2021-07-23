@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 
 import { useScreenInstanceInfo } from './contexts'
@@ -140,5 +140,12 @@ export function useNavigator() {
     [history]
   )
 
-  return { push, replace, pop }
+  return useMemo(
+    () => ({
+      push,
+      replace,
+      pop,
+    }),
+    [push, replace, pop]
+  )
 }
