@@ -5,7 +5,9 @@ import { useHistory } from 'react-router-dom'
 
 const PageUseQueryParams: React.FC = () => {
   const history = useHistory()
-  const { hello } = useQueryParams<{ hello: 'world' }>()
+  const { hello } = useQueryParams<{ hello: 'world' }>({
+    ignoreNestedRoutes: true,
+  })
 
   return (
     <Container>

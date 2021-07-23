@@ -5,7 +5,9 @@ import { useScreenInstanceInfo } from './contexts'
 
 export function useQueryParams<
   T extends { [key in keyof T]: string } = {}
->(): Partial<T> {
+>(options?: { ignoreNestedRoutes?: boolean }): Partial<T> {
+  const ignoreNestedRoutes = !!options?.ignoreNestedRoutes
+
   const location = useLocation()
   const { as } = useScreenInstanceInfo()
 
@@ -22,12 +24,17 @@ export function useQueryParams<
     }
   }, [as])
 
-  return useMemo(
+  const queryParams = useMemo(
     () =>
       parse({
         pathname: location.pathname,
         search: location.search,
       }),
-    [location.pathname, location.search]
+    [
+      ignoreNestedRoutes,
+      ...(ignoreNestedRoutes ? [as] : [location.pathname, location.search]),
+    ]
   )
+
+  return queryParams
 }
