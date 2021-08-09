@@ -31,7 +31,9 @@
     "react-router-dom": "^5.2.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.11.6",
     "@emotion/babel-plugin": "^11.2.0",
+    "@testing-library/dom": "^6.15.0",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
