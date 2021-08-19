@@ -1,9 +1,20 @@
-<img src="./cover.svg" style="width: 100%" />
+<img src="./cover.svg" style="width: 100%;" />
+
+<div align="center">
+
+![](https://img.shields.io/npm/v/karrotframe)
+![](https://img.shields.io/npm/l/karrotframe)
+![](https://img.shields.io/npm/dt/karrotframe)
+
+</div>
 
 ## 시작하기
 
 ```bash
 $ yarn add karrotframe
+
+# peer-dependencies
+$ yarn add react react-dom react-router-dom
 ```
 
 ```typescript
@@ -327,14 +338,3 @@ const ExampleScreen = () => {
 ```
 
 > path 내에 `_si` 쿼리스트링이 포함되어있지 않으면 Karrotframe은 내부 라우팅으로 인식해 별도의 애니메이션 처리를 위한 작업을 하지 않습니다
-
-## Contributor
-
-- Bucky (bucky@daangn.com)
-- Tony (tony@daangn.com)
-- Victor (victor@daangn.com)
-- Steve (steve@daangn.com)
-
-## Contributing
-
-Karrotframe에 새 기능 또는 옵션을 Contribute 하시려면 [Contribution Guide](./CONTRIBUTING.md)를 확인하세요
