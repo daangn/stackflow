@@ -22,7 +22,8 @@
     "build:dts:index": "dts-bundle-generator ./src/index.ts -o ./lib/index.d.ts --no-check",
     "build:dts:navigator": "dts-bundle-generator ./src/navigator/index.ts -o ./lib/navigator.d.ts --no-check",
     "build:runtime": "webpack --config ./webpack/build.js",
-    "clean": "rimraf lib && rimraf node_modules"
+    "clean": "rimraf lib && rimraf node_modules",
+    "prepack": "yarn clean && yarn build"
   },
   "dependencies": {
     "@types/history": "^4.7.8",
