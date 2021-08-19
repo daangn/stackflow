@@ -3,7 +3,7 @@ import { useHistory, useLocation } from 'react-router-dom'
 
 import { useScreenInstanceInfo } from './contexts'
 import { getNavigatorParams, NavigatorParamKeys } from './helpers'
-import { useUniqueId } from './hooks/useUniqueId'
+import { useUniqueId } from './hooks'
 import { useStore, useStoreActions } from './store'
 
 export function useNavigator() {

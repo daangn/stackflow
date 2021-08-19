@@ -16,11 +16,12 @@ import {
   NavigatorTheme,
 } from './helpers'
 import {
+  UniqueIdProvider,
   useHistoryPopEffect,
   useHistoryPushEffect,
   useHistoryReplaceEffect,
-} from './hooks/useHistoryEffect'
-import { UniqueIdProvider, useUniqueId } from './hooks/useUniqueId'
+  useUniqueId,
+} from './hooks'
 import styles from './Navigator.scss'
 import {
   ScreenInstance,
