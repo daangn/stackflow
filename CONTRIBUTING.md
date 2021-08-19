@@ -12,9 +12,9 @@ $ yarn
 
 > Karrotframe은 [Yarn 3](https://yarnpkg.com)와 Yarn workspace를 사용합니다
 
-### Karrotframe 빌드하기
+### `@karrotframe/navigator` 빌드하기
 
-`/packages/karrotframe` 폴더에서 다음 명령어로 빌드합니다
+`/packages/navigator` 폴더에서 다음 명령어로 빌드합니다
 
 ```bash
 $ yarn build
@@ -28,12 +28,12 @@ $ yarn build
 $ yarn start
 ```
 
-### Karrotframe을 수정하면서 기능 테스트용 예제 프로젝트의 변화를 봅니다
+### `@karrotframe/navigator`를 수정하면서 기능 테스트용 예제 프로젝트의 변화를 봅니다
 
 ```bash
 # /examples/spec
 $ yarn start
 
-# 새 터미널 창의 /packages/karrotframe
+# 새 터미널 창의 /packages/navigator
 $ yarn dev
 ```

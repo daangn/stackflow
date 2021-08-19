@@ -3,7 +3,10 @@
 /.pnp.js
 
 /packages/karrotframe/node_modules
-/packages/karrotframe/lib
+/packages/karrotframe/index.css
+/packages/karrotframe/index.d.ts
+/packages/karrotframe/index.js
+/packages/karrotframe/index.js.map
 
 /examples/playground/node_modules
 /examples/playground/build
