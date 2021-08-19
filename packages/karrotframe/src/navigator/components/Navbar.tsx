@@ -4,7 +4,7 @@ import React, { useLayoutEffect, useRef, useState } from 'react'
 import { IconBack, IconClose } from '../assets'
 import { useNavigatorOptions } from '../contexts'
 import { NavigatorTheme } from '../helpers'
-import { store, useStore } from '../store'
+import { useStoreSelector } from '../store'
 import { useNavigator } from '../useNavigator'
 import styles from './Navbar.scss'
 
@@ -19,8 +19,8 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = (props) => {
   const { pop } = useNavigator()
   const navigatorOptions = useNavigatorOptions()
-  const screenInstanceOptions = useStore(
-    store,
+
+  const screenInstanceOptions = useStoreSelector(
     (state) => state.screenInstanceOptions
   )
 

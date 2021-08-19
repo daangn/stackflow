@@ -2,17 +2,18 @@ import { useCallback, useMemo } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 
 import { useScreenInstanceInfo } from './contexts'
-import {
-  generateScreenInstanceId,
-  getNavigatorParams,
-  NavigatorParamKeys,
-} from './helpers'
-import { addScreenInstancePromise, store } from './store'
+import { getNavigatorParams, NavigatorParamKeys } from './helpers'
+import { useUniqueId } from './hooks/useUniqueId'
+import { useStore, useStoreActions } from './store'
 
 export function useNavigator() {
   const history = useHistory()
   const location = useLocation()
   const screenInfo = useScreenInstanceInfo()
+  const { uid } = useUniqueId()
+
+  const store = useStore()
+  const { addScreenInstancePromise } = useStoreActions()
 
   const searchParams = new URLSearchParams(location.search)
   const { present, screenInstanceId } = getNavigatorParams(searchParams)
@@ -30,10 +31,7 @@ export function useNavigator() {
       new Promise((resolve) => {
         const { pathname, searchParams } = new URL(to, /* dummy */ 'file://')
 
-        searchParams.set(
-          NavigatorParamKeys.screenInstanceId,
-          generateScreenInstanceId()
-        )
+        searchParams.set(NavigatorParamKeys.screenInstanceId, uid())
 
         if (options?.present) {
           searchParams.set(NavigatorParamKeys.present, 'true')
@@ -49,7 +47,7 @@ export function useNavigator() {
 
         history.push(`${pathname}?${searchParams.toString()}`)
       }),
-    [history, screenInfo]
+    [screenInfo, history]
   )
 
   const replace = useCallback(
@@ -65,10 +63,7 @@ export function useNavigator() {
       const { pathname, searchParams } = new URL(to, /* dummy */ 'file://')
 
       if (options?.animate) {
-        searchParams.set(
-          NavigatorParamKeys.screenInstanceId,
-          generateScreenInstanceId()
-        )
+        searchParams.set(NavigatorParamKeys.screenInstanceId, uid())
       } else {
         if (screenInstanceId) {
           searchParams.set(

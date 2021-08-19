@@ -5,12 +5,7 @@ import {
   ScreenInstanceOptionsProvider,
 } from './contexts'
 import { ScreenComponentProps } from './ScreenComponentProps'
-import {
-  addScreen,
-  addScreenInstanceOption,
-  NavbarOptions,
-  removeScreen,
-} from './store'
+import { NavbarOptions, useStoreActions } from './store'
 
 interface Props {
   /**
@@ -25,6 +20,7 @@ interface Props {
 }
 const Screen: React.FC<Props> = (props) => {
   const { component: Component } = props
+  const { addScreen, addScreenInstanceOption, removeScreen } = useStoreActions()
 
   useEffect(() => {
     if (!props.children && !Component) {

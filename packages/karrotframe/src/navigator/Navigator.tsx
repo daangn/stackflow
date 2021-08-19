@@ -11,7 +11,6 @@ import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import { Card } from './components'
 import { NavigatorOptionsProvider, useNavigatorOptions } from './contexts'
 import {
-  generateScreenInstanceId,
   getNavigatorParams,
   NavigatorParamKeys,
   NavigatorTheme,
@@ -21,21 +20,24 @@ import {
   useHistoryPushEffect,
   useHistoryReplaceEffect,
 } from './hooks/useHistoryEffect'
+import { UniqueIdProvider, useUniqueId } from './hooks/useUniqueId'
 import styles from './Navigator.scss'
 import {
-  increaseScreenInstancePtr,
-  insertScreenInstance,
-  mapScreenInstance,
   ScreenInstance,
-  setScreenInstancePtr,
-  store,
+  StoreProvider,
   useStore,
+  useStoreActions,
+  useStoreSelector,
 } from './store'
+
+declare global {
+  interface Window {
+    __KARROTFRAME__?: boolean
+  }
+}
 
 const DEFAULT_CUPERTINO_ANIMATION_DURATION = 350
 const DEFAULT_ANDROID_ANIMATION_DURATION = 270
-
-let isNavigatorInitialized = false
 
 interface NavigatorProps {
   /**
@@ -81,13 +83,17 @@ const Navigator: React.FC<NavigatorProps> = (props) => {
           })(),
       }}
     >
-      <NavigatorScreens
-        theme={props.theme ?? 'Android'}
-        onClose={props.onClose}
-        onDepthChange={props.onDepthChange}
-      >
-        {props.children}
-      </NavigatorScreens>
+      <UniqueIdProvider>
+        <StoreProvider>
+          <NavigatorScreens
+            theme={props.theme ?? 'Android'}
+            onClose={props.onClose}
+            onDepthChange={props.onDepthChange}
+          >
+            {props.children}
+          </NavigatorScreens>
+        </StoreProvider>
+      </UniqueIdProvider>
     </NavigatorOptionsProvider>
   )
 
@@ -106,11 +112,19 @@ interface NavigatorScreensProps {
 const NavigatorScreens: React.FC<NavigatorScreensProps> = (props) => {
   const location = useLocation()
   const history = useHistory()
+  const { uid } = useUniqueId()
 
-  const { screenInstances, screenInstancePtr } = useStore(store, (state) => ({
+  const store = useStore()
+  const { screenInstances, screenInstancePtr } = useStoreSelector((state) => ({
     screenInstances: state.screenInstances,
     screenInstancePtr: state.screenInstancePtr,
   }))
+  const {
+    increaseScreenInstancePtr,
+    insertScreenInstance,
+    mapScreenInstance,
+    setScreenInstancePtr,
+  } = useStoreActions()
 
   const pushScreen = useCallback(
     ({
@@ -199,23 +213,22 @@ const NavigatorScreens: React.FC<NavigatorScreensProps> = (props) => {
   )
 
   useEffect(() => {
-    if (isNavigatorInitialized) {
+    if (typeof window === 'undefined') {
+      return
+    }
+    if (window.__KARROTFRAME__) {
       throw new Error('한 개의 앱에는 한 개의 Navigator만 허용됩니다')
     }
 
-    const searchParams = new URLSearchParams(location.search)
+    window.__KARROTFRAME__ = true
 
-    searchParams.set(
-      NavigatorParamKeys.screenInstanceId,
-      generateScreenInstanceId()
-    )
+    const searchParams = new URLSearchParams(location.search)
+    searchParams.set(NavigatorParamKeys.screenInstanceId, uid())
 
     history.replace(`${location.pathname}?${searchParams.toString()}`)
 
-    isNavigatorInitialized = true
-
     return () => {
-      isNavigatorInitialized = false
+      window.__KARROTFRAME__ = false
     }
   }, [])
 
@@ -431,8 +444,7 @@ const Transition: React.FC<TransitionProps> = (props) => {
   const navigatorOptions = useNavigatorOptions()
   const nodeRef = useRef<HTMLDivElement>(null)
 
-  const { screens, screenInstancePtr, screenInstances } = useStore(
-    store,
+  const { screens, screenInstancePtr, screenInstances } = useStoreSelector(
     (state) => ({
       screens: state.screens,
       screenInstancePtr: state.screenInstancePtr,

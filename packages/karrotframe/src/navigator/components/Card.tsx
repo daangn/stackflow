@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import zenscroll from 'zenscroll'
 
 import { useNavigatorOptions } from '../contexts'
-import { setScreenEdge, store, useStore } from '../store'
+import { useStore, useStoreActions, useStoreSelector } from '../store'
 import { useNavigator } from '../useNavigator'
 import styles from './Card.scss'
 import Navbar from './Navbar'
@@ -25,10 +25,12 @@ const Card: React.FC<CardProps> = (props) => {
 
   const [popped, setPopped] = useState(false)
 
-  const { screenEdge, screenInstanceOptions } = useStore(store, (state) => ({
+  const store = useStore()
+  const { screenEdge, screenInstanceOptions } = useStoreSelector((state) => ({
     screenEdge: state.screenEdge,
     screenInstanceOptions: state.screenInstanceOptions,
   }))
+  const { setScreenEdge } = useStoreActions()
 
   const x = useRef<number>(0)
   const requestAnimationFrameLock = useRef<boolean>(false)
