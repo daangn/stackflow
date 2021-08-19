@@ -6,10 +6,9 @@ module.exports = {
   mode: 'production',
   entry: {
     index: path.resolve('./src/index.ts'),
-    navigator: path.resolve('./src/navigator/index.ts'),
   },
   output: {
-    path: path.resolve('./lib'),
+    path: path.resolve('./'),
     filename: '[name].js',
     libraryTarget: 'umd',
   },

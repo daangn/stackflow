@@ -1,5 +1,5 @@
 {
-  "name": "karrotframe-repo",
+  "name": "@karrotframe/monorepo",
   "license": "Apache-2.0",
   "scripts": {
     "prettify": "prettier --write ."

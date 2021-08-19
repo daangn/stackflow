@@ -11,16 +11,16 @@
 ## 시작하기
 
 ```bash
-$ yarn add karrotframe
+$ yarn add @karrotframe/navigator
 
 # peer-dependencies
 $ yarn add react react-dom react-router-dom
 ```
 
 ```typescript
-import 'karrotframe/lib/index.css'
+import '@karrotframe/navigator/index.css'
 
-import { ... } from 'karrotframe'
+import { ... } from '@karrotframe/navigator'
 ```
 
 ## 1. 네비게이터
@@ -39,7 +39,7 @@ import { ... } from 'karrotframe'
 `Navigator` 컴포넌트는 화면을 표현하는데 반드시 필요한 요소들이 포함됩니다. 컴포넌트 트리 상단에 포함해주세요
 
 ```tsx
-import { Navigator } from 'karrotframe'
+import { Navigator } from '@karrotframe/navigator'
 
 const App: React.FC = () => {
   return (
@@ -68,7 +68,7 @@ const App: React.FC = () => {
 `Screen` 컴포넌트는 화면을 선언하는데 사용합니다. `Navigator` 안에 선언합니다.
 
 ```tsx
-import { Navigator, Screen } from 'karrotframe'
+import { Navigator, Screen } from '@karrotframe/navigator'
 
 const App: React.FC = () => {
   return (
@@ -99,7 +99,7 @@ const App: React.FC = () => {
 > `ScreenComponentProps`를 통해 스크린에 대한 정보를 받아올 수 있습니다
 
 ```tsx
-import { ScreenComponentProps } from 'karrotframe'
+import { ScreenComponentProps } from '@karrotframe/navigator'
 
 const MyComponent: React.FC<ScreenComponentProps> = (props) => {
   console.log(isTop) // 현재 최상단인지 여부
@@ -112,7 +112,7 @@ const MyComponent: React.FC<ScreenComponentProps> = (props) => {
 기본적으로 Screen은 상단 네비게이션 바를 포함하고 있지 않습니다. 기본 제공되는 상단 네비게이션 바를 추가, 수정하기 위해서는 `ScreenHelmet` 컴포넌트를 사용하세요.
 
 ```tsx
-import { ScreenHelmet } from 'karrotframe'
+import { ScreenHelmet } from '@karrotframe/navigator'
 
 const MyComponent: React.FC = () => {
   return (
@@ -173,7 +173,7 @@ const Post: React.FC = () => {
 화면의 전환간 path의 변경으로 인해 의도하지 않은 화면의 변경이 발생하지 않도록 하기 위해, `useQueryParam`을 통해 querystring을 사용하고, `useParams`를 통해 path parameter를 사용할 수 있습니다.
 
 ```tsx
-import { useQueryParams, useParams } from 'karrotframe'
+import { useQueryParams, useParams } from '@karrotframe/navigator'
 
 const Post: React.FC = () => {
   /**
@@ -195,7 +195,7 @@ const Post: React.FC = () => {
 화면 전환을 수행합니다.
 
 ```tsx
-import { useNavigator } from 'karrotframe'
+import { useNavigator } from '@karrotframe/navigator'
 
 const Posts: React.FC = () => {
   const { push, pop, replace } = useNavigator()
@@ -248,7 +248,7 @@ const Posts: React.FC = () => {
 > `pop()` 함수 내 `depth` argument를 2 이상으로 부여할 시 여러 화면을 뛰어넘어서 전송도 가능합니다.
 
 ```tsx
-import { useNavigator } from 'karrotframe'
+import { useNavigator } from '@karrotframe/navigator'
 
 const Posts: React.FC = () => {
   const { push } = useNavigator()
@@ -294,7 +294,7 @@ const PostWriteForm: React.FC = () => {
 #### 라우터 교체하기
 
 ```tsx
-import { Navigator } from 'karrotframe'
+import { Navigator } from '@karrotframe/navigator'
 import { HashRouter } from 'react-router-dom'
 
 const App = () => {

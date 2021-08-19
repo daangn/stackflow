@@ -1,6 +1,7 @@
 import React from 'react'
+
 import styled from '@emotion/styled'
-import { ScreenHelmet } from 'karrotframe'
+import { ScreenHelmet } from '@karrotframe/navigator'
 
 const Page404: React.FC = () => {
   return (

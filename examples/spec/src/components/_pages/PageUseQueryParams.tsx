@@ -1,7 +1,8 @@
 import React from 'react'
-import styled from '@emotion/styled'
-import { ScreenHelmet, useQueryParams } from 'karrotframe'
 import { useHistory } from 'react-router-dom'
+
+import styled from '@emotion/styled'
+import { ScreenHelmet, useQueryParams } from '@karrotframe/navigator'
 
 const PageUseQueryParams: React.FC = () => {
   const history = useHistory()

@@ -1,28 +1,28 @@
 {
-  "name": "karrotframe",
+  "name": "@karrotframe/navigator",
   "version": "0.16.11",
   "description": "UX Enhancer",
   "repository": "https://github.com/daangn/karrotframe",
   "license": "Apache-2.0",
   "author": "Danggeun Market Inc.",
-  "main": "lib/index.js",
-  "module": "lib/index.js",
-  "source": "src/index.ts",
-  "types": "lib",
+  "main": "index.js",
+  "types": "index.d.ts",
   "files": [
-    "lib",
+    "index.css",
+    "index.d.ts",
+    "index.js",
+    "index.js.map",
     "README.md",
     "LICENSE",
     "cover.svg"
   ],
   "scripts": {
     "dev": "webpack --config ./webpack/build.js --watch",
-    "build": "yarn clean && yarn build:check && yarn build:runtime && yarn build:dts:index && yarn build:dts:navigator",
+    "build": "yarn clean && yarn build:check && yarn build:runtime && yarn build:dts",
     "build:check": "tsc",
-    "build:dts:index": "dts-bundle-generator ./src/index.ts -o ./lib/index.d.ts --no-check",
-    "build:dts:navigator": "dts-bundle-generator ./src/navigator/index.ts -o ./lib/navigator.d.ts --no-check",
+    "build:dts": "dts-bundle-generator ./src/index.ts -o ./index.d.ts --no-check",
     "build:runtime": "webpack --config ./webpack/build.js",
-    "clean": "rimraf lib && rimraf node_modules",
+    "clean": "rimraf index.css && rimraf index.d.ts && rimraf index.js && rimraf index.js.map && rimraf node_modules",
     "prepack": "yarn clean && yarn build"
   },
   "dependencies": {

@@ -23,7 +23,7 @@
     "extends": "react-app"
   },
   "dependencies": {
-    "karrotframe": "workspace:*",
+    "@karrotframe/navigator": "workspace:packages/navigator",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.2.0"
