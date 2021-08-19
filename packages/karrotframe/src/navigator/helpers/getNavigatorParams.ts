@@ -1,7 +1,7 @@
-export const NavigatorParamKeys = {
+export const NavigatorParamKeys = Object.freeze({
   screenInstanceId: '_si',
   present: '_present',
-}
+})
 
 export type NavigatorParams = {
   screenInstanceId: string | null
