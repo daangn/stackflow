@@ -30,17 +30,15 @@ module.exports = {
         type: 'javascript/auto',
       },
       {
-        test: /\.(sa|sc|c)ss$/,
+        test: /\.vanilla\.css$/i,
         use: [
           MiniCssExtractPlugin.loader,
           {
-            loader: 'css-loader',
+            loader: require.resolve('css-loader'),
             options: {
-              sourceMap: false,
-              // modules: { localIdentName: 'kf-[hash:base64:5]' },
+              url: false,
             },
           },
-          'sass-loader',
         ],
       },
     ],
