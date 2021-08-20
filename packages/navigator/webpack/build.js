@@ -1,6 +1,7 @@
 const path = require('path')
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const { VanillaExtractPlugin } = require('@vanilla-extract/webpack-plugin')
 
 module.exports = {
   mode: 'production',
@@ -36,7 +37,7 @@ module.exports = {
             loader: 'css-loader',
             options: {
               sourceMap: false,
-              modules: { localIdentName: 'kf-[hash:base64:5]' },
+              // modules: { localIdentName: 'kf-[hash:base64:5]' },
             },
           },
           'sass-loader',
@@ -61,5 +62,9 @@ module.exports = {
   optimization: {
     minimize: false,
   },
-  plugins: [new ForkTsCheckerWebpackPlugin(), new MiniCssExtractPlugin()],
+  plugins: [
+    new ForkTsCheckerWebpackPlugin(),
+    new VanillaExtractPlugin(),
+    new MiniCssExtractPlugin(),
+  ],
 }

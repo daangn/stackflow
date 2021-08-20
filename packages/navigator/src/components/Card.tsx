@@ -1,11 +1,18 @@
-import classnames from 'clsx'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import zenscroll from 'zenscroll'
 
 import { useNavigatorOptions } from '../contexts'
 import { useStore, useStoreActions, useStoreSelector } from '../store'
 import { useNavigator } from '../useNavigator'
-import styles from './Card.scss'
+import {
+  cardDim,
+  cardEdge,
+  cardFrame,
+  cardFrameOffset,
+  cardMain,
+  cardMainOffset,
+  cardTransitionNode,
+} from './Card.css'
 import Navbar from './Navbar'
 
 const $frameOffsetSet = new Set<HTMLDivElement>()
@@ -23,6 +30,9 @@ const Card: React.FC<CardProps> = (props) => {
   const navigator = useNavigator()
   const navigatorOptions = useNavigatorOptions()
 
+  const android = navigatorOptions.theme === 'Android'
+  const cupertino = navigatorOptions.theme === 'Cupertino'
+
   const [popped, setPopped] = useState(false)
 
   const store = useStore()
@@ -38,9 +48,6 @@ const Card: React.FC<CardProps> = (props) => {
   const dimRef = useRef<HTMLDivElement>(null)
   const frameRef = useRef<HTMLDivElement>(null)
   const frameOffsetRef = useRef<HTMLDivElement>(null)
-
-  const isNavbarVisible =
-    screenInstanceOptions[props.screenInstanceId]?.navbar.visible
 
   useEffect(() => {
     const $frameOffset = frameOffsetRef.current
@@ -144,10 +151,9 @@ const Card: React.FC<CardProps> = (props) => {
         if ($frame) {
           $frame.style.overflowY = ''
           $frame.style.transform = ''
-          $frame.style.transition =
-            navigatorOptions.theme === 'Cupertino'
-              ? `transform ${navigatorOptions.animationDuration}ms`
-              : ''
+          $frame.style.transition = cupertino
+            ? `transform ${navigatorOptions.animationDuration}ms`
+            : ''
         }
         $frameOffsetSet.forEach(($frameOffset) => {
           $frameOffset.style.transform = ''
@@ -169,20 +175,23 @@ const Card: React.FC<CardProps> = (props) => {
     screenInstanceOption?.navbar.onTopClick?.()
   }, [])
 
+  const isNavbarVisible =
+    screenInstanceOptions[props.screenInstanceId]?.navbar.visible ?? false
+
+  const cupertinoAndIsPresent = cupertino && props.isPresent
+  const cupertinoAndIsNavbarVisible = cupertino && isNavbarVisible
+  const androidAndIsRoot = android && props.isRoot
+  const androidAndIsNavbarVisible = android && isNavbarVisible
+
   return (
-    <div
-      ref={props.nodeRef}
-      className={classnames(styles.cardTransitionNode, {
-        [styles.isNotPresent]: !props.isPresent,
-        [styles.isPresent]: props.isPresent,
-      })}
-    >
+    <div ref={props.nodeRef} className={cardTransitionNode}>
       {!props.isRoot && (
         <div
           ref={dimRef}
-          className={classnames(styles.cardDim, {
-            [styles.isNavbarVisible]: !!isNavbarVisible,
-            [styles.isPresent]: props.isPresent,
+          className={cardDim({
+            cupertinoAndIsNavbarVisible,
+            cupertinoAndIsPresent,
+            android,
           })}
           style={{
             transition: `opacity ${navigatorOptions.animationDuration}ms`,
@@ -190,29 +199,31 @@ const Card: React.FC<CardProps> = (props) => {
         />
       )}
       <div
-        className={classnames(styles.cardMainOffset, {
-          [styles.isNotTop]: !props.isTop,
+        className={cardMainOffset({
+          androidAndIsNotTop: android && !props.isTop,
         })}
         style={{
           transition: `transform ${navigatorOptions.animationDuration}ms`,
         }}
       >
         <div
-          className={classnames(styles.cardMain, {
-            [styles.isNavbarVisible]: !!isNavbarVisible,
-            [styles.isPresent]: props.isPresent,
-            [styles.isRoot]: props.isRoot,
+          className={cardMain({
+            android,
+            androidAndIsNavbarVisible,
+            androidAndIsRoot,
+            cupertinoAndIsNavbarVisible,
+            cupertinoAndIsPresent,
           })}
           style={{
             transition:
-              navigatorOptions.theme === 'Cupertino' && props.isPresent
+              cupertino && props.isPresent
                 ? `transform ${navigatorOptions.animationDuration}ms`
-                : navigatorOptions.theme === 'Android'
+                : android
                 ? `transform ${navigatorOptions.animationDuration}ms, opacity ${navigatorOptions.animationDuration}ms`
                 : undefined,
           }}
         >
-          {!!isNavbarVisible && (
+          {isNavbarVisible && (
             <Navbar
               screenInstanceId={props.screenInstanceId}
               theme={navigatorOptions.theme}
@@ -224,8 +235,9 @@ const Card: React.FC<CardProps> = (props) => {
           )}
           <div
             ref={frameOffsetRef}
-            className={classnames(styles.cardFrameOffset, {
-              [styles.isNotTop]: !props.isTop,
+            className={cardFrameOffset({
+              cupertinoAndIsNotPresent: cupertino && !props.isPresent,
+              cupertinoAndIsNotTop: cupertino && !props.isTop,
             })}
             style={{
               transition: `transform ${navigatorOptions.animationDuration}ms`,
@@ -233,34 +245,32 @@ const Card: React.FC<CardProps> = (props) => {
           >
             <div
               ref={frameRef}
-              className={classnames('kf-frame', styles.cardFrame, {
-                [styles.isNotRoot]: !props.isRoot,
-                [styles.isPresent]: props.isPresent,
+              className={cardFrame({
+                cupertino,
+                cupertinoAndIsNotRoot: cupertino && !props.isRoot,
+                cupertinoAndIsPresent,
+                cupertinoAndIsNotPresent: cupertino && !props.isPresent,
               })}
               style={{
-                transition:
-                  navigatorOptions.theme === 'Cupertino'
-                    ? `transform ${navigatorOptions.animationDuration}ms`
-                    : undefined,
+                transition: cupertino
+                  ? `transform ${navigatorOptions.animationDuration}ms`
+                  : undefined,
               }}
             >
               {props.children}
             </div>
           </div>
-          {navigatorOptions.theme === 'Cupertino' &&
-            !props.isRoot &&
-            !props.isPresent &&
-            !popped && (
-              <div
-                className={classnames(styles.cardEdge, {
-                  [styles.isNavbarNotVisible]: !isNavbarVisible,
-                  [styles.isNavbarVisible]: !!isNavbarVisible,
-                })}
-                onTouchStart={onEdgeTouchStart}
-                onTouchMove={onEdgeTouchMove}
-                onTouchEnd={onEdgeTouchEnd}
-              />
-            )}
+          {cupertino && !props.isRoot && !props.isPresent && !popped && (
+            <div
+              className={cardEdge({
+                cupertinoAndIsNavbarVisible,
+                isNavbarVisible,
+              })}
+              onTouchStart={onEdgeTouchStart}
+              onTouchMove={onEdgeTouchMove}
+              onTouchEnd={onEdgeTouchEnd}
+            />
+          )}
         </div>
       </div>
     </div>

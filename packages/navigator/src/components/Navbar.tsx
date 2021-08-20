@@ -1,4 +1,3 @@
-import classnames from 'clsx'
 import React, { useLayoutEffect, useRef, useState } from 'react'
 
 import { IconBack, IconClose } from '../assets'
@@ -6,7 +5,20 @@ import { useNavigatorOptions } from '../contexts'
 import { NavigatorTheme } from '../helpers'
 import { useStoreSelector } from '../store'
 import { useNavigator } from '../useNavigator'
-import styles from './Navbar.scss'
+import {
+  navbar,
+  navbarBack,
+  navbarCenter,
+  navbarCenterMain,
+  navbarCenterMainEdge,
+  navbarCenterMainText,
+  navbarClose,
+  navbarFlex,
+  navbarLeft,
+  navbarMain,
+  navbarRight,
+  navbarSvgIcon,
+} from './Navbar.css'
 
 interface NavbarProps {
   screenInstanceId: string
@@ -19,6 +31,9 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = (props) => {
   const { pop } = useNavigator()
   const navigatorOptions = useNavigatorOptions()
+
+  const android = navigatorOptions.theme === 'Android'
+  const cupertino = navigatorOptions.theme === 'Cupertino'
 
   const screenInstanceOptions = useStoreSelector(
     (state) => state.screenInstanceOptions
@@ -71,7 +86,7 @@ const Navbar: React.FC<NavbarProps> = (props) => {
       <a
         role="text"
         aria-label="닫기"
-        className={styles.navbarClose}
+        className={navbarClose}
         onClick={props.onClose}
       >
         {screenInstanceOption.navbar.customCloseButton}
@@ -80,10 +95,10 @@ const Navbar: React.FC<NavbarProps> = (props) => {
       <a
         role="text"
         aria-label="닫기"
-        className={styles.navbarClose}
+        className={navbarClose}
         onClick={props.onClose}
       >
-        <IconClose />
+        <IconClose className={navbarSvgIcon} />
       </a>
     ))
 
@@ -93,7 +108,7 @@ const Navbar: React.FC<NavbarProps> = (props) => {
       <a
         role="text"
         aria-label="뒤로가기"
-        className={styles.navbarBack}
+        className={navbarBack}
         onClick={onBackClick}
       >
         {screenInstanceOption.navbar.customBackButton}
@@ -102,13 +117,13 @@ const Navbar: React.FC<NavbarProps> = (props) => {
       <a
         role="text"
         aria-label="뒤로가기"
-        className={styles.navbarBack}
+        className={navbarBack}
         onClick={onBackClick}
       >
         {navigatorOptions.theme === 'Cupertino' && props.isPresent ? (
-          <IconClose />
+          <IconClose className={navbarSvgIcon} />
         ) : (
-          <IconBack />
+          <IconBack className={navbarSvgIcon} />
         )}
       </a>
     ))
@@ -123,30 +138,44 @@ const Navbar: React.FC<NavbarProps> = (props) => {
   const noBorder = screenInstanceOption?.navbar.noBorder
 
   return (
-    <div ref={navbarRef} className={classnames('kf-navbar', styles.navbar)}>
+    <div
+      ref={navbarRef}
+      className={navbar({
+        cupertinoAndIsNotPresent: cupertino && !props.isPresent,
+      })}
+    >
       <div
-        className={classnames(styles.navbarMain, {
-          [styles.noBorder]: noBorder,
+        className={navbarMain({
+          android,
+          cupertino,
+          noBorder,
         })}
       >
-        <div className={styles.navbarFlex}>
-          <div className={styles.navbarLeft}>
+        <div className={navbarFlex}>
+          <div className={navbarLeft}>
             {screenInstanceOption?.navbar.closeButtonLocation === 'left' &&
               closeButton}
             {backButton}
             {screenInstanceOption?.navbar.appendLeft}
           </div>
-          <div ref={centerRef} className={styles.navbarCenter}>
+          <div
+            ref={centerRef}
+            className={navbarCenter({
+              android,
+            })}
+          >
             <div
-              className={classnames(styles.navbarCenterMain, {
-                [styles.isLeft]: isLeft,
+              className={navbarCenterMain({
+                android,
+                androidAndIsLeft: android && isLeft,
+                cupertino,
               })}
               style={{
                 width: centerMainWidth,
               }}
             >
               {typeof screenInstanceOption?.navbar.title === 'string' ? (
-                <div className={styles.navbarCenterMainText}>
+                <div className={navbarCenterMainText}>
                   {screenInstanceOption?.navbar.title}
                 </div>
               ) : (
@@ -154,14 +183,20 @@ const Navbar: React.FC<NavbarProps> = (props) => {
               )}
             </div>
             <div
-              className={styles.navbarCenterMainEdge}
+              className={navbarCenterMainEdge({
+                cupertino,
+              })}
               style={{
                 width: centerMainWidth,
               }}
               onClick={props.onTopClick}
             />
           </div>
-          <div className={styles.navbarRight}>
+          <div
+            className={navbarRight({
+              android,
+            })}
+          >
             {screenInstanceOption?.navbar.appendRight}
             {screenInstanceOption?.navbar.closeButtonLocation === 'right' &&
               closeButton}

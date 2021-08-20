@@ -1,8 +1,12 @@
 import React from 'react'
 
-const IconBack: React.FC = () => {
+interface IconBackProps {
+  className?: string
+}
+const IconBack: React.FC<IconBackProps> = (props) => {
   return (
     <svg
+      className={props.className}
       width="24"
       height="24"
       viewBox="0 0 24 24"

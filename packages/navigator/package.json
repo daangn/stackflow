@@ -34,6 +34,7 @@
     "history": "^4.7.8",
     "react-fast-compare": "^3.2.0",
     "react-transition-group": "^4.4.2",
+    "vanilla-classnames": "^0.1.0",
     "zenscroll": "^4.0.2"
   },
   "devDependencies": {
@@ -47,6 +48,9 @@
     "@types/react-dom": "^16.9.8",
     "@types/react-transition-group": "^4.4.2",
     "@types/zenscroll": "^4.0.0",
+    "@vanilla-extract/babel-plugin": "^1.0.1",
+    "@vanilla-extract/css": "^1.2.3",
+    "@vanilla-extract/webpack-plugin": "^1.1.0",
     "babel-loader": "^8.2.2",
     "css-loader": "^5.0.1",
     "dts-bundle-generator": "^5.9.0",
