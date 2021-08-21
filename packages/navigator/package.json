@@ -18,12 +18,12 @@
     "cover.svg"
   ],
   "scripts": {
-    "dev": "webpack --config ./webpack/build.js --watch",
-    "build": "yarn clean && yarn build:check && yarn build:runtime && yarn build:dts",
+    "dev": "yarn build:runtime --watch",
+    "build": "yarn clean && yarn build:check && NODE_ENV=production yarn build:runtime && yarn build:dts",
     "build:check": "tsc",
     "build:dts": "dts-bundle-generator ./src/index.ts -o ./index.d.ts --no-check",
     "build:runtime": "webpack --config ./webpack/build.js",
-    "clean": "rimraf index.css && rimraf index.d.ts && rimraf index.js && rimraf index.js.map && rimraf node_modules",
+    "clean": "rimraf index.css && rimraf index.css.map && rimraf index.d.ts && rimraf index.js && rimraf index.js.map && rimraf node_modules",
     "prepack": "yarn clean && yarn build"
   },
   "dependencies": {

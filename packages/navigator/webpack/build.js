@@ -16,6 +16,10 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.js$/,
+        type: 'javascript/auto',
+      },
+      {
         test: /\.tsx?$/,
         use: {
           loader: require.resolve('babel-loader'),
@@ -24,10 +28,6 @@ module.exports = {
             babelrc: true,
           },
         },
-      },
-      {
-        test: /\.js$/,
-        type: 'javascript/auto',
       },
       {
         test: /\.vanilla\.css$/i,
