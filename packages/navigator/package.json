@@ -9,6 +9,7 @@
   "types": "index.d.ts",
   "files": [
     "index.css",
+    "index.css.map",
     "index.d.ts",
     "index.js",
     "index.js.map",
