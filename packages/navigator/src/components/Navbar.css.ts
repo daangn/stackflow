@@ -3,11 +3,11 @@ import { vcn } from 'vanilla-classnames'
 import { style } from '@vanilla-extract/css'
 
 import {
-  cardTransitionNode_exitActive,
-  cardTransitionNode_exitDone,
+  container_exitActive as cardContainer_exitActive,
+  container_exitDone as cardContainer_exitDone,
 } from './Card.css'
 
-export const navbar = vcn(
+export const container = vcn(
   style({
     position: 'absolute',
     width: '100%',
@@ -20,10 +20,10 @@ export const navbar = vcn(
   {
     cupertinoAndIsNotPresent: style({
       selectors: {
-        [`${cardTransitionNode_exitActive} &`]: {
+        [`${cardContainer_exitActive} &`]: {
           display: 'none',
         },
-        [`${cardTransitionNode_exitDone} &`]: {
+        [`${cardContainer_exitDone} &`]: {
           display: 'none',
         },
       },
@@ -31,7 +31,7 @@ export const navbar = vcn(
   }
 )
 
-export const navbarMain = vcn(
+export const main = vcn(
   style({
     display: 'flex',
     position: 'relative',
@@ -51,7 +51,7 @@ export const navbarMain = vcn(
   }
 )
 
-export const navbarFlex = style({
+export const flex = style({
   display: 'flex',
   position: 'absolute',
   left: 0,
@@ -60,7 +60,7 @@ export const navbarFlex = style({
   top: 0,
 })
 
-export const navbarLeft = style({
+export const left = style({
   padding: '0 0.5rem',
   display: 'flex',
   alignItems: 'center',
@@ -71,7 +71,7 @@ export const navbarLeft = style({
   },
 })
 
-export const navbarBack = style({
+export const backButton = style({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -89,7 +89,45 @@ export const navbarBack = style({
   },
 })
 
-export const navbarCenter = vcn(
+export const right = vcn(
+  style({
+    padding: '0 0.5rem',
+    display: 'flex',
+    alignItems: 'center',
+    height: '100%',
+    marginLeft: 'auto',
+    position: 'relative',
+    zIndex: 1,
+    ':empty': {
+      display: 'none',
+    },
+  }),
+  {
+    android: style({
+      padding: '0 0.5rem 0 0',
+    }),
+  }
+)
+
+export const closeButton = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  cursor: 'pointer',
+  WebkitTapHighlightColor: 'rgba(0, 0, 0, 0)',
+  opacity: '1',
+  transition: 'opacity 300ms',
+  width: '2.25rem',
+  height: '2.75rem',
+  textDecoration: 'none',
+  outline: 'none',
+  ':active': {
+    opacity: '0.2',
+    transition: 'opacity 0s',
+  },
+})
+
+export const center = vcn(
   style({
     flex: '1',
     display: 'flex',
@@ -103,7 +141,7 @@ export const navbarCenter = vcn(
   }
 )
 
-export const navbarCenterMain = vcn(
+export const centerMain = vcn(
   style({
     display: 'block',
   }),
@@ -137,7 +175,7 @@ export const navbarCenterMain = vcn(
   }
 )
 
-export const navbarCenterMainText = style({
+export const centerMainText = style({
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   fontSize: 'inherit',
@@ -146,7 +184,7 @@ export const navbarCenterMainText = style({
   width: '100%',
 })
 
-export const navbarCenterMainEdge = vcn(
+export const centerMainEdge = vcn(
   style({
     position: 'absolute',
     top: '0',
@@ -165,45 +203,7 @@ export const navbarCenterMainEdge = vcn(
   }
 )
 
-export const navbarRight = vcn(
-  style({
-    padding: '0 0.5rem',
-    display: 'flex',
-    alignItems: 'center',
-    height: '100%',
-    marginLeft: 'auto',
-    position: 'relative',
-    zIndex: 1,
-    ':empty': {
-      display: 'none',
-    },
-  }),
-  {
-    android: style({
-      padding: '0 0.5rem 0 0',
-    }),
-  }
-)
-
-export const navbarClose = style({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  cursor: 'pointer',
-  WebkitTapHighlightColor: 'rgba(0, 0, 0, 0)',
-  opacity: '1',
-  transition: 'opacity 300ms',
-  width: '2.25rem',
-  height: '2.75rem',
-  textDecoration: 'none',
-  outline: 'none',
-  ':active': {
-    opacity: '0.2',
-    transition: 'opacity 0s',
-  },
-})
-
-export const navbarSvgIcon = style({
+export const svgIcon = style({
   width: '1.5rem',
   height: '1.5rem',
 })

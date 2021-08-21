@@ -5,20 +5,7 @@ import { useNavigatorOptions } from '../contexts'
 import { NavigatorTheme } from '../helpers'
 import { useStoreSelector } from '../store'
 import { useNavigator } from '../useNavigator'
-import {
-  navbar,
-  navbarBack,
-  navbarCenter,
-  navbarCenterMain,
-  navbarCenterMainEdge,
-  navbarCenterMainText,
-  navbarClose,
-  navbarFlex,
-  navbarLeft,
-  navbarMain,
-  navbarRight,
-  navbarSvgIcon,
-} from './Navbar.css'
+import * as css from './Navbar.css'
 
 interface NavbarProps {
   screenInstanceId: string
@@ -84,21 +71,21 @@ const Navbar: React.FC<NavbarProps> = (props) => {
     props.isRoot &&
     (screenInstanceOption?.navbar.customCloseButton ? (
       <a
+        className={css.closeButton}
         role="text"
         aria-label="닫기"
-        className={navbarClose}
         onClick={props.onClose}
       >
         {screenInstanceOption.navbar.customCloseButton}
       </a>
     ) : (
       <a
+        className={css.closeButton}
         role="text"
         aria-label="닫기"
-        className={navbarClose}
         onClick={props.onClose}
       >
-        <IconClose className={navbarSvgIcon} />
+        <IconClose className={css.svgIcon} />
       </a>
     ))
 
@@ -106,24 +93,24 @@ const Navbar: React.FC<NavbarProps> = (props) => {
     !props.isRoot &&
     (screenInstanceOption?.navbar.customBackButton ? (
       <a
+        className={css.backButton}
         role="text"
         aria-label="뒤로가기"
-        className={navbarBack}
         onClick={onBackClick}
       >
         {screenInstanceOption.navbar.customBackButton}
       </a>
     ) : (
       <a
+        className={css.backButton}
         role="text"
         aria-label="뒤로가기"
-        className={navbarBack}
         onClick={onBackClick}
       >
         {navigatorOptions.theme === 'Cupertino' && props.isPresent ? (
-          <IconClose className={navbarSvgIcon} />
+          <IconClose className={css.svgIcon} />
         ) : (
-          <IconBack className={navbarSvgIcon} />
+          <IconBack className={css.svgIcon} />
         )}
       </a>
     ))
@@ -139,33 +126,33 @@ const Navbar: React.FC<NavbarProps> = (props) => {
 
   return (
     <div
-      ref={navbarRef}
-      className={navbar({
+      className={css.container({
         cupertinoAndIsNotPresent: cupertino && !props.isPresent,
       })}
+      ref={navbarRef}
     >
       <div
-        className={navbarMain({
+        className={css.main({
           android,
           cupertino,
           noBorder,
         })}
       >
-        <div className={navbarFlex}>
-          <div className={navbarLeft}>
+        <div className={css.flex}>
+          <div className={css.left}>
             {screenInstanceOption?.navbar.closeButtonLocation === 'left' &&
               closeButton}
             {backButton}
             {screenInstanceOption?.navbar.appendLeft}
           </div>
           <div
-            ref={centerRef}
-            className={navbarCenter({
+            className={css.center({
               android,
             })}
+            ref={centerRef}
           >
             <div
-              className={navbarCenterMain({
+              className={css.centerMain({
                 android,
                 androidAndIsLeft: android && isLeft,
                 cupertino,
@@ -175,7 +162,7 @@ const Navbar: React.FC<NavbarProps> = (props) => {
               }}
             >
               {typeof screenInstanceOption?.navbar.title === 'string' ? (
-                <div className={navbarCenterMainText}>
+                <div className={css.centerMainText}>
                   {screenInstanceOption?.navbar.title}
                 </div>
               ) : (
@@ -183,7 +170,7 @@ const Navbar: React.FC<NavbarProps> = (props) => {
               )}
             </div>
             <div
-              className={navbarCenterMainEdge({
+              className={css.centerMainEdge({
                 cupertino,
               })}
               style={{
@@ -193,7 +180,7 @@ const Navbar: React.FC<NavbarProps> = (props) => {
             />
           </div>
           <div
-            className={navbarRight({
+            className={css.right({
               android,
             })}
           >

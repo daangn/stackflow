@@ -4,15 +4,7 @@ import zenscroll from 'zenscroll'
 import { useNavigatorOptions } from '../contexts'
 import { useStore, useStoreActions, useStoreSelector } from '../store'
 import { useNavigator } from '../useNavigator'
-import {
-  cardDim,
-  cardEdge,
-  cardFrame,
-  cardFrameOffset,
-  cardMain,
-  cardMainOffset,
-  cardTransitionNode,
-} from './Card.css'
+import * as css from './Card.css'
 import Navbar from './Navbar'
 
 const $frameOffsetSet = new Set<HTMLDivElement>()
@@ -178,28 +170,23 @@ const Card: React.FC<CardProps> = (props) => {
   const isNavbarVisible =
     screenInstanceOptions[props.screenInstanceId]?.navbar.visible ?? false
 
-  const cupertinoAndIsPresent = cupertino && props.isPresent
-  const cupertinoAndIsNavbarVisible = cupertino && isNavbarVisible
-  const androidAndIsRoot = android && props.isRoot
-  const androidAndIsNavbarVisible = android && isNavbarVisible
-
   return (
-    <div ref={props.nodeRef} className={cardTransitionNode}>
+    <div ref={props.nodeRef} className={css.container}>
       {!props.isRoot && (
         <div
-          ref={dimRef}
-          className={cardDim({
-            cupertinoAndIsNavbarVisible,
-            cupertinoAndIsPresent,
+          className={css.dim({
             android,
+            cupertinoAndIsNavbarVisible: cupertino && isNavbarVisible,
+            cupertinoAndIsPresent: cupertino && props.isPresent,
           })}
+          ref={dimRef}
           style={{
             transition: `opacity ${navigatorOptions.animationDuration}ms`,
           }}
         />
       )}
       <div
-        className={cardMainOffset({
+        className={css.mainOffset({
           androidAndIsNotTop: android && !props.isTop,
         })}
         style={{
@@ -207,12 +194,12 @@ const Card: React.FC<CardProps> = (props) => {
         }}
       >
         <div
-          className={cardMain({
+          className={css.main({
             android,
-            androidAndIsNavbarVisible,
-            androidAndIsRoot,
-            cupertinoAndIsNavbarVisible,
-            cupertinoAndIsPresent,
+            androidAndIsNavbarVisible: android && isNavbarVisible,
+            androidAndIsRoot: android && props.isRoot,
+            cupertinoAndIsNavbarVisible: cupertino && isNavbarVisible,
+            cupertinoAndIsPresent: cupertino && props.isPresent,
           })}
           style={{
             transition:
@@ -234,23 +221,23 @@ const Card: React.FC<CardProps> = (props) => {
             />
           )}
           <div
-            ref={frameOffsetRef}
-            className={cardFrameOffset({
+            className={css.frameOffset({
               cupertinoAndIsNotPresent: cupertino && !props.isPresent,
               cupertinoAndIsNotTop: cupertino && !props.isTop,
             })}
+            ref={frameOffsetRef}
             style={{
               transition: `transform ${navigatorOptions.animationDuration}ms`,
             }}
           >
             <div
-              ref={frameRef}
-              className={cardFrame({
+              className={css.frame({
                 cupertino,
                 cupertinoAndIsNotRoot: cupertino && !props.isRoot,
-                cupertinoAndIsPresent,
+                cupertinoAndIsPresent: cupertino && props.isPresent,
                 cupertinoAndIsNotPresent: cupertino && !props.isPresent,
               })}
+              ref={frameRef}
               style={{
                 transition: cupertino
                   ? `transform ${navigatorOptions.animationDuration}ms`
@@ -262,8 +249,8 @@ const Card: React.FC<CardProps> = (props) => {
           </div>
           {cupertino && !props.isRoot && !props.isPresent && !popped && (
             <div
-              className={cardEdge({
-                cupertinoAndIsNavbarVisible,
+              className={css.edge({
+                cupertinoAndIsNavbarVisible: cupertino && isNavbarVisible,
                 isNavbarVisible,
               })}
               onTouchStart={onEdgeTouchStart}

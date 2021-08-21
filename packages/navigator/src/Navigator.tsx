@@ -9,10 +9,10 @@ import { CSSTransition, TransitionGroup } from 'react-transition-group'
 
 import { Card } from './components'
 import {
-  cardTransitionNode_enterActive,
-  cardTransitionNode_enterDone,
-  cardTransitionNode_exitActive,
-  cardTransitionNode_exitDone,
+  container_enterActive,
+  container_enterDone,
+  container_exitActive,
+  container_exitDone,
 } from './components/Card.css'
 import { NavigatorOptionsProvider, useNavigatorOptions } from './contexts'
 import {
@@ -27,8 +27,7 @@ import {
   useHistoryReplaceEffect,
   useUniqueId,
 } from './hooks'
-// import styles from './Navigator.scss'
-import { root } from './Navigator.css'
+import * as css from './Navigator.css'
 import {
   ScreenInstance,
   StoreProvider,
@@ -417,7 +416,7 @@ const NavigatorScreens: React.FC<NavigatorScreensProps> = (props) => {
   )
 
   return (
-    <div className={root}>
+    <div className={css.root}>
       {props.children}
       <TransitionGroup component={null}>
         {screenInstances.map((screenInstance, index) => (
@@ -467,10 +466,10 @@ const Transition: React.FC<TransitionProps> = (props) => {
       timeout={navigatorOptions.animationDuration}
       in={props.screenInstanceIndex <= screenInstancePtr}
       classNames={{
-        enterActive: cardTransitionNode_enterActive,
-        enterDone: cardTransitionNode_enterDone,
-        exitActive: cardTransitionNode_exitActive,
-        exitDone: cardTransitionNode_exitDone,
+        enterActive: container_enterActive,
+        enterDone: container_enterDone,
+        exitActive: container_exitActive,
+        exitDone: container_exitDone,
       }}
       unmountOnExit
     >

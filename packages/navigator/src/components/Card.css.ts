@@ -2,20 +2,7 @@ import { vcn } from 'vanilla-classnames'
 
 import { style } from '@vanilla-extract/css'
 
-export const cardTransitionNode_enterActive = style({
-  display: 'block',
-})
-export const cardTransitionNode_enterDone = style({
-  display: 'block',
-})
-export const cardTransitionNode_exitActive = style({
-  display: 'block',
-})
-export const cardTransitionNode_exitDone = style({
-  display: 'block',
-})
-
-export const cardTransitionNode = style({
+export const container = style({
   position: 'absolute',
   top: '0',
   left: '0',
@@ -23,8 +10,20 @@ export const cardTransitionNode = style({
   height: '100%',
   overflow: 'hidden',
 })
+export const container_enterActive = style({
+  display: 'block',
+})
+export const container_enterDone = style({
+  display: 'block',
+})
+export const container_exitActive = style({
+  display: 'block',
+})
+export const container_exitDone = style({
+  display: 'block',
+})
 
-export const cardDim = vcn(
+export const dim = vcn(
   style({
     backgroundColor: 'rgba(0, 0, 0, 0.15)',
     position: 'absolute',
@@ -35,16 +34,16 @@ export const cardDim = vcn(
     opacity: 0,
     willChange: 'opacity',
     selectors: {
-      [`${cardTransitionNode_enterActive} &`]: {
+      [`${container_enterActive} &`]: {
         opacity: 1,
       },
-      [`${cardTransitionNode_enterDone} &`]: {
+      [`${container_enterDone} &`]: {
         opacity: 1,
       },
-      [`${cardTransitionNode_exitActive} &`]: {
+      [`${container_exitActive} &`]: {
         opacity: 0,
       },
-      [`${cardTransitionNode_exitDone} &`]: {
+      [`${container_exitDone} &`]: {
         opacity: 0,
       },
     },
@@ -63,7 +62,7 @@ export const cardDim = vcn(
   }
 )
 
-export const cardMainOffset = vcn(
+export const mainOffset = vcn(
   style({
     width: '100%',
     height: '100%',
@@ -76,7 +75,7 @@ export const cardMainOffset = vcn(
   }
 )
 
-export const cardMain = vcn(
+export const main = vcn(
   style({
     position: 'absolute',
     top: 0,
@@ -90,16 +89,16 @@ export const cardMain = vcn(
       transform: 'translateY(100%)',
       willChange: 'transform',
       selectors: {
-        [`${cardTransitionNode_enterActive} &`]: {
+        [`${container_enterActive} &`]: {
           transform: 'translateY(0)',
         },
-        [`${cardTransitionNode_enterDone} &`]: {
+        [`${container_enterDone} &`]: {
           transform: 'translateY(0)',
         },
-        [`${cardTransitionNode_exitActive} &`]: {
+        [`${container_exitActive} &`]: {
           transform: 'translateY(100%)',
         },
-        [`${cardTransitionNode_exitDone} &`]: {
+        [`${container_exitDone} &`]: {
           transform: 'translateY(100%)',
         },
       },
@@ -113,19 +112,19 @@ export const cardMain = vcn(
       transitionTimingFunction: 'cubic-bezier(0.22, 0.67, 0.39, 0.83)',
       willChange: 'transform, opacity',
       selectors: {
-        [`${cardTransitionNode_enterActive} &`]: {
+        [`${container_enterActive} &`]: {
           opacity: 1,
           transform: 'translateY(0)',
         },
-        [`${cardTransitionNode_enterDone} &`]: {
+        [`${container_enterDone} &`]: {
           opacity: 1,
           transform: 'translateY(0)',
         },
-        [`${cardTransitionNode_exitActive} &`]: {
+        [`${container_exitActive} &`]: {
           opacity: 0,
           transform: 'translateY(10rem)',
         },
-        [`${cardTransitionNode_exitDone} &`]: {
+        [`${container_exitDone} &`]: {
           opacity: 0,
           transform: 'translateY(10rem)',
         },
@@ -141,7 +140,7 @@ export const cardMain = vcn(
   }
 )
 
-export const cardFrameOffset = vcn(
+export const frameOffset = vcn(
   style({
     width: '100%',
     height: '100%',
@@ -150,10 +149,10 @@ export const cardFrameOffset = vcn(
   {
     cupertinoAndIsNotPresent: style({
       selectors: {
-        [`${cardTransitionNode_exitActive} &`]: {
+        [`${container_exitActive} &`]: {
           transform: 'translateX(0)',
         },
-        [`${cardTransitionNode_exitDone} &`]: {
+        [`${container_exitDone} &`]: {
           transform: 'translateX(0)',
         },
       },
@@ -164,7 +163,7 @@ export const cardFrameOffset = vcn(
   }
 )
 
-export const cardFrame = vcn(
+export const frame = vcn(
   style({
     width: '100%',
     height: '100%',
@@ -186,16 +185,16 @@ export const cardFrame = vcn(
     }),
     cupertinoAndIsNotPresent: style({
       selectors: {
-        [`${cardTransitionNode_enterActive} &`]: {
+        [`${container_enterActive} &`]: {
           transform: 'translateX(0)',
         },
-        [`${cardTransitionNode_enterDone} &`]: {
+        [`${container_enterDone} &`]: {
           transform: 'translateX(0)',
         },
-        [`${cardTransitionNode_exitActive} &`]: {
+        [`${container_exitActive} &`]: {
           transform: 'translateX(100%)',
         },
-        [`${cardTransitionNode_exitDone} &`]: {
+        [`${container_exitDone} &`]: {
           transform: 'translateX(100%)',
         },
       },
@@ -203,7 +202,7 @@ export const cardFrame = vcn(
   }
 )
 
-export const cardEdge = vcn(
+export const edge = vcn(
   style({
     position: 'absolute',
     left: 0,
