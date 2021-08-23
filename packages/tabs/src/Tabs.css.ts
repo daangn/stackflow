@@ -4,14 +4,26 @@ import { composeStyles, createTheme, style } from '@vanilla-extract/css'
 import { calc } from '@vanilla-extract/css-utils'
 
 const [themeClass, vars] = createTheme({
-  tabBarBackgroundColor: '#fff',
-  tabBarBorderColor: 'rgba(0, 0, 0, 0.07)',
-  tabBarBorderSize: '1px',
-  tabBarBaseFontColor: '$gray500',
-  tabBarActiveFontColor: '$gray900',
-  tabBarIndicatorColor: '$gray900',
-  tabMainBackgroundColor: '#fff',
+  tabBar: {
+    backgroundColor: '#fff',
+    borderColor: 'rgba(0, 0, 0, 0.07)',
+    borderSize: '1px',
+    baseFontColor: '#ADB1BA',
+    activeFontColor: '#212124',
+    indicator: {
+      color: '#212124',
+      width: '',
+      transform: '',
+    },
+  },
+  tabMain: {
+    backgroundColor: '#fff',
+    width: '',
+    transform: '',
+  },
 })
+
+export { vars }
 
 export const container = composeStyles(
   themeClass,
@@ -32,14 +44,14 @@ export const nav = vcn(
   style({
     display: 'none',
     position: 'relative',
-    backgroundColor: vars.tabBarBackgroundColor,
+    backgroundColor: vars.tabBar.backgroundColor,
     marginTop: '-1px',
     paddingTop: '1px',
     boxShadow:
       'inset 0px ' +
-      calc(vars.tabBarBorderSize).negate() +
+      calc(vars.tabBar.borderSize).negate() +
       ' 0 ' +
-      vars.tabBarBorderColor,
+      vars.tabBar.borderColor,
   }),
   {
     active: style({
@@ -55,7 +67,7 @@ export const navTab = vcn(
     fontWeight: 700,
     textAlign: 'center',
     padding: '0.59375rem 0',
-    color: vars.tabBarBaseFontColor,
+    color: vars.tabBar.baseFontColor,
     cursor: 'pointer',
     WebkitTapHighlightColor: 'transparent',
     textDecoration: 'none',
@@ -64,7 +76,7 @@ export const navTab = vcn(
   }),
   {
     active: style({
-      color: vars.tabBarActiveFontColor,
+      color: vars.tabBar.activeFontColor,
     }),
   }
 )
@@ -74,19 +86,21 @@ export const indicator = style({
   bottom: '0',
   left: '0',
   height: '2px',
-  backgroundColor: vars.tabBarIndicatorColor,
-  transition: 'transform 300ms',
+  backgroundColor: vars.tabBar.indicator.color,
   willChange: 'transform',
-  // width: ${(props) => 100 / props.tabCount}%;
-  // transform: translateX(${(props) => props.position * 100 + '%'});
+  transition: 'transform 300ms',
+  width: vars.tabBar.indicator.width,
+  transform: vars.tabBar.indicator.transform,
 })
 
 export const mains = style({
   display: 'flex',
   flex: '1',
   overflow: 'hidden',
-  transition: 'transform 300ms',
   willChange: 'transform',
+  transition: 'transform 300ms',
+  width: vars.tabMain.width,
+  transform: vars.tabMain.transform,
 })
 
 export const main = vcn(
@@ -95,7 +109,7 @@ export const main = vcn(
     height: '100%',
     width: '100%',
     overflow: 'hidden',
-    backgroundColor: vars.tabMainBackgroundColor,
+    backgroundColor: vars.tabMain.backgroundColor,
     position: 'relative',
     visibility: 'hidden',
     transition: 'visibility 0s 300ms',

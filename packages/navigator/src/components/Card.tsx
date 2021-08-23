@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import zenscroll from 'zenscroll'
 
-import { useNavigatorOptions } from '../contexts'
+import { NavigatorTheme } from '../helpers'
 import { useStore, useStoreActions, useStoreSelector } from '../store'
 import { useNavigator } from '../useNavigator'
 import * as css from './Card.css'
@@ -10,6 +10,7 @@ import Navbar from './Navbar'
 const $frameOffsetSet = new Set<HTMLDivElement>()
 
 interface CardProps {
+  theme: NavigatorTheme
   nodeRef: React.RefObject<HTMLDivElement>
   screenPath: string
   screenInstanceId: string
@@ -20,10 +21,9 @@ interface CardProps {
 }
 const Card: React.FC<CardProps> = (props) => {
   const navigator = useNavigator()
-  const navigatorOptions = useNavigatorOptions()
 
-  const android = navigatorOptions.theme === 'Android'
-  const cupertino = navigatorOptions.theme === 'Cupertino'
+  const android = props.theme === 'Android'
+  const cupertino = props.theme === 'Cupertino'
 
   const [popped, setPopped] = useState(false)
 
@@ -138,18 +138,16 @@ const Card: React.FC<CardProps> = (props) => {
 
         if ($dim) {
           $dim.style.opacity = ''
-          $dim.style.transition = `opacity ${navigatorOptions.animationDuration}ms`
+          $dim.style.transition = ''
         }
         if ($frame) {
           $frame.style.overflowY = ''
           $frame.style.transform = ''
-          $frame.style.transition = cupertino
-            ? `transform ${navigatorOptions.animationDuration}ms`
-            : ''
+          $frame.style.transition = ''
         }
         $frameOffsetSet.forEach(($frameOffset) => {
           $frameOffset.style.transform = ''
-          $frameOffset.style.transition = `transform ${navigatorOptions.animationDuration}ms`
+          $frameOffset.style.transition = ''
         })
       })
     }
@@ -180,18 +178,12 @@ const Card: React.FC<CardProps> = (props) => {
             cupertinoAndIsPresent: cupertino && props.isPresent,
           })}
           ref={dimRef}
-          style={{
-            transition: `opacity ${navigatorOptions.animationDuration}ms`,
-          }}
         />
       )}
       <div
         className={css.mainOffset({
           androidAndIsNotTop: android && !props.isTop,
         })}
-        style={{
-          transition: `transform ${navigatorOptions.animationDuration}ms`,
-        }}
       >
         <div
           className={css.main({
@@ -201,19 +193,11 @@ const Card: React.FC<CardProps> = (props) => {
             cupertinoAndIsNavbarVisible: cupertino && isNavbarVisible,
             cupertinoAndIsPresent: cupertino && props.isPresent,
           })}
-          style={{
-            transition:
-              cupertino && props.isPresent
-                ? `transform ${navigatorOptions.animationDuration}ms`
-                : android
-                ? `transform ${navigatorOptions.animationDuration}ms, opacity ${navigatorOptions.animationDuration}ms`
-                : undefined,
-          }}
         >
           {isNavbarVisible && (
             <Navbar
               screenInstanceId={props.screenInstanceId}
-              theme={navigatorOptions.theme}
+              theme={props.theme}
               isRoot={props.isRoot}
               isPresent={props.isPresent}
               onClose={props.onClose}
@@ -226,9 +210,6 @@ const Card: React.FC<CardProps> = (props) => {
               cupertinoAndIsNotTop: cupertino && !props.isTop,
             })}
             ref={frameOffsetRef}
-            style={{
-              transition: `transform ${navigatorOptions.animationDuration}ms`,
-            }}
           >
             <div
               className={css.frame({
@@ -238,11 +219,6 @@ const Card: React.FC<CardProps> = (props) => {
                 cupertinoAndIsNotPresent: cupertino && !props.isPresent,
               })}
               ref={frameRef}
-              style={{
-                transition: cupertino
-                  ? `transform ${navigatorOptions.animationDuration}ms`
-                  : undefined,
-              }}
             >
               {props.children}
             </div>

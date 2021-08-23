@@ -2,12 +2,14 @@ import React from 'react'
 import { HashRouter } from 'react-router-dom'
 import { TransitionGroup } from 'react-transition-group'
 
+import { assignInlineVars } from '@vanilla-extract/dynamic'
+
 import Stack from './components/Stack'
-import { NavigatorOptionsProvider } from './contexts'
 import { NavigatorTheme } from './helpers'
 import { UniqueIdProvider } from './hooks'
 import * as css from './Navigator.css'
 import { StoreProvider } from './store'
+import { vars } from './theme.css'
 
 declare global {
   interface Window {
@@ -46,38 +48,41 @@ interface NavigatorProps {
   onDepthChange?: (depth: number) => void
 }
 const Navigator: React.FC<NavigatorProps> = (props) => {
+  const theme = props.theme ?? 'Android'
+
+  const animationDuration =
+    props.animationDuration ??
+    (() => {
+      switch (theme) {
+        case 'Cupertino':
+          return DEFAULT_CUPERTINO_ANIMATION_DURATION
+        case 'Android':
+          return DEFAULT_ANDROID_ANIMATION_DURATION
+      }
+    })()
+
   let h = (
-    <NavigatorOptionsProvider
-      value={{
-        theme: props.theme ?? 'Android',
-        animationDuration:
-          props.animationDuration ??
-          (() => {
-            switch (props.theme ?? 'Android') {
-              case 'Cupertino':
-                return DEFAULT_CUPERTINO_ANIMATION_DURATION
-              case 'Android':
-                return DEFAULT_ANDROID_ANIMATION_DURATION
-            }
-          })(),
-      }}
-    >
-      <UniqueIdProvider>
-        <StoreProvider>
-          <div className={css.root}>
-            <TransitionGroup component={null}>
-              <Stack
-                theme={props.theme ?? 'Android'}
-                onClose={props.onClose}
-                onDepthChange={props.onDepthChange}
-              >
-                {props.children}
-              </Stack>
-            </TransitionGroup>
-          </div>
-        </StoreProvider>
-      </UniqueIdProvider>
-    </NavigatorOptionsProvider>
+    <UniqueIdProvider>
+      <StoreProvider>
+        <div
+          className={css.root}
+          style={assignInlineVars({
+            [vars.animationDuration]: animationDuration + 'ms',
+          })}
+        >
+          <TransitionGroup component={null}>
+            <Stack
+              animationDuration={animationDuration}
+              theme={theme}
+              onClose={props.onClose}
+              onDepthChange={props.onDepthChange}
+            >
+              {props.children}
+            </Stack>
+          </TransitionGroup>
+        </div>
+      </StoreProvider>
+    </UniqueIdProvider>
   )
 
   if (!props.useCustomRouter) {

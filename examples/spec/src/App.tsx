@@ -11,13 +11,14 @@ import PagePush from './components/_pages/PagePush'
 import PageReplace from './components/_pages/PageReplace'
 import PageReplaceInUseEffect from './components/_pages/PageReplaceInUseEffect'
 import PageScreenHelmet from './components/_pages/PageScreenHelmet'
+import PageTabs from './components/_pages/PageTabs'
 import PageUseParams from './components/_pages/PageUseParams'
 import PageUseQueryParams from './components/_pages/PageUseQueryParams'
 
 const App: React.FC = () => {
   return (
     <Navigator
-      theme="Android"
+      theme="Cupertino"
       onDepthChange={(depth) => {
         console.log(depth)
       }}
@@ -33,6 +34,7 @@ const App: React.FC = () => {
       <Screen path="/replaceInUseEffect" component={PageReplaceInUseEffect} />
       <Screen path="/useParams/:param" component={PageUseParams} />
       <Screen path="/useQueryParams" component={PageUseQueryParams} />
+      <Screen path="/tabs" component={PageTabs} />
       <Screen path="*" component={Page404} />
     </Navigator>
   )

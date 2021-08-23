@@ -1,7 +1,6 @@
 import React from 'react'
 import { CSSTransition } from 'react-transition-group'
 
-import { useNavigatorOptions } from '../contexts'
 import { NavigatorTheme } from '../helpers'
 import { useStoreSelector } from '../store'
 import NodeRef from './_lib/NodeRef'
@@ -26,12 +25,11 @@ declare global {
 
 interface StackProps {
   theme: NavigatorTheme
+  animationDuration: number
   onClose?: () => void
   onDepthChange?: (depth: number) => void
 }
 const Stack: React.FC<StackProps> = (props) => {
-  const navigatorOptions = useNavigatorOptions()
-
   const { screens, screenInstances, screenInstancePtr } = useStoreSelector(
     (state) => ({
       screens: state.screens,
@@ -65,7 +63,7 @@ const Stack: React.FC<StackProps> = (props) => {
               <CSSTransition
                 key={screenInstance.id}
                 nodeRef={nodeRef}
-                timeout={navigatorOptions.animationDuration}
+                timeout={props.animationDuration}
                 in={screenInstanceIndex <= screenInstancePtr}
                 classNames={{
                   enterActive: container_enterActive,
@@ -77,12 +75,13 @@ const Stack: React.FC<StackProps> = (props) => {
               >
                 <Card
                   nodeRef={nodeRef}
+                  theme={props.theme}
                   screenPath={screen.path}
                   screenInstanceId={screenInstance.id}
                   isRoot={screenInstanceIndex === 0}
                   isTop={
                     screenInstanceIndex >= screenInstancePtr ||
-                    (navigatorOptions.theme === 'Cupertino' &&
+                    (props.theme === 'Cupertino' &&
                       screenInstances.length > screenInstanceIndex + 1 &&
                       screenInstances[screenInstanceIndex + 1].present)
                   }

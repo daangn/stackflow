@@ -1,9 +1,11 @@
 import React, { useLayoutEffect, useRef, useState } from 'react'
 
+import { assignInlineVars } from '@vanilla-extract/dynamic'
+
 import { IconBack, IconClose } from '../assets'
-import { useNavigatorOptions } from '../contexts'
 import { NavigatorTheme } from '../helpers'
 import { useStoreSelector } from '../store'
+import { vars } from '../theme.css'
 import { useNavigator } from '../useNavigator'
 import * as css from './Navbar.css'
 
@@ -17,10 +19,9 @@ interface NavbarProps {
 }
 const Navbar: React.FC<NavbarProps> = (props) => {
   const { pop } = useNavigator()
-  const navigatorOptions = useNavigatorOptions()
 
-  const android = navigatorOptions.theme === 'Android'
-  const cupertino = navigatorOptions.theme === 'Cupertino'
+  const android = props.theme === 'Android'
+  const cupertino = props.theme === 'Cupertino'
 
   const screenInstanceOptions = useStoreSelector(
     (state) => state.screenInstanceOptions
@@ -107,7 +108,7 @@ const Navbar: React.FC<NavbarProps> = (props) => {
         aria-label="뒤로가기"
         onClick={onBackClick}
       >
-        {navigatorOptions.theme === 'Cupertino' && props.isPresent ? (
+        {props.theme === 'Cupertino' && props.isPresent ? (
           <IconClose className={css.svgIcon} />
         ) : (
           <IconBack className={css.svgIcon} />
@@ -130,6 +131,9 @@ const Navbar: React.FC<NavbarProps> = (props) => {
         cupertinoAndIsNotPresent: cupertino && !props.isPresent,
       })}
       ref={navbarRef}
+      style={assignInlineVars({
+        [vars.navbar.center.mainWidth]: centerMainWidth + 'px',
+      })}
     >
       <div
         className={css.main({
@@ -157,9 +161,6 @@ const Navbar: React.FC<NavbarProps> = (props) => {
                 androidAndIsLeft: android && isLeft,
                 cupertino,
               })}
-              style={{
-                width: centerMainWidth,
-              }}
             >
               {typeof screenInstanceOption?.navbar.title === 'string' ? (
                 <div className={css.centerMainText}>
@@ -173,9 +174,6 @@ const Navbar: React.FC<NavbarProps> = (props) => {
               className={css.centerMainEdge({
                 cupertino,
               })}
-              style={{
-                width: centerMainWidth,
-              }}
               onClick={props.onTopClick}
             />
           </div>

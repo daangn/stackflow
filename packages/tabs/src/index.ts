@@ -1,2 +1,2 @@
-export * from './Tabs'
-export * from './useTabsController'
+export { default as Tabs } from './Tabs'
+export { useTabsController } from './useTabsController'

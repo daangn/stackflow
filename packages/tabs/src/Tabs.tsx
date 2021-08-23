@@ -7,7 +7,17 @@ import React, {
   useState,
 } from 'react'
 
-import { container, indicator, main, mains, nav, navTab } from './Tabs.css'
+import { assignInlineVars } from '@vanilla-extract/dynamic'
+
+import {
+  container,
+  indicator,
+  main,
+  mains,
+  nav,
+  navTab,
+  vars,
+} from './Tabs.css'
 import { TabsControllerContext } from './useTabsController'
 
 interface Tab {
@@ -50,7 +60,7 @@ interface TabsProps {
   /**
    * Called when tab changed
    */
-  onTabChange: (tabKey: any, chagedBy?: 'click' | 'swipe') => void
+  onTabChange: (key: string, changedBy?: 'click' | 'swipe') => void
 }
 const Tabs: React.FC<TabsProps> = (props) => {
   const activeTabIndex =
@@ -310,8 +320,7 @@ const Tabs: React.FC<TabsProps> = (props) => {
 
           for (let i = 0; i < mains.children.length; i++) {
             ;(mains.children[i] as HTMLDivElement).style.visibility = ''
-            ;(mains.children[i] as HTMLDivElement).style.transition =
-              'visibility 0s 300ms'
+            ;(mains.children[i] as HTMLDivElement).style.transition = ''
           }
         }
         if (navIndicator) {
@@ -321,7 +330,7 @@ const Tabs: React.FC<TabsProps> = (props) => {
       }
     }
 
-    const useCapture = props.tabs[activeTabIndex].useCapture ?? false
+    const useCapture = props.tabs[activeTabIndex]?.useCapture ?? false
 
     mains.addEventListener('touchstart', onTouchStart, useCapture)
     mains.addEventListener('touchmove', onTouchMove, {
@@ -355,10 +364,23 @@ const Tabs: React.FC<TabsProps> = (props) => {
           [enableSwipe, disableSwipe]
         )}
       >
-        <div ref={containerRef} className={container}>
+        <div
+          ref={containerRef}
+          className={container}
+          style={assignInlineVars({
+            [vars.tabBar.indicator.width]: `${100 / props.tabs.length}%`,
+            [vars.tabBar.indicator.transform]: `translateX(${
+              activeTabIndex * 100 + '%'
+            })`,
+            [vars.tabMain.width]: `${props.tabs.length * 100}%`,
+            [vars.tabMain.transform]: `translateX(
+              -${activeTabIndex * (100 / props.tabs.length) + '%'}
+            )`,
+          })}
+        >
           <div
             className={nav({
-              active: props.tabs.length > 1,
+              active: props.tabs.length > 0,
             })}
           >
             {props.tabs.map((tab) => (
@@ -376,25 +398,9 @@ const Tabs: React.FC<TabsProps> = (props) => {
                 {tab.name}
               </a>
             ))}
-            <div
-              className={indicator}
-              ref={navIndicatorRef}
-              style={{
-                width: `${100 / props.tabs.length}%`,
-                transform: `translateX(${activeTabIndex * 100 + '%'})`,
-              }}
-            />
+            <div className={indicator} ref={navIndicatorRef} />
           </div>
-          <div
-            ref={mainsRef}
-            className={mains}
-            style={{
-              width: `${props.tabs.length * 100}%`,
-              transform: `translateX(
-                ${activeTabIndex * (100 / props.tabs.length) + '%'}
-              )`,
-            }}
-          >
+          <div ref={mainsRef} className={mains}>
             {props.tabs.map((tab, tabIndex) => (
               <div
                 key={tab.key}

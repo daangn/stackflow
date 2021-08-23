@@ -13,6 +13,7 @@
 ## Packages
 
 - [`@karrotframe/navigator`](./packages/navigator)
+- [`@karrotframe/tabs`](./packages/tabs)
 
 ## Contributors
 

@@ -17,7 +17,6 @@ export const container = vcn(
     padding: 'constant(safe-area-inset-top) 0 0',
     paddingTop: 'env(safe-area-inset-top)',
     backgroundColor: vars.backgroundColor,
-    color: vars.textColor,
   }),
   {
     cupertinoAndIsNotPresent: style({
@@ -43,17 +42,17 @@ export const main = vcn(
       height: '3.5rem',
       boxShadow:
         'inset 0px ' +
-        calc(vars.navbarBorderSize.android).negate() +
+        calc(vars.navbar.borderSize.android).negate() +
         ' 0 ' +
-        vars.navbarBorderColor.android,
+        vars.navbar.borderColor.android,
     }),
     cupertino: style({
       height: '2.75rem',
       boxShadow:
         'inset 0px ' +
-        calc(vars.navbarBorderSize.cupertino).negate() +
+        calc(vars.navbar.borderSize.cupertino).negate() +
         ' 0 ' +
-        vars.navbarBorderColor.cupertino,
+        vars.navbar.borderColor.cupertino,
     }),
     noBorder: style({
       boxShadow: 'none',
@@ -86,6 +85,7 @@ export const backButton = style({
   alignItems: 'center',
   justifyContent: 'center',
   cursor: 'pointer',
+  color: vars.navbar.iconColor,
   WebkitTapHighlightColor: 'transparent',
   opacity: 1,
   transition: 'opacity 300ms',
@@ -124,6 +124,7 @@ export const closeButton = style({
   alignItems: 'center',
   justifyContent: 'center',
   cursor: 'pointer',
+  color: vars.navbar.iconColor,
   WebkitTapHighlightColor: 'transparent',
   opacity: '1',
   transition: 'opacity 300ms',
@@ -143,6 +144,7 @@ export const center = vcn(
     display: 'flex',
     alignItems: 'center',
     overflow: 'hidden',
+    color: vars.navbar.center.textColor,
   }),
   {
     android: style({
@@ -154,6 +156,7 @@ export const center = vcn(
 export const centerMain = vcn(
   style({
     display: 'block',
+    width: vars.navbar.center.mainWidth,
   }),
   {
     android: style({
@@ -205,6 +208,7 @@ export const centerMainEdge = vcn(
     display: 'none',
     cursor: 'pointer',
     WebkitTapHighlightColor: 'transparent',
+    width: vars.navbar.center.mainWidth,
   }),
   {
     cupertino: style({

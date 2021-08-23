@@ -57,6 +57,13 @@ const PageHome: React.FC<ScreenComponentProps> = ({ isTop, isRoot }) => {
       >
         useQueryParams()
       </ListItem>
+      <ListItem
+        onClick={() => {
+          push('/tabs')
+        }}
+      >
+        @karrotframe/tabs
+      </ListItem>
     </Container>
   )
 }

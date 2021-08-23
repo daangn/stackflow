@@ -35,6 +35,7 @@ export const dim = vcn(
     height: '100%',
     opacity: 0,
     willChange: 'opacity',
+    transition: `opacity ${vars.animationDuration}`,
     selectors: {
       [`${container_enterActive} &`]: {
         opacity: 1,
@@ -69,6 +70,7 @@ export const mainOffset = vcn(
     width: '100%',
     height: '100%',
     willChange: 'transform',
+    transition: `transform ${vars.animationDuration}`,
   }),
   {
     androidAndIsNotTop: style({
@@ -90,6 +92,7 @@ export const main = vcn(
     cupertinoAndIsPresent: style({
       transform: 'translateY(100%)',
       willChange: 'transform',
+      transition: `transform ${vars.animationDuration}`,
       selectors: {
         [`${container_enterActive} &`]: {
           transform: 'translateY(0)',
@@ -113,6 +116,7 @@ export const main = vcn(
       transform: 'translateY(10rem)',
       transitionTimingFunction: 'cubic-bezier(0.22, 0.67, 0.39, 0.83)',
       willChange: 'transform, opacity',
+      transition: `transform ${vars.animationDuration}, opacity ${vars.animationDuration}`,
       selectors: {
         [`${container_enterActive} &`]: {
           opacity: 1,
@@ -146,7 +150,8 @@ export const frameOffset = vcn(
   style({
     width: '100%',
     height: '100%',
-    willChange: 'transition',
+    willChange: 'transform',
+    transition: `transform ${vars.animationDuration}`,
   }),
   {
     cupertinoAndIsNotPresent: style({
@@ -178,6 +183,7 @@ export const frame = vcn(
     cupertino: style({
       transform: 'translateX(0)',
       willChange: 'transform',
+      transition: `transform ${vars.animationDuration}`,
     }),
     cupertinoAndIsNotRoot: style({
       transform: 'translateX(100%)',
