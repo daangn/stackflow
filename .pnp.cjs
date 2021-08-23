@@ -4354,7 +4354,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@vanilla-extract/css-utils", "npm:0.1.1"],
             ["@vanilla-extract/webpack-plugin", "virtual:9734371974fc3672e6ee6daaced72209b12ca9fc84a9165d5ad0a398b49c7f307e482322d97eb1c674aabea20bf8091ebf6497cedbc5194a41b6071448e304a4#npm:1.1.0"],
             ["babel-loader", "virtual:9734371974fc3672e6ee6daaced72209b12ca9fc84a9165d5ad0a398b49c7f307e482322d97eb1c674aabea20bf8091ebf6497cedbc5194a41b6071448e304a4#npm:8.2.2"],
-            ["clsx", "npm:1.1.1"],
             ["css-loader", "virtual:9734371974fc3672e6ee6daaced72209b12ca9fc84a9165d5ad0a398b49c7f307e482322d97eb1c674aabea20bf8091ebf6497cedbc5194a41b6071448e304a4#npm:5.0.2"],
             ["dts-bundle-generator", "npm:5.9.0"],
             ["fork-ts-checker-webpack-plugin", "virtual:9734371974fc3672e6ee6daaced72209b12ca9fc84a9165d5ad0a398b49c7f307e482322d97eb1c674aabea20bf8091ebf6497cedbc5194a41b6071448e304a4#npm:3.1.1"],
@@ -4409,7 +4408,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@vanilla-extract/css-utils", "npm:0.1.1"],
             ["@vanilla-extract/webpack-plugin", "virtual:9918b4199032c81043df1f2de5e98c0538364bce71b0d872796d81d8b95045c27af1ed74751d3aad530a48c9a619c38d6f3a2ae02ceef58b8f059a5e1e7f9752#npm:1.1.0"],
             ["babel-loader", "virtual:9918b4199032c81043df1f2de5e98c0538364bce71b0d872796d81d8b95045c27af1ed74751d3aad530a48c9a619c38d6f3a2ae02ceef58b8f059a5e1e7f9752#npm:8.2.2"],
-            ["clsx", "npm:1.1.1"],
             ["css-loader", "virtual:9918b4199032c81043df1f2de5e98c0538364bce71b0d872796d81d8b95045c27af1ed74751d3aad530a48c9a619c38d6f3a2ae02ceef58b8f059a5e1e7f9752#npm:5.0.2"],
             ["dts-bundle-generator", "npm:5.9.0"],
             ["fork-ts-checker-webpack-plugin", "virtual:9918b4199032c81043df1f2de5e98c0538364bce71b0d872796d81d8b95045c27af1ed74751d3aad530a48c9a619c38d6f3a2ae02ceef58b8f059a5e1e7f9752#npm:3.1.1"],
@@ -7786,15 +7784,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["is-plain-object", "npm:2.0.4"],
             ["kind-of", "npm:6.0.3"],
             ["shallow-clone", "npm:3.0.1"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
-      ["clsx", [
-        ["npm:1.1.1", {
-          "packageLocation": "./.yarn/cache/clsx-npm-1.1.1-362bec0598-ff05265032.zip/node_modules/clsx/",
-          "packageDependencies": [
-            ["clsx", "npm:1.1.1"]
           ],
           "linkType": "HARD",
         }]

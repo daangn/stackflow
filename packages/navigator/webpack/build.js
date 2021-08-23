@@ -47,7 +47,6 @@ module.exports = {
     extensions: ['.js', '.mjs', '.ts', '.tsx'],
   },
   externals: [
-    /clsx/,
     /history/,
     /react-fast-compare/,
     /react-transition-group/,

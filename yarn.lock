@@ -2262,7 +2262,6 @@ __metadata:
     "@vanilla-extract/css-utils": ^0.1.1
     "@vanilla-extract/webpack-plugin": ^1.1.0
     babel-loader: ^8.2.2
-    clsx: ^1.1.1
     css-loader: ^5.0.1
     dts-bundle-generator: ^5.9.0
     fork-ts-checker-webpack-plugin: ^3.1.1
@@ -5033,13 +5032,6 @@ __metadata:
     kind-of: ^6.0.2
     shallow-clone: ^3.0.0
   checksum: 770f912fe4e6f21873c8e8fbb1e99134db3b93da32df271d00589ea4a29dbe83a9808a322c93f3bcaf8584b8b4fa6fc269fc8032efbaa6728e0c9886c74467d2
-  languageName: node
-  linkType: hard
-
-"clsx@npm:^1.1.1":
-  version: 1.1.1
-  resolution: "clsx@npm:1.1.1"
-  checksum: ff052650329773b9b245177305fc4c4dc3129f7b2be84af4f58dc5defa99538c61d4207be7419405a5f8f3d92007c954f4daba5a7b74e563d5de71c28c830063
   languageName: node
   linkType: hard
 

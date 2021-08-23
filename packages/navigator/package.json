@@ -31,7 +31,6 @@
     "@types/prop-types": "^15.7.4",
     "@types/react-router": "^5.1.16",
     "@types/react-router-dom": "^5.1.8",
-    "clsx": "^1.1.1",
     "history": "^4.7.8",
     "react-fast-compare": "^3.2.0",
     "react-transition-group": "^4.4.2",
