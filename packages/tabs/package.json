@@ -1,6 +1,6 @@
 {
-  "name": "@karrotframe/navigator",
-  "version": "0.17.0",
+  "name": "@karrotframe/tabs",
+  "version": "0.1.0",
   "description": "UX Enhancer",
   "repository": "https://github.com/daangn/karrotframe",
   "license": "Apache-2.0",
@@ -13,9 +13,7 @@
     "index.d.ts",
     "index.js",
     "index.js.map",
-    "README.md",
-    "LICENSE",
-    "cover.svg"
+    "LICENSE"
   ],
   "scripts": {
     "dev": "yarn build:runtime --watch",
