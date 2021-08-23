@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo } from 'react'
 
 import {
-  ScreenInstanceInfoProvider,
+  ScreenInstanceProvider,
   ScreenInstanceSetNavbarProvider,
 } from './contexts'
 import { INavbarOptions, useStoreActions } from './store'
@@ -19,7 +19,7 @@ interface IScreenProps {
 }
 const Screen: React.FC<IScreenProps> = (props) => {
   const { component: Component } = props
-  const { addScreen, addScreenInstanceOption, removeScreen } = useStoreActions()
+  const { registerScreen, addScreenInstanceOption } = useStoreActions()
 
   useEffect(() => {
     if (!props.children && !Component) {
@@ -29,7 +29,7 @@ const Screen: React.FC<IScreenProps> = (props) => {
 
     const screenId = props.path
 
-    addScreen({
+    const unregisterScreen = registerScreen({
       screen: {
         id: screenId,
         path: props.path,
@@ -46,7 +46,7 @@ const Screen: React.FC<IScreenProps> = (props) => {
             [addScreenInstanceOption, screenInstanceId]
           )
 
-          const screenInstanceInfo = useMemo(
+          const screenInstanceContext = useMemo(
             () => ({
               screenInstanceId,
               as,
@@ -58,20 +58,18 @@ const Screen: React.FC<IScreenProps> = (props) => {
           )
 
           return (
-            <ScreenInstanceInfoProvider value={screenInstanceInfo}>
+            <ScreenInstanceProvider value={screenInstanceContext}>
               <ScreenInstanceSetNavbarProvider value={setNavbar}>
                 {Component ? <Component /> : props.children}
               </ScreenInstanceSetNavbarProvider>
-            </ScreenInstanceInfoProvider>
+            </ScreenInstanceProvider>
           )
         },
       },
     })
 
     return () => {
-      removeScreen({
-        screenId,
-      })
+      unregisterScreen()
     }
   }, [props.path, Component])
 

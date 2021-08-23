@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 
-import { useScreenInstanceInfo } from './contexts'
+import { useScreenInstance } from './contexts'
 import { getNavigatorParams, NavigatorParamKeys } from './helpers'
 import { useUniqueId } from './hooks'
 import { useStore, useStoreActions } from './store'
@@ -9,7 +9,7 @@ import { useStore, useStoreActions } from './store'
 export function useNavigator() {
   const history = useHistory()
   const location = useLocation()
-  const screenInfo = useScreenInstanceInfo()
+  const screenInfo = useScreenInstance()
   const { uid } = useUniqueId()
 
   const store = useStore()

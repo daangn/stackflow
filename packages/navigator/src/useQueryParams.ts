@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { useLocation } from 'react-router-dom'
 
-import { useScreenInstanceInfo } from './contexts'
+import { useScreenInstance } from './contexts'
 
 export function useQueryParams<
   T extends { [key in keyof T]: string } = {}
@@ -9,7 +9,7 @@ export function useQueryParams<
   const ignoreNestedRoutes = !!options?.ignoreNestedRoutes
 
   const location = useLocation()
-  const { as } = useScreenInstanceInfo()
+  const { as } = useScreenInstance()
 
   const parse = useMemo(() => {
     let prevParams: Partial<T> = {}

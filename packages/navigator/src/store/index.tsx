@@ -132,7 +132,7 @@ export function useStoreSelector<V>(selector: (state: GlobalState) => V): V {
 export function useStoreActions() {
   const store = useStore()
 
-  const addScreen = useCallback(
+  const registerScreen = useCallback(
     ({ screen }: { screen: IScreen }) => {
       store.setState((prevState) => ({
         ...prevState,
@@ -141,19 +141,16 @@ export function useStoreActions() {
           [screen.id]: screen,
         },
       }))
-    },
-    [store]
-  )
 
-  const removeScreen = useCallback(
-    ({ screenId }: { screenId: string }) => {
-      store.setState((prevState) => ({
-        ...prevState,
-        screens: {
-          ...prevState.screens,
-          [screenId]: undefined,
-        },
-      }))
+      return function unregister() {
+        store.setState((prevState) => ({
+          ...prevState,
+          screens: {
+            ...prevState.screens,
+            [screen.id]: undefined,
+          },
+        }))
+      }
     },
     [store]
   )
@@ -270,8 +267,7 @@ export function useStoreActions() {
 
   return useMemo(
     () => ({
-      addScreen,
-      removeScreen,
+      registerScreen,
       addScreenInstanceOption,
       addScreenInstancePromise,
       mapScreenInstance,
@@ -281,8 +277,7 @@ export function useStoreActions() {
       setScreenEdge,
     }),
     [
-      addScreen,
-      removeScreen,
+      registerScreen,
       addScreenInstanceOption,
       addScreenInstancePromise,
       mapScreenInstance,

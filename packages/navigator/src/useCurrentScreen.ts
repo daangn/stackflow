@@ -1,16 +1,15 @@
 import { useMemo } from 'react'
 
-import { useScreenInstanceInfo } from './contexts'
+import { useScreenInstance } from './contexts'
 
 export function useCurrentScreen() {
-  const { screenInstanceId, isTop, isRoot } = useScreenInstanceInfo()
+  const { isTop, isRoot } = useScreenInstance()
 
   return useMemo(
     () => ({
-      screenInstanceId,
       isTop,
       isRoot,
     }),
-    [screenInstanceId, isTop, isRoot]
+    [isTop, isRoot]
   )
 }
