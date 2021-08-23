@@ -13,6 +13,7 @@
     "index.d.ts",
     "index.js",
     "index.js.map",
+    "README.md",
     "LICENSE"
   ],
   "scripts": {
