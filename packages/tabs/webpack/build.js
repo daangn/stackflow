@@ -46,15 +46,7 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.mjs', '.ts', '.tsx'],
   },
-  externals: [
-    /history/,
-    /react-fast-compare/,
-    /react-transition-group/,
-    /zenscroll/,
-    /react/,
-    /react-dom/,
-    /react-router-dom/,
-  ],
+  externals: [/\@vanilla-extract\/dynamic/, /react/, /react-dom/],
   devtool: 'source-map',
   optimization: {
     minimize: false,

@@ -47,9 +47,11 @@ module.exports = {
     extensions: ['.js', '.mjs', '.ts', '.tsx'],
   },
   externals: [
+    /\@vanilla-extract\/dynamic/,
     /history/,
     /react-fast-compare/,
     /react-transition-group/,
+    /vanilla-classnames/,
     /zenscroll/,
     /react/,
     /react-dom/,
