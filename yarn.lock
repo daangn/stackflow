@@ -2259,6 +2259,7 @@ __metadata:
     "@types/zenscroll": ^4.0.0
     "@vanilla-extract/babel-plugin": ^1.0.1
     "@vanilla-extract/css": ^1.2.3
+    "@vanilla-extract/css-utils": ^0.1.1
     "@vanilla-extract/webpack-plugin": ^1.1.0
     babel-loader: ^8.2.2
     clsx: ^1.1.1
@@ -2958,6 +2959,13 @@ __metadata:
     "@babel/template": ^7.12.13
     "@vanilla-extract/integration": ^1.0.0
   checksum: 01f3d0a99652cc57cb1ade24f8bafc4f45b09d5a3db19118a681c5b924bae6825e466ac14b3c8e3547411157db5f204bafbcdd452d8eee76ec140e640d0ca2ef
+  languageName: node
+  linkType: hard
+
+"@vanilla-extract/css-utils@npm:^0.1.1":
+  version: 0.1.1
+  resolution: "@vanilla-extract/css-utils@npm:0.1.1"
+  checksum: e8c4e2e6d7780fc51dfa44091779194230f1b6c597f502a2dba0bcd6a56919408f71876ff9cd17218768eb8514b0fa7ac6eee193170b363e56767ba294b29b39
   languageName: node
   linkType: hard
 

@@ -17,7 +17,7 @@ import PageUseQueryParams from './components/_pages/PageUseQueryParams'
 const App: React.FC = () => {
   return (
     <Navigator
-      theme="Cupertino"
+      theme="Android"
       onDepthChange={(depth) => {
         console.log(depth)
       }}

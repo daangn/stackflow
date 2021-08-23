@@ -2,6 +2,8 @@ import { vcn } from 'vanilla-classnames'
 
 import { style } from '@vanilla-extract/css'
 
+import { vars } from '../theme.css'
+
 export const container = style({
   position: 'absolute',
   top: '0',
@@ -25,7 +27,7 @@ export const container_exitDone = style({
 
 export const dim = vcn(
   style({
-    backgroundColor: 'rgba(0, 0, 0, 0.15)',
+    backgroundColor: vars.dimBackgroundColor,
     position: 'absolute',
     top: 0,
     left: 0,
@@ -57,7 +59,7 @@ export const dim = vcn(
     }),
     android: style({
       height: '10rem',
-      background: 'linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0))',
+      background: `linear-gradient(${vars.dimBackgroundColor}, rgba(0, 0, 0, 0))`,
     }),
   }
 )
@@ -169,7 +171,7 @@ export const frame = vcn(
     height: '100%',
     overflowY: 'scroll',
     scrollBehavior: 'smooth',
-    backgroundColor: '#fff',
+    backgroundColor: vars.backgroundColor,
     WebkitOverflowScrolling: 'touch',
   }),
   {

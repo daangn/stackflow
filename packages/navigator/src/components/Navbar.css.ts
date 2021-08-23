@@ -1,7 +1,9 @@
 import { vcn } from 'vanilla-classnames'
 
 import { style } from '@vanilla-extract/css'
+import { calc } from '@vanilla-extract/css-utils'
 
+import { vars } from '../theme.css'
 import {
   container_exitActive as cardContainer_exitActive,
   container_exitDone as cardContainer_exitDone,
@@ -14,8 +16,8 @@ export const container = vcn(
     top: 0,
     padding: 'constant(safe-area-inset-top) 0 0',
     paddingTop: 'env(safe-area-inset-top)',
-    backgroundColor: '#fff',
-    color: '#212529',
+    backgroundColor: vars.backgroundColor,
+    color: vars.textColor,
   }),
   {
     cupertinoAndIsNotPresent: style({
@@ -39,11 +41,19 @@ export const main = vcn(
   {
     android: style({
       height: '3.5rem',
-      boxShadow: 'inset 0px -1px 0 rgba(0, 0, 0, 0.07)',
+      boxShadow:
+        'inset 0px ' +
+        calc(vars.navbarBorderSize.android).negate() +
+        ' 0 ' +
+        vars.navbarBorderColor.android,
     }),
     cupertino: style({
       height: '2.75rem',
-      boxShadow: 'inset 0px -0.5px 0 rgba(0, 0, 0, 0.12)',
+      boxShadow:
+        'inset 0px ' +
+        calc(vars.navbarBorderSize.cupertino).negate() +
+        ' 0 ' +
+        vars.navbarBorderColor.cupertino,
     }),
     noBorder: style({
       boxShadow: 'none',
@@ -76,7 +86,7 @@ export const backButton = style({
   alignItems: 'center',
   justifyContent: 'center',
   cursor: 'pointer',
-  WebkitTapHighlightColor: 'rgba(0, 0, 0, 0)',
+  WebkitTapHighlightColor: 'transparent',
   opacity: 1,
   transition: 'opacity 300ms',
   width: '2.25rem',
@@ -114,7 +124,7 @@ export const closeButton = style({
   alignItems: 'center',
   justifyContent: 'center',
   cursor: 'pointer',
-  WebkitTapHighlightColor: 'rgba(0, 0, 0, 0)',
+  WebkitTapHighlightColor: 'transparent',
   opacity: '1',
   transition: 'opacity 300ms',
   width: '2.25rem',
