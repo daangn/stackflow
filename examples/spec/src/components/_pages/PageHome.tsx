@@ -1,15 +1,11 @@
 import React from 'react'
 
 import styled from '@emotion/styled'
-import {
-  ScreenComponentProps,
-  ScreenHelmet,
-  useNavigator,
-} from '@karrotframe/navigator'
+import { ScreenHelmet, useNavigator } from '@karrotframe/navigator'
 
 import ListItem from '../ListItem'
 
-const PageHome: React.FC<ScreenComponentProps> = ({ isTop, isRoot }) => {
+const PageHome: React.FC = () => {
   const { push } = useNavigator()
 
   return (
