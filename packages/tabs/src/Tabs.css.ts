@@ -65,7 +65,6 @@ const _tabBarItem: StyleRule = {
   transition: 'color 100ms',
   outline: 'none',
 }
-
 export const tabBarItem = styleVariants({
   normal: {
     ..._tabBarItem,
@@ -109,7 +108,6 @@ const _tabMain: StyleRule = {
   visibility: 'hidden',
   transition: 'visibility 0s 300ms',
 }
-
 export const tabMain = styleVariants({
   hidden: {
     ..._tabMain,
