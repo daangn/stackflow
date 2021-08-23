@@ -2,7 +2,7 @@ import { vcn } from 'vanilla-classnames'
 
 import { style } from '@vanilla-extract/css'
 
-import { vars } from '../theme.css'
+import { vars } from '../Navigator.css'
 
 export const container = style({
   position: 'absolute',

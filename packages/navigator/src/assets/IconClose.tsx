@@ -1,9 +1,8 @@
 import React from 'react'
 
-interface IconCloseProps {
+const IconClose: React.FC<{
   className?: string
-}
-const IconClose: React.FC<IconCloseProps> = (props) => {
+}> = (props) => {
   return (
     <svg
       className={props.className}

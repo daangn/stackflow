@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 
 import { useScreenInstanceOptions } from './contexts'
 
-interface ScreenHelmetProps {
+interface IScreenHelmetProps {
   /**
    * title
    */
@@ -50,7 +50,7 @@ interface ScreenHelmetProps {
    */
   onTopClick?: () => void
 }
-const ScreenHelmet: React.FC<ScreenHelmetProps> = (props) => {
+const ScreenHelmet: React.FC<IScreenHelmetProps> = (props) => {
   const screen = useScreenInstanceOptions()
 
   useEffect(() => {

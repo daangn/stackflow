@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 
-import styled from '@emotion/styled'
 import { ScreenHelmet } from '@karrotframe/navigator'
 import { Tabs } from '@karrotframe/tabs'
 
@@ -8,7 +7,7 @@ const PageTabs: React.FC = () => {
   const [activeKey, setActiveKey] = useState<string>('tab_1')
 
   return (
-    <Container>
+    <>
       <ScreenHelmet title="@karrotframe/tabs" noBorder />
       <Tabs
         tabs={[
@@ -32,13 +31,8 @@ const PageTabs: React.FC = () => {
           setActiveKey(key)
         }}
       />
-    </Container>
+    </>
   )
 }
-
-const Container = styled.div`
-  position: relative;
-  height: 100%;
-`
 
 export default PageTabs

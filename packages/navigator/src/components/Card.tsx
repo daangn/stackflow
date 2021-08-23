@@ -1,16 +1,16 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import zenscroll from 'zenscroll'
 
-import { NavigatorTheme } from '../helpers'
 import { useStore, useStoreActions, useStoreSelector } from '../store'
+import { INavigatorTheme } from '../types'
 import { useNavigator } from '../useNavigator'
 import * as css from './Card.css'
 import Navbar from './Navbar'
 
 const $frameOffsetSet = new Set<HTMLDivElement>()
 
-interface CardProps {
-  theme: NavigatorTheme
+interface ICardProps {
+  theme: INavigatorTheme
   nodeRef: React.RefObject<HTMLDivElement>
   screenPath: string
   screenInstanceId: string
@@ -19,7 +19,7 @@ interface CardProps {
   isPresent: boolean
   onClose?: () => void
 }
-const Card: React.FC<CardProps> = (props) => {
+const Card: React.FC<ICardProps> = (props) => {
   const navigator = useNavigator()
 
   const android = props.theme === 'Android'

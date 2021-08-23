@@ -2,7 +2,7 @@ import { matchPath } from 'react-router-dom'
 
 import { getNavigatorParams } from '../helpers'
 import { useHistoryPopEffect } from '../hooks'
-import { ScreenInstance, useStore, useStoreActions } from '../store'
+import { IScreenInstance, useStore, useStoreActions } from '../store'
 import usePop from './Stack.usePop'
 import { usePush } from './Stack.usePush'
 
@@ -78,7 +78,7 @@ function useInitializeHistoryPopEffect() {
         } else {
           mapScreenInstance({
             ptr: screenInstancePtr,
-            mapper(screenInstance: ScreenInstance): ScreenInstance {
+            mapper(screenInstance: IScreenInstance): IScreenInstance {
               return {
                 ...screenInstance,
                 nestedRouteCount: screenInstance.nestedRouteCount + 1,

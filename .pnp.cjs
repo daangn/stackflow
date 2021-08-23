@@ -2906,13 +2906,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["@babel/plugin-transform-react-jsx", [
-        ["npm:7.12.16", {
-          "packageLocation": "./.yarn/cache/@babel-plugin-transform-react-jsx-npm-7.12.16-c7baa496b1-3b1dcbd214.zip/node_modules/@babel/plugin-transform-react-jsx/",
-          "packageDependencies": [
-            ["@babel/plugin-transform-react-jsx", "npm:7.12.16"]
-          ],
-          "linkType": "SOFT",
-        }],
         ["npm:7.14.9", {
           "packageLocation": "./.yarn/cache/@babel-plugin-transform-react-jsx-npm-7.14.9-58bb40c990-833426a5d3.zip/node_modules/@babel/plugin-transform-react-jsx/",
           "packageDependencies": [
@@ -2948,24 +2941,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/helper-plugin-utils", "npm:7.14.5"],
             ["@babel/plugin-syntax-jsx", "virtual:a8686f58e5e96f96c97a32dd339cbf5a82282845002f80f2599c5541c404d3ddc12df035ecc8147ba2e59ffb315d7f1d7128fef8fcd76925f4da4bf19b38f147#npm:7.14.5"],
             ["@babel/types", "npm:7.15.0"],
-            ["@types/babel__core", null]
-          ],
-          "packagePeers": [
-            "@babel/core",
-            "@types/babel__core"
-          ],
-          "linkType": "HARD",
-        }],
-        ["virtual:c16f697f8af2f9fa3890249793ad3704a01ae290a76dc41b24df98fd76fd1b928840db2aef41f6bc7a053fa86f3a9089c16ab10774caa05f373948c95f9127d3#npm:7.12.16", {
-          "packageLocation": "./.yarn/__virtual__/@babel-plugin-transform-react-jsx-virtual-25b83d8004/0/cache/@babel-plugin-transform-react-jsx-npm-7.12.16-c7baa496b1-3b1dcbd214.zip/node_modules/@babel/plugin-transform-react-jsx/",
-          "packageDependencies": [
-            ["@babel/plugin-transform-react-jsx", "virtual:c16f697f8af2f9fa3890249793ad3704a01ae290a76dc41b24df98fd76fd1b928840db2aef41f6bc7a053fa86f3a9089c16ab10774caa05f373948c95f9127d3#npm:7.12.16"],
-            ["@babel/core", "npm:7.12.16"],
-            ["@babel/helper-annotate-as-pure", "npm:7.12.13"],
-            ["@babel/helper-module-imports", "npm:7.12.13"],
-            ["@babel/helper-plugin-utils", "npm:7.12.13"],
-            ["@babel/plugin-syntax-jsx", "virtual:4e360c55d70d274ca840a7128e7ba1840cb60f7bbc10ee489e103858373c004bd4e5c23eba43351bf9b4687976194d18181029b41e1ea4bb71bc6f21778f3985#npm:7.12.13"],
-            ["@babel/types", "npm:7.12.13"],
             ["@types/babel__core", null]
           ],
           "packagePeers": [
@@ -4371,7 +4346,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/preset-typescript", "virtual:9734371974fc3672e6ee6daaced72209b12ca9fc84a9165d5ad0a398b49c7f307e482322d97eb1c674aabea20bf8091ebf6497cedbc5194a41b6071448e304a4#npm:7.12.16"],
             ["@types/history", "npm:4.7.8"],
             ["@types/node", "npm:14.14.27"],
-            ["@types/prop-types", "npm:15.7.4"],
             ["@types/react", "npm:16.14.3"],
             ["@types/react-dom", "npm:16.9.10"],
             ["@types/react-router", "npm:5.1.16"],
@@ -4422,7 +4396,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/preset-typescript", "virtual:9734371974fc3672e6ee6daaced72209b12ca9fc84a9165d5ad0a398b49c7f307e482322d97eb1c674aabea20bf8091ebf6497cedbc5194a41b6071448e304a4#npm:7.12.16"],
             ["@types/history", "npm:4.7.8"],
             ["@types/node", "npm:14.14.27"],
-            ["@types/prop-types", "npm:15.7.4"],
             ["@types/react", "npm:16.14.3"],
             ["@types/react-dom", "npm:16.9.10"],
             ["@types/react-router", "npm:5.1.16"],
@@ -4459,15 +4432,12 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@karrotframe/tabs", "virtual:f1f17cd4dad23d97d3274d4240aabf5c79c7702d5d0a0f2803d8b3dccf5be49ec01e4ddff04a2bb33e6bbf93b5cb9f48958c566805538889d2586f9617b3166a#workspace:packages/tabs"],
             ["@babel/cli", "virtual:9734371974fc3672e6ee6daaced72209b12ca9fc84a9165d5ad0a398b49c7f307e482322d97eb1c674aabea20bf8091ebf6497cedbc5194a41b6071448e304a4#npm:7.12.16"],
             ["@babel/core", "npm:7.12.16"],
-            ["@babel/plugin-transform-react-jsx", "virtual:c16f697f8af2f9fa3890249793ad3704a01ae290a76dc41b24df98fd76fd1b928840db2aef41f6bc7a053fa86f3a9089c16ab10774caa05f373948c95f9127d3#npm:7.12.16"],
             ["@babel/preset-env", "virtual:9734371974fc3672e6ee6daaced72209b12ca9fc84a9165d5ad0a398b49c7f307e482322d97eb1c674aabea20bf8091ebf6497cedbc5194a41b6071448e304a4#npm:7.12.16"],
             ["@babel/preset-react", "virtual:9734371974fc3672e6ee6daaced72209b12ca9fc84a9165d5ad0a398b49c7f307e482322d97eb1c674aabea20bf8091ebf6497cedbc5194a41b6071448e304a4#npm:7.14.5"],
             ["@babel/preset-typescript", "virtual:9734371974fc3672e6ee6daaced72209b12ca9fc84a9165d5ad0a398b49c7f307e482322d97eb1c674aabea20bf8091ebf6497cedbc5194a41b6071448e304a4#npm:7.12.16"],
             ["@types/node", "npm:14.14.27"],
-            ["@types/prop-types", "npm:15.7.4"],
             ["@types/react", "npm:16.14.3"],
             ["@types/react-dom", "npm:16.9.10"],
-            ["@types/react-router-dom", "npm:5.1.7"],
             ["@vanilla-extract/babel-plugin", "npm:1.0.1"],
             ["@vanilla-extract/css", "npm:1.2.3"],
             ["@vanilla-extract/css-utils", "npm:0.1.1"],
@@ -4480,19 +4450,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["mini-css-extract-plugin", "virtual:c16f697f8af2f9fa3890249793ad3704a01ae290a76dc41b24df98fd76fd1b928840db2aef41f6bc7a053fa86f3a9089c16ab10774caa05f373948c95f9127d3#npm:1.3.8"],
             ["react", "npm:16.14.0"],
             ["react-dom", "virtual:f1f17cd4dad23d97d3274d4240aabf5c79c7702d5d0a0f2803d8b3dccf5be49ec01e4ddff04a2bb33e6bbf93b5cb9f48958c566805538889d2586f9617b3166a#npm:16.14.0"],
-            ["react-router-dom", "virtual:f1f17cd4dad23d97d3274d4240aabf5c79c7702d5d0a0f2803d8b3dccf5be49ec01e4ddff04a2bb33e6bbf93b5cb9f48958c566805538889d2586f9617b3166a#npm:5.2.0"],
             ["rimraf", "npm:3.0.2"],
             ["typescript", "patch:typescript@npm%3A4.3.5#~builtin<compat/typescript>::version=4.3.5&hash=d8b4e7"],
-            ["vanilla-classnames", "npm:0.1.0"],
             ["webpack", "virtual:c16f697f8af2f9fa3890249793ad3704a01ae290a76dc41b24df98fd76fd1b928840db2aef41f6bc7a053fa86f3a9089c16ab10774caa05f373948c95f9127d3#npm:5.21.2"],
             ["webpack-cli", "virtual:c16f697f8af2f9fa3890249793ad3704a01ae290a76dc41b24df98fd76fd1b928840db2aef41f6bc7a053fa86f3a9089c16ab10774caa05f373948c95f9127d3#npm:4.5.0"]
           ],
           "packagePeers": [
             "@types/react-dom",
-            "@types/react-router-dom",
             "@types/react",
             "react-dom",
-            "react-router-dom",
             "react"
           ],
           "linkType": "SOFT",
@@ -4503,12 +4469,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@karrotframe/tabs", "workspace:packages/tabs"],
             ["@babel/cli", "virtual:9734371974fc3672e6ee6daaced72209b12ca9fc84a9165d5ad0a398b49c7f307e482322d97eb1c674aabea20bf8091ebf6497cedbc5194a41b6071448e304a4#npm:7.12.16"],
             ["@babel/core", "npm:7.12.16"],
-            ["@babel/plugin-transform-react-jsx", "virtual:c16f697f8af2f9fa3890249793ad3704a01ae290a76dc41b24df98fd76fd1b928840db2aef41f6bc7a053fa86f3a9089c16ab10774caa05f373948c95f9127d3#npm:7.12.16"],
             ["@babel/preset-env", "virtual:9734371974fc3672e6ee6daaced72209b12ca9fc84a9165d5ad0a398b49c7f307e482322d97eb1c674aabea20bf8091ebf6497cedbc5194a41b6071448e304a4#npm:7.12.16"],
             ["@babel/preset-react", "virtual:9734371974fc3672e6ee6daaced72209b12ca9fc84a9165d5ad0a398b49c7f307e482322d97eb1c674aabea20bf8091ebf6497cedbc5194a41b6071448e304a4#npm:7.14.5"],
             ["@babel/preset-typescript", "virtual:9734371974fc3672e6ee6daaced72209b12ca9fc84a9165d5ad0a398b49c7f307e482322d97eb1c674aabea20bf8091ebf6497cedbc5194a41b6071448e304a4#npm:7.12.16"],
             ["@types/node", "npm:14.14.27"],
-            ["@types/prop-types", "npm:15.7.4"],
             ["@types/react", "npm:16.14.3"],
             ["@types/react-dom", "npm:16.9.10"],
             ["@vanilla-extract/babel-plugin", "npm:1.0.1"],
@@ -4523,7 +4487,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["mini-css-extract-plugin", "virtual:ae49183e9c54e8facf537b659e1bf3527452ac370b879521c1a0b480d040738e71b2f207565fd549a17e224c512cea175a43215d71833563652049461a2a8096#npm:1.3.8"],
             ["rimraf", "npm:3.0.2"],
             ["typescript", "patch:typescript@npm%3A4.3.5#~builtin<compat/typescript>::version=4.3.5&hash=d8b4e7"],
-            ["vanilla-classnames", "npm:0.1.0"],
             ["webpack", "virtual:ae49183e9c54e8facf537b659e1bf3527452ac370b879521c1a0b480d040738e71b2f207565fd549a17e224c512cea175a43215d71833563652049461a2a8096#npm:5.21.2"],
             ["webpack-cli", "virtual:ae49183e9c54e8facf537b659e1bf3527452ac370b879521c1a0b480d040738e71b2f207565fd549a17e224c512cea175a43215d71833563652049461a2a8096#npm:4.5.0"]
           ],
@@ -5027,13 +4990,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/@types-prop-types-npm-15.7.3-084e0015c6-41831d53c4.zip/node_modules/@types/prop-types/",
           "packageDependencies": [
             ["@types/prop-types", "npm:15.7.3"]
-          ],
-          "linkType": "HARD",
-        }],
-        ["npm:15.7.4", {
-          "packageLocation": "./.yarn/cache/@types-prop-types-npm-15.7.4-592896a9fe-ef6e1899e5.zip/node_modules/@types/prop-types/",
-          "packageDependencies": [
-            ["@types/prop-types", "npm:15.7.4"]
           ],
           "linkType": "HARD",
         }]

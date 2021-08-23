@@ -1,9 +1,8 @@
 import React from 'react'
 
-interface IconBackProps {
+const IconBack: React.FC<{
   className?: string
-}
-const IconBack: React.FC<IconBackProps> = (props) => {
+}> = (props) => {
   return (
     <svg
       className={props.className}

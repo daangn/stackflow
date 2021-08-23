@@ -1,18 +1,18 @@
-export const NavigatorParamKeys = Object.freeze({
-  screenInstanceId: '_si',
-  present: '_present',
-})
+export enum NavigatorParamKeys {
+  SCREEN_INSTANCE_ID = '_si',
+  PRESENT = '_present',
+}
 
-export type NavigatorParams = {
+export interface INavigatorParams {
   screenInstanceId: string | null
   present: boolean
 }
 
 export function getNavigatorParams(
   searchParams: URLSearchParams
-): NavigatorParams {
+): INavigatorParams {
   return {
-    screenInstanceId: searchParams.get(NavigatorParamKeys.screenInstanceId),
-    present: searchParams.get(NavigatorParamKeys.present) === 'true',
+    screenInstanceId: searchParams.get(NavigatorParamKeys.SCREEN_INSTANCE_ID),
+    present: searchParams.get(NavigatorParamKeys.PRESENT) === 'true',
   }
 }

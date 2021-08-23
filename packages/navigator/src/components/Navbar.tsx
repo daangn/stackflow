@@ -3,21 +3,21 @@ import React, { useLayoutEffect, useRef, useState } from 'react'
 import { assignInlineVars } from '@vanilla-extract/dynamic'
 
 import { IconBack, IconClose } from '../assets'
-import { NavigatorTheme } from '../helpers'
+import { vars } from '../Navigator.css'
 import { useStoreSelector } from '../store'
-import { vars } from '../theme.css'
+import { INavigatorTheme } from '../types'
 import { useNavigator } from '../useNavigator'
 import * as css from './Navbar.css'
 
-interface NavbarProps {
+interface INavbarProps {
   screenInstanceId: string
-  theme: NavigatorTheme
+  theme: INavigatorTheme
   isRoot: boolean
   isPresent: boolean
   onTopClick: () => void
   onClose?: () => void
 }
-const Navbar: React.FC<NavbarProps> = (props) => {
+const Navbar: React.FC<INavbarProps> = (props) => {
   const { pop } = useNavigator()
 
   const android = props.theme === 'Android'

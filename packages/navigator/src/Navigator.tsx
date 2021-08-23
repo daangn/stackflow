@@ -5,11 +5,10 @@ import { TransitionGroup } from 'react-transition-group'
 import { assignInlineVars } from '@vanilla-extract/dynamic'
 
 import Stack from './components/Stack'
-import { NavigatorTheme } from './helpers'
 import { UniqueIdProvider } from './hooks'
 import * as css from './Navigator.css'
 import { StoreProvider } from './store'
-import { vars } from './theme.css'
+import { INavigatorTheme } from './types'
 
 declare global {
   interface Window {
@@ -20,11 +19,11 @@ declare global {
 const DEFAULT_CUPERTINO_ANIMATION_DURATION = 350
 const DEFAULT_ANDROID_ANIMATION_DURATION = 270
 
-interface NavigatorProps {
+interface INavigatorProps {
   /**
    * Theme (default: `Android`)
    */
-  theme?: NavigatorTheme
+  theme?: INavigatorTheme
 
   /**
    * Transition animation duration
@@ -47,7 +46,7 @@ interface NavigatorProps {
    */
   onDepthChange?: (depth: number) => void
 }
-const Navigator: React.FC<NavigatorProps> = (props) => {
+const Navigator: React.FC<INavigatorProps> = (props) => {
   const theme = props.theme ?? 'Android'
 
   const animationDuration =
@@ -67,7 +66,7 @@ const Navigator: React.FC<NavigatorProps> = (props) => {
         <div
           className={css.root}
           style={assignInlineVars({
-            [vars.animationDuration]: animationDuration + 'ms',
+            [css.vars.animationDuration]: animationDuration + 'ms',
           })}
         >
           <TransitionGroup component={null}>

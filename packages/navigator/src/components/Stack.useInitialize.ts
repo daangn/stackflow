@@ -27,7 +27,7 @@ function useInitialize() {
 
     const searchParams = new URLSearchParams(location.search)
     const screenInstanceId = uid()
-    searchParams.set(NavigatorParamKeys.screenInstanceId, screenInstanceId)
+    searchParams.set(NavigatorParamKeys.SCREEN_INSTANCE_ID, screenInstanceId)
 
     const { screens, screenInstances } = store.getState()
 

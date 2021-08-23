@@ -4,10 +4,10 @@ import {
   ScreenInstanceInfoProvider,
   ScreenInstanceOptionsProvider,
 } from './contexts'
-import { ScreenComponentProps } from './ScreenComponentProps'
-import { NavbarOptions, useStoreActions } from './store'
+import { INavbarOptions, useStoreActions } from './store'
+import { IScreenComponentProps } from './types'
 
-interface Props {
+interface IScreenProps {
   /**
    * URL path
    */
@@ -16,9 +16,9 @@ interface Props {
   /**
    * Component
    */
-  component?: React.ComponentType<ScreenComponentProps>
+  component?: React.ComponentType<IScreenComponentProps>
 }
-const Screen: React.FC<Props> = (props) => {
+const Screen: React.FC<IScreenProps> = (props) => {
   const { component: Component } = props
   const { addScreen, addScreenInstanceOption, removeScreen } = useStoreActions()
 
@@ -35,7 +35,7 @@ const Screen: React.FC<Props> = (props) => {
         id: screenId,
         path: props.path,
         Component({ screenInstanceId, isTop, isRoot, as }) {
-          const setNavbar = (navbar: NavbarOptions) => {
+          const setNavbar = (navbar: INavbarOptions) => {
             addScreenInstanceOption({
               screenInstanceId,
               screenInstanceOption: {

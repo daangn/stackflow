@@ -8,18 +8,18 @@ import React, {
 } from 'react'
 import compare from 'react-fast-compare'
 
-import { ScreenComponentProps } from '../ScreenComponentProps'
+import { IScreenComponentProps } from '../types'
 import { createStore, Store } from './createStore'
 
-export interface Screen {
+export interface IScreen {
   id: string
   path: string
   Component: React.FC<
-    { screenInstanceId: string; as: string } & ScreenComponentProps
+    { screenInstanceId: string; as: string } & IScreenComponentProps
   >
 }
 
-export interface ScreenInstance {
+export interface IScreenInstance {
   id: string
   screenId: string
   nestedRouteCount: number
@@ -27,11 +27,11 @@ export interface ScreenInstance {
   as: string
 }
 
-export interface ScreenInstanceOption {
-  navbar: NavbarOptions
+export interface IScreenInstanceOption {
+  navbar: INavbarOptions
 }
 
-export interface NavbarOptions {
+export interface INavbarOptions {
   visible: boolean
   title: React.ReactNode | null
   appendLeft: React.ReactNode | null
@@ -44,29 +44,29 @@ export interface NavbarOptions {
   onTopClick?: () => void
 }
 
-export type ScreenInstancePromise = {
+export interface IScreenInstancePromise {
   resolve: (data: any | null) => void
   popped: boolean
 }
 
-export interface ScreenEdge {
+export interface IScreenEdge {
   startTime: number | null
   startX: number | null
 }
 
 export interface GlobalState {
   screens: {
-    [screenId: string]: Screen | undefined
+    [screenId: string]: IScreen | undefined
   }
-  screenInstances: ScreenInstance[]
+  screenInstances: IScreenInstance[]
   screenInstancePtr: number
   screenInstanceOptions: {
-    [screenInstanceId: string]: ScreenInstanceOption | undefined
+    [screenInstanceId: string]: IScreenInstanceOption | undefined
   }
   screenInstancePromises: {
-    [screenInstanceId: string]: ScreenInstancePromise | undefined
+    [screenInstanceId: string]: IScreenInstancePromise | undefined
   }
-  screenEdge: ScreenEdge
+  screenEdge: IScreenEdge
 }
 
 const StoreContext = createContext<Store<GlobalState>>(null as any)
@@ -131,7 +131,7 @@ export function useStoreActions() {
   const store = useStore()
 
   const addScreen = useCallback(
-    ({ screen }: { screen: Screen }) => {
+    ({ screen }: { screen: IScreen }) => {
       store.setState((prevState) => ({
         ...prevState,
         screens: {
@@ -162,7 +162,7 @@ export function useStoreActions() {
       screenInstanceOption,
     }: {
       screenInstanceId: string
-      screenInstanceOption: ScreenInstanceOption
+      screenInstanceOption: IScreenInstanceOption
     }) => {
       store.setState((prevState) => ({
         ...prevState,
@@ -181,7 +181,7 @@ export function useStoreActions() {
       screenInstancePromise,
     }: {
       screenInstanceId: string
-      screenInstancePromise: ScreenInstancePromise
+      screenInstancePromise: IScreenInstancePromise
     }) => {
       store.setState((prevState) => ({
         ...prevState,
@@ -200,7 +200,7 @@ export function useStoreActions() {
       mapper,
     }: {
       ptr: number
-      mapper: (screenInstance: ScreenInstance) => ScreenInstance
+      mapper: (screenInstance: IScreenInstance) => IScreenInstance
     }) => {
       store.setState((prevState) => ({
         ...prevState,
@@ -257,7 +257,7 @@ export function useStoreActions() {
   )
 
   const setScreenEdge = useCallback(
-    ({ screenEdge }: { screenEdge: ScreenEdge }) => {
+    ({ screenEdge }: { screenEdge: IScreenEdge }) => {
       store.setState((prevState) => ({
         ...prevState,
         screenEdge,

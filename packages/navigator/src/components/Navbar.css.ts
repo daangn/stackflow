@@ -3,7 +3,7 @@ import { vcn } from 'vanilla-classnames'
 import { style } from '@vanilla-extract/css'
 import { calc } from '@vanilla-extract/css-utils'
 
-import { vars } from '../theme.css'
+import { vars } from '../Navigator.css'
 import {
   container_exitActive as cardContainer_exitActive,
   container_exitDone as cardContainer_exitDone,

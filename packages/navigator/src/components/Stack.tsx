@@ -1,8 +1,8 @@
 import React from 'react'
 import { CSSTransition } from 'react-transition-group'
 
-import { NavigatorTheme } from '../helpers'
 import { useStoreSelector } from '../store'
+import { INavigatorTheme } from '../types'
 import NodeRef from './_lib/NodeRef'
 import Card from './Card'
 import {
@@ -23,13 +23,13 @@ declare global {
   }
 }
 
-interface StackProps {
-  theme: NavigatorTheme
+interface IStackProps {
+  theme: INavigatorTheme
   animationDuration: number
   onClose?: () => void
   onDepthChange?: (depth: number) => void
 }
-const Stack: React.FC<StackProps> = (props) => {
+const Stack: React.FC<IStackProps> = (props) => {
   const { screens, screenInstances, screenInstancePtr } = useStoreSelector(
     (state) => ({
       screens: state.screens,

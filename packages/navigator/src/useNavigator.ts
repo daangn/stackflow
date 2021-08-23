@@ -31,10 +31,10 @@ export function useNavigator() {
       new Promise((resolve) => {
         const { pathname, searchParams } = new URL(to, /* dummy */ 'file://')
 
-        searchParams.set(NavigatorParamKeys.screenInstanceId, uid())
+        searchParams.set(NavigatorParamKeys.SCREEN_INSTANCE_ID, uid())
 
         if (options?.present) {
-          searchParams.set(NavigatorParamKeys.present, 'true')
+          searchParams.set(NavigatorParamKeys.PRESENT, 'true')
         }
 
         addScreenInstancePromise({
@@ -63,16 +63,16 @@ export function useNavigator() {
       const { pathname, searchParams } = new URL(to, /* dummy */ 'file://')
 
       if (options?.animate) {
-        searchParams.set(NavigatorParamKeys.screenInstanceId, uid())
+        searchParams.set(NavigatorParamKeys.SCREEN_INSTANCE_ID, uid())
       } else {
         if (screenInstanceId) {
           searchParams.set(
-            NavigatorParamKeys.screenInstanceId,
+            NavigatorParamKeys.SCREEN_INSTANCE_ID,
             screenInstanceId
           )
         }
         if (present) {
-          searchParams.set(NavigatorParamKeys.present, 'true')
+          searchParams.set(NavigatorParamKeys.PRESENT, 'true')
         }
       }
 
