@@ -11,6 +11,12 @@ Tab UI Implementation
 $ yarn add @karrotframe/tabs
 ```
 
+```typescript
+import '@karrotframe/tabs/index.css'
+
+import { ... } from '@karrotframe/tabs'
+```
+
 ## How to use
 
 ```tsx
