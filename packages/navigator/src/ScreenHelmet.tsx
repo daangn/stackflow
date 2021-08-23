@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 
-import { useScreenInstanceOptions } from './contexts'
+import { useScreenInstanceSetNavbar } from './contexts'
 
 interface IScreenHelmetProps {
   /**
@@ -51,10 +51,10 @@ interface IScreenHelmetProps {
   onTopClick?: () => void
 }
 const ScreenHelmet: React.FC<IScreenHelmetProps> = (props) => {
-  const screen = useScreenInstanceOptions()
+  const setNavbar = useScreenInstanceSetNavbar()
 
   useEffect(() => {
-    screen.setNavbar({
+    setNavbar({
       visible: true,
       title: props.title ?? null,
       appendLeft: props.appendLeft ?? null,
@@ -80,7 +80,7 @@ const ScreenHelmet: React.FC<IScreenHelmetProps> = (props) => {
 
   useEffect(() => {
     return () => {
-      screen.setNavbar({
+      setNavbar({
         visible: false,
         title: null,
         appendLeft: null,

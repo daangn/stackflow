@@ -4,6 +4,8 @@ export const ContextScreenInstanceInfo = createContext<{
   screenInstanceId: string
   path: string
   as: string
+  isTop: boolean
+  isRoot: boolean
 }>(null as any)
 
 export const ScreenInstanceInfoProvider = ContextScreenInstanceInfo.Provider

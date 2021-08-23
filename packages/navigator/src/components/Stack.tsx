@@ -89,8 +89,8 @@ const Stack: React.FC<IStackProps> = (props) => {
                   onClose={props.onClose}
                 >
                   <screen.Component
-                    as={screenInstance.as}
                     screenInstanceId={screenInstance.id}
+                    as={screenInstance.as}
                     isTop={isTop}
                     isRoot={isRoot}
                   />

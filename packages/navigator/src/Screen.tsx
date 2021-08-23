@@ -1,11 +1,10 @@
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect, useMemo } from 'react'
 
 import {
   ScreenInstanceInfoProvider,
-  ScreenInstanceOptionsProvider,
+  ScreenInstanceSetNavbarProvider,
 } from './contexts'
 import { INavbarOptions, useStoreActions } from './store'
-import { IScreenComponentProps } from './types'
 
 interface IScreenProps {
   /**
@@ -16,7 +15,7 @@ interface IScreenProps {
   /**
    * Component
    */
-  component?: React.ComponentType<IScreenComponentProps>
+  component?: React.ComponentType
 }
 const Screen: React.FC<IScreenProps> = (props) => {
   const { component: Component } = props
@@ -34,35 +33,35 @@ const Screen: React.FC<IScreenProps> = (props) => {
       screen: {
         id: screenId,
         path: props.path,
-        Component({ screenInstanceId, isTop, isRoot, as }) {
-          const setNavbar = (navbar: INavbarOptions) => {
-            addScreenInstanceOption({
+        Component({ screenInstanceId, as, isTop, isRoot }) {
+          const setNavbar = useCallback(
+            (navbar: INavbarOptions) => {
+              addScreenInstanceOption({
+                screenInstanceId,
+                screenInstanceOption: {
+                  navbar,
+                },
+              })
+            },
+            [addScreenInstanceOption, screenInstanceId]
+          )
+
+          const screenInstanceInfo = useMemo(
+            () => ({
               screenInstanceId,
-              screenInstanceOption: {
-                navbar,
-              },
-            })
-          }
+              as,
+              isTop,
+              isRoot,
+              path: props.path,
+            }),
+            [screenInstanceId, as, isTop, isRoot, props.path]
+          )
 
           return (
-            <ScreenInstanceInfoProvider
-              value={{
-                screenInstanceId,
-                as,
-                path: props.path,
-              }}
-            >
-              <ScreenInstanceOptionsProvider
-                value={{
-                  setNavbar,
-                }}
-              >
-                {Component ? (
-                  <Component isTop={isTop} isRoot={isRoot} />
-                ) : (
-                  props.children
-                )}
-              </ScreenInstanceOptionsProvider>
+            <ScreenInstanceInfoProvider value={screenInstanceInfo}>
+              <ScreenInstanceSetNavbarProvider value={setNavbar}>
+                {Component ? <Component /> : props.children}
+              </ScreenInstanceSetNavbarProvider>
             </ScreenInstanceInfoProvider>
           )
         },

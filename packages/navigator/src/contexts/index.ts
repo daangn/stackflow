@@ -1,2 +1,2 @@
 export * from './ContextScreenInstanceInfo'
-export * from './ContextScreenInstanceOptions'
+export * from './ContextScreenInstanceSetNavbar'

@@ -8,15 +8,17 @@ import React, {
 } from 'react'
 import compare from 'react-fast-compare'
 
-import { IScreenComponentProps } from '../types'
 import { createStore, Store } from './createStore'
 
 export interface IScreen {
   id: string
   path: string
-  Component: React.FC<
-    { screenInstanceId: string; as: string } & IScreenComponentProps
-  >
+  Component: React.FC<{
+    screenInstanceId: string
+    as: string
+    isTop: boolean
+    isRoot: boolean
+  }>
 }
 
 export interface IScreenInstance {
