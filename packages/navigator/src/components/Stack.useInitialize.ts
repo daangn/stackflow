@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { matchPath, useHistory } from 'react-router-dom'
+import { matchPath, useHistory, useLocation } from 'react-router-dom'
 
 import { NavigatorParamKeys } from '../helpers'
 import { useUniqueId } from '../hooks'
@@ -8,6 +8,7 @@ import { usePush } from './Stack.usePush'
 
 function useInitialize() {
   const { uid } = useUniqueId()
+  const location = useLocation()
   const history = useHistory()
 
   const store = useStore()
