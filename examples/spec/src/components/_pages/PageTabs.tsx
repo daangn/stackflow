@@ -13,14 +13,14 @@ const PageTabs: React.FC = () => {
         tabs={[
           {
             key: 'tab_1',
-            name: 'Tab 1',
+            buttonLabel: 'Tab 1',
             render() {
               return <div>Tab 1</div>
             },
           },
           {
             key: 'tab_2',
-            name: 'Tab 2',
+            buttonLabel: 'Tab 2',
             render() {
               return <div>Tab 2</div>
             },

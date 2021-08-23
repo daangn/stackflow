@@ -21,19 +21,19 @@ export interface ITab {
   key: string
 
   /**
-   * Tab name
+   * Tab button label
    */
-  name: string
-
-  /**
-   * Whether capture or bubble in touch event
-   */
-  useCapture?: boolean
+  buttonLabel: string
 
   /**
    * Tab contents
    */
   render: () => React.ReactNode
+
+  /**
+   * Whether capture or bubble in touch event
+   */
+  useCapture?: boolean
 }
 
 interface ITabsProps {
@@ -206,7 +206,7 @@ const Tabs: React.FC<ITabsProps> = (props) => {
               <a
                 key={tab.key}
                 role="tab"
-                aria-label={tab.name}
+                aria-label={tab.buttonLabel}
                 className={
                   css.tabBarItem[
                     props.activeTabKey === tab.key ? 'active' : 'normal'
@@ -216,7 +216,7 @@ const Tabs: React.FC<ITabsProps> = (props) => {
                   props.onTabChange(tab.key, 'click')
                 }}
               >
-                {tab.name}
+                {tab.buttonLabel}
               </a>
             ))}
             <div ref={tabBarIndicatorRef} className={css.tabBarIndicator} />
