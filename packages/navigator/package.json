@@ -4,7 +4,7 @@
   "description": "UX Enhancer",
   "repository": "https://github.com/daangn/karrotframe",
   "license": "Apache-2.0",
-  "author": "Danggeun Market Inc.",
+  "author": "Tony Won <tony@daangn.com>",
   "main": "index.js",
   "types": "index.d.ts",
   "files": [
