@@ -13,6 +13,8 @@ interface INavbarProps {
   theme: INavigatorTheme
   isRoot: boolean
   isPresent: boolean
+  backButtonAriaLabel: string
+  closeButtonAriaLabel: string
   onTopClick: () => void
   onClose?: () => void
 }
@@ -73,7 +75,7 @@ const Navbar: React.FC<INavbarProps> = (props) => {
       <a
         className={css.closeButton}
         role="text"
-        aria-label="닫기"
+        aria-label={props.closeButtonAriaLabel}
         onClick={props.onClose}
       >
         {screenInstanceOption.navbar.customCloseButton}
@@ -82,7 +84,7 @@ const Navbar: React.FC<INavbarProps> = (props) => {
       <a
         className={css.closeButton}
         role="text"
-        aria-label="닫기"
+        aria-label={props.closeButtonAriaLabel}
         onClick={props.onClose}
       >
         <IconClose className={css.svgIcon} />
@@ -95,7 +97,7 @@ const Navbar: React.FC<INavbarProps> = (props) => {
       <a
         className={css.backButton}
         role="text"
-        aria-label="뒤로가기"
+        aria-label={props.backButtonAriaLabel}
         onClick={onBackClick}
       >
         {screenInstanceOption.navbar.customBackButton}
@@ -104,7 +106,7 @@ const Navbar: React.FC<INavbarProps> = (props) => {
       <a
         className={css.backButton}
         role="text"
-        aria-label="뒤로가기"
+        aria-label={props.backButtonAriaLabel}
         onClick={onBackClick}
       >
         {props.theme === 'Cupertino' && props.isPresent ? (

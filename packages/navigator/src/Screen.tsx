@@ -23,7 +23,7 @@ const Screen: React.FC<IScreenProps> = (props) => {
 
   useEffect(() => {
     if (!props.children && !Component) {
-      console.warn('component props, children 중 하나는 반드시 필요합니다')
+      console.warn('Either component props or children is required')
       return
     }
 

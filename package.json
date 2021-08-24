@@ -2,6 +2,7 @@
   "name": "@karrotframe/monorepo",
   "license": "Apache-2.0",
   "scripts": {
+    "build": "yarn workspaces foreach -t run build",
     "prettify": "prettier --write ."
   },
   "workspaces": [
@@ -13,5 +14,6 @@
     "playwright": "^1.12.3",
     "prettier": "^2.3.2",
     "typescript": "^4.3.5"
-  }
+  },
+  "packageManager": "yarn@3.0.1"
 }

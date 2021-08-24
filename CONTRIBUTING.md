@@ -1,39 +1,48 @@
 # Contribution Guide
 
-## 개발 환경을 설정합니다
+## Setup
 
-### 의존성 설치
+### Install dependencies
 
-프로젝트 루트에서 다음 명령어를 입력해 의존성을 설치합니다
+Install the dependencies by entering the following command in the project root
 
 ```bash
 $ yarn
 ```
 
-> Karrotframe은 [Yarn 3](https://yarnpkg.com)와 Yarn workspace를 사용합니다
+> Karrotframe uses [Yarn 3](https://yarnpkg.com) and Yarn workspace
 
-### `@karrotframe/navigator` 빌드하기
+### Build
 
-`/packages/navigator` 폴더에서 다음 명령어로 빌드합니다
+Build all packages
 
 ```bash
 $ yarn build
 ```
 
-### 기능 테스트용 예제 시작하기
-
-`/examples/spec` 폴더에서 다음 명령어로 프로젝트를 시작할 수 있습니다
+...or you can build each packages by `yarn workspace` command
 
 ```bash
-$ yarn start
+# Build @karrotframe/navigator
+$ yarn workspace @karrotframe/navigator build
+
+# Build @karrotframe/tabs
+$ yarn workspace @karrotframe/tabs build
 ```
 
-### `@karrotframe/navigator`를 수정하면서 기능 테스트용 예제 프로젝트의 변화를 봅니다
+### Getting started with `example-spec`
+
+You can start your project in the `/examples/spec` folder with the following command
 
 ```bash
-# /examples/spec
-$ yarn start
+$ yarn workspace example-spec start
+```
 
-# 새 터미널 창의 /packages/navigator
-$ yarn dev
+### Example: View the changes in the `example-spec` project for testing while editing `@karrotframe/navigator` as follows:
+
+```bash
+$ yarn workspace example-spec start
+
+# In a new terminal window
+$ yarn workspace @karrotframe/navigator dev
 ```

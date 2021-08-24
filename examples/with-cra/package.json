@@ -3,9 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "react-scripts build",
-    "start": "react-scripts start",
-    "test": "react-scripts test"
+    "build": "react-app-rewired build",
+    "start": "react-app-rewired start"
   },
   "browserslist": {
     "production": [
@@ -38,6 +37,8 @@
     "@types/react": "^16.9.0",
     "@types/react-dom": "^16.9.0",
     "@types/react-router-dom": "^5.1.5",
+    "customize-cra": "^1.0.0",
+    "react-app-rewired": "^2.1.6",
     "react-scripts": "3.4.3",
     "typescript": "~3.7.2"
   }

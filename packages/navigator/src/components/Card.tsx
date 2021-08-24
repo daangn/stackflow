@@ -17,6 +17,8 @@ interface ICardProps {
   isRoot: boolean
   isTop: boolean
   isPresent: boolean
+  backButtonAriaLabel: string
+  closeButtonAriaLabel: string
   onClose?: () => void
 }
 const Card: React.FC<ICardProps> = (props) => {
@@ -200,6 +202,8 @@ const Card: React.FC<ICardProps> = (props) => {
               theme={props.theme}
               isRoot={props.isRoot}
               isPresent={props.isPresent}
+              backButtonAriaLabel={props.backButtonAriaLabel}
+              closeButtonAriaLabel={props.closeButtonAriaLabel}
               onClose={props.onClose}
               onTopClick={onTopClick}
             />

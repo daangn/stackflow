@@ -26,6 +26,8 @@ declare global {
 interface IStackProps {
   theme: INavigatorTheme
   animationDuration: number
+  backButtonAriaLabel: string
+  closeButtonAriaLabel: string
   onClose?: () => void
   onDepthChange?: (depth: number) => void
 }
@@ -86,6 +88,8 @@ const Stack: React.FC<IStackProps> = (props) => {
                       screenInstances[screenInstanceIndex + 1].present)
                   }
                   isPresent={screenInstance.present}
+                  backButtonAriaLabel={props.backButtonAriaLabel}
+                  closeButtonAriaLabel={props.closeButtonAriaLabel}
                   onClose={props.onClose}
                 >
                   <screen.Component

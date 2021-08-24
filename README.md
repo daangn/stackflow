@@ -27,4 +27,4 @@
 
 ## Contribution Guide
 
-Karrotframe에 새 기능 또는 옵션을 Contribute 하시려면 [Contribution Guide](./CONTRIBUTING.md)를 확인하세요
+To contribute new features or options to Karrotframe, please check [Contribution Guide](./CONTRIBUTING.md)

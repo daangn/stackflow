@@ -20,7 +20,7 @@ function useInitialize() {
       return
     }
     if (window.__KARROTFRAME__) {
-      throw new Error('한 개의 앱에는 한 개의 Navigator만 허용됩니다')
+      throw new Error('Only one Navigator is allowed in an app')
     }
 
     window.__KARROTFRAME__ = true

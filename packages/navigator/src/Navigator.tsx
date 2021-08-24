@@ -42,6 +42,16 @@ interface INavigatorProps {
   className?: string
 
   /**
+   * `aria-label=` property assigned to back button
+   */
+  backButtonAriaLabel?: string
+
+  /**
+   * `aria-label=` property assigned to close button
+   */
+  closeButtonAriaLabel?: string
+
+  /**
    * When close button clicked
    */
   onClose?: () => void
@@ -51,15 +61,19 @@ interface INavigatorProps {
    */
   onDepthChange?: (depth: number) => void
 }
-const Navigator: React.FC<INavigatorProps> = (props) => {
-  const theme = props.theme ?? 'Android'
-
-  const animationDuration =
-    props.animationDuration ??
-    (theme === 'Android'
-      ? DEFAULT_ANDROID_ANIMATION_DURATION
-      : DEFAULT_CUPERTINO_ANIMATION_DURATION)
-
+const Navigator: React.FC<INavigatorProps> = ({
+  theme = 'Android',
+  animationDuration = theme === 'Android'
+    ? DEFAULT_ANDROID_ANIMATION_DURATION
+    : DEFAULT_CUPERTINO_ANIMATION_DURATION,
+  useCustomRouter,
+  className,
+  backButtonAriaLabel = 'Go back',
+  closeButtonAriaLabel = 'Close',
+  onClose,
+  onDepthChange,
+  children,
+}) => {
   let h = (
     <UniqueIdProvider>
       <StoreProvider>
@@ -69,7 +83,7 @@ const Navigator: React.FC<INavigatorProps> = (props) => {
               android: theme === 'Android',
               cupertino: theme === 'Cupertino',
             }),
-            ...(props.className ? [props.className] : []),
+            ...(className ? [className] : []),
           ].join(' ')}
           style={assignInlineVars({
             [css.vars.animationDuration]: animationDuration + 'ms',
@@ -79,10 +93,12 @@ const Navigator: React.FC<INavigatorProps> = (props) => {
             <Stack
               animationDuration={animationDuration}
               theme={theme}
-              onClose={props.onClose}
-              onDepthChange={props.onDepthChange}
+              onClose={onClose}
+              backButtonAriaLabel={backButtonAriaLabel}
+              closeButtonAriaLabel={closeButtonAriaLabel}
+              onDepthChange={onDepthChange}
             >
-              {props.children}
+              {children}
             </Stack>
           </TransitionGroup>
         </div>
@@ -90,7 +106,7 @@ const Navigator: React.FC<INavigatorProps> = (props) => {
     </UniqueIdProvider>
   )
 
-  if (!props.useCustomRouter) {
+  if (!useCustomRouter) {
     h = <HashRouter>{h}</HashRouter>
   }
 
