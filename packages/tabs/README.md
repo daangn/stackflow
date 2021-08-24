@@ -1,9 +1,12 @@
-# `@karrotframe/tabs`
+<img src="./cover.svg" style="width: 100%;" />
 
-Tab UI Implementation
+<div align="center">
 
-- Indicator with intermediate animation
-- Swipeable
+![](https://img.shields.io/npm/v/karrotframe)
+![](https://img.shields.io/npm/l/karrotframe)
+![](https://img.shields.io/npm/dt/karrotframe)
+
+</div>
 
 ## Getting Started
 
@@ -48,4 +51,23 @@ const App: React.FC = () => {
 }
 
 export default App
+```
+
+```tsx
+import { useTabsController } from '@karrotframe/tabs'
+
+const Something: React.FC = () => {
+  const { enableSwipe, disableSwipe } = useTabsController()
+
+  const onTouchDown = () => {
+    // disable swipe when other action needed
+    disableSwipe()
+
+    // ...
+  }
+
+  return (
+    // ...
+  )
+}
 ```
