@@ -1,6 +1,6 @@
 import { vcn } from 'vanilla-classnames'
 
-import { style } from '@vanilla-extract/css'
+import { composeStyles, createTheme, style } from '@vanilla-extract/css'
 import { calc } from '@vanilla-extract/css-utils'
 
 import { vars } from '../Navigator.css'
@@ -9,15 +9,24 @@ import {
   container_exitDone as cardContainer_exitDone,
 } from './Card.css'
 
+const [navbarThemeClass, navbarVars] = createTheme({
+  centerMainWidth: '',
+})
+
+export { navbarVars }
+
 export const container = vcn(
-  style({
-    position: 'absolute',
-    width: '100%',
-    top: 0,
-    padding: 'constant(safe-area-inset-top) 0 0',
-    paddingTop: 'env(safe-area-inset-top)',
-    backgroundColor: vars.backgroundColor,
-  }),
+  composeStyles(
+    navbarThemeClass,
+    style({
+      position: 'absolute',
+      width: '100%',
+      top: 0,
+      padding: 'constant(safe-area-inset-top) 0 0',
+      paddingTop: 'env(safe-area-inset-top)',
+      backgroundColor: vars.backgroundColor,
+    })
+  ),
   {
     cupertinoAndIsNotPresent: style({
       selectors: {
@@ -36,24 +45,14 @@ export const main = vcn(
   style({
     display: 'flex',
     position: 'relative',
+    height: vars.navbar.height,
+    boxShadow:
+      'inset 0px ' +
+      calc(vars.navbar.borderSize).negate() +
+      ' 0 ' +
+      vars.navbar.borderColor,
   }),
   {
-    android: style({
-      height: '3.5rem',
-      boxShadow:
-        'inset 0px ' +
-        calc(vars.navbar.borderSize.android).negate() +
-        ' 0 ' +
-        vars.navbar.borderColor.android,
-    }),
-    cupertino: style({
-      height: '2.75rem',
-      boxShadow:
-        'inset 0px ' +
-        calc(vars.navbar.borderSize.cupertino).negate() +
-        ' 0 ' +
-        vars.navbar.borderColor.cupertino,
-    }),
     noBorder: style({
       boxShadow: 'none',
     }),
@@ -156,7 +155,7 @@ export const center = vcn(
 export const centerMain = vcn(
   style({
     display: 'block',
-    width: vars.navbar.center.mainWidth,
+    width: navbarVars.centerMainWidth,
   }),
   {
     android: style({
@@ -208,7 +207,7 @@ export const centerMainEdge = vcn(
     display: 'none',
     cursor: 'pointer',
     WebkitTapHighlightColor: 'transparent',
-    width: vars.navbar.center.mainWidth,
+    width: navbarVars.centerMainWidth,
   }),
   {
     cupertino: style({

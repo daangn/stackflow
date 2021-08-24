@@ -3,7 +3,6 @@ import React, { useLayoutEffect, useRef, useState } from 'react'
 import { assignInlineVars } from '@vanilla-extract/dynamic'
 
 import { IconBack, IconClose } from '../assets'
-import { vars } from '../Navigator.css'
 import { useStoreSelector } from '../store'
 import { INavigatorTheme } from '../types'
 import { useNavigator } from '../useNavigator'
@@ -27,7 +26,7 @@ const Navbar: React.FC<INavbarProps> = (props) => {
     (state) => state.screenInstanceOptions
   )
 
-  const [centerMainWidth, setCenterMainWidth] = useState<string | undefined>(
+  const [centerMainWidth, setCenterMainWidth] = useState<number | undefined>(
     undefined
   )
 
@@ -50,7 +49,7 @@ const Navbar: React.FC<INavbarProps> = (props) => {
 
       const sideMargin = Math.max(leftWidth, rightWidth)
 
-      setCenterMainWidth(screenWidth - 2 * sideMargin + 'px')
+      setCenterMainWidth(screenWidth - 2 * sideMargin)
     }
 
     if (props.theme === 'Cupertino') {
@@ -132,13 +131,11 @@ const Navbar: React.FC<INavbarProps> = (props) => {
       })}
       ref={navbarRef}
       style={assignInlineVars({
-        [vars.navbar.center.mainWidth]: centerMainWidth + 'px',
+        [css.navbarVars.centerMainWidth]: `${centerMainWidth}px`,
       })}
     >
       <div
         className={css.main({
-          android,
-          cupertino,
           noBorder,
         })}
       >

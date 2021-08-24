@@ -19,12 +19,16 @@ const [themeClass, vars] = createTheme({
       width: '',
       transform: '',
     },
+    itemPadding: '0.59375rem',
+    fontSize: '0.875rem',
+    fontWeight: '700',
   },
   tabMain: {
     backgroundColor: '#fff',
     width: '',
     transform: '',
   },
+  transitionDuration: '300ms',
 })
 
 export { vars }
@@ -55,10 +59,10 @@ export const tabBar = style({
 
 const _tabBarItem: StyleRule = {
   flex: '1',
-  fontSize: '0.875rem',
-  fontWeight: 700,
+  fontSize: vars.tabBar.fontSize,
+  fontWeight: vars.tabBar.fontWeight,
   textAlign: 'center',
-  padding: '0.59375rem 0',
+  padding: `${vars.tabBar.itemPadding} 0`,
   cursor: 'pointer',
   WebkitTapHighlightColor: 'transparent',
   textDecoration: 'none',
@@ -83,7 +87,7 @@ export const tabBarIndicator = style({
   height: '2px',
   backgroundColor: vars.tabBar.indicator.color,
   willChange: 'transform',
-  transition: 'transform 300ms',
+  transition: `transform ${vars.transitionDuration}`,
   width: vars.tabBar.indicator.width,
   transform: vars.tabBar.indicator.transform,
 })
@@ -93,7 +97,7 @@ export const tabMains = style({
   flex: '1',
   overflow: 'hidden',
   willChange: 'transform',
-  transition: 'transform 300ms',
+  transition: `transform ${vars.transitionDuration}`,
   width: vars.tabMain.width,
   transform: vars.tabMain.transform,
 })
@@ -106,7 +110,7 @@ const _tabMain: StyleRule = {
   backgroundColor: vars.tabMain.backgroundColor,
   position: 'relative',
   visibility: 'hidden',
-  transition: 'visibility 0s 300ms',
+  transition: `visibility 0s ${vars.transitionDuration}`,
 }
 export const tabMain = styleVariants({
   hidden: {

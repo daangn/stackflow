@@ -51,6 +51,11 @@ interface ITabsProps {
    * Called when tab changed
    */
   onTabChange: (key: string, changedBy?: 'click' | 'swipe') => void
+
+  /**
+   * Class name appended to root div element
+   */
+  className?: string
 }
 
 const TabsContext = createContext<{
@@ -189,7 +194,10 @@ const Tabs: React.FC<ITabsProps> = (props) => {
       >
         <div
           ref={containerRef}
-          className={css.container}
+          className={[
+            css.container,
+            ...(props.className ? [props.className] : []),
+          ].join(' ')}
           style={assignInlineVars({
             [css.vars.tabBar.indicator.width]: 100 / props.tabs.length + '%',
             [css.vars.tabBar.indicator.transform]:

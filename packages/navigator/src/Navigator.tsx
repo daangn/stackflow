@@ -37,6 +37,11 @@ interface INavigatorProps {
   useCustomRouter?: boolean
 
   /**
+   * Class name appended to root div element
+   */
+  className?: string
+
+  /**
    * When close button clicked
    */
   onClose?: () => void
@@ -51,20 +56,21 @@ const Navigator: React.FC<INavigatorProps> = (props) => {
 
   const animationDuration =
     props.animationDuration ??
-    (() => {
-      switch (theme) {
-        case 'Cupertino':
-          return DEFAULT_CUPERTINO_ANIMATION_DURATION
-        case 'Android':
-          return DEFAULT_ANDROID_ANIMATION_DURATION
-      }
-    })()
+    (theme === 'Android'
+      ? DEFAULT_ANDROID_ANIMATION_DURATION
+      : DEFAULT_CUPERTINO_ANIMATION_DURATION)
 
   let h = (
     <UniqueIdProvider>
       <StoreProvider>
         <div
-          className={css.root}
+          className={[
+            css.root({
+              android: theme === 'Android',
+              cupertino: theme === 'Cupertino',
+            }),
+            ...(props.className ? [props.className] : []),
+          ].join(' ')}
           style={assignInlineVars({
             [css.vars.animationDuration]: animationDuration + 'ms',
           })}

@@ -53,7 +53,7 @@ export const dim = vcn(
   }),
   {
     cupertinoAndIsNavbarVisible: style({
-      top: '2.75rem',
+      top: vars.navbar.height,
     }),
     cupertinoAndIsPresent: style({
       top: 0,
@@ -109,7 +109,7 @@ export const main = vcn(
       },
     }),
     cupertinoAndIsNavbarVisible: style({
-      paddingTop: 'calc(2.75rem + env(safe-area-inset-top))',
+      paddingTop: `calc(${vars.navbar.height} + env(safe-area-inset-top))`,
     }),
     android: style({
       opacity: 0,
@@ -137,7 +137,7 @@ export const main = vcn(
       },
     }),
     androidAndIsNavbarVisible: style({
-      paddingTop: '3.5rem',
+      paddingTop: vars.navbar.height,
     }),
     androidAndIsRoot: style({
       opacity: 0,
