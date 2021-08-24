@@ -8,11 +8,25 @@
 
 </div>
 
-## Getting started
+**Swipable Tab UI for React**
+
+---
+
+- [Setup](#setup)
+- [Components](#components)
+  - [Tabs](#tabs)
+- [Hooks](#hooks)
+  - [useTabsController](#usetabscontroller)
+
+---
+
+## Setup
 
 ```bash
 $ yarn add @karrotframe/tabs
 ```
+
+Should import the CSS of your app
 
 ```typescript
 import '@karrotframe/tabs/index.css'
@@ -20,7 +34,9 @@ import '@karrotframe/tabs/index.css'
 import { ... } from '@karrotframe/tabs'
 ```
 
-## How to use
+## Components
+
+### Tabs
 
 ```tsx
 import { Tabs } from '@karrotframe/tabs'
@@ -52,6 +68,10 @@ const App: React.FC = () => {
 
 export default App
 ```
+
+## Hooks
+
+### useTabsController
 
 ```tsx
 import { useTabsController } from '@karrotframe/tabs'

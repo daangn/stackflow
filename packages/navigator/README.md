@@ -19,10 +19,6 @@
 
 ---
 
-[💻 Try it out for yourself in CodeSandbox]()
-
----
-
 - [Setup](#setup)
 - [Components](#components)
   - [Navigator](#navigator)
@@ -42,11 +38,11 @@
 
 ## Setup
 
-Should import the CSS of your app
-
 ```bash
 $ yarn add @karrotframe/navigator
 ```
+
+Should import the CSS of your app
 
 ```typescript
 import '@karrotframe/navigator/index.css'
