@@ -1,10 +1,11 @@
 import React from 'react'
 
-import { ScreenComponentProps, ScreenHelmet, useNavigator } from 'karrotframe'
 import styled from '@emotion/styled'
+import { ScreenHelmet, useNavigator } from '@karrotframe/navigator'
+
 import ListItem from '../ListItem'
 
-const PageHome: React.FC<ScreenComponentProps> = ({ isTop, isRoot }) => {
+const PageHome: React.FC = () => {
   const { push } = useNavigator()
 
   return (
@@ -51,6 +52,13 @@ const PageHome: React.FC<ScreenComponentProps> = ({ isTop, isRoot }) => {
         }}
       >
         useQueryParams()
+      </ListItem>
+      <ListItem
+        onClick={() => {
+          push('/tabs')
+        }}
+      >
+        @karrotframe/tabs
       </ListItem>
     </Container>
   )

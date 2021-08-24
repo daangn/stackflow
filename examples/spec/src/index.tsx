@@ -1,4 +1,5 @@
-import 'karrotframe/lib/index.css'
+import '@karrotframe/navigator/index.css'
+import '@karrotframe/tabs/index.css'
 import './index.css'
 
 import React from 'react'

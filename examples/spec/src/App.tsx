@@ -2,17 +2,18 @@ import './App.css'
 
 import React from 'react'
 
-import { Navigator, Screen } from 'karrotframe'
+import { Navigator, Screen } from '@karrotframe/navigator'
 
+import Page404 from './components/_pages/Page404'
 import PageHome from './components/_pages/PageHome'
-import PageScreenHelmet from './components/_pages/PageScreenHelmet'
-import PagePush from './components/_pages/PagePush'
 import PagePop from './components/_pages/PagePop'
+import PagePush from './components/_pages/PagePush'
 import PageReplace from './components/_pages/PageReplace'
+import PageReplaceInUseEffect from './components/_pages/PageReplaceInUseEffect'
+import PageScreenHelmet from './components/_pages/PageScreenHelmet'
+import PageTabs from './components/_pages/PageTabs'
 import PageUseParams from './components/_pages/PageUseParams'
 import PageUseQueryParams from './components/_pages/PageUseQueryParams'
-import PageReplaceInUseEffect from './components/_pages/PageReplaceInUseEffect'
-import Page404 from './components/_pages/Page404'
 
 const App: React.FC = () => {
   return (
@@ -33,6 +34,7 @@ const App: React.FC = () => {
       <Screen path="/replaceInUseEffect" component={PageReplaceInUseEffect} />
       <Screen path="/useParams/:param" component={PageUseParams} />
       <Screen path="/useQueryParams" component={PageUseQueryParams} />
+      <Screen path="/tabs" component={PageTabs} />
       <Screen path="*" component={Page404} />
     </Navigator>
   )

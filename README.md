@@ -2,9 +2,9 @@
 
 <div align="center">
 
-![](https://img.shields.io/npm/v/karrotframe)
-![](https://img.shields.io/npm/l/karrotframe)
-![](https://img.shields.io/npm/dt/karrotframe)
+![](https://img.shields.io/npm/v/@karrotframe/navigator)
+![](https://img.shields.io/npm/l/@karrotframe/navigator)
+![](https://img.shields.io/npm/dt/@karrotframe/navigator)
 ![](https://img.shields.io/github/contributors/daangn/karrotframe)
 ![](https://img.shields.io/github/last-commit/daangn/karrotframe)
 
@@ -12,7 +12,8 @@
 
 ## Packages
 
-- [`karrotframe`](./packages/karrotframe)
+- [`@karrotframe/navigator`](./packages/navigator)
+- [`@karrotframe/tabs`](./packages/tabs)
 
 ## Contributors
 
@@ -26,4 +27,4 @@
 
 ## Contribution Guide
 
-Karrotframe에 새 기능 또는 옵션을 Contribute 하시려면 [Contribution Guide](./CONTRIBUTING.md)를 확인하세요
+To contribute new features or options to Karrotframe, please check [Contribution Guide](./CONTRIBUTING.md)

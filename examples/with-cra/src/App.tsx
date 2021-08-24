@@ -1,5 +1,11 @@
 import React from 'react'
-import { Navigator, Screen, ScreenHelmet, useNavigator } from 'karrotframe'
+
+import {
+  Navigator,
+  Screen,
+  ScreenHelmet,
+  useNavigator,
+} from '@karrotframe/navigator'
 
 const App: React.FC = () => {
   return (

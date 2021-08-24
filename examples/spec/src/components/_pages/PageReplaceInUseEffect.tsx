@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
-import { useNavigator } from 'karrotframe'
+
 import styled from '@emotion/styled'
+import { useNavigator } from '@karrotframe/navigator'
 
 const PageReplaceInUseEffect: React.FC = () => {
   const { replace } = useNavigator()
