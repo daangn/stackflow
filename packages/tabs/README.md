@@ -8,7 +8,7 @@
 
 </div>
 
-## Getting Started
+## Getting started
 
 ```bash
 $ yarn add @karrotframe/tabs
