@@ -2,9 +2,9 @@
 
 <div align="center">
 
-![](https://img.shields.io/npm/v/karrotframe)
-![](https://img.shields.io/npm/l/karrotframe)
-![](https://img.shields.io/npm/dt/karrotframe)
+![](https://img.shields.io/npm/v/@karrotframe/tabs)
+![](https://img.shields.io/npm/l/@karrotframe/tabs)
+![](https://img.shields.io/npm/dt/@karrotframe/tabs)
 
 </div>
 

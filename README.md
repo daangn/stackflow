@@ -2,9 +2,9 @@
 
 <div align="center">
 
-![](https://img.shields.io/npm/v/karrotframe)
-![](https://img.shields.io/npm/l/karrotframe)
-![](https://img.shields.io/npm/dt/karrotframe)
+![](https://img.shields.io/npm/v/@karrotframe/navigator)
+![](https://img.shields.io/npm/l/@karrotframe/navigator)
+![](https://img.shields.io/npm/dt/@karrotframe/navigator)
 ![](https://img.shields.io/github/contributors/daangn/karrotframe)
 ![](https://img.shields.io/github/last-commit/daangn/karrotframe)
 
