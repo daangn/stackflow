@@ -15,7 +15,7 @@
 - ⚙️ Navigation bar designed for each platform
 - 🪄 Automatically attach close or back button for each circumstance
 
-> Core logic of Navigator in depend on `react-router-dom`
+> Core logic of Navigator depends on `react-router-dom`
 
 ---
 
