@@ -3,30 +3,39 @@ import React, {
   useCallback,
   useContext,
   useMemo,
-  useRef,
+  useReducer,
 } from 'react'
 
-const UniqueIdContext = createContext<React.MutableRefObject<number>>(
-  null as any
-)
+const UniqueIdContext = createContext<{
+  counter: number
+  increase: () => void
+}>(null as any)
 
 export const UniqueIdProvider: React.FC = (props) => {
-  const counterRef = useRef(0)
+  const [counter, increase] = useReducer((i) => i + 1, 0)
 
   return (
-    <UniqueIdContext.Provider value={counterRef}>
+    <UniqueIdContext.Provider
+      value={useMemo(
+        () => ({
+          counter,
+          increase,
+        }),
+        [counter, increase]
+      )}
+    >
       {props.children}
     </UniqueIdContext.Provider>
   )
 }
 
 export function useUniqueId() {
-  const counterRef = useContext(UniqueIdContext)
+  const { counter, increase } = useContext(UniqueIdContext)
 
   const uid = useCallback(() => {
-    counterRef.current += 1
-    return String(counterRef.current)
-  }, [counterRef])
+    increase()
+    return String(counter)
+  }, [counter, increase])
 
   return useMemo(
     () => ({
