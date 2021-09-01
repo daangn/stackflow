@@ -27,8 +27,8 @@
     "@emotion/styled": "^11.1.5",
     "@karrotframe/navigator": "workspace:packages/navigator",
     "@karrotframe/tabs": "workspace:packages/tabs",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
+    "react": "next",
+    "react-dom": "next",
     "react-router-dom": "^5.2.0"
   },
   "devDependencies": {
@@ -40,8 +40,8 @@
     "@testing-library/user-event": "^7.1.2",
     "@types/jest": "^24.0.0",
     "@types/node": "^12.0.0",
-    "@types/react": "^16.9.0",
-    "@types/react-dom": "^16.9.0",
+    "@types/react": "^17.0.19",
+    "@types/react-dom": "^17.0.9",
     "@types/react-router-dom": "^5.1.5",
     "customize-cra": "^1.0.0",
     "react-app-rewired": "^2.1.6",
