@@ -1,3 +1,5 @@
+const css = String.raw
+
 export function makeTranslation(element: HTMLElement) {
   let _rAFLock = false
 
@@ -15,13 +17,21 @@ export function makeTranslation(element: HTMLElement) {
     }) {
       if (force || !_rAFLock) {
         _rAFLock = true
+
         requestAnimationFrame(() => {
           if (y === 0) {
             element.style.cssText = ''
           } else {
-            element.style.transform = `translateY(${y}px)`
-            element.style.overflow = 'hidden'
-            element.style.transition = smooth ? '' : '0s'
+            element.style.cssText = css`
+              transform: translateY(${y}px);
+              overflow: hidden;
+
+              ${!smooth
+                ? css`
+                    transition: 0s;
+                  `
+                : ''}
+            `
           }
 
           onAnimationFrame?.(y)

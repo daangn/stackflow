@@ -1,21 +1,19 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useImperativeHandle, useRef, useState } from 'react'
 
-import { mergeRefs } from '../mergeRefs'
 import { ICustomSpinner } from '../types'
 import FallbackSpinner from './FallbackSpinner'
 import * as css from './PullToRefresh.css'
 import { makeTranslation } from './PullToRefresh.translation'
 
+type PullToRefreshRef = {
+  getContainerElement: () => HTMLDivElement | null
+  getScrollContainerElement: () => HTMLDivElement | null
+}
 type PullToRefreshProps = React.PropsWithChildren<{
   /**
    * Class name appended to root div element
    */
   className?: string
-
-  /**
-   * Ref of div element with `overflow: scroll` attribute
-   */
-  scrollContainerRef?: React.RefObject<HTMLDivElement>
 
   /**
    * Called when pulled
@@ -32,11 +30,16 @@ type PullToRefreshProps = React.PropsWithChildren<{
    */
   disabled?: boolean
 }>
-const PullToRefresh = React.forwardRef<HTMLDivElement, PullToRefreshProps>(
+const PullToRefresh = React.forwardRef<PullToRefreshRef, PullToRefreshProps>(
   (props, ref) => {
     const containerRef = useRef<HTMLDivElement>(null)
     const scrollContainerRef = useRef<HTMLDivElement>(null)
     const spinnerContainerRef = useRef<HTMLDivElement>(null)
+
+    useImperativeHandle(ref, () => ({
+      getContainerElement: () => containerRef.current,
+      getScrollContainerElement: () => scrollContainerRef.current,
+    }))
 
     const [t, setT] = useState(0)
     const [refreshing, setRefreshing] = useState(false)
@@ -156,7 +159,7 @@ const PullToRefresh = React.forwardRef<HTMLDivElement, PullToRefreshProps>(
 
     return (
       <div
-        ref={mergeRefs([ref, containerRef])}
+        ref={containerRef}
         className={[
           css.container,
           ...(props.className ? [props.className] : []),
@@ -165,10 +168,7 @@ const PullToRefresh = React.forwardRef<HTMLDivElement, PullToRefreshProps>(
         <div ref={spinnerContainerRef} className={css.spinnerContainer}>
           <Spinner t={t} refreshing={refreshing} />
         </div>
-        <div
-          ref={mergeRefs([scrollContainerRef, props.scrollContainerRef])}
-          className={css.scrollContainer}
-        >
+        <div ref={scrollContainerRef} className={css.scrollContainer}>
           {props.children}
         </div>
       </div>
