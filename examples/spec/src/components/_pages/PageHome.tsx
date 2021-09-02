@@ -60,6 +60,13 @@ const PageHome: React.FC = () => {
       >
         @karrotframe/tabs
       </ListItem>
+      <ListItem
+        onClick={() => {
+          push('/pulltorefresh')
+        }}
+      >
+        @karrotframe/pulltorefresh
+      </ListItem>
     </Container>
   )
 }
