@@ -120,9 +120,9 @@ const PullToRefresh = React.forwardRef<HTMLDivElement, PullToRefreshProps>(
         }
 
         function dispose() {
-          setRefreshing(false)
           resetTranslation()
           resetState()
+          setRefreshing(false)
         }
 
         const pulled = Δy > spinnerHeight
@@ -131,9 +131,9 @@ const PullToRefresh = React.forwardRef<HTMLDivElement, PullToRefreshProps>(
           return dispose()
         }
 
+        translate({ y: spinnerHeight, smooth: true, force: true })
         refreshing = true
         setRefreshing(true)
-        translate({ y: spinnerHeight, smooth: true, force: true })
 
         props.onPull(dispose)
       }
