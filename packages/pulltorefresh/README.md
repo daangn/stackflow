@@ -14,7 +14,7 @@
 
 - [Setup](#setup)
 - [Components](#components)
-- [Hooks](#hooks)
+  - [PullToRefresh](#pulltorefresh)
 
 ---
 
@@ -34,4 +34,26 @@ import { ... } from '@karrotframe/pulltorefresh'
 
 ## Components
 
-## Hooks
+### PullToRefresh
+
+> All the props is typed and commented in TypeScript
+
+```tsx
+import { PullToRefresh } from '@karrotmarket/pulltorefresh'
+
+const App: React.FC = () => {
+  return (
+    <PullToRefresh
+      onPull={(dispose) => {
+        refresh().then(() => {
+          dispose()
+        })
+      }}
+    >
+      Hello, World
+    </PullToRefresh>
+  )
+}
+
+export default App
+```

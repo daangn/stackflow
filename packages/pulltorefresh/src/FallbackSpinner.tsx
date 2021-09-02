@@ -3,8 +3,7 @@ import React, { useMemo } from 'react'
 import * as css from './FallbackSpinner.css'
 import { vars } from './theme.css'
 
-const SIZE = 45
-const BAR_WIDTH = 8
+const SIZE = 28.75
 const BAR_COUNT = 10
 
 interface FallbackSpinnerProps {
@@ -14,7 +13,7 @@ interface FallbackSpinnerProps {
 const FallbackSpinner: React.FC<FallbackSpinnerProps> = (props) => {
   const directions = useMemo(() => {
     const center = SIZE / 2
-    const radius = center - BAR_WIDTH * 1.25
+    const radius = SIZE / 3.83
     const it = 360 / (BAR_COUNT * 2)
     const directions = []
     const oneAngle = (it * Math.PI) / 90
@@ -25,8 +24,8 @@ const FallbackSpinner: React.FC<FallbackSpinnerProps> = (props) => {
       const fromX = center - Math.sin(angle) * radius
       const fromY = center - Math.cos(angle) * radius
 
-      const toX = center - Math.sin(angle) * (radius + 8)
-      const toY = center - Math.cos(angle) * (radius + 8)
+      const toX = center - Math.sin(angle) * (radius + SIZE / 5.75)
+      const toY = center - Math.cos(angle) * (radius + SIZE / 5.75)
 
       directions.push(`M${fromX} ${fromY}, ${toX} ${toY}`)
     }
@@ -48,10 +47,11 @@ const FallbackSpinner: React.FC<FallbackSpinnerProps> = (props) => {
       >
         {directions.map((direction, idx) => (
           <path
+            className={css.spinnerPath}
             key={idx}
             d={direction}
             fill="transparent"
-            strokeWidth={5}
+            strokeWidth={3.125}
             strokeLinecap="round"
             stroke={
               idx === 0

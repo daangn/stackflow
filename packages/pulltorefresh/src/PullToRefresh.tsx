@@ -52,35 +52,40 @@ const PullToRefresh = React.forwardRef<HTMLDivElement, PullToRefreshProps>(
         return
       }
 
+      let pulling: boolean = false
+      let refreshing: boolean = false
       let y0: number | null = null
       let Δy: number | null = null
-      let refreshing: boolean = false
 
       const resetState = () => {
+        pulling = false
+        refreshing = false
         y0 = null
         Δy = null
-        refreshing = false
       }
 
       const { translate, resetTranslation } = makeTranslation($scrollContainer)
 
-      const onTouchStart = (e: TouchEvent) => {
-        const y = e.touches[0].clientY
-
+      const onTouchStart = () => {
+        console.log($scrollContainer.scrollTop)
         if (refreshing || $scrollContainer.scrollTop > 0) {
           return
         }
 
-        y0 = y
+        pulling = true
       }
 
       const onTouchMove = (e: TouchEvent) => {
-        if (refreshing || y0 === null) {
+        if (refreshing || !pulling) {
           return
         }
 
         const spinnerHeight = $spinnerContainer.clientHeight
         const y = e.touches[0].clientY
+
+        if (!y0) {
+          y0 = y
+        }
 
         Δy = y - y0
 
@@ -94,7 +99,6 @@ const PullToRefresh = React.forwardRef<HTMLDivElement, PullToRefreshProps>(
         }
 
         if (t(Δy) > 0 && t(Δy) < 1) {
-          e.preventDefault()
           translate({
             y: Δy,
             onAnimationFrame: (Δy) => setT(t(Δy)),
@@ -102,7 +106,6 @@ const PullToRefresh = React.forwardRef<HTMLDivElement, PullToRefreshProps>(
         }
 
         if (t(Δy) >= 1) {
-          e.preventDefault()
           translate({
             y: spinnerHeight + (Δy - spinnerHeight) / 6,
             onAnimationFrame: () => setT(1),
@@ -137,11 +140,13 @@ const PullToRefresh = React.forwardRef<HTMLDivElement, PullToRefreshProps>(
       }
 
       $scrollContainer.addEventListener('touchstart', onTouchStart)
+      $scrollContainer.addEventListener('scroll', onTouchStart)
       $scrollContainer.addEventListener('touchmove', onTouchMove)
       $scrollContainer.addEventListener('touchend', onTouchEnd)
 
       return () => {
         $scrollContainer.removeEventListener('touchstart', onTouchStart)
+        $scrollContainer.removeEventListener('scroll', onTouchStart)
         $scrollContainer.removeEventListener('touchmove', onTouchMove)
         $scrollContainer.removeEventListener('touchend', onTouchEnd)
       }

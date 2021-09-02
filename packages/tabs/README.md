@@ -38,6 +38,8 @@ import { ... } from '@karrotframe/tabs'
 
 ### Tabs
 
+> All the props is typed and commented in TypeScript
+
 ```tsx
 import { Tabs } from '@karrotframe/tabs'
 import { useState } from 'react'
