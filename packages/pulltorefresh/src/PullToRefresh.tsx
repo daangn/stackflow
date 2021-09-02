@@ -119,9 +119,9 @@ const PullToRefresh = React.forwardRef<HTMLDivElement, PullToRefreshProps>(
           return
         }
 
-        async function dispose() {
+        function dispose() {
           setRefreshing(false)
-          await resetTranslation()
+          resetTranslation()
           resetState()
         }
 

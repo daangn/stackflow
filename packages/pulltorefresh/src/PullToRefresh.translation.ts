@@ -36,14 +36,12 @@ export function makeTranslation(element: HTMLElement) {
         })
       }
     },
-    resetTranslation: () =>
-      new Promise<void>((resolve) => {
-        requestAnimationFrame(() => {
-          element.style.transform = ''
-          element.style.transition = ''
-          element.style.overflow = ''
-          resolve()
-        })
-      }),
+    resetTranslation() {
+      requestAnimationFrame(() => {
+        element.style.transform = ''
+        element.style.transition = ''
+        element.style.overflow = ''
+      })
+    },
   }
 }
