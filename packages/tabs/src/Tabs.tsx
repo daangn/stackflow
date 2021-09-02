@@ -1,17 +1,11 @@
-import React, {
-  createContext,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { assignInlineVars } from '@vanilla-extract/dynamic'
 
-import { makeAnimate } from './Tabs.animate'
+import { pipe } from './pipe'
 import * as css from './Tabs.css'
-import { Action, makeReducer, State } from './Tabs.reducer'
+import { makeState } from './Tabs.state'
+import { makeTranslation } from './Tabs.translation'
 import { TabsControllerContext } from './useTabsController'
 
 export interface ITab {
@@ -28,7 +22,7 @@ export interface ITab {
   /**
    * Tab contents
    */
-  render: () => React.ReactNode
+  render: React.ComponentType
 
   /**
    * Whether capture or bubble in touch event
@@ -50,19 +44,21 @@ interface ITabsProps {
   /**
    * Called when tab changed
    */
-  onTabChange: (key: string, changedBy?: 'click' | 'swipe') => void
+  onTabChange: (key: string) => void
 
   /**
    * Class name appended to root div element
    */
   className?: string
+
+  /**
+   * Disable swipe
+   */
+  disableSwipe?: boolean
 }
 
-const TabsContext = createContext<{
-  swipeEnabledRef: React.MutableRefObject<boolean>
-}>(null as any)
-
 const Tabs: React.FC<ITabsProps> = (props) => {
+  const tabCount = props.tabs.length
   const activeTabIndex =
     props.tabs.findIndex((tab) => tab.key === props.activeTabKey) !== -1
       ? props.tabs.findIndex((tab) => tab.key === props.activeTabKey)
@@ -72,7 +68,7 @@ const Tabs: React.FC<ITabsProps> = (props) => {
   const tabMainsRef = useRef<HTMLDivElement>(null)
   const tabBarIndicatorRef = useRef<HTMLDivElement>(null)
 
-  const swipeEnabledRef = useRef(true)
+  const [isSwipeDisabled, setIsSwipeDisabled] = useState(true)
 
   const [lazyMap, setLazyMap] = useState<{
     [tabKey: string]: true | undefined
@@ -86,166 +82,180 @@ const Tabs: React.FC<ITabsProps> = (props) => {
   }, [props.activeTabKey])
 
   useEffect(() => {
-    const container = containerRef.current!
-    const tabBarIndicator = tabBarIndicatorRef.current!
-    const tabMains = tabMainsRef.current!
+    setIsSwipeDisabled(props.disableSwipe ?? false)
+  }, [props.disableSwipe])
 
-    let state: State = {
+  useEffect(() => {
+    const $tabBarIndicator = tabBarIndicatorRef.current
+    const $tabMains = tabMainsRef.current
+
+    if (!$tabBarIndicator || !$tabMains) {
+      return
+    }
+
+    const { dispatch, addEffect } = makeState({
       _t: 'idle',
-    }
-
-    const animate = makeAnimate({
-      tabCount: props.tabs.length,
-      tabBarIndicator: tabBarIndicator,
-      tabMains: tabMains,
-    })
-
-    const reducer = makeReducer({
-      tabCount: props.tabs.length,
+      tabCount,
       activeTabIndex,
-      mainWidth: container.clientWidth,
-      onNextTab() {
-        props.onTabChange(props.tabs[activeTabIndex + 1].key, 'swipe')
-      },
-      onPreviousTab() {
-        props.onTabChange(props.tabs[activeTabIndex - 1].key, 'swipe')
-      },
     })
 
-    let rAFLock = false
-    const dispatch = (action: Action) => {
-      state = reducer(state, action)
+    const { translate, resetTranslation } = makeTranslation({
+      $tabMains,
+      $tabBarIndicator,
+      tabCount,
+    })
 
-      if (!rAFLock) {
-        rAFLock = true
-        requestAnimationFrame(() => {
-          animate(state)
-          rAFLock = false
-        })
-      }
-    }
+    const dispose = pipe(
+      addEffect((state) => {
+        switch (state._t) {
+          case 'idle': {
+            resetTranslation()
+            break
+          }
+          case 'swipe_started': {
+            translate({
+              activeTabIndex,
+              dx: state.dx,
+            })
+            break
+          }
+          default: {
+            translate({
+              activeTabIndex,
+            })
+            break
+          }
+        }
+      }),
+      addEffect((state) => {
+        if (
+          activeTabIndex !== state.activeTabIndex &&
+          props.tabs[state.activeTabIndex]?.key
+        ) {
+          props.onTabChange(props.tabs[state.activeTabIndex].key)
+        }
+      })
+    )
 
     const onTouchStart = (e: TouchEvent) => {
-      if (!swipeEnabledRef.current) {
+      if (isSwipeDisabled) {
         return
       }
-      dispatch({
-        _t: 'TOUCH_START',
-        x: e.touches[0].clientX,
-        y: e.touches[0].clientY,
-      })
+      dispatch({ _t: 'TOUCH_START', e })
     }
 
     const onTouchMove = (e: TouchEvent) => {
-      if (!swipeEnabledRef.current) {
+      if (isSwipeDisabled) {
         return
       }
-      dispatch({
-        _t: 'TOUCH_MOVE',
-        x: e.touches[0].clientX,
-        y: e.touches[0].clientY,
-        e,
-      })
+      dispatch({ _t: 'TOUCH_MOVE', e })
     }
 
     const onTouchEnd = (e: TouchEvent) => {
-      if (!swipeEnabledRef.current) {
+      if (isSwipeDisabled) {
         return
       }
-      dispatch({
-        _t: 'TOUCH_END',
-        e,
-      })
+      dispatch({ _t: 'TOUCH_END', e })
     }
 
     const capture = props.tabs[activeTabIndex]?.useCapture ?? false
 
-    tabMains.addEventListener('touchstart', onTouchStart, capture)
-    tabMains.addEventListener('touchmove', onTouchMove, {
+    $tabMains.addEventListener('touchstart', onTouchStart, capture)
+    $tabMains.addEventListener('touchmove', onTouchMove, {
       capture,
       passive: false,
     })
-    tabMains.addEventListener('touchend', onTouchEnd, capture)
+    $tabMains.addEventListener('touchend', onTouchEnd, capture)
 
     return () => {
-      tabMains.removeEventListener('touchstart', onTouchStart, capture)
-      tabMains.removeEventListener('touchmove', onTouchMove, capture)
-      tabMains.removeEventListener('touchend', onTouchEnd, capture)
+      $tabMains.removeEventListener('touchstart', onTouchStart, capture)
+      $tabMains.removeEventListener('touchmove', onTouchMove, capture)
+      $tabMains.removeEventListener('touchend', onTouchEnd, capture)
+      dispose()
     }
-  }, [props, tabMainsRef, tabBarIndicatorRef, activeTabIndex])
+  }, [
+    props,
+    tabMainsRef,
+    tabBarIndicatorRef,
+    tabCount,
+    activeTabIndex,
+    isSwipeDisabled,
+  ])
+
+  const go = useCallback((tabKey: string) => {
+    if (props.tabs.find((tab) => tab.key === tabKey)) {
+      props.onTabChange(tabKey)
+    }
+  }, [])
 
   const enableSwipe = useCallback(() => {
-    swipeEnabledRef.current = true
-  }, [swipeEnabledRef])
+    setIsSwipeDisabled(false)
+  }, [])
 
   const disableSwipe = useCallback(() => {
-    swipeEnabledRef.current = false
-  }, [swipeEnabledRef])
+    setIsSwipeDisabled(true)
+  }, [])
 
   return (
-    <TabsContext.Provider
-      value={useMemo(() => ({ swipeEnabledRef }), [swipeEnabledRef])}
+    <TabsControllerContext.Provider
+      value={useMemo(
+        () => ({
+          go,
+          enableSwipe,
+          disableSwipe,
+        }),
+        [go, enableSwipe, disableSwipe]
+      )}
     >
-      <TabsControllerContext.Provider
-        value={useMemo(
-          () => ({ enableSwipe, disableSwipe }),
-          [enableSwipe, disableSwipe]
-        )}
+      <div
+        ref={containerRef}
+        className={[
+          css.container,
+          ...(props.className ? [props.className] : []),
+        ].join(' ')}
+        style={assignInlineVars({
+          [css.vars.tabBar.indicator.width]: 100 / tabCount + '%',
+          [css.vars.tabBar.indicator.transform]:
+            'translateX(' + activeTabIndex * 100 + '%)',
+          [css.vars.tabMain.width]: tabCount * 100 + '%',
+          [css.vars.tabMain.transform]:
+            'translateX(' + -1 * activeTabIndex * (100 / tabCount) + '%)',
+        })}
       >
-        <div
-          ref={containerRef}
-          className={[
-            css.container,
-            ...(props.className ? [props.className] : []),
-          ].join(' ')}
-          style={assignInlineVars({
-            [css.vars.tabBar.indicator.width]: 100 / props.tabs.length + '%',
-            [css.vars.tabBar.indicator.transform]:
-              'translateX(' + activeTabIndex * 100 + '%)',
-            [css.vars.tabMain.width]: props.tabs.length * 100 + '%',
-            [css.vars.tabMain.transform]:
-              'translateX(' +
-              -1 * activeTabIndex * (100 / props.tabs.length) +
-              '%)',
-          })}
-        >
-          <div className={css.tabBar}>
-            {props.tabs.map((tab) => (
-              <a
-                key={tab.key}
-                role="tab"
-                aria-label={tab.buttonLabel}
-                className={
-                  css.tabBarItem[
-                    props.activeTabKey === tab.key ? 'active' : 'normal'
-                  ]
-                }
-                onClick={() => {
-                  props.onTabChange(tab.key, 'click')
-                }}
-              >
-                {tab.buttonLabel}
-              </a>
-            ))}
-            <div ref={tabBarIndicatorRef} className={css.tabBarIndicator} />
-          </div>
-          <div ref={tabMainsRef} className={css.tabMains}>
-            {props.tabs.map((tab) => (
-              <div
-                key={tab.key}
-                className={
-                  css.tabMain[
-                    props.activeTabKey === tab.key ? 'active' : 'hidden'
-                  ]
-                }
-              >
-                {lazyMap[tab.key] && tab.render()}
-              </div>
-            ))}
-          </div>
+        <div className={css.tabBar}>
+          {props.tabs.map((tab) => (
+            <a
+              key={tab.key}
+              role="tab"
+              aria-label={tab.buttonLabel}
+              className={
+                css.tabBarItem[
+                  props.activeTabKey === tab.key ? 'active' : 'normal'
+                ]
+              }
+              onClick={() => {
+                props.onTabChange(tab.key)
+              }}
+            >
+              {tab.buttonLabel}
+            </a>
+          ))}
+          <div ref={tabBarIndicatorRef} className={css.tabBarIndicator} />
         </div>
-      </TabsControllerContext.Provider>
-    </TabsContext.Provider>
+        <div ref={tabMainsRef} className={css.tabMains}>
+          {props.tabs.map(({ key, render: Component }) => (
+            <div
+              key={key}
+              className={
+                css.tabMain[props.activeTabKey === key ? 'active' : 'hidden']
+              }
+            >
+              {lazyMap[key] && <Component />}
+            </div>
+          ))}
+        </div>
+      </div>
+    </TabsControllerContext.Provider>
   )
 }
 
