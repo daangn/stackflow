@@ -10,7 +10,7 @@ const PagePullToRefresh: React.FC = () => {
     <>
       <ScreenHelmet title="@karrotframe/pulltorefresh" />
       <PullToRefresh
-        onRefresh={async (dispose) => {
+        onPull={async (dispose) => {
           await delay(1000)
           dispose()
         }}

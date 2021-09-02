@@ -1,5 +1,7 @@
 import { keyframes, style, styleVariants } from '@vanilla-extract/css'
 
+import { vars } from './theme.css'
+
 export const container = style({
   display: 'flex',
   justifyContent: 'center',
@@ -18,11 +20,9 @@ const spinning = keyframes({
 export const spinner = styleVariants({
   normal: {
     transform: 'scale(0.625)',
-    transition: 'transform 300ms',
   },
   spin: {
     transform: 'scale(0.625)',
-    transition: 'transform 300ms',
-    animation: `${spinning} 0.75s infinite linear`,
+    animation: `${spinning} ${vars.fallbackSpinnerAnimationDuration} infinite linear`,
   },
 })

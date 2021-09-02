@@ -9,7 +9,7 @@ const BAR_COUNT = 10
 
 interface FallbackSpinnerProps {
   t: number
-  loading: boolean
+  refreshing: boolean
 }
 const FallbackSpinner: React.FC<FallbackSpinnerProps> = (props) => {
   const directions = useMemo(() => {
@@ -38,7 +38,7 @@ const FallbackSpinner: React.FC<FallbackSpinnerProps> = (props) => {
   return (
     <div className={css.container}>
       <svg
-        className={props.loading ? css.spinner.spin : css.spinner.normal}
+        className={props.refreshing ? css.spinner.spin : css.spinner.normal}
         width={SIZE}
         height={SIZE}
         viewBox={`0 0 ${SIZE} ${SIZE}`}

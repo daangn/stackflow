@@ -3,152 +3,172 @@ import React, { useEffect, useRef, useState } from 'react'
 import FallbackSpinner from './FallbackSpinner'
 import { mergeRefs } from './mergeRefs'
 import * as css from './PullToRefresh.css'
-import { makeTranslate } from './PullToRefresh.translate'
+import { makeTranslation } from './PullToRefresh.translation'
 
-interface PullToRefreshProps {
-  containerRef?: React.RefObject<HTMLDivElement>
-  containerClassName?: string
+type PullToRefreshProps = React.PropsWithChildren<{
+  /**
+   * Class name appended to root div element
+   */
+  className?: string
+
+  /**
+   * Ref of div element with `overflow: scroll` attribute
+   */
   scrollContainerRef?: React.RefObject<HTMLDivElement>
-  onRefresh?: (dispose: () => void) => void
-  spinner?: React.ComponentType<{ t: number; loading: boolean }>
-}
-const PullToRefresh: React.FC<PullToRefreshProps> = (props) => {
-  const [spinnerT, setSpinnerT] = useState(0)
-  const [spinnerLoading, setSpinnerLoading] = useState(false)
 
-  const containerRef = useRef<HTMLDivElement>(null)
-  const scrollContainerRef = useRef<HTMLDivElement>(null)
-  const spinnerContainerRef = useRef<HTMLDivElement>(null)
+  /**
+   * Called when pulled
+   */
+  onPull: (dispose: () => void) => void
 
-  useEffect(() => {
-    const $scrollContainer = scrollContainerRef.current
-    const $spinnerContainer = spinnerContainerRef.current
+  /**
+   * Custom spinner
+   */
+  customSpinner?: React.ComponentType<{ t: number; refreshing: boolean }>
 
-    if (!$scrollContainer || !$spinnerContainer) {
-      return
-    }
+  /**
+   * Disable pulling
+   */
+  disabled?: boolean
+}>
+const PullToRefresh = React.forwardRef<HTMLDivElement, PullToRefreshProps>(
+  (props, ref) => {
+    const containerRef = useRef<HTMLDivElement>(null)
+    const scrollContainerRef = useRef<HTMLDivElement>(null)
+    const spinnerContainerRef = useRef<HTMLDivElement>(null)
 
-    const { translate: translate1, reset } = makeTranslate($scrollContainer)
-    const { translate: translate2 } = makeTranslate($scrollContainer, {
-      enableTransition: true,
-    })
+    const [t, setT] = useState(0)
+    const [refreshing, setRefreshing] = useState(false)
 
-    let y0: number | null = null
-    let dy: number | null = null
-    let nowRefreshing: boolean = false
-
-    const onTouchStart = (e: TouchEvent) => {
-      const y = e.touches[0].clientY
-
-      if (nowRefreshing || $scrollContainer.scrollTop > 0) {
+    useEffect(() => {
+      if (props.disabled) {
         return
       }
 
-      y0 = y
-    }
-
-    const onTouchMove = (e: TouchEvent) => {
-      const y = e.touches[0].clientY
-
-      if (nowRefreshing || y0 === null) {
-        return
-      }
-      if (y - y0 > 0) {
-        e.preventDefault()
-        dy = y - y0
-      } else {
-        dy = 0
-      }
-
-      const spinnerHeight = $spinnerContainer.clientHeight
-
-      if (dy > spinnerHeight) {
-        const y = spinnerHeight + (dy - spinnerHeight) / 6
-
-        translate1({ y }).then(() => {
-          setSpinnerT(1)
-        })
-      } else {
-        translate1({ y: dy }).then((y) => {
-          setSpinnerT(y / spinnerHeight)
-        })
-      }
-    }
-
-    const onTouchEnd = async () => {
+      const $scrollContainer = scrollContainerRef.current
       const $spinnerContainer = spinnerContainerRef.current
 
-      if (dy === null || !$spinnerContainer) {
+      if (!$scrollContainer || !$spinnerContainer) {
         return
       }
 
-      const spinnerHeight = $spinnerContainer.clientHeight
+      let y0: number | null = null
+      let Δy: number | null = null
+      let refreshing: boolean = false
 
-      if (dy > spinnerHeight) {
-        nowRefreshing = true
-        setSpinnerLoading(true)
-        translate2({ y: spinnerHeight })
-
-        if (props.onRefresh) {
-          props.onRefresh(() => {
-            setSpinnerLoading(false)
-            reset().then(() => {
-              y0 = null
-              dy = null
-              nowRefreshing = false
-            })
-          })
-        } else {
-          setTimeout(() => {
-            setSpinnerLoading(false)
-            reset().then(() => {
-              y0 = null
-              dy = null
-              nowRefreshing = false
-            })
-          }, 700)
-        }
-      } else {
-        reset().then(() => {
-          y0 = null
-          dy = null
-          nowRefreshing = false
-        })
+      const resetState = () => {
+        y0 = null
+        Δy = null
+        refreshing = false
       }
-    }
 
-    $scrollContainer.addEventListener('touchstart', onTouchStart)
-    $scrollContainer.addEventListener('touchmove', onTouchMove)
-    $scrollContainer.addEventListener('touchend', onTouchEnd)
+      const { translate, resetTranslation } = makeTranslation($scrollContainer)
 
-    return () => {
-      $scrollContainer.removeEventListener('touchstart', onTouchStart)
-      $scrollContainer.removeEventListener('touchmove', onTouchMove)
-      $scrollContainer.removeEventListener('touchend', onTouchEnd)
-    }
-  }, [setSpinnerT, setSpinnerLoading])
+      const onTouchStart = (e: TouchEvent) => {
+        const y = e.touches[0].clientY
 
-  const Spinner = props.spinner ?? FallbackSpinner
+        if (refreshing || $scrollContainer.scrollTop > 0) {
+          return
+        }
 
-  return (
-    <div
-      ref={mergeRefs([containerRef, props.containerRef])}
-      className={[
-        css.container,
-        ...(props.containerClassName ? [props.containerClassName] : []),
-      ].join(' ')}
-    >
-      <div ref={spinnerContainerRef} className={css.spinnerContainer}>
-        <Spinner t={spinnerT} loading={spinnerLoading} />
-      </div>
+        y0 = y
+      }
+
+      const onTouchMove = (e: TouchEvent) => {
+        if (refreshing || y0 === null) {
+          return
+        }
+
+        const spinnerHeight = $spinnerContainer.clientHeight
+        const y = e.touches[0].clientY
+
+        Δy = y - y0
+
+        const t = (Δy: number) => Δy / spinnerHeight
+
+        if (t(Δy) <= 0) {
+          translate({
+            y: 0,
+            onAnimationFrame: () => setT(0),
+          })
+        }
+
+        if (t(Δy) > 0 && t(Δy) < 1) {
+          e.preventDefault()
+          translate({
+            y: Δy,
+            onAnimationFrame: (Δy) => setT(t(Δy)),
+          })
+        }
+
+        if (t(Δy) >= 1) {
+          e.preventDefault()
+          translate({
+            y: spinnerHeight + (Δy - spinnerHeight) / 6,
+            onAnimationFrame: () => setT(1),
+          })
+        }
+      }
+
+      const onTouchEnd = async () => {
+        const spinnerHeight = $spinnerContainer.clientHeight
+
+        if (Δy === null) {
+          return
+        }
+
+        async function dispose() {
+          setRefreshing(false)
+          await resetTranslation()
+          resetState()
+        }
+
+        const pulled = Δy > spinnerHeight
+
+        if (!pulled) {
+          return dispose()
+        }
+
+        refreshing = true
+        setRefreshing(true)
+        translate({ y: spinnerHeight, smooth: true, force: true })
+
+        props.onPull(dispose)
+      }
+
+      $scrollContainer.addEventListener('touchstart', onTouchStart)
+      $scrollContainer.addEventListener('touchmove', onTouchMove)
+      $scrollContainer.addEventListener('touchend', onTouchEnd)
+
+      return () => {
+        $scrollContainer.removeEventListener('touchstart', onTouchStart)
+        $scrollContainer.removeEventListener('touchmove', onTouchMove)
+        $scrollContainer.removeEventListener('touchend', onTouchEnd)
+      }
+    }, [setT, setRefreshing, props.disabled])
+
+    const Spinner = props.customSpinner ?? FallbackSpinner
+
+    return (
       <div
-        ref={mergeRefs([scrollContainerRef, props.scrollContainerRef])}
-        className={css.scrollContainer}
+        ref={mergeRefs([ref, containerRef])}
+        className={[
+          css.container,
+          ...(props.className ? [props.className] : []),
+        ].join(' ')}
       >
-        {props.children}
+        <div ref={spinnerContainerRef} className={css.spinnerContainer}>
+          <Spinner t={t} refreshing={refreshing} />
+        </div>
+        <div
+          ref={mergeRefs([scrollContainerRef, props.scrollContainerRef])}
+          className={css.scrollContainer}
+        >
+          {props.children}
+        </div>
       </div>
-    </div>
-  )
-}
+    )
+  }
+)
 
 export default PullToRefresh
