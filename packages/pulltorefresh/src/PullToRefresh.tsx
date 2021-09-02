@@ -67,7 +67,6 @@ const PullToRefresh = React.forwardRef<HTMLDivElement, PullToRefreshProps>(
       const { translate, resetTranslation } = makeTranslation($scrollContainer)
 
       const onTouchStart = () => {
-        console.log($scrollContainer.scrollTop)
         if (refreshing || $scrollContainer.scrollTop > 0) {
           return
         }
