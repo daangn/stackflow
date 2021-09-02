@@ -1,6 +1,6 @@
 import { composeStyles, style } from '@vanilla-extract/css'
 
-import { theme, vars } from './theme.css'
+import { theme, vars } from '../theme.css'
 
 export const container = composeStyles(
   theme,

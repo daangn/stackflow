@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react'
 
+import { mergeRefs } from '../mergeRefs'
+import { ICustomSpinner } from '../types'
 import FallbackSpinner from './FallbackSpinner'
-import { mergeRefs } from './mergeRefs'
 import * as css from './PullToRefresh.css'
 import { makeTranslation } from './PullToRefresh.translation'
 
@@ -24,7 +25,7 @@ type PullToRefreshProps = React.PropsWithChildren<{
   /**
    * Custom spinner
    */
-  customSpinner?: React.ComponentType<{ t: number; refreshing: boolean }>
+  customSpinner?: ICustomSpinner
 
   /**
    * Disable pulling

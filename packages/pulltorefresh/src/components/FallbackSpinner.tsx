@@ -1,16 +1,13 @@
 import React, { useMemo } from 'react'
 
+import { vars } from '../theme.css'
+import { ICustomSpinner } from '../types'
 import * as css from './FallbackSpinner.css'
-import { vars } from './theme.css'
 
 const SIZE = 28.75
 const BAR_COUNT = 10
 
-interface FallbackSpinnerProps {
-  t: number
-  refreshing: boolean
-}
-const FallbackSpinner: React.FC<FallbackSpinnerProps> = (props) => {
+const FallbackSpinner: ICustomSpinner = (props) => {
   const directions = useMemo(() => {
     const center = SIZE / 2
     const radius = SIZE / 3.83

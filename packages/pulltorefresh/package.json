@@ -26,9 +26,6 @@
     "clean": "rimraf index.css && rimraf index.css.map && rimraf index.d.ts && rimraf index.js && rimraf index.js.map && rimraf node_modules",
     "prepack": "yarn clean && yarn build"
   },
-  "dependencies": {
-    "@vanilla-extract/dynamic": "^2.0.0"
-  },
   "devDependencies": {
     "@babel/cli": "^7.11.6",
     "@babel/core": "^7.11.6",

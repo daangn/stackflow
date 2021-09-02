@@ -23,12 +23,7 @@ export function makeTranslation(element: HTMLElement) {
           } else {
             element.style.transform = `translateY(${y}px)`
             element.style.overflow = 'hidden'
-
-            if (smooth) {
-              element.style.transition = ''
-            } else {
-              element.style.transition = '0s'
-            }
+            element.style.transition = smooth ? '' : '0s'
           }
 
           onAnimationFrame?.(y)

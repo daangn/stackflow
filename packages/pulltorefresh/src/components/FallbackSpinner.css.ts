@@ -1,6 +1,6 @@
 import { keyframes, style, styleVariants } from '@vanilla-extract/css'
 
-import { vars } from './theme.css'
+import { vars } from '../theme.css'
 
 export const container = style({
   display: 'flex',
