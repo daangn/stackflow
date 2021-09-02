@@ -16,7 +16,7 @@ export const scrollContainer = style({
   overflowY: 'scroll',
   position: 'relative',
   WebkitOverflowScrolling: 'touch',
-  transition: `transform 300ms`,
+  transition: `transform ${vars.scrollContainerTransitionDuration}`,
   backgroundColor: vars.backgroundColor,
   zIndex: 1,
 })
