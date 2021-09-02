@@ -9,9 +9,125 @@ const PagePullToRefresh: React.FC = () => {
   return (
     <>
       <ScreenHelmet title="@karrotframe/pulltorefresh" />
-      <PullToRefresh>hello</PullToRefresh>
+      <PullToRefresh
+        onRefresh={async (dispose) => {
+          await delay(1000)
+          dispose()
+        }}
+      >
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+        hello
+        <br />
+      </PullToRefresh>
     </>
   )
+}
+
+function delay(ms: number) {
+  return new Promise<void>((resolve) => {
+    setTimeout(resolve, ms)
+  })
 }
 
 export default PagePullToRefresh
