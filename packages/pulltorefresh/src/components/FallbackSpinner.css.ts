@@ -2,13 +2,7 @@ import { keyframes, style, styleVariants } from '@vanilla-extract/css'
 
 import { vars } from '../theme.css'
 
-export const container = style({
-  display: 'flex',
-  justifyContent: 'center',
-  padding: '0.625rem 0 1.5rem',
-})
-
-const spinning = keyframes({
+const spin = keyframes({
   '0%': {
     transform: 'rotate(0deg)',
   },
@@ -17,13 +11,19 @@ const spinning = keyframes({
   },
 })
 
+export const container = style({
+  display: 'flex',
+  justifyContent: 'center',
+  padding: '0.75rem 0 1.75rem',
+})
+
 export const spinner = styleVariants({
   normal: {},
   spin: {
-    animation: `${spinning} ${vars.fallbackSpinnerAnimationDuration} infinite linear`,
+    animation: `${spin} ${vars.fallbackSpinnerAnimationDuration} infinite linear`,
   },
 })
 
 export const spinnerPath = style({
-  transition: 'stroke 200ms',
+  transition: 'stroke 100ms',
 })
