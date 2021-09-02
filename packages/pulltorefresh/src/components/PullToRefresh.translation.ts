@@ -17,9 +17,7 @@ export function makeTranslation(element: HTMLElement) {
         _rAFLock = true
         requestAnimationFrame(() => {
           if (y === 0) {
-            element.style.transform = ''
-            element.style.overflow = ''
-            element.style.transition = ''
+            element.style.cssText = ''
           } else {
             element.style.transform = `translateY(${y}px)`
             element.style.overflow = 'hidden'
@@ -33,9 +31,7 @@ export function makeTranslation(element: HTMLElement) {
     },
     resetTranslation() {
       requestAnimationFrame(() => {
-        element.style.transform = ''
-        element.style.transition = ''
-        element.style.overflow = ''
+        element.style.cssText = ''
       })
     },
   }
