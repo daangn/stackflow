@@ -14,6 +14,7 @@
 
 - [`@karrotframe/navigator`](./packages/navigator)
 - [`@karrotframe/tabs`](./packages/tabs)
+- [`@karrotframe/pulltorefresh`](./packages/pulltorefresh)
 
 ## Contributors
 
