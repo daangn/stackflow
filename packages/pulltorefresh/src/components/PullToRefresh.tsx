@@ -41,7 +41,7 @@ const PullToRefresh = React.forwardRef<PullToRefreshRef, PullToRefreshProps>(
       getScrollContainerElement: () => scrollContainerRef.current,
     }))
 
-    const [t, setT] = useState(0)
+    const [offset, setOffset] = useState(0)
     const [refreshing, setRefreshing] = useState(false)
 
     useEffect(() => {
@@ -92,26 +92,26 @@ const PullToRefresh = React.forwardRef<PullToRefreshRef, PullToRefreshProps>(
 
         dy = y - y0
 
-        const t = (dy: number) => dy / spinnerHeight
+        const offset = (dy: number) => dy / spinnerHeight
 
-        if (t(dy) <= 0) {
+        if (offset(dy) <= 0) {
           translate({
             y: 0,
-            onAnimationFrame: () => setT(0),
+            onAnimationFrame: () => setOffset(0),
           })
         }
 
-        if (t(dy) > 0 && t(dy) < 1) {
+        if (offset(dy) > 0 && offset(dy) < 1) {
           translate({
             y: dy,
-            onAnimationFrame: (dy) => setT(t(dy)),
+            onAnimationFrame: (dy) => setOffset(offset(dy)),
           })
         }
 
-        if (t(dy) >= 1) {
+        if (offset(dy) >= 1) {
           translate({
             y: spinnerHeight + (dy - spinnerHeight) / 6,
-            onAnimationFrame: () => setT(1),
+            onAnimationFrame: () => setOffset(1),
           })
         }
       }
@@ -166,7 +166,7 @@ const PullToRefresh = React.forwardRef<PullToRefreshRef, PullToRefreshProps>(
         ].join(' ')}
       >
         <div ref={spinnerContainerRef} className={css.spinnerContainer}>
-          <Spinner t={t} refreshing={refreshing} />
+          <Spinner offset={offset} refreshing={refreshing} />
         </div>
         <div ref={scrollContainerRef} className={css.scrollContainer}>
           {props.children}

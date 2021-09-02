@@ -29,7 +29,7 @@ const FallbackSpinner: ICustomSpinner = (props) => {
     return directions
   }, [])
 
-  const currentValue = useMemo(() => BAR_COUNT * props.t, [props.t])
+  const currentValue = useMemo(() => BAR_COUNT * props.offset, [props.offset])
 
   return (
     <div className={css.container}>
@@ -39,7 +39,7 @@ const FallbackSpinner: ICustomSpinner = (props) => {
         height={SIZE}
         viewBox={`0 0 ${SIZE} ${SIZE}`}
         style={{
-          opacity: props.t,
+          opacity: props.offset,
         }}
       >
         {directions.map((direction, idx) => (

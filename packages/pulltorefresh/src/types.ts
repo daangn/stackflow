@@ -1,7 +1,7 @@
 import React from 'react'
 
 export interface ICustomSpinnerProps {
-  t: number
+  offset: number
   refreshing: boolean
 }
 
