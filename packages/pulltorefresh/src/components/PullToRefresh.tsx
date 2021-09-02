@@ -150,7 +150,7 @@ const PullToRefresh = React.forwardRef<HTMLDivElement, PullToRefreshProps>(
         $scrollContainer.removeEventListener('touchmove', onTouchMove)
         $scrollContainer.removeEventListener('touchend', onTouchEnd)
       }
-    }, [setT, setRefreshing, props.disabled, props.onPull])
+    }, [props.disabled, props.onPull])
 
     const Spinner = props.customSpinner ?? FallbackSpinner
 
