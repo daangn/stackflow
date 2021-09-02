@@ -7,6 +7,7 @@ import { Navigator, Screen } from '@karrotframe/navigator'
 import Page404 from './components/_pages/Page404'
 import PageHome from './components/_pages/PageHome'
 import PagePop from './components/_pages/PagePop'
+import PagePullToRefresh from './components/_pages/PagePullToRefresh'
 import PagePush from './components/_pages/PagePush'
 import PageReplace from './components/_pages/PageReplace'
 import PageReplaceInUseEffect from './components/_pages/PageReplaceInUseEffect'
@@ -35,6 +36,7 @@ const App: React.FC = () => {
       <Screen path="/useParams/:param" component={PageUseParams} />
       <Screen path="/useQueryParams" component={PageUseQueryParams} />
       <Screen path="/tabs" component={PageTabs} />
+      <Screen path="/pulltorefresh" component={PagePullToRefresh} />
       <Screen path="*" component={Page404} />
     </Navigator>
   )

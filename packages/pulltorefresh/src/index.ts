@@ -1,3 +1,1 @@
-export function hello() {
-  console.log('Hello, World')
-}
+export { default as PullToRefresh } from './PullToRefresh'
