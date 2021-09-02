@@ -56,13 +56,13 @@ const PullToRefresh = React.forwardRef<HTMLDivElement, PullToRefreshProps>(
       let pulling: boolean = false
       let refreshing: boolean = false
       let y0: number | null = null
-      let Δy: number | null = null
+      let dy: number | null = null
 
       const resetState = () => {
         pulling = false
         refreshing = false
         y0 = null
-        Δy = null
+        dy = null
       }
 
       const { translate, resetTranslation } = makeTranslation($scrollContainer)
@@ -87,27 +87,27 @@ const PullToRefresh = React.forwardRef<HTMLDivElement, PullToRefreshProps>(
           y0 = y
         }
 
-        Δy = y - y0
+        dy = y - y0
 
-        const t = (Δy: number) => Δy / spinnerHeight
+        const t = (dy: number) => dy / spinnerHeight
 
-        if (t(Δy) <= 0) {
+        if (t(dy) <= 0) {
           translate({
             y: 0,
             onAnimationFrame: () => setT(0),
           })
         }
 
-        if (t(Δy) > 0 && t(Δy) < 1) {
+        if (t(dy) > 0 && t(dy) < 1) {
           translate({
-            y: Δy,
-            onAnimationFrame: (Δy) => setT(t(Δy)),
+            y: dy,
+            onAnimationFrame: (dy) => setT(t(dy)),
           })
         }
 
-        if (t(Δy) >= 1) {
+        if (t(dy) >= 1) {
           translate({
-            y: spinnerHeight + (Δy - spinnerHeight) / 6,
+            y: spinnerHeight + (dy - spinnerHeight) / 6,
             onAnimationFrame: () => setT(1),
           })
         }
@@ -116,7 +116,7 @@ const PullToRefresh = React.forwardRef<HTMLDivElement, PullToRefreshProps>(
       const onTouchEnd = async () => {
         const spinnerHeight = $spinnerContainer.clientHeight
 
-        if (Δy === null) {
+        if (dy === null) {
           return
         }
 
@@ -126,7 +126,7 @@ const PullToRefresh = React.forwardRef<HTMLDivElement, PullToRefreshProps>(
           setRefreshing(false)
         }
 
-        const pulled = Δy > spinnerHeight
+        const pulled = dy > spinnerHeight
 
         if (!pulled) {
           return dispose()

@@ -11,7 +11,7 @@ export function makeTranslation(element: HTMLElement) {
       y: number
       smooth?: boolean
       force?: boolean
-      onAnimationFrame?: (Δy: number) => void
+      onAnimationFrame?: (dy: number) => void
     }) {
       if (force || !_rAFLock) {
         _rAFLock = true
