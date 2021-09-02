@@ -100,29 +100,23 @@ const Tabs: React.FC<ITabsProps> = (props) => {
     })
 
     const { translate, resetTranslation } = makeTranslation({
+      tabCount,
+      activeTabIndex,
       $tabMains,
       $tabBarIndicator,
-      tabCount,
     })
 
     const dispose = pipe(
       addEffect((state) => {
         switch (state._t) {
-          case 'idle': {
-            resetTranslation()
-            break
-          }
           case 'swipe_started': {
             translate({
-              activeTabIndex,
               dx: state.dx,
             })
             break
           }
           default: {
-            translate({
-              activeTabIndex,
-            })
+            resetTranslation()
             break
           }
         }
