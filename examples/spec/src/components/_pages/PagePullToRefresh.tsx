@@ -2,6 +2,7 @@ import '@karrotframe/pulltorefresh/index.css'
 
 import React from 'react'
 
+import styled from '@emotion/styled'
 import { ScreenHelmet } from '@karrotframe/navigator'
 import { PullToRefresh } from '@karrotframe/pulltorefresh'
 
@@ -15,110 +16,7 @@ const PagePullToRefresh: React.FC = () => {
           dispose()
         }}
       >
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
-        hello
-        <br />
+        <ScrollEnabler />
       </PullToRefresh>
     </>
   )
@@ -129,5 +27,9 @@ function delay(ms: number) {
     setTimeout(resolve, ms)
   })
 }
+
+const ScrollEnabler = styled.div`
+  height: 200vh;
+`
 
 export default PagePullToRefresh
