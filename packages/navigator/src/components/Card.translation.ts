@@ -1,3 +1,5 @@
+const MAX_FRAME_OFFSET = 80
+
 const css = String.raw
 
 export function makeTranslation({
@@ -25,8 +27,10 @@ export function makeTranslation({
         _rAFLock = true
 
         requestAnimationFrame(() => {
+          const p = dx / window.screen.width
+
           $dim.style.cssText = css`
-            opacity: ${1 - dx / window.screen.width};
+            opacity: ${1 - p};
             transition: opacity 0s;
           `
           $frame.style.cssText = css`
@@ -35,7 +39,7 @@ export function makeTranslation({
             transition: transform 0s;
           `
           $frameOffset.style.cssText = css`
-            transform: translateX(${-5 + (5 * dx) / window.screen.width}rem);
+            transform: translateX(${-1 * (1 - p) * MAX_FRAME_OFFSET}px);
             transition: transform 0s;
           `
 

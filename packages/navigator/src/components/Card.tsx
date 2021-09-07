@@ -66,11 +66,9 @@ const Card: React.FC<ICardProps> = (props) => {
     })
 
     const onTouchStart = (e: TouchEvent) => {
-      x0 = e.touches[0].clientX
+      document.activeElement?.['blur']?.()
+      x0 = x = e.touches[0].clientX
       t0 = Date.now()
-
-      const { activeElement } = document as any
-      activeElement?.blur?.()
     }
 
     const onTouchMove = (e: TouchEvent) => {
@@ -102,9 +100,9 @@ const Card: React.FC<ICardProps> = (props) => {
       resetTranslation()
     }
 
-    $edge.addEventListener('touchstart', onTouchStart)
-    $edge.addEventListener('touchmove', onTouchMove)
-    $edge.addEventListener('touchend', onTouchEnd)
+    $edge.addEventListener('touchstart', onTouchStart, { passive: true })
+    $edge.addEventListener('touchmove', onTouchMove, { passive: true })
+    $edge.addEventListener('touchend', onTouchEnd, { passive: true })
 
     return () => {
       $edge.removeEventListener('touchstart', onTouchStart)
