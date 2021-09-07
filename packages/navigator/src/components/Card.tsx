@@ -91,7 +91,7 @@ const Card: React.FC<ICardProps> = (props) => {
       const t = Date.now()
       const v = (x - x0) / (t - t0)
 
-      if (v > 1 || x / window.screen.width > 0.4) {
+      if (v > 1 || x / $frame.clientWidth > 0.4) {
         setPopped(true)
         pop()
       }

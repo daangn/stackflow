@@ -27,7 +27,7 @@ export function makeTranslation({
         _rAFLock = true
 
         requestAnimationFrame(() => {
-          const p = dx / window.screen.width
+          const p = dx / $frame.clientWidth
 
           $dim.style.cssText = css`
             opacity: ${1 - p};

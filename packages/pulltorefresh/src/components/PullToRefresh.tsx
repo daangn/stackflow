@@ -142,10 +142,18 @@ const PullToRefresh = React.forwardRef<PullToRefreshRef, PullToRefreshProps>(
         props.onPull(dispose)
       }
 
-      $scrollContainer.addEventListener('touchstart', onTouchStart)
-      $scrollContainer.addEventListener('scroll', onTouchStart)
-      $scrollContainer.addEventListener('touchmove', onTouchMove)
-      $scrollContainer.addEventListener('touchend', onTouchEnd)
+      $scrollContainer.addEventListener('touchstart', onTouchStart, {
+        passive: true,
+      })
+      $scrollContainer.addEventListener('scroll', onTouchStart, {
+        passive: true,
+      })
+      $scrollContainer.addEventListener('touchmove', onTouchMove, {
+        passive: true,
+      })
+      $scrollContainer.addEventListener('touchend', onTouchEnd, {
+        passive: true,
+      })
 
       return () => {
         $scrollContainer.removeEventListener('touchstart', onTouchStart)

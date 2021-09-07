@@ -20,9 +20,9 @@ export interface ITab {
   buttonLabel: string
 
   /**
-   * Tab contents
+   * Component to render in a tab
    */
-  render: React.ComponentType
+  component: React.ComponentType
 
   /**
    * Whether capture or bubble in touch event
@@ -108,17 +108,12 @@ const Tabs: React.FC<ITabsProps> = (props) => {
 
     const dispose = pipe(
       addEffect((state) => {
-        switch (state._t) {
-          case 'swipe_started': {
-            translate({
-              dx: state.dx,
-            })
-            break
-          }
-          default: {
-            resetTranslation()
-            break
-          }
+        if (state._t === 'swipe_started') {
+          translate({
+            dx: state.dx,
+          })
+        } else {
+          resetTranslation()
         }
       }),
       addEffect((state) => {
@@ -133,33 +128,38 @@ const Tabs: React.FC<ITabsProps> = (props) => {
 
     const onTouchStart = (e: TouchEvent) => {
       if (isSwipeDisabled) {
-        return
+        dispatch({ _t: 'TOUCH_END', e })
+      } else {
+        dispatch({ _t: 'TOUCH_START', e })
       }
-      dispatch({ _t: 'TOUCH_START', e })
     }
 
     const onTouchMove = (e: TouchEvent) => {
       if (isSwipeDisabled) {
-        return
+        dispatch({ _t: 'TOUCH_END', e })
+      } else {
+        dispatch({ _t: 'TOUCH_MOVE', e })
       }
-      dispatch({ _t: 'TOUCH_MOVE', e })
     }
 
     const onTouchEnd = (e: TouchEvent) => {
-      if (isSwipeDisabled) {
-        return
-      }
       dispatch({ _t: 'TOUCH_END', e })
     }
 
     const capture = props.tabs[activeTabIndex]?.useCapture ?? false
 
-    $tabMains.addEventListener('touchstart', onTouchStart, capture)
-    $tabMains.addEventListener('touchmove', onTouchMove, {
+    $tabMains.addEventListener('touchstart', onTouchStart, {
+      passive: true,
       capture,
-      passive: false,
     })
-    $tabMains.addEventListener('touchend', onTouchEnd, capture)
+    $tabMains.addEventListener('touchmove', onTouchMove, {
+      passive: true,
+      capture,
+    })
+    $tabMains.addEventListener('touchend', onTouchEnd, {
+      passive: true,
+      capture,
+    })
 
     return () => {
       $tabMains.removeEventListener('touchstart', onTouchStart, capture)
@@ -237,7 +237,7 @@ const Tabs: React.FC<ITabsProps> = (props) => {
           <div ref={tabBarIndicatorRef} className={css.tabBarIndicator} />
         </div>
         <div ref={tabMainsRef} className={css.tabMains}>
-          {props.tabs.map(({ key, render: Component }) => (
+          {props.tabs.map(({ key, component: Component }) => (
             <div
               key={key}
               className={

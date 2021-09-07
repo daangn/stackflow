@@ -68,8 +68,6 @@ function reducer(prevState: State, action: Action): State {
         }
       }
 
-      e.stopPropagation()
-
       if (prevState._t === 'idle') {
         return {
           ...prevState,
@@ -106,7 +104,6 @@ function reducer(prevState: State, action: Action): State {
         }
       }
       if (prevState._t === 'swipe_started') {
-        e.preventDefault()
         const { x0 } = prevState
 
         return {
@@ -121,7 +118,6 @@ function reducer(prevState: State, action: Action): State {
     }
     case 'TOUCH_END': {
       if (prevState._t === 'swipe_started') {
-        e.stopPropagation()
         const { activeTabIndex, tabCount, dx } = prevState
 
         const hasNextTab = activeTabIndex < tabCount - 1
