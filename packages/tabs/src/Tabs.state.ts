@@ -24,24 +24,23 @@ export type State = {
 export type Action =
   | {
       _t: 'TOUCH_START'
-      e: TouchEvent
+      x: number
+      y: number
     }
   | {
       _t: 'TOUCH_MOVE'
-      e: TouchEvent
+      x: number
+      y: number
     }
   | {
       _t: 'TOUCH_END'
-      e: TouchEvent
     }
 
 function reducer(prevState: State, action: Action): State {
-  const { e } = action
-  const x = e.touches[0]?.clientX
-  const y = e.touches[0]?.clientY
-
   switch (action._t) {
     case 'TOUCH_START': {
+      const { x, y } = action
+
       if (x < 0) {
         return {
           ...prevState,
@@ -61,6 +60,8 @@ function reducer(prevState: State, action: Action): State {
       }
     }
     case 'TOUCH_MOVE': {
+      const { x, y } = action
+
       if (x < 0) {
         return {
           ...prevState,

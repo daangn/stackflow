@@ -128,22 +128,36 @@ const Tabs: React.FC<ITabsProps> = (props) => {
 
     const onTouchStart = (e: TouchEvent) => {
       if (isSwipeDisabled) {
-        dispatch({ _t: 'TOUCH_END', e })
+        dispatch({
+          _t: 'TOUCH_END',
+        })
       } else {
-        dispatch({ _t: 'TOUCH_START', e })
+        dispatch({
+          _t: 'TOUCH_START',
+          x: e.touches[0].clientX,
+          y: e.touches[0].clientY,
+        })
       }
     }
 
     const onTouchMove = (e: TouchEvent) => {
       if (isSwipeDisabled) {
-        dispatch({ _t: 'TOUCH_END', e })
+        dispatch({
+          _t: 'TOUCH_END',
+        })
       } else {
-        dispatch({ _t: 'TOUCH_MOVE', e })
+        dispatch({
+          _t: 'TOUCH_MOVE',
+          x: e.touches[0].clientX,
+          y: e.touches[0].clientY,
+        })
       }
     }
 
-    const onTouchEnd = (e: TouchEvent) => {
-      dispatch({ _t: 'TOUCH_END', e })
+    const onTouchEnd = () => {
+      dispatch({
+        _t: 'TOUCH_END',
+      })
     }
 
     const capture = props.tabs[activeTabIndex]?.useCapture ?? false
