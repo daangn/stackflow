@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { CSSTransition } from 'react-transition-group'
 
 import { useStoreSelector } from '../store'
@@ -32,6 +32,8 @@ interface IStackProps {
   onDepthChange?: (depth: number) => void
 }
 const Stack: React.FC<IStackProps> = (props) => {
+  const beforeTopFrameOffsetRef = useRef<HTMLDivElement>(null)
+
   const { screens, screenInstances, screenInstancePtr } = useStoreSelector(
     (state) => ({
       screens: state.screens,
@@ -77,6 +79,7 @@ const Stack: React.FC<IStackProps> = (props) => {
               >
                 <Card
                   nodeRef={nodeRef}
+                  beforeTopFrameOffsetRef={beforeTopFrameOffsetRef}
                   theme={props.theme}
                   screenPath={screen.path}
                   screenInstanceId={screenInstance.id}
@@ -87,6 +90,7 @@ const Stack: React.FC<IStackProps> = (props) => {
                       screenInstances.length > screenInstanceIndex + 1 &&
                       screenInstances[screenInstanceIndex + 1].present)
                   }
+                  isBeforeTop={screenInstanceIndex === screenInstancePtr - 1}
                   isPresent={screenInstance.present}
                   backButtonAriaLabel={props.backButtonAriaLabel}
                   closeButtonAriaLabel={props.closeButtonAriaLabel}

@@ -1,28 +1,29 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import zenscroll from 'zenscroll'
 
-import { useStore, useStoreActions, useStoreSelector } from '../store'
+import { useStore, useStoreSelector } from '../store'
 import { INavigatorTheme } from '../types'
 import { useNavigator } from '../useNavigator'
 import * as css from './Card.css'
+import { makeTranslation } from './Card.translation'
 import Navbar from './Navbar'
-
-const $frameOffsetSet = new Set<HTMLDivElement>()
 
 interface ICardProps {
   theme: INavigatorTheme
   nodeRef: React.RefObject<HTMLDivElement>
+  beforeTopFrameOffsetRef: React.RefObject<HTMLDivElement>
   screenPath: string
   screenInstanceId: string
   isRoot: boolean
   isTop: boolean
+  isBeforeTop: boolean
   isPresent: boolean
   backButtonAriaLabel: string
   closeButtonAriaLabel: string
   onClose?: () => void
 }
 const Card: React.FC<ICardProps> = (props) => {
-  const navigator = useNavigator()
+  const { pop } = useNavigator()
 
   const android = props.theme === 'Android'
   const cupertino = props.theme === 'Cupertino'
@@ -30,137 +31,96 @@ const Card: React.FC<ICardProps> = (props) => {
   const [popped, setPopped] = useState(false)
 
   const store = useStore()
-  const { screenEdge, screenInstanceOptions } = useStoreSelector((state) => ({
-    screenEdge: state.screenEdge,
+  const { screenInstanceOptions } = useStoreSelector((state) => ({
     screenInstanceOptions: state.screenInstanceOptions,
   }))
-  const { setScreenEdge } = useStoreActions()
-
-  const x = useRef<number>(0)
-  const requestAnimationFrameLock = useRef<boolean>(false)
-
   const dimRef = useRef<HTMLDivElement>(null)
   const frameRef = useRef<HTMLDivElement>(null)
-  const frameOffsetRef = useRef<HTMLDivElement>(null)
+  const frameOffsetRef = props.beforeTopFrameOffsetRef
+  const edgeRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    const $dim = dimRef.current
+    const $frame = frameRef.current
     const $frameOffset = frameOffsetRef.current
+    const $edge = edgeRef.current
 
-    if ($frameOffset) {
-      $frameOffsetSet.add($frameOffset)
-
-      return () => {
-        $frameOffsetSet.delete($frameOffset)
-      }
+    if (!$dim || !$frame || !$frameOffset || !$edge) {
+      return
     }
-  }, [frameOffsetRef.current])
 
-  const onEdgeTouchStart = useCallback(
-    (e: React.TouchEvent<HTMLDivElement>) => {
-      ;(document.activeElement as any)?.blur?.()
+    let x0: number | null = null
+    let t0: number | null = null
+    let x: number | null = null
 
-      setScreenEdge({
-        screenEdge: {
-          startX: e.touches[0].clientX,
-          startTime: Date.now(),
-        },
-      })
-    },
-    []
-  )
+    const resetState = () => {
+      x0 = null
+      t0 = null
+      x = null
+    }
 
-  const onEdgeTouchMove = useCallback(
-    (e: React.TouchEvent<HTMLDivElement>) => {
-      if (screenEdge.startX) {
-        x.current = e.touches[0].clientX
+    const { translate, resetTranslation } = makeTranslation({
+      $dim,
+      $frame,
+      $frameOffset,
+    })
 
-        if (!requestAnimationFrameLock.current) {
-          requestAnimationFrameLock.current = true
+    const onTouchStart = (e: TouchEvent) => {
+      x0 = e.touches[0].clientX
+      t0 = Date.now()
 
-          requestAnimationFrame(() => {
-            if (x.current > 0) {
-              const computedEdgeX = x.current - screenEdge.startX!
+      const { activeElement } = document as any
+      activeElement?.blur?.()
+    }
 
-              const $dim = dimRef.current
-              const $frame = frameRef.current
-
-              if (computedEdgeX >= 0) {
-                if ($dim) {
-                  $dim.style.opacity = `${
-                    1 - computedEdgeX / window.screen.width
-                  }`
-                  $dim.style.transition = '0s'
-                }
-                if ($frame) {
-                  $frame.style.overflowY = 'hidden'
-                  $frame.style.transform = `translateX(${computedEdgeX}px)`
-                  $frame.style.transition = '0s'
-                }
-                $frameOffsetSet.forEach(($frameOffset) => {
-                  if ($frameOffset !== frameOffsetRef.current) {
-                    $frameOffset.style.transform = `translateX(-${
-                      5 - (5 * computedEdgeX) / window.screen.width
-                    }rem)`
-                    $frameOffset.style.transition = '0s'
-                  }
-                })
-              }
-            }
-
-            requestAnimationFrameLock.current = false
-          })
-        }
+    const onTouchMove = (e: TouchEvent) => {
+      if (!x0) {
+        return resetState()
       }
-    },
-    [screenEdge]
-  )
 
-  const onEdgeTouchEnd = useCallback(() => {
-    if (x.current) {
-      const velocity =
-        x.current / (Date.now() - (screenEdge.startTime as number))
+      x = e.touches[0].clientX
 
-      if (velocity > 1 || x.current / window.screen.width > 0.4) {
+      translate({
+        dx: x - x0,
+      })
+    }
+
+    const onTouchEnd = () => {
+      if (!x0 || !t0 || !x) {
+        return resetState()
+      }
+
+      const t = Date.now()
+      const v = (x - x0) / (t - t0)
+
+      if (v > 1 || x / window.screen.width > 0.4) {
         setPopped(true)
-        navigator.pop()
+        pop()
       }
 
-      setScreenEdge({
-        screenEdge: {
-          startX: null,
-          startTime: null,
-        },
-      })
-
-      x.current = 0
-
-      requestAnimationFrame(() => {
-        const $dim = dimRef.current
-        const $frame = frameRef.current
-
-        if ($dim) {
-          $dim.style.opacity = ''
-          $dim.style.transition = ''
-        }
-        if ($frame) {
-          $frame.style.overflowY = ''
-          $frame.style.transform = ''
-          $frame.style.transition = ''
-        }
-        $frameOffsetSet.forEach(($frameOffset) => {
-          $frameOffset.style.transform = ''
-          $frameOffset.style.transition = ''
-        })
-      })
+      resetState()
+      resetTranslation()
     }
-  }, [screenEdge])
+
+    $edge.addEventListener('touchstart', onTouchStart)
+    $edge.addEventListener('touchmove', onTouchMove)
+    $edge.addEventListener('touchend', onTouchEnd)
+
+    return () => {
+      $edge.removeEventListener('touchstart', onTouchStart)
+      $edge.removeEventListener('touchmove', onTouchMove)
+      $edge.removeEventListener('touchend', onTouchEnd)
+    }
+  }, [dimRef, frameRef, frameOffsetRef, edgeRef, setPopped, pop])
 
   const onTopClick = useCallback(() => {
+    const $frame = frameRef.current
+
     const screenInstanceOption =
       store.getState().screenInstanceOptions[props.screenInstanceId]
 
-    if (!screenInstanceOption?.navbar.disableScrollToTop && frameRef.current) {
-      const scroller = zenscroll.createScroller(frameRef.current)
+    if (!screenInstanceOption?.navbar.disableScrollToTop && $frame) {
+      const scroller = zenscroll.createScroller($frame)
       scroller.toY(0)
     }
 
@@ -213,7 +173,7 @@ const Card: React.FC<ICardProps> = (props) => {
               cupertinoAndIsNotPresent: cupertino && !props.isPresent,
               cupertinoAndIsNotTop: cupertino && !props.isTop,
             })}
-            ref={frameOffsetRef}
+            ref={props.isBeforeTop ? props.beforeTopFrameOffsetRef : undefined}
           >
             <div
               className={css.frame({
@@ -233,9 +193,7 @@ const Card: React.FC<ICardProps> = (props) => {
                 cupertinoAndIsNavbarVisible: cupertino && isNavbarVisible,
                 isNavbarVisible,
               })}
-              onTouchStart={onEdgeTouchStart}
-              onTouchMove={onEdgeTouchMove}
-              onTouchEnd={onEdgeTouchEnd}
+              ref={edgeRef}
             />
           )}
         </div>

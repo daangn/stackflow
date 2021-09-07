@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 import { assignInlineVars } from '@vanilla-extract/dynamic'
 
@@ -37,16 +37,19 @@ const Navbar: React.FC<INavbarProps> = (props) => {
 
   const screenInstanceOption = screenInstanceOptions[props.screenInstanceId]
 
-  useLayoutEffect(() => {
+  useEffect(() => {
+    const $navbar = navbarRef.current
+    const $center = centerRef.current
+
     const onResize = () => {
-      if (!navbarRef.current || !centerRef.current) {
+      if (!$navbar || !$center) {
         return
       }
 
-      const screenWidth = navbarRef.current.clientWidth
+      const screenWidth = $navbar.clientWidth
 
-      const { offsetLeft: leftWidth, clientWidth: centerWidth } =
-        centerRef.current
+      const leftWidth = $center.offsetLeft
+      const centerWidth = $center.clientWidth
       const rightWidth = screenWidth - leftWidth - centerWidth
 
       const sideMargin = Math.max(leftWidth, rightWidth)
