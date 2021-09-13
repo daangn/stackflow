@@ -1,4 +1,10 @@
-import React, { createContext, useCallback, useContext, useState } from 'react'
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from 'react'
 
 export interface IScreenInstance {
   id: string
@@ -104,19 +110,31 @@ export const ScreenInstancesProvider: React.FC = (props) => {
     [setScreenInstancePromiseMap]
   )
 
+  const value = useMemo(
+    () => ({
+      screenInstances,
+      screenInstancePromiseMap,
+      screenInstancePtr,
+      insertScreenInstance,
+      mapScreenInstance,
+      incScreenInstancePtr,
+      setScreenInstancePtr,
+      addScreenInstancePromise,
+    }),
+    [
+      screenInstances,
+      screenInstancePromiseMap,
+      screenInstancePtr,
+      insertScreenInstance,
+      mapScreenInstance,
+      incScreenInstancePtr,
+      setScreenInstancePtr,
+      addScreenInstancePromise,
+    ]
+  )
+
   return (
-    <ScreenInstancesContext.Provider
-      value={{
-        screenInstances,
-        screenInstancePromiseMap,
-        screenInstancePtr,
-        insertScreenInstance,
-        mapScreenInstance,
-        incScreenInstancePtr,
-        setScreenInstancePtr,
-        addScreenInstancePromise,
-      }}
-    >
+    <ScreenInstancesContext.Provider value={value}>
       {props.children}
     </ScreenInstancesContext.Provider>
   )
