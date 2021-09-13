@@ -2,6 +2,7 @@ import React, { createContext, useContext, useMemo } from 'react'
 
 interface IScreenInstanceContext {
   screenInstanceId: string
+  screenPath: string
   as: string
   isTop: boolean
   isRoot: boolean
@@ -17,11 +18,18 @@ export const ScreenInstanceProvider: React.FC<IScreenInstanceContext> = (
   const value = useMemo(
     () => ({
       screenInstanceId: props.screenInstanceId,
+      screenPath: props.screenPath,
       as: props.as,
       isTop: props.isTop,
       isRoot: props.isRoot,
     }),
-    [props.screenInstanceId, props.as, props.isTop, props.isRoot]
+    [
+      props.screenInstanceId,
+      props.screenPath,
+      props.as,
+      props.isTop,
+      props.isRoot,
+    ]
   )
   return (
     <ScreenInstanceContext.Provider value={value}>

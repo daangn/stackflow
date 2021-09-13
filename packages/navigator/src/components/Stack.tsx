@@ -76,6 +76,7 @@ const Stack: React.FC<IStackProps> = (props) => {
               >
                 <ScreenInstanceProvider
                   screenInstanceId={screenInstance.id}
+                  screenPath={screen.path}
                   as={screenInstance.as}
                   isTop={isTop}
                   isRoot={isRoot}
