@@ -48,9 +48,9 @@ export const ScreensProvider: React.FC = (props) => {
   const value = useMemo(
     () => ({
       screens,
-      registerScreen: registerScreen,
+      registerScreen,
     }),
-    []
+    [screens, registerScreen]
   )
 
   return (
