@@ -11,6 +11,7 @@ import {
   container_exitActive,
   container_exitDone,
 } from './Card.css'
+import CardFallback from './CardFallback'
 import { ScreenHelmetProvider } from './Stack.ScreenHelmetContext'
 import { ScreenInstanceProvider } from './Stack.ScreenInstanceContext'
 import useDepthChangeEffect from './Stack.useDepthChangeEffect'
@@ -47,73 +48,92 @@ const Stack: React.FC<IStackProps> = (props) => {
   useInitializeHistoryPopEffect()
 
   return (
-    <React.Suspense fallback={null}>
-      {screenInstances.map((screenInstance, screenInstanceIndex) => {
-        const isRoot = screenInstanceIndex === 0
-        const isTop = screenInstanceIndex === screenInstancePtr
+    <>
+      {Array(screenInstances.length + 1)
+        .fill('')
+        .map((_, i) => {
+          const screenInstanceIndex = i
+          const isRoot = screenInstanceIndex === 0
+          const isTop = screenInstanceIndex === screenInstancePtr
 
-        const screen = screens[screenInstance.screenId]
+          const screenInstance = screenInstances[i]
+          const screen = screens[screenInstance?.screenId]
 
-        if (!screen) {
-          return null
-        }
+          const renderNode = (fallback: boolean) => (
+            <NodeRef<HTMLDivElement> key={screenInstanceIndex}>
+              {(nodeRef) =>
+                screen && (
+                  <CSSTransition
+                    key={screenInstanceIndex}
+                    nodeRef={nodeRef}
+                    timeout={props.animationDuration}
+                    in={screenInstanceIndex <= screenInstancePtr}
+                    classNames={{
+                      enterActive: container_enterActive,
+                      enterDone: container_enterDone,
+                      exitActive: container_exitActive,
+                      exitDone: container_exitDone,
+                    }}
+                    unmountOnExit
+                  >
+                    {fallback ? (
+                      <CardFallback
+                        nodeRef={nodeRef}
+                        theme={props.theme}
+                        isRoot={screenInstanceIndex === 0}
+                        isPresent={screenInstance.present}
+                      />
+                    ) : (
+                      <ScreenInstanceProvider
+                        screenInstanceId={screenInstance.id}
+                        screenPath={screen.path}
+                        as={screenInstance.as}
+                        isTop={isTop}
+                        isRoot={isRoot}
+                      >
+                        <ScreenHelmetProvider>
+                          <Card
+                            nodeRef={nodeRef}
+                            theme={props.theme}
+                            screenPath={screen.path}
+                            screenInstanceId={screenInstance.id}
+                            isRoot={screenInstanceIndex === 0}
+                            isTop={
+                              screenInstanceIndex >= screenInstancePtr ||
+                              (props.theme === 'Cupertino' &&
+                                screenInstances.length >
+                                  screenInstanceIndex + 1 &&
+                                screenInstances[screenInstanceIndex + 1]
+                                  .present)
+                            }
+                            isPresent={screenInstance.present}
+                            isBeforeTop={
+                              screenInstanceIndex === screenInstancePtr - 1
+                            }
+                            beforeTopFrameOffsetRef={beforeTopFrameOffsetRef}
+                            backButtonAriaLabel={props.backButtonAriaLabel}
+                            closeButtonAriaLabel={props.closeButtonAriaLabel}
+                            onClose={props.onClose}
+                          >
+                            <screen.Component />
+                          </Card>
+                        </ScreenHelmetProvider>
+                      </ScreenInstanceProvider>
+                    )}
+                  </CSSTransition>
+                )
+              }
+            </NodeRef>
+          )
 
-        return (
-          <NodeRef<HTMLDivElement> key={screenInstanceIndex}>
-            {(nodeRef) => (
-              <CSSTransition
-                key={screenInstance.id}
-                nodeRef={nodeRef}
-                timeout={props.animationDuration}
-                in={screenInstanceIndex <= screenInstancePtr}
-                classNames={{
-                  enterActive: container_enterActive,
-                  enterDone: container_enterDone,
-                  exitActive: container_exitActive,
-                  exitDone: container_exitDone,
-                }}
-                unmountOnExit
-              >
-                <ScreenInstanceProvider
-                  screenInstanceId={screenInstance.id}
-                  screenPath={screen.path}
-                  as={screenInstance.as}
-                  isTop={isTop}
-                  isRoot={isRoot}
-                >
-                  <ScreenHelmetProvider>
-                    <Card
-                      nodeRef={nodeRef}
-                      beforeTopFrameOffsetRef={beforeTopFrameOffsetRef}
-                      theme={props.theme}
-                      screenPath={screen.path}
-                      screenInstanceId={screenInstance.id}
-                      isRoot={screenInstanceIndex === 0}
-                      isTop={
-                        screenInstanceIndex >= screenInstancePtr ||
-                        (props.theme === 'Cupertino' &&
-                          screenInstances.length > screenInstanceIndex + 1 &&
-                          screenInstances[screenInstanceIndex + 1].present)
-                      }
-                      isBeforeTop={
-                        screenInstanceIndex === screenInstancePtr - 1
-                      }
-                      isPresent={screenInstance.present}
-                      backButtonAriaLabel={props.backButtonAriaLabel}
-                      closeButtonAriaLabel={props.closeButtonAriaLabel}
-                      onClose={props.onClose}
-                    >
-                      <screen.Component />
-                    </Card>
-                  </ScreenHelmetProvider>
-                </ScreenInstanceProvider>
-              </CSSTransition>
-            )}
-          </NodeRef>
-        )
-      })}
+          return (
+            <React.Suspense key={i} fallback={renderNode(true)}>
+              {renderNode(false)}
+            </React.Suspense>
+          )
+        })}
       {props.children}
-    </React.Suspense>
+    </>
   )
 }
 

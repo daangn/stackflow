@@ -56,9 +56,9 @@ const PageHome: React.FC = () => {
       </ListItem>
       <ListItem
         onClick={() => {
-          startTransition(() => {
-            push('/movies/ZmlsbXM6Ng==')
-          })
+          // startTransition(() => {
+          push('/movies/ZmlsbXM6Ng==')
+          // })
         }}
       >
         Remote API Call with Suspense

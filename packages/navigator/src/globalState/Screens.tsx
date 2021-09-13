@@ -6,7 +6,7 @@ import React, {
   useState,
 } from 'react'
 
-interface IScreen {
+export interface IScreen {
   id: string
   path: string
   Component: React.ComponentType
