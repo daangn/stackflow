@@ -1,4 +1,10 @@
-import React, { createContext, useCallback, useContext, useState } from 'react'
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from 'react'
 
 interface IScreen {
   id: string
@@ -39,13 +45,16 @@ export const ScreensProvider: React.FC = (props) => {
     return unregister
   }, [])
 
+  const value = useMemo(
+    () => ({
+      screens,
+      registerScreen: registerScreen,
+    }),
+    []
+  )
+
   return (
-    <ScreensContext.Provider
-      value={{
-        screens,
-        registerScreen: registerScreen,
-      }}
-    >
+    <ScreensContext.Provider value={value}>
       {props.children}
     </ScreensContext.Provider>
   )
