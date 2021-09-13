@@ -51,11 +51,6 @@ export interface IScreenInstancePromise {
   popped: boolean
 }
 
-export interface IScreenEdge {
-  startTime: number | null
-  startX: number | null
-}
-
 export interface GlobalState {
   screens: {
     [screenId: string]: IScreen | undefined
@@ -68,7 +63,6 @@ export interface GlobalState {
   screenInstancePromises: {
     [screenInstanceId: string]: IScreenInstancePromise | undefined
   }
-  screenEdge: IScreenEdge
 }
 
 const StoreContext = createContext<Store<GlobalState>>(null as any)
@@ -82,10 +76,6 @@ export const StoreProvider: React.FC = (props) => {
         screenInstancePtr: -1,
         screenInstanceOptions: {},
         screenInstancePromises: {},
-        screenEdge: {
-          startX: null,
-          startTime: null,
-        },
       })),
     []
   )
@@ -255,16 +245,6 @@ export function useStoreActions() {
     [store]
   )
 
-  const setScreenEdge = useCallback(
-    ({ screenEdge }: { screenEdge: IScreenEdge }) => {
-      store.setState((prevState) => ({
-        ...prevState,
-        screenEdge,
-      }))
-    },
-    [store]
-  )
-
   return useMemo(
     () => ({
       registerScreen,
@@ -274,7 +254,6 @@ export function useStoreActions() {
       insertScreenInstance,
       increaseScreenInstancePtr,
       setScreenInstancePtr,
-      setScreenEdge,
     }),
     [
       registerScreen,
@@ -284,7 +263,6 @@ export function useStoreActions() {
       insertScreenInstance,
       increaseScreenInstancePtr,
       setScreenInstancePtr,
-      setScreenEdge,
     ]
   )
 }

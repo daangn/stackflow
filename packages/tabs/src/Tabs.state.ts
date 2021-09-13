@@ -24,24 +24,23 @@ export type State = {
 export type Action =
   | {
       _t: 'TOUCH_START'
-      e: TouchEvent
+      x: number
+      y: number
     }
   | {
       _t: 'TOUCH_MOVE'
-      e: TouchEvent
+      x: number
+      y: number
     }
   | {
       _t: 'TOUCH_END'
-      e: TouchEvent
     }
 
 function reducer(prevState: State, action: Action): State {
-  const { e } = action
-  const x = e.touches[0]?.clientX
-  const y = e.touches[0]?.clientY
-
   switch (action._t) {
     case 'TOUCH_START': {
+      const { x, y } = action
+
       if (x < 0) {
         return {
           ...prevState,
@@ -61,14 +60,14 @@ function reducer(prevState: State, action: Action): State {
       }
     }
     case 'TOUCH_MOVE': {
+      const { x, y } = action
+
       if (x < 0) {
         return {
           ...prevState,
           _t: 'swipe_canceled',
         }
       }
-
-      e.stopPropagation()
 
       if (prevState._t === 'idle') {
         return {
@@ -106,7 +105,6 @@ function reducer(prevState: State, action: Action): State {
         }
       }
       if (prevState._t === 'swipe_started') {
-        e.preventDefault()
         const { x0 } = prevState
 
         return {
@@ -121,7 +119,6 @@ function reducer(prevState: State, action: Action): State {
     }
     case 'TOUCH_END': {
       if (prevState._t === 'swipe_started') {
-        e.stopPropagation()
         const { activeTabIndex, tabCount, dx } = prevState
 
         const hasNextTab = activeTabIndex < tabCount - 1
