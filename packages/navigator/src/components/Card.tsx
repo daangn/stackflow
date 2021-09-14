@@ -10,6 +10,7 @@ import { useScreenHelmet } from './Stack.ScreenHelmetContext'
 
 interface ICardProps {
   theme: INavigatorTheme
+  className?: string
   nodeRef: React.RefObject<HTMLDivElement>
   beforeTopFrameOffsetRef: React.RefObject<HTMLDivElement>
   screenPath: string
@@ -20,7 +21,6 @@ interface ICardProps {
   isPresent: boolean
   backButtonAriaLabel: string
   closeButtonAriaLabel: string
-  fallback?: boolean
   onClose?: () => void
 }
 const Card: React.FC<ICardProps> = (props) => {
@@ -122,7 +122,10 @@ const Card: React.FC<ICardProps> = (props) => {
   const isNavbarVisible = screenHelmetOption.visible ?? false
 
   return (
-    <div ref={props.nodeRef} className={css.container}>
+    <div
+      ref={props.nodeRef}
+      className={[css.container, props.className].join(' ')}
+    >
       {!props.isRoot && (
         <div
           className={css.dim({
