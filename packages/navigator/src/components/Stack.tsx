@@ -75,9 +75,7 @@ const Stack: React.FC<IStackProps> = (props) => {
             <NodeRef<HTMLDivElement> key={screenInstanceIndex}>
               {(nodeRef) => (
                 <>
-                  {onMount && (
-                    <OnMount onMount={onMount} onUnmount={onUnmount} />
-                  )}
+                  <OnMount onMount={onMount} onUnmount={onUnmount} />
                   {screen && (
                     <CSSTransition
                       key={screenInstanceIndex}

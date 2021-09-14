@@ -6,19 +6,27 @@ export function makeRelayEnvironment({ endpoint }: { endpoint: string }) {
 
   const environment = new Environment({
     network: Network.create(async (operation, variables) => {
-      return fetch(endpoint, {
-        method: 'post',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          query: operation.text,
-          variables,
-        }),
-      }).then((h) => h.json())
+      return Promise.resolve()
+        .then(() =>
+          fetch(endpoint, {
+            method: 'post',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              query: operation.text,
+              variables,
+            }),
+          })
+        )
+        .then((h) => h.json())
     }),
     store,
   })
 
   return environment
+}
+
+function delay(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
 }
