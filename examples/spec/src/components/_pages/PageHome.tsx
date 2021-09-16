@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { startTransition, useTransition } from 'react'
 
 import styled from '@emotion/styled'
 import { ScreenHelmet, useNavigator } from '@karrotframe/navigator'
@@ -7,6 +7,7 @@ import ListItem from '../ListItem'
 
 const PageHome: React.FC = () => {
   const { push } = useNavigator()
+  const [isPending, startTransition] = useTransition()
 
   return (
     <Container>
@@ -52,6 +53,15 @@ const PageHome: React.FC = () => {
         }}
       >
         useQueryParams()
+      </ListItem>
+      <ListItem
+        onClick={() => {
+          startTransition(() => {
+            push('/movies/ZmlsbXM6Ng==')
+          })
+        }}
+      >
+        Remote API Call with Suspense
       </ListItem>
       <ListItem
         onClick={() => {

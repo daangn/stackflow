@@ -20,6 +20,7 @@ interface ICardProps {
   isPresent: boolean
   backButtonAriaLabel: string
   closeButtonAriaLabel: string
+  fallback?: boolean
   onClose?: () => void
 }
 const Card: React.FC<ICardProps> = (props) => {

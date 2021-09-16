@@ -4,4 +4,13 @@ const {
   removeModuleScopePlugin,
 } = require('customize-cra')
 
-module.exports = override(addBabelPlugin('@emotion'), removeModuleScopePlugin())
+module.exports = override(
+  addBabelPlugin('@emotion'),
+  addBabelPlugin([
+    'babel-plugin-relay',
+    {
+      artifactDirectory: './src/__relay__',
+    },
+  ]),
+  removeModuleScopePlugin()
+)

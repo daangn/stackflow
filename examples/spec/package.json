@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "build": "react-app-rewired build",
-    "start": "react-app-rewired start"
+    "start": "react-app-rewired start",
+    "relay": "relay-compiler --src ./src/components --schema ./src/relay/schema.graphql --language typescript --extensions ts tsx --artifactDirectory ./src/__relay__",
+    "codegen": "graphql-codegen"
   },
   "browserslist": {
     "production": [
@@ -22,20 +24,26 @@
     "extends": "react-app"
   },
   "dependencies": {
+    "@babel/runtime": "^7.15.4",
     "@emotion/core": "^11.0.0",
     "@emotion/react": "^11.1.5",
     "@emotion/styled": "^11.1.5",
     "@karrotframe/navigator": "workspace:packages/navigator",
     "@karrotframe/pulltorefresh": "workspace:packages/pulltorefresh",
     "@karrotframe/tabs": "workspace:packages/tabs",
+    "graphql": "^15.5.3",
     "react": "next",
     "react-dom": "next",
+    "react-relay": "^12.0.0",
     "react-router-dom": "^5.2.0",
+    "relay-runtime": "^12.0.0",
     "smoothscroll-polyfill": "^0.4.4"
   },
   "devDependencies": {
     "@babel/core": "^7.11.6",
     "@emotion/babel-plugin": "^11.2.0",
+    "@graphql-codegen/cli": "^2.2.0",
+    "@graphql-codegen/schema-ast": "^2.2.0",
     "@testing-library/dom": "^6.15.0",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
@@ -44,11 +52,16 @@
     "@types/node": "^12.0.0",
     "@types/react": "^17.0.19",
     "@types/react-dom": "^17.0.9",
+    "@types/react-relay": "^11.0.2",
     "@types/react-router-dom": "^5.1.5",
+    "@types/relay-runtime": "^11.0.3",
     "@types/smoothscroll-polyfill": "^0",
+    "babel-plugin-relay": "^12.0.0",
     "customize-cra": "^1.0.0",
     "react-app-rewired": "^2.1.6",
     "react-scripts": "3.4.3",
+    "relay-compiler": "^12.0.0",
+    "relay-compiler-language-typescript": "^14.1.0",
     "typescript": "~3.7.2"
   }
 }

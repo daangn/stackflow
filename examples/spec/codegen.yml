@@ -1,0 +1,5 @@
+schema: https://swapi-graphql.netlify.app/.netlify/functions/index
+generates:
+  ./src/relay/schema.graphql:
+    plugins:
+      - schema-ast

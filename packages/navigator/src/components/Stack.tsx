@@ -47,7 +47,7 @@ const Stack: React.FC<IStackProps> = (props) => {
   useInitializeHistoryPopEffect()
 
   return (
-    <>
+    <React.Suspense fallback={null}>
       {screenInstances.map((screenInstance, screenInstanceIndex) => {
         const isRoot = screenInstanceIndex === 0
         const isTop = screenInstanceIndex === screenInstancePtr
@@ -113,7 +113,7 @@ const Stack: React.FC<IStackProps> = (props) => {
         )
       })}
       {props.children}
-    </>
+    </React.Suspense>
   )
 }
 
