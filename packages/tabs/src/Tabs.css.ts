@@ -1,8 +1,45 @@
-import { createTheme, style } from '@vanilla-extract/css'
+import {
+  createGlobalTheme,
+  createGlobalThemeContract,
+  style,
+} from '@vanilla-extract/css'
 import { calc } from '@vanilla-extract/css-utils'
 import { recipe } from '@vanilla-extract/recipes'
 
-const [themeClass, vars] = createTheme({
+const vars = createGlobalThemeContract(
+  {
+    tabBar: {
+      backgroundColor: null,
+      borderColor: null,
+      borderSize: null,
+      baseFontColor: null,
+      activeFontColor: null,
+      fontSize: null,
+      fontWeight: null,
+      inset: null,
+      indicator: {
+        color: null,
+        width: null,
+        transform: null,
+        display: null,
+      },
+      item: {
+        vPadding: null,
+        hPadding: null,
+        gap: null,
+      },
+    },
+    tabMain: {
+      backgroundColor: null,
+      width: null,
+      transform: null,
+    },
+    transitionDuration: null,
+  },
+  (_, path) => `kf_tabs_${path.join('-')}`
+)
+
+createGlobalTheme(':root', vars, {
   tabBar: {
     backgroundColor: '#fff',
     borderColor: 'rgba(0, 0, 0, 0.07)',
@@ -11,7 +48,7 @@ const [themeClass, vars] = createTheme({
     activeFontColor: '#212124',
     fontSize: '0.875rem',
     fontWeight: '700',
-    inset: '0',
+    inset: '1rem',
     indicator: {
       color: '#212124',
       width: '',
@@ -19,9 +56,9 @@ const [themeClass, vars] = createTheme({
       display: '',
     },
     item: {
-      verticalPadding: '0.59375rem',
-      inlineHorizontalPadding: '0.875rem',
-      inlineGap: '0.5rem',
+      vPadding: '0.59375rem',
+      hPadding: '0.25rem',
+      gap: '1.25rem',
     },
   },
   tabMain: {
@@ -34,16 +71,13 @@ const [themeClass, vars] = createTheme({
 
 export { vars }
 
-export const container = style([
-  themeClass,
-  {
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    width: '100%',
-    overflow: 'hidden',
-  },
-])
+export const container = style({
+  height: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+  width: '100%',
+  overflow: 'hidden',
+})
 
 export const tabBar = recipe({
   base: {
@@ -82,7 +116,7 @@ export const tabBarItem = recipe({
     fontWeight: vars.tabBar.fontWeight,
     textAlign: 'center',
     color: vars.tabBar.baseFontColor,
-    padding: `${vars.tabBar.item.verticalPadding} 0`,
+    padding: `${vars.tabBar.item.vPadding} 0`,
     cursor: 'pointer',
     WebkitTapHighlightColor: 'transparent',
     textDecoration: 'none',
@@ -99,8 +133,8 @@ export const tabBarItem = recipe({
       true: {
         display: 'inline-block',
         verticalAlign: 'top',
-        padding: `${vars.tabBar.item.verticalPadding} ${vars.tabBar.item.inlineHorizontalPadding}`,
-        marginRight: vars.tabBar.item.inlineGap,
+        padding: `${vars.tabBar.item.vPadding} ${vars.tabBar.item.hPadding}`,
+        marginRight: vars.tabBar.item.gap,
         selectors: {
           ['&:last-of-type']: {
             marginRight: '0',

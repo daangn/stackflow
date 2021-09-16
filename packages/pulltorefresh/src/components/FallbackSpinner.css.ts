@@ -1,4 +1,5 @@
-import { keyframes, style, styleVariants } from '@vanilla-extract/css'
+import { keyframes, style } from '@vanilla-extract/css'
+import { recipe } from '@vanilla-extract/recipes'
 
 import { vars } from '../theme.css'
 
@@ -17,10 +18,14 @@ export const container = style({
   padding: '0.75rem 0 1.75rem',
 })
 
-export const spinner = styleVariants({
-  normal: {},
-  spin: {
-    animation: `${spin} ${vars.fallbackSpinnerAnimationDuration} infinite linear`,
+export const spinner = recipe({
+  base: {},
+  variants: {
+    spin: {
+      true: {
+        animation: `${spin} ${vars.fallbackSpinner.animationDuration} infinite linear`,
+      },
+    },
   },
 })
 

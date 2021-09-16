@@ -21,7 +21,9 @@ const FallbackSpinner: ICustomSpinner = (props) => {
   return (
     <div className={css.container}>
       <svg
-        className={props.refreshing ? css.spinner.spin : css.spinner.normal}
+        className={css.spinner({
+          spin: props.refreshing ? true : undefined,
+        })}
         width="32"
         height="32"
         viewBox="0 0 32 32"
@@ -38,7 +40,7 @@ const FallbackSpinner: ICustomSpinner = (props) => {
             strokeWidth="3"
             strokeLinecap="round"
             stroke={
-              i < props.offset * 10 ? vars.fallbackSpinnerColor : 'transparent'
+              i < props.offset * 10 ? vars.fallbackSpinner.color : 'transparent'
             }
           />
         ))}

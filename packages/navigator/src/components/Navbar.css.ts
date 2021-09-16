@@ -1,7 +1,6 @@
-import { vcn } from 'vanilla-classnames'
-
-import { composeStyles, createTheme, style } from '@vanilla-extract/css'
+import { style } from '@vanilla-extract/css'
 import { calc } from '@vanilla-extract/css-utils'
+import { recipe } from '@vanilla-extract/recipes'
 
 import { vars } from '../Navigator.css'
 import {
@@ -9,40 +8,33 @@ import {
   container_exitDone as cardContainer_exitDone,
 } from './Card.css'
 
-const [navbarThemeClass, navbarVars] = createTheme({
-  centerMainWidth: '',
-})
-
-export { navbarVars }
-
-export const container = vcn(
-  composeStyles(
-    navbarThemeClass,
-    style({
-      position: 'absolute',
-      width: '100%',
-      top: 0,
-      padding: 'constant(safe-area-inset-top) 0 0',
-      paddingTop: 'env(safe-area-inset-top)',
-      backgroundColor: vars.backgroundColor,
-    })
-  ),
-  {
-    cupertinoAndIsNotPresent: style({
-      selectors: {
-        [`${cardContainer_exitActive} &`]: {
-          display: 'none',
-        },
-        [`${cardContainer_exitDone} &`]: {
-          display: 'none',
+export const container = recipe({
+  base: {
+    position: 'absolute',
+    width: '100%',
+    top: 0,
+    padding: 'constant(safe-area-inset-top) 0 0',
+    paddingTop: 'env(safe-area-inset-top)',
+    backgroundColor: vars.backgroundColor,
+  },
+  variants: {
+    cupertinoAndIsNotPresent: {
+      true: {
+        selectors: {
+          [`${cardContainer_exitActive} &`]: {
+            display: 'none',
+          },
+          [`${cardContainer_exitDone} &`]: {
+            display: 'none',
+          },
         },
       },
-    }),
-  }
-)
+    },
+  },
+})
 
-export const main = vcn(
-  style({
+export const main = recipe({
+  base: {
     display: 'flex',
     position: 'relative',
     height: vars.navbar.height,
@@ -51,13 +43,15 @@ export const main = vcn(
       calc(vars.navbar.borderSize).negate() +
       ' 0 ' +
       vars.navbar.borderColor,
-  }),
-  {
-    noBorder: style({
-      boxShadow: 'none',
-    }),
-  }
-)
+  },
+  variants: {
+    noBorder: {
+      true: {
+        boxShadow: 'none',
+      },
+    },
+  },
+})
 
 export const flex = style({
   display: 'flex',
@@ -98,8 +92,8 @@ export const backButton = style({
   },
 })
 
-export const right = vcn(
-  style({
+export const right = recipe({
+  base: {
     padding: '0 0.5rem',
     display: 'flex',
     alignItems: 'center',
@@ -110,13 +104,15 @@ export const right = vcn(
     ':empty': {
       display: 'none',
     },
-  }),
-  {
-    android: style({
-      padding: '0 0.5rem 0 0',
-    }),
-  }
-)
+  },
+  variants: {
+    android: {
+      true: {
+        padding: '0 0.5rem 0 0',
+      },
+    },
+  },
+})
 
 export const closeButton = style({
   display: 'flex',
@@ -137,55 +133,63 @@ export const closeButton = style({
   },
 })
 
-export const center = vcn(
-  style({
+export const center = recipe({
+  base: {
     flex: '1',
     display: 'flex',
     alignItems: 'center',
     overflow: 'hidden',
     color: vars.navbar.center.textColor,
-  }),
-  {
-    android: style({
-      paddingRight: '1rem',
-    }),
-  }
-)
+  },
+  variants: {
+    android: {
+      true: {
+        paddingRight: '1rem',
+      },
+    },
+  },
+})
 
-export const centerMain = vcn(
-  style({
+export const centerMain = recipe({
+  base: {
     display: 'block',
-    width: navbarVars.centerMainWidth,
-  }),
-  {
-    android: style({
-      justifyContent: 'flex-start',
-      paddingLeft: '1rem',
-      fontSize: '1.1875rem',
-      lineHeight: '1.5',
-      fontWeight: 'bold',
-      width: '100%',
-      boxSizing: 'border-box',
-    }),
-    androidAndIsLeft: style({
-      paddingLeft: '0.375rem',
-    }),
-    cupertino: style({
-      fontFamily: '-apple-system, BlinkMacSystemFont',
-      textAlign: 'center',
-      fontWeight: 600,
-      fontSize: '1rem',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      position: 'absolute',
-      top: '0',
-      left: '50%',
-      height: '100%',
-      transform: 'translate(-50%)',
-    }),
-  }
-)
+    width: vars.navbar.center.mainWidth,
+  },
+  variants: {
+    android: {
+      true: {
+        justifyContent: 'flex-start',
+        paddingLeft: '1rem',
+        fontSize: '1.1875rem',
+        lineHeight: '1.5',
+        fontWeight: 'bold',
+        width: '100%',
+        boxSizing: 'border-box',
+      },
+    },
+    androidAndIsLeft: {
+      true: {
+        paddingLeft: '0.375rem',
+      },
+    },
+    cupertino: {
+      true: {
+        fontFamily: '-apple-system, BlinkMacSystemFont',
+        textAlign: 'center',
+        fontWeight: 600,
+        fontSize: '1rem',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'absolute',
+        top: '0',
+        left: '50%',
+        height: '100%',
+        transform: 'translate(-50%)',
+      },
+    },
+  },
+})
 
 export const centerMainText = style({
   overflow: 'hidden',
@@ -196,8 +200,8 @@ export const centerMainText = style({
   width: '100%',
 })
 
-export const centerMainEdge = vcn(
-  style({
+export const centerMainEdge = recipe({
+  base: {
     position: 'absolute',
     top: '0',
     left: '50%',
@@ -207,14 +211,16 @@ export const centerMainEdge = vcn(
     display: 'none',
     cursor: 'pointer',
     WebkitTapHighlightColor: 'transparent',
-    width: navbarVars.centerMainWidth,
-  }),
-  {
-    cupertino: style({
-      display: 'block',
-    }),
-  }
-)
+    width: vars.navbar.center.mainWidth,
+  },
+  variants: {
+    cupertino: {
+      true: {
+        display: 'block',
+      },
+    },
+  },
+})
 
 export const svgIcon = style({
   width: '1.5rem',

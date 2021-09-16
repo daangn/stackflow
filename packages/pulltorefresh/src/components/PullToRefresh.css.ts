@@ -1,22 +1,19 @@
-import { composeStyles, style } from '@vanilla-extract/css'
+import { style } from '@vanilla-extract/css'
 
-import { theme, vars } from '../theme.css'
+import { vars } from '../theme.css'
 
-export const container = composeStyles(
-  theme,
-  style({
-    height: '100%',
-    overflow: 'hidden',
-    backgroundColor: vars.backgroundLowColor,
-  })
-)
+export const container = style({
+  height: '100%',
+  overflow: 'hidden',
+  backgroundColor: vars.backgroundLowColor,
+})
 
 export const scrollContainer = style({
   height: '100%',
   overflowY: 'scroll',
   position: 'relative',
   WebkitOverflowScrolling: 'touch',
-  transition: `transform ${vars.scrollContainerTransitionDuration}`,
+  transition: `transform ${vars.scrollContainer.transitionDuration}`,
   backgroundColor: vars.backgroundColor,
   zIndex: 1,
 })

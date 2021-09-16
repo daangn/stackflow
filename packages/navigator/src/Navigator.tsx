@@ -79,10 +79,7 @@ const Navigator: React.FC<INavigatorProps> = ({
       <StoreProvider>
         <div
           className={[
-            css.root({
-              android: theme === 'Android',
-              cupertino: theme === 'Cupertino',
-            }),
+            css.root({ theme }),
             ...(className ? [className] : []),
           ].join(' ')}
           style={assignInlineVars({

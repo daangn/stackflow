@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { assignInlineVars } from '@vanilla-extract/dynamic'
 
 import { IconBack, IconClose } from '../assets'
+import { vars } from '../Navigator.css'
 import { useStoreSelector } from '../store'
 import { INavigatorTheme } from '../types'
 import { useNavigator } from '../useNavigator'
@@ -132,16 +133,17 @@ const Navbar: React.FC<INavbarProps> = (props) => {
   return (
     <div
       className={css.container({
-        cupertinoAndIsNotPresent: cupertino && !props.isPresent,
+        cupertinoAndIsNotPresent:
+          cupertino && !props.isPresent ? true : undefined,
       })}
       ref={navbarRef}
       style={assignInlineVars({
-        [css.navbarVars.centerMainWidth]: `${centerMainWidth}px`,
+        [vars.navbar.center.mainWidth]: `${centerMainWidth}px`,
       })}
     >
       <div
         className={css.main({
-          noBorder,
+          noBorder: noBorder ? true : undefined,
         })}
       >
         <div className={css.flex}>
@@ -153,15 +155,15 @@ const Navbar: React.FC<INavbarProps> = (props) => {
           </div>
           <div
             className={css.center({
-              android,
+              android: android ? true : undefined,
             })}
             ref={centerRef}
           >
             <div
               className={css.centerMain({
-                android,
-                androidAndIsLeft: android && isLeft,
-                cupertino,
+                android: android ? true : undefined,
+                androidAndIsLeft: android && isLeft ? true : undefined,
+                cupertino: cupertino ? true : undefined,
               })}
             >
               {typeof screenInstanceOption?.navbar.title === 'string' ? (
@@ -174,14 +176,14 @@ const Navbar: React.FC<INavbarProps> = (props) => {
             </div>
             <div
               className={css.centerMainEdge({
-                cupertino,
+                cupertino: cupertino ? true : undefined,
               })}
               onClick={props.onTopClick}
             />
           </div>
           <div
             className={css.right({
-              android,
+              android: android ? true : undefined,
             })}
           >
             {screenInstanceOption?.navbar.appendRight}

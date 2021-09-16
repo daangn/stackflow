@@ -133,25 +133,30 @@ const Card: React.FC<ICardProps> = (props) => {
       {!props.isRoot && (
         <div
           className={css.dim({
-            android,
-            cupertinoAndIsNavbarVisible: cupertino && isNavbarVisible,
-            cupertinoAndIsPresent: cupertino && props.isPresent,
+            android: android ? true : undefined,
+            cupertinoAndIsNavbarVisible:
+              cupertino && isNavbarVisible ? true : undefined,
+            cupertinoAndIsPresent:
+              cupertino && props.isPresent ? true : undefined,
           })}
           ref={dimRef}
         />
       )}
       <div
         className={css.mainOffset({
-          androidAndIsNotTop: android && !props.isTop,
+          androidAndIsNotTop: android && !props.isTop ? true : undefined,
         })}
       >
         <div
           className={css.main({
-            android,
-            androidAndIsNavbarVisible: android && isNavbarVisible,
-            androidAndIsRoot: android && props.isRoot,
-            cupertinoAndIsNavbarVisible: cupertino && isNavbarVisible,
-            cupertinoAndIsPresent: cupertino && props.isPresent,
+            android: android ? true : undefined,
+            androidAndIsNavbarVisible:
+              android && isNavbarVisible ? true : undefined,
+            androidAndIsRoot: android && props.isRoot ? true : undefined,
+            cupertinoAndIsNavbarVisible:
+              cupertino && isNavbarVisible ? true : undefined,
+            cupertinoAndIsPresent:
+              cupertino && props.isPresent ? true : undefined,
           })}
         >
           {isNavbarVisible && (
@@ -168,17 +173,22 @@ const Card: React.FC<ICardProps> = (props) => {
           )}
           <div
             className={css.frameOffset({
-              cupertinoAndIsNotPresent: cupertino && !props.isPresent,
-              cupertinoAndIsNotTop: cupertino && !props.isTop,
+              cupertinoAndIsNotPresent:
+                cupertino && !props.isPresent ? true : undefined,
+              cupertinoAndIsNotTop:
+                cupertino && !props.isTop ? true : undefined,
             })}
             ref={props.isBeforeTop ? props.beforeTopFrameOffsetRef : undefined}
           >
             <div
               className={css.frame({
-                cupertino,
-                cupertinoAndIsNotRoot: cupertino && !props.isRoot,
-                cupertinoAndIsPresent: cupertino && props.isPresent,
-                cupertinoAndIsNotPresent: cupertino && !props.isPresent,
+                cupertino: cupertino ? true : undefined,
+                cupertinoAndIsNotRoot:
+                  cupertino && !props.isRoot ? true : undefined,
+                cupertinoAndIsPresent:
+                  cupertino && props.isPresent ? true : undefined,
+                cupertinoAndIsNotPresent:
+                  cupertino && !props.isPresent ? true : undefined,
               })}
               ref={frameRef}
             >
@@ -188,8 +198,9 @@ const Card: React.FC<ICardProps> = (props) => {
           {cupertino && !props.isRoot && !props.isPresent && !popped && (
             <div
               className={css.edge({
-                cupertinoAndIsNavbarVisible: cupertino && isNavbarVisible,
-                isNavbarVisible,
+                cupertinoAndIsNavbarVisible:
+                  cupertino && isNavbarVisible ? true : undefined,
+                isNavbarVisible: isNavbarVisible ? true : undefined,
               })}
               ref={edgeRef}
             />

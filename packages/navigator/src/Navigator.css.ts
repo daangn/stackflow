@@ -1,8 +1,26 @@
-import { vcn } from 'vanilla-classnames'
+import { createGlobalThemeContract, createTheme } from '@vanilla-extract/css'
+import { recipe } from '@vanilla-extract/recipes'
 
-import { createTheme, style } from '@vanilla-extract/css'
+const vars = createGlobalThemeContract(
+  {
+    backgroundColor: null,
+    dimBackgroundColor: null,
+    navbar: {
+      iconColor: null,
+      borderColor: null,
+      borderSize: null,
+      height: null,
+      center: {
+        textColor: null,
+        mainWidth: null,
+      },
+    },
+    animationDuration: '',
+  },
+  (_, path) => `kf_navigator_${path.join('-')}`
+)
 
-const [themeClassAndroid, vars] = createTheme({
+const Android = createTheme(vars, {
   backgroundColor: '#fff',
   dimBackgroundColor: 'rgba(0, 0, 0, 0.15)',
   navbar: {
@@ -12,12 +30,13 @@ const [themeClassAndroid, vars] = createTheme({
     height: '3.5rem',
     center: {
       textColor: '#212529',
+      mainWidth: '',
     },
   },
   animationDuration: '',
 })
 
-const themeClassCupertino = createTheme(vars, {
+const Cupertino = createTheme(vars, {
   backgroundColor: '#fff',
   dimBackgroundColor: 'rgba(0, 0, 0, 0.15)',
   navbar: {
@@ -27,23 +46,26 @@ const themeClassCupertino = createTheme(vars, {
     height: '2.75rem',
     center: {
       textColor: '#212529',
+      mainWidth: '',
     },
   },
   animationDuration: '',
 })
 
-export const root = vcn(
-  style({
+export const root = recipe({
+  base: {
     width: '100%',
     height: '100%',
     overflow: 'hidden',
     position: 'relative',
     userSelect: 'none',
-  }),
-  {
-    android: themeClassAndroid,
-    cupertino: themeClassCupertino,
-  }
-)
+  },
+  variants: {
+    theme: {
+      Android,
+      Cupertino,
+    },
+  },
+})
 
 export { vars }

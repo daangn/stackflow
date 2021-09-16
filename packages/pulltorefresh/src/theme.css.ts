@@ -1,11 +1,33 @@
-import { createTheme } from '@vanilla-extract/css'
+import {
+  createGlobalTheme,
+  createGlobalThemeContract,
+} from '@vanilla-extract/css'
 
-const [theme, vars] = createTheme({
+const vars = createGlobalThemeContract(
+  {
+    backgroundLowColor: null,
+    backgroundColor: null,
+    scrollContainer: {
+      transitionDuration: null,
+    },
+    fallbackSpinner: {
+      color: null,
+      animationDuration: null,
+    },
+  },
+  (_, path) => `kf_pulltorefresh_${path.join('-')}`
+)
+
+createGlobalTheme(':root', vars, {
   backgroundLowColor: '#f2f3f6',
   backgroundColor: '#fff',
-  scrollContainerTransitionDuration: '300ms',
-  fallbackSpinnerColor: '#fa6616',
-  fallbackSpinnerAnimationDuration: '750ms',
+  scrollContainer: {
+    transitionDuration: '300ms',
+  },
+  fallbackSpinner: {
+    color: '#fa6616',
+    animationDuration: '750ms',
+  },
 })
 
-export { theme, vars }
+export { vars }

@@ -4083,6 +4083,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@vanilla-extract/css", "npm:1.6.0"],
             ["@vanilla-extract/css-utils", "npm:0.1.1"],
             ["@vanilla-extract/dynamic", "npm:2.0.0"],
+            ["@vanilla-extract/recipes", "virtual:9734371974fc3672e6ee6daaced72209b12ca9fc84a9165d5ad0a398b49c7f307e482322d97eb1c674aabea20bf8091ebf6497cedbc5194a41b6071448e304a4#npm:0.1.0"],
             ["@vanilla-extract/webpack-plugin", "virtual:5667f7a2f367bfbcd36ca28513d46f745f9f1399813f671e47eb9f5596f70e460cdf86f88e4ce61bb178256d37ca7f73addcb0bcc8192afd11ce5f317116a5e5#npm:2.1.0"],
             ["babel-loader", "virtual:5667f7a2f367bfbcd36ca28513d46f745f9f1399813f671e47eb9f5596f70e460cdf86f88e4ce61bb178256d37ca7f73addcb0bcc8192afd11ce5f317116a5e5#npm:8.2.2"],
             ["css-loader", "virtual:5667f7a2f367bfbcd36ca28513d46f745f9f1399813f671e47eb9f5596f70e460cdf86f88e4ce61bb178256d37ca7f73addcb0bcc8192afd11ce5f317116a5e5#npm:5.0.2"],
@@ -4097,7 +4098,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react-transition-group", "virtual:5667f7a2f367bfbcd36ca28513d46f745f9f1399813f671e47eb9f5596f70e460cdf86f88e4ce61bb178256d37ca7f73addcb0bcc8192afd11ce5f317116a5e5#npm:4.4.2"],
             ["rimraf", "npm:3.0.2"],
             ["typescript", "patch:typescript@npm%3A4.3.5#~builtin<compat/typescript>::version=4.3.5&hash=d8b4e7"],
-            ["vanilla-classnames", "npm:0.1.0"],
             ["webpack", "virtual:5667f7a2f367bfbcd36ca28513d46f745f9f1399813f671e47eb9f5596f70e460cdf86f88e4ce61bb178256d37ca7f73addcb0bcc8192afd11ce5f317116a5e5#npm:5.21.2"],
             ["webpack-cli", "virtual:5667f7a2f367bfbcd36ca28513d46f745f9f1399813f671e47eb9f5596f70e460cdf86f88e4ce61bb178256d37ca7f73addcb0bcc8192afd11ce5f317116a5e5#npm:4.5.0"],
             ["zenscroll", "npm:4.0.2"]
@@ -4133,6 +4133,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@vanilla-extract/css", "npm:1.6.0"],
             ["@vanilla-extract/css-utils", "npm:0.1.1"],
             ["@vanilla-extract/dynamic", "npm:2.0.0"],
+            ["@vanilla-extract/recipes", "virtual:9734371974fc3672e6ee6daaced72209b12ca9fc84a9165d5ad0a398b49c7f307e482322d97eb1c674aabea20bf8091ebf6497cedbc5194a41b6071448e304a4#npm:0.1.0"],
             ["@vanilla-extract/webpack-plugin", "virtual:9734371974fc3672e6ee6daaced72209b12ca9fc84a9165d5ad0a398b49c7f307e482322d97eb1c674aabea20bf8091ebf6497cedbc5194a41b6071448e304a4#npm:2.1.0"],
             ["babel-loader", "virtual:9734371974fc3672e6ee6daaced72209b12ca9fc84a9165d5ad0a398b49c7f307e482322d97eb1c674aabea20bf8091ebf6497cedbc5194a41b6071448e304a4#npm:8.2.2"],
             ["css-loader", "virtual:9734371974fc3672e6ee6daaced72209b12ca9fc84a9165d5ad0a398b49c7f307e482322d97eb1c674aabea20bf8091ebf6497cedbc5194a41b6071448e304a4#npm:5.0.2"],
@@ -4147,7 +4148,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react-transition-group", "virtual:9734371974fc3672e6ee6daaced72209b12ca9fc84a9165d5ad0a398b49c7f307e482322d97eb1c674aabea20bf8091ebf6497cedbc5194a41b6071448e304a4#npm:4.4.2"],
             ["rimraf", "npm:3.0.2"],
             ["typescript", "patch:typescript@npm%3A4.3.5#~builtin<compat/typescript>::version=4.3.5&hash=d8b4e7"],
-            ["vanilla-classnames", "npm:0.1.0"],
             ["webpack", "virtual:9734371974fc3672e6ee6daaced72209b12ca9fc84a9165d5ad0a398b49c7f307e482322d97eb1c674aabea20bf8091ebf6497cedbc5194a41b6071448e304a4#npm:5.21.2"],
             ["webpack-cli", "virtual:9734371974fc3672e6ee6daaced72209b12ca9fc84a9165d5ad0a398b49c7f307e482322d97eb1c674aabea20bf8091ebf6497cedbc5194a41b6071448e304a4#npm:4.5.0"],
             ["zenscroll", "npm:4.0.2"]
@@ -4183,6 +4183,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@vanilla-extract/css", "npm:1.6.0"],
             ["@vanilla-extract/css-utils", "npm:0.1.1"],
             ["@vanilla-extract/dynamic", "npm:2.0.0"],
+            ["@vanilla-extract/recipes", "virtual:9734371974fc3672e6ee6daaced72209b12ca9fc84a9165d5ad0a398b49c7f307e482322d97eb1c674aabea20bf8091ebf6497cedbc5194a41b6071448e304a4#npm:0.1.0"],
             ["@vanilla-extract/webpack-plugin", "virtual:9918b4199032c81043df1f2de5e98c0538364bce71b0d872796d81d8b95045c27af1ed74751d3aad530a48c9a619c38d6f3a2ae02ceef58b8f059a5e1e7f9752#npm:2.1.0"],
             ["babel-loader", "virtual:9918b4199032c81043df1f2de5e98c0538364bce71b0d872796d81d8b95045c27af1ed74751d3aad530a48c9a619c38d6f3a2ae02ceef58b8f059a5e1e7f9752#npm:8.2.2"],
             ["css-loader", "virtual:9918b4199032c81043df1f2de5e98c0538364bce71b0d872796d81d8b95045c27af1ed74751d3aad530a48c9a619c38d6f3a2ae02ceef58b8f059a5e1e7f9752#npm:5.0.2"],
@@ -4194,7 +4195,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react-transition-group", "virtual:9918b4199032c81043df1f2de5e98c0538364bce71b0d872796d81d8b95045c27af1ed74751d3aad530a48c9a619c38d6f3a2ae02ceef58b8f059a5e1e7f9752#npm:4.4.2"],
             ["rimraf", "npm:3.0.2"],
             ["typescript", "patch:typescript@npm%3A4.3.5#~builtin<compat/typescript>::version=4.3.5&hash=d8b4e7"],
-            ["vanilla-classnames", "npm:0.1.0"],
             ["webpack", "virtual:9918b4199032c81043df1f2de5e98c0538364bce71b0d872796d81d8b95045c27af1ed74751d3aad530a48c9a619c38d6f3a2ae02ceef58b8f059a5e1e7f9752#npm:5.21.2"],
             ["webpack-cli", "virtual:9918b4199032c81043df1f2de5e98c0538364bce71b0d872796d81d8b95045c27af1ed74751d3aad530a48c9a619c38d6f3a2ae02ceef58b8f059a5e1e7f9752#npm:4.5.0"],
             ["zenscroll", "npm:4.0.2"]
@@ -4218,6 +4218,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@vanilla-extract/babel-plugin", "npm:1.1.0"],
             ["@vanilla-extract/css", "npm:1.6.0"],
             ["@vanilla-extract/css-utils", "npm:0.1.1"],
+            ["@vanilla-extract/recipes", "virtual:9734371974fc3672e6ee6daaced72209b12ca9fc84a9165d5ad0a398b49c7f307e482322d97eb1c674aabea20bf8091ebf6497cedbc5194a41b6071448e304a4#npm:0.1.0"],
             ["@vanilla-extract/webpack-plugin", "virtual:2e545d859c3c3ab905d16c19389c267495e6b97cef42509d79163cb6ae804e03850a28de27435fc812fd77d7811e10afb63ca7a9557384036a05340431988112#npm:2.1.0"],
             ["babel-loader", "virtual:2e545d859c3c3ab905d16c19389c267495e6b97cef42509d79163cb6ae804e03850a28de27435fc812fd77d7811e10afb63ca7a9557384036a05340431988112#npm:8.2.2"],
             ["css-loader", "virtual:2e545d859c3c3ab905d16c19389c267495e6b97cef42509d79163cb6ae804e03850a28de27435fc812fd77d7811e10afb63ca7a9557384036a05340431988112#npm:5.0.2"],
@@ -4254,6 +4255,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@vanilla-extract/babel-plugin", "npm:1.1.0"],
             ["@vanilla-extract/css", "npm:1.6.0"],
             ["@vanilla-extract/css-utils", "npm:0.1.1"],
+            ["@vanilla-extract/recipes", "virtual:9734371974fc3672e6ee6daaced72209b12ca9fc84a9165d5ad0a398b49c7f307e482322d97eb1c674aabea20bf8091ebf6497cedbc5194a41b6071448e304a4#npm:0.1.0"],
             ["@vanilla-extract/webpack-plugin", "virtual:ae5e70ff97bc96f93243a2a1700f6492f99c2c06d84a900bb4d1a4ed3c07f4689e710c9155588cdf2b68ef956ace839a63e61f26e21987fb6a081a3d0c81184a#npm:2.1.0"],
             ["babel-loader", "virtual:ae5e70ff97bc96f93243a2a1700f6492f99c2c06d84a900bb4d1a4ed3c07f4689e710c9155588cdf2b68ef956ace839a63e61f26e21987fb6a081a3d0c81184a#npm:8.2.2"],
             ["css-loader", "virtual:ae5e70ff97bc96f93243a2a1700f6492f99c2c06d84a900bb4d1a4ed3c07f4689e710c9155588cdf2b68ef956ace839a63e61f26e21987fb6a081a3d0c81184a#npm:5.0.2"],
@@ -4285,7 +4287,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@vanilla-extract/css", "npm:1.6.0"],
             ["@vanilla-extract/css-utils", "npm:0.1.1"],
             ["@vanilla-extract/dynamic", "npm:2.0.0"],
-            ["@vanilla-extract/recipes", "virtual:c16f697f8af2f9fa3890249793ad3704a01ae290a76dc41b24df98fd76fd1b928840db2aef41f6bc7a053fa86f3a9089c16ab10774caa05f373948c95f9127d3#npm:0.1.0"],
+            ["@vanilla-extract/recipes", "virtual:9734371974fc3672e6ee6daaced72209b12ca9fc84a9165d5ad0a398b49c7f307e482322d97eb1c674aabea20bf8091ebf6497cedbc5194a41b6071448e304a4#npm:0.1.0"],
             ["@vanilla-extract/webpack-plugin", "virtual:c16f697f8af2f9fa3890249793ad3704a01ae290a76dc41b24df98fd76fd1b928840db2aef41f6bc7a053fa86f3a9089c16ab10774caa05f373948c95f9127d3#npm:2.1.0"],
             ["babel-loader", "virtual:c16f697f8af2f9fa3890249793ad3704a01ae290a76dc41b24df98fd76fd1b928840db2aef41f6bc7a053fa86f3a9089c16ab10774caa05f373948c95f9127d3#npm:8.2.2"],
             ["css-loader", "virtual:c16f697f8af2f9fa3890249793ad3704a01ae290a76dc41b24df98fd76fd1b928840db2aef41f6bc7a053fa86f3a9089c16ab10774caa05f373948c95f9127d3#npm:5.0.2"],
@@ -4323,7 +4325,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@vanilla-extract/css", "npm:1.6.0"],
             ["@vanilla-extract/css-utils", "npm:0.1.1"],
             ["@vanilla-extract/dynamic", "npm:2.0.0"],
-            ["@vanilla-extract/recipes", "virtual:c16f697f8af2f9fa3890249793ad3704a01ae290a76dc41b24df98fd76fd1b928840db2aef41f6bc7a053fa86f3a9089c16ab10774caa05f373948c95f9127d3#npm:0.1.0"],
+            ["@vanilla-extract/recipes", "virtual:9734371974fc3672e6ee6daaced72209b12ca9fc84a9165d5ad0a398b49c7f307e482322d97eb1c674aabea20bf8091ebf6497cedbc5194a41b6071448e304a4#npm:0.1.0"],
             ["@vanilla-extract/webpack-plugin", "virtual:ae49183e9c54e8facf537b659e1bf3527452ac370b879521c1a0b480d040738e71b2f207565fd549a17e224c512cea175a43215d71833563652049461a2a8096#npm:2.1.0"],
             ["babel-loader", "virtual:ae49183e9c54e8facf537b659e1bf3527452ac370b879521c1a0b480d040738e71b2f207565fd549a17e224c512cea175a43215d71833563652049461a2a8096#npm:8.2.2"],
             ["css-loader", "virtual:ae49183e9c54e8facf537b659e1bf3527452ac370b879521c1a0b480d040738e71b2f207565fd549a17e224c512cea175a43215d71833563652049461a2a8096#npm:5.0.2"],
@@ -5257,10 +5259,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "SOFT",
         }],
-        ["virtual:c16f697f8af2f9fa3890249793ad3704a01ae290a76dc41b24df98fd76fd1b928840db2aef41f6bc7a053fa86f3a9089c16ab10774caa05f373948c95f9127d3#npm:0.1.0", {
-          "packageLocation": "./.yarn/__virtual__/@vanilla-extract-recipes-virtual-6a98e6fd03/0/cache/@vanilla-extract-recipes-npm-0.1.0-1bc85e35ca-51000edfac.zip/node_modules/@vanilla-extract/recipes/",
+        ["virtual:9734371974fc3672e6ee6daaced72209b12ca9fc84a9165d5ad0a398b49c7f307e482322d97eb1c674aabea20bf8091ebf6497cedbc5194a41b6071448e304a4#npm:0.1.0", {
+          "packageLocation": "./.yarn/__virtual__/@vanilla-extract-recipes-virtual-de3e94637d/0/cache/@vanilla-extract-recipes-npm-0.1.0-1bc85e35ca-51000edfac.zip/node_modules/@vanilla-extract/recipes/",
           "packageDependencies": [
-            ["@vanilla-extract/recipes", "virtual:c16f697f8af2f9fa3890249793ad3704a01ae290a76dc41b24df98fd76fd1b928840db2aef41f6bc7a053fa86f3a9089c16ab10774caa05f373948c95f9127d3#npm:0.1.0"],
+            ["@vanilla-extract/recipes", "virtual:9734371974fc3672e6ee6daaced72209b12ca9fc84a9165d5ad0a398b49c7f307e482322d97eb1c674aabea20bf8091ebf6497cedbc5194a41b6071448e304a4#npm:0.1.0"],
             ["@types/vanilla-extract__css", null],
             ["@vanilla-extract/css", "npm:1.6.0"]
           ],
@@ -21196,15 +21198,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/value-equal-npm-1.0.1-7811e93c9b-bb7ae1facc.zip/node_modules/value-equal/",
           "packageDependencies": [
             ["value-equal", "npm:1.0.1"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
-      ["vanilla-classnames", [
-        ["npm:0.1.0", {
-          "packageLocation": "./.yarn/cache/vanilla-classnames-npm-0.1.0-492e944a8f-0c4925ab9a.zip/node_modules/vanilla-classnames/",
-          "packageDependencies": [
-            ["vanilla-classnames", "npm:0.1.0"]
           ],
           "linkType": "HARD",
         }]
