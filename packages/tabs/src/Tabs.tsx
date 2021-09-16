@@ -101,6 +101,42 @@ const Tabs: React.FC<ITabsProps> = (props) => {
     setIsSwipeDisabled(props.disableSwipe ?? false)
   }, [props.disableSwipe])
 
+  const move = useCallback(
+    (tab: ITab) => {
+      props.onTabChange(tab.key)
+
+      const MIN_SCROLL_MARGIN = 64
+      const nextTabIndex = props.tabs.findIndex((t) => t === tab)
+
+      const $tabBar = tabBarRef.current
+      const $tabBarItem = $tabBar?.children[nextTabIndex] as HTMLDivElement
+
+      if (!$tabBar || !$tabBarItem) {
+        return
+      }
+
+      const { clientWidth: fullWidth, scrollLeft } = $tabBar
+      const { offsetLeft: itemLeft, clientWidth: itemWidth } = $tabBarItem
+
+      const minScrollLeft = itemLeft + itemWidth + MIN_SCROLL_MARGIN - fullWidth
+      const maxScrollLeft = itemLeft - MIN_SCROLL_MARGIN
+
+      if (scrollLeft < minScrollLeft) {
+        $tabBar.scroll({
+          left: minScrollLeft,
+          behavior: 'smooth',
+        })
+      }
+      if (scrollLeft > maxScrollLeft) {
+        $tabBar.scroll({
+          left: maxScrollLeft,
+          behavior: 'smooth',
+        })
+      }
+    },
+    [tabBarRef, activeTabIndex, props.onTabChange]
+  )
+
   useEffect(() => {
     const $tabBar = tabBarRef.current
     const $tabBarIndicator = tabBarIndicatorRef.current
@@ -140,7 +176,7 @@ const Tabs: React.FC<ITabsProps> = (props) => {
           activeTabIndex !== state.activeTabIndex &&
           props.tabs[state.activeTabIndex]?.key
         ) {
-          props.onTabChange(props.tabs[state.activeTabIndex].key)
+          move(props.tabs[state.activeTabIndex])
         }
       })
     )
@@ -241,8 +277,9 @@ const Tabs: React.FC<ITabsProps> = (props) => {
   }, [tabBarRef, activeTabIndex])
 
   const go = useCallback((tabKey: string) => {
-    if (props.tabs.find((tab) => tab.key === tabKey)) {
-      props.onTabChange(tabKey)
+    const activeTab = props.tabs.find((tab) => tab.key === tabKey)
+    if (activeTab) {
+      move(activeTab)
     }
   }, [])
 
@@ -297,9 +334,7 @@ const Tabs: React.FC<ITabsProps> = (props) => {
                 active: props.activeTabKey === tab.key ? true : undefined,
                 scrollable: props.useInlineButtons,
               })}
-              onClick={() => {
-                props.onTabChange(tab.key)
-              }}
+              onClick={() => move(tab)}
             >
               {tab.buttonLabel}
             </a>

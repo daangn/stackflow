@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react'
 
 import styled from '@emotion/styled'
 import { ScreenHelmet } from '@karrotframe/navigator'
-import { Tabs, useTabsController } from '@karrotframe/tabs'
+import { Tabs } from '@karrotframe/tabs'
 
 const PageTabs: React.FC = () => {
   const [activeKey, setActiveKey] = useState<string>('63119')
@@ -14,28 +14,23 @@ const PageTabs: React.FC = () => {
         tabs={[
           {
             key: '63119',
-            buttonLabel: '뀨에에에에엥ㅇ',
-            component: Tab1,
+            buttonLabel: 'Small Business',
+            component() {
+              return <div>Small Business</div>
+            },
           },
           {
             key: '21882',
-            buttonLabel: '먹거리',
+            buttonLabel: 'Food & Beverage',
             component() {
-              return <div>Tab 2</div>
+              return <div>Food & Beverage</div>
             },
           },
           {
             key: '8433',
-            buttonLabel: '생활',
+            buttonLabel: 'Living',
             component() {
-              return <div>Tab 2</div>
-            },
-          },
-          {
-            key: '52177',
-            buttonLabel: '건강',
-            component() {
-              return <div>Tab 2</div>
+              return <div>Living</div>
             },
           },
         ]}
@@ -46,40 +41,6 @@ const PageTabs: React.FC = () => {
         useInlineButtons
       />
     </>
-  )
-}
-
-const Tab1: React.FC = () => {
-  const horizontalScrollerRef = useRef<HTMLDivElement>(null)
-
-  return (
-    <HorizontalScroller ref={horizontalScrollerRef}>
-      <ScrollEnabler>Tab 1</ScrollEnabler>
-    </HorizontalScroller>
-  )
-}
-
-const Tab3: React.FC = () => {
-  const { go, disableSwipe } = useTabsController()
-
-  return (
-    <div>
-      Tab 3
-      <button
-        onClick={() => {
-          go('tab_1')
-        }}
-      >
-        Go to tab1
-      </button>
-      <button
-        onClick={() => {
-          disableSwipe()
-        }}
-      >
-        Disable swipe
-      </button>
-    </div>
   )
 }
 
