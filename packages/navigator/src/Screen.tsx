@@ -1,11 +1,6 @@
-import React, { useCallback, useEffect, useMemo } from 'react'
+import React, { useEffect } from 'react'
 
-import {
-  ScreenInstanceProvider,
-  ScreenInstanceSetNavbarProvider,
-} from './contexts'
 import { useScreens } from './globalState'
-import { INavbarOptions, useStoreActions } from './store'
 
 interface IScreenProps {
   /**
@@ -19,59 +14,31 @@ interface IScreenProps {
   component?: React.ComponentType
 }
 const Screen: React.FC<IScreenProps> = (props) => {
-  const { component: Component } = props
+  const { path } = props
   const { registerScreen } = useScreens()
-  const { addScreenInstanceOption } = useStoreActions()
 
   useEffect(() => {
-    if (!props.children && !Component) {
+    if (!props.children && !props.component) {
       console.warn('Either component props or children is required')
       return
     }
 
-    const screenId = props.path
-
     const unregisterScreen = registerScreen({
-      id: screenId,
-      path: props.path,
-      Component({ screenInstanceId, as, isTop, isRoot }) {
-        const setNavbar = useCallback(
-          (navbar: INavbarOptions) => {
-            addScreenInstanceOption({
-              screenInstanceId,
-              screenInstanceOption: {
-                navbar,
-              },
-            })
-          },
-          [addScreenInstanceOption, screenInstanceId]
-        )
-
-        const screenInstanceContext = useMemo(
-          () => ({
-            screenInstanceId,
-            as,
-            isTop,
-            isRoot,
-            path: props.path,
-          }),
-          [screenInstanceId, as, isTop, isRoot, props.path]
-        )
-
-        return (
-          <ScreenInstanceProvider value={screenInstanceContext}>
-            <ScreenInstanceSetNavbarProvider value={setNavbar}>
-              {Component ? <Component /> : props.children}
-            </ScreenInstanceSetNavbarProvider>
-          </ScreenInstanceProvider>
-        )
+      id: path,
+      path,
+      Component() {
+        if (props.component) {
+          return <props.component />
+        } else {
+          return <>{props.children}</>
+        }
       },
     })
 
     return () => {
       unregisterScreen()
     }
-  }, [props.path, Component])
+  }, [props.path, props.component])
 
   return null
 }

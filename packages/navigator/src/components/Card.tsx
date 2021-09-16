@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import zenscroll from 'zenscroll'
 
-import { useStore, useStoreSelector } from '../store'
 import { INavigatorTheme } from '../types'
 import { useNavigator } from '../useNavigator'
 import * as css from './Card.css'
 import { makeTranslation } from './Card.translation'
 import Navbar from './Navbar'
+import { useScreenHelmet } from './Stack.ScreenHelmetContext'
 
 interface ICardProps {
   theme: INavigatorTheme
@@ -24,20 +24,16 @@ interface ICardProps {
 }
 const Card: React.FC<ICardProps> = (props) => {
   const { pop } = useNavigator()
-
-  const android = props.theme === 'Android'
-  const cupertino = props.theme === 'Cupertino'
-
+  const { screenHelmetOption } = useScreenHelmet()
   const [popped, setPopped] = useState(false)
 
-  const store = useStore()
-  const { screenInstanceOptions } = useStoreSelector((state) => ({
-    screenInstanceOptions: state.screenInstanceOptions,
-  }))
   const dimRef = useRef<HTMLDivElement>(null)
   const frameRef = useRef<HTMLDivElement>(null)
   const frameOffsetRef = props.beforeTopFrameOffsetRef
   const edgeRef = useRef<HTMLDivElement>(null)
+
+  const android = props.theme === 'Android'
+  const cupertino = props.theme === 'Cupertino'
 
   useEffect(() => {
     const $dim = dimRef.current
@@ -114,19 +110,15 @@ const Card: React.FC<ICardProps> = (props) => {
   const onTopClick = useCallback(() => {
     const $frame = frameRef.current
 
-    const screenInstanceOption =
-      store.getState().screenInstanceOptions[props.screenInstanceId]
-
-    if (!screenInstanceOption?.navbar.disableScrollToTop && $frame) {
+    if (!screenHelmetOption.disableScrollToTop && $frame) {
       const scroller = zenscroll.createScroller($frame)
       scroller.toY(0)
     }
 
-    screenInstanceOption?.navbar.onTopClick?.()
-  }, [])
+    screenHelmetOption.onTopClick?.()
+  }, [screenHelmetOption])
 
-  const isNavbarVisible =
-    screenInstanceOptions[props.screenInstanceId]?.navbar.visible ?? false
+  const isNavbarVisible = screenHelmetOption.visible ?? false
 
   return (
     <div ref={props.nodeRef} className={css.container}>
