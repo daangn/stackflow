@@ -1,9 +1,4 @@
-import {
-  createTheme,
-  style,
-  StyleRule,
-  styleVariants,
-} from '@vanilla-extract/css'
+import { createTheme, style } from '@vanilla-extract/css'
 import { calc } from '@vanilla-extract/css-utils'
 import { recipe } from '@vanilla-extract/recipes'
 
@@ -140,23 +135,22 @@ export const tabMains = style({
   transform: vars.tabMain.transform,
 })
 
-const _tabMain: StyleRule = {
-  flex: '1',
-  height: '100%',
-  width: '100%',
-  overflow: 'hidden',
-  backgroundColor: vars.tabMain.backgroundColor,
-  position: 'relative',
-  visibility: 'hidden',
-  transition: `visibility 0s ${vars.transitionDuration}`,
-}
-export const tabMain = styleVariants({
-  hidden: {
-    ..._tabMain,
+export const tabMain = recipe({
+  base: {
+    flex: '1',
+    width: '100%',
+    overflow: 'hidden',
+    backgroundColor: vars.tabMain.backgroundColor,
+    position: 'relative',
+    visibility: 'hidden',
+    transition: `visibility 0s ${vars.transitionDuration}`,
   },
-  active: {
-    ..._tabMain,
-    visibility: 'visible',
-    transition: 'visibility 0s 0s',
+  variants: {
+    active: {
+      true: {
+        visibility: 'visible',
+        transition: 'visibility 0s 0s',
+      },
+    },
   },
 })

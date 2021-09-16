@@ -347,9 +347,9 @@ const Tabs: React.FC<ITabsProps> = (props) => {
           {props.tabs.map(({ key, component: Component }) => (
             <div
               key={key}
-              className={
-                css.tabMain[props.activeTabKey === key ? 'active' : 'hidden']
-              }
+              className={css.tabMain({
+                active: props.activeTabKey === key ? true : undefined,
+              })}
             >
               {lazyMap[key] && <Component />}
             </div>
