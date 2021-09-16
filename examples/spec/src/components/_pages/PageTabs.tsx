@@ -1,6 +1,5 @@
-import React, { useRef, useState } from 'react'
+import React, { useState } from 'react'
 
-import styled from '@emotion/styled'
 import { ScreenHelmet } from '@karrotframe/navigator'
 import { Tabs } from '@karrotframe/tabs'
 
