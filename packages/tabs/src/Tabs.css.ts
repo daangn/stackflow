@@ -64,7 +64,7 @@ export const tabBar = recipe({
       vars.tabBar.borderColor,
   },
   variants: {
-    scrollable: {
+    inline: {
       true: {
         display: 'block',
         padding: `1px ${vars.tabBar.inset} 0`,
@@ -100,7 +100,7 @@ export const tabBarItem = recipe({
         color: vars.tabBar.activeFontColor,
       },
     },
-    scrollable: {
+    inline: {
       true: {
         display: 'inline-block',
         verticalAlign: 'top',

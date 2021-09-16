@@ -322,7 +322,7 @@ const Tabs: React.FC<ITabsProps> = (props) => {
         <div
           ref={tabBarRef}
           className={css.tabBar({
-            scrollable: props.useInlineButtons,
+            inline: props.useInlineButtons,
           })}
         >
           {props.tabs.map((tab) => (
@@ -332,7 +332,7 @@ const Tabs: React.FC<ITabsProps> = (props) => {
               aria-label={tab.buttonLabel}
               className={css.tabBarItem({
                 active: props.activeTabKey === tab.key ? true : undefined,
-                scrollable: props.useInlineButtons,
+                inline: props.useInlineButtons,
               })}
               onClick={() => move(tab)}
             >
