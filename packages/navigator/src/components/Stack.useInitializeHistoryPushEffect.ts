@@ -1,11 +1,14 @@
 import { matchPath } from 'react-router-dom'
 
+import { useScreens } from '../globalState'
 import { getNavigatorParams } from '../helpers'
 import { useHistoryPushEffect } from '../hooks'
 import { useStore, useStoreActions } from '../store'
 import { usePush } from './Stack.usePush'
 
 export function useInitializeHistoryPushEffect() {
+  const { screens } = useScreens()
+
   const store = useStore()
   const { mapScreenInstance } = useStoreActions()
 
@@ -13,7 +16,7 @@ export function useInitializeHistoryPushEffect() {
 
   useHistoryPushEffect(
     (location) => {
-      const { screens, screenInstancePtr } = store.getState()
+      const { screenInstancePtr } = store.getState()
 
       const searchParams = new URLSearchParams(location.search)
       const { screenInstanceId, present } = getNavigatorParams(searchParams)
@@ -41,6 +44,6 @@ export function useInitializeHistoryPushEffect() {
         })
       }
     },
-    [push]
+    [screens, push]
   )
 }

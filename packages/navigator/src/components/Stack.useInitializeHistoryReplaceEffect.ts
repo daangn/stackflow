@@ -1,19 +1,17 @@
 import { matchPath } from 'react-router-dom'
 
+import { useScreens } from '../globalState'
 import { getNavigatorParams } from '../helpers'
 import { useHistoryReplaceEffect } from '../hooks'
-import { useStore } from '../store'
 import { useReplace } from './Stack.useReplace'
 
 export function useInitializeHistoryReplaceEffect() {
-  const store = useStore()
+  const { screens } = useScreens()
 
   const replace = useReplace()
 
   useHistoryReplaceEffect(
     (location) => {
-      const { screens } = store.getState()
-
       const searchParams = new URLSearchParams(location.search)
       const { screenInstanceId, present } = getNavigatorParams(searchParams)
 
@@ -32,6 +30,6 @@ export function useInitializeHistoryReplaceEffect() {
         })
       }
     },
-    [replace]
+    [screens, replace]
   )
 }

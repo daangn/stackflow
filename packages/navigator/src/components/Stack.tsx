@@ -1,6 +1,7 @@
 import React, { useRef } from 'react'
 import { CSSTransition } from 'react-transition-group'
 
+import { useScreens } from '../globalState'
 import { useStoreSelector } from '../store'
 import { INavigatorTheme } from '../types'
 import NodeRef from './_lib/NodeRef'
@@ -34,13 +35,12 @@ interface IStackProps {
 const Stack: React.FC<IStackProps> = (props) => {
   const beforeTopFrameOffsetRef = useRef<HTMLDivElement>(null)
 
-  const { screens, screenInstances, screenInstancePtr } = useStoreSelector(
-    (state) => ({
-      screens: state.screens,
-      screenInstances: state.screenInstances,
-      screenInstancePtr: state.screenInstancePtr,
-    })
-  )
+  const { screens } = useScreens()
+
+  const { screenInstances, screenInstancePtr } = useStoreSelector((state) => ({
+    screenInstances: state.screenInstances,
+    screenInstancePtr: state.screenInstancePtr,
+  }))
 
   useDepthChangeEffect(props.onDepthChange)
 
