@@ -18,38 +18,37 @@ const CardFallback: React.FC<ICardFallbackProps> = (props) => {
       {!props.isRoot && (
         <div
           className={css.dim({
-            android,
-            cupertinoAndIsNavbarVisible: false,
-            cupertinoAndIsPresent: cupertino && props.isPresent,
+            android: android ? true : undefined,
+            cupertinoAndIsNavbarVisible: false ? true : undefined,
+            cupertinoAndIsPresent:
+              cupertino && props.isPresent ? true : undefined,
           })}
         />
       )}
-      <div
-        className={css.mainOffset({
-          androidAndIsNotTop: false,
-        })}
-      >
+      <div className={css.mainOffset({})}>
         <div
           className={css.main({
-            android,
-            androidAndIsRoot: android && props.isRoot,
-            cupertinoAndIsPresent: cupertino && props.isPresent,
-            androidAndIsNavbarVisible: false,
-            cupertinoAndIsNavbarVisible: false,
+            android: android ? true : undefined,
+            androidAndIsRoot: android && props.isRoot ? true : undefined,
+            cupertinoAndIsPresent:
+              cupertino && props.isPresent ? true : undefined,
           })}
         >
           <div
             className={css.frameOffset({
-              cupertinoAndIsNotPresent: cupertino && !props.isPresent,
-              cupertinoAndIsNotTop: false,
+              cupertinoAndIsNotPresent:
+                cupertino && !props.isPresent ? true : undefined,
             })}
           >
             <div
               className={css.frame({
-                cupertino,
-                cupertinoAndIsNotRoot: cupertino && !props.isRoot,
-                cupertinoAndIsPresent: cupertino && props.isPresent,
-                cupertinoAndIsNotPresent: cupertino && !props.isPresent,
+                cupertino: cupertino ? true : undefined,
+                cupertinoAndIsNotRoot:
+                  cupertino && !props.isRoot ? true : undefined,
+                cupertinoAndIsPresent:
+                  cupertino && props.isPresent ? true : undefined,
+                cupertinoAndIsNotPresent:
+                  cupertino && !props.isPresent ? true : undefined,
               })}
             >
               Loading...

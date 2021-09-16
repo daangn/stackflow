@@ -2889,7 +2889,6 @@ __metadata:
     "@types/react-router": ^5.1.16
     "@types/react-router-dom": ^5.1.8
     "@types/react-transition-group": ^4.4.2
-    "@types/zenscroll": ^4.0.0
     "@vanilla-extract/babel-plugin": ^1.1.0
     "@vanilla-extract/css": ^1.6.0
     "@vanilla-extract/css-utils": ^0.1.1
@@ -2908,7 +2907,6 @@ __metadata:
     typescript: ^4.3.4
     webpack: ^5.9.0
     webpack-cli: ^4.2.0
-    zenscroll: ^4.0.2
   peerDependencies:
     react: ">=16.8"
     react-dom: ">=16.8"
@@ -3704,13 +3702,6 @@ __metadata:
   dependencies:
     "@types/node": "*"
   checksum: dfb49abe82605615712fc694eaa4f7068fe30aa03f38c085e2c2e74408beaad30471d36da9654a811482ece2ea4405575fd99b19c0aa327ed2a9736b554bbf43
-  languageName: node
-  linkType: hard
-
-"@types/zenscroll@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "@types/zenscroll@npm:4.0.0"
-  checksum: 6bc30cfbb310398d08eb38328aac1d436beb48e85b64632d3e40d2dfeff7fb0cbeefcd3df1ef689469aab0c9ffd4ef84869a2cd70e06e1b53f7e19fede6835cb
   languageName: node
   linkType: hard
 
@@ -19156,12 +19147,5 @@ resolve@1.15.0:
   version: 0.1.0
   resolution: "yocto-queue@npm:0.1.0"
   checksum: f77b3d8d00310def622123df93d4ee654fc6a0096182af8bd60679ddcdfb3474c56c6c7190817c84a2785648cdee9d721c0154eb45698c62176c322fb46fc700
-  languageName: node
-  linkType: hard
-
-"zenscroll@npm:^4.0.2":
-  version: 4.0.2
-  resolution: "zenscroll@npm:4.0.2"
-  checksum: 5fe5c8b685246985cbb8eb270bbbac013bddaf5cde0fb9042c7b5640e31877d11a28892a802426659fe505b0b514d4d004fedd27c0cc22682611cc8f9e43132e
   languageName: node
   linkType: hard

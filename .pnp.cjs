@@ -4607,7 +4607,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["lodash.get", "npm:4.4.2"],
             ["make-error", "npm:1.3.6"],
             ["ts-node", "virtual:de6b80da66ca8e1e37c47d6192af28d4154748797b0ca36d2df617b9d0178c932710298fef29fd1554e476c7b72d83ce59848711447f6fd662be798641f6faf1#npm:9.1.1"],
-            ["tslib", "npm:2.3.1"]
+            ["tslib", "npm:2.3.1"],
+            ["typescript", "patch:typescript@npm%3A3.7.7#~builtin<compat/typescript>::version=3.7.7&hash=d8b4e7"]
           ],
           "packagePeers": [
             "@types/cosmiconfig",
@@ -5568,7 +5569,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/react-router", "npm:5.1.16"],
             ["@types/react-router-dom", "npm:5.1.8"],
             ["@types/react-transition-group", "npm:4.4.2"],
-            ["@types/zenscroll", "npm:4.0.0"],
             ["@vanilla-extract/babel-plugin", "npm:1.1.0"],
             ["@vanilla-extract/css", "npm:1.6.0"],
             ["@vanilla-extract/css-utils", "npm:0.1.1"],
@@ -5589,8 +5589,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["rimraf", "npm:3.0.2"],
             ["typescript", "patch:typescript@npm%3A4.3.5#~builtin<compat/typescript>::version=4.3.5&hash=d8b4e7"],
             ["webpack", "virtual:5667f7a2f367bfbcd36ca28513d46f745f9f1399813f671e47eb9f5596f70e460cdf86f88e4ce61bb178256d37ca7f73addcb0bcc8192afd11ce5f317116a5e5#npm:5.21.2"],
-            ["webpack-cli", "virtual:5667f7a2f367bfbcd36ca28513d46f745f9f1399813f671e47eb9f5596f70e460cdf86f88e4ce61bb178256d37ca7f73addcb0bcc8192afd11ce5f317116a5e5#npm:4.5.0"],
-            ["zenscroll", "npm:4.0.2"]
+            ["webpack-cli", "virtual:5667f7a2f367bfbcd36ca28513d46f745f9f1399813f671e47eb9f5596f70e460cdf86f88e4ce61bb178256d37ca7f73addcb0bcc8192afd11ce5f317116a5e5#npm:4.5.0"]
           ],
           "packagePeers": [
             "@types/react-dom",
@@ -5618,7 +5617,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/react-router", "npm:5.1.16"],
             ["@types/react-router-dom", "npm:5.1.8"],
             ["@types/react-transition-group", "npm:4.4.2"],
-            ["@types/zenscroll", "npm:4.0.0"],
             ["@vanilla-extract/babel-plugin", "npm:1.1.0"],
             ["@vanilla-extract/css", "npm:1.6.0"],
             ["@vanilla-extract/css-utils", "npm:0.1.1"],
@@ -5639,8 +5637,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["rimraf", "npm:3.0.2"],
             ["typescript", "patch:typescript@npm%3A4.3.5#~builtin<compat/typescript>::version=4.3.5&hash=d8b4e7"],
             ["webpack", "virtual:9734371974fc3672e6ee6daaced72209b12ca9fc84a9165d5ad0a398b49c7f307e482322d97eb1c674aabea20bf8091ebf6497cedbc5194a41b6071448e304a4#npm:5.21.2"],
-            ["webpack-cli", "virtual:9734371974fc3672e6ee6daaced72209b12ca9fc84a9165d5ad0a398b49c7f307e482322d97eb1c674aabea20bf8091ebf6497cedbc5194a41b6071448e304a4#npm:4.5.0"],
-            ["zenscroll", "npm:4.0.2"]
+            ["webpack-cli", "virtual:9734371974fc3672e6ee6daaced72209b12ca9fc84a9165d5ad0a398b49c7f307e482322d97eb1c674aabea20bf8091ebf6497cedbc5194a41b6071448e304a4#npm:4.5.0"]
           ],
           "packagePeers": [
             "@types/react-dom",
@@ -5668,7 +5665,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/react-router", "npm:5.1.16"],
             ["@types/react-router-dom", "npm:5.1.8"],
             ["@types/react-transition-group", "npm:4.4.2"],
-            ["@types/zenscroll", "npm:4.0.0"],
             ["@vanilla-extract/babel-plugin", "npm:1.1.0"],
             ["@vanilla-extract/css", "npm:1.6.0"],
             ["@vanilla-extract/css-utils", "npm:0.1.1"],
@@ -5686,8 +5682,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["rimraf", "npm:3.0.2"],
             ["typescript", "patch:typescript@npm%3A4.3.5#~builtin<compat/typescript>::version=4.3.5&hash=d8b4e7"],
             ["webpack", "virtual:9918b4199032c81043df1f2de5e98c0538364bce71b0d872796d81d8b95045c27af1ed74751d3aad530a48c9a619c38d6f3a2ae02ceef58b8f059a5e1e7f9752#npm:5.21.2"],
-            ["webpack-cli", "virtual:9918b4199032c81043df1f2de5e98c0538364bce71b0d872796d81d8b95045c27af1ed74751d3aad530a48c9a619c38d6f3a2ae02ceef58b8f059a5e1e7f9752#npm:4.5.0"],
-            ["zenscroll", "npm:4.0.2"]
+            ["webpack-cli", "virtual:9918b4199032c81043df1f2de5e98c0538364bce71b0d872796d81d8b95045c27af1ed74751d3aad530a48c9a619c38d6f3a2ae02ceef58b8f059a5e1e7f9752#npm:4.5.0"]
           ],
           "linkType": "SOFT",
         }]
@@ -6712,15 +6707,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["@types/yauzl", "npm:2.9.2"],
             ["@types/node", "npm:14.14.27"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
-      ["@types/zenscroll", [
-        ["npm:4.0.0", {
-          "packageLocation": "./.yarn/cache/@types-zenscroll-npm-4.0.0-25a46aaa75-6bc30cfbb3.zip/node_modules/@types/zenscroll/",
-          "packageDependencies": [
-            ["@types/zenscroll", "npm:4.0.0"]
           ],
           "linkType": "HARD",
         }]
@@ -24126,7 +24112,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["diff", "npm:4.0.2"],
             ["make-error", "npm:1.3.6"],
             ["source-map-support", "npm:0.5.20"],
-            ["typescript", null],
+            ["typescript", "patch:typescript@npm%3A3.7.7#~builtin<compat/typescript>::version=3.7.7&hash=d8b4e7"],
             ["yn", "npm:3.1.1"]
           ],
           "packagePeers": [
@@ -26380,15 +26366,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/yocto-queue-npm-0.1.0-c6c9a7db29-f77b3d8d00.zip/node_modules/yocto-queue/",
           "packageDependencies": [
             ["yocto-queue", "npm:0.1.0"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
-      ["zenscroll", [
-        ["npm:4.0.2", {
-          "packageLocation": "./.yarn/cache/zenscroll-npm-4.0.2-8ae60740aa-5fe5c8b685.zip/node_modules/zenscroll/",
-          "packageDependencies": [
-            ["zenscroll", "npm:4.0.2"]
           ],
           "linkType": "HARD",
         }]
