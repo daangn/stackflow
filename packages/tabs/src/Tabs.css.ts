@@ -103,6 +103,7 @@ export const tabBarItem = recipe({
     scrollable: {
       true: {
         display: 'inline-block',
+        verticalAlign: 'top',
         padding: `${vars.tabBar.item.verticalPadding} ${vars.tabBar.item.inlineHorizontalPadding}`,
         marginRight: vars.tabBar.item.inlineGap,
       },
