@@ -5,7 +5,7 @@ import { ScreenHelmet } from '@karrotframe/navigator'
 import { Tabs, useTabsController } from '@karrotframe/tabs'
 
 const PageTabs: React.FC = () => {
-  const [activeKey, setActiveKey] = useState<string>('tab_1')
+  const [activeKey, setActiveKey] = useState<string>('63119')
 
   return (
     <>
@@ -13,27 +13,37 @@ const PageTabs: React.FC = () => {
       <Tabs
         tabs={[
           {
-            key: 'tab_1',
-            buttonLabel: 'Tab 1',
+            key: '63119',
+            buttonLabel: '뀨에에에에엥ㅇ',
             component: Tab1,
           },
           {
-            key: 'tab_2',
-            buttonLabel: 'Tab 2',
+            key: '21882',
+            buttonLabel: '먹거리',
             component() {
               return <div>Tab 2</div>
             },
           },
           {
-            key: 'tab_3',
-            buttonLabel: 'Tab 3',
-            component: Tab3,
+            key: '8433',
+            buttonLabel: '생활',
+            component() {
+              return <div>Tab 2</div>
+            },
+          },
+          {
+            key: '52177',
+            buttonLabel: '건강',
+            component() {
+              return <div>Tab 2</div>
+            },
           },
         ]}
         activeTabKey={activeKey}
         onTabChange={(key) => {
           setActiveKey(key)
         }}
+        useInlineButtons
       />
     </>
   )

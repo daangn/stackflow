@@ -3,13 +3,17 @@ const css = String.raw
 export function makeTranslation({
   tabCount,
   activeTabIndex,
-  $tabMains,
+  $tabBar,
   $tabBarIndicator,
+  $tabMains,
+  useInlineButtons,
 }: {
   tabCount: number
   activeTabIndex: number
-  $tabMains: HTMLDivElement
+  $tabBar: HTMLDivElement
   $tabBarIndicator: HTMLDivElement
+  $tabMains: HTMLDivElement
+  useInlineButtons?: boolean
 }) {
   let _rAFLock = false
 
@@ -29,12 +33,34 @@ export function makeTranslation({
             maxTranslateX
           )
 
+          if (useInlineButtons) {
+            const { clientWidth: fullWidth } = $tabBarIndicator
+
+            const i = -1 * (translateX / fullWidth)
+            const p = i % 1
+
+            const left = $tabBar.children[Math.floor(i)] as HTMLDivElement
+            const right = $tabBar.children[Math.ceil(i)] as HTMLDivElement
+
+            const { offsetLeft: xl, clientWidth: wl } = left
+            const { offsetLeft: xr, clientWidth: wr } = right
+
+            const x = xl + (xr - xl) * p
+            const scaleX = (wl + (wr - wl) * p) / fullWidth
+
+            $tabBarIndicator.style.cssText = css`
+              transform: translateX(${x}px) scaleX(${scaleX});
+              transition: transform 0s;
+            `
+          } else {
+            $tabBarIndicator.style.cssText = css`
+              transform: translateX(${(-1 * translateX) / tabCount}px);
+              transition: transform 0s;
+            `
+          }
+
           $tabMains.style.cssText = css`
             transform: translateX(${translateX}px);
-            transition: transform 0s;
-          `
-          $tabBarIndicator.style.cssText = css`
-            transform: translateX(${(-1 * translateX) / tabCount}px);
             transition: transform 0s;
           `
           for (let i = 0; i < $tabMains.children.length; i++) {
@@ -43,14 +69,16 @@ export function makeTranslation({
               transition: visibility 0s 0s;
             `
           }
+
           _rAFLock = false
         })
       }
     },
     resetTranslation() {
       requestAnimationFrame(() => {
-        $tabMains.style.cssText = ''
         $tabBarIndicator.style.cssText = ''
+        $tabMains.style.cssText = ''
+
         for (let i = 0; i < $tabMains.children.length; i++) {
           ;($tabMains.children[i] as HTMLDivElement).style.cssText = ''
         }
