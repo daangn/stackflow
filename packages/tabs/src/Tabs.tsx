@@ -167,6 +167,7 @@ const Tabs: React.FC<ITabsProps> = (props) => {
           translate({
             dx: state.dx,
           })
+          state.e.preventDefault()
         } else {
           resetTranslation()
         }
@@ -205,6 +206,7 @@ const Tabs: React.FC<ITabsProps> = (props) => {
           _t: 'TOUCH_MOVE',
           x: e.touches[0].clientX,
           y: e.touches[0].clientY,
+          e,
         })
       }
     }
@@ -222,7 +224,6 @@ const Tabs: React.FC<ITabsProps> = (props) => {
       capture,
     })
     $tabMains.addEventListener('touchmove', onTouchMove, {
-      passive: true,
       capture,
     })
     $tabMains.addEventListener('touchend', onTouchEnd, {

@@ -15,6 +15,7 @@ export type State = {
       x0: number
       y0: number
       dx: number
+      e: TouchEvent
     }
   | {
       _t: 'swipe_canceled'
@@ -31,6 +32,7 @@ export type Action =
       _t: 'TOUCH_MOVE'
       x: number
       y: number
+      e: TouchEvent
     }
   | {
       _t: 'TOUCH_END'
@@ -60,7 +62,7 @@ function reducer(prevState: State, action: Action): State {
       }
     }
     case 'TOUCH_MOVE': {
-      const { x, y } = action
+      const { x, y, e } = action
 
       if (x < 0) {
         return {
@@ -96,6 +98,7 @@ function reducer(prevState: State, action: Action): State {
             ...prevState,
             _t: 'swipe_started',
             dx: 0,
+            e,
           }
         } else {
           return {
