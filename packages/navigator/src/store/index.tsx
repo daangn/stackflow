@@ -10,25 +10,6 @@ import compare from 'react-fast-compare'
 
 import { createStore, Store } from './createStore'
 
-export interface IScreen {
-  id: string
-  path: string
-  Component: React.FC<{
-    screenInstanceId: string
-    as: string
-    isTop: boolean
-    isRoot: boolean
-  }>
-}
-
-export interface IScreenInstance {
-  id: string
-  screenId: string
-  nestedRouteCount: number
-  present: boolean
-  as: string
-}
-
 export interface IScreenInstanceOption {
   navbar: INavbarOptions
 }
@@ -46,19 +27,9 @@ export interface INavbarOptions {
   onTopClick?: () => void
 }
 
-export interface IScreenInstancePromise {
-  resolve: (data: any | null) => void
-  popped: boolean
-}
-
 export interface GlobalState {
-  screenInstances: IScreenInstance[]
-  screenInstancePtr: number
   screenInstanceOptions: {
     [screenInstanceId: string]: IScreenInstanceOption | undefined
-  }
-  screenInstancePromises: {
-    [screenInstanceId: string]: IScreenInstancePromise | undefined
   }
 }
 
@@ -68,10 +39,7 @@ export const StoreProvider: React.FC = (props) => {
   const store = useMemo(
     () =>
       createStore<GlobalState>(() => ({
-        screenInstances: [],
-        screenInstancePtr: -1,
         screenInstanceOptions: {},
-        screenInstancePromises: {},
       })),
     []
   )
@@ -137,103 +105,10 @@ export function useStoreActions() {
     [store]
   )
 
-  const addScreenInstancePromise = useCallback(
-    ({
-      screenInstanceId,
-      screenInstancePromise,
-    }: {
-      screenInstanceId: string
-      screenInstancePromise: IScreenInstancePromise
-    }) => {
-      store.setState((prevState) => ({
-        ...prevState,
-        screenInstancePromises: {
-          ...prevState.screenInstancePromises,
-          [screenInstanceId]: screenInstancePromise,
-        },
-      }))
-    },
-    [store]
-  )
-
-  const mapScreenInstance = useCallback(
-    ({
-      ptr,
-      mapper,
-    }: {
-      ptr: number
-      mapper: (screenInstance: IScreenInstance) => IScreenInstance
-    }) => {
-      store.setState((prevState) => ({
-        ...prevState,
-        screenInstances: prevState.screenInstances.map((si, i) =>
-          i === ptr ? mapper(si) : si
-        ),
-      }))
-    },
-    [store]
-  )
-
-  const insertScreenInstance = useCallback(
-    ({
-      ptr,
-      screenInstance,
-    }: {
-      ptr: number
-      screenInstance: {
-        id: string
-        screenId: string
-        present: boolean
-        as: string
-      }
-    }) => {
-      store.setState((prevState) => ({
-        ...prevState,
-        screenInstances: [
-          ...prevState.screenInstances.filter((_, i) => i <= ptr),
-          {
-            ...screenInstance,
-            nestedRouteCount: 0,
-          },
-        ],
-      }))
-    },
-    [store]
-  )
-
-  const increaseScreenInstancePtr = useCallback(() => {
-    store.setState((prevState) => ({
-      ...prevState,
-      screenInstancePtr: prevState.screenInstancePtr + 1,
-    }))
-  }, [store])
-
-  const setScreenInstancePtr = useCallback(
-    ({ ptr }: { ptr: number }) => {
-      store.setState((prevState) => ({
-        ...prevState,
-        screenInstancePtr: ptr,
-      }))
-    },
-    [store]
-  )
-
   return useMemo(
     () => ({
       addScreenInstanceOption,
-      addScreenInstancePromise,
-      mapScreenInstance,
-      insertScreenInstance,
-      increaseScreenInstancePtr,
-      setScreenInstancePtr,
     }),
-    [
-      addScreenInstanceOption,
-      addScreenInstancePromise,
-      mapScreenInstance,
-      insertScreenInstance,
-      increaseScreenInstancePtr,
-      setScreenInstancePtr,
-    ]
+    [addScreenInstanceOption]
   )
 }

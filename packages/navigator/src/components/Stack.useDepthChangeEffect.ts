@@ -1,20 +1,15 @@
 import { useEffect } from 'react'
 
-import { useStore } from '../store'
+import { useScreenInstances } from '../globalState'
 
 function useDepthChangeEffect(onDepthChange?: (depth: number) => void) {
-  const store = useStore()
+  const { screenInstancePtr } = useScreenInstances()
 
   useEffect(() => {
-    return store.listen((prevState, nextState) => {
-      if (
-        nextState.screenInstancePtr > -1 &&
-        prevState.screenInstancePtr !== nextState.screenInstancePtr
-      ) {
-        onDepthChange?.(nextState.screenInstancePtr)
-      }
-    })
-  }, [onDepthChange])
+    if (screenInstancePtr > -1) {
+      onDepthChange?.(screenInstancePtr)
+    }
+  }, [onDepthChange, screenInstancePtr])
 }
 
 export default useDepthChangeEffect

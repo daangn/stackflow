@@ -1,14 +1,15 @@
 import { useCallback } from 'react'
 
-import { useStore, useStoreActions } from '../store'
+import { useScreenInstances } from '../globalState'
 
 export function usePush() {
-  const store = useStore()
   const {
+    screenInstances,
+    screenInstancePtr,
     insertScreenInstance,
-    increaseScreenInstancePtr,
+    incScreenInstancePtr,
     setScreenInstancePtr,
-  } = useStoreActions()
+  } = useScreenInstances()
 
   const push = useCallback(
     ({
@@ -22,8 +23,6 @@ export function usePush() {
       present: boolean
       as: string
     }) => {
-      const { screenInstances, screenInstancePtr } = store.getState()
-
       const nextPtr = screenInstances.findIndex(
         (screenInstance) => screenInstance.id === screenInstanceId
       )
@@ -38,12 +37,18 @@ export function usePush() {
             as,
           },
         })
-        increaseScreenInstancePtr()
+        incScreenInstancePtr()
       } else {
-        setScreenInstancePtr({ ptr: nextPtr })
+        setScreenInstancePtr(nextPtr)
       }
     },
-    []
+    [
+      screenInstances,
+      screenInstancePtr,
+      insertScreenInstance,
+      incScreenInstancePtr,
+      setScreenInstancePtr,
+    ]
   )
 
   return push
