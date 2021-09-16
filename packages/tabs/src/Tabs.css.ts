@@ -1,11 +1,11 @@
 import {
-  composeStyles,
   createTheme,
   style,
   StyleRule,
   styleVariants,
 } from '@vanilla-extract/css'
 import { calc } from '@vanilla-extract/css-utils'
+import { recipe } from '@vanilla-extract/recipes'
 
 const [themeClass, vars] = createTheme({
   tabBar: {
@@ -14,14 +14,20 @@ const [themeClass, vars] = createTheme({
     borderSize: '1px',
     baseFontColor: '#ADB1BA',
     activeFontColor: '#212124',
+    fontSize: '0.875rem',
+    fontWeight: '700',
+    inset: '0',
     indicator: {
       color: '#212124',
       width: '',
       transform: '',
+      display: '',
     },
-    itemPadding: '0.59375rem',
-    fontSize: '0.875rem',
-    fontWeight: '700',
+    item: {
+      verticalPadding: '0.59375rem',
+      inlineHorizontalPadding: '0.875rem',
+      inlineGap: '0.5rem',
+    },
   },
   tabMain: {
     backgroundColor: '#fff',
@@ -33,54 +39,85 @@ const [themeClass, vars] = createTheme({
 
 export { vars }
 
-export const container = composeStyles(
+export const container = style([
   themeClass,
-  style({
+  {
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
     width: '100%',
     overflow: 'hidden',
-  })
-)
+  },
+])
 
-export const tabBar = style({
-  display: 'flex',
-  position: 'relative',
-  backgroundColor: vars.tabBar.backgroundColor,
-  marginTop: '-1px',
-  paddingTop: '1px',
-  boxShadow:
-    'inset 0px ' +
-    calc(vars.tabBar.borderSize).negate() +
-    ' 0 ' +
-    vars.tabBar.borderColor,
+export const tabBar = recipe({
+  base: {
+    display: 'flex',
+    position: 'relative',
+    backgroundColor: vars.tabBar.backgroundColor,
+    marginTop: '-1px',
+    paddingTop: '1px',
+    boxShadow:
+      'inset 0px ' +
+      calc(vars.tabBar.borderSize).negate() +
+      ' 0 ' +
+      vars.tabBar.borderColor,
+  },
+  variants: {
+    inline: {
+      true: {
+        display: 'block',
+        padding: `1px ${vars.tabBar.inset} 0`,
+        overflowX: 'scroll',
+        whiteSpace: 'nowrap',
+        selectors: {
+          ['&::-webkit-scrollbar']: {
+            display: 'none',
+          },
+        },
+      },
+    },
+  },
 })
 
-const _tabBarItem: StyleRule = {
-  flex: '1',
-  fontSize: vars.tabBar.fontSize,
-  fontWeight: vars.tabBar.fontWeight,
-  textAlign: 'center',
-  padding: `${vars.tabBar.itemPadding} 0`,
-  cursor: 'pointer',
-  WebkitTapHighlightColor: 'transparent',
-  textDecoration: 'none',
-  transition: 'color 100ms',
-  outline: 'none',
-}
-export const tabBarItem = styleVariants({
-  normal: {
-    ..._tabBarItem,
+export const tabBarItem = recipe({
+  base: {
+    flex: '1',
+    fontSize: vars.tabBar.fontSize,
+    fontWeight: vars.tabBar.fontWeight,
+    textAlign: 'center',
     color: vars.tabBar.baseFontColor,
+    padding: `${vars.tabBar.item.verticalPadding} 0`,
+    cursor: 'pointer',
+    WebkitTapHighlightColor: 'transparent',
+    textDecoration: 'none',
+    transition: 'color 100ms',
+    outline: 'none',
   },
-  active: {
-    ..._tabBarItem,
-    color: vars.tabBar.activeFontColor,
+  variants: {
+    active: {
+      true: {
+        color: vars.tabBar.activeFontColor,
+      },
+    },
+    inline: {
+      true: {
+        display: 'inline-block',
+        verticalAlign: 'top',
+        padding: `${vars.tabBar.item.verticalPadding} ${vars.tabBar.item.inlineHorizontalPadding}`,
+        marginRight: vars.tabBar.item.inlineGap,
+        selectors: {
+          ['&:last-of-type']: {
+            marginRight: '0',
+          },
+        },
+      },
+    },
   },
 })
 
 export const tabBarIndicator = style({
+  display: vars.tabBar.indicator.display,
   position: 'absolute',
   bottom: '0',
   left: '0',
@@ -90,6 +127,7 @@ export const tabBarIndicator = style({
   transition: `transform ${vars.transitionDuration}`,
   width: vars.tabBar.indicator.width,
   transform: vars.tabBar.indicator.transform,
+  transformOrigin: 'top left',
 })
 
 export const tabMains = style({

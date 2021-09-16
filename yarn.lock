@@ -1968,11 +1968,11 @@ __metadata:
     "@types/react-router-dom": ^5.1.8
     "@types/react-transition-group": ^4.4.2
     "@types/zenscroll": ^4.0.0
-    "@vanilla-extract/babel-plugin": ^1.0.1
-    "@vanilla-extract/css": ^1.2.3
+    "@vanilla-extract/babel-plugin": ^1.1.0
+    "@vanilla-extract/css": ^1.6.0
     "@vanilla-extract/css-utils": ^0.1.1
     "@vanilla-extract/dynamic": ^2.0.0
-    "@vanilla-extract/webpack-plugin": ^1.1.0
+    "@vanilla-extract/webpack-plugin": ^2.1.0
     babel-loader: ^8.2.2
     css-loader: ^5.0.1
     dts-bundle-generator: ^5.9.0
@@ -2006,10 +2006,10 @@ __metadata:
     "@types/node": ^14.11.8
     "@types/react": ^16.9.46
     "@types/react-dom": ^16.9.8
-    "@vanilla-extract/babel-plugin": ^1.0.1
-    "@vanilla-extract/css": ^1.2.3
+    "@vanilla-extract/babel-plugin": ^1.1.0
+    "@vanilla-extract/css": ^1.6.0
     "@vanilla-extract/css-utils": ^0.1.1
-    "@vanilla-extract/webpack-plugin": ^1.1.0
+    "@vanilla-extract/webpack-plugin": ^2.1.0
     babel-loader: ^8.2.2
     css-loader: ^5.0.1
     dts-bundle-generator: ^5.9.0
@@ -2037,11 +2037,12 @@ __metadata:
     "@types/node": ^14.11.8
     "@types/react": ^16.9.46
     "@types/react-dom": ^16.9.8
-    "@vanilla-extract/babel-plugin": ^1.0.1
-    "@vanilla-extract/css": ^1.2.3
+    "@vanilla-extract/babel-plugin": ^1.1.0
+    "@vanilla-extract/css": ^1.6.0
     "@vanilla-extract/css-utils": ^0.1.1
     "@vanilla-extract/dynamic": ^2.0.0
-    "@vanilla-extract/webpack-plugin": ^1.1.0
+    "@vanilla-extract/recipes": ^0.1.0
+    "@vanilla-extract/webpack-plugin": ^2.1.0
     babel-loader: ^8.2.2
     css-loader: ^5.0.1
     dts-bundle-generator: ^5.9.0
@@ -2557,6 +2558,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/smoothscroll-polyfill@npm:^0":
+  version: 0.3.1
+  resolution: "@types/smoothscroll-polyfill@npm:0.3.1"
+  checksum: 871a5b556c3be746882ac58b0f936a66a716f4e9b5bd18aaf72fe60aaad42e6ce09e2c639c455ab7655637839bc3a3d923994dd68463c905bd1ecbd1961d8ec1
+  languageName: node
+  linkType: hard
+
 "@types/stack-utils@npm:^1.0.1":
   version: 1.0.1
   resolution: "@types/stack-utils@npm:1.0.1"
@@ -2701,14 +2709,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vanilla-extract/babel-plugin@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "@vanilla-extract/babel-plugin@npm:1.0.1"
+"@vanilla-extract/babel-plugin@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@vanilla-extract/babel-plugin@npm:1.1.0"
   dependencies:
     "@babel/core": ^7.13.10
     "@babel/template": ^7.12.13
-    "@vanilla-extract/integration": ^1.0.0
-  checksum: 01f3d0a99652cc57cb1ade24f8bafc4f45b09d5a3db19118a681c5b924bae6825e466ac14b3c8e3547411157db5f204bafbcdd452d8eee76ec140e640d0ca2ef
+    "@vanilla-extract/integration": ^1.4.0
+  checksum: 1e9f32d517f6fd392a185a73d2a44d98f59472fc6f5f520526db3fdf5008307258687af48078ceb8bbeced1dcad91cfcb33444ea446b3f1aa460caf0a414e6b8
   languageName: node
   linkType: hard
 
@@ -2719,9 +2727,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vanilla-extract/css@npm:^1.2.0, @vanilla-extract/css@npm:^1.2.3":
-  version: 1.2.3
-  resolution: "@vanilla-extract/css@npm:1.2.3"
+"@vanilla-extract/css@npm:^1.5.0, @vanilla-extract/css@npm:^1.6.0":
+  version: 1.6.0
+  resolution: "@vanilla-extract/css@npm:1.6.0"
   dependencies:
     "@emotion/hash": ^0.8.0
     "@vanilla-extract/private": ^1.0.1
@@ -2731,7 +2739,8 @@ __metadata:
     csstype: ^3.0.7
     dedent: ^0.7.0
     deep-object-diff: ^1.1.0
-  checksum: 6424c7a70ecac29e2f910a0baf2f1cb9bebc83bd317a9240d619dd71ebdb36f90ac9674a8b502f4dd1ce21f976c89347411b3741ca25f598a340b9ef275c6fc9
+    deepmerge: ^4.2.2
+  checksum: ee08f58c34fe284ddd44156d13ec5ba54e73d570c3a8da439b35b5e9f04890d5fd6a1346d3ac94281562915cf3a6ce16e4176a3b76c5a4ae203d89d4d9d50a92
   languageName: node
   linkType: hard
 
@@ -2744,11 +2753,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vanilla-extract/integration@npm:^1.0.0, @vanilla-extract/integration@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "@vanilla-extract/integration@npm:1.1.0"
+"@vanilla-extract/integration@npm:^1.3.0, @vanilla-extract/integration@npm:^1.4.0":
+  version: 1.4.0
+  resolution: "@vanilla-extract/integration@npm:1.4.0"
   dependencies:
-    "@vanilla-extract/css": ^1.2.0
+    "@vanilla-extract/css": ^1.5.0
     chalk: ^4.1.1
     dedent: ^0.7.0
     esbuild: ^0.11.16
@@ -2756,7 +2765,7 @@ __metadata:
     find-up: ^5.0.0
     javascript-stringify: ^2.0.1
     lodash: ^4.17.21
-  checksum: fceaa6e3746bcd955bbbaddb19a9fcff471a467704b9806f84fa47afe3944b1f8e12fe4a87ed5150179a3399fe164f1b04f249350f644e8114d2a63f5e923a3f
+  checksum: 1f3906a50538488b5ceb23c04b27a81647fb33e3c53d0a721da38305ebe83c53322041ca9a65773012e604efd3dcb145f97ed9e80b4a240383777bd5bad2092e
   languageName: node
   linkType: hard
 
@@ -2767,11 +2776,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vanilla-extract/webpack-plugin@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "@vanilla-extract/webpack-plugin@npm:1.1.0"
+"@vanilla-extract/recipes@npm:^0.1.0":
+  version: 0.1.0
+  resolution: "@vanilla-extract/recipes@npm:0.1.0"
+  peerDependencies:
+    "@vanilla-extract/css": "*"
+  checksum: 51000edfac8995a46d14bf482f15f6c3b33d625fd4ffdfc934ab70d2eaee6a7ad4a489b6c1066cf7f32bbf65de34d7c0e1dca4a3c1611d718683ce87323607af
+  languageName: node
+  linkType: hard
+
+"@vanilla-extract/webpack-plugin@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "@vanilla-extract/webpack-plugin@npm:2.1.0"
   dependencies:
-    "@vanilla-extract/integration": ^1.1.0
+    "@vanilla-extract/integration": ^1.3.0
     chalk: ^4.1.1
     debug: ^4.3.1
     loader-utils: ^2.0.0
@@ -2779,7 +2797,7 @@ __metadata:
     virtual-resource-loader: ^1.0.0
   peerDependencies:
     webpack: ^4.30.0 || ^5.20.2
-  checksum: 1c5554c5f11e204d17876fe834cb41e7ab91cb3a565ff680709bbf28f96fada1e79b6e399303bcd6be2973abcfcbeda2c363641bb06d496af981f6701e71b959
+  checksum: 3847b9539be8f235585baf1f9794a0b5d09ec23b7df540d6460accbca36a6b9b0f85cb35cec95139e2fd5faaac2ec81644837dea809331e101760f4b2ad70627
   languageName: node
   linkType: hard
 
@@ -5637,6 +5655,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"deepmerge@npm:^4.2.2":
+  version: 4.2.2
+  resolution: "deepmerge@npm:4.2.2"
+  checksum: a8c43a1ed8d6d1ed2b5bf569fa4c8eb9f0924034baf75d5d406e47e157a451075c4db353efea7b6bcc56ec48116a8ce72fccf867b6e078e7c561904b5897530b
+  languageName: node
+  linkType: hard
+
 "default-gateway@npm:^4.2.0":
   version: 4.2.0
   resolution: "default-gateway@npm:4.2.0"
@@ -6680,12 +6705,14 @@ __metadata:
     "@types/react": ^17.0.19
     "@types/react-dom": ^17.0.9
     "@types/react-router-dom": ^5.1.5
+    "@types/smoothscroll-polyfill": ^0
     customize-cra: ^1.0.0
     react: next
     react-app-rewired: ^2.1.6
     react-dom: next
     react-router-dom: ^5.2.0
     react-scripts: 3.4.3
+    smoothscroll-polyfill: ^0.4.4
     typescript: ~3.7.2
   languageName: unknown
   linkType: soft
@@ -14105,6 +14132,13 @@ resolve@1.15.0:
     astral-regex: ^1.0.0
     is-fullwidth-code-point: ^2.0.0
   checksum: 4e82995aa59cef7eb03ef232d73c2239a15efa0ace87a01f3012ebb942e963fbb05d448ce7391efcd52ab9c32724164aba2086f5143e0445c969221dde3b6b1e
+  languageName: node
+  linkType: hard
+
+"smoothscroll-polyfill@npm:^0.4.4":
+  version: 0.4.4
+  resolution: "smoothscroll-polyfill@npm:0.4.4"
+  checksum: b99ff7d91689d563ec69cb1d29713b332a24c88ac3dc4ef9ef9fbe4137305336e67253211067c5f786478dbdabd2aa6c2033709d4d8feca327b09eca8d5a0e7b
   languageName: node
   linkType: hard
 

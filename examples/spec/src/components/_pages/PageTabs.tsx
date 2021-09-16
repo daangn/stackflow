@@ -2,10 +2,10 @@ import React, { useRef, useState } from 'react'
 
 import styled from '@emotion/styled'
 import { ScreenHelmet } from '@karrotframe/navigator'
-import { Tabs, useTabsController } from '@karrotframe/tabs'
+import { Tabs } from '@karrotframe/tabs'
 
 const PageTabs: React.FC = () => {
-  const [activeKey, setActiveKey] = useState<string>('tab_1')
+  const [activeKey, setActiveKey] = useState<string>('63119')
 
   return (
     <>
@@ -13,75 +13,49 @@ const PageTabs: React.FC = () => {
       <Tabs
         tabs={[
           {
-            key: 'tab_1',
-            buttonLabel: 'Tab 1',
-            component: Tab1,
-          },
-          {
-            key: 'tab_2',
-            buttonLabel: 'Tab 2',
+            key: '63119',
+            buttonLabel: 'Following',
             component() {
-              return <div>Tab 2</div>
+              return <div>Following</div>
             },
           },
           {
-            key: 'tab_3',
-            buttonLabel: 'Tab 3',
-            component: Tab3,
+            key: '21882',
+            buttonLabel: 'Food & Beverage',
+            component() {
+              return <div>Food & Beverage</div>
+            },
+          },
+          {
+            key: '64048',
+            buttonLabel: 'Living',
+            component() {
+              return <div>Living</div>
+            },
+          },
+          {
+            key: '46250',
+            buttonLabel: 'Health',
+            component() {
+              return <div>Health</div>
+            },
+          },
+          {
+            key: '44589',
+            buttonLabel: 'Beauty',
+            component() {
+              return <div>Beauty</div>
+            },
           },
         ]}
         activeTabKey={activeKey}
         onTabChange={(key) => {
           setActiveKey(key)
         }}
+        useInlineButtons
       />
     </>
   )
 }
-
-const Tab1: React.FC = () => {
-  const horizontalScrollerRef = useRef<HTMLDivElement>(null)
-
-  return (
-    <HorizontalScroller ref={horizontalScrollerRef}>
-      <ScrollEnabler>Tab 1</ScrollEnabler>
-    </HorizontalScroller>
-  )
-}
-
-const Tab3: React.FC = () => {
-  const { go, disableSwipe } = useTabsController()
-
-  return (
-    <div>
-      Tab 3
-      <button
-        onClick={() => {
-          go('tab_1')
-        }}
-      >
-        Go to tab1
-      </button>
-      <button
-        onClick={() => {
-          disableSwipe()
-        }}
-      >
-        Disable swipe
-      </button>
-    </div>
-  )
-}
-
-const HorizontalScroller = styled.div`
-  width: 100%;
-  height: 5rem;
-  overflow-x: scroll;
-  background-color: red;
-`
-
-const ScrollEnabler = styled.div`
-  width: 200vw;
-`
 
 export default PageTabs

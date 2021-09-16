@@ -30,7 +30,8 @@
     "@karrotframe/tabs": "workspace:packages/tabs",
     "react": "next",
     "react-dom": "next",
-    "react-router-dom": "^5.2.0"
+    "react-router-dom": "^5.2.0",
+    "smoothscroll-polyfill": "^0.4.4"
   },
   "devDependencies": {
     "@babel/core": "^7.11.6",
@@ -44,6 +45,7 @@
     "@types/react": "^17.0.19",
     "@types/react-dom": "^17.0.9",
     "@types/react-router-dom": "^5.1.5",
+    "@types/smoothscroll-polyfill": "^0",
     "customize-cra": "^1.0.0",
     "react-app-rewired": "^2.1.6",
     "react-scripts": "3.4.3",
