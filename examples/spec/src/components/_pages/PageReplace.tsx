@@ -7,6 +7,7 @@ import ListItem from '../ListItem'
 
 const PageReplace: React.FC = () => {
   const { replace, push } = useNavigator()
+
   return (
     <Container>
       <ScreenHelmet title="Replace" />

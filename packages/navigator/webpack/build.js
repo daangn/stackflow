@@ -50,7 +50,6 @@ module.exports = {
     /\@vanilla-extract\/dynamic/,
     /history/,
     /react-fast-compare/,
-    /react-transition-group/,
     /react/,
     /react-dom/,
     /react-router-dom/,

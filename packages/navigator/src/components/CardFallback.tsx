@@ -1,11 +1,12 @@
 import React from 'react'
 
 import { INavigatorTheme } from '../types'
+import { SuspenseTransitionStatus } from './_lib/SuspenseTransition'
 import * as css from './Card.css'
 
 interface ICardFallbackProps {
+  status: SuspenseTransitionStatus
   theme: INavigatorTheme
-  nodeRef: React.RefObject<HTMLDivElement>
   isRoot: boolean
   isPresent: boolean
 }
@@ -14,7 +15,14 @@ const CardFallback: React.FC<ICardFallbackProps> = (props) => {
   const cupertino = props.theme === 'Cupertino'
 
   return (
-    <div ref={props.nodeRef} className={css.container}>
+    <div
+      className={css.container({
+        enterActive: props.status === 'enterActive' ? true : undefined,
+        enterDone: props.status === 'enterDone' ? true : undefined,
+        exitActive: props.status === 'exitActive' ? true : undefined,
+        exitDone: props.status === 'exitDone' ? true : undefined,
+      })}
+    >
       {!props.isRoot && (
         <div
           className={css.dim({

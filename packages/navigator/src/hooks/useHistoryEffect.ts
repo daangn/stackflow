@@ -129,10 +129,14 @@ export function useHistoryReplaceEffect(
   const history = useHistory()
 
   useEffect(() => {
-    return history.listen((location, action) => {
+    const dispose = history.listen((location, action) => {
       if (action === 'REPLACE') {
         callback(location, action)
       }
     })
+
+    return () => {
+      dispose()
+    }
   }, deps)
 }

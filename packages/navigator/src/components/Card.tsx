@@ -1,16 +1,17 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef } from 'react'
 
 import { INavigatorTheme } from '../types'
 import { useNavigator } from '../useNavigator'
+import { SuspenseTransitionStatus } from './_lib/SuspenseTransition'
 import * as css from './Card.css'
 import { makeTranslation } from './Card.translation'
 import Navbar from './Navbar'
 import { useScreenHelmet } from './Stack.ScreenHelmetContext'
 
 interface ICardProps {
+  status: SuspenseTransitionStatus
+  mount: boolean
   theme: INavigatorTheme
-  className?: string
-  nodeRef: React.RefObject<HTMLDivElement>
   beforeTopFrameOffsetRef: React.RefObject<HTMLDivElement>
   screenPath: string
   screenInstanceId: string
@@ -25,7 +26,6 @@ interface ICardProps {
 const Card: React.FC<ICardProps> = (props) => {
   const { pop } = useNavigator()
   const { screenHelmetOption } = useScreenHelmet()
-  const [popped, setPopped] = useState(false)
 
   const dimRef = useRef<HTMLDivElement>(null)
   const frameRef = useRef<HTMLDivElement>(null)
@@ -88,7 +88,6 @@ const Card: React.FC<ICardProps> = (props) => {
       const v = (x - x0) / (t - t0)
 
       if (v > 1 || x / $frame.clientWidth > 0.4) {
-        setPopped(true)
         pop()
       }
 
@@ -105,7 +104,7 @@ const Card: React.FC<ICardProps> = (props) => {
       $edge.removeEventListener('touchmove', onTouchMove)
       $edge.removeEventListener('touchend', onTouchEnd)
     }
-  }, [dimRef, frameRef, frameOffsetRef, edgeRef, setPopped, pop])
+  }, [dimRef, frameRef, frameOffsetRef, edgeRef, pop])
 
   const onTopClick = useCallback(() => {
     const $frame = frameRef.current
@@ -122,10 +121,18 @@ const Card: React.FC<ICardProps> = (props) => {
 
   const isNavbarVisible = screenHelmetOption.visible ?? false
 
+  if (!props.mount) {
+    return null
+  }
+
   return (
     <div
-      ref={props.nodeRef}
-      className={[css.container, props.className].join(' ')}
+      className={css.container({
+        enterActive: props.status === 'enterActive' ? true : undefined,
+        enterDone: props.status === 'enterDone' ? true : undefined,
+        exitActive: props.status === 'exitActive' ? true : undefined,
+        exitDone: props.status === 'exitDone' ? true : undefined,
+      })}
     >
       {!props.isRoot && (
         <div
@@ -192,7 +199,7 @@ const Card: React.FC<ICardProps> = (props) => {
               {props.children}
             </div>
           </div>
-          {cupertino && !props.isRoot && !props.isPresent && !popped && (
+          {cupertino && !props.isRoot && !props.isPresent && (
             <div
               className={css.edge({
                 cupertinoAndIsNavbarVisible:

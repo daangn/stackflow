@@ -1934,7 +1934,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.0.0, @babel/runtime@npm:^7.1.2, @babel/runtime@npm:^7.10.2, @babel/runtime@npm:^7.12.1, @babel/runtime@npm:^7.3.4, @babel/runtime@npm:^7.4.5, @babel/runtime@npm:^7.5.1, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.7.2, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.8.7":
+"@babel/runtime@npm:^7.0.0, @babel/runtime@npm:^7.1.2, @babel/runtime@npm:^7.10.2, @babel/runtime@npm:^7.12.1, @babel/runtime@npm:^7.3.4, @babel/runtime@npm:^7.4.5, @babel/runtime@npm:^7.5.1, @babel/runtime@npm:^7.7.2, @babel/runtime@npm:^7.8.4":
   version: 7.12.13
   resolution: "@babel/runtime@npm:7.12.13"
   dependencies:
@@ -2888,7 +2888,6 @@ __metadata:
     "@types/react-dom": ^16.9.8
     "@types/react-router": ^5.1.16
     "@types/react-router-dom": ^5.1.8
-    "@types/react-transition-group": ^4.4.2
     "@vanilla-extract/babel-plugin": ^1.1.0
     "@vanilla-extract/css": ^1.6.0
     "@vanilla-extract/css-utils": ^0.1.1
@@ -2902,7 +2901,6 @@ __metadata:
     history: ^4.7.8
     mini-css-extract-plugin: ^1.3.8
     react-fast-compare: ^3.2.0
-    react-transition-group: ^4.4.2
     rimraf: ^3.0.2
     typescript: ^4.3.4
     webpack: ^5.9.0
@@ -3554,15 +3552,6 @@ __metadata:
     "@types/history": "*"
     "@types/react": "*"
   checksum: a9c04be430e7f63b17d3ac46fb5594e4089747b3004af04560cd068db136ccaedd66622f448489280cb5a94873dece69a5bc1f91c892ec5178e41ed00b78b43d
-  languageName: node
-  linkType: hard
-
-"@types/react-transition-group@npm:^4.4.2":
-  version: 4.4.2
-  resolution: "@types/react-transition-group@npm:4.4.2"
-  dependencies:
-    "@types/react": "*"
-  checksum: 35523ef25ae5bbf68793a52e9b996f8c7c337e0d10650bc964c26929547b062509c955f55e76651bcf604560594783f60c4bfcee290a263845f9e43eb0ab0d1e
   languageName: node
   linkType: hard
 
@@ -7347,16 +7336,6 @@ __metadata:
   dependencies:
     utila: ~0.4
   checksum: ea52fe303f5392e48dea563abef0e6fb3a478b8dbe3c599e99bb5d53981c6c38fc4944e56bb92a8ead6bb989d10b7914722ae11febbd2fd0910e33b9fc4aaa77
-  languageName: node
-  linkType: hard
-
-"dom-helpers@npm:^5.0.1":
-  version: 5.2.0
-  resolution: "dom-helpers@npm:5.2.0"
-  dependencies:
-    "@babel/runtime": ^7.8.7
-    csstype: ^3.0.2
-  checksum: bea3e7217c2adac5f89285b7786dbcc3a356226f6ff12934c9626689829b00e7fa7630a8f77973028d039db1aba6b882b1494854aa910422d1644486136b1e55
   languageName: node
   linkType: hard
 
@@ -15278,21 +15257,6 @@ fsevents@^1.2.7:
   bin:
     react-scripts: bin/react-scripts.js
   checksum: bfa712f317aef20d7783f891fd5a9e76ab93d19ab5ae858e662ca213ef2421d0e03c22b7df0265ccb8cce938db8cb6fdd0d9754fa5d19d28846bd4c47ba9e8cf
-  languageName: node
-  linkType: hard
-
-"react-transition-group@npm:^4.4.2":
-  version: 4.4.2
-  resolution: "react-transition-group@npm:4.4.2"
-  dependencies:
-    "@babel/runtime": ^7.5.5
-    dom-helpers: ^5.0.1
-    loose-envify: ^1.4.0
-    prop-types: ^15.6.2
-  peerDependencies:
-    react: ">=16.6.0"
-    react-dom: ">=16.6.0"
-  checksum: b67bf5b3e86dbab72d658b9a52a3589e5960583ab28c7c66272427d8fe30d4c7de422d5046ae96bd2683cdf80cc3264b2516f5ce80cae1dbe6cf3ca6dda392c5
   languageName: node
   linkType: hard
 

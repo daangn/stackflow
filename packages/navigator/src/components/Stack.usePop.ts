@@ -18,7 +18,7 @@ function usePop() {
         const promise = screenInstancePromiseMap[targetScreenInstanceId]
 
         if (promise) {
-          setTimeout(() => promise.resolve(null), 0)
+          Promise.resolve().then(() => promise.resolve(null))
         }
       }
       setScreenInstancePtr(screenInstancePtr - depth)

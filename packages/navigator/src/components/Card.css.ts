@@ -3,25 +3,42 @@ import { recipe } from '@vanilla-extract/recipes'
 
 import { vars } from '../Navigator.css'
 
-export const container = style({
-  position: 'absolute',
-  top: '0',
-  left: '0',
-  width: '100%',
-  height: '100%',
-  overflow: 'hidden',
-})
 export const container_enterActive = style({
-  display: 'block',
+  visibility: 'visible',
 })
 export const container_enterDone = style({
-  display: 'block',
+  visibility: 'visible',
 })
 export const container_exitActive = style({
-  display: 'block',
+  visibility: 'visible',
 })
 export const container_exitDone = style({
-  display: 'block',
+  visibility: 'hidden',
+})
+
+export const container = recipe({
+  base: {
+    position: 'absolute',
+    top: '0',
+    left: '0',
+    width: '100%',
+    height: '100%',
+    overflow: 'hidden',
+  },
+  variants: {
+    enterActive: {
+      true: container_enterActive,
+    },
+    enterDone: {
+      true: container_enterDone,
+    },
+    exitActive: {
+      true: container_exitActive,
+    },
+    exitDone: {
+      true: container_exitDone,
+    },
+  },
 })
 
 export const dim = recipe({
@@ -243,6 +260,7 @@ export const edge = recipe({
   base: {
     position: 'absolute',
     left: 0,
+    top: 0,
     height: '100%',
     width: '1.25rem',
   },

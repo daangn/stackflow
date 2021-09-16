@@ -80,7 +80,9 @@ export function useNavigator() {
         }
       }
 
-      history.replace(`${pathname}?${searchParams.toString()}`)
+      Promise.resolve().then(() => {
+        history.replace(`${pathname}?${searchParams.toString()}`)
+      })
     },
     [history, screenInstanceId, present]
   )

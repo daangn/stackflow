@@ -1,6 +1,5 @@
 import React from 'react'
 import { HashRouter } from 'react-router-dom'
-import { TransitionGroup } from 'react-transition-group'
 
 import { assignInlineVars } from '@vanilla-extract/dynamic'
 
@@ -87,18 +86,16 @@ const Navigator: React.FC<INavigatorProps> = ({
               [css.vars.animationDuration]: animationDuration + 'ms',
             })}
           >
-            <TransitionGroup component={null}>
-              <Stack
-                animationDuration={animationDuration}
-                theme={theme}
-                onClose={onClose}
-                backButtonAriaLabel={backButtonAriaLabel}
-                closeButtonAriaLabel={closeButtonAriaLabel}
-                onDepthChange={onDepthChange}
-              >
-                {children}
-              </Stack>
-            </TransitionGroup>
+            <Stack
+              animationDuration={animationDuration}
+              theme={theme}
+              onClose={onClose}
+              backButtonAriaLabel={backButtonAriaLabel}
+              closeButtonAriaLabel={closeButtonAriaLabel}
+              onDepthChange={onDepthChange}
+            >
+              {children}
+            </Stack>
           </div>
         </ScreenInstancesProvider>
       </ScreensProvider>
