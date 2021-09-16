@@ -8,7 +8,6 @@ import Stack from './components/Stack'
 import { ScreenInstancesProvider, ScreensProvider } from './globalState'
 import { UniqueIdProvider } from './hooks'
 import * as css from './Navigator.css'
-import { StoreProvider } from './store'
 import { INavigatorTheme } from './types'
 
 declare global {
@@ -79,30 +78,28 @@ const Navigator: React.FC<INavigatorProps> = ({
     <UniqueIdProvider>
       <ScreensProvider>
         <ScreenInstancesProvider>
-          <StoreProvider>
-            <div
-              className={[
-                css.root({ theme }),
-                ...(className ? [className] : []),
-              ].join(' ')}
-              style={assignInlineVars({
-                [css.vars.animationDuration]: animationDuration + 'ms',
-              })}
-            >
-              <TransitionGroup component={null}>
-                <Stack
-                  animationDuration={animationDuration}
-                  theme={theme}
-                  onClose={onClose}
-                  backButtonAriaLabel={backButtonAriaLabel}
-                  closeButtonAriaLabel={closeButtonAriaLabel}
-                  onDepthChange={onDepthChange}
-                >
-                  {children}
-                </Stack>
-              </TransitionGroup>
-            </div>
-          </StoreProvider>
+          <div
+            className={[
+              css.root({ theme }),
+              ...(className ? [className] : []),
+            ].join(' ')}
+            style={assignInlineVars({
+              [css.vars.animationDuration]: animationDuration + 'ms',
+            })}
+          >
+            <TransitionGroup component={null}>
+              <Stack
+                animationDuration={animationDuration}
+                theme={theme}
+                onClose={onClose}
+                backButtonAriaLabel={backButtonAriaLabel}
+                closeButtonAriaLabel={closeButtonAriaLabel}
+                onDepthChange={onDepthChange}
+              >
+                {children}
+              </Stack>
+            </TransitionGroup>
+          </div>
         </ScreenInstancesProvider>
       </ScreensProvider>
     </UniqueIdProvider>

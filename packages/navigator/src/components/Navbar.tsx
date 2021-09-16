@@ -4,10 +4,10 @@ import { assignInlineVars } from '@vanilla-extract/dynamic'
 
 import { IconBack, IconClose } from '../assets'
 import { vars } from '../Navigator.css'
-import { useStoreSelector } from '../store'
 import { INavigatorTheme } from '../types'
 import { useNavigator } from '../useNavigator'
 import * as css from './Navbar.css'
+import { useScreenHelmet } from './Stack.ScreenHelmetContext'
 
 interface INavbarProps {
   screenInstanceId: string
@@ -21,13 +21,10 @@ interface INavbarProps {
 }
 const Navbar: React.FC<INavbarProps> = (props) => {
   const { pop } = useNavigator()
+  const { screenHelmetOption } = useScreenHelmet()
 
   const android = props.theme === 'Android'
   const cupertino = props.theme === 'Cupertino'
-
-  const screenInstanceOptions = useStoreSelector(
-    (state) => state.screenInstanceOptions
-  )
 
   const [centerMainWidth, setCenterMainWidth] = useState<number | undefined>(
     undefined
@@ -35,8 +32,6 @@ const Navbar: React.FC<INavbarProps> = (props) => {
 
   const navbarRef = useRef<HTMLDivElement>(null)
   const centerRef = useRef<HTMLDivElement>(null)
-
-  const screenInstanceOption = screenInstanceOptions[props.screenInstanceId]
 
   useEffect(() => {
     const $navbar = navbarRef.current
@@ -66,7 +61,7 @@ const Navbar: React.FC<INavbarProps> = (props) => {
         window.removeEventListener('resize', onResize)
       }
     }
-  }, [screenInstanceOption])
+  }, [screenHelmetOption])
 
   const onBackClick = () => {
     pop()
@@ -75,14 +70,14 @@ const Navbar: React.FC<INavbarProps> = (props) => {
   const closeButton =
     props.onClose &&
     props.isRoot &&
-    (screenInstanceOption?.navbar.customCloseButton ? (
+    (screenHelmetOption.customCloseButton ? (
       <a
         className={css.closeButton}
         role="text"
         aria-label={props.closeButtonAriaLabel}
         onClick={props.onClose}
       >
-        {screenInstanceOption.navbar.customCloseButton}
+        {screenHelmetOption.customCloseButton}
       </a>
     ) : (
       <a
@@ -97,14 +92,14 @@ const Navbar: React.FC<INavbarProps> = (props) => {
 
   const backButton =
     !props.isRoot &&
-    (screenInstanceOption?.navbar.customBackButton ? (
+    (screenHelmetOption.customBackButton ? (
       <a
         className={css.backButton}
         role="text"
         aria-label={props.backButtonAriaLabel}
         onClick={onBackClick}
       >
-        {screenInstanceOption.navbar.customBackButton}
+        {screenHelmetOption.customBackButton}
       </a>
     ) : (
       <a
@@ -122,13 +117,12 @@ const Navbar: React.FC<INavbarProps> = (props) => {
     ))
 
   const isLeft = !!(
-    (screenInstanceOption?.navbar.closeButtonLocation === 'left' &&
-      closeButton) ||
+    (screenHelmetOption.closeButtonLocation === 'left' && closeButton) ||
     backButton ||
-    screenInstanceOption?.navbar.appendLeft
+    screenHelmetOption.appendLeft
   )
 
-  const noBorder = screenInstanceOption?.navbar.noBorder
+  const noBorder = screenHelmetOption.noBorder
 
   return (
     <div
@@ -148,10 +142,9 @@ const Navbar: React.FC<INavbarProps> = (props) => {
       >
         <div className={css.flex}>
           <div className={css.left}>
-            {screenInstanceOption?.navbar.closeButtonLocation === 'left' &&
-              closeButton}
+            {screenHelmetOption.closeButtonLocation === 'left' && closeButton}
             {backButton}
-            {screenInstanceOption?.navbar.appendLeft}
+            {screenHelmetOption.appendLeft}
           </div>
           <div
             className={css.center({
@@ -166,12 +159,12 @@ const Navbar: React.FC<INavbarProps> = (props) => {
                 cupertino: cupertino ? true : undefined,
               })}
             >
-              {typeof screenInstanceOption?.navbar.title === 'string' ? (
+              {typeof screenHelmetOption.title === 'string' ? (
                 <div className={css.centerMainText}>
-                  {screenInstanceOption?.navbar.title}
+                  {screenHelmetOption.title}
                 </div>
               ) : (
-                screenInstanceOption?.navbar.title
+                screenHelmetOption.title
               )}
             </div>
             <div
@@ -186,9 +179,8 @@ const Navbar: React.FC<INavbarProps> = (props) => {
               android: android ? true : undefined,
             })}
           >
-            {screenInstanceOption?.navbar.appendRight}
-            {screenInstanceOption?.navbar.closeButtonLocation === 'right' &&
-              closeButton}
+            {screenHelmetOption.appendRight}
+            {screenHelmetOption.closeButtonLocation === 'right' && closeButton}
           </div>
         </div>
       </div>

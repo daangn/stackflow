@@ -11,6 +11,8 @@ import {
   container_exitActive,
   container_exitDone,
 } from './Card.css'
+import { ScreenHelmetProvider } from './Stack.ScreenHelmetContext'
+import { ScreenInstanceProvider } from './Stack.ScreenInstanceContext'
 import useDepthChangeEffect from './Stack.useDepthChangeEffect'
 import useInitialize from './Stack.useInitialize'
 import useInitializeHistoryPopEffect from './Stack.useInitializeHistoryPopEffect'
@@ -72,32 +74,38 @@ const Stack: React.FC<IStackProps> = (props) => {
                 }}
                 unmountOnExit
               >
-                <Card
-                  nodeRef={nodeRef}
-                  beforeTopFrameOffsetRef={beforeTopFrameOffsetRef}
-                  theme={props.theme}
-                  screenPath={screen.path}
+                <ScreenInstanceProvider
                   screenInstanceId={screenInstance.id}
-                  isRoot={screenInstanceIndex === 0}
-                  isTop={
-                    screenInstanceIndex >= screenInstancePtr ||
-                    (props.theme === 'Cupertino' &&
-                      screenInstances.length > screenInstanceIndex + 1 &&
-                      screenInstances[screenInstanceIndex + 1].present)
-                  }
-                  isBeforeTop={screenInstanceIndex === screenInstancePtr - 1}
-                  isPresent={screenInstance.present}
-                  backButtonAriaLabel={props.backButtonAriaLabel}
-                  closeButtonAriaLabel={props.closeButtonAriaLabel}
-                  onClose={props.onClose}
+                  as={screenInstance.as}
+                  isTop={isTop}
+                  isRoot={isRoot}
                 >
-                  <screen.Component
-                    screenInstanceId={screenInstance.id}
-                    as={screenInstance.as}
-                    isTop={isTop}
-                    isRoot={isRoot}
-                  />
-                </Card>
+                  <ScreenHelmetProvider>
+                    <Card
+                      nodeRef={nodeRef}
+                      beforeTopFrameOffsetRef={beforeTopFrameOffsetRef}
+                      theme={props.theme}
+                      screenPath={screen.path}
+                      screenInstanceId={screenInstance.id}
+                      isRoot={screenInstanceIndex === 0}
+                      isTop={
+                        screenInstanceIndex >= screenInstancePtr ||
+                        (props.theme === 'Cupertino' &&
+                          screenInstances.length > screenInstanceIndex + 1 &&
+                          screenInstances[screenInstanceIndex + 1].present)
+                      }
+                      isBeforeTop={
+                        screenInstanceIndex === screenInstancePtr - 1
+                      }
+                      isPresent={screenInstance.present}
+                      backButtonAriaLabel={props.backButtonAriaLabel}
+                      closeButtonAriaLabel={props.closeButtonAriaLabel}
+                      onClose={props.onClose}
+                    >
+                      <screen.Component />
+                    </Card>
+                  </ScreenHelmetProvider>
+                </ScreenInstanceProvider>
               </CSSTransition>
             )}
           </NodeRef>

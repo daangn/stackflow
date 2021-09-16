@@ -1,6 +1,9 @@
 import React, { useEffect } from 'react'
 
-import { useScreenInstanceSetNavbar } from './contexts'
+import {
+  initialScreenHelmetOption,
+  useScreenHelmet,
+} from './components/Stack.ScreenHelmetContext'
 
 interface IScreenHelmetProps {
   /**
@@ -51,49 +54,20 @@ interface IScreenHelmetProps {
   onTopClick?: () => void
 }
 const ScreenHelmet: React.FC<IScreenHelmetProps> = (props) => {
-  const setNavbar = useScreenInstanceSetNavbar()
+  const { setScreenHelmetOption, clearScreenHelmetOption } = useScreenHelmet()
 
   useEffect(() => {
-    setNavbar({
+    setScreenHelmetOption({
+      ...initialScreenHelmetOption(),
+      ...Object.entries(props).reduce(
+        (a, [k, v]) => (v === undefined || v === null ? a : ((a[k] = v), a)),
+        {}
+      ),
       visible: true,
-      title: props.title ?? null,
-      appendLeft: props.appendLeft ?? null,
-      appendRight: props.appendRight ?? null,
-      closeButtonLocation: props.closeButtonLocation ?? 'left',
-      customBackButton: props.customBackButton ?? null,
-      customCloseButton: props.customCloseButton ?? null,
-      disableScrollToTop: props.disableScrollToTop ?? false,
-      noBorder: props.noBorder ?? false,
-      onTopClick: props.onTopClick,
     })
-  }, [
-    props.title,
-    props.appendLeft,
-    props.appendRight,
-    props.closeButtonLocation,
-    props.customBackButton,
-    props.customCloseButton,
-    props.disableScrollToTop,
-    props.noBorder,
-    props.onTopClick,
-  ])
+  }, [props])
 
-  useEffect(() => {
-    return () => {
-      setNavbar({
-        visible: false,
-        title: null,
-        appendLeft: null,
-        appendRight: null,
-        closeButtonLocation: 'left',
-        customBackButton: null,
-        customCloseButton: null,
-        disableScrollToTop: false,
-        noBorder: false,
-        onTopClick: undefined,
-      })
-    }
-  }, [])
+  useEffect(() => clearScreenHelmetOption, [clearScreenHelmetOption])
 
   return null
 }

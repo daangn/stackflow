@@ -9,12 +9,7 @@ import React, {
 interface IScreen {
   id: string
   path: string
-  Component: React.FC<{
-    screenInstanceId: string
-    as: string
-    isTop: boolean
-    isRoot: boolean
-  }>
+  Component: React.ComponentType
 }
 
 interface IScreenMap {
