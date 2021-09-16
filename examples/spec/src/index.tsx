@@ -4,6 +4,7 @@
 import '@karrotframe/navigator/index.css'
 import '@karrotframe/tabs/index.css'
 import './index.css'
+import './shims'
 
 import React from 'react'
 import ReactDOM from 'react-dom'

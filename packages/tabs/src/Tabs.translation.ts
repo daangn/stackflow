@@ -39,8 +39,8 @@ export function makeTranslation({
             const i = -1 * (translateX / fullWidth)
             const p = i % 1
 
-            const left = $tabBar.children[Math.floor(i)] as HTMLDivElement
-            const right = $tabBar.children[Math.ceil(i)] as HTMLDivElement
+            const left = $tabBar.children[Math.floor(i) + 1] as HTMLDivElement
+            const right = $tabBar.children[Math.ceil(i) + 1] as HTMLDivElement
 
             const { offsetLeft: xl, clientWidth: wl } = left
             const { offsetLeft: xr, clientWidth: wr } = right

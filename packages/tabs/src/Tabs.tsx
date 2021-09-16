@@ -109,7 +109,7 @@ const Tabs: React.FC<ITabsProps> = (props) => {
       const nextTabIndex = props.tabs.findIndex((t) => t === tab)
 
       const $tabBar = tabBarRef.current
-      const $tabBarItem = $tabBar?.children[nextTabIndex] as HTMLDivElement
+      const $tabBarItem = $tabBar?.children[nextTabIndex + 1] as HTMLDivElement
 
       if (!$tabBar || !$tabBarItem) {
         return
@@ -254,7 +254,9 @@ const Tabs: React.FC<ITabsProps> = (props) => {
 
     const setStyle = () => {
       if (props.useInlineButtons) {
-        const $tabBarItem = $tabBar.children[activeTabIndex] as HTMLDivElement
+        const $tabBarItem = $tabBar.children[
+          activeTabIndex + 1
+        ] as HTMLDivElement
 
         setTabBarIndicatorTransform(`
           translateX(${$tabBarItem.offsetLeft}px)
@@ -325,6 +327,7 @@ const Tabs: React.FC<ITabsProps> = (props) => {
             inline: props.useInlineButtons,
           })}
         >
+          <div ref={tabBarIndicatorRef} className={css.tabBarIndicator} />
           {props.tabs.map((tab) => (
             <a
               key={tab.key}
@@ -339,7 +342,6 @@ const Tabs: React.FC<ITabsProps> = (props) => {
               {tab.buttonLabel}
             </a>
           ))}
-          <div ref={tabBarIndicatorRef} className={css.tabBarIndicator} />
         </div>
         <div ref={tabMainsRef} className={css.tabMains}>
           {props.tabs.map(({ key, component: Component }) => (

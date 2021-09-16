@@ -14,9 +14,9 @@ const PageTabs: React.FC = () => {
         tabs={[
           {
             key: '63119',
-            buttonLabel: 'Small Business',
+            buttonLabel: 'Following',
             component() {
-              return <div>Small Business</div>
+              return <div>Following</div>
             },
           },
           {
@@ -27,10 +27,24 @@ const PageTabs: React.FC = () => {
             },
           },
           {
-            key: '8433',
+            key: '64048',
             buttonLabel: 'Living',
             component() {
               return <div>Living</div>
+            },
+          },
+          {
+            key: '46250',
+            buttonLabel: 'Health',
+            component() {
+              return <div>Health</div>
+            },
+          },
+          {
+            key: '44589',
+            buttonLabel: 'Beauty',
+            component() {
+              return <div>Beauty</div>
             },
           },
         ]}
@@ -43,16 +57,5 @@ const PageTabs: React.FC = () => {
     </>
   )
 }
-
-const HorizontalScroller = styled.div`
-  width: 100%;
-  height: 5rem;
-  overflow-x: scroll;
-  background-color: red;
-`
-
-const ScrollEnabler = styled.div`
-  width: 200vw;
-`
 
 export default PageTabs

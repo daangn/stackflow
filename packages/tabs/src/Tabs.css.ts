@@ -106,6 +106,11 @@ export const tabBarItem = recipe({
         verticalAlign: 'top',
         padding: `${vars.tabBar.item.verticalPadding} ${vars.tabBar.item.inlineHorizontalPadding}`,
         marginRight: vars.tabBar.item.inlineGap,
+        selectors: {
+          ['&:last-of-type']: {
+            marginRight: '0',
+          },
+        },
       },
     },
   },
