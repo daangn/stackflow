@@ -1,10 +1,9 @@
 import { useCallback } from 'react'
 
-import { useStore, useStoreActions } from '../store'
+import { useScreenInstances } from '../globalState'
 
 export function useReplace() {
-  const store = useStore()
-  const { insertScreenInstance } = useStoreActions()
+  const { screenInstancePtr, insertScreenInstance } = useScreenInstances()
 
   const replace = useCallback(
     ({
@@ -18,8 +17,6 @@ export function useReplace() {
       as: string
       present: boolean
     }) => {
-      const { screenInstancePtr } = store.getState()
-
       insertScreenInstance({
         ptr: screenInstancePtr - 1,
         screenInstance: {
@@ -30,7 +27,7 @@ export function useReplace() {
         },
       })
     },
-    []
+    [screenInstancePtr, insertScreenInstance]
   )
 
   return replace

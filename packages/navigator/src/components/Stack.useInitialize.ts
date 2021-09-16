@@ -1,10 +1,9 @@
 import { useEffect } from 'react'
 import { matchPath, useHistory, useLocation } from 'react-router-dom'
 
-import { useScreens } from '../globalState'
+import { useScreenInstances, useScreens } from '../globalState'
 import { NavigatorParamKeys } from '../helpers'
 import { useUniqueId } from '../hooks'
-import { useStore } from '../store'
 import { usePush } from './Stack.usePush'
 
 function useInitialize() {
@@ -13,8 +12,7 @@ function useInitialize() {
   const history = useHistory()
 
   const { screens } = useScreens()
-
-  const store = useStore()
+  const { screenInstances } = useScreenInstances()
 
   const push = usePush()
 
@@ -32,8 +30,6 @@ function useInitialize() {
     const screenInstanceId = uid()
     searchParams.set(NavigatorParamKeys.SCREEN_INSTANCE_ID, screenInstanceId)
 
-    const { screenInstances } = store.getState()
-
     if (screenInstances.length === 0) {
       const matchScreen = Object.values(screens).find(
         (screen) =>
@@ -49,14 +45,14 @@ function useInitialize() {
           as: location.pathname,
         })
       }
-    }
 
-    history.replace(`${location.pathname}?${searchParams.toString()}`)
+      history.replace(`${location.pathname}?${searchParams.toString()}`)
+    }
 
     return () => {
       window.__KARROTFRAME__ = false
     }
-  }, [screens])
+  }, [screens, screenInstances])
 }
 
 export default useInitialize

@@ -1,10 +1,10 @@
 import { useCallback } from 'react'
 
-import { useStore, useStoreActions } from '../store'
+import { useScreenInstances } from '../globalState'
 
 function usePop() {
-  const store = useStore()
-  const { setScreenInstancePtr } = useStoreActions()
+  const { screenInstancePtr, screenInstancePromiseMap, setScreenInstancePtr } =
+    useScreenInstances()
 
   const pop = useCallback(
     ({
@@ -14,19 +14,16 @@ function usePop() {
       depth: number
       targetScreenInstanceId?: string
     }) => {
-      const { screenInstancePromises, screenInstancePtr } = store.getState()
       if (targetScreenInstanceId) {
-        const promise = screenInstancePromises[targetScreenInstanceId]
+        const promise = screenInstancePromiseMap[targetScreenInstanceId]
 
-        if (promise && !promise.popped) {
-          promise.resolve(null)
+        if (promise) {
+          setTimeout(() => promise.resolve(null), 0)
         }
       }
-      setScreenInstancePtr({
-        ptr: screenInstancePtr - depth,
-      })
+      setScreenInstancePtr(screenInstancePtr - depth)
     },
-    []
+    [screenInstancePtr, screenInstancePromiseMap, setScreenInstancePtr]
   )
 
   return pop

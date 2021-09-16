@@ -2,9 +2,9 @@ import { useCallback, useMemo } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 
 import { useScreenInstance } from './contexts'
+import { useScreenInstances } from './globalState'
 import { getNavigatorParams, NavigatorParamKeys } from './helpers'
 import { useUniqueId } from './hooks'
-import { useStore, useStoreActions } from './store'
 
 export function useNavigator() {
   const history = useHistory()
@@ -12,8 +12,12 @@ export function useNavigator() {
   const screenInfo = useScreenInstance()
   const { uid } = useUniqueId()
 
-  const store = useStore()
-  const { addScreenInstancePromise } = useStoreActions()
+  const {
+    screenInstances,
+    screenInstancePtr,
+    screenInstancePromiseMap,
+    addScreenInstancePromise,
+  } = useScreenInstances()
 
   const searchParams = new URLSearchParams(location.search)
   const { present, screenInstanceId } = getNavigatorParams(searchParams)
@@ -41,7 +45,6 @@ export function useNavigator() {
           screenInstanceId: screenInfo.screenInstanceId,
           screenInstancePromise: {
             resolve,
-            popped: false,
           },
         })
 
@@ -83,9 +86,6 @@ export function useNavigator() {
 
   const pop = useCallback(
     (depth = 1) => {
-      const { screenInstances, screenInstancePtr, screenInstancePromises } =
-        store.getState()
-
       const targetScreenInstance = screenInstances[screenInstancePtr - depth]
 
       const backwardCount = screenInstances
@@ -97,7 +97,8 @@ export function useNavigator() {
         .reduce((acc, current) => acc + current + 1, 0)
 
       const targetPromise =
-        targetScreenInstance && screenInstancePromises[targetScreenInstance.id]
+        targetScreenInstance &&
+        screenInstancePromiseMap[targetScreenInstance.id]
       let _data: any = null
 
       const dispose = history.listen(() => {
@@ -118,10 +119,6 @@ export function useNavigator() {
         data: T
       ) {
         _data = data
-
-        if (targetPromise) {
-          targetPromise.popped = true
-        }
       }
 
       Promise.resolve().then(() => {
@@ -132,7 +129,7 @@ export function useNavigator() {
         send,
       }
     },
-    [history]
+    [screenInstances, screenInstancePtr, screenInstancePromiseMap, history]
   )
 
   return useMemo(
