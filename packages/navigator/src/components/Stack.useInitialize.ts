@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { matchPath, useHistory, useLocation } from 'react-router-dom'
 
+import { useScreens } from '../globalState'
 import { NavigatorParamKeys } from '../helpers'
 import { useUniqueId } from '../hooks'
 import { useStore } from '../store'
@@ -11,6 +12,8 @@ function useInitialize() {
   const location = useLocation()
   const history = useHistory()
 
+  const { screens } = useScreens()
+
   const store = useStore()
 
   const push = usePush()
@@ -20,7 +23,7 @@ function useInitialize() {
       return
     }
     if (window.__KARROTFRAME__) {
-      throw new Error('Only one Navigator is allowed in an app')
+      return console.error('Only one Navigator is allowed in an app')
     }
 
     window.__KARROTFRAME__ = true
@@ -29,7 +32,7 @@ function useInitialize() {
     const screenInstanceId = uid()
     searchParams.set(NavigatorParamKeys.SCREEN_INSTANCE_ID, screenInstanceId)
 
-    const { screens, screenInstances } = store.getState()
+    const { screenInstances } = store.getState()
 
     if (screenInstances.length === 0) {
       const matchScreen = Object.values(screens).find(
@@ -53,7 +56,7 @@ function useInitialize() {
     return () => {
       window.__KARROTFRAME__ = false
     }
-  }, [])
+  }, [screens])
 }
 
 export default useInitialize

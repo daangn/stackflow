@@ -52,9 +52,6 @@ export interface IScreenInstancePromise {
 }
 
 export interface GlobalState {
-  screens: {
-    [screenId: string]: IScreen | undefined
-  }
   screenInstances: IScreenInstance[]
   screenInstancePtr: number
   screenInstanceOptions: {
@@ -71,7 +68,6 @@ export const StoreProvider: React.FC = (props) => {
   const store = useMemo(
     () =>
       createStore<GlobalState>(() => ({
-        screens: {},
         screenInstances: [],
         screenInstancePtr: -1,
         screenInstanceOptions: {},
@@ -121,29 +117,6 @@ export function useStoreSelector<V>(selector: (state: GlobalState) => V): V {
 
 export function useStoreActions() {
   const store = useStore()
-
-  const registerScreen = useCallback(
-    ({ screen }: { screen: IScreen }) => {
-      store.setState((prevState) => ({
-        ...prevState,
-        screens: {
-          ...prevState.screens,
-          [screen.id]: screen,
-        },
-      }))
-
-      return function unregister() {
-        store.setState((prevState) => ({
-          ...prevState,
-          screens: {
-            ...prevState.screens,
-            [screen.id]: undefined,
-          },
-        }))
-      }
-    },
-    [store]
-  )
 
   const addScreenInstanceOption = useCallback(
     ({
@@ -247,7 +220,6 @@ export function useStoreActions() {
 
   return useMemo(
     () => ({
-      registerScreen,
       addScreenInstanceOption,
       addScreenInstancePromise,
       mapScreenInstance,
@@ -256,7 +228,6 @@ export function useStoreActions() {
       setScreenInstancePtr,
     }),
     [
-      registerScreen,
       addScreenInstanceOption,
       addScreenInstancePromise,
       mapScreenInstance,

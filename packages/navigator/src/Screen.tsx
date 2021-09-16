@@ -4,6 +4,7 @@ import {
   ScreenInstanceProvider,
   ScreenInstanceSetNavbarProvider,
 } from './contexts'
+import { useScreens } from './globalState'
 import { INavbarOptions, useStoreActions } from './store'
 
 interface IScreenProps {
@@ -19,7 +20,8 @@ interface IScreenProps {
 }
 const Screen: React.FC<IScreenProps> = (props) => {
   const { component: Component } = props
-  const { registerScreen, addScreenInstanceOption } = useStoreActions()
+  const { registerScreen } = useScreens()
+  const { addScreenInstanceOption } = useStoreActions()
 
   useEffect(() => {
     if (!props.children && !Component) {
@@ -30,41 +32,39 @@ const Screen: React.FC<IScreenProps> = (props) => {
     const screenId = props.path
 
     const unregisterScreen = registerScreen({
-      screen: {
-        id: screenId,
-        path: props.path,
-        Component({ screenInstanceId, as, isTop, isRoot }) {
-          const setNavbar = useCallback(
-            (navbar: INavbarOptions) => {
-              addScreenInstanceOption({
-                screenInstanceId,
-                screenInstanceOption: {
-                  navbar,
-                },
-              })
-            },
-            [addScreenInstanceOption, screenInstanceId]
-          )
-
-          const screenInstanceContext = useMemo(
-            () => ({
+      id: screenId,
+      path: props.path,
+      Component({ screenInstanceId, as, isTop, isRoot }) {
+        const setNavbar = useCallback(
+          (navbar: INavbarOptions) => {
+            addScreenInstanceOption({
               screenInstanceId,
-              as,
-              isTop,
-              isRoot,
-              path: props.path,
-            }),
-            [screenInstanceId, as, isTop, isRoot, props.path]
-          )
+              screenInstanceOption: {
+                navbar,
+              },
+            })
+          },
+          [addScreenInstanceOption, screenInstanceId]
+        )
 
-          return (
-            <ScreenInstanceProvider value={screenInstanceContext}>
-              <ScreenInstanceSetNavbarProvider value={setNavbar}>
-                {Component ? <Component /> : props.children}
-              </ScreenInstanceSetNavbarProvider>
-            </ScreenInstanceProvider>
-          )
-        },
+        const screenInstanceContext = useMemo(
+          () => ({
+            screenInstanceId,
+            as,
+            isTop,
+            isRoot,
+            path: props.path,
+          }),
+          [screenInstanceId, as, isTop, isRoot, props.path]
+        )
+
+        return (
+          <ScreenInstanceProvider value={screenInstanceContext}>
+            <ScreenInstanceSetNavbarProvider value={setNavbar}>
+              {Component ? <Component /> : props.children}
+            </ScreenInstanceSetNavbarProvider>
+          </ScreenInstanceProvider>
+        )
       },
     })
 
