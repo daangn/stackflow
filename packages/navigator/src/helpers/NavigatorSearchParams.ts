@@ -9,12 +9,15 @@ export function makeNavigatorSearchParams(
     screenInstanceId,
     present,
   }: {
-    screenInstanceId: string
+    screenInstanceId?: string
     present?: boolean
   }
 ) {
   const searchParams = new URLSearchParams(init ?? '')
-  searchParams.set(K.SCREEN_INSTANCE_ID, screenInstanceId)
+
+  if (screenInstanceId) {
+    searchParams.set(K.SCREEN_INSTANCE_ID, screenInstanceId)
+  }
 
   if (present) {
     searchParams.set(K.IS_PRESENT, 'true')
@@ -36,12 +39,8 @@ export function parseNavigatorSearchParams(
 ) {
   const searchParams = new URLSearchParams(init)
 
-  const screenInstanceId = searchParams.get(K.SCREEN_INSTANCE_ID)
+  const screenInstanceId = searchParams.get(K.SCREEN_INSTANCE_ID) ?? undefined
   const present = searchParams.get(K.IS_PRESENT) === 'true'
-
-  if (!screenInstanceId) {
-    throw new Error('screenInstanceId not found')
-  }
 
   return makeNavigatorSearchParams(null, {
     screenInstanceId,
