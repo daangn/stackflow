@@ -13,7 +13,7 @@ export function makeNavigatorSearchParams(
     present?: boolean
   }
 ) {
-  const searchParams = new URLSearchParams(init ?? '')
+  const searchParams = new URLSearchParams(init ?? undefined)
 
   if (screenInstanceId) {
     searchParams.set(K.SCREEN_INSTANCE_ID, screenInstanceId)
