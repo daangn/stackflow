@@ -3,11 +3,11 @@ import { matchPath, useHistory, useLocation } from 'react-router-dom'
 
 import { useScreenInstances, useScreens } from '../globalState'
 import { NavigatorParamKeys } from '../helpers'
-import { useUniqueId } from '../hooks'
+import { useIncrementalId } from '../hooks'
 import { usePush } from './Stack.usePush'
 
 function useInitialize() {
-  const { uid } = useUniqueId()
+  const makeId = useIncrementalId()
   const location = useLocation()
   const history = useHistory()
 
@@ -27,7 +27,7 @@ function useInitialize() {
     window.__KARROTFRAME__ = true
 
     const searchParams = new URLSearchParams(location.search)
-    const screenInstanceId = uid()
+    const screenInstanceId = makeId()
     searchParams.set(NavigatorParamKeys.SCREEN_INSTANCE_ID, screenInstanceId)
 
     if (screenInstances.length === 0) {

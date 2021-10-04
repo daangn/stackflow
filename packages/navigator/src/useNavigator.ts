@@ -4,13 +4,13 @@ import { useHistory, useLocation } from 'react-router-dom'
 import { useScreenInstance } from './components/Stack.ScreenInstanceContext'
 import { useScreenInstances } from './globalState'
 import { getNavigatorParams, NavigatorParamKeys } from './helpers'
-import { useUniqueId } from './hooks'
+import { useIncrementalId } from './hooks'
 
 export function useNavigator() {
   const history = useHistory()
   const location = useLocation()
   const screenInfo = useScreenInstance()
-  const { uid } = useUniqueId()
+  const makeId = useIncrementalId()
 
   const {
     screenInstances,
@@ -35,7 +35,7 @@ export function useNavigator() {
       new Promise((resolve) => {
         const { pathname, searchParams } = new URL(to, /* dummy */ 'file://')
 
-        searchParams.set(NavigatorParamKeys.SCREEN_INSTANCE_ID, uid())
+        searchParams.set(NavigatorParamKeys.SCREEN_INSTANCE_ID, makeId())
 
         if (options?.present) {
           searchParams.set(NavigatorParamKeys.PRESENT, 'true')
@@ -66,7 +66,7 @@ export function useNavigator() {
       const { pathname, searchParams } = new URL(to, /* dummy */ 'file://')
 
       if (options?.animate) {
-        searchParams.set(NavigatorParamKeys.SCREEN_INSTANCE_ID, uid())
+        searchParams.set(NavigatorParamKeys.SCREEN_INSTANCE_ID, makeId())
       } else {
         if (screenInstanceId) {
           searchParams.set(

@@ -1,2 +1,2 @@
 export * from './useHistoryEffect'
-export * from './useUniqueId'
+export * from './useIncrementalId'
