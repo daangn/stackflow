@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { useLocation } from 'react-router-dom'
 
-import { useScreenInstance } from './components/Stack.ScreenInstanceContext'
+import { useScreenInstance } from './components/Stack.ContextScreenInstance'
 
 export function useQueryParams<
   T extends { [key in keyof T]: string } = {}

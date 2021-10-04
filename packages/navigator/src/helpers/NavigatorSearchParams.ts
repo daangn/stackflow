@@ -1,4 +1,4 @@
-const enum K {
+enum K {
   SCREEN_INSTANCE_ID = '_si',
   IS_PRESENT = '_present',
 }

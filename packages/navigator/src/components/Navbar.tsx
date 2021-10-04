@@ -7,7 +7,7 @@ import { vars } from '../Navigator.css'
 import { INavigatorTheme } from '../types'
 import { useNavigator } from '../useNavigator'
 import * as css from './Navbar.css'
-import { useScreenHelmet } from './Stack.ScreenHelmetContext'
+import { useScreenHelmet } from './Stack.ContextScreenHelmet'
 
 interface INavbarProps {
   screenInstanceId: string
@@ -21,7 +21,7 @@ interface INavbarProps {
 }
 const Navbar: React.FC<INavbarProps> = (props) => {
   const { pop } = useNavigator()
-  const { screenHelmetOption } = useScreenHelmet()
+  const { screenHelmetProps } = useScreenHelmet()
 
   const android = props.theme === 'Android'
   const cupertino = props.theme === 'Cupertino'
@@ -61,7 +61,7 @@ const Navbar: React.FC<INavbarProps> = (props) => {
         window.removeEventListener('resize', onResize)
       }
     }
-  }, [screenHelmetOption])
+  }, [screenHelmetProps])
 
   const onBackClick = () => {
     pop()
@@ -70,14 +70,14 @@ const Navbar: React.FC<INavbarProps> = (props) => {
   const closeButton =
     props.onClose &&
     props.isRoot &&
-    (screenHelmetOption.customCloseButton ? (
+    (screenHelmetProps.customCloseButton ? (
       <a
         className={css.closeButton}
         role="text"
         aria-label={props.closeButtonAriaLabel}
         onClick={props.onClose}
       >
-        {screenHelmetOption.customCloseButton}
+        {screenHelmetProps.customCloseButton}
       </a>
     ) : (
       <a
@@ -92,14 +92,14 @@ const Navbar: React.FC<INavbarProps> = (props) => {
 
   const backButton =
     !props.isRoot &&
-    (screenHelmetOption.customBackButton ? (
+    (screenHelmetProps.customBackButton ? (
       <a
         className={css.backButton}
         role="text"
         aria-label={props.backButtonAriaLabel}
         onClick={onBackClick}
       >
-        {screenHelmetOption.customBackButton}
+        {screenHelmetProps.customBackButton}
       </a>
     ) : (
       <a
@@ -117,12 +117,12 @@ const Navbar: React.FC<INavbarProps> = (props) => {
     ))
 
   const isLeft = !!(
-    (screenHelmetOption.closeButtonLocation === 'left' && closeButton) ||
+    (screenHelmetProps.closeButtonLocation === 'left' && closeButton) ||
     backButton ||
-    screenHelmetOption.appendLeft
+    screenHelmetProps.appendLeft
   )
 
-  const noBorder = screenHelmetOption.noBorder
+  const noBorder = screenHelmetProps.noBorder
 
   return (
     <div
@@ -142,9 +142,9 @@ const Navbar: React.FC<INavbarProps> = (props) => {
       >
         <div className={css.flex}>
           <div className={css.left}>
-            {screenHelmetOption.closeButtonLocation === 'left' && closeButton}
+            {screenHelmetProps.closeButtonLocation === 'left' && closeButton}
             {backButton}
-            {screenHelmetOption.appendLeft}
+            {screenHelmetProps.appendLeft}
           </div>
           <div
             className={css.center({
@@ -159,12 +159,12 @@ const Navbar: React.FC<INavbarProps> = (props) => {
                 cupertino: cupertino ? true : undefined,
               })}
             >
-              {typeof screenHelmetOption.title === 'string' ? (
+              {typeof screenHelmetProps.title === 'string' ? (
                 <div className={css.centerMainText}>
-                  {screenHelmetOption.title}
+                  {screenHelmetProps.title}
                 </div>
               ) : (
-                screenHelmetOption.title
+                screenHelmetProps.title
               )}
             </div>
             <div
@@ -179,8 +179,8 @@ const Navbar: React.FC<INavbarProps> = (props) => {
               android: android ? true : undefined,
             })}
           >
-            {screenHelmetOption.appendRight}
-            {screenHelmetOption.closeButtonLocation === 'right' && closeButton}
+            {screenHelmetProps.appendRight}
+            {screenHelmetProps.closeButtonLocation === 'right' && closeButton}
           </div>
         </div>
       </div>

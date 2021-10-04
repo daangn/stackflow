@@ -5,7 +5,7 @@ import { useNavigator } from '../useNavigator'
 import * as css from './Card.css'
 import { makeTranslation } from './Card.translation'
 import Navbar from './Navbar'
-import { useScreenHelmet } from './Stack.ScreenHelmetContext'
+import { useScreenHelmet } from './Stack.ContextScreenHelmet'
 
 interface ICardProps {
   theme: INavigatorTheme
@@ -23,7 +23,7 @@ interface ICardProps {
 }
 const Card: React.FC<ICardProps> = (props) => {
   const { pop } = useNavigator()
-  const { screenHelmetOption } = useScreenHelmet()
+  const { screenHelmetVisible, screenHelmetProps } = useScreenHelmet()
   const [popped, setPopped] = useState(false)
 
   const dimRef = useRef<HTMLDivElement>(null)
@@ -109,17 +109,17 @@ const Card: React.FC<ICardProps> = (props) => {
   const onTopClick = useCallback(() => {
     const $frame = frameRef.current
 
-    if (!screenHelmetOption.disableScrollToTop && $frame) {
+    if (!screenHelmetProps.disableScrollToTop && $frame) {
       $frame.scroll({
         top: 0,
         behavior: 'smooth',
       })
     }
 
-    screenHelmetOption.onTopClick?.()
-  }, [screenHelmetOption])
+    screenHelmetProps.onTopClick?.()
+  }, [screenHelmetProps])
 
-  const isNavbarVisible = screenHelmetOption.visible ?? false
+  const isNavbarVisible = screenHelmetVisible ?? false
 
   return (
     <div ref={props.nodeRef} className={css.container}>

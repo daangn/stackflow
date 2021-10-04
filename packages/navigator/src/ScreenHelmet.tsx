@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react'
 
 import {
-  makeScreenHelmetDefaultOption,
+  makeScreenHelmetDefaultProps,
   useScreenHelmet,
-} from './components/Stack.ScreenHelmetContext'
+} from './components/Stack.ContextScreenHelmet'
 
-interface IScreenHelmetProps {
+export interface IScreenHelmetProps {
   /**
    * title
    */
@@ -54,20 +54,24 @@ interface IScreenHelmetProps {
   onTopClick?: () => void
 }
 const ScreenHelmet: React.FC<IScreenHelmetProps> = (props) => {
-  const { setScreenHelmetOption, clearScreenHelmetOption } = useScreenHelmet()
+  const {
+    setScreenHelmetProps,
+    setScreenHelmetVisible,
+    resetScreenHelmetProps,
+  } = useScreenHelmet()
 
   useEffect(() => {
-    setScreenHelmetOption({
-      ...makeScreenHelmetDefaultOption(),
+    setScreenHelmetProps({
+      ...makeScreenHelmetDefaultProps(),
       ...Object.entries(props).reduce(
         (a, [k, v]) => (v === undefined || v === null ? a : ((a[k] = v), a)),
         {}
       ),
-      visible: true,
     })
+    setScreenHelmetVisible(true)
   }, [props])
 
-  useEffect(() => clearScreenHelmetOption, [clearScreenHelmetOption])
+  useEffect(() => resetScreenHelmetProps, [resetScreenHelmetProps])
 
   return null
 }

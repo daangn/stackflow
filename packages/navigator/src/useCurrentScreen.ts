@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 
-import { useScreenInstance } from './components/Stack.ScreenInstanceContext'
+import { useScreenInstance } from './components/Stack.ContextScreenInstance'
 
 export function useCurrentScreen() {
   const { isTop, isRoot } = useScreenInstance()

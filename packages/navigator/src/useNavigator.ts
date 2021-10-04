@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 
-import { useScreenInstance } from './components/Stack.ScreenInstanceContext'
+import { useScreenInstance } from './components/Stack.ContextScreenInstance'
 import { useScreenInstances } from './globalState'
 import {
   makeNavigatorSearchParams,
