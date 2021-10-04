@@ -5,7 +5,7 @@ import React, {
   useReducer,
 } from 'react'
 
-const IncrementalIdContext = createContext<() => string>(null as any)
+const ContextIncrementalId = createContext<() => string>(null as any)
 
 export const ProviderIncrementalId: React.FC = (props) => {
   const [counter, increase] = useReducer((i) => i + 1, 0)
@@ -16,12 +16,12 @@ export const ProviderIncrementalId: React.FC = (props) => {
   }, [counter, increase])
 
   return (
-    <IncrementalIdContext.Provider value={id}>
+    <ContextIncrementalId.Provider value={id}>
       {props.children}
-    </IncrementalIdContext.Provider>
+    </ContextIncrementalId.Provider>
   )
 }
 
 export function useIncrementalId() {
-  return useContext(IncrementalIdContext)
+  return useContext(ContextIncrementalId)
 }
