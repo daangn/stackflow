@@ -5,6 +5,7 @@ import { useScreenInstance } from './components/Stack.ContextScreenInstance'
 import { useScreenInstances } from './globalState'
 import {
   makeNavigatorSearchParams,
+  nextTick,
   parseNavigatorSearchParams,
 } from './helpers'
 import { useIncrementalId } from './hooks'
@@ -72,7 +73,7 @@ export function useNavigator() {
         present,
       })
 
-      Promise.resolve().then(() => {
+      nextTick(() => {
         history.replace(`${pathname}?${navigatorSearchParams.toString()}`)
       })
     },
@@ -116,7 +117,7 @@ export function useNavigator() {
         _data = data
       }
 
-      Promise.resolve().then(() => {
+      nextTick(() => {
         history.go(-backwardCount)
       })
 

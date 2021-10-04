@@ -1,6 +1,7 @@
 import { useCallback } from 'react'
 
 import { useScreenInstances } from '../globalState'
+import { nextTick } from '../helpers'
 
 function usePop() {
   const { screenInstancePtr, screenInstancePromiseMap, setScreenInstancePtr } =
@@ -18,7 +19,7 @@ function usePop() {
         const promise = screenInstancePromiseMap[targetScreenInstanceId]
 
         if (promise) {
-          setTimeout(() => promise.resolve(null), 0)
+          nextTick(() => promise.resolve(null))
         }
       }
       setScreenInstancePtr(screenInstancePtr - depth)
