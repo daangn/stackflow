@@ -20,7 +20,7 @@ export interface IScreenInstancePromiseMap {
   [key: string]: IScreenInstancePromise
 }
 
-const ScreenInstancesContext = createContext<{
+const ContextScreenInstances = createContext<{
   screenInstances: IScreenInstance[]
   screenInstancePtr: number
   screenInstancePromiseMap: IScreenInstancePromiseMap
@@ -45,7 +45,7 @@ const ScreenInstancesContext = createContext<{
   }) => void
 }>(null as any)
 
-export const ScreenInstancesProvider: React.FC = (props) => {
+export const ProviderScreenInstances: React.FC = (props) => {
   const [screenInstances, setScreenInstances] = useState<IScreenInstance[]>([])
   const [screenInstancePtr, setScreenInstancePtr] = useState<number>(-1)
   const [screenInstancePromiseMap, setScreenInstancePromiseMap] =
@@ -134,12 +134,12 @@ export const ScreenInstancesProvider: React.FC = (props) => {
   )
 
   return (
-    <ScreenInstancesContext.Provider value={value}>
+    <ContextScreenInstances.Provider value={value}>
       {props.children}
-    </ScreenInstancesContext.Provider>
+    </ContextScreenInstances.Provider>
   )
 }
 
 export function useScreenInstances() {
-  return useContext(ScreenInstancesContext)
+  return useContext(ContextScreenInstances)
 }

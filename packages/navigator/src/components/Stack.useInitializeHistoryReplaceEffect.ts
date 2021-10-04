@@ -1,7 +1,7 @@
 import { matchPath } from 'react-router-dom'
 
 import { useScreens } from '../globalState'
-import { getNavigatorParams } from '../helpers'
+import { parseNavigatorSearchParams } from '../helpers'
 import { useHistoryReplaceEffect } from '../hooks'
 import { useReplace } from './Stack.useReplace'
 
@@ -12,8 +12,8 @@ export function useInitializeHistoryReplaceEffect() {
 
   useHistoryReplaceEffect(
     (location) => {
-      const searchParams = new URLSearchParams(location.search)
-      const { screenInstanceId, present } = getNavigatorParams(searchParams)
+      const navigatorSearchParams = parseNavigatorSearchParams(location.search)
+      const { screenInstanceId, present } = navigatorSearchParams.toObject()
 
       const matchScreen = Object.values(screens).find(
         (screen) =>

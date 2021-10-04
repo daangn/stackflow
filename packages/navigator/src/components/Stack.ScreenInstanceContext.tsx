@@ -1,18 +1,17 @@
 import React, { createContext, useContext, useMemo } from 'react'
 
-interface IScreenInstanceContext {
+const ContextScreenInstance = createContext<ProviderScreenInstanceProps>(
+  null as any
+)
+
+interface ProviderScreenInstanceProps {
   screenInstanceId: string
   screenPath: string
   as: string
   isTop: boolean
   isRoot: boolean
 }
-
-export const ScreenInstanceContext = createContext<IScreenInstanceContext>(
-  null as any
-)
-
-export const ScreenInstanceProvider: React.FC<IScreenInstanceContext> = (
+export const ProviderScreenInstance: React.FC<ProviderScreenInstanceProps> = (
   props
 ) => {
   const value = useMemo(
@@ -32,12 +31,12 @@ export const ScreenInstanceProvider: React.FC<IScreenInstanceContext> = (
     ]
   )
   return (
-    <ScreenInstanceContext.Provider value={value}>
+    <ContextScreenInstance.Provider value={value}>
       {props.children}
-    </ScreenInstanceContext.Provider>
+    </ContextScreenInstance.Provider>
   )
 }
 
 export function useScreenInstance() {
-  return useContext(ScreenInstanceContext)
+  return useContext(ContextScreenInstance)
 }

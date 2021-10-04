@@ -7,7 +7,7 @@ import React, {
 } from 'react'
 import compare from 'react-fast-compare'
 
-export interface IScreenHelmetOption {
+interface IScreenHelmetOption {
   visible: boolean
   title: React.ReactNode | null
   appendLeft: React.ReactNode | null
@@ -20,7 +20,7 @@ export interface IScreenHelmetOption {
   onTopClick?: () => void
 }
 
-export function initialScreenHelmetOption(): IScreenHelmetOption {
+export function makeScreenHelmetDefaultOption(): IScreenHelmetOption {
   return {
     visible: false,
     title: null,
@@ -35,15 +35,15 @@ export function initialScreenHelmetOption(): IScreenHelmetOption {
   }
 }
 
-export const ScreenHelmetContext = createContext<{
+const ContextScreenHelmet = createContext<{
   screenHelmetOption: IScreenHelmetOption
   setScreenHelmetOption: (option: IScreenHelmetOption) => void
   clearScreenHelmetOption: () => void
 }>(null as any)
 
-export const ScreenHelmetProvider: React.FC = (props) => {
+export const ProviderScreenHelmet: React.FC = (props) => {
   const [screenHelmetOption, _setScreenHelmetOption] =
-    useState<IScreenHelmetOption>(initialScreenHelmetOption())
+    useState<IScreenHelmetOption>(makeScreenHelmetDefaultOption())
 
   const setScreenHelmetOption = useCallback(
     (nextOption: IScreenHelmetOption) => {
@@ -55,7 +55,7 @@ export const ScreenHelmetProvider: React.FC = (props) => {
   )
 
   const clearScreenHelmetOption = useCallback(() => {
-    _setScreenHelmetOption(initialScreenHelmetOption())
+    _setScreenHelmetOption(makeScreenHelmetDefaultOption())
   }, [])
 
   const value = useMemo(
@@ -68,12 +68,12 @@ export const ScreenHelmetProvider: React.FC = (props) => {
   )
 
   return (
-    <ScreenHelmetContext.Provider value={value}>
+    <ContextScreenHelmet.Provider value={value}>
       {props.children}
-    </ScreenHelmetContext.Provider>
+    </ContextScreenHelmet.Provider>
   )
 }
 
 export function useScreenHelmet() {
-  return useContext(ScreenHelmetContext)
+  return useContext(ContextScreenHelmet)
 }

@@ -7,7 +7,7 @@ import React, {
 
 const IncrementalIdContext = createContext<() => string>(null as any)
 
-export const IncrementalIdProvider: React.FC = (props) => {
+export const ProviderIncrementalId: React.FC = (props) => {
   const [counter, increase] = useReducer((i) => i + 1, 0)
 
   const id = useCallback(() => {

@@ -11,8 +11,8 @@ import {
   container_exitActive,
   container_exitDone,
 } from './Card.css'
-import { ScreenHelmetProvider } from './Stack.ScreenHelmetContext'
-import { ScreenInstanceProvider } from './Stack.ScreenInstanceContext'
+import { ProviderScreenHelmet } from './Stack.ScreenHelmetContext'
+import { ProviderScreenInstance } from './Stack.ScreenInstanceContext'
 import useDepthChangeEffect from './Stack.useDepthChangeEffect'
 import useInitialize from './Stack.useInitialize'
 import useInitializeHistoryPopEffect from './Stack.useInitializeHistoryPopEffect'
@@ -74,14 +74,14 @@ const Stack: React.FC<IStackProps> = (props) => {
                 }}
                 unmountOnExit
               >
-                <ScreenInstanceProvider
+                <ProviderScreenInstance
                   screenInstanceId={screenInstance.id}
                   screenPath={screen.path}
                   as={screenInstance.as}
                   isTop={isTop}
                   isRoot={isRoot}
                 >
-                  <ScreenHelmetProvider>
+                  <ProviderScreenHelmet>
                     <Card
                       nodeRef={nodeRef}
                       beforeTopFrameOffsetRef={beforeTopFrameOffsetRef}
@@ -105,8 +105,8 @@ const Stack: React.FC<IStackProps> = (props) => {
                     >
                       <screen.Component />
                     </Card>
-                  </ScreenHelmetProvider>
-                </ScreenInstanceProvider>
+                  </ProviderScreenHelmet>
+                </ProviderScreenInstance>
               </CSSTransition>
             )}
           </NodeRef>

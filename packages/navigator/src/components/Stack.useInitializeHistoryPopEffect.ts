@@ -1,7 +1,7 @@
 import { matchPath } from 'react-router-dom'
 
 import { IScreenInstance, useScreenInstances, useScreens } from '../globalState'
-import { getNavigatorParams } from '../helpers'
+import { parseNavigatorSearchParams } from '../helpers'
 import { useHistoryPopEffect } from '../hooks'
 import usePop from './Stack.usePop'
 import { usePush } from './Stack.usePush'
@@ -24,8 +24,10 @@ function useInitializeHistoryPopEffect() {
             matchPath(location.pathname, { exact: true, path: screen.path })
         )
 
-        const searchParams = new URLSearchParams(location.search)
-        const { screenInstanceId } = getNavigatorParams(searchParams)
+        const navigatorSearchParams = parseNavigatorSearchParams(
+          location.search
+        )
+        const { screenInstanceId } = navigatorSearchParams.toObject()
 
         if (screenInstanceId && matchScreen) {
           const nextPtr = screenInstances.findIndex(
@@ -58,8 +60,10 @@ function useInitializeHistoryPopEffect() {
         }
       },
       forward(location) {
-        const searchParams = new URLSearchParams(location.search)
-        const { screenInstanceId, present } = getNavigatorParams(searchParams)
+        const navigatorSearchParams = parseNavigatorSearchParams(
+          location.search
+        )
+        const { screenInstanceId, present } = navigatorSearchParams.toObject()
 
         const matchScreen = Object.values(screens).find(
           (screen) =>

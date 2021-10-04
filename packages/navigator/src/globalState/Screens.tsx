@@ -16,12 +16,12 @@ interface IScreenMap {
   [key: string]: IScreen | undefined
 }
 
-const ScreensContext = createContext<{
+const ContextScreens = createContext<{
   screens: IScreenMap
   registerScreen: (screen: IScreen) => () => void
 }>(null as any)
 
-export const ScreensProvider: React.FC = (props) => {
+export const ProviderScreens: React.FC = (props) => {
   const [screens, setScreens] = useState<IScreenMap>({})
 
   const registerScreen = useCallback((screen: IScreen) => {
@@ -49,12 +49,12 @@ export const ScreensProvider: React.FC = (props) => {
   )
 
   return (
-    <ScreensContext.Provider value={value}>
+    <ContextScreens.Provider value={value}>
       {props.children}
-    </ScreensContext.Provider>
+    </ContextScreens.Provider>
   )
 }
 
 export function useScreens() {
-  return useContext(ScreensContext)
+  return useContext(ContextScreens)
 }

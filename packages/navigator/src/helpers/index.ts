@@ -1,1 +1,1 @@
-export * from './getNavigatorParams'
+export * from './NavigatorSearchParams'

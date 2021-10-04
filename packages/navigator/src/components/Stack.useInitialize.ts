@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { matchPath, useHistory, useLocation } from 'react-router-dom'
 
 import { useScreenInstances, useScreens } from '../globalState'
-import { NavigatorParamKeys } from '../helpers'
+import { makeNavigatorSearchParams } from '../helpers'
 import { useIncrementalId } from '../hooks'
 import { usePush } from './Stack.usePush'
 
@@ -26,9 +26,10 @@ function useInitialize() {
 
     window.__KARROTFRAME__ = true
 
-    const searchParams = new URLSearchParams(location.search)
     const screenInstanceId = makeId()
-    searchParams.set(NavigatorParamKeys.SCREEN_INSTANCE_ID, screenInstanceId)
+    const navigatorSearchParams = makeNavigatorSearchParams(location.search, {
+      screenInstanceId,
+    })
 
     if (screenInstances.length === 0) {
       const matchScreen = Object.values(screens).find(
@@ -46,7 +47,9 @@ function useInitialize() {
         })
       }
 
-      history.replace(`${location.pathname}?${searchParams.toString()}`)
+      history.replace(
+        `${location.pathname}?${navigatorSearchParams.toString()}`
+      )
     }
 
     return () => {

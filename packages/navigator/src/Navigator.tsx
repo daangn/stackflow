@@ -5,8 +5,8 @@ import { TransitionGroup } from 'react-transition-group'
 import { assignInlineVars } from '@vanilla-extract/dynamic'
 
 import Stack from './components/Stack'
-import { ScreenInstancesProvider, ScreensProvider } from './globalState'
-import { UniqueIdProvider } from './hooks'
+import { ProviderScreenInstances, ProviderScreens } from './globalState'
+import { ProviderIncrementalId } from './hooks'
 import * as css from './Navigator.css'
 import { INavigatorTheme } from './types'
 
@@ -75,9 +75,9 @@ const Navigator: React.FC<INavigatorProps> = ({
   children,
 }) => {
   let h = (
-    <UniqueIdProvider>
-      <ScreensProvider>
-        <ScreenInstancesProvider>
+    <ProviderIncrementalId>
+      <ProviderScreens>
+        <ProviderScreenInstances>
           <div
             className={[
               css.root({ theme }),
@@ -100,9 +100,9 @@ const Navigator: React.FC<INavigatorProps> = ({
               </Stack>
             </TransitionGroup>
           </div>
-        </ScreenInstancesProvider>
-      </ScreensProvider>
-    </UniqueIdProvider>
+        </ProviderScreenInstances>
+      </ProviderScreens>
+    </ProviderIncrementalId>
   )
 
   if (!useCustomRouter) {

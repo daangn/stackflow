@@ -3,7 +3,10 @@ import { useHistory, useLocation } from 'react-router-dom'
 
 import { useScreenInstance } from './components/Stack.ScreenInstanceContext'
 import { useScreenInstances } from './globalState'
-import { getNavigatorParams, NavigatorParamKeys } from './helpers'
+import {
+  makeNavigatorSearchParams,
+  parseNavigatorSearchParams,
+} from './helpers'
 import { useIncrementalId } from './hooks'
 
 export function useNavigator() {
@@ -19,8 +22,8 @@ export function useNavigator() {
     addScreenInstancePromise,
   } = useScreenInstances()
 
-  const searchParams = new URLSearchParams(location.search)
-  const { present, screenInstanceId } = getNavigatorParams(searchParams)
+  const navigatorSearchParams = parseNavigatorSearchParams(location.search)
+  const { present, screenInstanceId } = navigatorSearchParams.toObject()
 
   const push = useCallback(
     <T = object>(
@@ -35,11 +38,10 @@ export function useNavigator() {
       new Promise((resolve) => {
         const { pathname, searchParams } = new URL(to, /* dummy */ 'file://')
 
-        searchParams.set(NavigatorParamKeys.SCREEN_INSTANCE_ID, makeId())
-
-        if (options?.present) {
-          searchParams.set(NavigatorParamKeys.PRESENT, 'true')
-        }
+        const navigatorSearchParams = makeNavigatorSearchParams(searchParams, {
+          screenInstanceId: makeId(),
+          present: options?.present,
+        })
 
         addScreenInstancePromise({
           screenInstanceId: screenInfo.screenInstanceId,
@@ -48,7 +50,7 @@ export function useNavigator() {
           },
         })
 
-        history.push(`${pathname}?${searchParams.toString()}`)
+        history.push(`${pathname}?${navigatorSearchParams.toString()}`)
       }),
     [screenInfo, history]
   )
@@ -65,21 +67,12 @@ export function useNavigator() {
     ) => {
       const { pathname, searchParams } = new URL(to, /* dummy */ 'file://')
 
-      if (options?.animate) {
-        searchParams.set(NavigatorParamKeys.SCREEN_INSTANCE_ID, makeId())
-      } else {
-        if (screenInstanceId) {
-          searchParams.set(
-            NavigatorParamKeys.SCREEN_INSTANCE_ID,
-            screenInstanceId
-          )
-        }
-        if (present) {
-          searchParams.set(NavigatorParamKeys.PRESENT, 'true')
-        }
-      }
+      const navigatorSearchParams = makeNavigatorSearchParams(searchParams, {
+        screenInstanceId: options?.animate ? makeId() : screenInstanceId,
+        present,
+      })
 
-      history.replace(`${pathname}?${searchParams.toString()}`)
+      history.replace(`${pathname}?${navigatorSearchParams.toString()}`)
     },
     [history, screenInstanceId, present]
   )

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 
 import {
-  initialScreenHelmetOption,
+  makeScreenHelmetDefaultOption,
   useScreenHelmet,
 } from './components/Stack.ScreenHelmetContext'
 
@@ -58,7 +58,7 @@ const ScreenHelmet: React.FC<IScreenHelmetProps> = (props) => {
 
   useEffect(() => {
     setScreenHelmetOption({
-      ...initialScreenHelmetOption(),
+      ...makeScreenHelmetDefaultOption(),
       ...Object.entries(props).reduce(
         (a, [k, v]) => (v === undefined || v === null ? a : ((a[k] = v), a)),
         {}
