@@ -53,16 +53,12 @@ const App: React.FC = () => {
       tabs={[
         {
           key: 'tab_1',
-          buttonLabel: 'Tab 1'
-          render() {
-            return (
-              <div>Tab 1</div>
-            )
-          }
-        }
+          buttonLabel: 'Tab 1',
+          component: () => <div>Tab 1</div>,
+        },
       ]}
       onTabChange={(key) => {
-        setActiveKey(key)
+        setActiveTabKey(key)
       }}
     />
   )
