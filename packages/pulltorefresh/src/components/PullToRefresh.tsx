@@ -1,5 +1,6 @@
 import React, { useEffect, useImperativeHandle, useRef, useState } from 'react'
 
+import { PullToRefreshScrollContainerRefContext } from '../hooks/usePullToRefreshScrollContainerRef'
 import { ICustomSpinner } from '../types'
 import FallbackSpinner from './FallbackSpinner'
 import * as css from './PullToRefresh.css'
@@ -166,20 +167,24 @@ const PullToRefresh = React.forwardRef<PullToRefreshRef, PullToRefreshProps>(
     const Spinner = props.customSpinner ?? FallbackSpinner
 
     return (
-      <div
-        ref={containerRef}
-        className={[
-          css.container,
-          ...(props.className ? [props.className] : []),
-        ].join(' ')}
+      <PullToRefreshScrollContainerRefContext.Provider
+        value={scrollContainerRef}
       >
-        <div ref={spinnerContainerRef} className={css.spinnerContainer}>
-          <Spinner offset={offset} refreshing={refreshing} />
+        <div
+          ref={containerRef}
+          className={[
+            css.container,
+            ...(props.className ? [props.className] : []),
+          ].join(' ')}
+        >
+          <div ref={spinnerContainerRef} className={css.spinnerContainer}>
+            <Spinner offset={offset} refreshing={refreshing} />
+          </div>
+          <div ref={scrollContainerRef} className={css.scrollContainer}>
+            {props.children}
+          </div>
         </div>
-        <div ref={scrollContainerRef} className={css.scrollContainer}>
-          {props.children}
-        </div>
-      </div>
+      </PullToRefreshScrollContainerRefContext.Provider>
     )
   }
 )
