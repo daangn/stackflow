@@ -39,8 +39,16 @@ export function makeTranslation({
             const i = -1 * (translateX / fullWidth)
             const p = i % 1
 
-            const left = $tabBar.children[Math.floor(i) + 1] as HTMLDivElement
-            const right = $tabBar.children[Math.ceil(i) + 1] as HTMLDivElement
+            const left = $tabBar.children[Math.floor(i) + 1] as
+              | HTMLDivElement
+              | undefined
+            const right = $tabBar.children[Math.ceil(i) + 1] as
+              | HTMLDivElement
+              | undefined
+
+            if (!left || !right) {
+              return
+            }
 
             const { offsetLeft: xl, clientWidth: wl } = left
             const { offsetLeft: xr, clientWidth: wr } = right
@@ -64,10 +72,14 @@ export function makeTranslation({
             transition: transform 0s;
           `
           for (let i = 0; i < $tabMains.children.length; i++) {
-            ;($tabMains.children[i] as HTMLDivElement).style.cssText = css`
-              visibility: visible;
-              transition: visibility 0s 0s;
-            `
+            const $tabMain = $tabMains.children[i] as HTMLDivElement | undefined
+
+            if ($tabMain) {
+              $tabMain.style.cssText = css`
+                visibility: visible;
+                transition: visibility 0s 0s;
+              `
+            }
           }
 
           _rAFLock = false
@@ -80,7 +92,11 @@ export function makeTranslation({
         $tabMains.style.cssText = ''
 
         for (let i = 0; i < $tabMains.children.length; i++) {
-          ;($tabMains.children[i] as HTMLDivElement).style.cssText = ''
+          const $tabMain = $tabMains.children[i] as HTMLDivElement | undefined
+
+          if ($tabMain) {
+            $tabMain.style.cssText = ''
+          }
         }
       })
     },

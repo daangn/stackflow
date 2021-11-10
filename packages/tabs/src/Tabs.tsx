@@ -109,7 +109,9 @@ const Tabs: React.FC<ITabsProps> = (props) => {
       const nextTabIndex = props.tabs.findIndex((t) => t === tab)
 
       const $tabBar = tabBarRef.current
-      const $tabBarItem = $tabBar?.children[nextTabIndex + 1] as HTMLDivElement
+      const $tabBarItem = $tabBar?.children[nextTabIndex + 1] as
+        | HTMLDivElement
+        | undefined
 
       if (!$tabBar || !$tabBarItem) {
         return
