@@ -255,14 +255,16 @@ const Tabs: React.FC<ITabsProps> = (props) => {
 
     const setStyle = () => {
       if (props.useInlineButtons) {
-        const $tabBarItem = $tabBar.children[
-          activeTabIndex + 1
-        ] as HTMLDivElement
+        const $tabBarItem = $tabBar.children[activeTabIndex + 1] as
+          | HTMLDivElement
+          | undefined
 
-        setTabBarIndicatorTransform(`
-          translateX(${$tabBarItem.offsetLeft}px)
-          scaleX(${$tabBarItem.clientWidth / $tabBar.clientWidth})
-        `)
+        if ($tabBarItem) {
+          setTabBarIndicatorTransform(`
+            translateX(${$tabBarItem.offsetLeft}px)
+            scaleX(${$tabBarItem.clientWidth / $tabBar.clientWidth})
+          `)
+        }
       } else {
         setTabBarIndicatorTransform(`translateX(${activeTabIndex * 100}%)`)
       }
