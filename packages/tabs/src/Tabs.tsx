@@ -276,8 +276,8 @@ const Tabs: React.FC<ITabsProps> = (props) => {
       const $tabBar = tabBarRef.current
 
       if ($tabBar) {
-        setStyle()
         clearInterval(interval)
+        setStyle()
       }
     }, 64)
 
