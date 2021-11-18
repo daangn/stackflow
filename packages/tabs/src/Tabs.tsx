@@ -249,13 +249,13 @@ const Tabs: React.FC<ITabsProps> = (props) => {
   ])
 
   useEffect(() => {
-    const $tabBar = tabBarRef.current
-
-    if (!$tabBar) {
-      return
-    }
-
     const setStyle = () => {
+      const $tabBar = tabBarRef.current
+
+      if (!$tabBar) {
+        return
+      }
+
       if (props.useInlineButtons) {
         const $tabBarItem = $tabBar.children[activeTabIndex + 1] as
           | HTMLDivElement
@@ -272,7 +272,14 @@ const Tabs: React.FC<ITabsProps> = (props) => {
       }
     }
 
-    setStyle()
+    const interval = setInterval(() => {
+      const $tabBar = tabBarRef.current
+
+      if ($tabBar) {
+        setStyle()
+        clearInterval(interval)
+      }
+    }, 64)
 
     if (typeof window !== 'undefined') {
       window.addEventListener('resize', setStyle)
