@@ -15,16 +15,11 @@ import { makeState } from './Tabs.state'
 import { makeTranslation } from './Tabs.translation'
 import { TabsControllerContext } from './useTabsController'
 
-export interface ITab {
+export type ITab = {
   /**
    * Unique key for each tab
    */
   key: string
-
-  /**
-   * Tab button label
-   */
-  buttonLabel: string
 
   /**
    * Component to render in a tab
@@ -35,7 +30,25 @@ export interface ITab {
    * Whether capture or bubble in touch event
    */
   useCapture?: boolean
-}
+} & (
+  | {
+      /**
+       * Tab button label
+       */
+      buttonLabel: string
+    }
+  | {
+      /**
+       * Tab button label
+       */
+      buttonLabel: React.ReactNode
+
+      /**
+       * Tab button aria label
+       */
+      buttonAriaLabel: string
+    }
+)
 
 interface ITabsProps {
   /**
@@ -352,7 +365,9 @@ const Tabs: React.FC<ITabsProps> = (props) => {
             <a
               key={tab.key}
               role="tab"
-              aria-label={tab.buttonLabel}
+              aria-label={
+                'buttonAriaLabel' in tab ? tab.buttonAriaLabel : tab.buttonLabel
+              }
               className={css.tabBarItem({
                 active: props.activeTabKey === tab.key ? true : undefined,
                 inline: props.useInlineButtons,
