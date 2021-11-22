@@ -22,9 +22,9 @@ export type ITab = {
   key: string
 
   /**
-   * Component to render in a tab
+   * render in a tab
    */
-  component: React.ComponentType
+  render: () => React.ReactNode
 
   /**
    * Whether capture or bubble in touch event
@@ -379,14 +379,14 @@ const Tabs: React.FC<ITabsProps> = (props) => {
           ))}
         </div>
         <div ref={tabMainsRef} className={css.tabMains}>
-          {props.tabs.map(({ key, component: Component }) => (
+          {props.tabs.map(({ key, render }) => (
             <div
               key={key}
               className={css.tabMain({
                 active: props.activeTabKey === key ? true : undefined,
               })}
             >
-              {lazyMap[key] && <Component />}
+              {lazyMap[key] && render()}
             </div>
           ))}
         </div>

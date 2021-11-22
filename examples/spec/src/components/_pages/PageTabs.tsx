@@ -14,35 +14,35 @@ const PageTabs: React.FC = () => {
           {
             key: '63119',
             buttonLabel: 'Following',
-            component() {
+            render() {
               return <div>Following</div>
             },
           },
           {
             key: '21882',
             buttonLabel: 'Food & Beverage',
-            component() {
+            render() {
               return <div>Food & Beverage</div>
             },
           },
           {
             key: '64048',
             buttonLabel: 'Living',
-            component() {
+            render() {
               return <div>Living</div>
             },
           },
           {
             key: '46250',
             buttonLabel: 'Health',
-            component() {
+            render() {
               return <div>Health</div>
             },
           },
           {
             key: '44589',
             buttonLabel: 'Beauty',
-            component() {
+            render() {
               return <div>Beauty</div>
             },
           },
