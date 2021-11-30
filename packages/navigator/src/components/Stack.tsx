@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import { CSSTransition } from 'react-transition-group'
 
 import { useScreenInstances, useScreens } from '../globalState'
@@ -36,6 +36,10 @@ interface IStackProps {
 const Stack: React.FC<IStackProps> = (props) => {
   const beforeTopFrameOffsetRef = useRef<HTMLDivElement>(null)
 
+  const [transtionState, setTransitionState] = useState<
+    'idle' | 'enter-active' | 'exit-active'
+  >('idle')
+
   const { screens } = useScreens()
   const { screenInstances, screenInstancePtr } = useScreenInstances()
 
@@ -72,6 +76,18 @@ const Stack: React.FC<IStackProps> = (props) => {
                   exitActive: container_exitActive,
                   exitDone: container_exitDone,
                 }}
+                onEntering={() => {
+                  setTransitionState('enter-active')
+                }}
+                onEntered={() => {
+                  setTransitionState('idle')
+                }}
+                onExiting={() => {
+                  setTransitionState('exit-active')
+                }}
+                onExited={() => {
+                  setTransitionState('idle')
+                }}
                 unmountOnExit
               >
                 <ProviderScreenInstance
@@ -99,6 +115,7 @@ const Stack: React.FC<IStackProps> = (props) => {
                         screenInstanceIndex === screenInstancePtr - 1
                       }
                       isPresent={screenInstance.present}
+                      transitionState={transtionState}
                       backButtonAriaLabel={props.backButtonAriaLabel}
                       closeButtonAriaLabel={props.closeButtonAriaLabel}
                       onClose={props.onClose}

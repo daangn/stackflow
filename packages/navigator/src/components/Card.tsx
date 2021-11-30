@@ -17,6 +17,7 @@ interface ICardProps {
   isTop: boolean
   isBeforeTop: boolean
   isPresent: boolean
+  transitionState: 'idle' | 'enter-active' | 'exit-active'
   backButtonAriaLabel: string
   closeButtonAriaLabel: string
   onClose?: () => void
@@ -182,6 +183,12 @@ const Card: React.FC<ICardProps> = (props) => {
                   cupertino && props.isPresent ? true : undefined,
                 cupertinoAndIsNotPresent:
                   cupertino && !props.isPresent ? true : undefined,
+                hidden:
+                  !props.isTop &&
+                  !props.isBeforeTop &&
+                  props.transitionState === 'idle'
+                    ? true
+                    : undefined,
               })}
               ref={frameRef}
             >
