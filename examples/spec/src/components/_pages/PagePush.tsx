@@ -28,7 +28,7 @@ const PagePush: React.FC = () => {
           if (d) {
             setData(JSON.stringify(d))
           } else {
-            setData('')
+            setData('null')
           }
         }}
       >

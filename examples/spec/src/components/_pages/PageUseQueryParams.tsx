@@ -7,7 +7,7 @@ import { ScreenHelmet, useQueryParams } from '@karrotframe/navigator'
 const PageUseQueryParams: React.FC = () => {
   const history = useHistory()
   const { hello } = useQueryParams<{ hello: 'world' }>({
-    ignoreNestedRoutes: true,
+    ignoreNestedRoutes: false,
   })
 
   return (

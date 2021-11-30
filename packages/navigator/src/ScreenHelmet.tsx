@@ -1,8 +1,11 @@
 import React, { useEffect } from 'react'
 
-import { useScreenInstanceSetNavbar } from './contexts'
+import {
+  makeScreenHelmetDefaultProps,
+  useScreenHelmet,
+} from './components/Stack.ContextScreenHelmet'
 
-interface IScreenHelmetProps {
+export interface IScreenHelmetProps {
   /**
    * title
    */
@@ -51,49 +54,24 @@ interface IScreenHelmetProps {
   onTopClick?: () => void
 }
 const ScreenHelmet: React.FC<IScreenHelmetProps> = (props) => {
-  const setNavbar = useScreenInstanceSetNavbar()
+  const {
+    setScreenHelmetProps,
+    setScreenHelmetVisible,
+    resetScreenHelmetProps,
+  } = useScreenHelmet()
 
   useEffect(() => {
-    setNavbar({
-      visible: true,
-      title: props.title ?? null,
-      appendLeft: props.appendLeft ?? null,
-      appendRight: props.appendRight ?? null,
-      closeButtonLocation: props.closeButtonLocation ?? 'left',
-      customBackButton: props.customBackButton ?? null,
-      customCloseButton: props.customCloseButton ?? null,
-      disableScrollToTop: props.disableScrollToTop ?? false,
-      noBorder: props.noBorder ?? false,
-      onTopClick: props.onTopClick,
+    setScreenHelmetProps({
+      ...makeScreenHelmetDefaultProps(),
+      ...Object.entries(props).reduce(
+        (a, [k, v]) => (v === undefined || v === null ? a : ((a[k] = v), a)),
+        {}
+      ),
     })
-  }, [
-    props.title,
-    props.appendLeft,
-    props.appendRight,
-    props.closeButtonLocation,
-    props.customBackButton,
-    props.customCloseButton,
-    props.disableScrollToTop,
-    props.noBorder,
-    props.onTopClick,
-  ])
+    setScreenHelmetVisible(true)
+  }, [props])
 
-  useEffect(() => {
-    return () => {
-      setNavbar({
-        visible: false,
-        title: null,
-        appendLeft: null,
-        appendRight: null,
-        closeButtonLocation: 'left',
-        customBackButton: null,
-        customCloseButton: null,
-        disableScrollToTop: false,
-        noBorder: false,
-        onTopClick: undefined,
-      })
-    }
-  }, [])
+  useEffect(() => resetScreenHelmetProps, [resetScreenHelmetProps])
 
   return null
 }

@@ -236,6 +236,11 @@ export const frame = recipe({
         },
       },
     },
+    hidden: {
+      true: {
+        display: 'none',
+      },
+    },
   },
 })
 

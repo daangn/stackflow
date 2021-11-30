@@ -1,17 +1,18 @@
 import { useEffect } from 'react'
 import { matchPath, useHistory, useLocation } from 'react-router-dom'
 
-import { NavigatorParamKeys } from '../helpers'
-import { useUniqueId } from '../hooks'
-import { useStore } from '../store'
+import { useScreenInstances, useScreens } from '../globalState'
+import { makeNavigatorSearchParams } from '../helpers'
+import { useIncrementalId } from '../hooks'
 import { usePush } from './Stack.usePush'
 
 function useInitialize() {
-  const { uid } = useUniqueId()
+  const makeId = useIncrementalId()
   const location = useLocation()
   const history = useHistory()
 
-  const store = useStore()
+  const { screens } = useScreens()
+  const { screenInstances } = useScreenInstances()
 
   const push = usePush()
 
@@ -20,16 +21,15 @@ function useInitialize() {
       return
     }
     if (window.__KARROTFRAME__) {
-      throw new Error('Only one Navigator is allowed in an app')
+      return console.error('Only one Navigator is allowed in an app')
     }
 
     window.__KARROTFRAME__ = true
 
-    const searchParams = new URLSearchParams(location.search)
-    const screenInstanceId = uid()
-    searchParams.set(NavigatorParamKeys.SCREEN_INSTANCE_ID, screenInstanceId)
-
-    const { screens, screenInstances } = store.getState()
+    const screenInstanceId = makeId()
+    const navigatorSearchParams = makeNavigatorSearchParams(location.search, {
+      screenInstanceId,
+    })
 
     if (screenInstances.length === 0) {
       const matchScreen = Object.values(screens).find(
@@ -46,14 +46,16 @@ function useInitialize() {
           as: location.pathname,
         })
       }
-    }
 
-    history.replace(`${location.pathname}?${searchParams.toString()}`)
+      history.replace(
+        `${location.pathname}?${navigatorSearchParams.toString()}`
+      )
+    }
 
     return () => {
       window.__KARROTFRAME__ = false
     }
-  }, [])
+  }, [screens, screenInstances])
 }
 
 export default useInitialize

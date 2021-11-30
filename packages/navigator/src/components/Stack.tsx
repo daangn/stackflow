@@ -1,7 +1,7 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import { CSSTransition } from 'react-transition-group'
 
-import { useStoreSelector } from '../store'
+import { useScreenInstances, useScreens } from '../globalState'
 import { INavigatorTheme } from '../types'
 import NodeRef from './_lib/NodeRef'
 import Card from './Card'
@@ -11,6 +11,8 @@ import {
   container_exitActive,
   container_exitDone,
 } from './Card.css'
+import { ProviderScreenHelmet } from './Stack.ContextScreenHelmet'
+import { ProviderScreenInstance } from './Stack.ContextScreenInstance'
 import useDepthChangeEffect from './Stack.useDepthChangeEffect'
 import useInitialize from './Stack.useInitialize'
 import useInitializeHistoryPopEffect from './Stack.useInitializeHistoryPopEffect'
@@ -34,13 +36,12 @@ interface IStackProps {
 const Stack: React.FC<IStackProps> = (props) => {
   const beforeTopFrameOffsetRef = useRef<HTMLDivElement>(null)
 
-  const { screens, screenInstances, screenInstancePtr } = useStoreSelector(
-    (state) => ({
-      screens: state.screens,
-      screenInstances: state.screenInstances,
-      screenInstancePtr: state.screenInstancePtr,
-    })
-  )
+  const [transtionState, setTransitionState] = useState<
+    'idle' | 'enter-active' | 'exit-active'
+  >('idle')
+
+  const { screens } = useScreens()
+  const { screenInstances, screenInstancePtr } = useScreenInstances()
 
   useDepthChangeEffect(props.onDepthChange)
 
@@ -75,34 +76,54 @@ const Stack: React.FC<IStackProps> = (props) => {
                   exitActive: container_exitActive,
                   exitDone: container_exitDone,
                 }}
+                onEntering={() => {
+                  setTransitionState('enter-active')
+                }}
+                onEntered={() => {
+                  setTransitionState('idle')
+                }}
+                onExiting={() => {
+                  setTransitionState('exit-active')
+                }}
+                onExited={() => {
+                  setTransitionState('idle')
+                }}
                 unmountOnExit
               >
-                <Card
-                  nodeRef={nodeRef}
-                  beforeTopFrameOffsetRef={beforeTopFrameOffsetRef}
-                  theme={props.theme}
-                  screenPath={screen.path}
+                <ProviderScreenInstance
                   screenInstanceId={screenInstance.id}
-                  isRoot={screenInstanceIndex === 0}
-                  isTop={
-                    screenInstanceIndex >= screenInstancePtr ||
-                    (props.theme === 'Cupertino' &&
-                      screenInstances.length > screenInstanceIndex + 1 &&
-                      screenInstances[screenInstanceIndex + 1].present)
-                  }
-                  isBeforeTop={screenInstanceIndex === screenInstancePtr - 1}
-                  isPresent={screenInstance.present}
-                  backButtonAriaLabel={props.backButtonAriaLabel}
-                  closeButtonAriaLabel={props.closeButtonAriaLabel}
-                  onClose={props.onClose}
+                  screenPath={screen.path}
+                  as={screenInstance.as}
+                  isTop={isTop}
+                  isRoot={isRoot}
                 >
-                  <screen.Component
-                    screenInstanceId={screenInstance.id}
-                    as={screenInstance.as}
-                    isTop={isTop}
-                    isRoot={isRoot}
-                  />
-                </Card>
+                  <ProviderScreenHelmet>
+                    <Card
+                      nodeRef={nodeRef}
+                      beforeTopFrameOffsetRef={beforeTopFrameOffsetRef}
+                      theme={props.theme}
+                      screenPath={screen.path}
+                      screenInstanceId={screenInstance.id}
+                      isRoot={screenInstanceIndex === 0}
+                      isTop={
+                        screenInstanceIndex >= screenInstancePtr ||
+                        (props.theme === 'Cupertino' &&
+                          screenInstances.length > screenInstanceIndex + 1 &&
+                          screenInstances[screenInstanceIndex + 1].present)
+                      }
+                      isBeforeTop={
+                        screenInstanceIndex === screenInstancePtr - 1
+                      }
+                      isPresent={screenInstance.present}
+                      transitionState={transtionState}
+                      backButtonAriaLabel={props.backButtonAriaLabel}
+                      closeButtonAriaLabel={props.closeButtonAriaLabel}
+                      onClose={props.onClose}
+                    >
+                      <screen.Component />
+                    </Card>
+                  </ProviderScreenHelmet>
+                </ProviderScreenInstance>
               </CSSTransition>
             )}
           </NodeRef>

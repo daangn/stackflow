@@ -1,14 +1,16 @@
 import { matchPath } from 'react-router-dom'
 
-import { getNavigatorParams } from '../helpers'
+import { IScreenInstance, useScreenInstances, useScreens } from '../globalState'
+import { parseNavigatorSearchParams } from '../helpers'
 import { useHistoryPopEffect } from '../hooks'
-import { IScreenInstance, useStore, useStoreActions } from '../store'
 import usePop from './Stack.usePop'
 import { usePush } from './Stack.usePush'
 
 function useInitializeHistoryPopEffect() {
-  const store = useStore()
-  const { mapScreenInstance } = useStoreActions()
+  const { screens } = useScreens()
+
+  const { screenInstances, screenInstancePtr, mapScreenInstance } =
+    useScreenInstances()
 
   const push = usePush()
   const pop = usePop()
@@ -16,16 +18,16 @@ function useInitializeHistoryPopEffect() {
   useHistoryPopEffect(
     {
       backward(location) {
-        const { screens, screenInstances, screenInstancePtr } = store.getState()
-
         const matchScreen = Object.values(screens).find(
           (screen) =>
             screen &&
             matchPath(location.pathname, { exact: true, path: screen.path })
         )
 
-        const searchParams = new URLSearchParams(location.search)
-        const { screenInstanceId } = getNavigatorParams(searchParams)
+        const navigatorSearchParams = parseNavigatorSearchParams(
+          location.search
+        )
+        const { screenInstanceId } = navigatorSearchParams.toObject()
 
         if (screenInstanceId && matchScreen) {
           const nextPtr = screenInstances.findIndex(
@@ -58,9 +60,10 @@ function useInitializeHistoryPopEffect() {
         }
       },
       forward(location) {
-        const { screens, screenInstancePtr } = store.getState()
-        const searchParams = new URLSearchParams(location.search)
-        const { screenInstanceId, present } = getNavigatorParams(searchParams)
+        const navigatorSearchParams = parseNavigatorSearchParams(
+          location.search
+        )
+        const { screenInstanceId, present } = navigatorSearchParams.toObject()
 
         const matchScreen = Object.values(screens).find(
           (screen) =>
@@ -88,7 +91,7 @@ function useInitializeHistoryPopEffect() {
         }
       },
     },
-    [pop, push]
+    [screens, screenInstances, screenInstancePtr, mapScreenInstance, pop, push]
   )
 }
 

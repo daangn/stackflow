@@ -5,9 +5,9 @@ import { TransitionGroup } from 'react-transition-group'
 import { assignInlineVars } from '@vanilla-extract/dynamic'
 
 import Stack from './components/Stack'
-import { UniqueIdProvider } from './hooks'
+import { ProviderScreenInstances, ProviderScreens } from './globalState'
+import { ProviderIncrementalId } from './hooks'
 import * as css from './Navigator.css'
-import { StoreProvider } from './store'
 import { INavigatorTheme } from './types'
 
 declare global {
@@ -75,32 +75,34 @@ const Navigator: React.FC<INavigatorProps> = ({
   children,
 }) => {
   let h = (
-    <UniqueIdProvider>
-      <StoreProvider>
-        <div
-          className={[
-            css.root({ theme }),
-            ...(className ? [className] : []),
-          ].join(' ')}
-          style={assignInlineVars({
-            [css.vars.animationDuration]: animationDuration + 'ms',
-          })}
-        >
-          <TransitionGroup component={null}>
-            <Stack
-              animationDuration={animationDuration}
-              theme={theme}
-              onClose={onClose}
-              backButtonAriaLabel={backButtonAriaLabel}
-              closeButtonAriaLabel={closeButtonAriaLabel}
-              onDepthChange={onDepthChange}
-            >
-              {children}
-            </Stack>
-          </TransitionGroup>
-        </div>
-      </StoreProvider>
-    </UniqueIdProvider>
+    <ProviderIncrementalId>
+      <ProviderScreens>
+        <ProviderScreenInstances>
+          <div
+            className={[
+              css.root({ theme }),
+              ...(className ? [className] : []),
+            ].join(' ')}
+            style={assignInlineVars({
+              [css.vars.animationDuration]: animationDuration + 'ms',
+            })}
+          >
+            <TransitionGroup component={null}>
+              <Stack
+                animationDuration={animationDuration}
+                theme={theme}
+                onClose={onClose}
+                backButtonAriaLabel={backButtonAriaLabel}
+                closeButtonAriaLabel={closeButtonAriaLabel}
+                onDepthChange={onDepthChange}
+              >
+                {children}
+              </Stack>
+            </TransitionGroup>
+          </div>
+        </ProviderScreenInstances>
+      </ProviderScreens>
+    </ProviderIncrementalId>
   )
 
   if (!useCustomRouter) {

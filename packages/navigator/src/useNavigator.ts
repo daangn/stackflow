@@ -1,22 +1,30 @@
 import { useCallback, useMemo } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 
-import { useScreenInstance } from './contexts'
-import { getNavigatorParams, NavigatorParamKeys } from './helpers'
-import { useUniqueId } from './hooks'
-import { useStore, useStoreActions } from './store'
+import { useScreenInstance } from './components/Stack.ContextScreenInstance'
+import { useScreenInstances } from './globalState'
+import {
+  makeNavigatorSearchParams,
+  nextTick,
+  parseNavigatorSearchParams,
+} from './helpers'
+import { useIncrementalId } from './hooks'
 
 export function useNavigator() {
   const history = useHistory()
   const location = useLocation()
   const screenInfo = useScreenInstance()
-  const { uid } = useUniqueId()
+  const makeId = useIncrementalId()
 
-  const store = useStore()
-  const { addScreenInstancePromise } = useStoreActions()
+  const {
+    screenInstances,
+    screenInstancePtr,
+    screenInstancePromiseMap,
+    addScreenInstancePromise,
+  } = useScreenInstances()
 
-  const searchParams = new URLSearchParams(location.search)
-  const { present, screenInstanceId } = getNavigatorParams(searchParams)
+  const navigatorSearchParams = parseNavigatorSearchParams(location.search)
+  const { present, screenInstanceId } = navigatorSearchParams.toObject()
 
   const push = useCallback(
     <T = object>(
@@ -31,21 +39,19 @@ export function useNavigator() {
       new Promise((resolve) => {
         const { pathname, searchParams } = new URL(to, /* dummy */ 'file://')
 
-        searchParams.set(NavigatorParamKeys.SCREEN_INSTANCE_ID, uid())
-
-        if (options?.present) {
-          searchParams.set(NavigatorParamKeys.PRESENT, 'true')
-        }
+        const navigatorSearchParams = makeNavigatorSearchParams(searchParams, {
+          screenInstanceId: makeId(),
+          present: options?.present,
+        })
 
         addScreenInstancePromise({
           screenInstanceId: screenInfo.screenInstanceId,
           screenInstancePromise: {
             resolve,
-            popped: false,
           },
         })
 
-        history.push(`${pathname}?${searchParams.toString()}`)
+        history.push(`${pathname}?${navigatorSearchParams.toString()}`)
       }),
     [screenInfo, history]
   )
@@ -62,30 +68,20 @@ export function useNavigator() {
     ) => {
       const { pathname, searchParams } = new URL(to, /* dummy */ 'file://')
 
-      if (options?.animate) {
-        searchParams.set(NavigatorParamKeys.SCREEN_INSTANCE_ID, uid())
-      } else {
-        if (screenInstanceId) {
-          searchParams.set(
-            NavigatorParamKeys.SCREEN_INSTANCE_ID,
-            screenInstanceId
-          )
-        }
-        if (present) {
-          searchParams.set(NavigatorParamKeys.PRESENT, 'true')
-        }
-      }
+      const navigatorSearchParams = makeNavigatorSearchParams(searchParams, {
+        screenInstanceId: options?.animate ? makeId() : screenInstanceId,
+        present,
+      })
 
-      history.replace(`${pathname}?${searchParams.toString()}`)
+      nextTick(() => {
+        history.replace(`${pathname}?${navigatorSearchParams.toString()}`)
+      })
     },
     [history, screenInstanceId, present]
   )
 
   const pop = useCallback(
     (depth = 1) => {
-      const { screenInstances, screenInstancePtr, screenInstancePromises } =
-        store.getState()
-
       const targetScreenInstance = screenInstances[screenInstancePtr - depth]
 
       const backwardCount = screenInstances
@@ -97,7 +93,8 @@ export function useNavigator() {
         .reduce((acc, current) => acc + current + 1, 0)
 
       const targetPromise =
-        targetScreenInstance && screenInstancePromises[targetScreenInstance.id]
+        targetScreenInstance &&
+        screenInstancePromiseMap[targetScreenInstance.id]
       let _data: any = null
 
       const dispose = history.listen(() => {
@@ -118,13 +115,9 @@ export function useNavigator() {
         data: T
       ) {
         _data = data
-
-        if (targetPromise) {
-          targetPromise.popped = true
-        }
       }
 
-      Promise.resolve().then(() => {
+      nextTick(() => {
         history.go(-backwardCount)
       })
 
@@ -132,7 +125,7 @@ export function useNavigator() {
         send,
       }
     },
-    [history]
+    [screenInstances, screenInstancePtr, screenInstancePromiseMap, history]
   )
 
   return useMemo(

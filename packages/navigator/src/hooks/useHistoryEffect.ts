@@ -2,7 +2,7 @@ import { Action, Location } from 'history'
 import { DependencyList, useEffect, useRef } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 
-import { getNavigatorParams } from '../helpers'
+import { parseNavigatorSearchParams } from '../helpers'
 
 export function useHistoryPopEffect(
   callbacks: {
@@ -25,8 +25,9 @@ export function useHistoryPopEffect(
       return
     }
 
-    const searchParams = new URLSearchParams(location.search)
-    const { screenInstanceId } = getNavigatorParams(searchParams)
+    const navigatorSearchParams = parseNavigatorSearchParams(location.search)
+    const { screenInstanceId } = navigatorSearchParams.toObject()
+
     if (!screenInstanceId) {
       return
     }
