@@ -33,8 +33,7 @@
     "@vanilla-extract/dynamic": "^2.0.0",
     "history": "^4.7.8",
     "react-fast-compare": "^3.2.0",
-    "react-transition-group": "^4.4.2",
-    "zenscroll": "^4.0.2"
+    "react-transition-group": "^4.4.2"
   },
   "devDependencies": {
     "@babel/cli": "^7.11.6",
@@ -49,7 +48,6 @@
     "@types/react-router": "^5.1.16",
     "@types/react-router-dom": "^5.1.8",
     "@types/react-transition-group": "^4.4.2",
-    "@types/zenscroll": "^4.0.0",
     "@vanilla-extract/babel-plugin": "^1.1.0",
     "@vanilla-extract/css": "^1.6.0",
     "@vanilla-extract/css-utils": "^0.1.1",

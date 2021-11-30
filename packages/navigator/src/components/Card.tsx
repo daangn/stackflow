@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import zenscroll from 'zenscroll'
 
 import { INavigatorTheme } from '../types'
 import { useNavigator } from '../useNavigator'
@@ -111,8 +110,10 @@ const Card: React.FC<ICardProps> = (props) => {
     const $frame = frameRef.current
 
     if (!screenHelmetOption.disableScrollToTop && $frame) {
-      const scroller = zenscroll.createScroller($frame)
-      scroller.toY(0)
+      $frame.scroll({
+        top: 0,
+        behavior: 'smooth',
+      })
     }
 
     screenHelmetOption.onTopClick?.()

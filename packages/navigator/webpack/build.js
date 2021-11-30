@@ -51,7 +51,6 @@ module.exports = {
     /history/,
     /react-fast-compare/,
     /react-transition-group/,
-    /zenscroll/,
     /react/,
     /react-dom/,
     /react-router-dom/,
