@@ -64,7 +64,7 @@ interface ITabsProps {
   /**
    * Called when tab changed
    */
-  onTabChange: (key: string) => void
+  onTabChange: (key: string, info: { swiped: boolean }) => void
 
   /**
    * Class name appended to root div element
@@ -115,8 +115,8 @@ const Tabs: React.FC<ITabsProps> = (props) => {
   }, [props.disableSwipe])
 
   const move = useCallback(
-    (tab: ITab) => {
-      props.onTabChange(tab.key)
+    (tab: ITab, info: { swiped: boolean }) => {
+      props.onTabChange(tab.key, info)
 
       const MIN_SCROLL_MARGIN = 64
       const nextTabIndex = props.tabs.findIndex((t) => t === tab)
@@ -192,7 +192,7 @@ const Tabs: React.FC<ITabsProps> = (props) => {
           activeTabIndex !== state.activeTabIndex &&
           props.tabs[state.activeTabIndex]?.key
         ) {
-          move(props.tabs[state.activeTabIndex])
+          move(props.tabs[state.activeTabIndex], { swiped: true })
         }
       })
     )
@@ -314,7 +314,7 @@ const Tabs: React.FC<ITabsProps> = (props) => {
   const go = useCallback((tabKey: string) => {
     const activeTab = props.tabs.find((tab) => tab.key === tabKey)
     if (activeTab) {
-      move(activeTab)
+      move(activeTab, { swiped: false })
     }
   }, [])
 
@@ -372,7 +372,7 @@ const Tabs: React.FC<ITabsProps> = (props) => {
                 active: props.activeTabKey === tab.key ? true : undefined,
                 inline: props.useInlineButtons,
               })}
-              onClick={() => move(tab)}
+              onClick={() => move(tab, { swiped: false })}
             >
               {tab.buttonLabel}
             </a>

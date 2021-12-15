@@ -48,8 +48,9 @@ const PageTabs: React.FC = () => {
           },
         ]}
         activeTabKey={activeKey}
-        onTabChange={(key) => {
+        onTabChange={(key, info) => {
           setActiveKey(key)
+          console.log(info)
         }}
         useInlineButtons
       />
