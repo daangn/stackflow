@@ -54,7 +54,7 @@ const App: React.FC = () => {
         {
           key: 'tab_1',
           buttonLabel: 'Tab 1',
-          component: () => <div>Tab 1</div>,
+          render: () => <div>Tab 1</div>,
         },
       ]}
       onTabChange={(key) => {
