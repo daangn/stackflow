@@ -16,6 +16,9 @@ import PageTabs from './components/_pages/PageTabs'
 import PageUseParams from './components/_pages/PageUseParams'
 import PageUseQueryParams from './components/_pages/PageUseQueryParams'
 
+// TODO: @karrotframe/plugin/core
+import { useData } from "./useData";
+
 const App: React.FC = () => {
   return (
     <Navigator
@@ -26,6 +29,7 @@ const App: React.FC = () => {
       onClose={() => {
         window.alert('Close button clicked!')
       }}
+      plugins={[useData()]}
     >
       <Screen path="/" component={PageHome} />
       <Screen path="/screenHelmet" component={PageScreenHelmet} />

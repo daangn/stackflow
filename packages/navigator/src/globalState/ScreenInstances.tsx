@@ -1,10 +1,11 @@
 import React, {
-  createContext,
+  createContext, ReactNode,
   useCallback,
   useContext,
   useMemo,
   useState,
 } from 'react'
+import {PluginType} from "../useNavigator";
 
 export interface IScreenInstance {
   id: string
@@ -15,6 +16,7 @@ export interface IScreenInstance {
 }
 export interface IScreenInstancePromise {
   resolve: (data: any | null) => void
+  onNextPagePopped?: (from: string, data: any) => void;
 }
 export interface IScreenInstancePromiseMap {
   [key: string]: IScreenInstancePromise
@@ -43,9 +45,10 @@ const ContextScreenInstances = createContext<{
     screenInstanceId: string
     screenInstancePromise: IScreenInstancePromise
   }) => void
+  screenPlugins: PluginType[]
 }>(null as any)
 
-export const ProviderScreenInstances: React.FC = (props) => {
+export const ProviderScreenInstances: React.FC<{plugins: PluginType[], children: ReactNode}> = ({plugins, children}) => {
   const [screenInstances, setScreenInstances] = useState<IScreenInstance[]>([])
   const [screenInstancePtr, setScreenInstancePtr] = useState<number>(-1)
   const [screenInstancePromiseMap, setScreenInstancePromiseMap] =
@@ -120,6 +123,7 @@ export const ProviderScreenInstances: React.FC = (props) => {
       incScreenInstancePtr,
       setScreenInstancePtr,
       addScreenInstancePromise,
+      screenPlugins: plugins,
     }),
     [
       screenInstances,
@@ -130,12 +134,13 @@ export const ProviderScreenInstances: React.FC = (props) => {
       incScreenInstancePtr,
       setScreenInstancePtr,
       addScreenInstancePromise,
+      plugins
     ]
   )
 
   return (
     <ContextScreenInstances.Provider value={value}>
-      {props.children}
+      {children}
     </ContextScreenInstances.Provider>
   )
 }
