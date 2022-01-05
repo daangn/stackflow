@@ -9,6 +9,7 @@ import { ProviderScreenInstances, ProviderScreens } from './globalState'
 import { ProviderIncrementalId } from './hooks'
 import * as css from './Navigator.css'
 import { INavigatorTheme } from './types'
+import {PluginType} from "./useNavigator";
 
 declare global {
   interface Window {
@@ -18,6 +19,10 @@ declare global {
 
 const DEFAULT_CUPERTINO_ANIMATION_DURATION = 350
 const DEFAULT_ANDROID_ANIMATION_DURATION = 270
+
+enum PluginTarget {
+  screenInstance
+}
 
 interface INavigatorProps {
   /**
@@ -60,6 +65,11 @@ interface INavigatorProps {
    * When navigation depth changed
    */
   onDepthChange?: (depth: number) => void
+
+  /**
+   * plugins
+   */
+  plugins?: PluginType[]
 }
 const Navigator: React.FC<INavigatorProps> = ({
   theme = 'Android',
@@ -72,12 +82,13 @@ const Navigator: React.FC<INavigatorProps> = ({
   closeButtonAriaLabel = 'Close',
   onClose,
   onDepthChange,
+  plugins= [],
   children,
 }) => {
   let h = (
     <ProviderIncrementalId>
       <ProviderScreens>
-        <ProviderScreenInstances>
+        <ProviderScreenInstances plugins={plugins.filter(plugin => plugin.target === PluginTarget.screenInstance)}>
           <div
             className={[
               css.root({ theme }),
