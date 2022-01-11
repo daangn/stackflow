@@ -1,16 +1,19 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 
 import styled from '@emotion/styled'
 import { ScreenHelmet, useNavigator } from '@karrotframe/navigator'
 
 import ListItem from '../ListItem'
+import { useData } from "../../useData";
 
 const PageHome: React.FC = () => {
   // TODO: generic is needed to support type info
-  const { push, loadData  } = useNavigator()
-  const loadedData = useMemo(() => loadData(), [loadData]);
+  const { push  } = useNavigator()
+  const {dataFromNextPage} = useData();
+  const data = dataFromNextPage({from: '/pop'});
+  // // const loadedData = useMemo(() => loadData(), [loadData]);
 
-  return (
+    return (
     <Container>
       <ScreenHelmet title="Spec" />
       <ListItem
@@ -69,7 +72,7 @@ const PageHome: React.FC = () => {
       >
         @karrotframe/pulltorefresh
       </ListItem>
-      <ListItem>{loadedData?.['/pop']?.hello || 'no data yet'}</ListItem>
+      <ListItem>{data || 'no data yet'}</ListItem>
     </Container>
   )
 }

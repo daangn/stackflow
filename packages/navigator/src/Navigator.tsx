@@ -10,6 +10,7 @@ import { ProviderIncrementalId } from './hooks'
 import * as css from './Navigator.css'
 import { INavigatorTheme } from './types'
 import {PluginType} from "./useNavigator";
+import {ProviderPlugins} from "./plugins/Plugins";
 
 declare global {
   interface Window {
@@ -87,6 +88,7 @@ const Navigator: React.FC<INavigatorProps> = ({
 }) => {
   let h = (
     <ProviderIncrementalId>
+      <ProviderPlugins plugins={plugins}>
       <ProviderScreens>
         <ProviderScreenInstances plugins={plugins.filter(plugin => plugin.target === PluginTarget.screenInstance)}>
           <div
@@ -113,6 +115,7 @@ const Navigator: React.FC<INavigatorProps> = ({
           </div>
         </ProviderScreenInstances>
       </ProviderScreens>
+      </ProviderPlugins>
     </ProviderIncrementalId>
   )
 
