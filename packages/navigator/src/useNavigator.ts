@@ -14,18 +14,19 @@ enum PluginTarget {
     screenInstance
 }
 
+type BeforePushType = {to: string, options: { createSomething: () => any}};
+
 export interface PluginType {
-    target:PluginTarget;
-    isDataRequired: boolean;
+    target: PluginTarget;
     handlers: {[funName: string]: () => void;};
-    listeners: {
-        beforePush?: (to: string) => void;
+    lifeCycleHooks: {
+        beforePush?: (context: BeforePushType) => Promise<BeforePushType | void>;
         onPushed?: (to: string) => void;
         beforePop?: (from: string) => void;
         onPopped?: (from: string, data: any, options: any) => void;
+        onPoppedWithData?: (from: string, data: any, options: any) => void;
     }
 }
-
 export function useNavigator() {
   const history = useHistory()
   const location = useLocation()
@@ -44,17 +45,16 @@ export function useNavigator() {
   const { present, screenInstanceId } = navigatorSearchParams.toObject()
 
   const currentScreenInstance = useMemo(() => screenInstances[screenInstancePtr], [screenInstances, screenInstancePtr]);
-  const dataPlugin = useMemo(() =>  screenPlugins.find(plugin => plugin.isDataRequired), [screenPlugins])
 
   const beforePush = useCallback((to: string) => {
-      screenPlugins.forEach(plugin => {
-          plugin?.listeners?.beforePush?.(to);
+      screenPlugins.forEach(async plugin => {
+          await plugin?.lifeCycleHooks?.beforePush?.({to, options: { createSomething: () => {} }});
       })
   }, [screenPlugins])
 
   const onPushed = useCallback((to) => {
       screenPlugins.forEach(plugin => {
-              plugin?.listeners.onPushed?.(to);
+              plugin?.lifeCycleHooks?.onPushed?.(to);
       })
   }, [screenPlugins])
 
@@ -68,8 +68,8 @@ export function useNavigator() {
         present?: boolean
       },
     ): Promise<T | null> =>
-      new Promise((resolve) => {
-        beforePush(to);
+      new Promise(async (resolve) => {
+        await beforePush(to);
         const { pathname, searchParams } = new URL(to, /* dummy */ 'file://')
 
         const navigatorSearchParams = makeNavigatorSearchParams(searchParams, {
@@ -115,20 +115,22 @@ export function useNavigator() {
 
     const beforePop = useCallback(() => {
         screenPlugins.forEach(plugin => {
-            plugin?.listeners.beforePop?.(currentScreenInstance.as);
+            plugin?.lifeCycleHooks.beforePop?.(currentScreenInstance.as);
         })
     }, [])
 
     const onPopped = useCallback(() => {
         screenPlugins.forEach(plugin => {
             // TODO: prepare data and options, unifying onPoppedWithData
-            plugin?.listeners.onPopped?.(currentScreenInstance.as, null, null);
+            plugin?.lifeCycleHooks.onPopped?.(currentScreenInstance.as, null, null);
         })
 
     }, [])
 
     const onPoppedWithData = useCallback((data: any) => {
-        dataPlugin?.listeners.onPopped?.(currentScreenInstance.as, data, {});
+        screenPlugins.forEach(plugin => {
+            plugin?.lifeCycleHooks.onPoppedWithData?.(currentScreenInstance.as, data, {});
+        });
     }, [])
 
   const pop = useCallback(
