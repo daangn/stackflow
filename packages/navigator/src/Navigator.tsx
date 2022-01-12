@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {ReactNode} from 'react'
 import { HashRouter } from 'react-router-dom'
 import { TransitionGroup } from 'react-transition-group'
 
@@ -20,10 +20,6 @@ declare global {
 
 const DEFAULT_CUPERTINO_ANIMATION_DURATION = 350
 const DEFAULT_ANDROID_ANIMATION_DURATION = 270
-
-enum PluginTarget {
-  screenInstance
-}
 
 interface INavigatorProps {
   /**
@@ -86,36 +82,49 @@ const Navigator: React.FC<INavigatorProps> = ({
   plugins= [],
   children,
 }) => {
+
+  const wrapComponent = (wrappers: any[], component: any) => {
+    const all = [...wrappers, component];
+    const create = (i: number): ReactNode => {
+      const Component = all[i];
+      if(!all[i]) return null;
+      if(typeof Component ==='string') return React.createElement(all[i], null, create(i+1));
+      return (<Component>{create(i+1)}</Component>)
+    }
+    return create(0);
+  }
+
   let h = (
     <ProviderIncrementalId>
-      <ProviderPlugins plugins={plugins}>
-      <ProviderScreens>
-        <ProviderScreenInstances plugins={plugins.filter(plugin => plugin.target === PluginTarget.screenInstance)}>
-          <div
-            className={[
-              css.root({ theme }),
-              ...(className ? [className] : []),
-            ].join(' ')}
-            style={assignInlineVars({
-              [css.vars.animationDuration]: animationDuration + 'ms',
-            })}
-          >
-            <TransitionGroup component={null}>
-              <Stack
-                animationDuration={animationDuration}
-                theme={theme}
-                onClose={onClose}
-                backButtonAriaLabel={backButtonAriaLabel}
-                closeButtonAriaLabel={closeButtonAriaLabel}
-                onDepthChange={onDepthChange}
-              >
-                {children}
-              </Stack>
-            </TransitionGroup>
-          </div>
-        </ProviderScreenInstances>
-      </ProviderScreens>
-      </ProviderPlugins>
+      {wrapComponent(plugins.map(plugin => (plugin as any)().decorators2),
+          () => (<ProviderPlugins plugins={plugins}>
+            <ProviderScreens>
+              <ProviderScreenInstances plugins={plugins}>
+                <div
+                    className={[
+                      css.root({ theme }),
+                      ...(className ? [className] : []),
+                    ].join(' ')}
+                    style={assignInlineVars({
+                      [css.vars.animationDuration]: animationDuration + 'ms',
+                    })}
+                >
+                  <TransitionGroup component={null}>
+                    <Stack
+                        animationDuration={animationDuration}
+                        theme={theme}
+                        onClose={onClose}
+                        backButtonAriaLabel={backButtonAriaLabel}
+                        closeButtonAriaLabel={closeButtonAriaLabel}
+                        onDepthChange={onDepthChange}
+                    >
+                      {children}
+                    </Stack>
+                  </TransitionGroup>
+                </div>
+              </ProviderScreenInstances>
+            </ProviderScreens>
+          </ProviderPlugins>) )}
     </ProviderIncrementalId>
   )
 

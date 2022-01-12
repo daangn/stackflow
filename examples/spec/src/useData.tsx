@@ -10,8 +10,7 @@ type BeforePushType = {to: string, options: { createSomething: () => any}};
 // TODO: load this type from @karrotframe/plugin later
 // FIXME: 매개변수를 context, next 로 2개만 선언할 것. context 에서 optional 하게 to 나 data 등의 정보를 받아온다.
 export interface PluginType {
-    target: PluginTarget;
-    handlers: {[funName: string]: () => void;};
+    handlers: {[funName: string]: (params: any) => any;};
     lifeCycleHooks: {
         beforePush?: (context: BeforePushType, next: () => Promise<void>) => Promise<BeforePushType | void>;
         onPushed?: (to: string, next: () => void) => void;
@@ -21,15 +20,15 @@ export interface PluginType {
     }
 }
 
-export const useData = (): PluginType & { dataFromNextPage: ({from}: {from: string}) => any } => {
+export const useData = (): PluginType => {
     const [data, setData] = useState(null);
-    const loadData = useCallback((from?: string) => {
-        return from? data?.[from] : data;
-    }, [data])
 
     return {
-        target: PluginTarget.screenInstance,
-        handlers: { loadData },
+        handlers: {
+            dataFromNextPage: ({ from }: {from: string}) => {
+                return data?.[from] ?? 'no data';
+            },
+        },
         lifeCycleHooks: {
             onPoppedWithData: (from: string, data: any, options: any) => {
                 setData((prev: any) => ({
@@ -37,9 +36,6 @@ export const useData = (): PluginType & { dataFromNextPage: ({from}: {from: stri
                     [from]: data
                 }))
             },
-        },
-        dataFromNextPage: ({ from }: {from: string}) => {
-            return data?.[from] ?? 'no data';
         },
     }
 }
