@@ -1,4 +1,4 @@
-import {useCallback, useMemo } from 'react'
+import { ReactNode, useCallback, useMemo} from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 
 import { useScreenInstance } from './components/Stack.ContextScreenInstance'
@@ -9,6 +9,7 @@ import {
   parseNavigatorSearchParams,
 } from './helpers'
 import { useIncrementalId } from './hooks'
+import {usePlugins} from "./plugins/Plugins";
 
 enum PluginTarget {
     screenInstance
@@ -17,14 +18,16 @@ enum PluginTarget {
 type BeforePushType = {to: string, options: { createSomething: () => any}};
 
 export interface PluginType {
+    init: (s: any) => void;
     target: PluginTarget;
     handlers: {[funName: string]: () => void;};
+    decorators: (children: ReactNode) => ReactNode;
     lifeCycleHooks: {
         beforePush?: (context: BeforePushType) => Promise<BeforePushType | void>;
         onPushed?: (to: string) => void;
         beforePop?: (from: string) => void;
         onPopped?: (from: string, data: any, options: any) => void;
-        onPoppedWithData?: (from: string, data: any, options: any) => void;
+        onPoppedWithData?: (ctx: any) => void;
     }
 }
 export function useNavigator() {
@@ -32,6 +35,7 @@ export function useNavigator() {
   const location = useLocation()
   const screenInfo = useScreenInstance()
   const makeId = useIncrementalId()
+  const {lifecycleHooks} = usePlugins()
 
   const {
     screenInstances,
@@ -115,23 +119,51 @@ export function useNavigator() {
 
     const beforePop = useCallback(() => {
         screenPlugins.forEach(plugin => {
-            plugin?.lifeCycleHooks.beforePop?.(currentScreenInstance.as);
+            plugin?.lifeCycleHooks?.beforePop?.(currentScreenInstance.as);
         })
-    }, [])
+    }, [screenPlugins])
 
     const onPopped = useCallback(() => {
         screenPlugins.forEach(plugin => {
             // TODO: prepare data and options, unifying onPoppedWithData
-            plugin?.lifeCycleHooks.onPopped?.(currentScreenInstance.as, null, null);
+            plugin?.lifeCycleHooks?.onPopped?.(currentScreenInstance.as, null, null);
         })
 
-    }, [])
+    }, [screenPlugins])
 
     const onPoppedWithData = useCallback((data: any) => {
-        screenPlugins.forEach(plugin => {
-            plugin?.lifeCycleHooks.onPoppedWithData?.(currentScreenInstance.as, data, {});
-        });
-    }, [])
+        // screenPlugins.forEach(plugin => {
+        //         const context = {
+        //             from: currentScreenInstance.as,
+        //             data,
+        //             options: {}
+        //         } as any;
+
+            // (plugin as any)()?.lifeCycleHooks?.onPoppedWithData?.(context);
+            // (lifecycleHooks as any)?.onPoppedWithData?.(context);
+        // });
+
+        lifecycleHooks.forEach(hook => {
+            const context = {
+                from: currentScreenInstance.as,
+                data,
+                options: {}
+            } as any;
+            hook?.onPoppedWithData?.(context);
+        })
+        // (lifecycleHooks as any)?.onPoppedWithData?.(context);
+
+
+        // screenPlugins.forEach(plugin => {
+        //     console.log('%cplugin: ', 'background: white; color: salmon;', plugin);
+        //     const context = {
+        //         from: currentScreenInstance.as,
+        //         data,
+        //         options: {}
+        //     } as any;
+        //     (plugin as any)?.onPoppedWithData?.(context);
+        // });
+    }, [screenPlugins])
 
   const pop = useCallback(
     (depth = 1) => {
@@ -189,21 +221,6 @@ export function useNavigator() {
       push,
       replace,
       pop,
-      ...screenPlugins.reduce((acc, curr) => {
-            if(curr && curr.handlers) {
-                acc = {
-                    ...acc,
-                    ...Object.keys(curr.handlers).reduce((_acc, _curr) => {
-                        _acc = {
-                            ..._acc,
-                            [_curr]: curr.handlers[_curr]
-                        }
-                        return _acc;
-                    }, {}),
-                }
-            }
-            return acc;
-        }, {})
     }),
     [push, replace, pop]
   )
