@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useMemo} from 'react'
+import { useCallback, useMemo} from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 
 import { useScreenInstance } from './components/Stack.ContextScreenInstance'
@@ -11,25 +11,42 @@ import {
 import { useIncrementalId } from './hooks'
 import {usePlugins} from "./plugins/Plugins";
 
-enum PluginTarget {
-    screenInstance
+type Options = { createSomething: () => any}
+interface HookParams {
+    options: Options
 }
-
-type BeforePushType = {to: string, options: { createSomething: () => any}};
+interface BeforePushType extends HookParams {
+    to: string;
+}
+interface OnPushedType extends HookParams {
+    to: string;
+}
+interface BeforePop extends HookParams {
+    from: string;
+}
+interface OnPopped extends HookParams {
+    from: string;
+}
+interface OnPoppedWithDataType extends HookParams {
+    from: string;
+    data?: any;
+}
 
 export interface PluginType {
-    init: (s: any) => void;
-    target: PluginTarget;
-    handlers: {[funName: string]: () => void;};
-    decorators: (children: ReactNode) => ReactNode;
     lifeCycleHooks: {
-        beforePush?: (context: BeforePushType) => Promise<BeforePushType | void>;
-        onPushed?: (to: string) => void;
-        beforePop?: (from: string) => void;
-        onPopped?: (from: string, data: any, options: any) => void;
-        onPoppedWithData?: (ctx: any) => void;
-    }
+        beforePush?: (context: BeforePushType, next?: () => Promise<BeforePushType | void>) => Promise<BeforePushType | void>;
+        onPushed?: (context: OnPushedType, next?: () => Promise<OnPushedType | void>) => Promise<OnPushedType | void>;
+        beforePop?: (context: BeforePop, next?: () => Promise<BeforePop | void>) => Promise<BeforePop | void>;
+        onPopped?: (context: OnPopped, next?: () => Promise<OnPopped | void>) => Promise<OnPopped | void>;
+        onPoppedWithData?: (context: OnPoppedWithDataType, next?: () => Promise<OnPoppedWithDataType | void>) => void;
+    };
 }
+
+export type KarrotframePlugin = {
+    provider?: React.FC;
+    executor: () => PluginType;
+}
+
 export function useNavigator() {
   const history = useHistory()
   const location = useLocation()
@@ -42,7 +59,6 @@ export function useNavigator() {
     screenInstancePtr,
     screenInstancePromiseMap,
     addScreenInstancePromise,
-    screenPlugins
   } = useScreenInstances()
 
   const navigatorSearchParams = parseNavigatorSearchParams(location.search)
@@ -51,16 +67,24 @@ export function useNavigator() {
   const currentScreenInstance = useMemo(() => screenInstances[screenInstancePtr], [screenInstances, screenInstancePtr]);
 
   const beforePush = useCallback((to: string) => {
-      screenPlugins.forEach(async plugin => {
-          await plugin?.lifeCycleHooks?.beforePush?.({to, options: { createSomething: () => {} }});
+      lifecycleHooks.forEach(hook => {
+          const context = {
+              to,
+              options: {}
+          };
+          hook?.beforePush?.(context);
       })
-  }, [screenPlugins])
+  }, [lifecycleHooks])
 
   const onPushed = useCallback((to) => {
-      screenPlugins.forEach(plugin => {
-              plugin?.lifeCycleHooks?.onPushed?.(to);
+      lifecycleHooks.forEach(hook => {
+          const context = {
+              to,
+              options: {}
+          };
+          hook?.onPushed?.(context);
       })
-  }, [screenPlugins])
+  }, [lifecycleHooks])
 
   const push = useCallback(
     <T = object>(
@@ -118,31 +142,26 @@ export function useNavigator() {
   )
 
     const beforePop = useCallback(() => {
-        screenPlugins.forEach(plugin => {
-            plugin?.lifeCycleHooks?.beforePop?.(currentScreenInstance.as);
+        lifecycleHooks.forEach(hook => {
+            const context = {
+                from: currentScreenInstance.as,
+                options: {}
+            };
+            hook?.beforePop?.(context);
         })
-    }, [screenPlugins])
+    }, [lifecycleHooks])
 
     const onPopped = useCallback(() => {
-        screenPlugins.forEach(plugin => {
-            // TODO: prepare data and options, unifying onPoppedWithData
-            plugin?.lifeCycleHooks?.onPopped?.(currentScreenInstance.as, null, null);
+        lifecycleHooks.forEach(hook => {
+            const context = {
+                from: currentScreenInstance.as,
+                options: {}
+            };
+            hook?.onPopped?.(context);
         })
-
-    }, [screenPlugins])
+    }, [lifecycleHooks])
 
     const onPoppedWithData = useCallback((data: any) => {
-        // screenPlugins.forEach(plugin => {
-        //         const context = {
-        //             from: currentScreenInstance.as,
-        //             data,
-        //             options: {}
-        //         } as any;
-
-            // (plugin as any)()?.lifeCycleHooks?.onPoppedWithData?.(context);
-            // (lifecycleHooks as any)?.onPoppedWithData?.(context);
-        // });
-
         lifecycleHooks.forEach(hook => {
             const context = {
                 from: currentScreenInstance.as,
@@ -151,19 +170,7 @@ export function useNavigator() {
             } as any;
             hook?.onPoppedWithData?.(context);
         })
-        // (lifecycleHooks as any)?.onPoppedWithData?.(context);
-
-
-        // screenPlugins.forEach(plugin => {
-        //     console.log('%cplugin: ', 'background: white; color: salmon;', plugin);
-        //     const context = {
-        //         from: currentScreenInstance.as,
-        //         data,
-        //         options: {}
-        //     } as any;
-        //     (plugin as any)?.onPoppedWithData?.(context);
-        // });
-    }, [screenPlugins])
+    }, [lifecycleHooks])
 
   const pop = useCallback(
     (depth = 1) => {

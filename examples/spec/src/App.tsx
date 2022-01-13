@@ -17,8 +17,8 @@ import PageUseParams from './components/_pages/PageUseParams'
 import PageUseQueryParams from './components/_pages/PageUseQueryParams'
 
 // TODO: @karrotframe/plugin/core
-import {useDataDecorator} from "./plugins/useDataDecorator";
-import {useDataDecoratorDirty} from "./plugins/useDataDecoratorDirty";
+import {dataPlugin} from "./plugins/useDataDecorator";
+import {middlewareLoggerPlugin } from "./plugins/useMiddlewareLoggerWithPromise";
 
 const App: React.FC = () => {
   return (
@@ -30,7 +30,7 @@ const App: React.FC = () => {
       onClose={() => {
         window.alert('Close button clicked!')
       }}
-      plugins={[useDataDecorator, useDataDecoratorDirty]}
+      plugins={[dataPlugin, middlewareLoggerPlugin]}
     >
       <Screen path="/" component={PageHome} />
       <Screen path="/screenHelmet" component={PageScreenHelmet} />

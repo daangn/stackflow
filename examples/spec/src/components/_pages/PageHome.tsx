@@ -1,4 +1,4 @@
-import React, { useMemo} from 'react'
+import React, {useMemo} from 'react'
 import styled from '@emotion/styled'
 import { ScreenHelmet, useNavigator } from '@karrotframe/navigator'
 
@@ -6,15 +6,9 @@ import ListItem from '../ListItem'
 import { useDataDecorator } from "../../plugins/useDataDecorator";
 
 const PageHome: React.FC = () => {
-  // TODO: generic is needed to support type info
   const { push  } = useNavigator()
-  const { dataFromNextPage, certainValue } = useDataDecorator();
-  const result = useMemo(() => {
-    return dataFromNextPage({from: '/pop'});
-  }, [dataFromNextPage])
-  const result2 = useMemo(() => {
-    return certainValue();
-  }, [certainValue])
+  const { dataFromNextPage } = useDataDecorator();
+  const result = useMemo(() => dataFromNextPage({from: '/pop'}), [dataFromNextPage]);
 
     return (
     <Container>
@@ -75,8 +69,7 @@ const PageHome: React.FC = () => {
       >
         @karrotframe/pulltorefresh
       </ListItem>
-      <ListItem>{result?.hello || 'no data yet'}</ListItem>
-      <ListItem>{result2 || 'no data yet2'}</ListItem>
+      <ListItem>{result?.hello || 'pending...'}</ListItem>
     </Container>
   )
 }

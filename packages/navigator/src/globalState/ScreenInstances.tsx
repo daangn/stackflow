@@ -1,11 +1,10 @@
 import React, {
-  createContext, ReactNode,
+  createContext,
   useCallback,
   useContext,
   useMemo,
   useState,
 } from 'react'
-import {PluginType} from "../useNavigator";
 
 export interface IScreenInstance {
   id: string
@@ -45,10 +44,9 @@ const ContextScreenInstances = createContext<{
     screenInstanceId: string
     screenInstancePromise: IScreenInstancePromise
   }) => void
-  screenPlugins: PluginType[]
 }>(null as any)
 
-export const ProviderScreenInstances: React.FC<{plugins: PluginType[], children: ReactNode}> = ({plugins, children}) => {
+export const ProviderScreenInstances: React.FC = ({ children}) => {
   const [screenInstances, setScreenInstances] = useState<IScreenInstance[]>([])
   const [screenInstancePtr, setScreenInstancePtr] = useState<number>(-1)
   const [screenInstancePromiseMap, setScreenInstancePromiseMap] =
@@ -123,7 +121,6 @@ export const ProviderScreenInstances: React.FC<{plugins: PluginType[], children:
       incScreenInstancePtr,
       setScreenInstancePtr,
       addScreenInstancePromise,
-      screenPlugins: plugins,
     }),
     [
       screenInstances,
@@ -134,7 +131,6 @@ export const ProviderScreenInstances: React.FC<{plugins: PluginType[], children:
       incScreenInstancePtr,
       setScreenInstancePtr,
       addScreenInstancePromise,
-      plugins
     ]
   )
 
