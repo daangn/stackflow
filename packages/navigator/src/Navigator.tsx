@@ -1,4 +1,4 @@
-import React, {ReactNode} from 'react'
+import React from 'react'
 import { HashRouter } from 'react-router-dom'
 import { TransitionGroup } from 'react-transition-group'
 
@@ -9,8 +9,9 @@ import { ProviderScreenInstances, ProviderScreens } from './globalState'
 import { ProviderIncrementalId } from './hooks'
 import * as css from './Navigator.css'
 import { INavigatorTheme } from './types'
-import {PluginType} from "./useNavigator";
+import {KarrotframePlugin} from "./useNavigator";
 import {ProviderPlugins} from "./plugins/Plugins";
+import wrapProvider from "./plugins/helper";
 
 declare global {
   interface Window {
@@ -66,7 +67,7 @@ interface INavigatorProps {
   /**
    * plugins
    */
-  plugins?: PluginType[]
+  plugins?: KarrotframePlugin[]
 }
 const Navigator: React.FC<INavigatorProps> = ({
   theme = 'Android',
@@ -82,24 +83,13 @@ const Navigator: React.FC<INavigatorProps> = ({
   plugins= [],
   children,
 }) => {
-
-  const wrapComponent = (wrappers: any[], component: any) => {
-    const all = [...wrappers, component];
-    const create = (i: number): ReactNode => {
-      const Component = all[i];
-      if(!all[i]) return null;
-      if(typeof Component ==='string') return React.createElement(all[i], null, create(i+1));
-      return (<Component>{create(i+1)}</Component>)
-    }
-    return create(0);
-  }
-
   let h = (
     <ProviderIncrementalId>
-      {wrapComponent(plugins.map(plugin => (plugin as any)().decorators2),
-          () => (<ProviderPlugins plugins={plugins}>
+      {wrapProvider(plugins.map(plugin => plugin.provider).filter(Boolean),
+          () =>
+           (<ProviderPlugins plugins={plugins}>
             <ProviderScreens>
-              <ProviderScreenInstances plugins={plugins}>
+              <ProviderScreenInstances>
                 <div
                     className={[
                       css.root({ theme }),

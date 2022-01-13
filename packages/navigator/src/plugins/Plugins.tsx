@@ -1,23 +1,44 @@
 import React, {
-    createContext, ReactNode,
-    useContext, useEffect,
+    createContext,
+    ReactNode,
+    useContext
 } from 'react'
 
+type Options = { createSomething: () => any}
+interface HookParams {
+    options: Options
+}
+interface BeforePushType extends HookParams {
+    to: string;
+}
+interface OnPushedType extends HookParams {
+    to: string;
+}
+interface BeforePop extends HookParams {
+    from: string;
+}
+interface OnPopped extends HookParams {
+    from: string;
+}
+interface OnPoppedWithDataType extends HookParams {
+    from: string;
+    data?: any;
+}
+
+interface LifeCycleHooks {
+    beforePush?: (context: BeforePushType, next?: () => Promise<BeforePushType | void>) => Promise<BeforePushType | void>;
+    onPushed?: (context: OnPushedType, next?: () => Promise<OnPushedType | void>) => Promise<OnPushedType | void>;
+    beforePop?: (context: BeforePop, next?: () => Promise<BeforePop | void>) => Promise<BeforePop | void>;
+    onPopped?: (context: OnPopped, next?: () => Promise<OnPopped | void>) => Promise<OnPopped | void>;
+    onPoppedWithData?: (context: OnPoppedWithDataType, next?: () => Promise<OnPoppedWithDataType | void>) => void;
+}
+
 const ContextPlugins = createContext<{
-    lifecycleHooks: any[]
+    lifecycleHooks: LifeCycleHooks[]
 }>(null as any)
 
-// TODO: 플러그인이 값을 저장하고, 부르고, 하위 Providers 들에게 데이터들을 전파하기 위한 공간
 export const ProviderPlugins: React.FC<{plugins: any[]; children: ReactNode}> = ({children, plugins, }) => {
-    const lifecycleHooks = plugins.map(plugin => plugin().lifeCycleHooks);
-    const {something, setSomething} = useContext((plugins[0] as any)()?.provider)
-    console.log('%csomething: ', 'color: coral;', something);
-
-    useEffect(() => {
-        setTimeout(() => {
-            setSomething('why not?')
-        }, 2000)
-    }, [])
+    const lifecycleHooks = plugins.map(plugin => plugin.executor().lifeCycleHooks);
 
     return (
         <ContextPlugins.Provider value={{lifecycleHooks}}>

@@ -1,62 +1,71 @@
-import React, {createContext, useContext, useState, useCallback, ReactNode, useMemo} from "react";
+import React, { createContext, useContext, useState, useMemo } from "react";
 
-type BeforePushType = {to: string, options: { createSomething: () => any}};
-
-export interface PluginType {
-    lifeCycleHooks: {
-        beforePush?: (context: BeforePushType, next: () => Promise<void>) => Promise<BeforePushType | void>;
-        onPushed?: (to: string, next: () => void) => void;
-        beforePop?: (from: string) => void;
-        onPopped?: (from: string, data: any, options: any) => void;
-        onPoppedWithData?: (from: string, data: any, options: any) => void;
-    }
+type Options = { createSomething: () => any}
+interface HookParams {
+    options: Options
+}
+interface BeforePushType extends HookParams {
+    to: string;
+}
+interface OnPushedType extends HookParams {
+    to: string;
+}
+interface BeforePop extends HookParams {
+    from: string;
+}
+interface OnPopped extends HookParams {
+    from: string;
+}
+interface OnPoppedWithDataType extends HookParams {
+    from: string;
+    data?: any;
 }
 
+export interface LifeCycleHooks {
+    beforePush?: (context: BeforePushType, next?: () => Promise<BeforePushType | void>) => Promise<BeforePushType | void>;
+    onPushed?: (context: OnPushedType, next?: () => Promise<OnPushedType | void>) => Promise<OnPushedType | void>;
+    beforePop?: (context: BeforePop, next?: () => Promise<BeforePop | void>) => Promise<BeforePop | void>;
+    onPopped?: (context: OnPopped, next?: () => Promise<OnPopped | void>) => Promise<OnPopped | void>;
+    onPoppedWithData?: (context: OnPoppedWithDataType, next?: () => Promise<OnPoppedWithDataType | void>) => void;
+}
 
-export const ContextPlugins = createContext<{
-    data: any;
-    setData: (data: any) => void;
-    something: any;
-    setSomething: (something:any) => void;
-}>(null as any)
+export interface PluginType {
+    lifeCycleHooks: LifeCycleHooks;
+}
 
-export const ProviderDataPlugins: React.FC = (props) => {
-    const [data, setData] = useState<any>({hello: 'none'});
-    const [something, setSomething] = useState<any>('hi high!');
-    console.log('%csomething: ', 'background: white; color: lightskyblue;', something);
+export const ContextDataPlugin = createContext<{ data: any; setData: (data: any) => void; }>(null as any)
+
+export const DataPluginProvider: React.FC = (props) => {
+    const [data, setData] = useState<any>(null);
 
     return (
-        <ContextPlugins.Provider value={{data, setData, something, setSomething}}>
+        <ContextDataPlugin.Provider value={{data, setData}}>
             {props.children}
-        </ContextPlugins.Provider>
+        </ContextDataPlugin.Provider>
     )
 }
 
-export const useDataDecorator = () => {
-    const ctx = useContext(ContextPlugins);
-
-    const onPoppedWithDataCallback = useCallback(({from, data, options}) => {
-        ctx?.setData?.({[from]: data})
-    }, [ctx])
+export const useDataDecorator = (): PluginType & { dataFromNextPage: (params: {from: string}) => any; }  => {
+    const context = useContext(ContextDataPlugin);
 
     return useMemo(() => {
         return {
-            provider: ContextPlugins,
             lifeCycleHooks: {
-                onPoppedWithData: onPoppedWithDataCallback,
+                onPoppedWithData: ({from, data}) => {
+                    context.setData({[from]: data})
+                },
             },
-            decorators: (children: ReactNode) => (<ProviderDataPlugins>{children}</ProviderDataPlugins>),
-            decorators2: ProviderDataPlugins,
-            dataFromNextPage: ({ from }: {from: string}) => {
-                return ctx?.data?.[from];
-            },
-            certainValue: () => {
-                return ctx?.something;
-            },
+            dataFromNextPage: ({ from }: {from: string}) => context?.data?.[from]
         };
-    }, [ctx, onPoppedWithDataCallback])
+    }, [context])
 }
 
-export const useDataContext = () => {
-    return useContext(ContextPlugins)
+type KarrotframePlugin = {
+    provider?: React.FC;
+    executor: () => PluginType;
+}
+
+export const dataPlugin: KarrotframePlugin = {
+    provider: DataPluginProvider,
+    executor: useDataDecorator
 }
