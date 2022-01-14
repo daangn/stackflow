@@ -34,15 +34,17 @@ interface OnPoppedWithDataType extends HookParams {
 
 export interface PluginType {
     lifeCycleHooks: {
-        beforePush?: (context: BeforePushType, next?: () => Promise<BeforePushType | void>) => Promise<BeforePushType | void>;
-        onPushed?: (context: OnPushedType, next?: () => Promise<OnPushedType | void>) => Promise<OnPushedType | void>;
-        beforePop?: (context: BeforePop, next?: () => Promise<BeforePop | void>) => Promise<BeforePop | void>;
-        onPopped?: (context: OnPopped, next?: () => Promise<OnPopped | void>) => Promise<OnPopped | void>;
-        onPoppedWithData?: (context: OnPoppedWithDataType, next?: () => Promise<OnPoppedWithDataType | void>) => void;
+        beforePush?: (context: BeforePushType, next: () => Promise<BeforePushType | void>) => Promise<BeforePushType | void>;
+        onPushed?: (context: OnPushedType, next: () => Promise<OnPushedType | void>) => Promise<OnPushedType | void>;
+        beforePop?: (context: BeforePop, next: () => Promise<BeforePop | void>) => Promise<BeforePop | void>;
+        onPopped?: (context: OnPopped, next: () => Promise<OnPopped | void>) => Promise<OnPopped | void>;
+        onPoppedWithData?: (context: OnPoppedWithDataType, next: () => Promise<OnPoppedWithDataType | void>) => void;
     };
+    decorator?: React.FC;
 }
 
 export type KarrotframePlugin = {
+    name: string;
     provider?: React.FC;
     executor: () => PluginType;
 }
