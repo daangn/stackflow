@@ -56,10 +56,12 @@ export const useMiddlewareLoggerWithPromise = (): PluginType => {
     }
 }
 type KarrotframePlugin = {
+    name: string;
     provider?: React.FC;
     executor: () => PluginType;
 }
 
 export const middlewareLoggerPlugin: KarrotframePlugin = {
+    name: 'middlewareLoggerPlugin',
     executor: useMiddlewareLoggerWithPromise
 }
