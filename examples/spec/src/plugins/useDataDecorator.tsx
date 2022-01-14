@@ -61,11 +61,13 @@ export const useDataDecorator = (): PluginType & { dataFromNextPage: (params: {f
 }
 
 type KarrotframePlugin = {
+    name: string;
     provider?: React.FC;
     executor: () => PluginType;
 }
 
 export const dataPlugin: KarrotframePlugin = {
+    name: 'dataPlugin',
     provider: DataPluginProvider,
     executor: useDataDecorator
 }
