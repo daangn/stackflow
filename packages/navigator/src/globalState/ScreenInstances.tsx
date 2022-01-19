@@ -5,6 +5,7 @@ import React, {
   useMemo,
   useState,
 } from 'react'
+import { usePlugins } from "./Plugins";
 
 export interface IScreenInstance {
   id: string
@@ -47,6 +48,8 @@ const ContextScreenInstances = createContext<{
 }>(null as any)
 
 export const ProviderScreenInstances: React.FC = ({ children}) => {
+  const { lifecycleHooks } = usePlugins()
+
   const [screenInstances, setScreenInstances] = useState<IScreenInstance[]>([])
   const [screenInstancePtr, setScreenInstancePtr] = useState<number>(-1)
   const [screenInstancePromiseMap, setScreenInstancePromiseMap] =
@@ -65,6 +68,15 @@ export const ProviderScreenInstances: React.FC = ({ children}) => {
         as: string
       }
     }) => {
+      lifecycleHooks.forEach(hook => {
+        const context = {
+          ptr,
+          screenInstance,
+          options: {}
+        };
+        hook?.onInsertScreenInstance?.(context);
+      })
+
       setScreenInstances((screenInstances) => [
         ...screenInstances.filter((_, i) => i <= ptr),
         {
@@ -84,6 +96,16 @@ export const ProviderScreenInstances: React.FC = ({ children}) => {
       ptr: number
       mapper: (screenInstance: IScreenInstance) => IScreenInstance
     }) => {
+      lifecycleHooks.forEach(hook => {
+        const context = {
+          ptr,
+          options: {
+            mapperScreenInstance: mapper
+          }
+        };
+        hook?.onMapScreenInstance?.(context);
+      })
+
       setScreenInstances((screenInstances) =>
         screenInstances.map((si, i) => (i === ptr ? mapper(si) : si))
       )
@@ -103,6 +125,13 @@ export const ProviderScreenInstances: React.FC = ({ children}) => {
       screenInstanceId: string
       screenInstancePromise: IScreenInstancePromise
     }) => {
+      lifecycleHooks.forEach(hook => {
+        const context = {
+          screenInstanceId,
+          screenInstancePromise,
+        };
+        hook?.onAddScreenInstancePromise?.(context);
+      });
       setScreenInstancePromiseMap((screenInstancePromiseMap) => ({
         ...screenInstancePromiseMap,
         [screenInstanceId]: screenInstancePromise,

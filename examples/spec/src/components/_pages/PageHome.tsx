@@ -3,11 +3,11 @@ import styled from '@emotion/styled'
 import { ScreenHelmet, useNavigator } from '@karrotframe/navigator'
 
 import ListItem from '../ListItem'
-import { useDataDecorator } from "../../plugins/useDataDecorator";
+import { useDataPlugin } from "@karrotframe/plugins";
 
 const PageHome: React.FC = () => {
   const { push  } = useNavigator()
-  const { dataFromNextPage } = useDataDecorator();
+  const { dataFromNextPage } = useDataPlugin();
   const result = useMemo(() => dataFromNextPage({from: '/pop'}), [dataFromNextPage]);
 
     return (

@@ -26,6 +26,7 @@
     "@emotion/react": "^11.1.5",
     "@emotion/styled": "^11.1.5",
     "@karrotframe/navigator": "workspace:packages/navigator",
+    "@karrotframe/plugins": "workspace:packages/plugins",
     "@karrotframe/pulltorefresh": "workspace:packages/pulltorefresh",
     "@karrotframe/tabs": "workspace:packages/tabs",
     "react": "next",

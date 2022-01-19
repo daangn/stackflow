@@ -9,9 +9,9 @@ import { ProviderScreenInstances, ProviderScreens } from './globalState'
 import { ProviderIncrementalId } from './hooks'
 import * as css from './Navigator.css'
 import { INavigatorTheme } from './types'
-import {KarrotframePlugin} from "./useNavigator";
-import {ProviderPlugins} from "./plugins/Plugins";
-import wrapProvider from "./plugins/helper";
+import { KarrotframePlugin } from "@karrotframe/plugins";
+import wrapProvider from './helpers/wrapProvider'
+import { ProviderPlugins } from "./globalState/Plugins";
 
 declare global {
   interface Window {

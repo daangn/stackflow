@@ -3,51 +3,13 @@ import { useHistory, useLocation } from 'react-router-dom'
 
 import { useScreenInstance } from './components/Stack.ContextScreenInstance'
 import { useScreenInstances } from './globalState'
+import { usePlugins } from './globalState/Plugins'
 import {
   makeNavigatorSearchParams,
   nextTick,
   parseNavigatorSearchParams,
 } from './helpers'
 import { useIncrementalId } from './hooks'
-import {usePlugins} from "./plugins/Plugins";
-
-type Options = { createSomething: () => any}
-interface HookParams {
-    options: Options
-}
-interface BeforePushType extends HookParams {
-    to: string;
-}
-interface OnPushedType extends HookParams {
-    to: string;
-}
-interface BeforePop extends HookParams {
-    from: string;
-}
-interface OnPopped extends HookParams {
-    from: string;
-}
-interface OnPoppedWithDataType extends HookParams {
-    from: string;
-    data?: any;
-}
-
-export interface PluginType {
-    lifeCycleHooks: {
-        beforePush?: (context: BeforePushType, next: () => Promise<BeforePushType | void>) => Promise<BeforePushType | void>;
-        onPushed?: (context: OnPushedType, next: () => Promise<OnPushedType | void>) => Promise<OnPushedType | void>;
-        beforePop?: (context: BeforePop, next: () => Promise<BeforePop | void>) => Promise<BeforePop | void>;
-        onPopped?: (context: OnPopped, next: () => Promise<OnPopped | void>) => Promise<OnPopped | void>;
-        onPoppedWithData?: (context: OnPoppedWithDataType, next: () => Promise<OnPoppedWithDataType | void>) => void;
-    };
-    decorator?: React.FC;
-}
-
-export type KarrotframePlugin = {
-    name: string;
-    provider?: React.FC;
-    executor: () => PluginType;
-}
 
 export function useNavigator() {
   const history = useHistory()
@@ -72,7 +34,11 @@ export function useNavigator() {
       lifecycleHooks.forEach(hook => {
           const context = {
               to,
-              options: {}
+              options: {
+                  push,
+                  replace,
+                  pop
+              }
           };
           hook?.beforePush?.(context);
       })
@@ -82,9 +48,41 @@ export function useNavigator() {
       lifecycleHooks.forEach(hook => {
           const context = {
               to,
-              options: {}
+              options: {
+                  push,
+                  replace,
+                  pop
+              }
           };
           hook?.onPushed?.(context);
+      })
+  }, [lifecycleHooks])
+
+  const beforeReplace = useCallback((to) => {
+      lifecycleHooks.forEach(hook => {
+          const context = {
+              to,
+              options: {
+                  push,
+                  replace,
+                  pop
+              }
+          };
+          hook?.beforeReplace?.(context);
+      })
+  }, [lifecycleHooks])
+
+  const onReplaced = useCallback((to) => {
+      lifecycleHooks.forEach(hook => {
+          const context = {
+              to,
+              options: {
+                  push,
+                  replace,
+                  pop
+              }
+          };
+          hook?.onReplaced?.(context);
       })
   }, [lifecycleHooks])
 
@@ -129,6 +127,7 @@ export function useNavigator() {
         animate?: boolean
       }
     ) => {
+      beforeReplace(to);
       const { pathname, searchParams } = new URL(to, /* dummy */ 'file://')
 
       const navigatorSearchParams = makeNavigatorSearchParams(searchParams, {
@@ -136,6 +135,7 @@ export function useNavigator() {
         present,
       })
 
+      onReplaced(to)
       nextTick(() => {
         history.replace(`${pathname}?${navigatorSearchParams.toString()}`)
       })
@@ -146,8 +146,12 @@ export function useNavigator() {
     const beforePop = useCallback(() => {
         lifecycleHooks.forEach(hook => {
             const context = {
-                from: currentScreenInstance.as,
-                options: {}
+                from: currentScreenInstance?.as,
+                options: {
+                    push,
+                    replace,
+                    pop
+                }
             };
             hook?.beforePop?.(context);
         })
@@ -156,8 +160,12 @@ export function useNavigator() {
     const onPopped = useCallback(() => {
         lifecycleHooks.forEach(hook => {
             const context = {
-                from: currentScreenInstance.as,
-                options: {}
+                from: currentScreenInstance?.as,
+                options: {
+                    push,
+                    replace,
+                    pop
+                }
             };
             hook?.onPopped?.(context);
         })
@@ -166,9 +174,13 @@ export function useNavigator() {
     const onPoppedWithData = useCallback((data: any) => {
         lifecycleHooks.forEach(hook => {
             const context = {
-                from: currentScreenInstance.as,
+                from: currentScreenInstance?.as,
                 data,
-                options: {}
+                options: {
+                    push,
+                    replace,
+                    pop
+                }
             } as any;
             hook?.onPoppedWithData?.(context);
         })
@@ -195,8 +207,8 @@ export function useNavigator() {
       const dispose = history.listen(() => {
         dispose()
 
-        if (targetScreenInstance && targetPromise?.resolve) {
-          targetPromise.resolve(_data ?? null)
+        if (targetScreenInstance) {
+          targetPromise?.resolve(_data ?? null)
         }
       })
 
