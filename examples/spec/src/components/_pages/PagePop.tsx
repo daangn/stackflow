@@ -6,14 +6,14 @@ import { ScreenHelmet, useNavigator } from '@karrotframe/navigator'
 import ListItem from '../ListItem'
 
 const PagePop: React.FC = () => {
-  const { push, pop } = useNavigator()
+  const { pop } = useNavigator()
 
   return (
     <Container>
       <ScreenHelmet title="Pop" />
       <ListItem
         onClick={() => {
-          push('/pop');
+          pop();
         }}
       >
         pop()
