@@ -5,7 +5,7 @@ import React, {
   useMemo,
   useState,
 } from 'react'
-import {usePlugins} from "./Plugins";
+import { usePlugins } from './Plugins'
 
 interface IScreen {
   id: string
@@ -26,15 +26,17 @@ export const ProviderScreens: React.FC = (props) => {
   const [screens, setScreens] = useState<IScreenMap>({})
   const { lifecycleHooks } = usePlugins()
 
-  const onRegisterScreen = useCallback((screen: IScreen) => {
-    lifecycleHooks.forEach(hook => {
-      const context = {
-        screen,
-      };
-      hook?.onRegisterScreen?.(context);
-    })
-  }, [lifecycleHooks])
-
+  const onRegisterScreen = useCallback(
+    (screen: IScreen) => {
+      lifecycleHooks.forEach((hook) => {
+        const context = {
+          screen,
+        }
+        hook?.onRegisterScreen?.(context)
+      })
+    },
+    [lifecycleHooks]
+  )
 
   const registerScreen = useCallback((screen: IScreen) => {
     onRegisterScreen(screen)
