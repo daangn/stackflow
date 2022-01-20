@@ -5,7 +5,7 @@ import React, {
   useMemo,
   useState,
 } from 'react'
-import { usePlugins } from "./Plugins";
+import { usePlugins } from './Plugins'
 
 export interface IScreenInstance {
   id: string
@@ -16,7 +16,7 @@ export interface IScreenInstance {
 }
 export interface IScreenInstancePromise {
   resolve: (data: any | null) => void
-  onNextPagePopped?: (from: string, data: any) => void;
+  onNextPagePopped?: (from: string, data: any) => void
 }
 export interface IScreenInstancePromiseMap {
   [key: string]: IScreenInstancePromise
@@ -47,7 +47,7 @@ const ContextScreenInstances = createContext<{
   }) => void
 }>(null as any)
 
-export const ProviderScreenInstances: React.FC = ({ children}) => {
+export const ProviderScreenInstances: React.FC = ({ children }) => {
   const { lifecycleHooks } = usePlugins()
 
   const [screenInstances, setScreenInstances] = useState<IScreenInstance[]>([])
@@ -68,13 +68,13 @@ export const ProviderScreenInstances: React.FC = ({ children}) => {
         as: string
       }
     }) => {
-      lifecycleHooks.forEach(hook => {
+      lifecycleHooks.forEach((hook) => {
         const context = {
           ptr,
           screenInstance,
-          options: {}
-        };
-        hook?.onInsertScreenInstance?.(context);
+          options: {},
+        }
+        hook?.onInsertScreenInstance?.(context)
       })
 
       setScreenInstances((screenInstances) => [
@@ -96,14 +96,14 @@ export const ProviderScreenInstances: React.FC = ({ children}) => {
       ptr: number
       mapper: (screenInstance: IScreenInstance) => IScreenInstance
     }) => {
-      lifecycleHooks.forEach(hook => {
+      lifecycleHooks.forEach((hook) => {
         const context = {
           ptr,
           options: {
-            mapperScreenInstance: mapper
-          }
-        };
-        hook?.onMapScreenInstance?.(context);
+            mapperScreenInstance: mapper,
+          },
+        }
+        hook?.onMapScreenInstance?.(context)
       })
 
       setScreenInstances((screenInstances) =>
@@ -125,13 +125,13 @@ export const ProviderScreenInstances: React.FC = ({ children}) => {
       screenInstanceId: string
       screenInstancePromise: IScreenInstancePromise
     }) => {
-      lifecycleHooks.forEach(hook => {
+      lifecycleHooks.forEach((hook) => {
         const context = {
           screenInstanceId,
           screenInstancePromise,
-        };
-        hook?.onAddScreenInstancePromise?.(context);
-      });
+        }
+        hook?.onAddScreenInstancePromise?.(context)
+      })
       setScreenInstancePromiseMap((screenInstancePromiseMap) => ({
         ...screenInstancePromiseMap,
         [screenInstanceId]: screenInstancePromise,

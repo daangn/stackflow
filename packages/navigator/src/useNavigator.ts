@@ -1,4 +1,4 @@
-import { useCallback, useMemo} from 'react'
+import { useCallback, useMemo } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 
 import { useScreenInstance } from './components/Stack.ContextScreenInstance'
@@ -16,7 +16,7 @@ export function useNavigator() {
   const location = useLocation()
   const screenInfo = useScreenInstance()
   const makeId = useIncrementalId()
-  const {lifecycleHooks} = usePlugins()
+  const { lifecycleHooks } = usePlugins()
 
   const {
     screenInstances,
@@ -28,63 +28,78 @@ export function useNavigator() {
   const navigatorSearchParams = parseNavigatorSearchParams(location.search)
   const { present, screenInstanceId } = navigatorSearchParams.toObject()
 
-  const currentScreenInstance = useMemo(() => screenInstances[screenInstancePtr], [screenInstances, screenInstancePtr]);
+  const currentScreenInstance = useMemo(
+    () => screenInstances[screenInstancePtr],
+    [screenInstances, screenInstancePtr]
+  )
 
-  const beforePush = useCallback((to: string) => {
-      lifecycleHooks.forEach(hook => {
-          const context = {
-              to,
-              options: {
-                  push,
-                  replace,
-                  pop
-              }
-          };
-          hook?.beforePush?.(context);
+  const beforePush = useCallback(
+    (to: string) => {
+      lifecycleHooks.forEach((hook) => {
+        const context = {
+          to,
+          options: {
+            push,
+            replace,
+            pop,
+          },
+        }
+        hook?.beforePush?.(context)
       })
-  }, [lifecycleHooks])
+    },
+    [lifecycleHooks]
+  )
 
-  const onPushed = useCallback((to) => {
-      lifecycleHooks.forEach(hook => {
-          const context = {
-              to,
-              options: {
-                  push,
-                  replace,
-                  pop
-              }
-          };
-          hook?.onPushed?.(context);
+  const onPushed = useCallback(
+    (to) => {
+      lifecycleHooks.forEach((hook) => {
+        const context = {
+          to,
+          options: {
+            push,
+            replace,
+            pop,
+          },
+        }
+        hook?.onPushed?.(context)
       })
-  }, [lifecycleHooks])
+    },
+    [lifecycleHooks]
+  )
 
-  const beforeReplace = useCallback((to) => {
-      lifecycleHooks.forEach(hook => {
-          const context = {
-              to,
-              options: {
-                  push,
-                  replace,
-                  pop
-              }
-          };
-          hook?.beforeReplace?.(context);
+  const beforeReplace = useCallback(
+    (to) => {
+      lifecycleHooks.forEach((hook) => {
+        const context = {
+          to,
+          options: {
+            push,
+            replace,
+            pop,
+          },
+        }
+        hook?.beforeReplace?.(context)
       })
-  }, [lifecycleHooks])
+    },
+    [lifecycleHooks]
+  )
 
-  const onReplaced = useCallback((to) => {
-      lifecycleHooks.forEach(hook => {
-          const context = {
-              to,
-              options: {
-                  push,
-                  replace,
-                  pop
-              }
-          };
-          hook?.onReplaced?.(context);
+  const onReplaced = useCallback(
+    (to) => {
+      lifecycleHooks.forEach((hook) => {
+        const context = {
+          to,
+          options: {
+            push,
+            replace,
+            pop,
+          },
+        }
+        hook?.onReplaced?.(context)
       })
-  }, [lifecycleHooks])
+    },
+    [lifecycleHooks]
+  )
 
   const push = useCallback(
     <T = object>(
@@ -94,10 +109,10 @@ export function useNavigator() {
          * Bottom to top animation (iOS only)
          */
         present?: boolean
-      },
+      }
     ): Promise<T | null> =>
       new Promise(async (resolve) => {
-        await beforePush(to);
+        await beforePush(to)
         const { pathname, searchParams } = new URL(to, /* dummy */ 'file://')
 
         const navigatorSearchParams = makeNavigatorSearchParams(searchParams, {
@@ -111,7 +126,7 @@ export function useNavigator() {
             resolve,
           },
         })
-        onPushed(to);
+        onPushed(to)
         history.push(`${pathname}?${navigatorSearchParams.toString()}`)
       }),
     [screenInfo, history]
@@ -127,7 +142,7 @@ export function useNavigator() {
         animate?: boolean
       }
     ) => {
-      beforeReplace(to);
+      beforeReplace(to)
       const { pathname, searchParams } = new URL(to, /* dummy */ 'file://')
 
       const navigatorSearchParams = makeNavigatorSearchParams(searchParams, {
@@ -143,52 +158,55 @@ export function useNavigator() {
     [history, screenInstanceId, present]
   )
 
-    const beforePop = useCallback(() => {
-        lifecycleHooks.forEach(hook => {
-            const context = {
-                from: currentScreenInstance?.as,
-                options: {
-                    push,
-                    replace,
-                    pop
-                }
-            };
-            hook?.beforePop?.(context);
-        })
-    }, [lifecycleHooks])
+  const beforePop = useCallback(() => {
+    lifecycleHooks.forEach((hook) => {
+      const context = {
+        from: currentScreenInstance?.as,
+        options: {
+          push,
+          replace,
+          pop,
+        },
+      }
+      hook?.beforePop?.(context)
+    })
+  }, [lifecycleHooks])
 
-    const onPopped = useCallback(() => {
-        lifecycleHooks.forEach(hook => {
-            const context = {
-                from: currentScreenInstance?.as,
-                options: {
-                    push,
-                    replace,
-                    pop
-                }
-            };
-            hook?.onPopped?.(context);
-        })
-    }, [lifecycleHooks])
+  const onPopped = useCallback(() => {
+    lifecycleHooks.forEach((hook) => {
+      const context = {
+        from: currentScreenInstance?.as,
+        options: {
+          push,
+          replace,
+          pop,
+        },
+      }
+      hook?.onPopped?.(context)
+    })
+  }, [lifecycleHooks])
 
-    const onPoppedWithData = useCallback((data: any) => {
-        lifecycleHooks.forEach(hook => {
-            const context = {
-                from: currentScreenInstance?.as,
-                data,
-                options: {
-                    push,
-                    replace,
-                    pop
-                }
-            } as any;
-            hook?.onPoppedWithData?.(context);
-        })
-    }, [lifecycleHooks])
+  const onPoppedWithData = useCallback(
+    (data: any) => {
+      lifecycleHooks.forEach((hook) => {
+        const context = {
+          from: currentScreenInstance?.as,
+          data,
+          options: {
+            push,
+            replace,
+            pop,
+          },
+        } as any
+        hook?.onPoppedWithData?.(context)
+      })
+    },
+    [lifecycleHooks]
+  )
 
   const pop = useCallback(
     (depth = 1) => {
-        beforePop();
+      beforePop()
       const targetScreenInstance = screenInstances[screenInstancePtr - depth]
 
       const backwardCount = screenInstances
@@ -219,13 +237,13 @@ export function useNavigator() {
         /**
          * Payload
          */
-        data: T,
+        data: T
       ) {
         _data = data
         // FIXME: 'onPoppedWithData' and 'onPopped' should be unified later
-        onPoppedWithData(data);
+        onPoppedWithData(data)
       }
-      onPopped();
+      onPopped()
       nextTick(() => {
         history.go(-backwardCount)
       })

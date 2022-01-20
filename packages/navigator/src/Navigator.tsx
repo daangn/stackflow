@@ -9,9 +9,9 @@ import { ProviderScreenInstances, ProviderScreens } from './globalState'
 import { ProviderIncrementalId } from './hooks'
 import * as css from './Navigator.css'
 import { INavigatorTheme } from './types'
-import { KarrotframePlugin } from "@karrotframe/plugins";
+import { KarrotframePlugin } from '@karrotframe/plugins'
 import wrapProvider from './helpers/wrapProvider'
-import { ProviderPlugins } from "./globalState/Plugins";
+import { ProviderPlugins } from './globalState/Plugins'
 
 declare global {
   interface Window {
@@ -80,33 +80,34 @@ const Navigator: React.FC<INavigatorProps> = ({
   closeButtonAriaLabel = 'Close',
   onClose,
   onDepthChange,
-  plugins= [],
+  plugins = [],
   children,
 }) => {
   let h = (
     <ProviderIncrementalId>
-      {wrapProvider(plugins.map(plugin => plugin.provider).filter(Boolean),
-          () =>
-           (<ProviderPlugins plugins={plugins}>
+      {wrapProvider(
+        plugins.map((plugin) => plugin.provider).filter(Boolean),
+        () => (
+          <ProviderPlugins plugins={plugins}>
             <ProviderScreens>
               <ProviderScreenInstances>
                 <div
-                    className={[
-                      css.root({ theme }),
-                      ...(className ? [className] : []),
-                    ].join(' ')}
-                    style={assignInlineVars({
-                      [css.vars.animationDuration]: animationDuration + 'ms',
-                    })}
+                  className={[
+                    css.root({ theme }),
+                    ...(className ? [className] : []),
+                  ].join(' ')}
+                  style={assignInlineVars({
+                    [css.vars.animationDuration]: animationDuration + 'ms',
+                  })}
                 >
                   <TransitionGroup component={null}>
                     <Stack
-                        animationDuration={animationDuration}
-                        theme={theme}
-                        onClose={onClose}
-                        backButtonAriaLabel={backButtonAriaLabel}
-                        closeButtonAriaLabel={closeButtonAriaLabel}
-                        onDepthChange={onDepthChange}
+                      animationDuration={animationDuration}
+                      theme={theme}
+                      onClose={onClose}
+                      backButtonAriaLabel={backButtonAriaLabel}
+                      closeButtonAriaLabel={closeButtonAriaLabel}
+                      onDepthChange={onDepthChange}
                     >
                       {children}
                     </Stack>
@@ -114,7 +115,9 @@ const Navigator: React.FC<INavigatorProps> = ({
                 </div>
               </ProviderScreenInstances>
             </ProviderScreens>
-          </ProviderPlugins>) )}
+          </ProviderPlugins>
+        )
+      )}
     </ProviderIncrementalId>
   )
 

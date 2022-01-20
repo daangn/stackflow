@@ -16,7 +16,10 @@ import PageTabs from './components/_pages/PageTabs'
 import PageUseParams from './components/_pages/PageUseParams'
 import PageUseQueryParams from './components/_pages/PageUseQueryParams'
 
-import { dataPlugin, loggerMiddlewareBeforePushPlugin } from "@karrotframe/plugins";
+import {
+  dataPlugin,
+  loggerMiddlewareBeforePushPlugin,
+} from '@karrotframe/plugins'
 
 const App: React.FC = () => {
   return (

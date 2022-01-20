@@ -36,7 +36,5 @@ module.exports = {
   optimization: {
     minimize: false,
   },
-  plugins: [
-    new ForkTsCheckerWebpackPlugin(),
-  ],
+  plugins: [new ForkTsCheckerWebpackPlugin()],
 }

@@ -1,16 +1,19 @@
-import React, {useMemo} from 'react'
+import React, { useMemo } from 'react'
 import styled from '@emotion/styled'
 import { ScreenHelmet, useNavigator } from '@karrotframe/navigator'
 
 import ListItem from '../ListItem'
-import { useDataPlugin } from "@karrotframe/plugins";
+import { useDataPlugin } from '@karrotframe/plugins'
 
 const PageHome: React.FC = () => {
-  const { push  } = useNavigator()
-  const { dataFromNextPage } = useDataPlugin();
-  const result = useMemo(() => dataFromNextPage({from: '/pop'}), [dataFromNextPage]);
+  const { push } = useNavigator()
+  const { dataFromNextPage } = useDataPlugin()
+  const result = useMemo(
+    () => dataFromNextPage({ from: '/pop' }),
+    [dataFromNextPage]
+  )
 
-    return (
+  return (
     <Container>
       <ScreenHelmet title="Spec" />
       <ListItem

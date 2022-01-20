@@ -13,7 +13,7 @@ const PagePop: React.FC = () => {
       <ScreenHelmet title="Pop" />
       <ListItem
         onClick={() => {
-          pop();
+          pop()
         }}
       >
         pop()
