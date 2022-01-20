@@ -2,9 +2,10 @@
   "name": "@karrotframe/monorepo",
   "license": "Apache-2.0",
   "scripts": {
-    "postinstall": "yarn build",
-    "build": "yarn workspaces foreach -t run build",
-    "prettify": "prettier --write ."
+    "build": "yarn workspaces foreach --topological-dev run build",
+    "prettify": "prettier --write .",
+    "test:navigator": "cd packages/navigator && yarn test",
+    "install:navigator": "cd packages/navigator && yarn install --immutable --immutable-cache"
   },
   "workspaces": [
     "packages/*",
