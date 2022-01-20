@@ -1,6 +1,6 @@
-import {
+import type {
   BeforePushType,
-  KarrotframePlugin,
+  NavigatorPluginType,
   PluginType,
 } from '../types/navigator'
 import composeMiddlewares from '../utils/composeMiddlewares'
@@ -42,7 +42,7 @@ const useLoggerMiddlewareBeforePushPlugin = (): PluginType => {
   }
 }
 
-export const loggerMiddlewareBeforePushPlugin: KarrotframePlugin = {
+export const loggerMiddlewareBeforePushPlugin: NavigatorPluginType = {
   name: 'loggerMiddlewareBeforePushPlugin',
   executor: useLoggerMiddlewareBeforePushPlugin,
 }

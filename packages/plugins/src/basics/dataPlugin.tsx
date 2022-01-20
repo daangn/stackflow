@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useMemo } from 'react'
-import { KarrotframePlugin, PluginType } from '../types/navigator'
+import type { NavigatorPluginType, PluginType } from '../types/navigator'
 
 export const ContextDataPlugin = createContext<{
   data: any
@@ -32,7 +32,7 @@ export const useDataPlugin = (): PluginType & {
   }, [context])
 }
 
-export const dataPlugin: KarrotframePlugin = {
+export const dataPlugin: NavigatorPluginType = {
   name: 'dataPlugin',
   provider: DataPluginProvider,
   executor: useDataPlugin,

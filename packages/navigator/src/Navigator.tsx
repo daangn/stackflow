@@ -9,7 +9,7 @@ import { ProviderScreenInstances, ProviderScreens } from './globalState'
 import { ProviderIncrementalId } from './hooks'
 import * as css from './Navigator.css'
 import { INavigatorTheme } from './types'
-import { KarrotframePlugin } from '@karrotframe/plugins'
+import type { NavigatorPluginType } from '@karrotframe/plugins'
 import wrapProvider from './helpers/wrapProvider'
 import { ProviderPlugins } from './globalState/Plugins'
 
@@ -67,7 +67,7 @@ interface INavigatorProps {
   /**
    * plugins
    */
-  plugins?: KarrotframePlugin[]
+  plugins?: NavigatorPluginType[]
 }
 const Navigator: React.FC<INavigatorProps> = ({
   theme = 'Android',

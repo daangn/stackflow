@@ -117,7 +117,7 @@ export interface PluginType {
     ) => Promise<onAddScreenInstancePromise | void>
   }
 }
-export type KarrotframePlugin = {
+export type NavigatorPluginType = {
   name: string
   provider?: React.FC
   executor: () => PluginType
