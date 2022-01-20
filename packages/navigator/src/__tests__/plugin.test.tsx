@@ -8,7 +8,7 @@ import { useNavigator } from '../useNavigator'
 
 import type {
   BeforePushType,
-  KarrotframePlugin,
+  NavigatorPluginType,
   PluginType,
 } from '@karrotframe/plugins'
 import { composeMiddlewares } from '@karrotframe/plugins'
@@ -48,7 +48,7 @@ test('인터페이스에 맞게 플러그인을 선언하면 정상적으로 렌
     return <div>{sampleFunction() || 'no data'}</div>
   }
 
-  const simplePlugin: KarrotframePlugin = {
+  const simplePlugin: NavigatorPluginType = {
     name: 'simple-plugin',
     provider: SimplePluginProvider,
     executor: useSimplePlugin,
@@ -96,7 +96,7 @@ test('플러그인의 hook 에서 얻은 정보로 컴포넌트를 업데이트�
     }, [context])
   }
 
-  const simplePlugin: KarrotframePlugin = {
+  const simplePlugin: NavigatorPluginType = {
     name: 'simple-plugin',
     provider: SimplePluginProvider,
     executor: useSimplePlugin,
@@ -183,7 +183,7 @@ test('플러그인을 사용해서 미들웨어의 마지막 단에 가공한 ur
   const redirectMiddleware = async (
     ctx: BeforePushType
   ): Promise<BeforePushType | void> => {
-    ctx.options.push?.(ctx.to)
+    ctx.options?.push?.(ctx.to)
   }
 
   const useTestMiddlewarePlugin = (): PluginType => ({
@@ -196,7 +196,7 @@ test('플러그인을 사용해서 미들웨어의 마지막 단에 가공한 ur
     },
   })
 
-  const middlewarePlugin: KarrotframePlugin = {
+  const middlewarePlugin: NavigatorPluginType = {
     name: 'middleware-plugin',
     executor: useTestMiddlewarePlugin,
   }
@@ -289,7 +289,7 @@ test('2개 이상의 플러그인을 조합해서 사용할 수 있다.', async 
     }, [context])
   }
 
-  const simplePlugin: KarrotframePlugin = {
+  const simplePlugin: NavigatorPluginType = {
     name: 'simple-plugin',
     provider: SimplePluginProvider,
     executor: useSimplePlugin,
@@ -316,7 +316,7 @@ test('2개 이상의 플러그인을 조합해서 사용할 수 있다.', async 
   const redirectMiddleware = async (
     ctx: BeforePushType
   ): Promise<BeforePushType | void> => {
-    ctx.options.push?.(ctx.to)
+    ctx.options?.push?.(ctx.to)
   }
 
   const useTestMiddlewarePlugin = (): PluginType => ({
@@ -329,7 +329,7 @@ test('2개 이상의 플러그인을 조합해서 사용할 수 있다.', async 
     },
   })
 
-  const middlewarePlugin: KarrotframePlugin = {
+  const middlewarePlugin: NavigatorPluginType = {
     name: 'middleware-plugin',
     executor: useTestMiddlewarePlugin,
   }
@@ -400,14 +400,14 @@ test('플러그인을 2개 이상 사용할 때 플러그인을 배열에 선언
     ctx: BeforePushType
   ): Promise<BeforePushType | void> => {
     if (ctx.to === '/move') {
-      ctx.options.push?.('/first-url')
+      ctx.options?.push?.('/first-url')
     }
   }
   const redirectSecond = async (
     ctx: BeforePushType
   ): Promise<BeforePushType | void> => {
     if (ctx.to === '/first-url') {
-      ctx.options.push?.('/second-url')
+      ctx.options?.push?.('/second-url')
     }
   }
   const useFirstPlugin = (): PluginType => ({
@@ -415,7 +415,7 @@ test('플러그인을 2개 이상 사용할 때 플러그인을 배열에 선언
       beforePush: redirectFirst,
     },
   })
-  const firstPlugin: KarrotframePlugin = {
+  const firstPlugin: NavigatorPluginType = {
     name: 'first-plugin',
     executor: useFirstPlugin,
   }
@@ -425,7 +425,7 @@ test('플러그인을 2개 이상 사용할 때 플러그인을 배열에 선언
       beforePush: redirectSecond,
     },
   })
-  const secondPlugin: KarrotframePlugin = {
+  const secondPlugin: NavigatorPluginType = {
     name: 'second-plugin',
     executor: useSecondPlugin,
   }
