@@ -7,7 +7,7 @@ on:
 
 jobs:
   test:
-    timeout-minutes: 10
+    timeout-minutes: 3
     runs-on: ubuntu-latest
 
     steps:
@@ -29,11 +29,8 @@ jobs:
         restore-keys: |
           nodeModules-
 
-    - name: Install Dependencies
+    - name: Install Dependencies and Build all package
       run: yarn install --immutable --immutable-cache
-
-    - name: Build all package
-      run: yarn build
 
     - name: Run tests for navigator
       run: yarn test:navigator
