@@ -4,7 +4,7 @@
   "scripts": {
     "build": "yarn workspaces foreach --topological-dev run build",
     "prettify": "prettier --write .",
-    "test:navigator": "cd packages/navigator && yarn test",
+    "test:navigator": "cd packages/navigator && yarn test:ci",
     "install:navigator": "cd packages/navigator && yarn install --immutable --immutable-cache"
   },
   "workspaces": [
