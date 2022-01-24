@@ -215,20 +215,16 @@ const customMiddlewareThird = async (
   await next()
 }
 
-const useMiddlewareLoggerWithPromise = (): PluginType => {
-  return {
-    lifeCycleHooks: {
-      beforePush: composeMiddlewares<BeforePushType>([
-        customMiddlewareFirst,
-        customMiddlewareSecond,
-        customMiddlewareThird,
-      ]),
-    },
-  }
-}
-
 const middlewareLoggerPlugin: NavigatorPluginType = {
   name: 'middlewareLoggerPlugin',
-  executor: useMiddlewareLoggerWithPromise,
+  executor: () => ({
+      lifeCycleHooks: {
+          beforePush: composeMiddlewares<BeforePushType>([
+              customMiddlewareFirst,
+              customMiddlewareSecond,
+              customMiddlewareThird,
+          ]),
+      },
+  }),
 }
 ```

@@ -30,8 +30,9 @@ const customMiddlewareThird = async (
   console.log('after promise in third middleware', ctx.to)
 }
 
-const useLoggerMiddlewareBeforePushPlugin = (): PluginType => {
-  return {
+export const loggerMiddlewareBeforePushPlugin: NavigatorPluginType = {
+  name: 'loggerMiddlewareBeforePushPlugin',
+  executor: () => ({
     lifeCycleHooks: {
       beforePush: composeMiddlewares<BeforePushType>([
         customMiddlewareFirst,
@@ -39,10 +40,5 @@ const useLoggerMiddlewareBeforePushPlugin = (): PluginType => {
         customMiddlewareThird,
       ]),
     },
-  }
-}
-
-export const loggerMiddlewareBeforePushPlugin: NavigatorPluginType = {
-  name: 'loggerMiddlewareBeforePushPlugin',
-  executor: useLoggerMiddlewareBeforePushPlugin,
+  } as PluginType),
 }

@@ -186,19 +186,17 @@ test('플러그인을 사용해서 미들웨어의 마지막 단에 가공한 ur
     ctx.options?.push?.(ctx.to)
   }
 
-  const useTestMiddlewarePlugin = (): PluginType => ({
-    lifeCycleHooks: {
-      beforePush: composeMiddlewares<BeforePushType>([
-        modifyUrlMiddleware,
-        loggerMiddleware,
-        redirectMiddleware,
-      ]),
-    },
-  })
-
   const middlewarePlugin: NavigatorPluginType = {
     name: 'middleware-plugin',
-    executor: useTestMiddlewarePlugin,
+    executor: () => ({
+      lifeCycleHooks: {
+        beforePush: composeMiddlewares<BeforePushType>([
+          modifyUrlMiddleware,
+          loggerMiddleware,
+          redirectMiddleware,
+        ]),
+      },
+    }),
   }
 
   const FalsePage: React.FC = () => <div>false</div>
