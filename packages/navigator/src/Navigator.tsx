@@ -9,7 +9,7 @@ import { ProviderScreenInstances, ProviderScreens } from './globalState'
 import { ProviderIncrementalId } from './hooks'
 import * as css from './Navigator.css'
 import { INavigatorTheme } from './types'
-import type { NavigatorPluginType } from '@karrotframe/plugins'
+import type { NavigatorPluginType } from '@karrotframe/plugin'
 import wrapProvider from './helpers/wrapProvider'
 import { ProviderPlugins } from './globalState/Plugins'
 
@@ -65,7 +65,7 @@ interface INavigatorProps {
   onDepthChange?: (depth: number) => void
 
   /**
-   * plugins
+   * external plugins to apply to navigator
    */
   plugins?: NavigatorPluginType[]
 }
