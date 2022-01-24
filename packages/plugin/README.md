@@ -15,9 +15,6 @@ interface Options {
   pop?: (from: string) => void
   push?: (to: string) => void
   replace?: (to: string) => void
-  preventPop?: () => void
-  preventPush?: () => void
-  preventReplace?: () => void
   mapperScreenInstance?: (screenInstance: IScreenInstance) => IScreenInstance
 }
 
