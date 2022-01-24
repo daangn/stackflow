@@ -2465,7 +2465,7 @@ __metadata:
     "@babel/preset-env": ^7.12.7
     "@babel/preset-react": ^7.14.5
     "@babel/preset-typescript": ^7.10.4
-    "@karrotframe/plugins": "workspace:packages/plugins"
+    "@karrotframe/plugin": "workspace:packages/plugin"
     "@testing-library/jest-dom": ^5.16.1
     "@testing-library/react": ^12.1.2
     "@types/history": ^4.7.8
@@ -2501,16 +2501,16 @@ __metadata:
     webpack: ^5.9.0
     webpack-cli: ^4.2.0
   peerDependencies:
-    "@karrotframe/plugins": "workspace:packages/plugins"
+    "@karrotframe/plugin": "workspace:packages/plugin"
     react: ">=16.8"
     react-dom: ">=16.8"
     react-router-dom: ">=5.2.0"
   languageName: unknown
   linkType: soft
 
-"@karrotframe/plugins@workspace:packages/plugins":
+"@karrotframe/plugin@workspace:packages/plugin":
   version: 0.0.0-use.local
-  resolution: "@karrotframe/plugins@workspace:packages/plugins"
+  resolution: "@karrotframe/plugin@workspace:packages/plugin"
   dependencies:
     "@babel/cli": ^7.11.6
     "@babel/core": ^7.11.6
@@ -7686,7 +7686,7 @@ __metadata:
     "@emotion/react": ^11.1.5
     "@emotion/styled": ^11.1.5
     "@karrotframe/navigator": "workspace:packages/navigator"
-    "@karrotframe/plugins": "workspace:packages/plugins"
+    "@karrotframe/plugin": "workspace:packages/plugin"
     "@karrotframe/pulltorefresh": "workspace:packages/pulltorefresh"
     "@karrotframe/tabs": "workspace:packages/tabs"
     "@testing-library/dom": ^6.15.0

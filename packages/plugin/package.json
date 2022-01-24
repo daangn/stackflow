@@ -1,5 +1,5 @@
 {
-  "name": "@karrotframe/plugins",
+  "name": "@karrotframe/plugin",
   "version": "0.1.0",
   "description": "extension for karrotframe",
   "repository": "https://github.com/daangn/karrotframe",

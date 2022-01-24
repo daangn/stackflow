@@ -19,7 +19,7 @@ import PageUseQueryParams from './components/_pages/PageUseQueryParams'
 import {
   dataPlugin,
   loggerMiddlewareBeforePushPlugin,
-} from '@karrotframe/plugins'
+} from '@karrotframe/plugin'
 
 const App: React.FC = () => {
   return (

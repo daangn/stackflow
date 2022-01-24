@@ -10,8 +10,8 @@ import type {
   BeforePushType,
   NavigatorPluginType,
   PluginType,
-} from '@karrotframe/plugins'
-import { composeMiddlewares } from '@karrotframe/plugins'
+} from '@karrotframe/plugin'
+import { composeMiddlewares } from '@karrotframe/plugin'
 
 const Page404: React.FC = () => <div>Not Found</div>
 
