@@ -15,6 +15,7 @@
 - [`@karrotframe/navigator`](./packages/navigator)
 - [`@karrotframe/tabs`](./packages/tabs)
 - [`@karrotframe/pulltorefresh`](./packages/pulltorefresh)
+- [`@karrotframe/plugin`](./packages/plugin)
 
 ## Contributors
 
@@ -25,6 +26,7 @@
 - Tim (tim@daangn.com)
 - [woochanleee](https://github.com/woochanleee)
 - [Ryz0nd](https://github.com/Ryz0nd)
+- Usher (usher@daangn.com)
 
 ## Contribution Guide
 
