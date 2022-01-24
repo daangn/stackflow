@@ -1,6 +1,6 @@
 {
   "name": "@karrotframe/plugin",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "extension for karrotframe",
   "repository": "https://github.com/daangn/karrotframe",
   "license": "Apache-2.0",
