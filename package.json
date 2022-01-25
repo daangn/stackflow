@@ -1,5 +1,6 @@
 {
   "name": "@karrotframe/monorepo",
+  "private": true,
   "license": "Apache-2.0",
   "scripts": {
     "build": "yarn workspaces foreach --topological-dev run build",
