@@ -1,9 +1,15 @@
 import React from 'react'
 
+interface IScreen {
+  id: string
+  path: string
+  Component: React.ComponentType
+}
+
 interface IScreenInstance {
   id: string
   screenId: string
-  nestedRouteCount: number
+  nestedRouteCount?: number
   present: boolean
   as: string
 }
@@ -16,53 +22,88 @@ interface Options {
   preventPush?: () => void
   preventReplace?: () => void
   mapperScreenInstance?: (screenInstance: IScreenInstance) => IScreenInstance
+  setScreenInstances?: (screenInstances: IScreenInstance[]) => void
+  setScreenInstancePtr?: (ptr: number) => void
 }
 interface HookParams {
   options?: Options
 }
 export interface BeforePushType extends HookParams {
   to: string
+  screenInstances: IScreenInstance[]
+  screenInstancePtr: number
 }
 export interface OnPushedType extends HookParams {
   to: string
+  screenInstances: IScreenInstance[]
+  screenInstancePtr: number
 }
 export interface BeforePop extends HookParams {
   from: string
+  screenInstances: IScreenInstance[]
+  screenInstancePtr: number
 }
+
 export interface OnPopped extends HookParams {
   from: string
+  screenInstances: IScreenInstance[]
+  screenInstancePtr: number
 }
 export interface OnPoppedWithDataType extends HookParams {
   from: string
   data?: any
+  screenInstances: IScreenInstance[]
+  screenInstancePtr: number
 }
-export interface beforeReplace extends HookParams {
+export interface BeforeReplace extends HookParams {
   to: string
+  screenInstances: IScreenInstance[]
+  screenInstancePtr: number
 }
-export interface onReplaced extends HookParams {
+export interface OnReplaced extends HookParams {
   to: string
+  screenInstances: IScreenInstance[]
+  screenInstancePtr: number
 }
-export interface onRegisterScreen extends HookParams {
-  screen: {
-    id: string
-    path: string
-    Component: React.ComponentType
-  }
+export interface BeforeRegisterScreen extends HookParams {
+  screen: IScreen
+  screens: IScreen[]
 }
-export interface onInsertScreenInstance extends HookParams {
+export interface OnRegisterScreen extends HookParams {
+  screen: IScreen
+  screens: IScreen[]
+}
+export interface OnInsertScreenInstance extends HookParams {
   ptr: number
-  screenInstance: {
-    id: string
-    screenId: string
-    present: boolean
-    as: string
-  }
+  screenInstance: IScreenInstance
+  screenInstances: IScreenInstance[]
 }
-export interface onMapScreenInstance extends HookParams {
+export interface BeforeInsertScreenInstance extends HookParams {
   ptr: number
+  screenInstance: IScreenInstance
+  screenInstances: IScreenInstance[]
 }
-export interface onAddScreenInstancePromise extends HookParams {
+export interface BeforeMapScreenInstance extends HookParams {
+  ptr: number
+  screenInstances: IScreenInstance[]
+}
+export interface OnMapScreenInstance extends HookParams {
+  ptr: number
+  screenInstances: IScreenInstance[]
+}
+export interface BeforeAddScreenInstancePromise extends HookParams {
   screenInstanceId: string
+  screenInstances: IScreenInstance[]
+  screenInstancePtr: number
+  screenInstancePromise: {
+    resolve: (data: any | null) => void
+    onNextPagePopped?: (from: string, data: any) => void
+  }
+}
+export interface OnAddScreenInstancePromise extends HookParams {
+  screenInstanceId: string
+  screenInstances: IScreenInstance[]
+  screenInstancePtr: number
   screenInstancePromise: {
     resolve: (data: any | null) => void
     onNextPagePopped?: (from: string, data: any) => void
@@ -92,29 +133,45 @@ export interface PluginType {
       next: () => Promise<OnPoppedWithDataType | void>
     ) => Promise<OnPoppedWithDataType | void>
     beforeReplace?: (
-      context: beforeReplace,
-      next: () => Promise<beforeReplace | void>
-    ) => Promise<beforeReplace | void>
+      context: BeforeReplace,
+      next: () => Promise<BeforeReplace | void>
+    ) => Promise<BeforeReplace | void>
     onReplaced?: (
-      context: onReplaced,
-      next: () => Promise<onReplaced | void>
-    ) => Promise<onReplaced | void>
+      context: OnReplaced,
+      next: () => Promise<OnReplaced | void>
+    ) => Promise<OnReplaced | void>
+    beforeRegisterScreen?: (
+      context: BeforeRegisterScreen,
+      next: () => Promise<BeforeRegisterScreen | void>
+    ) => Promise<BeforeRegisterScreen | void>
     onRegisterScreen?: (
-      context: onRegisterScreen,
-      next: () => Promise<onRegisterScreen | void>
-    ) => Promise<onRegisterScreen | void>
+      context: OnRegisterScreen,
+      next: () => Promise<OnRegisterScreen | void>
+    ) => Promise<OnRegisterScreen | void>
+    beforeInsertScreenInstance?: (
+      context: BeforeInsertScreenInstance,
+      next: () => Promise<BeforeInsertScreenInstance | void>
+    ) => Promise<BeforeInsertScreenInstance | void>
     onInsertScreenInstance?: (
-      context: onInsertScreenInstance,
-      next: () => Promise<onInsertScreenInstance | void>
-    ) => Promise<onInsertScreenInstance | void>
+      context: OnInsertScreenInstance,
+      next: () => Promise<OnInsertScreenInstance | void>
+    ) => Promise<OnInsertScreenInstance | void>
+    beforeMapScreenInstance?: (
+      context: BeforeMapScreenInstance,
+      next: () => Promise<BeforeMapScreenInstance | void>
+    ) => Promise<BeforeMapScreenInstance | void>
     onMapScreenInstance?: (
-      context: onMapScreenInstance,
-      next: () => Promise<onMapScreenInstance | void>
-    ) => Promise<onMapScreenInstance | void>
+      context: OnMapScreenInstance,
+      next: () => Promise<OnMapScreenInstance | void>
+    ) => Promise<OnMapScreenInstance | void>
+    beforeAddScreenInstancePromise?: (
+      context: BeforeAddScreenInstancePromise,
+      next: () => Promise<BeforeAddScreenInstancePromise | void>
+    ) => Promise<BeforeAddScreenInstancePromise | void>
     onAddScreenInstancePromise?: (
-      context: onAddScreenInstancePromise,
-      next: () => Promise<onAddScreenInstancePromise | void>
-    ) => Promise<onAddScreenInstancePromise | void>
+      context: OnAddScreenInstancePromise,
+      next: () => Promise<OnAddScreenInstancePromise | void>
+    ) => Promise<OnAddScreenInstancePromise | void>
   }
 }
 export type NavigatorPluginType = {

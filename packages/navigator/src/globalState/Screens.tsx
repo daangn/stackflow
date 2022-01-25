@@ -31,20 +31,36 @@ export const ProviderScreens: React.FC = (props) => {
       lifecycleHooks.forEach((hook) => {
         const context = {
           screen,
+          screens,
         }
         hook?.onRegisterScreen?.(context)
       })
     },
-    [lifecycleHooks]
+    [lifecycleHooks, screens]
+  )
+
+  const beforeRegisterScreen = useCallback(
+    (screen: IScreen) => {
+      lifecycleHooks.forEach((hook) => {
+        const context = {
+          screen,
+          screens,
+        }
+        hook?.beforeRegisterScreen?.(context)
+      })
+    },
+    [lifecycleHooks, screens]
   )
 
   const registerScreen = useCallback((screen: IScreen) => {
-    onRegisterScreen(screen)
+    beforeRegisterScreen(screen)
 
     setScreens((screens) => ({
       ...screens,
       [screen.id]: screen,
     }))
+
+    onRegisterScreen(screen)
 
     const unregister = () => {
       setScreens((screens) => ({

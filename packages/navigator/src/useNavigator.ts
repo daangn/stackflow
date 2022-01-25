@@ -38,6 +38,8 @@ export function useNavigator() {
       lifecycleHooks.forEach((hook) => {
         const context = {
           to,
+          screenInstances,
+          screenInstancePtr,
           options: {
             push,
             replace,
@@ -55,6 +57,8 @@ export function useNavigator() {
       lifecycleHooks.forEach((hook) => {
         const context = {
           to,
+          screenInstances,
+          screenInstancePtr,
           options: {
             push,
             replace,
@@ -162,6 +166,8 @@ export function useNavigator() {
     lifecycleHooks.forEach((hook) => {
       const context = {
         from: currentScreenInstance?.as,
+        screenInstances,
+        screenInstancePtr,
         options: {
           push,
           replace,
@@ -176,6 +182,8 @@ export function useNavigator() {
     lifecycleHooks.forEach((hook) => {
       const context = {
         from: currentScreenInstance?.as,
+        screenInstances,
+        screenInstancePtr,
         options: {
           push,
           replace,

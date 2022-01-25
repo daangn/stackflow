@@ -3,7 +3,7 @@ name: Test for Pull request
 on:
   pull_request:
     branches:
-      - "**"
+      - '**'
 
 jobs:
   test:
@@ -11,26 +11,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Repo
-      uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
-    - name: Setup Node.js 14.x
-      uses: actions/setup-node@v2
-      with:
-        node-version: 14.x
+      - name: Setup Node.js 14.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14.x
 
-    - name: Use cached node_modules
-      uses: actions/cache@v1
-      with:
-        path: node_modules
-        key: nodeModules-${{ hashFiles('**/yarn.lock') }}
-        restore-keys: |
-          nodeModules-
+      - name: Use cached node_modules
+        uses: actions/cache@v1
+        with:
+          path: node_modules
+          key: nodeModules-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            nodeModules-
 
-    - name: Install Dependencies and Build all package
-      run: yarn install --immutable --immutable-cache
+      - name: Install Dependencies and Build all package
+        run: yarn install --immutable --immutable-cache
 
-    - name: Run tests for navigator
-      run: yarn test:navigator
+      - name: Run tests for navigator
+        run: yarn test:navigator
