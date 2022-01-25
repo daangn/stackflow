@@ -22,88 +22,88 @@ interface Options {
   preventPush?: () => void
   preventReplace?: () => void
   mapperScreenInstance?: (screenInstance: IScreenInstance) => IScreenInstance
-  setScreenInstances?: (screenInstances: IScreenInstance[]) => void;
-  setScreenInstancePtr?: (ptr: number) => void;
+  setScreenInstances?: (screenInstances: IScreenInstance[]) => void
+  setScreenInstancePtr?: (ptr: number) => void
 }
 interface HookParams {
   options?: Options
 }
 export interface BeforePushType extends HookParams {
   to: string
-  screenInstances: IScreenInstance[];
-  screenInstancePtr: number;
+  screenInstances: IScreenInstance[]
+  screenInstancePtr: number
 }
 export interface OnPushedType extends HookParams {
   to: string
-  screenInstances: IScreenInstance[];
-  screenInstancePtr: number;
+  screenInstances: IScreenInstance[]
+  screenInstancePtr: number
 }
 export interface BeforePop extends HookParams {
   from: string
-  screenInstances: IScreenInstance[];
-  screenInstancePtr: number;
+  screenInstances: IScreenInstance[]
+  screenInstancePtr: number
 }
 
 export interface OnPopped extends HookParams {
   from: string
-  screenInstances: IScreenInstance[];
-  screenInstancePtr: number;
+  screenInstances: IScreenInstance[]
+  screenInstancePtr: number
 }
 export interface OnPoppedWithDataType extends HookParams {
   from: string
   data?: any
-  screenInstances: IScreenInstance[];
-  screenInstancePtr: number;
+  screenInstances: IScreenInstance[]
+  screenInstancePtr: number
 }
 export interface BeforeReplace extends HookParams {
   to: string
-  screenInstances: IScreenInstance[];
-  screenInstancePtr: number;
+  screenInstances: IScreenInstance[]
+  screenInstancePtr: number
 }
 export interface OnReplaced extends HookParams {
   to: string
-  screenInstances: IScreenInstance[];
-  screenInstancePtr: number;
+  screenInstances: IScreenInstance[]
+  screenInstancePtr: number
 }
 export interface BeforeRegisterScreen extends HookParams {
-  screen: IScreen,
+  screen: IScreen
   screens: IScreen[]
 }
 export interface OnRegisterScreen extends HookParams {
-  screen: IScreen,
+  screen: IScreen
   screens: IScreen[]
 }
 export interface OnInsertScreenInstance extends HookParams {
   ptr: number
-  screenInstance: IScreenInstance;
-  screenInstances: IScreenInstance[];
+  screenInstance: IScreenInstance
+  screenInstances: IScreenInstance[]
 }
 export interface BeforeInsertScreenInstance extends HookParams {
   ptr: number
-  screenInstance: IScreenInstance;
-  screenInstances: IScreenInstance[];
+  screenInstance: IScreenInstance
+  screenInstances: IScreenInstance[]
 }
 export interface BeforeMapScreenInstance extends HookParams {
   ptr: number
-  screenInstances: IScreenInstance[];
+  screenInstances: IScreenInstance[]
 }
 export interface OnMapScreenInstance extends HookParams {
   ptr: number
-  screenInstances: IScreenInstance[];
+  screenInstances: IScreenInstance[]
 }
 export interface BeforeAddScreenInstancePromise extends HookParams {
-  screenInstanceId: string;
-  screenInstances: IScreenInstance[];
-  screenInstancePtr: number;
+  screenInstanceId: string
+  screenInstances: IScreenInstance[]
+  screenInstancePtr: number
   screenInstancePromise: {
     resolve: (data: any | null) => void
     onNextPagePopped?: (from: string, data: any) => void
   }
 }
 export interface OnAddScreenInstancePromise extends HookParams {
-  screenInstanceId: string;
-  screenInstances: IScreenInstance[];
-  screenInstancePtr: number;
+  screenInstanceId: string
+  screenInstances: IScreenInstance[]
+  screenInstancePtr: number
   screenInstancePromise: {
     resolve: (data: any | null) => void
     onNextPagePopped?: (from: string, data: any) => void

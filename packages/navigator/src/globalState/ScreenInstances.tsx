@@ -75,7 +75,7 @@ export const ProviderScreenInstances: React.FC = ({ children }) => {
           screenInstances,
           options: {
             setScreenInstances,
-            setScreenInstancePtr
+            setScreenInstancePtr,
           },
         }
         hook?.beforeInsertScreenInstance?.(context)
@@ -96,7 +96,7 @@ export const ProviderScreenInstances: React.FC = ({ children }) => {
           screenInstances,
           options: {
             setScreenInstances,
-            setScreenInstancePtr
+            setScreenInstancePtr,
           },
         }
         hook?.onInsertScreenInstance?.(context)
@@ -138,7 +138,6 @@ export const ProviderScreenInstances: React.FC = ({ children }) => {
         }
         hook?.onMapScreenInstance?.(context)
       })
-
     },
     [setScreenInstances]
   )

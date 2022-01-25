@@ -32,13 +32,14 @@ const customMiddlewareThird = async (
 
 export const loggerMiddlewareBeforePushPlugin: NavigatorPluginType = {
   name: 'loggerMiddlewareBeforePushPlugin',
-  executor: () => ({
-    lifeCycleHooks: {
-      beforePush: composeMiddlewares<BeforePushType>([
-        customMiddlewareFirst,
-        customMiddlewareSecond,
-        customMiddlewareThird,
-      ]),
-    },
-  } as PluginType),
+  executor: () =>
+    ({
+      lifeCycleHooks: {
+        beforePush: composeMiddlewares<BeforePushType>([
+          customMiddlewareFirst,
+          customMiddlewareSecond,
+          customMiddlewareThird,
+        ]),
+      },
+    } as PluginType),
 }
