@@ -72,9 +72,13 @@ export const ProviderScreenInstances: React.FC = ({ children }) => {
         const context = {
           ptr,
           screenInstance,
-          options: {},
+          screenInstances,
+          options: {
+            setScreenInstances,
+            setScreenInstancePtr
+          },
         }
-        hook?.onInsertScreenInstance?.(context)
+        hook?.beforeInsertScreenInstance?.(context)
       })
 
       setScreenInstances((screenInstances) => [
@@ -84,8 +88,21 @@ export const ProviderScreenInstances: React.FC = ({ children }) => {
           nestedRouteCount: 0,
         },
       ])
+
+      lifecycleHooks.forEach((hook) => {
+        const context = {
+          ptr,
+          screenInstance,
+          screenInstances,
+          options: {
+            setScreenInstances,
+            setScreenInstancePtr
+          },
+        }
+        hook?.onInsertScreenInstance?.(context)
+      })
     },
-    [setScreenInstances]
+    [setScreenInstances, screenInstances]
   )
 
   const mapScreenInstance = useCallback(
@@ -99,6 +116,22 @@ export const ProviderScreenInstances: React.FC = ({ children }) => {
       lifecycleHooks.forEach((hook) => {
         const context = {
           ptr,
+          screenInstances,
+          options: {
+            mapperScreenInstance: mapper,
+          },
+        }
+        hook?.beforeMapScreenInstance?.(context)
+      })
+
+      setScreenInstances((screenInstances) =>
+        screenInstances.map((si, i) => (i === ptr ? mapper(si) : si))
+      )
+
+      lifecycleHooks.forEach((hook) => {
+        const context = {
+          ptr,
+          screenInstances,
           options: {
             mapperScreenInstance: mapper,
           },
@@ -106,9 +139,6 @@ export const ProviderScreenInstances: React.FC = ({ children }) => {
         hook?.onMapScreenInstance?.(context)
       })
 
-      setScreenInstances((screenInstances) =>
-        screenInstances.map((si, i) => (i === ptr ? mapper(si) : si))
-      )
     },
     [setScreenInstances]
   )
@@ -127,15 +157,27 @@ export const ProviderScreenInstances: React.FC = ({ children }) => {
     }) => {
       lifecycleHooks.forEach((hook) => {
         const context = {
+          screenInstancePtr,
+          screenInstances,
+          screenInstanceId,
+          screenInstancePromise,
+        }
+        hook?.beforeAddScreenInstancePromise?.(context)
+      })
+
+      setScreenInstancePromiseMap((screenInstancePromiseMap) => ({
+        ...screenInstancePromiseMap,
+        [screenInstanceId]: screenInstancePromise,
+      }))
+      lifecycleHooks.forEach((hook) => {
+        const context = {
+          screenInstancePtr,
+          screenInstances,
           screenInstanceId,
           screenInstancePromise,
         }
         hook?.onAddScreenInstancePromise?.(context)
       })
-      setScreenInstancePromiseMap((screenInstancePromiseMap) => ({
-        ...screenInstancePromiseMap,
-        [screenInstanceId]: screenInstancePromise,
-      }))
     },
     [setScreenInstancePromiseMap]
   )
