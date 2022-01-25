@@ -9,3 +9,5 @@
 !.yarn/versions
 
 .DS_Store
+
+.idea/
