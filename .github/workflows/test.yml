@@ -20,7 +20,7 @@ jobs:
           node-version: 14.x
 
       - name: Install Dependencies and Build all package
-        run: yarn install --immutable --immutable-cache
+        run: yarn install --immutable
 
       - name: Run tests for navigator
         run: yarn workspace @karrotframe/navigator test
