@@ -60,6 +60,7 @@
     "@vanilla-extract/css-utils": "^0.1.1",
     "@vanilla-extract/recipes": "^0.1.0",
     "@vanilla-extract/webpack-plugin": "^2.1.0",
+    "babel-jest": "^27.4.6",
     "babel-loader": "^8.2.2",
     "css-loader": "^5.0.1",
     "dts-bundle-generator": "^5.9.0",
