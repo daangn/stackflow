@@ -25,8 +25,7 @@
     "build:runtime": "webpack --config ./webpack/build.js",
     "clean": "rimraf index.css && rimraf index.css.map && rimraf index.d.ts && rimraf index.js && rimraf index.js.map && rimraf node_modules",
     "prepack": "yarn clean && yarn build",
-    "test": "jest --watchAll",
-    "test:ci": "jest --ci --watchAll=false"
+    "test": "jest"
   },
   "dependencies": {
     "@types/history": "^4.0.0",
@@ -60,6 +59,7 @@
     "@vanilla-extract/css-utils": "^0.1.1",
     "@vanilla-extract/recipes": "^0.1.0",
     "@vanilla-extract/webpack-plugin": "^2.1.0",
+    "babel-jest": "^27.4.6",
     "babel-loader": "^8.2.2",
     "css-loader": "^5.0.1",
     "dts-bundle-generator": "^5.9.0",

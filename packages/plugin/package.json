@@ -2,48 +2,47 @@
   "name": "@karrotframe/plugin",
   "version": "0.1.1",
   "description": "extension for karrotframe",
-  "repository": "https://github.com/daangn/karrotframe",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/daangn/karrotframe.git",
+    "directory": "packages/plugin"
+  },
   "license": "Apache-2.0",
   "author": "Usher <usher@daangn.com>",
-  "main": "index.js",
-  "types": "index.d.ts",
+  "type": "module",
+  "source": "./src/index.ts",
+  "main": "./src/index.ts",
+  "module": "./lib/index.mjs",
+  "types": "./lib/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./lib/index.cjs",
+      "import": "./lib/index.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "main": "./lib/index.mjs"
+  },
   "files": [
-    "index.d.ts",
-    "index.js",
-    "index.js.map",
-    "README.md",
-    "LICENSE"
+    "src",
+    "lib"
   ],
   "scripts": {
-    "build": "yarn clean && yarn build:check && NODE_ENV=production yarn build:runtime && yarn build:dts",
-    "build:check": "tsc",
-    "build:dts": "dts-bundle-generator ./src/index.ts -o ./index.d.ts --no-check",
-    "build:runtime": "webpack --config ./webpack/build.js",
-    "clean": "rimraf index.css && rimraf index.css.map && rimraf index.d.ts && rimraf index.js && rimraf index.js.map && rimraf node_modules",
+    "build": "nanobundle build",
+    "clean": "rimraf lib",
     "prepack": "yarn clean && yarn build"
   },
   "devDependencies": {
-    "@babel/cli": "^7.11.6",
-    "@babel/core": "^7.11.6",
-    "@babel/preset-env": "^7.12.7",
-    "@babel/preset-react": "^7.14.5",
-    "@babel/preset-typescript": "^7.10.4",
-    "@types/node": "^14.11.8",
     "@types/react": "^16.9.46",
     "@types/react-dom": "^16.9.8",
-    "babel-loader": "^8.2.2",
-    "dts-bundle-generator": "^5.9.0",
-    "fork-ts-checker-webpack-plugin": "^3.1.1",
+    "nanobundle": "^0.0.21",
     "rimraf": "^3.0.2",
-    "typescript": "^4.3.4",
-    "webpack": "^5.9.0",
-    "webpack-cli": "^4.2.0"
+    "typescript": "^4.3.4"
   },
   "peerDependencies": {
     "react": ">=16.8",
     "react-dom": ">=16.8"
-  },
-  "engines": {
-    "node": ">=12"
   }
 }

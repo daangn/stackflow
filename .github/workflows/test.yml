@@ -13,24 +13,14 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
 
       - name: Setup Node.js 14.x
         uses: actions/setup-node@v2
         with:
           node-version: 14.x
 
-      - name: Use cached node_modules
-        uses: actions/cache@v1
-        with:
-          path: node_modules
-          key: nodeModules-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            nodeModules-
-
       - name: Install Dependencies and Build all package
-        run: yarn install --immutable --immutable-cache
+        run: yarn install --immutable
 
       - name: Run tests for navigator
-        run: yarn test:navigator
+        run: yarn workspace @karrotframe/navigator test
