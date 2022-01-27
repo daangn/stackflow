@@ -2196,7 +2196,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@karrotframe/navigator@workspace:packages/navigator":
+"@karrotframe/navigator@workspace:^, @karrotframe/navigator@workspace:packages/navigator":
   version: 0.0.0-use.local
   resolution: "@karrotframe/navigator@workspace:packages/navigator"
   dependencies:
@@ -2205,7 +2205,7 @@ __metadata:
     "@babel/preset-env": ^7.12.7
     "@babel/preset-react": ^7.14.5
     "@babel/preset-typescript": ^7.10.4
-    "@karrotframe/plugin": "workspace:packages/plugin"
+    "@karrotframe/plugin": "workspace:^0.2.0"
     "@testing-library/jest-dom": ^5.16.1
     "@testing-library/react": ^12.1.2
     "@types/history": ^4.7.8
@@ -2242,14 +2242,14 @@ __metadata:
     webpack: ^5.9.0
     webpack-cli: ^4.2.0
   peerDependencies:
-    "@karrotframe/plugin": "workspace:packages/plugin"
+    "@karrotframe/plugin": "workspace:^0.2.0"
     react: ">=16.8"
     react-dom: ">=16.8"
     react-router-dom: ">=5.2.0"
   languageName: unknown
   linkType: soft
 
-"@karrotframe/plugin@workspace:packages/plugin":
+"@karrotframe/plugin@workspace:^, @karrotframe/plugin@workspace:^0.2.0, @karrotframe/plugin@workspace:packages/plugin":
   version: 0.0.0-use.local
   resolution: "@karrotframe/plugin@workspace:packages/plugin"
   dependencies:
@@ -2264,7 +2264,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@karrotframe/pulltorefresh@workspace:packages/pulltorefresh":
+"@karrotframe/pulltorefresh@workspace:^, @karrotframe/pulltorefresh@workspace:packages/pulltorefresh":
   version: 0.0.0-use.local
   resolution: "@karrotframe/pulltorefresh@workspace:packages/pulltorefresh"
   dependencies:
@@ -2296,7 +2296,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@karrotframe/tabs@workspace:packages/tabs":
+"@karrotframe/tabs@workspace:^, @karrotframe/tabs@workspace:packages/tabs":
   version: 0.0.0-use.local
   resolution: "@karrotframe/tabs@workspace:packages/tabs"
   dependencies:
@@ -7155,10 +7155,10 @@ __metadata:
     "@emotion/core": ^11.0.0
     "@emotion/react": ^11.1.5
     "@emotion/styled": ^11.1.5
-    "@karrotframe/navigator": "workspace:packages/navigator"
-    "@karrotframe/plugin": "workspace:packages/plugin"
-    "@karrotframe/pulltorefresh": "workspace:packages/pulltorefresh"
-    "@karrotframe/tabs": "workspace:packages/tabs"
+    "@karrotframe/navigator": "workspace:^"
+    "@karrotframe/plugin": "workspace:^"
+    "@karrotframe/pulltorefresh": "workspace:^"
+    "@karrotframe/tabs": "workspace:^"
     "@testing-library/dom": ^6.15.0
     "@testing-library/jest-dom": ^4.2.4
     "@testing-library/react": ^9.3.2
@@ -7184,7 +7184,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-with-cra@workspace:examples/with-cra"
   dependencies:
-    "@karrotframe/navigator": "workspace:packages/navigator"
+    "@karrotframe/navigator": "workspace:^"
     "@testing-library/dom": ^6.15.0
     "@testing-library/jest-dom": ^4.2.4
     "@testing-library/react": ^9.3.2
