@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "lib": ["dom", "dom.iterable", "esnext"],
     "outDir": "lib",
     "module": "esnext",
     "moduleResolution": "node",
@@ -19,7 +18,8 @@
     "allowSyntheticDefaultImports": true,
     "jsxFactory": "",
     "skipLibCheck": true,
-    "noEmit": true,
+    "rootDir": "src",
+    "declarationDir": "lib",
     "downlevelIteration": true
   },
   "include": ["src"],
