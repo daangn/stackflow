@@ -17,7 +17,6 @@ export const container = recipe({
       'env(safe-area-inset-top) 0 0',
       'constant(safe-area-inset-top) 0 0',
     ],
-    paddingTop: ['env(safe-area-inset-top)', 'constant(safe-area-inset-top)'],
     backgroundColor: vars.backgroundColor,
   },
   variants: {
