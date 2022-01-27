@@ -14,8 +14,8 @@ export const container = recipe({
     width: '100%',
     top: 0,
     padding: [
-      'env(safe-area-inset-top) 0 0',
       'constant(safe-area-inset-top) 0 0',
+      'env(safe-area-inset-top) 0 0',
     ],
     backgroundColor: vars.backgroundColor,
   },
