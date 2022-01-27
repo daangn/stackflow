@@ -53,7 +53,7 @@ export const dim = recipe({
   variants: {
     cupertinoAndIsNavbarVisible: {
       true: {
-        top: vars.navbar.height,
+        top: `calc(${vars.navbar.height} + env(safe-area-inset-top))`
       },
     },
     cupertinoAndIsPresent: {
