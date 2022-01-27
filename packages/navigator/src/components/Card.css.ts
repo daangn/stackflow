@@ -53,7 +53,10 @@ export const dim = recipe({
   variants: {
     cupertinoAndIsNavbarVisible: {
       true: {
-        top: vars.navbar.height,
+        top: [
+          `calc(${vars.navbar.height} + env(safe-area-inset-top))`,
+          `calc(${vars.navbar.height} + constant(safe-area-inset-top))`,
+        ],
       },
     },
     cupertinoAndIsPresent: {
@@ -119,7 +122,10 @@ export const main = recipe({
     },
     cupertinoAndIsNavbarVisible: {
       true: {
-        paddingTop: `calc(${vars.navbar.height} + env(safe-area-inset-top))`,
+        paddingTop: [
+          `calc(${vars.navbar.height} + env(safe-area-inset-top))`,
+          `calc(${vars.navbar.height} + constant(safe-area-inset-top))`,
+        ],
       },
     },
     android: {
