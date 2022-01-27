@@ -1,5 +1,11 @@
 # @karrotframe/plugin
 
+## 0.2.2
+
+### Patch Changes
+
+- 814a344: Emit d.ts
+
 ## 0.2.1
 
 ### Patch Changes
