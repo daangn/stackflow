@@ -13,7 +13,10 @@ export const container = recipe({
     position: 'absolute',
     width: '100%',
     top: 0,
-    padding: ['env(safe-area-inset-top) 0 0', 'constant(safe-area-inset-top) 0 0'],
+    padding: [
+      'env(safe-area-inset-top) 0 0',
+      'constant(safe-area-inset-top) 0 0',
+    ],
     paddingTop: ['env(safe-area-inset-top)', 'constant(safe-area-inset-top)'],
     backgroundColor: vars.backgroundColor,
   },
