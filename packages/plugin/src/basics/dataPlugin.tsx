@@ -27,7 +27,10 @@ export const useDataPlugin = (): PluginType & {
           context.setData({ [from]: data })
         },
       },
-      dataFromNextPage: ({ from }: { from: string }) => context?.data?.[from],
+      dataFromNextPage: ({ from }: { from: string }) => {
+        if(!context || !context.data || !context.data[from]) return null;
+        return context.data[from]
+      },
     }
   }, [context])
 }
