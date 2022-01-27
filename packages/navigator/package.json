@@ -7,6 +7,9 @@
   "author": "Tony Won <tony@daangn.com>",
   "main": "index.js",
   "types": "index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
   "files": [
     "index.css",
     "index.css.map",
