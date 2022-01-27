@@ -39,7 +39,7 @@
     "@types/react-router-dom": "^5.1.5",
     "customize-cra": "^1.0.0",
     "react-app-rewired": "^2.1.6",
-    "react-scripts": "3.4.3",
+    "react-scripts": "5.0.0",
     "typescript": "~3.7.2"
   }
 }
