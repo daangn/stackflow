@@ -12,18 +12,18 @@
   "type": "module",
   "source": "./src/index.ts",
   "main": "./src/index.ts",
-  "module": "./lib/index.mjs",
+  "module": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "exports": {
     ".": {
       "require": "./lib/index.cjs",
-      "import": "./lib/index.mjs"
+      "import": "./lib/index.js"
     },
     "./package.json": "./package.json"
   },
   "publishConfig": {
     "access": "public",
-    "main": "./lib/index.mjs"
+    "main": "./lib/index.js"
   },
   "files": [
     "src",
