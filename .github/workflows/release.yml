@@ -28,7 +28,7 @@ jobs:
         run: yarn install --immutable
 
       - name: Create Release Pull Request
-        uses: cometkim/yarn-changeset-action@master
+        uses: cometkim/yarn-changeset-action@v1
         with:
           autoPublish: true
         env:
