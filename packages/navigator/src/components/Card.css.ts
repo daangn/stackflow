@@ -177,6 +177,11 @@ export const frameOffset = recipe({
     transition: `transform ${vars.animationDuration}`,
   },
   variants: {
+    noAnimate: {
+      true: {
+        transform: 'none',
+      }
+    },
     cupertinoAndIsNotPresent: {
       true: {
         selectors: {
@@ -207,6 +212,11 @@ export const frame = recipe({
     WebkitOverflowScrolling: 'touch',
   },
   variants: {
+    noAnimate: {
+      true: {
+        transform: 'none',
+      },
+    },
     cupertino: {
       true: {
         transform: 'translateX(0)',

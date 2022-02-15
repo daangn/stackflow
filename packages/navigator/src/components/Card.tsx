@@ -6,6 +6,7 @@ import * as css from './Card.css'
 import { makeTranslation } from './Card.translation'
 import Navbar from './Navbar'
 import { useScreenHelmet } from './Stack.ContextScreenHelmet'
+import { useAnimationContext } from "../globalState/Animation";
 
 interface ICardProps {
   theme: INavigatorTheme
@@ -23,6 +24,8 @@ interface ICardProps {
   onClose?: () => void
 }
 const Card: React.FC<ICardProps> = (props) => {
+  const { shouldAnimate } = useAnimationContext();
+
   const { pop } = useNavigator()
   const { screenHelmetVisible, screenHelmetProps } = useScreenHelmet()
   const [popped, setPopped] = useState(false)
@@ -167,22 +170,24 @@ const Card: React.FC<ICardProps> = (props) => {
           )}
           <div
             className={css.frameOffset({
+              noAnimate: !shouldAnimate ? true: undefined,
               cupertinoAndIsNotPresent:
-                cupertino && !props.isPresent ? true : undefined,
+                cupertino && !props.isPresent && shouldAnimate  ? true : undefined,
               cupertinoAndIsNotTop:
-                cupertino && !props.isTop ? true : undefined,
+                cupertino && !props.isTop && shouldAnimate ? true : undefined,
             })}
             ref={props.isBeforeTop ? props.beforeTopFrameOffsetRef : undefined}
           >
             <div
               className={css.frame({
-                cupertino: cupertino ? true : undefined,
+                noAnimate: !shouldAnimate ? true: undefined,
+                cupertino: cupertino && shouldAnimate ? true : undefined,
                 cupertinoAndIsNotRoot:
-                  cupertino && !props.isRoot ? true : undefined,
+                  cupertino && !props.isRoot && shouldAnimate ? true : undefined,
                 cupertinoAndIsPresent:
-                  cupertino && props.isPresent ? true : undefined,
+                  cupertino && props.isPresent && shouldAnimate ? true : undefined,
                 cupertinoAndIsNotPresent:
-                  cupertino && !props.isPresent ? true : undefined,
+                  cupertino && !props.isPresent && shouldAnimate ? true : undefined,
                 hidden:
                   !props.isTop &&
                   !props.isBeforeTop &&

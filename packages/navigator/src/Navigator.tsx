@@ -12,6 +12,7 @@ import { INavigatorTheme } from './types'
 import type { NavigatorPluginType } from '@karrotframe/plugin'
 import wrapProvider from './helpers/wrapProvider'
 import { ProviderPlugins } from './globalState/Plugins'
+import {ProviderAnimation} from "./globalState/Animation";
 
 declare global {
   interface Window {
@@ -91,6 +92,7 @@ const Navigator: React.FC<INavigatorProps> = ({
           <ProviderPlugins plugins={plugins}>
             <ProviderScreens>
               <ProviderScreenInstances>
+                <ProviderAnimation>
                 <div
                   className={[
                     css.root({ theme }),
@@ -113,6 +115,7 @@ const Navigator: React.FC<INavigatorProps> = ({
                     </Stack>
                   </TransitionGroup>
                 </div>
+                </ProviderAnimation>
               </ProviderScreenInstances>
             </ProviderScreens>
           </ProviderPlugins>

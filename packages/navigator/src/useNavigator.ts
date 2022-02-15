@@ -10,6 +10,7 @@ import {
   parseNavigatorSearchParams,
 } from './helpers'
 import { useIncrementalId } from './hooks'
+import { useAnimationContext } from "./globalState/Animation";
 
 export function useNavigator() {
   const history = useHistory()
@@ -24,6 +25,8 @@ export function useNavigator() {
     screenInstancePromiseMap,
     addScreenInstancePromise,
   } = useScreenInstances()
+
+  const { activeAnimation }= useAnimationContext();
 
   const navigatorSearchParams = parseNavigatorSearchParams(location.search)
   const { present, screenInstanceId } = navigatorSearchParams.toObject()
@@ -113,6 +116,10 @@ export function useNavigator() {
          * Bottom to top animation (iOS only)
          */
         present?: boolean
+        /**
+         * activate screen switch animation
+         */
+        animate?: boolean
       }
     ): Promise<T | null> =>
       new Promise(async (resolve) => {
@@ -131,6 +138,8 @@ export function useNavigator() {
           },
         })
         onPushed(to)
+        const animate = options?.animate ?? true;
+        activeAnimation(animate);
         history.push(`${pathname}?${navigatorSearchParams.toString()}`)
       }),
     [screenInfo, history]
@@ -140,22 +149,22 @@ export function useNavigator() {
     (
       to: string,
       options?: {
-        /**
-         * Animate when replaced
-         */
-        animate?: boolean
-      }
-    ) => {
+          /**
+           * activate screen switch animation
+           */
+          animate?: boolean
+      }    ) => {
       beforeReplace(to)
       const { pathname, searchParams } = new URL(to, /* dummy */ 'file://')
 
       const navigatorSearchParams = makeNavigatorSearchParams(searchParams, {
-        screenInstanceId: options?.animate ? makeId() : screenInstanceId,
+        screenInstanceId: makeId(),
         present,
       })
 
       onReplaced(to)
       nextTick(() => {
+        activeAnimation(!!options?.animate);
         history.replace(`${pathname}?${navigatorSearchParams.toString()}`)
       })
     },
@@ -213,7 +222,11 @@ export function useNavigator() {
   )
 
   const pop = useCallback(
-    (depth = 1) => {
+    (depth = 1, options?: {
+        /**
+         * activate screen switch animation
+         */
+        animate?: boolean }) => {
       beforePop()
       const targetScreenInstance = screenInstances[screenInstancePtr - depth]
 
@@ -253,6 +266,8 @@ export function useNavigator() {
       }
       onPopped()
       nextTick(() => {
+        const animate = options?.animate ?? true;
+        activeAnimation(animate);
         history.go(-backwardCount)
       })
 
