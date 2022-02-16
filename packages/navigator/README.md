@@ -164,7 +164,7 @@ const Posts: React.FC = () => {
     // Opens a specific path with some options
     push(`/posts/${postId}`, {
       present: true, // option to prevent swipe back (Cupertino theme only)
-      animate: false // option to control animation effect (default: true)
+      animate: false, // option to control animation effect (default: true)
     })
   }
 
@@ -174,7 +174,7 @@ const Posts: React.FC = () => {
 
     // Multiple levels can be popped through the depth argument
     pop(1)
-    
+
     // declare option to control animation effect (default: true)
     pop(1, { animate: false })
   }

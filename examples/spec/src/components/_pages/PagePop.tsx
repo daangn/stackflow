@@ -27,6 +27,13 @@ const PagePop: React.FC = () => {
       >
         pop() w/ send()
       </ListItem>
+      <ListItem
+        onClick={() => {
+          pop(1, { animate: false })
+        }}
+      >
+        pop() without animation effect
+      </ListItem>
     </Container>
   )
 }

@@ -55,7 +55,7 @@ export const dim = recipe({
       true: {
         top: [
           `calc(${vars.navbar.height} + constant(safe-area-inset-top))`,
-          `calc(${vars.navbar.height} + env(safe-area-inset-top))`
+          `calc(${vars.navbar.height} + env(safe-area-inset-top))`,
         ],
       },
     },
@@ -180,7 +180,7 @@ export const frameOffset = recipe({
     noAnimate: {
       true: {
         transform: 'none',
-      }
+      },
     },
     cupertinoAndIsNotPresent: {
       true: {

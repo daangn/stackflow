@@ -22,6 +22,15 @@ const PagePush: React.FC = () => {
         push() w/ present: true (iOS Only)
       </ListItem>
       <ListItem
+        onClick={() => {
+          push('/pop', {
+            animate: false,
+          })
+        }}
+      >
+        push() without animation effect
+      </ListItem>
+      <ListItem
         onClick={async () => {
           const d = await push<{ hello: string }>('/pop')
 
