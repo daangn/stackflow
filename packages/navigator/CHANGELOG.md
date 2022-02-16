@@ -1,6 +1,14 @@
 # @karrotframe/navigator
 
+## 0.21.0
+
+### Minor Changes
+
+- - Support animate option to control animation effect for route event
+  - Fix require verison for @karrotframe/plugin
+
 ## 0.20.0
+
 ### Minor Changes
 
 - bf58c9c: Fix workspace deps version ranges on the manifest

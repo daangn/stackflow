@@ -1,6 +1,6 @@
 {
   "name": "@karrotframe/navigator",
-  "version": "0.20.0",
+  "version": "0.21.0",
   "description": "UX Enhancer",
   "repository": "https://github.com/daangn/karrotframe",
   "license": "Apache-2.0",
@@ -45,7 +45,7 @@
     "@babel/preset-env": "^7.12.7",
     "@babel/preset-react": "^7.14.5",
     "@babel/preset-typescript": "^7.10.4",
-    "@karrotframe/plugin": "workspace:^0.2.1",
+    "@karrotframe/plugin": "workspace:^",
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.2",
     "@types/history": "^4.7.8",
@@ -79,7 +79,7 @@
     "webpack-cli": "^4.2.0"
   },
   "peerDependencies": {
-    "@karrotframe/plugin": "workspace:^0.2.1",
+    "@karrotframe/plugin": "workspace:^",
     "react": ">=16.8",
     "react-dom": ">=16.8",
     "react-router-dom": ">=5.2.0"

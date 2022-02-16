@@ -1,5 +1,11 @@
 # @karrotframe/plugin
 
+## 0.3.0
+
+### Minor Changes
+
+- Update nanobundle to v0.0.24
+
 ## 0.2.1
 
 ### Patch Changes
