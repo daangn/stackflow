@@ -141,12 +141,19 @@ const Card: React.FC<ICardProps> = (props) => {
       )}
       <div
         className={css.mainOffset({
-          androidAndIsNotTop: android && !props.isTop ? true : undefined,
+          androidAndNoAnimate:
+            android && !props.isTop && !shouldAnimate ? true : undefined,
+          androidAndIsNotTop:
+            android && !props.isTop && shouldAnimate ? true : undefined,
         })}
       >
         <div
           className={css.main({
-            android: android ? true : undefined,
+            androidAndNoAnimate:
+              android && !shouldAnimate && !isNavbarVisible ? true : undefined,
+            androidAndNoAnimateAndIsNavbarVisible:
+              android && !shouldAnimate && isNavbarVisible ? true : undefined,
+            android: android && shouldAnimate ? true : undefined,
             androidAndIsNavbarVisible:
               android && isNavbarVisible ? true : undefined,
             androidAndIsRoot: android && props.isRoot ? true : undefined,

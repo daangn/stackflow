@@ -81,6 +81,11 @@ export const mainOffset = recipe({
     transition: `transform ${vars.animationDuration}`,
   },
   variants: {
+    androidAndNoAnimate: {
+      true: {
+        transform: 'none',
+      },
+    },
     androidAndIsNotTop: {
       true: {
         transform: 'translateY(-2rem)',
@@ -126,6 +131,19 @@ export const main = recipe({
           `calc(${vars.navbar.height} + constant(safe-area-inset-top))`,
           `calc(${vars.navbar.height} + env(safe-area-inset-top))`,
         ],
+      },
+    },
+    androidAndNoAnimate: {
+      true: {
+        opacity: 'none',
+        transform: 'none',
+      },
+    },
+    androidAndNoAnimateAndIsNavbarVisible: {
+      true: {
+        opacity: 'none',
+        transform: 'none',
+        paddingTop: vars.navbar.height,
       },
     },
     android: {
