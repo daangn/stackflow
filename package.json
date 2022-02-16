@@ -4,7 +4,8 @@
   "license": "Apache-2.0",
   "scripts": {
     "build": "yarn workspaces foreach --topological-dev run build",
-    "prettify": "prettier --write ."
+    "prettify": "prettier --write .",
+    "postinstall": "husky install"
   },
   "workspaces": [
     "packages/*",
@@ -13,8 +14,13 @@
   "devDependencies": {
     "@changesets/cli": "^2.20.0",
     "@types/jest": "^26.0.20",
+    "husky": ">=6",
+    "lint-staged": ">=10",
     "prettier": "^2.3.2",
     "typescript": "^4.3.5"
   },
-  "packageManager": "yarn@3.1.1"
+  "packageManager": "yarn@3.1.1",
+  "lint-staged": {
+    "*.{js,css,md,ts,tsx,js,jsx}": "yarn prettify"
+  }
 }
