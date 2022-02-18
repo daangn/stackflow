@@ -46,7 +46,7 @@ $ yarn generate example.json --output ./sdk
 | `author`      | String | Author who is responsible for schema                                                                           | `"John Doe"`                     |
 | `endpoint`    | String | Declare domain URL                                                                                             | `"https://example.com"`          |
 | `endpoints`   | Object | Key is environment and value is domain URL.<br/> If `endpoint` is also declared, `endpoint` should be ignored. | `{ prod: "https://example.com"}` |
-| `version`     | Number | Version for Sdk                                                                                                | `"John Doe"`                     |
+| `version`     | Number | Version for Sdk                                                                                                | `1`                              |
 | `routes`      | Array  | Array contains `Route` elements.                                                                               |                                  |
 
 ## `Route` Schema Definition
