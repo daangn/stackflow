@@ -41,7 +41,8 @@
   },
   "devDependencies": {
     "@types/node": "^17.0.16",
-    "nanobundle": "^0.0.22"
+    "nanobundle": "^0.0.22",
+    "rimraf": "^3.0.2"
   },
   "dependencies": {
     "json-schema-to-typescript": "^10.1.5",
