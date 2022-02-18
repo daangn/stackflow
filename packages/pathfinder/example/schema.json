@@ -1,0 +1,37 @@
+{
+  "name": "example",
+  "description": "sdk for example route",
+  "author": "John Doe",
+  "endpoint": "https://example.com",
+  "endpoints": {
+    "prod": "https://example.prod.com"
+  },
+  "version": 1,
+  "routes": [
+    {
+      "name": "guitar",
+      "path": "/product/guitar/:guitarId",
+      "description": "Method to open guitar detail page",
+      "queryParams": {
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "accessory",
+      "path": "/product/accessory/:accessoryId",
+      "description": "Method to open accessory detail page",
+      "queryParams": {
+        "type": "object",
+        "properties": {
+          "referrer": {
+            "type": "string",
+            "description": "tracking referrer page",
+            "enum": ["guitar"]
+          }
+        },
+        "required": ["referrer"],
+        "additionalProperties": false
+      }
+    }
+  ]
+}

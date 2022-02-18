@@ -1,0 +1,50 @@
+{
+  "name": "@karrotframe/pathfinder",
+  "version": "0.0.1",
+  "description": "sdk generator for route by schema",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/daangn/karrotframe.git",
+    "directory": "packages/pathfinder"
+  },
+  "license": "Apache-2.0",
+  "author": "Usher <usher@daangn.com>",
+  "type": "module",
+  "source": "index.ts",
+  "main": "index.ts",
+  "module": "lib/index.mjs",
+  "types": "lib/index.d.ts",
+  "bin": {
+    "generate": "./bin/gen.js"
+  },
+  "exports": {
+    ".": {
+      "require": "./lib/index.cjs",
+      "import": "./lib/index.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "main": "lib/index.mjs"
+  },
+  "files": [
+    "lib",
+    "bin"
+  ],
+  "scripts": {
+    "build": "nanobundle build",
+    "clean": "rimraf lib",
+    "prepack": "yarn clean && yarn build",
+    "generate": "node ./bin/gen.js",
+    "generate:dev": "yarn build && yarn generate"
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.16",
+    "nanobundle": "^0.0.22"
+  },
+  "dependencies": {
+    "json-schema-to-typescript": "^10.1.5",
+    "typescript": "^4.5.5"
+  }
+}
