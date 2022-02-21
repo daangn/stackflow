@@ -1,5 +1,11 @@
 # @karrotframe/navigator
 
+## 0.21.2
+
+### Patch Changes
+
+- dae1c81: Fix backswipe for navigator
+
 ## 0.21.1
 
 ### Patch Changes
