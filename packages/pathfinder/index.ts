@@ -16,10 +16,7 @@ const generate = async (options: string[]) => {
     fs.mkdirSync(generatedDirectory)
   }
 
-  const jsonFile = fs.readFileSync(
-    path.join(path.resolve(), `/${targetSchema}`),
-    'utf-8'
-  )
+  const jsonFile = fs.readFileSync(path.resolve(`/${targetSchema}`), 'utf-8')
   const jsonData = JSON.parse(jsonFile)
 
   const result = await createSdk(jsonData)
