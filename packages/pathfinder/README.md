@@ -10,7 +10,6 @@ sdk generator tool for routes by schema
 - [Entire Schema Definition](#entire-schema-definition)
 - [Route Schema Definition](#route-schema-definition)
 - [Entire Schema Example](#entire-schema-example)
-- [generated SDK](#generated-sdk)
 - [Redefine onOpen callback for usage](#redefine-onopen-callback-for-usage)
 
 ## Installation
@@ -115,83 +114,6 @@ $ yarn generate example.json --output ./sdk
     }
   ]
 }
-```
-
-## generated SDK
-
-```typescript
-export interface OpenExampleGuitarQueryParamsType {}
-export interface OpenExampleAccessoryQueryParamsType {
-  /**
-   * tracking referrer page
-   */
-  referrer: 'guitar'
-}
-
-const getDynamicPath = (path: string, params: Record<string, string> = {}) =>
-  path
-    .split('/')
-    .map((item) => (item.startsWith(':') ? params[item.substring(1)] : item))
-    .join('/')
-
-export const makeExampleSdk = ({
-  onOpen = (endpoints: Record<string, string>, path: string) => {
-    window.location.href =
-      Object.keys(endpoints)[Object.keys(endpoints).length - 1] + path
-  },
-}: {
-  onOpen: (endpoints: Record<string, string>, path: string) => void
-}) => ({
-  /**
-   * Method to open guitar detail page
-   */
-  openExampleGuitar(
-    params: { guitarId: string },
-    queryParams?: OpenExampleGuitarQueryParamsType
-  ) {
-    const dynamicPath = getDynamicPath('/product/guitar/:guitarId', params)
-    const hasQueryParams = queryParams && Object.keys(queryParams).length > 0
-
-    const endpoints = { prod: 'https://example.prod.com' }
-    if (hasQueryParams) {
-      const dynamicPathWithQueryString =
-        dynamicPath +
-        '?' +
-        new URLSearchParams(queryParams as Record<string, string>).toString()
-      onOpen(endpoints, dynamicPathWithQueryString)
-      return
-    }
-    onOpen(endpoints, dynamicPath)
-  },
-
-  /**
-   * Method to open accessory detail page
-   */
-  openExampleAccessory(
-    params: { accessoryId: string },
-    queryParams?: OpenExampleAccessoryQueryParamsType
-  ) {
-    const dynamicPath = getDynamicPath(
-      '/product/accessory/:accessoryId',
-      params
-    )
-    const hasQueryParams = queryParams && Object.keys(queryParams).length > 0
-
-    const endpoints = { prod: 'https://example.prod.com' }
-    if (hasQueryParams) {
-      const dynamicPathWithQueryString =
-        dynamicPath +
-        '?' +
-        new URLSearchParams(queryParams as Record<string, string>).toString()
-      onOpen(endpoints, dynamicPathWithQueryString)
-      return
-    }
-    onOpen(endpoints, dynamicPath)
-  },
-  getVersion() {
-    return 1
-  },
-})
 ```
 
 ## Redefine `onOpen` callback for usage
