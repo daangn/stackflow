@@ -1,5 +1,11 @@
 # @karrotframe/navigator
 
+## 0.21.1
+
+### Patch Changes
+
+- Fix backswipe without ScreenHelmet
+
 ## 0.21.0
 
 ### Minor Changes
