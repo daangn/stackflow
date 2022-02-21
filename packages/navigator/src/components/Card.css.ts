@@ -266,14 +266,12 @@ export const edge = recipe({
     left: 0,
     height: '100%',
     width: '1.25rem',
+    top: 0,
   },
   variants: {
     isNavbarVisible: {
       true: {
         display: 'block',
-      },
-      false: {
-        top: 0,
       },
     },
     cupertinoAndIsNavbarVisible: {
