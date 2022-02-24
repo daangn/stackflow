@@ -1,5 +1,12 @@
 # @karrotframe/navigator
 
+## 1.0.0
+
+### Patch Changes
+
+- Updated dependencies [921cdcf]
+  - @karrotframe/plugin@0.4.0
+
 ## 0.21.2
 
 ### Patch Changes

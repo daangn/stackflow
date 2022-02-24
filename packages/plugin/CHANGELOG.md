@@ -1,5 +1,11 @@
 # @karrotframe/plugin
 
+## 0.4.0
+
+### Minor Changes
+
+- 921cdcf: Update nanobundle
+
 ## 0.3.0
 
 ### Minor Changes
