@@ -29,6 +29,11 @@
     "src",
     "lib"
   ],
+  "browserslist": [
+    "defaults",
+    "safari >= 13",
+    "not ie 11"
+  ],
   "scripts": {
     "build": "nanobundle build",
     "clean": "rimraf lib",
@@ -37,7 +42,7 @@
   "devDependencies": {
     "@types/react": "^16.9.46",
     "@types/react-dom": "^16.9.8",
-    "nanobundle": "^0.0.24",
+    "nanobundle": "^0.0.25",
     "rimraf": "^3.0.2",
     "typescript": "^4.3.4"
   },
