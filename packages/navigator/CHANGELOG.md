@@ -1,11 +1,10 @@
 # @karrotframe/navigator
 
-## 1.0.0
+## 0.21.3
 
 ### Patch Changes
 
-- Updated dependencies [921cdcf]
-  - @karrotframe/plugin@0.4.0
+Fix issue that animate options is not activated in android theme of Navigator component
 
 ## 0.21.2
 

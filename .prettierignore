@@ -1,6 +1,8 @@
 /.vscode
 /.yarn
 /.pnp.js
+/.pnp.cjs
+/.pnp.loader.mjs
 
 /packages/karrotframe/node_modules
 /packages/karrotframe/index.css
