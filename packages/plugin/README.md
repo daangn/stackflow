@@ -6,9 +6,6 @@
 
 [한국어](./README.ko.md)
 
-// TODO: guidance memoization
-// https://github.com/jaredpalmer/mutik#useselectors-vselector-s-s--v
-
 </div>
 
 **extensible plugin for @karrotframe/navigator**
