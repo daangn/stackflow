@@ -8,11 +8,6 @@
 
 </div>
 
-// TODO: guidance memoization
-// https://github.com/jaredpalmer/mutik#useselectors-vselector-s-s--v
-
-// TODO: add eslint rule for react hook deps
-
 [English](./README.md)
 
 **유연하고 확장가능한 @karrotframe/navigator 을 위한 plugin**
