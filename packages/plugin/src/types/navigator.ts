@@ -97,7 +97,6 @@ export interface BeforeAddScreenInstancePromise extends HookParams {
   screenInstancePtr: number
   screenInstancePromise: {
     resolve: (data: any | null) => void
-    onNextPagePopped?: (from: string, data: any) => void
   }
 }
 export interface OnAddScreenInstancePromise extends HookParams {
@@ -106,7 +105,6 @@ export interface OnAddScreenInstancePromise extends HookParams {
   screenInstancePtr: number
   screenInstancePromise: {
     resolve: (data: any | null) => void
-    onNextPagePopped?: (from: string, data: any) => void
   }
 }
 
