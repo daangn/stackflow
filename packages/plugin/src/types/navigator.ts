@@ -97,7 +97,6 @@ export interface BeforeAddScreenInstancePromise extends HookParams {
   screenInstancePtr: number
   screenInstancePromise: {
     resolve: (data: any | null) => void
-    onNextPagePopped?: (from: string, data: any) => void
   }
 }
 export interface OnAddScreenInstancePromise extends HookParams {
@@ -106,7 +105,6 @@ export interface OnAddScreenInstancePromise extends HookParams {
   screenInstancePtr: number
   screenInstancePromise: {
     resolve: (data: any | null) => void
-    onNextPagePopped?: (from: string, data: any) => void
   }
 }
 
@@ -114,63 +112,63 @@ export interface PluginType {
   lifeCycleHooks: {
     beforePush?: (
       context: BeforePushType,
-      next: () => Promise<BeforePushType | void>
+      next: (newCtx?: any) => Promise<BeforePushType | void>
     ) => Promise<BeforePushType | void>
     onPushed?: (
       context: OnPushedType,
-      next: () => Promise<OnPushedType | void>
+      next: (newCtx?: any) => Promise<OnPushedType | void>
     ) => Promise<OnPushedType | void>
     beforePop?: (
       context: BeforePop,
-      next: () => Promise<BeforePop | void>
+      next: (newCtx?: any) => Promise<BeforePop | void>
     ) => Promise<BeforePop | void>
     onPopped?: (
       context: OnPopped,
-      next: () => Promise<OnPopped | void>
+      next: (newCtx?: any) => Promise<OnPopped | void>
     ) => Promise<OnPopped | void>
     onPoppedWithData?: (
       context: OnPoppedWithDataType,
-      next: () => Promise<OnPoppedWithDataType | void>
+      next: (newCtx?: any) => Promise<OnPoppedWithDataType | void>
     ) => Promise<OnPoppedWithDataType | void>
     beforeReplace?: (
       context: BeforeReplace,
-      next: () => Promise<BeforeReplace | void>
+      next: (newCtx?: any) => Promise<BeforeReplace | void>
     ) => Promise<BeforeReplace | void>
     onReplaced?: (
       context: OnReplaced,
-      next: () => Promise<OnReplaced | void>
+      next: (newCtx?: any) => Promise<OnReplaced | void>
     ) => Promise<OnReplaced | void>
     beforeRegisterScreen?: (
       context: BeforeRegisterScreen,
-      next: () => Promise<BeforeRegisterScreen | void>
+      next: (newCtx?: any) => Promise<BeforeRegisterScreen | void>
     ) => Promise<BeforeRegisterScreen | void>
     onRegisterScreen?: (
       context: OnRegisterScreen,
-      next: () => Promise<OnRegisterScreen | void>
+      next: (newCtx?: any) => Promise<OnRegisterScreen | void>
     ) => Promise<OnRegisterScreen | void>
     beforeInsertScreenInstance?: (
       context: BeforeInsertScreenInstance,
-      next: () => Promise<BeforeInsertScreenInstance | void>
+      next: (newCtx?: any) => Promise<BeforeInsertScreenInstance | void>
     ) => Promise<BeforeInsertScreenInstance | void>
     onInsertScreenInstance?: (
       context: OnInsertScreenInstance,
-      next: () => Promise<OnInsertScreenInstance | void>
+      next: (newCtx?: any) => Promise<OnInsertScreenInstance | void>
     ) => Promise<OnInsertScreenInstance | void>
     beforeMapScreenInstance?: (
       context: BeforeMapScreenInstance,
-      next: () => Promise<BeforeMapScreenInstance | void>
+      next: (newCtx?: any) => Promise<BeforeMapScreenInstance | void>
     ) => Promise<BeforeMapScreenInstance | void>
     onMapScreenInstance?: (
       context: OnMapScreenInstance,
-      next: () => Promise<OnMapScreenInstance | void>
+      next: (newCtx?: any) => Promise<OnMapScreenInstance | void>
     ) => Promise<OnMapScreenInstance | void>
     beforeAddScreenInstancePromise?: (
       context: BeforeAddScreenInstancePromise,
-      next: () => Promise<BeforeAddScreenInstancePromise | void>
+      next: (newCtx?: any) => Promise<BeforeAddScreenInstancePromise | void>
     ) => Promise<BeforeAddScreenInstancePromise | void>
     onAddScreenInstancePromise?: (
       context: OnAddScreenInstancePromise,
-      next: () => Promise<OnAddScreenInstancePromise | void>
+      next: (newCtx?: any) => Promise<OnAddScreenInstancePromise | void>
     ) => Promise<OnAddScreenInstancePromise | void>
   }
 }

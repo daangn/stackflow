@@ -16,7 +16,6 @@ export interface IScreenInstance {
 }
 export interface IScreenInstancePromise {
   resolve: (data: any | null) => void
-  onNextPagePopped?: (from: string, data: any) => void
 }
 export interface IScreenInstancePromiseMap {
   [key: string]: IScreenInstancePromise

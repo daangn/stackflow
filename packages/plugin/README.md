@@ -1,153 +1,140 @@
-# karrotframe plugins extensions
+<div align="center">
 
-## hook interface
+![](https://img.shields.io/npm/v/@karrotframe/plugin)
+![](https://img.shields.io/npm/l/@karrotframe/plugin)
+![](https://img.shields.io/npm/dt/@karrotframe/plugin)
+
+[한국어](./README.ko.md)
+
+// TODO: guidance memoization
+// https://github.com/jaredpalmer/mutik#useselectors-vselector-s-s--v
+
+</div>
+
+**extensible plugin for @karrotframe/navigator**
+
+- 🧩 lifecycle hooks to control event for @karrotframe/navigator
+- 📭 apply middleware to lifecycle hooks
+- 🖇️ independent state manage of plugin to support various scenarios
+
+---
+
+- [Install](#install)
+
+---
+
+## Install
+
+```bash
+$ yarn add @karrotframe/plugin
+```
+
+---
+
+## Create simple plugin
+
+### Define plugin
+
+`plugins/index.ts`
 
 ```typescript
-interface IScreenInstance {
-  id: string
-  screenId: string
-  nestedRouteCount: number
-  present: boolean
-  as: string
+import type { PluginType, NavigatorPluginType } from '@karrotframe/plugin'
+
+const pluginName = 'SimplePlugin'
+
+export const useSimplePlugin = (): PluginType & {
+  pluginName: string
+} => {
+  return pluginName
 }
 
-interface Options {
-  pop?: (from: string) => void
-  push?: (to: string) => void
-  replace?: (to: string) => void
-  mapperScreenInstance?: (screenInstance: IScreenInstance) => IScreenInstance
-}
-
-interface HookParams {
-  options?: Options
-}
-
-interface BeforePushType extends HookParams {
-  to: string
-}
-
-interface OnPushedType extends HookParams {
-  to: string
-}
-
-interface BeforePop extends HookParams {
-  from: string
-}
-
-interface OnPopped extends HookParams {
-  from: string
-}
-
-interface OnPoppedWithDataType extends HookParams {
-  from: string
-  data?: any
-}
-
-interface beforeReplace extends HookParams {
-  to: string
-}
-
-interface onReplaced extends HookParams {
-  to: string
-}
-
-interface onRegisterScreen extends HookParams {
-  screen: {
-    id: string
-    path: string
-    Component: React.ComponentType
-  }
-}
-
-interface onInsertScreenInstance extends HookParams {
-  ptr: number
-  screenInstance: {
-    id: string
-    screenId: string
-    present: boolean
-    as: string
-  }
-}
-
-interface onMapScreenInstance extends HookParams {
-  ptr: number
-}
-
-interface onAddScreenInstancePromise extends HookParams {
-  screenInstanceId: string
-  screenInstancePromise: {
-    resolve: (data: any | null) => void
-    onNextPagePopped?: (from: string, data: any) => void
-  }
-}
-
-interface PluginType {
-  lifeCycleHooks: {
-    beforePush?: (
-      context: BeforePushType,
-      next: () => Promise<BeforePushType | void>
-    ) => Promise<BeforePushType | void>
-    onPushed?: (
-      context: OnPushedType,
-      next: () => Promise<OnPushedType | void>
-    ) => Promise<OnPushedType | void>
-    beforePop?: (
-      context: BeforePop,
-      next: () => Promise<BeforePop | void>
-    ) => Promise<BeforePop | void>
-    onPopped?: (
-      context: OnPopped,
-      next: () => Promise<OnPopped | void>
-    ) => Promise<OnPopped | void>
-    onPoppedWithData?: (
-      context: OnPoppedWithDataType,
-      next: () => Promise<OnPoppedWithDataType | void>
-    ) => Promise<OnPoppedWithDataType | void>
-    beforeReplace?: (
-      context: beforeReplace,
-      next: () => Promise<beforeReplace | void>
-    ) => Promise<beforeReplace | void>
-    onReplaced?: (
-      context: onReplaced,
-      next: () => Promise<onReplaced | void>
-    ) => Promise<onReplaced | void>
-    onRegisterScreen?: (
-      context: onRegisterScreen,
-      next: () => Promise<onRegisterScreen | void>
-    ) => Promise<onRegisterScreen | void>
-    onInsertScreenInstance?: (
-      context: onInsertScreenInstance,
-      next: () => Promise<onInsertScreenInstance | void>
-    ) => Promise<onInsertScreenInstance | void>
-    onMapScreenInstance?: (
-      context: onMapScreenInstance,
-      next: () => Promise<onMapScreenInstance | void>
-    ) => Promise<onMapScreenInstance | void>
-    onAddScreenInstancePromise?: (
-      context: onAddScreenInstancePromise,
-      next: () => Promise<onAddScreenInstancePromise | void>
-    ) => Promise<onAddScreenInstancePromise | void>
-  }
-}
-
-type NavigatorPluginType = {
-  name: string
-  provider?: React.FC
-  executor: () => PluginType
+export const simplePlugin: NavigatorPluginType = {
+  name: pluginName,
+  executor: useSimplePlugin,
 }
 ```
 
-## plugin example
+### Apply simple plugin
 
-```typescript jsx
+`App.tsx`
+
+```typescript
+import { simplePlugin } from './plugins'
+
+const App: React.FC = () => {
+  return (
+    <Navigator plugins={[simplePlugin]}>
+      <Screen path="/" component={Main} />
+    </Navigator>
+  )
+}
+```
+
+`Main.tsx`
+
+```typescript
+import { useSimplePlugin } from './plugins'
+
+const Main: React.FC = () => {
+  const { pluginName } = useSimplePlugin()
+  return (
+    <div>
+      <span>Main</span>
+      <span>{pluginName}</span>
+    </div>
+  )
+}
+```
+
+---
+
+## Create plugin with lifecycle hook of Navigator
+
+### Define plugin
+
+`plugins/index.ts`
+
+```typescript
+import type { NavigatorPluginType, PluginType } from '@karrotframe/plugin'
+
+export const loggerPlugin: NavigatorPluginType = {
+  name: 'loggerPlugin',
+  executor: (): PluginType => ({
+    lifeCycleHooks: {
+      onPoppedWithData: async ({ from, data }) => {
+        console.log('from: ', from)
+        console.log('data: ', data)
+      },
+    },
+  }),
+}
+```
+
+`onPoppedWithData` hook is called when user calls `pop().send(data)`.
+
+This hook takes `from` and `data` arguments as you know.
+
+You could also check other lifecycle hooks like `onPoppedWithData`.
+
+---
+
+## Create plugin to control state from plugin
+
+### Define plugin
+
+`plugins/index.ts`
+
+```typescript
 import React, { createContext, useContext, useState, useMemo } from 'react'
-import type { NavigatorPluginType, PluginType } from '../types/navigator'
+import type { NavigatorPluginType, PluginType } from '@karrotframe/plugin'
 
+// Create context to control global state
 export const ContextDataPlugin = createContext<{
   data: any
   setData: (data: any) => void
 }>(null as any)
 
+// Create provider to pass global state
 export const DataPluginProvider: React.FC = (props) => {
   const [data, setData] = useState<any>(null)
   return (
@@ -166,9 +153,11 @@ export const useDataPlugin = (): PluginType & {
     return {
       lifeCycleHooks: {
         onPoppedWithData: async ({ from, data }) => {
+          // control state of plugin in lifecycle hook
           context.setData({ [from]: data })
         },
       },
+      // dataFromNextPage would be extracted to access state of plugin for component
       dataFromNextPage: ({ from }: { from: string }) => context?.data?.[from],
     }
   }, [context])
@@ -181,50 +170,516 @@ export const dataPlugin: NavigatorPluginType = {
 }
 ```
 
-```typescript jsx
+You could use context api to control state of plugin from component.
+
+In this example, this Provider would wrap `Navigator` to pass states.
+
+And then you could access states of plugin from component.
+
+### Apply plugin
+
+`App.tsx`
+
+```typescript
+import { dataPlugin } from './plugins'
+
 const App: React.FC = () => {
   return (
     <Navigator plugins={[dataPlugin]}>
-      <Screen path="/" component={PageHome} />
+      <Screen path="/" component={Main} />
+      <Screen path="/other" component={Other} />
     </Navigator>
   )
 }
 ```
 
-## composeMiddleware
-
-### example
+`Main.tsx`
 
 ```typescript
-const customMiddlewareFirst = async (
+import { useDataPlugin } from './plugins'
+
+const Main: React.FC = () => {
+  const { dataFromNextPage } = useDataPlugin()
+  const result = useMemo(
+    () => dataFromNextPage({ from: '/other' }),
+    [dataFromNextPage]
+  )
+
+  return (
+    <div>
+      <span>Main</span>
+      <span>{result}</span>
+    </div>
+  )
+}
+```
+
+## Apply middleware to lifecycle hook
+
+### Define plugin
+
+```typescript
+import type {
+  BeforePushType,
+  NavigatorPluginType,
+  PluginType,
+} from '@karrotframe/plugin'
+
+// composeMiddlewares compose multiple middlewares for lifecycle hook.
+import { composeMiddlewares } from '@karrotframe/plugin'
+
+const filterPathMiddleware = async (
   ctx: BeforePushType,
   next: () => Promise<BeforePushType | void>
 ): Promise<BeforePushType | void> => {
+  if (ctx.to === 'not valid') {
+    // You could pass custom value as argument to next middleware
+    await next({
+      ...ctx,
+      to: 'valid',
+    })
+  }
+  // This next middleware would get basic arguments of lifecycle hook
+  // because there is not any argument because there is not any argument for next function.
   await next()
 }
-const customMiddlewareSecond = async (
-  ctx: BeforePushType,
-  next: () => Promise<BeforePushType | void>
-): Promise<BeforePushType | void> => {
-  next()
-}
-const customMiddlewareThird = async (
-  ctx: BeforePushType,
-  next: () => Promise<BeforePushType | void>
-): Promise<BeforePushType | void> => {
-  await next()
+const loggerMiddleware = async ({
+  to,
+}: BeforePushType): Promise<BeforePushType | void> => {
+  console.log('to: ', to)
 }
 
-const middlewareLoggerPlugin: NavigatorPluginType = {
-  name: 'middlewareLoggerPlugin',
-  executor: () => ({
+export const pluginWithMiddleware: NavigatorPluginType = {
+  name: 'pluginWithMiddleware',
+  executor: (): PluginType => ({
     lifeCycleHooks: {
       beforePush: composeMiddlewares<BeforePushType>([
-        customMiddlewareFirst,
-        customMiddlewareSecond,
-        customMiddlewareThird,
+        filterPathMiddleware,
+        loggerMiddleware,
       ]),
     },
   }),
+}
+```
+
+You could call next function as second argument of callback function when you use `composeMiddlewares` for hook.
+
+You could control lifecycle hook by stages with middleware.
+
+And next function could take custom value to pass this value to next middleware.
+
+## lifecycle hook
+
+### beforePush
+
+This hook calls callback function before `push()`
+
+| name                | type              | description                                               | example      |
+| ------------------- | ----------------- | --------------------------------------------------------- | ------------ |
+| `to`                | String            | Route path by `push()`.                                   | `"/product"` |
+| `screenInstances`   | IScreenInstance[] | Array that contains screen instance info from client      |              |
+| `screenInstancePtr` | number            | The pointer to indicate current screen                    | `3`          |
+| `options`           | Options           | push, replace, pop could be called from callback function |              |
+
+`screenInstances`
+
+```typescript
+;[
+  {
+    id: 2,
+    screenId: '/product',
+    nestedRouteCount: 0,
+    present: false,
+    as: '/product',
+  },
+]
+```
+
+---
+
+### onPushed
+
+This hook calls callback function immediately before route event(push).
+
+| name                | type              | description                                               | example      |
+| ------------------- | ----------------- | --------------------------------------------------------- | ------------ |
+| `to`                | String            | Route path by `push()`.                                   | `"/product"` |
+| `screenInstances`   | IScreenInstance[] | Array that contains screen instance info from client      |              |
+| `screenInstancePtr` | number            | The pointer to indicate current screen                    | `3`          |
+| `options`           | Options           | push, replace, pop could be called from callback function |              |
+
+`screenInstances`
+
+```typescript
+;[
+  {
+    id: 2,
+    screenId: '/product',
+    nestedRouteCount: 0,
+    present: false,
+    as: '/product',
+  },
+]
+```
+
+---
+
+### beforeReplace
+
+This hook calls callback function before `replace()`
+
+| name      | type    | description                                               | example      |
+| --------- | ------- | --------------------------------------------------------- | ------------ |
+| `to`      | String  | Route path by `replace()`                                 | `"/account"` |
+| `options` | Options | push, replace, pop could be called from callback function |              |
+
+---
+
+### onReplaced
+
+This hook calls callback function immediately before route event(replace).
+
+| name      | type    | description                                               | example      |
+| --------- | ------- | --------------------------------------------------------- | ------------ |
+| `to`      | String  | Route path by `replace()`                                 | `"/account"` |
+| `options` | Options | push, replace, pop could be called from callback function |              |
+
+---
+
+### beforePop
+
+This hook calls callback function before `pop()`
+
+| name                | type              | description                                               | example        |
+| ------------------- | ----------------- | --------------------------------------------------------- | -------------- |
+| `from`              | String            | Route path by `pop()`                                     | `"/product/1"` |
+| `screenInstances`   | IScreenInstance[] | Array that contains screen instance info from client      |                |
+| `screenInstancePtr` | number            | The pointer to indicate current screen                    | `3`            |
+| `options`           | Options           | push, replace, pop could be called from callback function |                |
+
+`screenInstances`
+
+```typescript
+;[
+  {
+    id: 2,
+    screenId: '/product',
+    nestedRouteCount: 0,
+    present: false,
+    as: '/product',
+  },
+]
+```
+
+---
+
+### onPopped
+
+This hook calls callback function before go back with provided depth(backwards count)
+
+| name                | type              | description                                               | example        |
+| ------------------- | ----------------- | --------------------------------------------------------- | -------------- |
+| `from`              | String            | Route path by `pop()`                                     | `"/product/1"` |
+| `screenInstances`   | IScreenInstance[] | Array that contains screen instance info from client      |                |
+| `screenInstancePtr` | number            | The pointer to indicate current screen                    | `3`            |
+| `options`           | Options           | push, replace, pop could be called from callback function |                |
+
+`screenInstances`
+
+```typescript
+;[
+  {
+    id: 2,
+    screenId: '/product',
+    nestedRouteCount: 0,
+    present: false,
+    as: '/product',
+  },
+]
+```
+
+---
+
+### onPoppedWithData
+
+This hook calls callback function when `pop().send()` is called.
+
+| name                | type              | description                                               | example                |
+| ------------------- | ----------------- | --------------------------------------------------------- | ---------------------- |
+| `from`              | String            | Route path by `pop()`                                     | `"/product/1"`         |
+| `data`              | object            | The data as argument of `pop().send()`                    | `{ name: 'John Doe' }` |
+| `screenInstances`   | IScreenInstance[] | Array that contains screen instance info from client      |                        |
+| `screenInstancePtr` | number            | The pointer to indicate current screen                    | `3`                    |
+| `options`           | Options           | push, replace, pop could be called from callback function |                        |
+
+`screenInstances`
+
+```typescript
+;[
+  {
+    id: 2,
+    screenId: '/product',
+    nestedRouteCount: 0,
+    present: false,
+    as: '/product',
+  },
+]
+```
+
+---
+
+### beforeRegisterScreen
+
+Each screen is registered during render by ReactDOM,
+
+if `Screen` components are defined as child component of `Navigator` component.
+
+This hook calls callback function before register this screens.
+
+| name      | type      | description                                                                     | example |
+| --------- | --------- | ------------------------------------------------------------------------------- | ------- |
+| `screen`  | IScreen   | The object that contains screen info as props for Screen component              |         |
+| `screens` | IScreen[] | Array that contains each screen info as child components of Navigator component |         |
+
+`screen`
+
+```typescript
+{
+   id: '/main',
+   path: '/main',
+   component:  Main
+}
+```
+
+---
+
+### onRegisterScreen
+
+Each screen is registered during render by ReactDOM,
+
+if `Screen` components are defined as child component of `Navigator` component.
+
+This hook calls callback function after register this screens.
+
+| name      | type      | description                                                                                                                    | example |
+| --------- | --------- | ------------------------------------------------------------------------------------------------------------------------------ | ------- |
+| `screen`  | IScreen   | The object that contains screen info as props for Screen component                                                             |         |
+| `screens` | IScreen[] | Array that contains each screen info as child components of Navigator component. This array also contains screen object above. |         |
+
+`screen`
+
+```typescript
+{
+   id: '/main',
+   path: '/main',
+   component:  Main
+}
+```
+
+---
+
+// TODO: insert 와 instance 는 구분해서 hook 을 제공할 것
+
+### beforeInsertScreenInstance
+
+ScreenInstance would be instantiated with screen info which is registered,
+
+when any route event like `push` is triggered.
+
+This hook calls callback function before such ScreenInstance is registered.
+
+| name              | type              | description                                                                     | example |
+| ----------------- | ----------------- | ------------------------------------------------------------------------------- | ------- |
+| `screenInstance`  | IScreenInstance   | screen instance info from client                                                |         |
+| `screenInstances` | IScreenInstance[] | Array that contains screen instance info from client                            |         |
+| `ptr`             | number            | The pointer that indicates current screenInstance                               | `4`     |
+| `options`         | Options           | setScreenInstances, setScreenInstancePtr could be called from callback function |         |
+
+`screenInstances`
+
+```typescript
+;[
+  {
+    id: 4,
+    screenId: '/product',
+    nestedRouteCount: 0,
+    present: false,
+    as: '/product',
+  },
+]
+```
+
+---
+
+### onInsertScreenInstance
+
+ScreenInstance would be instantiated with screen info which is registered,
+
+when any route event like `push` is triggered.
+
+This hook calls callback function just after such ScreenInstance is registered.
+
+| name              | type              | description                                                                     | example |
+| ----------------- | ----------------- | ------------------------------------------------------------------------------- | ------- |
+| `screenInstance`  | IScreenInstance   | screen instance info from client                                                |         |
+| `screenInstances` | IScreenInstance[] | Array that contains screen instance info from client                            |         |
+| `ptr`             | number            | The pointer that indicates current screenInstance                               | `4`     |
+| `options`         | Options           | setScreenInstances, setScreenInstancePtr could be called from callback function |         |
+
+`screenInstances`
+
+```typescript
+;[
+  {
+    id: 4,
+    screenId: '/product',
+    nestedRouteCount: 0,
+    present: false,
+    as: '/product',
+  },
+]
+```
+
+---
+
+### beforeMapScreenInstance
+
+You would need to modify properties of screenInstance in specific case with mapper function.
+
+This hook calls callback functions before mapper function that will modify screenInstance is called
+
+| name              | type              | description                                               | example |
+| ----------------- | ----------------- | --------------------------------------------------------- | ------- |
+| `screenInstances` | IScreenInstance[] | Array that contains screen instance info from client      |         |
+| `ptr`             | number            | The pointer that indicates current screenInstance         | `2`     |
+| `options`         | Options           | mapperScreenInstance could be called in callback function |         |
+
+`screenInstances`
+
+```typescript
+;[
+  {
+    id: 2,
+    screenId: '/product',
+    nestedRouteCount: 0,
+    present: false,
+    as: '/product',
+  },
+]
+```
+
+---
+
+### onMapScreenInstance
+
+You would need to modify properties of screenInstance in specific case with mapper function.
+
+This hook calls callback functions right after mapper function that will modify screenInstance is called
+
+| name              | type              | description                                               | example |
+| ----------------- | ----------------- | --------------------------------------------------------- | ------- |
+| `screenInstances` | IScreenInstance[] | Array that contains screen instance info from client      |         |
+| `ptr`             | number            | The pointer that indicates current screenInstance         | `2`     |
+| `options`         | Options           | mapperScreenInstance could be called in callback function |         |
+
+`screenInstances`
+
+```typescript
+;[
+  {
+    id: 2,
+    screenId: '/product',
+    nestedRouteCount: 0,
+    present: false,
+    as: '/product',
+  },
+]
+```
+
+---
+
+### beforeAddScreenInstancePromise
+
+`resolve` function of the promise for `push` will be declared to an object, `screenInstancePromiseMap`,
+
+when `push` event is triggered or `pop()` event which includes `pop().send()` is triggered.
+
+This hook calls callback function before initializing screenInstancePromiseMap by `screenInstanceId` with `resolve` function
+
+| name                    | type                   | description                                                                  | example |
+| ----------------------- | ---------------------- | ---------------------------------------------------------------------------- | ------- |
+| `screenInstanceId`      | string                 | screenInstanceId which is matched with screenInstancePromise                 |         |
+| `screenInstances`       | IScreenInstance[]      | Array that contains screen instance info from client                         |         |
+| `screenInstancePtr`     | number                 | The pointer to indicate current screen                                       |         |
+| `screenInstancePromise` | IScreenInstancePromise | The object to save resolve function for screenInstance with screenInstanceId |         |
+
+`screenInstances`
+
+```typescript
+;[
+  {
+    id: 2,
+    screenId: '/product',
+    nestedRouteCount: 0,
+    present: false,
+    as: '/product',
+  },
+]
+```
+
+---
+
+### onAddScreenInstancePromise
+
+`resolve` function of the promise for `push` will be declared to an object, `screenInstancePromiseMap`,
+
+when `push` event is triggered or `pop()` event which includes `pop().send()` is triggered.
+
+This hook calls callback function right after initializing screenInstancePromiseMap by `screenInstanceId` with `resolve` function
+
+| name                    | type                   | description                                                                  | example |
+| ----------------------- | ---------------------- | ---------------------------------------------------------------------------- | ------- |
+| `screenInstanceId`      | string                 | screenInstanceId which is matched with screenInstancePromise                 |         |
+| `screenInstances`       | IScreenInstance[]      | Array that contains screen instance info from client                         |         |
+| `screenInstancePtr`     | number                 | The pointer to indicate current screen                                       |         |
+| `screenInstancePromise` | IScreenInstancePromise | The object to save resolve function for screenInstance with screenInstanceId |         |
+
+`screenInstances`
+
+```typescript
+;[
+  {
+    id: 2,
+    screenId: '/product',
+    nestedRouteCount: 0,
+    present: false,
+    as: '/product',
+  },
+]
+```
+
+## interfaces
+
+```typescript
+interface IScreen {
+  id: string
+  path: string
+  Component: React.ComponentType
+}
+```
+
+```typescript
+interface IScreenInstance {
+  id: string
+  screenId: string
+  nestedRouteCount?: number
+  present: boolean
+  as: string
+}
+```
+
+```typescript
+interface IScreenInstancePromise {
+  resolve: (data: any | null) => void
 }
 ```

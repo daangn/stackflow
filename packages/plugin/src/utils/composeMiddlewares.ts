@@ -17,11 +17,14 @@ const composeMiddlewares = <T>(
 
   return function (
     context: T,
-    next: (newCtx?: T) => Promise<T | void>
+    next: (newCtx?: any) => Promise<T | void>
   ): Promise<T | void> {
     let index = -1
     return dispatch(0)
-    async function dispatch(i: number, modifiedContext?: T): Promise<void | T> {
+    async function dispatch(
+      i: number,
+      modifiedContext?: any
+    ): Promise<void | T> {
       if (i <= index)
         return Promise.reject(new Error('next() called multiple times'))
       index = i
