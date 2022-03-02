@@ -3,7 +3,7 @@ import styled from '@emotion/styled'
 import { ScreenHelmet, useNavigator } from '@karrotframe/navigator'
 
 import ListItem from '../ListItem'
-import { useDataPlugin } from '@karrotframe/plugin'
+import { useDataPlugin } from '@karrotframe/navigator-plugin'
 
 const PageHome: React.FC = () => {
   const { push } = useNavigator()

@@ -1,10 +1,10 @@
-# @karrotframe/plugin
+# @karrotframe/navigator-plugin
 
 <div align="center">
 
-![](https://img.shields.io/npm/v/@karrotframe/plugin)
-![](https://img.shields.io/npm/l/@karrotframe/plugin)
-![](https://img.shields.io/npm/dt/@karrotframe/plugin)
+![](https://img.shields.io/npm/v/@karrotframe/navigator-plugin)
+![](https://img.shields.io/npm/l/@karrotframe/navigator-plugin)
+![](https://img.shields.io/npm/dt/@karrotframe/navigator-plugin)
 
 </div>
 
@@ -24,21 +24,21 @@
 - [plugin 에서 state 를 관리하면서 해당 state 를 어플리케이션에서 사용하는 방법](#plugin-에서-state-를-관리하면서-해당-state-를-어플리케이션에서-사용하는-방법)
 - [lifecycle hook 에 미들웨어 적용하기](#lifecycle-hook-에-미들웨어-적용하기)
 - [Lifecycle Hooks](#lifecycle-hooks)
-    - [beforePush](#beforepush)
-    - [onPushed](#onpushed)
-    - [beforeReplace](#beforereplace)
-    - [onReplaced](#onreplaced)
-    - [beforePop](#beforepop)
-    - [onPopped](#onpopped)
-    - [onPoppedWithData](#onpoppedwithdata)
-    - [beforeRegisterScreen](#beforeregisterscreen)
-    - [onRegisterScreen](#onregisterscreen)
-    - [beforeInsertScreenInstance](#beforeinsertscreeninstance)
-    - [onInsertScreenInstance](#oninsertscreeninstance)
-    - [beforeMapScreenInstance](#beforemapscreeninstance)
-    - [onMapScreenInstance](#onmapscreeninstance)
-    - [beforeAddScreenInstancePromise](#beforeaddscreeninstancepromise)
-    - [onAddScreenInstancePromise](#onaddscreeninstancepromise)
+  - [beforePush](#beforepush)
+  - [onPushed](#onpushed)
+  - [beforeReplace](#beforereplace)
+  - [onReplaced](#onreplaced)
+  - [beforePop](#beforepop)
+  - [onPopped](#onpopped)
+  - [onPoppedWithData](#onpoppedwithdata)
+  - [beforeRegisterScreen](#beforeregisterscreen)
+  - [onRegisterScreen](#onregisterscreen)
+  - [beforeInsertScreenInstance](#beforeinsertscreeninstance)
+  - [onInsertScreenInstance](#oninsertscreeninstance)
+  - [beforeMapScreenInstance](#beforemapscreeninstance)
+  - [onMapScreenInstance](#onmapscreeninstance)
+  - [beforeAddScreenInstancePromise](#beforeaddscreeninstancepromise)
+  - [onAddScreenInstancePromise](#onaddscreeninstancepromise)
 - [Interfaces](#interfaces)
 
 ---
@@ -46,7 +46,7 @@
 ## 설치
 
 ```bash
-$ yarn add @karrotframe/plugin
+$ yarn add @karrotframe/navigator-plugin
 ```
 
 ---
@@ -58,7 +58,10 @@ $ yarn add @karrotframe/plugin
 `plugins/index.ts`
 
 ```typescript
-import type { PluginType, NavigatorPluginType } from '@karrotframe/plugin'
+import type {
+  PluginType,
+  NavigatorPluginType,
+} from '@karrotframe/navigator-plugin'
 
 const pluginName = 'SimplePlugin'
 
@@ -115,7 +118,10 @@ const Main: React.FC = () => {
 `plugins/index.ts`
 
 ```typescript
-import type { NavigatorPluginType, PluginType } from '@karrotframe/plugin'
+import type {
+  NavigatorPluginType,
+  PluginType,
+} from '@karrotframe/navigator-plugin'
 
 export const loggerPlugin: NavigatorPluginType = {
   name: 'loggerPlugin',
@@ -146,7 +152,10 @@ lifecycle hook 은 `onPoppedWithData` 이외에도 여러가지가 존재해요.
 
 ```typescript
 import React, { createContext, useContext, useState, useMemo } from 'react'
-import type { NavigatorPluginType, PluginType } from '@karrotframe/plugin'
+import type {
+  NavigatorPluginType,
+  PluginType,
+} from '@karrotframe/navigator-plugin'
 
 // 전역 state 를 관리하기 위한 context 생성
 export const ContextDataPlugin = createContext<{
@@ -243,10 +252,10 @@ import type {
   BeforePushType,
   NavigatorPluginType,
   PluginType,
-} from '@karrotframe/plugin'
+} from '@karrotframe/navigator-plugin'
 
 // hook 에 적용할 미들웨어를 하나로 묶어주는 역할을 해요
-import { composeMiddlewares } from '@karrotframe/plugin'
+import { composeMiddlewares } from '@karrotframe/navigator-plugin'
 
 const filterPathMiddleware = async (
   ctx: BeforePushType,

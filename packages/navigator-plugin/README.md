@@ -1,10 +1,10 @@
-# @karrotframe/plugin
+# @karrotframe/navigator-plugin
 
 <div align="center">
 
-![](https://img.shields.io/npm/v/@karrotframe/plugin)
-![](https://img.shields.io/npm/l/@karrotframe/plugin)
-![](https://img.shields.io/npm/dt/@karrotframe/plugin)
+![](https://img.shields.io/npm/v/@karrotframe/navigator-plugin)
+![](https://img.shields.io/npm/l/@karrotframe/navigator-plugin)
+![](https://img.shields.io/npm/dt/@karrotframe/navigator-plugin)
 
 </div>
 
@@ -24,21 +24,21 @@
 - [Create plugin to control state from plugin](#create-plugin-to-control-state-from-plugin)
 - [Apply middleware to lifecycle hook](#apply-middleware-to-lifecycle-hook)
 - [Lifecycle Hooks](#lifecycle-hooks)
-    - [beforePush](#beforepush)
-    - [onPushed](#onpushed)
-    - [beforeReplace](#beforereplace)
-    - [onReplaced](#onreplaced)
-    - [beforePop](#beforepop)
-    - [onPopped](#onpopped)
-    - [onPoppedWithData](#onpoppedwithdata)
-    - [beforeRegisterScreen](#beforeregisterscreen)
-    - [onRegisterScreen](#onregisterscreen)
-    - [beforeInsertScreenInstance](#beforeinsertscreeninstance)
-    - [onInsertScreenInstance](#oninsertscreeninstance)
-    - [beforeMapScreenInstance](#beforemapscreeninstance)
-    - [onMapScreenInstance](#onmapscreeninstance)
-    - [beforeAddScreenInstancePromise](#beforeaddscreeninstancepromise)
-    - [onAddScreenInstancePromise](#onaddscreeninstancepromise)
+  - [beforePush](#beforepush)
+  - [onPushed](#onpushed)
+  - [beforeReplace](#beforereplace)
+  - [onReplaced](#onreplaced)
+  - [beforePop](#beforepop)
+  - [onPopped](#onpopped)
+  - [onPoppedWithData](#onpoppedwithdata)
+  - [beforeRegisterScreen](#beforeregisterscreen)
+  - [onRegisterScreen](#onregisterscreen)
+  - [beforeInsertScreenInstance](#beforeinsertscreeninstance)
+  - [onInsertScreenInstance](#oninsertscreeninstance)
+  - [beforeMapScreenInstance](#beforemapscreeninstance)
+  - [onMapScreenInstance](#onmapscreeninstance)
+  - [beforeAddScreenInstancePromise](#beforeaddscreeninstancepromise)
+  - [onAddScreenInstancePromise](#onaddscreeninstancepromise)
 - [Interfaces](#interfaces)
 
 ---
@@ -46,7 +46,7 @@
 ## Install
 
 ```bash
-$ yarn add @karrotframe/plugin
+$ yarn add @karrotframe/navigator-plugin
 ```
 
 ---
@@ -58,7 +58,10 @@ $ yarn add @karrotframe/plugin
 `plugins/index.ts`
 
 ```typescript
-import type { PluginType, NavigatorPluginType } from '@karrotframe/plugin'
+import type {
+  PluginType,
+  NavigatorPluginType,
+} from '@karrotframe/navigator-plugin'
 
 const pluginName = 'SimplePlugin'
 
@@ -115,7 +118,10 @@ const Main: React.FC = () => {
 `plugins/index.ts`
 
 ```typescript
-import type { NavigatorPluginType, PluginType } from '@karrotframe/plugin'
+import type {
+  NavigatorPluginType,
+  PluginType,
+} from '@karrotframe/navigator-plugin'
 
 export const loggerPlugin: NavigatorPluginType = {
   name: 'loggerPlugin',
@@ -146,7 +152,10 @@ You could also check other lifecycle hooks like `onPoppedWithData`.
 
 ```typescript
 import React, { createContext, useContext, useState, useMemo } from 'react'
-import type { NavigatorPluginType, PluginType } from '@karrotframe/plugin'
+import type {
+  NavigatorPluginType,
+  PluginType,
+} from '@karrotframe/navigator-plugin'
 
 // Create context to control global state
 export const ContextDataPlugin = createContext<{
@@ -243,10 +252,10 @@ import type {
   BeforePushType,
   NavigatorPluginType,
   PluginType,
-} from '@karrotframe/plugin'
+} from '@karrotframe/navigator-plugin'
 
 // composeMiddlewares compose multiple middlewares for lifecycle hook.
-import { composeMiddlewares } from '@karrotframe/plugin'
+import { composeMiddlewares } from '@karrotframe/navigator-plugin'
 
 const filterPathMiddleware = async (
   ctx: BeforePushType,

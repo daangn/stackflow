@@ -35,8 +35,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:packages/navigator"
       },
       {
-        "name": "@karrotframe/plugin",
-        "reference": "workspace:packages/plugin"
+        "name": "@karrotframe/navigator-plugin",
+        "reference": "workspace:packages/navigator-plugin"
       },
       {
         "name": "@karrotframe/pulltorefresh",
@@ -52,7 +52,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
     "fallbackExclusionList": [
       ["@karrotframe/monorepo", ["workspace:."]],
       ["@karrotframe/navigator", ["virtual:ad2f32580ac86e1e67f3dc4c580e5cd38897c1ea6d294bb9f8d9f8a43245463a148c9279e05109dfca37e1e50e976125cf6e9b84cb8d332ae1090aa4c9f40b2a#workspace:packages/navigator", "virtual:f1f17cd4dad23d97d3274d4240aabf5c79c7702d5d0a0f2803d8b3dccf5be49ec01e4ddff04a2bb33e6bbf93b5cb9f48958c566805538889d2586f9617b3166a#workspace:packages/navigator", "workspace:packages/navigator"]],
-      ["@karrotframe/plugin", ["virtual:5667f7a2f367bfbcd36ca28513d46f745f9f1399813f671e47eb9f5596f70e460cdf86f88e4ce61bb178256d37ca7f73addcb0bcc8192afd11ce5f317116a5e5#workspace:packages/plugin", "virtual:f1f17cd4dad23d97d3274d4240aabf5c79c7702d5d0a0f2803d8b3dccf5be49ec01e4ddff04a2bb33e6bbf93b5cb9f48958c566805538889d2586f9617b3166a#workspace:packages/plugin", "workspace:packages/plugin"]],
+      ["@karrotframe/navigator-plugin", ["virtual:5667f7a2f367bfbcd36ca28513d46f745f9f1399813f671e47eb9f5596f70e460cdf86f88e4ce61bb178256d37ca7f73addcb0bcc8192afd11ce5f317116a5e5#workspace:packages/navigator-plugin", "virtual:f1f17cd4dad23d97d3274d4240aabf5c79c7702d5d0a0f2803d8b3dccf5be49ec01e4ddff04a2bb33e6bbf93b5cb9f48958c566805538889d2586f9617b3166a#workspace:packages/navigator-plugin", "workspace:packages/navigator-plugin"]],
       ["@karrotframe/pulltorefresh", ["virtual:f1f17cd4dad23d97d3274d4240aabf5c79c7702d5d0a0f2803d8b3dccf5be49ec01e4ddff04a2bb33e6bbf93b5cb9f48958c566805538889d2586f9617b3166a#workspace:packages/pulltorefresh", "workspace:packages/pulltorefresh"]],
       ["@karrotframe/tabs", ["virtual:f1f17cd4dad23d97d3274d4240aabf5c79c7702d5d0a0f2803d8b3dccf5be49ec01e4ddff04a2bb33e6bbf93b5cb9f48958c566805538889d2586f9617b3166a#workspace:packages/tabs", "workspace:packages/tabs"]],
       ["example-spec", ["workspace:examples/spec"]],
@@ -3659,12 +3659,12 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/preset-env", "virtual:9734371974fc3672e6ee6daaced72209b12ca9fc84a9165d5ad0a398b49c7f307e482322d97eb1c674aabea20bf8091ebf6497cedbc5194a41b6071448e304a4#npm:7.16.11"],
             ["@babel/preset-react", "virtual:9734371974fc3672e6ee6daaced72209b12ca9fc84a9165d5ad0a398b49c7f307e482322d97eb1c674aabea20bf8091ebf6497cedbc5194a41b6071448e304a4#npm:7.16.7"],
             ["@babel/preset-typescript", "virtual:9734371974fc3672e6ee6daaced72209b12ca9fc84a9165d5ad0a398b49c7f307e482322d97eb1c674aabea20bf8091ebf6497cedbc5194a41b6071448e304a4#npm:7.16.7"],
-            ["@karrotframe/plugin", "virtual:5667f7a2f367bfbcd36ca28513d46f745f9f1399813f671e47eb9f5596f70e460cdf86f88e4ce61bb178256d37ca7f73addcb0bcc8192afd11ce5f317116a5e5#workspace:packages/plugin"],
+            ["@karrotframe/navigator-plugin", "virtual:5667f7a2f367bfbcd36ca28513d46f745f9f1399813f671e47eb9f5596f70e460cdf86f88e4ce61bb178256d37ca7f73addcb0bcc8192afd11ce5f317116a5e5#workspace:packages/navigator-plugin"],
             ["@testing-library/jest-dom", "npm:5.16.1"],
             ["@testing-library/react", "virtual:5667f7a2f367bfbcd36ca28513d46f745f9f1399813f671e47eb9f5596f70e460cdf86f88e4ce61bb178256d37ca7f73addcb0bcc8192afd11ce5f317116a5e5#npm:12.1.2"],
             ["@types/history", "npm:4.7.8"],
             ["@types/jest", "npm:27.4.0"],
-            ["@types/karrotframe__plugin", null],
+            ["@types/karrotframe__navigator-plugin", null],
             ["@types/node", "npm:14.14.27"],
             ["@types/react", "npm:16.14.3"],
             ["@types/react-dom", "npm:16.9.10"],
@@ -3698,7 +3698,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["webpack-cli", "virtual:5667f7a2f367bfbcd36ca28513d46f745f9f1399813f671e47eb9f5596f70e460cdf86f88e4ce61bb178256d37ca7f73addcb0bcc8192afd11ce5f317116a5e5#npm:4.5.0"]
           ],
           "packagePeers": [
-            "@types/karrotframe__plugin",
+            "@types/karrotframe__navigator-plugin",
             "@types/react-dom",
             "@types/react-router-dom",
             "@types/react",
@@ -3717,12 +3717,12 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/preset-env", "virtual:9734371974fc3672e6ee6daaced72209b12ca9fc84a9165d5ad0a398b49c7f307e482322d97eb1c674aabea20bf8091ebf6497cedbc5194a41b6071448e304a4#npm:7.16.11"],
             ["@babel/preset-react", "virtual:9734371974fc3672e6ee6daaced72209b12ca9fc84a9165d5ad0a398b49c7f307e482322d97eb1c674aabea20bf8091ebf6497cedbc5194a41b6071448e304a4#npm:7.16.7"],
             ["@babel/preset-typescript", "virtual:9734371974fc3672e6ee6daaced72209b12ca9fc84a9165d5ad0a398b49c7f307e482322d97eb1c674aabea20bf8091ebf6497cedbc5194a41b6071448e304a4#npm:7.16.7"],
-            ["@karrotframe/plugin", "virtual:f1f17cd4dad23d97d3274d4240aabf5c79c7702d5d0a0f2803d8b3dccf5be49ec01e4ddff04a2bb33e6bbf93b5cb9f48958c566805538889d2586f9617b3166a#workspace:packages/plugin"],
+            ["@karrotframe/navigator-plugin", "virtual:f1f17cd4dad23d97d3274d4240aabf5c79c7702d5d0a0f2803d8b3dccf5be49ec01e4ddff04a2bb33e6bbf93b5cb9f48958c566805538889d2586f9617b3166a#workspace:packages/navigator-plugin"],
             ["@testing-library/jest-dom", "npm:5.16.1"],
             ["@testing-library/react", "virtual:9734371974fc3672e6ee6daaced72209b12ca9fc84a9165d5ad0a398b49c7f307e482322d97eb1c674aabea20bf8091ebf6497cedbc5194a41b6071448e304a4#npm:12.1.2"],
             ["@types/history", "npm:4.7.8"],
             ["@types/jest", "npm:27.4.0"],
-            ["@types/karrotframe__plugin", null],
+            ["@types/karrotframe__navigator-plugin", null],
             ["@types/node", "npm:14.14.27"],
             ["@types/react", "npm:17.0.19"],
             ["@types/react-dom", "npm:17.0.9"],
@@ -3756,8 +3756,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["webpack-cli", "virtual:9734371974fc3672e6ee6daaced72209b12ca9fc84a9165d5ad0a398b49c7f307e482322d97eb1c674aabea20bf8091ebf6497cedbc5194a41b6071448e304a4#npm:4.5.0"]
           ],
           "packagePeers": [
-            "@karrotframe/plugin",
-            "@types/karrotframe__plugin",
+            "@karrotframe/navigator-plugin",
+            "@types/karrotframe__navigator-plugin",
             "@types/react-dom",
             "@types/react-router-dom",
             "@types/react",
@@ -3776,7 +3776,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/preset-env", "virtual:9734371974fc3672e6ee6daaced72209b12ca9fc84a9165d5ad0a398b49c7f307e482322d97eb1c674aabea20bf8091ebf6497cedbc5194a41b6071448e304a4#npm:7.16.11"],
             ["@babel/preset-react", "virtual:9734371974fc3672e6ee6daaced72209b12ca9fc84a9165d5ad0a398b49c7f307e482322d97eb1c674aabea20bf8091ebf6497cedbc5194a41b6071448e304a4#npm:7.16.7"],
             ["@babel/preset-typescript", "virtual:9734371974fc3672e6ee6daaced72209b12ca9fc84a9165d5ad0a398b49c7f307e482322d97eb1c674aabea20bf8091ebf6497cedbc5194a41b6071448e304a4#npm:7.16.7"],
-            ["@karrotframe/plugin", "virtual:5667f7a2f367bfbcd36ca28513d46f745f9f1399813f671e47eb9f5596f70e460cdf86f88e4ce61bb178256d37ca7f73addcb0bcc8192afd11ce5f317116a5e5#workspace:packages/plugin"],
+            ["@karrotframe/navigator-plugin", "virtual:5667f7a2f367bfbcd36ca28513d46f745f9f1399813f671e47eb9f5596f70e460cdf86f88e4ce61bb178256d37ca7f73addcb0bcc8192afd11ce5f317116a5e5#workspace:packages/navigator-plugin"],
             ["@testing-library/jest-dom", "npm:5.16.1"],
             ["@testing-library/react", "virtual:5667f7a2f367bfbcd36ca28513d46f745f9f1399813f671e47eb9f5596f70e460cdf86f88e4ce61bb178256d37ca7f73addcb0bcc8192afd11ce5f317116a5e5#npm:12.1.2"],
             ["@types/history", "npm:4.7.8"],
@@ -3816,14 +3816,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "SOFT",
         }]
       ]],
-      ["@karrotframe/plugin", [
-        ["virtual:5667f7a2f367bfbcd36ca28513d46f745f9f1399813f671e47eb9f5596f70e460cdf86f88e4ce61bb178256d37ca7f73addcb0bcc8192afd11ce5f317116a5e5#workspace:packages/plugin", {
-          "packageLocation": "./.yarn/__virtual__/@karrotframe-plugin-virtual-dc86b4c6bd/1/packages/plugin/",
+      ["@karrotframe/navigator-plugin", [
+        ["virtual:5667f7a2f367bfbcd36ca28513d46f745f9f1399813f671e47eb9f5596f70e460cdf86f88e4ce61bb178256d37ca7f73addcb0bcc8192afd11ce5f317116a5e5#workspace:packages/navigator-plugin", {
+          "packageLocation": "./.yarn/__virtual__/@karrotframe-navigator-plugin-virtual-adb5fdbb6e/1/packages/navigator-plugin/",
           "packageDependencies": [
-            ["@karrotframe/plugin", "virtual:5667f7a2f367bfbcd36ca28513d46f745f9f1399813f671e47eb9f5596f70e460cdf86f88e4ce61bb178256d37ca7f73addcb0bcc8192afd11ce5f317116a5e5#workspace:packages/plugin"],
+            ["@karrotframe/navigator-plugin", "virtual:5667f7a2f367bfbcd36ca28513d46f745f9f1399813f671e47eb9f5596f70e460cdf86f88e4ce61bb178256d37ca7f73addcb0bcc8192afd11ce5f317116a5e5#workspace:packages/navigator-plugin"],
             ["@types/react", "npm:16.14.3"],
             ["@types/react-dom", "npm:16.9.10"],
-            ["nanobundle", "virtual:ac72fe853f5142f14781de572fd8e1a4ba0556a7f42d8c036f722f5bb419f217406de874b2e6f6503c8cbba0e77006105d712758dd807af405aaa745cf40d549#npm:0.0.25"],
+            ["nanobundle", "virtual:dda2d0194fa5a269fce6e624b388c98233315f9edef7e6029d9874cb522259ffac477f7c95b34c7b2f0f953c16d1fa18aac316e570aabda64820e1aeb2c78a25#npm:0.0.25"],
             ["react", "npm:16.14.0"],
             ["react-dom", "virtual:ad2f32580ac86e1e67f3dc4c580e5cd38897c1ea6d294bb9f8d9f8a43245463a148c9279e05109dfca37e1e50e976125cf6e9b84cb8d332ae1090aa4c9f40b2a#npm:16.14.0"],
             ["rimraf", "npm:3.0.2"],
@@ -3837,13 +3837,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "SOFT",
         }],
-        ["virtual:f1f17cd4dad23d97d3274d4240aabf5c79c7702d5d0a0f2803d8b3dccf5be49ec01e4ddff04a2bb33e6bbf93b5cb9f48958c566805538889d2586f9617b3166a#workspace:packages/plugin", {
-          "packageLocation": "./.yarn/__virtual__/@karrotframe-plugin-virtual-ac72fe853f/1/packages/plugin/",
+        ["virtual:f1f17cd4dad23d97d3274d4240aabf5c79c7702d5d0a0f2803d8b3dccf5be49ec01e4ddff04a2bb33e6bbf93b5cb9f48958c566805538889d2586f9617b3166a#workspace:packages/navigator-plugin", {
+          "packageLocation": "./.yarn/__virtual__/@karrotframe-navigator-plugin-virtual-dda2d0194f/1/packages/navigator-plugin/",
           "packageDependencies": [
-            ["@karrotframe/plugin", "virtual:f1f17cd4dad23d97d3274d4240aabf5c79c7702d5d0a0f2803d8b3dccf5be49ec01e4ddff04a2bb33e6bbf93b5cb9f48958c566805538889d2586f9617b3166a#workspace:packages/plugin"],
+            ["@karrotframe/navigator-plugin", "virtual:f1f17cd4dad23d97d3274d4240aabf5c79c7702d5d0a0f2803d8b3dccf5be49ec01e4ddff04a2bb33e6bbf93b5cb9f48958c566805538889d2586f9617b3166a#workspace:packages/navigator-plugin"],
             ["@types/react", "npm:17.0.19"],
             ["@types/react-dom", "npm:17.0.9"],
-            ["nanobundle", "virtual:ac72fe853f5142f14781de572fd8e1a4ba0556a7f42d8c036f722f5bb419f217406de874b2e6f6503c8cbba0e77006105d712758dd807af405aaa745cf40d549#npm:0.0.25"],
+            ["nanobundle", "virtual:dda2d0194fa5a269fce6e624b388c98233315f9edef7e6029d9874cb522259ffac477f7c95b34c7b2f0f953c16d1fa18aac316e570aabda64820e1aeb2c78a25#npm:0.0.25"],
             ["react", "npm:18.0.0-alpha-67f38366a-20210830"],
             ["react-dom", "virtual:f1f17cd4dad23d97d3274d4240aabf5c79c7702d5d0a0f2803d8b3dccf5be49ec01e4ddff04a2bb33e6bbf93b5cb9f48958c566805538889d2586f9617b3166a#npm:18.0.0-alpha-67f38366a-20210830"],
             ["rimraf", "npm:3.0.2"],
@@ -3857,13 +3857,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "SOFT",
         }],
-        ["workspace:packages/plugin", {
-          "packageLocation": "./packages/plugin/",
+        ["workspace:packages/navigator-plugin", {
+          "packageLocation": "./packages/navigator-plugin/",
           "packageDependencies": [
-            ["@karrotframe/plugin", "workspace:packages/plugin"],
+            ["@karrotframe/navigator-plugin", "workspace:packages/navigator-plugin"],
             ["@types/react", "npm:16.14.3"],
             ["@types/react-dom", "npm:16.9.10"],
-            ["nanobundle", "virtual:ac72fe853f5142f14781de572fd8e1a4ba0556a7f42d8c036f722f5bb419f217406de874b2e6f6503c8cbba0e77006105d712758dd807af405aaa745cf40d549#npm:0.0.25"],
+            ["nanobundle", "virtual:dda2d0194fa5a269fce6e624b388c98233315f9edef7e6029d9874cb522259ffac477f7c95b34c7b2f0f953c16d1fa18aac316e570aabda64820e1aeb2c78a25#npm:0.0.25"],
             ["rimraf", "npm:3.0.2"],
             ["typescript", "patch:typescript@npm%3A4.3.5#~builtin<compat/typescript>::version=4.3.5&hash=493e53"]
           ],
@@ -10852,7 +10852,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@emotion/react", "virtual:f1f17cd4dad23d97d3274d4240aabf5c79c7702d5d0a0f2803d8b3dccf5be49ec01e4ddff04a2bb33e6bbf93b5cb9f48958c566805538889d2586f9617b3166a#npm:11.1.5"],
             ["@emotion/styled", "virtual:f1f17cd4dad23d97d3274d4240aabf5c79c7702d5d0a0f2803d8b3dccf5be49ec01e4ddff04a2bb33e6bbf93b5cb9f48958c566805538889d2586f9617b3166a#npm:11.1.5"],
             ["@karrotframe/navigator", "virtual:f1f17cd4dad23d97d3274d4240aabf5c79c7702d5d0a0f2803d8b3dccf5be49ec01e4ddff04a2bb33e6bbf93b5cb9f48958c566805538889d2586f9617b3166a#workspace:packages/navigator"],
-            ["@karrotframe/plugin", "virtual:f1f17cd4dad23d97d3274d4240aabf5c79c7702d5d0a0f2803d8b3dccf5be49ec01e4ddff04a2bb33e6bbf93b5cb9f48958c566805538889d2586f9617b3166a#workspace:packages/plugin"],
+            ["@karrotframe/navigator-plugin", "virtual:f1f17cd4dad23d97d3274d4240aabf5c79c7702d5d0a0f2803d8b3dccf5be49ec01e4ddff04a2bb33e6bbf93b5cb9f48958c566805538889d2586f9617b3166a#workspace:packages/navigator-plugin"],
             ["@karrotframe/pulltorefresh", "virtual:f1f17cd4dad23d97d3274d4240aabf5c79c7702d5d0a0f2803d8b3dccf5be49ec01e4ddff04a2bb33e6bbf93b5cb9f48958c566805538889d2586f9617b3166a#workspace:packages/pulltorefresh"],
             ["@karrotframe/tabs", "virtual:f1f17cd4dad23d97d3274d4240aabf5c79c7702d5d0a0f2803d8b3dccf5be49ec01e4ddff04a2bb33e6bbf93b5cb9f48958c566805538889d2586f9617b3166a#workspace:packages/tabs"],
             ["@testing-library/dom", "npm:6.16.0"],
@@ -15257,16 +15257,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "SOFT",
         }],
-        ["virtual:ac72fe853f5142f14781de572fd8e1a4ba0556a7f42d8c036f722f5bb419f217406de874b2e6f6503c8cbba0e77006105d712758dd807af405aaa745cf40d549#npm:0.0.25", {
-          "packageLocation": "./.yarn/__virtual__/nanobundle-virtual-81df6d5ace/0/cache/nanobundle-npm-0.0.25-a91f7e5cc1-ad67df6b91.zip/node_modules/nanobundle/",
+        ["virtual:dda2d0194fa5a269fce6e624b388c98233315f9edef7e6029d9874cb522259ffac477f7c95b34c7b2f0f953c16d1fa18aac316e570aabda64820e1aeb2c78a25#npm:0.0.25", {
+          "packageLocation": "./.yarn/__virtual__/nanobundle-virtual-1039ecdb50/0/cache/nanobundle-npm-0.0.25-a91f7e5cc1-ad67df6b91.zip/node_modules/nanobundle/",
           "packageDependencies": [
-            ["nanobundle", "virtual:ac72fe853f5142f14781de572fd8e1a4ba0556a7f42d8c036f722f5bb419f217406de874b2e6f6503c8cbba0e77006105d712758dd807af405aaa745cf40d549#npm:0.0.25"],
+            ["nanobundle", "virtual:dda2d0194fa5a269fce6e624b388c98233315f9edef7e6029d9874cb522259ffac477f7c95b34c7b2f0f953c16d1fa18aac316e570aabda64820e1aeb2c78a25#npm:0.0.25"],
             ["@types/typescript", null],
             ["browserslist", "npm:4.19.1"],
             ["esbuild", "npm:0.14.23"],
             ["meow", "npm:10.1.2"],
             ["pretty-bytes", "npm:6.0.0"],
-            ["tsconfck", "virtual:81df6d5aced3bd434b713a2b33e42636d312cf6cf4a60624b4b06b5fb3971d3274aa7aee337e0f542d67795b35950a8b2b989bacc122b3909712f01376c8d69f#npm:1.1.2"],
+            ["tsconfck", "virtual:1039ecdb506ca9d62a482ef014080ea518c4df3ea57823f767d363cb6d63354a959c052752eb5e5238a04ff8a8b11f642eada3ce9dd1b26a03594a712813405e#npm:1.1.2"],
             ["typescript", "patch:typescript@npm%3A4.3.5#~builtin<compat/typescript>::version=4.3.5&hash=493e53"]
           ],
           "packagePeers": [
@@ -20969,10 +20969,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "SOFT",
         }],
-        ["virtual:81df6d5aced3bd434b713a2b33e42636d312cf6cf4a60624b4b06b5fb3971d3274aa7aee337e0f542d67795b35950a8b2b989bacc122b3909712f01376c8d69f#npm:1.1.2", {
-          "packageLocation": "./.yarn/__virtual__/tsconfck-virtual-5a89070133/0/cache/tsconfck-npm-1.1.2-cda4f4998e-99fafb27d2.zip/node_modules/tsconfck/",
+        ["virtual:1039ecdb506ca9d62a482ef014080ea518c4df3ea57823f767d363cb6d63354a959c052752eb5e5238a04ff8a8b11f642eada3ce9dd1b26a03594a712813405e#npm:1.1.2", {
+          "packageLocation": "./.yarn/__virtual__/tsconfck-virtual-d6ddbbc999/0/cache/tsconfck-npm-1.1.2-cda4f4998e-99fafb27d2.zip/node_modules/tsconfck/",
           "packageDependencies": [
-            ["tsconfck", "virtual:81df6d5aced3bd434b713a2b33e42636d312cf6cf4a60624b4b06b5fb3971d3274aa7aee337e0f542d67795b35950a8b2b989bacc122b3909712f01376c8d69f#npm:1.1.2"],
+            ["tsconfck", "virtual:1039ecdb506ca9d62a482ef014080ea518c4df3ea57823f767d363cb6d63354a959c052752eb5e5238a04ff8a8b11f642eada3ce9dd1b26a03594a712813405e#npm:1.1.2"],
             ["@types/typescript", null],
             ["typescript", "patch:typescript@npm%3A4.3.5#~builtin<compat/typescript>::version=4.3.5&hash=493e53"]
           ],
