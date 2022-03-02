@@ -19,6 +19,27 @@
 ---
 
 - [Install](#install)
+- [Create simple plugin](#create-simple-plugin)
+- [Create plugin with lifecycle hook of Navigator](#create-plugin-with-lifecycle-hook-of-navigator)
+- [Create plugin to control state from plugin](#create-plugin-to-control-state-from-plugin)
+- [Apply middleware to lifecycle hook](#apply-middleware-to-lifecycle-hook)
+- [Lifecycle Hooks](#lifecycle-hooks)
+    - [beforePush](#beforepush)
+    - [onPushed](#onpushed)
+    - [beforeReplace](#beforereplace)
+    - [onReplaced](#onreplaced)
+    - [beforePop](#beforepop)
+    - [onPopped](#onpopped)
+    - [onPoppedWithData](#onpoppedwithdata)
+    - [beforeRegisterScreen](#beforeregisterscreen)
+    - [onRegisterScreen](#onregisterscreen)
+    - [beforeInsertScreenInstance](#beforeinsertscreeninstance)
+    - [onInsertScreenInstance](#oninsertscreeninstance)
+    - [beforeMapScreenInstance](#beforemapscreeninstance)
+    - [onMapScreenInstance](#onmapscreeninstance)
+    - [beforeAddScreenInstancePromise](#beforeaddscreeninstancepromise)
+    - [onAddScreenInstancePromise](#onaddscreeninstancepromise)
+- [Interfaces](#interfaces)
 
 ---
 
@@ -267,7 +288,7 @@ You could control lifecycle hook by stages with middleware.
 
 And next function could take custom value to pass this value to next middleware.
 
-## lifecycle hook
+## Lifecycle Hooks
 
 ### beforePush
 
@@ -489,7 +510,7 @@ This hook calls callback function before such ScreenInstance is registered.
 | ----------------- | ----------------- | ------------------------------------------------------------------------------- | ------- |
 | `screenInstance`  | IScreenInstance   | screen instance info from client                                                |         |
 | `screenInstances` | IScreenInstance[] | Array that contains screen instance info from client                            |         |
-| `ptr`             | number            | The pointer that indicates current screenInstance                               | `4`     |
+| `ptr`             | number            | The pointer that indicates current screenInstance                               | `5`     |
 | `options`         | Options           | setScreenInstances, setScreenInstancePtr could be called from callback function |         |
 
 `screenInstances`
@@ -520,7 +541,7 @@ This hook calls callback function just after such ScreenInstance is registered.
 | ----------------- | ----------------- | ------------------------------------------------------------------------------- | ------- |
 | `screenInstance`  | IScreenInstance   | screen instance info from client                                                |         |
 | `screenInstances` | IScreenInstance[] | Array that contains screen instance info from client                            |         |
-| `ptr`             | number            | The pointer that indicates current screenInstance                               | `4`     |
+| `ptr`             | number            | The pointer that indicates current screenInstance                               | `5`     |
 | `options`         | Options           | setScreenInstances, setScreenInstancePtr could be called from callback function |         |
 
 `screenInstances`
@@ -548,7 +569,7 @@ This hook calls callback functions before mapper function that will modify scree
 | name              | type              | description                                               | example |
 | ----------------- | ----------------- | --------------------------------------------------------- | ------- |
 | `screenInstances` | IScreenInstance[] | Array that contains screen instance info from client      |         |
-| `ptr`             | number            | The pointer that indicates current screenInstance         | `2`     |
+| `ptr`             | number            | The pointer that indicates current screenInstance         | `4`     |
 | `options`         | Options           | mapperScreenInstance could be called in callback function |         |
 
 `screenInstances`
@@ -576,7 +597,7 @@ This hook calls callback functions right after mapper function that will modify 
 | name              | type              | description                                               | example |
 | ----------------- | ----------------- | --------------------------------------------------------- | ------- |
 | `screenInstances` | IScreenInstance[] | Array that contains screen instance info from client      |         |
-| `ptr`             | number            | The pointer that indicates current screenInstance         | `2`     |
+| `ptr`             | number            | The pointer that indicates current screenInstance         | `4`     |
 | `options`         | Options           | mapperScreenInstance could be called in callback function |         |
 
 `screenInstances`
@@ -607,7 +628,7 @@ This hook calls callback function before initializing screenInstancePromiseMap b
 | ----------------------- | ---------------------- | ---------------------------------------------------------------------------- | ------- |
 | `screenInstanceId`      | string                 | screenInstanceId which is matched with screenInstancePromise                 |         |
 | `screenInstances`       | IScreenInstance[]      | Array that contains screen instance info from client                         |         |
-| `screenInstancePtr`     | number                 | The pointer to indicate current screen                                       |         |
+| `screenInstancePtr`     | number                 | The pointer to indicate current screen                                       | `4`     |
 | `screenInstancePromise` | IScreenInstancePromise | The object to save resolve function for screenInstance with screenInstanceId |         |
 
 `screenInstances`
@@ -638,7 +659,7 @@ This hook calls callback function right after initializing screenInstancePromise
 | ----------------------- | ---------------------- | ---------------------------------------------------------------------------- | ------- |
 | `screenInstanceId`      | string                 | screenInstanceId which is matched with screenInstancePromise                 |         |
 | `screenInstances`       | IScreenInstance[]      | Array that contains screen instance info from client                         |         |
-| `screenInstancePtr`     | number                 | The pointer to indicate current screen                                       |         |
+| `screenInstancePtr`     | number                 | The pointer to indicate current screen                                       | `4`     |
 | `screenInstancePromise` | IScreenInstancePromise | The object to save resolve function for screenInstance with screenInstanceId |         |
 
 `screenInstances`
@@ -655,7 +676,15 @@ This hook calls callback function right after initializing screenInstancePromise
 ]
 ```
 
-## interfaces
+## Interfaces
+
+```typescript
+type NavigatorPluginType = {
+  name: string
+  provider?: React.FC
+  executor: () => PluginType
+}
+```
 
 ```typescript
 interface IScreen {

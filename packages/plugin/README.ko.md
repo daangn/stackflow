@@ -18,6 +18,31 @@
 
 ---
 
+- [설치](#설치)
+- [간단한 plugin 만들기](#간단한-plugin-만들기)
+- [Navigator 의 라이프사이클 hook 을 이용한 plugin 만들기](#Navigator-의-라이프사이클-hook-을-이용한-plugin-만들기)
+- [plugin 에서 state 를 관리하면서 해당 state 를 어플리케이션에서 사용하는 방법](#plugin-에서-state-를-관리하면서-해당-state-를-어플리케이션에서-사용하는-방법)
+- [lifecycle hook 에 미들웨어 적용하기](#lifecycle-hook-에-미들웨어-적용하기)
+- [Lifecycle Hooks](#lifecycle-hooks)
+    - [beforePush](#beforepush)
+    - [onPushed](#onpushed)
+    - [beforeReplace](#beforereplace)
+    - [onReplaced](#onreplaced)
+    - [beforePop](#beforepop)
+    - [onPopped](#onpopped)
+    - [onPoppedWithData](#onpoppedwithdata)
+    - [beforeRegisterScreen](#beforeregisterscreen)
+    - [onRegisterScreen](#onregisterscreen)
+    - [beforeInsertScreenInstance](#beforeinsertscreeninstance)
+    - [onInsertScreenInstance](#oninsertscreeninstance)
+    - [beforeMapScreenInstance](#beforemapscreeninstance)
+    - [onMapScreenInstance](#onmapscreeninstance)
+    - [beforeAddScreenInstancePromise](#beforeaddscreeninstancepromise)
+    - [onAddScreenInstancePromise](#onaddscreeninstancepromise)
+- [Interfaces](#interfaces)
+
+---
+
 ## 설치
 
 ```bash
@@ -262,7 +287,7 @@ export const pluginWithMiddleware: NavigatorPluginType = {
 
 다음 미들웨어가 기본적으로 받는 hook 의 context 인자 대신, 선행한 미들웨어가 가공한 context 인자를 받을 수 있어요.
 
-## lifecycle hook
+## Lifecycle Hooks
 
 ### beforePush
 
@@ -480,7 +505,7 @@ target path 로 route 이동(replace)을 실행하기 직전에 콜백 함수를
 | ----------------- | ----------------- | ----------------------------------------------------------------------------- | ------- |
 | `screenInstance`  | IScreenInstance   | 클라이언트에서 보고 있는 화면(screen) 인스턴스 정보를 가지고 있어요.          |         |
 | `screenInstances` | IScreenInstance[] | 지금까지 등록한 screenInstance 을 배열로 가지고 있어요.                       |         |
-| `ptr`             | number            | 현재 등록하려는 screenInstance 를 가리키는 pointer 에요.                      | `4`     |
+| `ptr`             | number            | 현재 등록하려는 screenInstance 를 가리키는 pointer 에요.                      | `5`     |
 | `options`         | Options           | setScreenInstances 나 setScreenInstancePtr 을 콜백 함수에서 호출 할 수 있어요 |         |
 
 `screenInstances`
@@ -511,7 +536,7 @@ target path 로 route 이동(replace)을 실행하기 직전에 콜백 함수를
 | ----------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------ | ------- |
 | `screenInstance`  | IScreenInstance   | 클라이언트에서 보고 있는 화면(screen) 인스턴스 정보를 가지고 있어요.                                               |         |
 | `screenInstances` | IScreenInstance[] | 지금까지 등록한 screenInstance 을 배열로 가지고 있어요. 방금 등록한 screenInstance 또한 배열 요소로 가지고 있어요. |         |
-| `ptr`             | number            | 현재 등록하려는 screenInstance 를 가리키는 pointer 에요.                                                           | `4`     |
+| `ptr`             | number            | 현재 등록하려는 screenInstance 를 가리키는 pointer 에요.                                                           | `5`     |
 | `options`         | Options           | setScreenInstances 나 setScreenInstancePtr 을 콜백 함수에서 호출 할 수 있어요                                      |         |
 
 `screenInstances`
@@ -541,7 +566,7 @@ target path 로 route 이동(replace)을 실행하기 직전에 콜백 함수를
 | name              | type              | description                                                                                                        | example |
 | ----------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------ | ------- |
 | `screenInstances` | IScreenInstance[] | 지금까지 등록한 screenInstance 을 배열로 가지고 있어요. 방금 등록한 screenInstance 또한 배열 요소로 가지고 있어요. |         |
-| `ptr`             | number            | 현재 수정하려는 screenInstance 를 가리키는 pointer 에요.                                                           | `2`     |
+| `ptr`             | number            | 현재 수정하려는 screenInstance 를 가리키는 pointer 에요.                                                           | `4`     |
 | `options`         | Options           | mapperScreenInstance 를 콜백 함수에서 호출 할 수 있어요.                                                           |         |
 
 `screenInstances`
@@ -573,7 +598,7 @@ target path 로 route 이동(replace)을 실행하기 직전에 콜백 함수를
 | name              | type              | description                                                                                                        | example |
 | ----------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------ | ------- |
 | `screenInstances` | IScreenInstance[] | 지금까지 등록한 screenInstance 을 배열로 가지고 있어요. 방금 등록한 screenInstance 또한 배열 요소로 가지고 있어요. |         |
-| `ptr`             | number            | 수정한 screenInstance 를 가리키는 pointer 에요.                                                                    | `2`     |
+| `ptr`             | number            | 수정한 screenInstance 를 가리키는 pointer 에요.                                                                    | `4`     |
 | `options`         | Options           | mapperScreenInstance 를 콜백 함수에서 호출 할 수 있어요.                                                           |         |
 
 `screenInstances`
@@ -608,7 +633,7 @@ promise 인 push 이벤트를 resolve 하는 resolve 함수를 screenInstanceId 
 | ----------------------- | ---------------------- | ----------------------------------------------------------------------------------------------------------------- | ------- |
 | `screenInstanceId`      | string                 | screenInstancePromise 를 등록하려는 screenInstanceId 값이에요.                                                    |         |
 | `screenInstances`       | IScreenInstance[]      | 지금까지 등록한 screenInstance 을 배열로 가지고 있어요.                                                           |         |
-| `screenInstancePtr`     | number                 | 현재(current) 화면(screen)을 가리키는 pointer 에요                                                                |         |
+| `screenInstancePtr`     | number                 | 현재(current) 화면(screen)을 가리키는 pointer 에요                                                                | `4`     |
 | `screenInstancePromise` | IScreenInstancePromise | screenInstanceId 에 대응하는 screenInstance 의 push 이벤트를 resolve 하기 위한 resolve 함수를 저장한 오브젝트에요 |         |
 
 `screenInstances`
@@ -643,7 +668,7 @@ promise 인 push 이벤트를 resolve 하는 resolve 함수를 screenInstanceId 
 | ----------------------- | ---------------------- | ----------------------------------------------------------------------------------------------------------------- | ------- |
 | `screenInstanceId`      | string                 | screenInstancePromise 를 등록하려는 screenInstanceId 값이에요.                                                    |         |
 | `screenInstances`       | IScreenInstance[]      | 지금까지 등록한 screenInstance 을 배열로 가지고 있어요.                                                           |         |
-| `screenInstancePtr`     | number                 | 현재(current) 화면(screen)을 가리키는 pointer 에요                                                                |         |
+| `screenInstancePtr`     | number                 | 현재(current) 화면(screen)을 가리키는 pointer 에요                                                                | `4`     |
 | `screenInstancePromise` | IScreenInstancePromise | screenInstanceId 에 대응하는 screenInstance 의 push 이벤트를 resolve 하기 위한 resolve 함수를 저장한 오브젝트에요 |         |
 
 `screenInstances`
@@ -660,7 +685,15 @@ promise 인 push 이벤트를 resolve 하는 resolve 함수를 screenInstanceId 
 ]
 ```
 
-## interfaces
+## Interfaces
+
+```typescript
+type NavigatorPluginType = {
+  name: string
+  provider?: React.FC
+  executor: () => PluginType
+}
+```
 
 ```typescript
 interface IScreen {
