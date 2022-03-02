@@ -1,12 +1,14 @@
+# @karrotframe/plugin
+
 <div align="center">
 
 ![](https://img.shields.io/npm/v/@karrotframe/plugin)
 ![](https://img.shields.io/npm/l/@karrotframe/plugin)
 ![](https://img.shields.io/npm/dt/@karrotframe/plugin)
 
-[한국어](./README.ko.md)
-
 </div>
+
+[한국어](./README.ko.md)
 
 **extensible plugin for @karrotframe/navigator**
 
@@ -474,8 +476,6 @@ This hook calls callback function after register this screens.
 ```
 
 ---
-
-// TODO: insert 와 instance 는 구분해서 hook 을 제공할 것
 
 ### beforeInsertScreenInstance
 
