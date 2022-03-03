@@ -2207,6 +2207,21 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@karrotframe/navigator-plugin@workspace:^, @karrotframe/navigator-plugin@workspace:packages/navigator-plugin":
+  version: 0.0.0-use.local
+  resolution: "@karrotframe/navigator-plugin@workspace:packages/navigator-plugin"
+  dependencies:
+    "@types/react": ^16.9.46
+    "@types/react-dom": ^16.9.8
+    nanobundle: ^0.0.25
+    rimraf: ^3.0.2
+    typescript: ^4.3.4
+  peerDependencies:
+    react: ">=16.8"
+    react-dom: ">=16.8"
+  languageName: unknown
+  linkType: soft
+
 "@karrotframe/navigator@workspace:^, @karrotframe/navigator@workspace:packages/navigator":
   version: 0.0.0-use.local
   resolution: "@karrotframe/navigator@workspace:packages/navigator"
@@ -2216,7 +2231,7 @@ __metadata:
     "@babel/preset-env": ^7.12.7
     "@babel/preset-react": ^7.14.5
     "@babel/preset-typescript": ^7.10.4
-    "@karrotframe/plugin": "workspace:^"
+    "@karrotframe/navigator-plugin": "workspace:^"
     "@testing-library/jest-dom": ^5.16.1
     "@testing-library/react": ^12.1.2
     "@types/history": ^4.7.8
@@ -2253,25 +2268,10 @@ __metadata:
     webpack: ^5.9.0
     webpack-cli: ^4.2.0
   peerDependencies:
-    "@karrotframe/plugin": "workspace:^"
+    "@karrotframe/navigator-plugin": "workspace:^"
     react: ">=16.8"
     react-dom: ">=16.8"
     react-router-dom: ">=5.2.0"
-  languageName: unknown
-  linkType: soft
-
-"@karrotframe/plugin@workspace:^, @karrotframe/plugin@workspace:packages/plugin":
-  version: 0.0.0-use.local
-  resolution: "@karrotframe/plugin@workspace:packages/plugin"
-  dependencies:
-    "@types/react": ^16.9.46
-    "@types/react-dom": ^16.9.8
-    nanobundle: ^0.0.25
-    rimraf: ^3.0.2
-    typescript: ^4.3.4
-  peerDependencies:
-    react: ">=16.8"
-    react-dom: ">=16.8"
   languageName: unknown
   linkType: soft
 
@@ -7234,7 +7234,7 @@ __metadata:
     "@emotion/react": ^11.1.5
     "@emotion/styled": ^11.1.5
     "@karrotframe/navigator": "workspace:^"
-    "@karrotframe/plugin": "workspace:^"
+    "@karrotframe/navigator-plugin": "workspace:^"
     "@karrotframe/pulltorefresh": "workspace:^"
     "@karrotframe/tabs": "workspace:^"
     "@testing-library/dom": ^6.15.0

@@ -1,4 +1,4 @@
-# @karrotframe/plugin
+# @karrotframe/navigator-plugin
 
 ## 0.4.0
 

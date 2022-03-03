@@ -15,7 +15,7 @@
 - [`@karrotframe/navigator`](./packages/navigator)
 - [`@karrotframe/tabs`](./packages/tabs)
 - [`@karrotframe/pulltorefresh`](./packages/pulltorefresh)
-- [`@karrotframe/plugin`](./packages/plugin)
+- [`@karrotframe/navigator-plugin`](./packages/navigator-plugin)
 
 ## Contributors
 
