@@ -21,20 +21,37 @@ $ yarn add @karrotframe/pathfinder
 ## Usage
 
 ```shell
-$ yarn generate example.json
-```
-
-```shell
-$ yarn generate ./schema/example.json # relative path
+$ yarn pathfinder init # create initial files
+$ yarn pathfinder generate -s schema.json # generate sdk file from schema
 ```
 
 ## CLI Option
 
-- `output` : Specify directory path to generate sdk file ( default: `__generated__` )
+- `-s, --source` : load json file defining schema
 
 ```shell
-$ yarn generate example.json --output ./sdk
+$ yarn pathfinder generate --source schema.json # load local json file
 ```
+
+```shell
+$ yarn pathfinder generate --source https://example.com/example.json # load remote json file
+```
+
+---
+
+- `-o, --output` : Specify directory path to generate sdk file ( default: `__generated__` )
+
+```shell
+$ yarn pathfinder generate example.json --output ./sdk
+```
+
+### `.pathfinderrc` config file
+
+A config file could be used instead of CLI option.
+Note that option of config file would be ignored when any same option have been declared from CLI option and from config file both.
+
+- `source` : path for json schema file.
+- `output` : path for generated sdk.
 
 ## Entire Schema Definition
 
@@ -124,15 +141,15 @@ To customize methods of SDK, you should redefine `onOpen` callback.
 import customRoute from 'customRoute'
 import { makeExampleSdk } from '__generated__'
 
-const { openExampleGuitar } = makeExampleSdk({
+const { openRouteJobs } = makeExampleSdk({
   onOpen: (endpoint: string, path: string) => {
     const targetPath = endpoint + path
-    customRoute.push(targetPath)
+    this.bridge.router.push(targetPath)
   },
 })
 
 const handler = () => {
-  const params = { guitarId: '12' }
+  const params = { newguitarId: 'constant' }
   openExampleGuitar(params)
 }
 ```

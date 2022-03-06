@@ -15,7 +15,8 @@
     "noUnusedParameters": true,
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
-    "downlevelIteration": true
+    "downlevelIteration": true,
+    "allowJs": true
   },
   "exclude": ["node_modules", "dist", "example"]
 }
