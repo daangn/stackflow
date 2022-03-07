@@ -42,8 +42,26 @@ $ yarn pathfinder generate --source https://example.com/example.json # load remo
 - `-o, --output` : Specify directory path to generate sdk file ( default: `__generated__` )
 
 ```shell
-$ yarn pathfinder generate example.json --output ./sdk
+$ yarn pathfinder generate -s schema.json  --output ./sdk
 ```
+
+---
+
+- `-r, --replace` : Replace generator function with specific module from npm package
+
+```shell
+$ yarn pathfinder generate -s schema.json -r custom-generator-name
+```
+
+---
+
+- `-d, --debug` : Turn on debug mode to display all messages
+
+```shell
+$ yarn pathfinder generate -d
+```
+
+---
 
 ### `.pathfinderrc` config file
 
