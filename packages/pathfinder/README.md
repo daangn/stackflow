@@ -55,10 +55,10 @@ $ yarn pathfinder generate -s schema.json -r custom-generator-name
 
 ---
 
-- `-u, --suffix` : name to describe result type ( default: `Sdk` )
+- `-u, --suffix` : name to describe result type. First letter will be capitalized automatically ( default: `Sdk` )
 
 ```shell
-$ yarn pathfinder generate -s schema.json -r custom-generator-name
+$ yarn pathfinder generate -s schema.json -u result
 ```
 
 ---
