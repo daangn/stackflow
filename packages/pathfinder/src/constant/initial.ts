@@ -31,7 +31,9 @@ const INITIAL_SCHEMA = `// you could switch file extension to '.json' after remo
 
 const INITIAL_CONFIG = `{
   "source": "./schema.json5",
-  "output": "./sdk"
+  "output": "./sdk",
+  "suffix": "sdk",
+  "replace": null
 }
   `
 
