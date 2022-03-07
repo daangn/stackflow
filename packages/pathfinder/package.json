@@ -1,6 +1,6 @@
 {
   "name": "@karrotframe/pathfinder",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "description": "sdk generator for route by schema",
   "repository": {
     "type": "git",
