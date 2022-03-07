@@ -1,37 +1,30 @@
-import fs from 'fs'
-import path from 'path'
-
 import getDataFromOptions from './getDataFromOptions'
 import readSchema from './readSchema'
 import validateSchema from './validateSchema'
-import createSdk from './createSdk'
+import createFile from './createFile'
 
 const generate = async ({
   source,
   output,
   debug,
+  replace,
 }: {
   source?: string
   output?: string
   debug?: boolean
+  replace?: string
 }) => {
   try {
     const { generatePath, target } = await getDataFromOptions(source, output)
     const jsonData = await readSchema(target)
     validateSchema(jsonData)
 
-    const result = await createSdk(jsonData)
-    const generatedDirectory = path.resolve(generatePath)
-
-    if (!fs.existsSync(generatedDirectory)) {
-      fs.mkdirSync(generatedDirectory)
+    const file = {
+      path: generatePath,
+      data: jsonData,
     }
 
-    fs.writeFileSync(
-      path.join(generatedDirectory, `${jsonData.name}Sdk.ts`),
-      result,
-      'utf-8'
-    )
+    await createFile(file, replace)
   } catch (e) {
     if (debug) {
       console.error(e)

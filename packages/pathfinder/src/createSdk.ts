@@ -14,13 +14,15 @@ import parsePathParams from '../utils/parsePathParams'
 // const encodePath = (path: string, checkLocale: (character: string) => boolean) =>
 //     [...path].map((character: string) => checkLocale(character) ? encodeURIComponent(character) : character).join('');
 
-const createSdk = async (metaData: {
+type FileData = {
   routes: Route[]
   name: string
   endpoint: string
   endpoints: Record<string, string>
   version: number
-}) => {
+}
+
+const createSdk = async (metaData: FileData) => {
   const { routes, name, endpoint, endpoints, version } = metaData
 
   const hasEndpoints = endpoints && Object.keys(endpoints).length > 0
@@ -60,7 +62,7 @@ const createSdk = async (metaData: {
         : `const endpoint = "${endpoint}"`
     }
     if(hasQueryParams) {
-      const dynamicPathWithQueryString = dynamicPath + "?" + new URLSearchParams(queryParams as unkown as Record<string, string>).toString() 
+      const dynamicPathWithQueryString = dynamicPath + "?" + new URLSearchParams(queryParams as unknown as Record<string, string>).toString() 
       onOpen(${
         hasEndpoints ? 'endpoints' : 'endpoint'
       }, dynamicPathWithQueryString);

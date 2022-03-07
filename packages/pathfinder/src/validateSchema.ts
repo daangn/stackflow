@@ -1,17 +1,12 @@
-import fs from 'fs'
-import path from 'path'
 import Ajv from 'ajv'
 
 import logger from '../utils/logger'
+import VALIDATOR from './constant/validator'
 
 const ajv = new Ajv()
 
 const validateSchema = (schema: object) => {
-  const validatorSchemaJson = fs.readFileSync(
-    path.resolve(`./src/constant/validator.json`),
-    'utf-8'
-  )
-  const validatorSchema = JSON.parse(validatorSchemaJson)
+  const validatorSchema = VALIDATOR
   const validate = ajv.compile(validatorSchema)
   const isValid = validate(schema)
 
