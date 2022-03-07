@@ -4,16 +4,6 @@ import { pascalCase } from 'pascal-case'
 import type { Route } from './types'
 import parsePathParams from '../utils/parsePathParams'
 
-// const KOREAN_REGEX = /[\uac00-\ud7af]|[\u1100-\u11ff]|[\u3130-\u318f]|[\ua960-\ua97f]|[\ud7b0-\ud7ff]/g
-
-// const isKorean = (char: string) => {
-//     const match = char.match(KOREAN_REGEX)
-//     return char === match?.[0]
-// }
-//
-// const encodePath = (path: string, checkLocale: (character: string) => boolean) =>
-//     [...path].map((character: string) => checkLocale(character) ? encodeURIComponent(character) : character).join('');
-
 type FileData = {
   routes: Route[]
   name: string

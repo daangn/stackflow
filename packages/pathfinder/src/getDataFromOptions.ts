@@ -6,15 +6,18 @@ const getDataFromOptions = async (options: {
   source?: string
   output?: string
   replace?: string
+  suffix?: string
 }): Promise<{
   generatePath: string
   target: string
   customFunction?: string | undefined
+  suffixName?: string | undefined
 }> => {
   let optionsFromConfig: {
     source?: string
     output?: string
     replace?: string
+    suffix?: string
   } = {}
   try {
     const explorer = cosmiconfig('pathfinder')
@@ -55,6 +58,7 @@ const getDataFromOptions = async (options: {
     target,
     generatePath,
     customFunction: options?.replace ?? optionsFromConfig?.replace ?? undefined,
+    suffixName: options?.suffix ?? optionsFromConfig?.suffix ?? undefined,
   }
 }
 

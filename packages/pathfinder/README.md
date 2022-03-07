@@ -1,6 +1,6 @@
 # @karrotframe/pathfinder
 
-sdk generator tool for routes by schema
+code generator tool for routes by schema
 
 ## Table of Contents
 
@@ -22,7 +22,7 @@ $ yarn add @karrotframe/pathfinder
 
 ```shell
 $ yarn pathfinder init # create initial files
-$ yarn pathfinder generate -s schema.json # generate sdk file from schema
+$ yarn pathfinder generate -s schema.json # generate code file from schema
 ```
 
 ## CLI Option
@@ -39,15 +39,23 @@ $ yarn pathfinder generate --source https://example.com/example.json # load remo
 
 ---
 
-- `-o, --output` : Specify directory path to generate sdk file ( default: `__generated__` )
+- `-o, --output` : Specify directory path to generate result file ( default: `__generated__` )
 
 ```shell
-$ yarn pathfinder generate -s schema.json  --output ./sdk
+$ yarn pathfinder generate -s schema.json  --output ./result
 ```
 
 ---
 
 - `-r, --replace` : Replace generator function with specific module from npm package
+
+```shell
+$ yarn pathfinder generate -s schema.json -r custom-generator-name
+```
+
+---
+
+- `-u, --suffix` : name to describe result type ( default: `Sdk` )
 
 ```shell
 $ yarn pathfinder generate -s schema.json -r custom-generator-name
@@ -69,18 +77,20 @@ A config file could be used instead of CLI option.
 Note that option of config file would be ignored when any same option have been declared from CLI option and from config file both.
 
 - `source` : path for json schema file.
-- `output` : path for generated sdk.
+- `output` : path for generated result.
+- `replace` : custom generator function with specific module from npm package to replace a basic built-in function.
+- `suffix` : name to describe result type.
 
 ## Entire Schema Definition
 
 | name          | type   | description                                                                                                    | example                          |
 | ------------- | ------ | -------------------------------------------------------------------------------------------------------------- | -------------------------------- |
-| `name`        | String | Sdk name to generate                                                                                           | `"example"`                      |
-| `description` | String | Description for sdk                                                                                            | `"sdk for example route"`        |
+| `name`        | String | name to generate                                                                                               | `"example"`                      |
+| `description` | String | Description for schema                                                                                         | `"sdk for example route"`        |
 | `author`      | String | Author who is responsible for schema                                                                           | `"John Doe"`                     |
 | `endpoint`    | String | Declare domain URL                                                                                             | `"https://example.com"`          |
 | `endpoints`   | Object | Key is environment and value is domain URL.<br/> If `endpoint` is also declared, `endpoint` should be ignored. | `{ prod: "https://example.com"}` |
-| `version`     | Number | Version for Sdk                                                                                                | `1`                              |
+| `version`     | Number | Version for generated result                                                                                   | `1`                              |
 | `routes`      | Array  | Array contains `Route` elements.                                                                               |                                  |
 
 ## `Route` Schema Definition
@@ -153,7 +163,7 @@ Note that option of config file would be ignored when any same option have been 
 
 ## Redefine `onOpen` callback for usage
 
-To customize methods of SDK, you should redefine `onOpen` callback.
+To customize methods, you should redefine `onOpen` callback.
 
 ```typescript
 import customRoute from 'customRoute'

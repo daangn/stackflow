@@ -19,8 +19,9 @@ const generateSecond = () => {
     .description('generate sdk files from schema')
     .option('-s, --source [path]', 'json file defining schema')
     .option('-o, --output [path]', 'output to provided path')
-    .option('-d, --debug', 'option to print all messages')
     .option('-r, --replace [name]', 'replace generator function')
+    .option('-u, --suffix [name]', 'name to describe result type')
+    .option('-d, --debug', 'option to print all messages')
     .action(async (options) => {
       await generate(options)
     })

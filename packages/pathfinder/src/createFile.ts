@@ -1,5 +1,6 @@
 import path from 'path'
 import fs from 'fs'
+import { pascalCase } from 'pascal-case'
 
 import type { Route } from './types'
 import createSdk from './createSdk'
@@ -15,7 +16,8 @@ type FileData = {
 
 const createFile = async (
   file: { path: string; data: FileData },
-  customFunction?: string
+  customFunction?: string,
+  suffix?: string
 ) => {
   let createFun = createSdk
   if (customFunction) {
@@ -42,7 +44,10 @@ const createFile = async (
   }
 
   fs.writeFileSync(
-    path.join(generatedDirectory, `${file.data.name}Sdk.ts`),
+    path.join(
+      generatedDirectory,
+      `${file.data.name}${suffix ? pascalCase(suffix) : 'Sdk'}.ts`
+    ),
     result,
     'utf-8'
   )
