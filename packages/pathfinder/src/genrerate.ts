@@ -15,7 +15,12 @@ const generate = async ({
   replace?: string
 }) => {
   try {
-    const { generatePath, target } = await getDataFromOptions(source, output)
+    const { generatePath, target, customFunction } = await getDataFromOptions({
+      source,
+      output,
+      replace,
+    })
+
     const jsonData = await readSchema(target)
     validateSchema(jsonData)
 
@@ -24,7 +29,7 @@ const generate = async ({
       data: jsonData,
     }
 
-    await createFile(file, replace)
+    await createFile(file, customFunction)
   } catch (e) {
     if (debug) {
       console.error(e)

@@ -2,11 +2,20 @@ import { cosmiconfig } from 'cosmiconfig'
 
 import logger from '../utils/logger'
 
-const getDataFromOptions = async (
-  source?: string,
+const getDataFromOptions = async (options: {
+  source?: string
   output?: string
-): Promise<{ generatePath: string; target: string }> => {
-  let optionsFromConfig: { source?: string; output?: string } = {}
+  replace?: string
+}): Promise<{
+  generatePath: string
+  target: string
+  customFunction?: string | undefined
+}> => {
+  let optionsFromConfig: {
+    source?: string
+    output?: string
+    replace?: string
+  } = {}
   try {
     const explorer = cosmiconfig('pathfinder')
     const search = await explorer.search()
@@ -26,8 +35,9 @@ const getDataFromOptions = async (
     throw e
   }
 
-  const generatePath = output ?? optionsFromConfig?.output ?? '__generated__'
-  const target = source ?? optionsFromConfig?.source
+  const generatePath =
+    options?.output ?? optionsFromConfig?.output ?? '__generated__'
+  const target = options?.source ?? optionsFromConfig?.source
 
   if (!target) {
     logger.error('Any json file can not be detected.')
@@ -44,6 +54,7 @@ const getDataFromOptions = async (
   return {
     target,
     generatePath,
+    customFunction: options?.replace ?? optionsFromConfig?.replace ?? undefined,
   }
 }
 
