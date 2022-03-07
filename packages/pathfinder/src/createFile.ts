@@ -3,6 +3,7 @@ import fs from 'fs'
 
 import type { Route } from './types'
 import createSdk from './createSdk'
+import logger from '../utils/logger'
 
 type FileData = {
   routes: Route[]
@@ -22,6 +23,14 @@ const createFile = async (
       const customFun = await import(customFunction)
       createFun = customFun.default
     } catch (e) {
+      if (e?.code === 'ERR_MODULE_NOT_FOUND') {
+        logger.warn(`Cannot find package '${customFunction}'`)
+        logger.warn(`You might mistype package name, or`)
+        logger.warn(`You might not install package yet.`)
+        logger.warn(`pathfinder will use a basic built-in generator.`)
+      } else {
+        console.error('module load error: ', e)
+      }
       createFun = createSdk
     }
   }
