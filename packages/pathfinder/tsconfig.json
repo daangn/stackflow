@@ -16,7 +16,8 @@
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
     "downlevelIteration": true,
-    "allowJs": true
+    "allowJs": true,
+    "resolveJsonModule": true
   },
   "exclude": ["node_modules", "dist", "example"]
 }

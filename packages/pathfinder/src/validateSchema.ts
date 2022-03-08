@@ -1,12 +1,11 @@
 import Ajv from 'ajv'
 
 import logger from '../utils/logger'
-import VALIDATOR from './constant/validator'
+import validatorSchema from './constant/validator.json'
 
 const ajv = new Ajv()
 
 const validateSchema = (schema: object) => {
-  const validatorSchema = VALIDATOR
   const validate = ajv.compile(validatorSchema)
   const isValid = validate(schema)
 
