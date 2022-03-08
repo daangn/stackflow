@@ -1,6 +1,17 @@
 # @karrotframe/pathfinder
 
-code generator tool for routes by schema
+<div align="center">
+
+![](https://img.shields.io/npm/v/@karrotframe/pathfinder)
+![](https://img.shields.io/npm/l/@karrotframe/pathfinder)
+![](https://img.shields.io/npm/dt/@karrotframe/pathfinder)
+
+</div>
+
+**code generator tool for routes by schema**
+
+- ✈️ handle routes with schema
+- 🛠 enable to switch generator function
 
 ## Table of Contents
 
