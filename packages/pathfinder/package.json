@@ -1,0 +1,71 @@
+{
+  "name": "@karrotframe/pathfinder",
+  "version": "0.0.18",
+  "description": "sdk generator for route by schema",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/daangn/karrotframe.git",
+    "directory": "packages/pathfinder"
+  },
+  "license": "Apache-2.0",
+  "author": "Usher <usher@daangn.com>",
+  "type": "module",
+  "source": "index.ts",
+  "main": "index.ts",
+  "module": "lib/index.mjs",
+  "types": "lib/index.d.ts",
+  "bin": "./bin/pathfinder.js",
+  "exports": {
+    ".": {
+      "require": "./lib/index.cjs",
+      "import": "./lib/index.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "main": "lib/index.mjs"
+  },
+  "files": [
+    "lib",
+    "bin"
+  ],
+  "scripts": {
+    "build": "nanobundle build",
+    "clean": "rimraf lib",
+    "prepack": "yarn clean && yarn build",
+    "pathfinder": "node ./bin/pathfinder.js",
+    "pathfinder:dev": "yarn build && yarn pathfinder",
+    "test": "jest"
+  },
+  "jest": {
+    "verbose": true,
+    "transform": {
+      "\\.[jt]s?$": "babel-jest"
+    }
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.17.6",
+    "@babel/core": "^7.17.5",
+    "@babel/preset-env": "^7.16.11",
+    "@babel/preset-typescript": "^7.16.7",
+    "@types/babel__core": "^7",
+    "@types/babel__preset-env": "^7",
+    "@types/jest": "^27.4.0",
+    "@types/node": "^17.0.16",
+    "babel-jest": "^27.5.1",
+    "jest": "^27.5.1",
+    "nanobundle": "^0.0.22",
+    "rimraf": "^3.0.2"
+  },
+  "dependencies": {
+    "ajv": "^8.10.0",
+    "commander": "^9.0.0",
+    "cosmiconfig": "^7.0.1",
+    "json-schema-to-typescript": "^10.1.5",
+    "json5": "^2.2.0",
+    "node-fetch": "^3.2.0",
+    "pascal-case": "^3.1.2",
+    "typescript": "^4.5.5"
+  }
+}
