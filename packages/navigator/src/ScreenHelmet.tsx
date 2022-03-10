@@ -52,6 +52,16 @@ export interface IScreenHelmetProps {
    * When top part clicked (iOS Only)
    */
   onTopClick?: () => void
+
+  /**
+   * Set visibility for NavBar (default: `true`)
+   */
+  visible?: boolean
+
+  /**
+   * block event when users try to swipe back
+   */
+  preventSwipeBack?: boolean
 }
 const ScreenHelmet: React.FC<IScreenHelmetProps> = (props) => {
   const {
@@ -68,7 +78,7 @@ const ScreenHelmet: React.FC<IScreenHelmetProps> = (props) => {
         {}
       ),
     })
-    setScreenHelmetVisible(true)
+    setScreenHelmetVisible(props.visible ?? true)
   }, [props])
 
   useEffect(() => resetScreenHelmetProps, [resetScreenHelmetProps])
