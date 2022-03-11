@@ -65,8 +65,6 @@ const Card: React.FC<ICardProps> = (props) => {
     })
 
     const onTouchStart = (e: TouchEvent) => {
-      if (screenHelmetProps.preventBackSwipe) return
-
       document.activeElement?.['blur']?.()
       x0 = x = e.touches[0].clientX
       t0 = Date.now()
@@ -110,15 +108,7 @@ const Card: React.FC<ICardProps> = (props) => {
       $edge.removeEventListener('touchmove', onTouchMove)
       $edge.removeEventListener('touchend', onTouchEnd)
     }
-  }, [
-    dimRef,
-    frameRef,
-    frameOffsetRef,
-    edgeRef,
-    setPopped,
-    pop,
-    screenHelmetProps.preventBackSwipe,
-  ])
+  }, [dimRef, frameRef, frameOffsetRef, edgeRef, setPopped, pop])
 
   const onTopClick = useCallback(() => {
     const $frame = frameRef.current
@@ -225,16 +215,20 @@ const Card: React.FC<ICardProps> = (props) => {
               {props.children}
             </div>
           </div>
-          {cupertino && !props.isRoot && !props.isPresent && !popped && (
-            <div
-              className={css.edge({
-                cupertinoAndIsNavbarVisible:
-                  cupertino && isNavbarVisible ? true : undefined,
-                isNavbarVisible: isNavbarVisible ? true : undefined,
-              })}
-              ref={edgeRef}
-            />
-          )}
+          {cupertino &&
+            !props.isRoot &&
+            !props.isPresent &&
+            !popped &&
+            !screenHelmetProps.preventBackSwipe && (
+              <div
+                className={css.edge({
+                  cupertinoAndIsNavbarVisible:
+                    cupertino && isNavbarVisible ? true : undefined,
+                  isNavbarVisible: isNavbarVisible ? true : undefined,
+                })}
+                ref={edgeRef}
+              />
+            )}
         </div>
       </div>
     </div>
