@@ -13,6 +13,9 @@ const PageScreenHelmet: React.FC = () => {
   const [noBorder, setNoBorder] = useState(false)
   const [noScreenHelmet, setNoScreenHelmet] = useState(false)
 
+  const [visible, setVisible] = useState(true)
+  const [shouldPreventBackSwipe, setPreventBackSwipe] = useState(false)
+
   const onTopClick = () => {
     setIsTopClicked(true)
   }
@@ -30,6 +33,8 @@ const PageScreenHelmet: React.FC = () => {
           appendLeft={appendLeft}
           appendRight={<div onClick={onRightClick}>{appendRight}</div>}
           noBorder={noBorder}
+          visible={visible}
+          preventBackSwipe={shouldPreventBackSwipe}
         />
       )}
       <InputGroup>
@@ -77,6 +82,26 @@ const PageScreenHelmet: React.FC = () => {
           checked={noBorder}
           onChange={(e) => {
             setNoBorder(e.target.checked)
+          }}
+        />
+      </InputGroup>
+      <InputGroup>
+        <InputLabel>VISIBILITY FOR NAVBAR</InputLabel>
+        <Checkbox
+          type="checkbox"
+          checked={visible}
+          onChange={(e) => {
+            setVisible(e.target.checked)
+          }}
+        />
+      </InputGroup>
+      <InputGroup>
+        <InputLabel>PREVENT BACK SWIPE</InputLabel>
+        <Checkbox
+          type="checkbox"
+          checked={shouldPreventBackSwipe}
+          onChange={(e) => {
+            setPreventBackSwipe(e.target.checked)
           }}
         />
       </InputGroup>
