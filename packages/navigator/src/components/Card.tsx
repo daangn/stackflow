@@ -108,7 +108,15 @@ const Card: React.FC<ICardProps> = (props) => {
       $edge.removeEventListener('touchmove', onTouchMove)
       $edge.removeEventListener('touchend', onTouchEnd)
     }
-  }, [dimRef, frameRef, frameOffsetRef, edgeRef, setPopped, pop])
+  }, [
+    dimRef,
+    frameRef,
+    frameOffsetRef,
+    edgeRef,
+    setPopped,
+    pop,
+    screenHelmetProps.preventBackSwipe,
+  ])
 
   const onTopClick = useCallback(() => {
     const $frame = frameRef.current
