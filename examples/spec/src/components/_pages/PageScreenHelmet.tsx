@@ -16,6 +16,8 @@ const PageScreenHelmet: React.FC = () => {
   const [visible, setVisible] = useState(true)
   const [shouldPreventSwipeBack, setPreventSwipeBack] = useState(false)
 
+  const [shouldHideLeftButton, setHideLeftButton] = useState(false)
+
   const onTopClick = () => {
     setIsTopClicked(true)
   }
@@ -35,6 +37,7 @@ const PageScreenHelmet: React.FC = () => {
           noBorder={noBorder}
           visible={visible}
           preventSwipeBack={shouldPreventSwipeBack}
+          hideLeftButton={shouldHideLeftButton}
         />
       )}
       <InputGroup>
@@ -102,6 +105,16 @@ const PageScreenHelmet: React.FC = () => {
           checked={shouldPreventSwipeBack}
           onChange={(e) => {
             setPreventSwipeBack(e.target.checked)
+          }}
+        />
+      </InputGroup>
+      <InputGroup>
+        <InputLabel>HIDE LEFT BUTTON</InputLabel>
+        <Checkbox
+          type="checkbox"
+          checked={shouldHideLeftButton}
+          onChange={(e) => {
+            setHideLeftButton(e.target.checked)
           }}
         />
       </InputGroup>
