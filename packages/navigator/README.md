@@ -137,6 +137,8 @@ const MyComponent: React.FC = () => {
         appendRight={<div>Append to Right</div>}
         customBackButton={<div>Back</div>}
         customCloseButton={<div>Close</div>}
+        visible={false}
+        preventBackSwipe={true}
       />
     </div>
   )
