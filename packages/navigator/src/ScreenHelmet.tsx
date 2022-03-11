@@ -61,7 +61,7 @@ export interface IScreenHelmetProps {
   /**
    * block event when users try to swipe back
    */
-  preventSwipeBack?: boolean
+  preventBackSwipe?: boolean
 }
 const ScreenHelmet: React.FC<IScreenHelmetProps> = (props) => {
   const {

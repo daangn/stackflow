@@ -65,7 +65,7 @@ const Card: React.FC<ICardProps> = (props) => {
     })
 
     const onTouchStart = (e: TouchEvent) => {
-      if (screenHelmetProps.preventSwipeBack) return
+      if (screenHelmetProps.preventBackSwipe) return
 
       document.activeElement?.['blur']?.()
       x0 = x = e.touches[0].clientX
@@ -117,7 +117,7 @@ const Card: React.FC<ICardProps> = (props) => {
     edgeRef,
     setPopped,
     pop,
-    screenHelmetProps.preventSwipeBack,
+    screenHelmetProps.preventBackSwipe,
   ])
 
   const onTopClick = useCallback(() => {
