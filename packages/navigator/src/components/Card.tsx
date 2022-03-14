@@ -229,6 +229,7 @@ const Card: React.FC<ICardProps> = (props) => {
             !popped &&
             !screenHelmetProps.preventBackSwipe && (
               <div
+                data-testid="edge-element"
                 className={css.edge({
                   cupertinoAndIsNavbarVisible:
                     cupertino && isNavbarVisible ? true : undefined,

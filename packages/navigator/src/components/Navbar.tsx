@@ -126,6 +126,7 @@ const Navbar: React.FC<INavbarProps> = (props) => {
 
   return (
     <div
+      data-testid="nav-bar"
       className={css.container({
         cupertinoAndIsNotPresent:
           cupertino && !props.isPresent ? true : undefined,
