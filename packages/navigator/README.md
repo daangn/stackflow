@@ -138,7 +138,7 @@ const MyComponent: React.FC = () => {
         customBackButton={<div>Back</div>}
         customCloseButton={<div>Close</div>}
         visible={false}
-        preventBackSwipe={true}
+        preventSwipeBack={true}
       />
     </div>
   )

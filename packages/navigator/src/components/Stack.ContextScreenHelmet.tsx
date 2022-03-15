@@ -20,7 +20,7 @@ export function makeScreenHelmetDefaultProps(): IScreenHelmetProps {
     disableScrollToTop: false,
     noBorder: false,
     onTopClick: undefined,
-    preventBackSwipe: false,
+    preventSwipeBack: false,
   }
 }
 

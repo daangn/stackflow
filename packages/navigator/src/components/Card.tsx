@@ -115,7 +115,7 @@ const Card: React.FC<ICardProps> = (props) => {
     edgeRef,
     setPopped,
     pop,
-    screenHelmetProps.preventBackSwipe,
+    screenHelmetProps.preventSwipeBack,
   ])
 
   const onTopClick = useCallback(() => {
@@ -227,7 +227,7 @@ const Card: React.FC<ICardProps> = (props) => {
             !props.isRoot &&
             !props.isPresent &&
             !popped &&
-            !screenHelmetProps.preventBackSwipe && (
+            !screenHelmetProps.preventSwipeBack && (
               <div
                 data-testid="edge-element"
                 className={css.edge({
