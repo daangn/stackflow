@@ -2,7 +2,7 @@
 # Manual changes might be lost - proceed with caution!
 
 __metadata:
-  version: 5
+  version: 6
   cacheKey: 8
 
 "@ampproject/remapping@npm:^2.1.0":
@@ -697,7 +697,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-proposal-private-property-in-object@npm:^7.16.7":
+"@babel/plugin-proposal-private-property-in-object@npm:^7.16.0, @babel/plugin-proposal-private-property-in-object@npm:^7.16.7":
   version: 7.16.7
   resolution: "@babel/plugin-proposal-private-property-in-object@npm:7.16.7"
   dependencies:
@@ -2616,7 +2616,6 @@ __metadata:
     babel-loader: ^8.2.2
     css-loader: ^5.0.1
     dts-bundle-generator: ^5.9.0
-    fork-ts-checker-webpack-plugin: ^3.1.1
     history: ^4.7.8
     jest: ^27.4.7
     mini-css-extract-plugin: ^1.3.8
@@ -2629,7 +2628,7 @@ __metadata:
     rimraf: ^3.0.2
     typescript: ^4.3.4
     webpack: ^5.9.0
-    webpack-cli: ^4.2.0
+    webpack-cli: ^4.9.2
   peerDependencies:
     "@karrotframe/navigator-plugin": "workspace:^"
     react: ">=16.8"
@@ -2687,7 +2686,6 @@ __metadata:
     babel-loader: ^8.2.2
     css-loader: ^5.0.1
     dts-bundle-generator: ^5.9.0
-    fork-ts-checker-webpack-plugin: ^3.1.1
     mini-css-extract-plugin: ^1.3.8
     rimraf: ^3.0.2
     typescript: ^4.3.4
@@ -2720,7 +2718,6 @@ __metadata:
     babel-loader: ^8.2.2
     css-loader: ^5.0.1
     dts-bundle-generator: ^5.9.0
-    fork-ts-checker-webpack-plugin: ^3.1.1
     mini-css-extract-plugin: ^1.3.8
     rimraf: ^3.0.2
     typescript: ^4.3.4
@@ -4192,6 +4189,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@webpack-cli/configtest@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "@webpack-cli/configtest@npm:1.1.1"
+  peerDependencies:
+    webpack: 4.x.x || 5.x.x
+    webpack-cli: 4.x.x
+  checksum: c4e7fca21315e487655fbdc7d079092c3f88b274a720d245ca2e13dce7553009fb3f9d82218c33f5c9b208832d72bb4114a9cca97d53b66212eff5da1d3ad44b
+  languageName: node
+  linkType: hard
+
 "@webpack-cli/info@npm:^1.2.2":
   version: 1.2.2
   resolution: "@webpack-cli/info@npm:1.2.2"
@@ -4200,6 +4207,17 @@ __metadata:
   peerDependencies:
     webpack-cli: 4.x.x
   checksum: a87891d89b5d537be24b185e2a8a0789f849b90e9c9cf4d5c8ff9783dd552dfdc593f17b9b0f34e379b440b613b03f75dd26d9813799ebfa3d5a03c41c6cce4c
+  languageName: node
+  linkType: hard
+
+"@webpack-cli/info@npm:^1.4.1":
+  version: 1.4.1
+  resolution: "@webpack-cli/info@npm:1.4.1"
+  dependencies:
+    envinfo: ^7.7.3
+  peerDependencies:
+    webpack-cli: 4.x.x
+  checksum: 7a7cac2ba4f2528caa329311599da1685b1bc099bfc5b7210932b7c86024c1277fd7857b08557902b187ea01247a8e8f72f7f5719af72b0c8d97f22087aa0c14
   languageName: node
   linkType: hard
 
@@ -4212,6 +4230,18 @@ __metadata:
     webpack-dev-server:
       optional: true
   checksum: dea0041e4bd1ed3b90c484a8d014c464ca12953e116ab4aa801cfeca48b606a27cc402c198a30fb0bfdf41a3b0e91f3d6ab509c32bfd2b9b5fd6e15ad67cb34e
+  languageName: node
+  linkType: hard
+
+"@webpack-cli/serve@npm:^1.6.1":
+  version: 1.6.1
+  resolution: "@webpack-cli/serve@npm:1.6.1"
+  peerDependencies:
+    webpack-cli: 4.x.x
+  peerDependenciesMeta:
+    webpack-dev-server:
+      optional: true
+  checksum: 8b273f906aeffa60c7d5700ae25f98d4b66b7e922cad38acb9575d55ff83872cd20b9894aacfa81c4d54e5b51b16253ae0e70c5e9e0608dc8768276e15c74536
   languageName: node
   linkType: hard
 
@@ -4308,7 +4338,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"acorn@npm:^8.2.4, acorn@npm:^8.4.1, acorn@npm:^8.7.0":
+"acorn@npm:^8.2.4, acorn@npm:^8.4.1, acorn@npm:^8.5.0, acorn@npm:^8.7.0":
   version: 8.7.0
   resolution: "acorn@npm:8.7.0"
   bin:
@@ -4480,13 +4510,6 @@ __metadata:
   version: 6.0.1
   resolution: "ansi-regex@npm:6.0.1"
   checksum: 1ff8b7667cded1de4fa2c9ae283e979fc87036864317da86a2e546725f96406746411d0d85e87a2d12fa5abd715d90006de7fa4fa0477c92321ad3b4c7d4e169
-  languageName: node
-  linkType: hard
-
-"ansi-styles@npm:^2.2.1":
-  version: 2.2.1
-  resolution: "ansi-styles@npm:2.2.1"
-  checksum: ebc0e00381f2a29000d1dac8466a640ce11943cef3bda3cd0020dc042e31e1058ab59bf6169cd794a54c3a7338a61ebc404b7c91e004092dd20e028c432c9c2c
   languageName: node
   linkType: hard
 
@@ -4830,17 +4853,6 @@ __metadata:
   version: 2.2.0
   resolution: "axobject-query@npm:2.2.0"
   checksum: 96b8c7d807ca525f41ad9b286186e2089b561ba63a6d36c3e7d73dc08150714660995c7ad19cda05784458446a0793b45246db45894631e13853f48c1aa3117f
-  languageName: node
-  linkType: hard
-
-"babel-code-frame@npm:^6.22.0":
-  version: 6.26.0
-  resolution: "babel-code-frame@npm:6.26.0"
-  dependencies:
-    chalk: ^1.1.3
-    esutils: ^2.0.2
-    js-tokens: ^3.0.2
-  checksum: 9410c3d5a921eb02fa409675d1a758e493323a49e7b9dddb7a2a24d47e61d39ab1129dd29f9175836eac9ce8b1d4c0a0718fcdc57ce0b865b529fd250dbab313
   languageName: node
   linkType: hard
 
@@ -5451,19 +5463,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chalk@npm:^1.1.3":
-  version: 1.1.3
-  resolution: "chalk@npm:1.1.3"
-  dependencies:
-    ansi-styles: ^2.2.1
-    escape-string-regexp: ^1.0.2
-    has-ansi: ^2.0.0
-    strip-ansi: ^3.0.0
-    supports-color: ^2.0.0
-  checksum: 9d2ea6b98fc2b7878829eec223abcf404622db6c48396a9b9257f6d0ead2acf18231ae368d6a664a83f272b0679158da12e97b5229f794939e555cc574478acd
-  languageName: node
-  linkType: hard
-
 "chalk@npm:^2.0.0, chalk@npm:^2.0.1, chalk@npm:^2.1.0, chalk@npm:^2.4.1, chalk@npm:^2.4.2":
   version: 2.4.2
   resolution: "chalk@npm:2.4.2"
@@ -5523,7 +5522,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chokidar@npm:^3.3.0, chokidar@npm:^3.4.0, chokidar@npm:^3.4.2, chokidar@npm:^3.5.2, chokidar@npm:^3.5.3":
+"chokidar@npm:^3.4.0, chokidar@npm:^3.4.2, chokidar@npm:^3.5.2, chokidar@npm:^3.5.3":
   version: 3.5.3
   resolution: "chokidar@npm:3.5.3"
   dependencies:
@@ -5770,7 +5769,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"colorette@npm:^2.0.10, colorette@npm:^2.0.16":
+"colorette@npm:^2.0.10, colorette@npm:^2.0.14, colorette@npm:^2.0.16":
   version: 2.0.16
   resolution: "colorette@npm:2.0.16"
   checksum: cd55596a3a2d1071c1a28eee7fd8a5387593ff1bd10a3e8d0a6221499311fe34a9f2b9272d77c391e0e003dcdc8934fb2f8d106e7ef1f7516f8060c901d41a27
@@ -7621,7 +7620,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"escape-string-regexp@npm:^1.0.2, escape-string-regexp@npm:^1.0.5":
+"escape-string-regexp@npm:^1.0.5":
   version: 1.0.5
   resolution: "escape-string-regexp@npm:1.0.5"
   checksum: 6092fda75c63b110c706b6a9bfde8a612ad595b628f0bd2147eea1d3406723020810e591effc7db1da91d80a71a737a313567c5abb3813e8d9c71f4aa595b410
@@ -8531,22 +8530,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fork-ts-checker-webpack-plugin@npm:^3.1.1":
-  version: 3.1.1
-  resolution: "fork-ts-checker-webpack-plugin@npm:3.1.1"
-  dependencies:
-    babel-code-frame: ^6.22.0
-    chalk: ^2.4.1
-    chokidar: ^3.3.0
-    micromatch: ^3.1.10
-    minimatch: ^3.0.4
-    semver: ^5.6.0
-    tapable: ^1.0.0
-    worker-rpc: ^0.1.0
-  checksum: c7b278e569ec7d5a1c73808b80870dda87f6171dc33c7cf06090c441c54753e1a5886b8256269fd2e100cda980b3f12db02d02ae2008fc067c81e948a173f35f
-  languageName: node
-  linkType: hard
-
 "fork-ts-checker-webpack-plugin@npm:^6.5.0":
   version: 6.5.0
   resolution: "fork-ts-checker-webpack-plugin@npm:6.5.0"
@@ -9010,15 +8993,6 @@ __metadata:
   version: 1.6.1
   resolution: "harmony-reflect@npm:1.6.1"
   checksum: 4cb91f86d262650d62c3ac713a2284ef0784a5c8be347188f97747db68d0e6d9801f09a3f12bacec59d5ec9d010cba64b8acb4c2c4827e172ef2ab215cdfef9d
-  languageName: node
-  linkType: hard
-
-"has-ansi@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "has-ansi@npm:2.0.0"
-  dependencies:
-    ansi-regex: ^2.0.0
-  checksum: 1b51daa0214440db171ff359d0a2d17bc20061164c57e76234f614c91dbd2a79ddd68dfc8ee73629366f7be45a6df5f2ea9de83f52e1ca24433f2cc78c35d8ec
   languageName: node
   linkType: hard
 
@@ -11158,13 +11132,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"js-tokens@npm:^3.0.2":
-  version: 3.0.2
-  resolution: "js-tokens@npm:3.0.2"
-  checksum: ff24cf90e6e4ac446eba56e604781c1aaf3bdaf9b13a00596a0ebd972fa3b25dc83c0f0f67289c33252abb4111e0d14e952a5d9ffb61f5c22532d555ebd8d8a9
-  languageName: node
-  linkType: hard
-
 "js-yaml@npm:^3.13.0, js-yaml@npm:^3.13.1, js-yaml@npm:^3.6.1":
   version: 3.14.1
   resolution: "js-yaml@npm:3.14.1"
@@ -11954,13 +11921,6 @@ __metadata:
   version: 1.1.2
   resolution: "methods@npm:1.1.2"
   checksum: 0917ff4041fa8e2f2fda5425a955fe16ca411591fbd123c0d722fcf02b73971ed6f764d85f0a6f547ce49ee0221ce2c19a5fa692157931cecb422984f1dcd13a
-  languageName: node
-  linkType: hard
-
-"microevent.ts@npm:~0.1.1":
-  version: 0.1.1
-  resolution: "microevent.ts@npm:0.1.1"
-  checksum: 7874fcdb3f0dfa4e996d3ea63b3b9882874ae7d22be28d51ae20da24c712e9e28e5011d988095c27dd2b32e37c0ad7425342a71b89adb8e808ec7194fadf4a7a
   languageName: node
   linkType: hard
 
@@ -15942,13 +15902,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"supports-color@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "supports-color@npm:2.0.0"
-  checksum: 602538c5812b9006404370b5a4b885d3e2a1f6567d314f8b4a41974ffe7d08e525bf92ae0f9c7030e3b4c78e4e34ace55d6a67a74f1571bc205959f5972f88f0
-  languageName: node
-  linkType: hard
-
 "supports-color@npm:^5.3.0":
   version: 5.5.0
   resolution: "supports-color@npm:5.5.0"
@@ -16629,27 +16582,27 @@ __metadata:
 
 "typescript@patch:typescript@>=3.0.1#~builtin<compat/typescript>, typescript@patch:typescript@^4.3.4#~builtin<compat/typescript>, typescript@patch:typescript@^4.3.5#~builtin<compat/typescript>":
   version: 4.3.5
-  resolution: "typescript@patch:typescript@npm%3A4.3.5#~builtin<compat/typescript>::version=4.3.5&hash=493e53"
+  resolution: "typescript@patch:typescript@npm%3A4.3.5#~builtin<compat/typescript>::version=4.3.5&hash=bda367"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 61fc1a2ca5037420de5bbe17c6ddc4cbcc0d52301ed94f0a7b5821c55ff9eb96307f0816f745ca8f0fc87ed92f3951cde6d97cd6fd6bc6920c02ea63b5b26259
+  checksum: 365df18cf979c971ef9543b2acaa8694377a803f98e1804c41d0ede0b09d7046cb0cd98f2eaf3884b0fe923c01a60af1f653841bd8805c9715d5479c09a4ebe4
   languageName: node
   linkType: hard
 
 "typescript@patch:typescript@^4.5.5#~builtin<compat/typescript>":
   version: 4.6.2
-  resolution: "typescript@patch:typescript@npm%3A4.6.2#~builtin<compat/typescript>::version=4.6.2&hash=493e53"
+  resolution: "typescript@patch:typescript@npm%3A4.6.2#~builtin<compat/typescript>::version=4.6.2&hash=bda367"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: efb83260a22ee49d4c8bdc59b3cefe54fdf51d6f563f5c3a35aa3d5e46fb12f3f1d33a36d6f9f64171e567ead1847e99cb612d0a9a74e7d44e16cad9d0bbc937
+  checksum: 40b493a71747fb89fa70df104e2c4a5e284b43750af5bea024090a5261cefa387f7a9372411b13030f7bf5555cee4275443d08805642ae5c74ef76740854a4c7
   languageName: node
   linkType: hard
 
 "typescript@patch:typescript@~3.7.2#~builtin<compat/typescript>":
   version: 3.7.7
-  resolution: "typescript@patch:typescript@npm%3A3.7.7#~builtin<compat/typescript>::version=3.7.7&hash=493e53"
+  resolution: "typescript@patch:typescript@npm%3A3.7.7#~builtin<compat/typescript>::version=3.7.7&hash=bda367"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
@@ -17036,6 +16989,39 @@ typescript@~3.7.2:
   bin:
     webpack-cli: bin/cli.js
   checksum: cb3c211ef52165c6ecf8d60b0af94da4b0719db892bd9128feddaced58d89f120ce5e9eb702060f57ba84ebb13421c7e0e9cbe035e6e30f4c3dda9638af3a471
+  languageName: node
+  linkType: hard
+
+"webpack-cli@npm:^4.9.2":
+  version: 4.9.2
+  resolution: "webpack-cli@npm:4.9.2"
+  dependencies:
+    "@discoveryjs/json-ext": ^0.5.0
+    "@webpack-cli/configtest": ^1.1.1
+    "@webpack-cli/info": ^1.4.1
+    "@webpack-cli/serve": ^1.6.1
+    colorette: ^2.0.14
+    commander: ^7.0.0
+    execa: ^5.0.0
+    fastest-levenshtein: ^1.0.12
+    import-local: ^3.0.2
+    interpret: ^2.2.0
+    rechoir: ^0.7.0
+    webpack-merge: ^5.7.3
+  peerDependencies:
+    webpack: 4.x.x || 5.x.x
+  peerDependenciesMeta:
+    "@webpack-cli/generators":
+      optional: true
+    "@webpack-cli/migrate":
+      optional: true
+    webpack-bundle-analyzer:
+      optional: true
+    webpack-dev-server:
+      optional: true
+  bin:
+    webpack-cli: bin/cli.js
+  checksum: ffb4c5d53ab65ce9f1e8efd34fca4cb858ec6afc91ece0d9375094edff2e7615708c8a586991057fd9cc8d37aab0eb0511913b178daac534e51bcf7d3583e61c
   languageName: node
   linkType: hard
 
@@ -17526,15 +17512,6 @@ typescript@~3.7.2:
     "@types/trusted-types": ^2.0.2
     workbox-core: 6.4.2
   checksum: 811dd5cae8f493e66e39729440b36a96ca3cb91b99595fd62f151c6f92f5e658109b0444aa3b91fafd1232220798c61c2164f1f2c76e21079abed9ceebe93f22
-  languageName: node
-  linkType: hard
-
-"worker-rpc@npm:^0.1.0":
-  version: 0.1.1
-  resolution: "worker-rpc@npm:0.1.1"
-  dependencies:
-    microevent.ts: ~0.1.1
-  checksum: 8f8607506172f44c05490f3ccf13e5c1f430eeb9b6116a405919c186b8b17add13bbb22467a0dbcd18ec7fcb080709a15738182e0003c5fbe2144721ea00f357
   languageName: node
   linkType: hard
 

@@ -1,5 +1,4 @@
 const path = require('path')
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const { VanillaExtractPlugin } = require('@vanilla-extract/webpack-plugin')
 
@@ -51,9 +50,5 @@ module.exports = {
   optimization: {
     minimize: false,
   },
-  plugins: [
-    new ForkTsCheckerWebpackPlugin(),
-    new VanillaExtractPlugin(),
-    new MiniCssExtractPlugin(),
-  ],
+  plugins: [new VanillaExtractPlugin(), new MiniCssExtractPlugin()],
 }
