@@ -21,7 +21,8 @@ export function makeScreenHelmetDefaultProps(): IScreenHelmetProps {
     noBorder: false,
     onTopClick: undefined,
     preventSwipeBack: false,
-    hideLeftButton: false,
+    noBackButton: false,
+    noCloseButton: false,
   }
 }
 

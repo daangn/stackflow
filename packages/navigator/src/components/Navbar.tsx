@@ -70,7 +70,7 @@ const Navbar: React.FC<INavbarProps> = (props) => {
   const closeButton =
     props.onClose &&
     props.isRoot &&
-    !screenHelmetProps.hideLeftButton &&
+    !screenHelmetProps.noCloseButton &&
     (screenHelmetProps.customCloseButton ? (
       <a
         className={css.closeButton}
@@ -93,7 +93,7 @@ const Navbar: React.FC<INavbarProps> = (props) => {
 
   const backButton =
     !props.isRoot &&
-    !screenHelmetProps.hideLeftButton &&
+    !screenHelmetProps.noBackButton &&
     (screenHelmetProps.customBackButton ? (
       <a
         className={css.backButton}

@@ -139,7 +139,8 @@ const MyComponent: React.FC = () => {
         customCloseButton={<div>Close</div>}
         visible={false}
         preventSwipeBack={true}
-        hideLeftButton={true}
+        noBackButton={true}
+        noCloseButton={true}
       />
     </div>
   )
