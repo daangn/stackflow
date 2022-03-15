@@ -134,18 +134,20 @@ describe('ScreenHelmet - preventSwipeBack:  ', () => {
   })
 })
 
-describe('ScreenHelmet - hideLeftButton: ', () => {
+describe('ScreenHelmet - noBackButton, noCloseButton: ', () => {
   const renderScreenHelmet = ({
-    hideLeftButton,
+    noBackButton,
+    noCloseButton,
   }: {
-    hideLeftButton: boolean
+    noBackButton?: boolean
+    noCloseButton?: boolean
   }): RenderResult => {
     const HomeWithoutButton: FC = (): ReactElement => {
       const { push } = useNavigator()
 
       return (
         <div>
-          <ScreenHelmet hideLeftButton />
+          <ScreenHelmet noCloseButton />
           <button
             onClick={() => {
               push('/another')
@@ -197,7 +199,7 @@ describe('ScreenHelmet - hideLeftButton: ', () => {
 
       return (
         <div>
-          <ScreenHelmet hideLeftButton />
+          <ScreenHelmet noBackButton />
           <span>another</span>
           <button
             onClick={() => {
@@ -218,40 +220,37 @@ describe('ScreenHelmet - hideLeftButton: ', () => {
         backButtonAriaLabel="BackButtonTest"
         closeButtonAriaLabel="CloseButtonTest"
       >
-        <Screen
-          path="/"
-          component={hideLeftButton ? HomeWithoutButton : Home}
-        />
+        <Screen path="/" component={noCloseButton ? HomeWithoutButton : Home} />
         <Screen
           path="/another"
-          component={hideLeftButton ? AnotherWithoutButton : Another}
+          component={noBackButton ? AnotherWithoutButton : Another}
         />
       </Navigator>
     )
   }
 
-  it('hideLeftButton 가 false 이면, root 에서 close button 이 나타난다.', () => {
+  it('noCloseButton 가 false 이면, root 에서 close button 이 나타난다.', () => {
     // when
-    const { getByLabelText } = renderScreenHelmet({ hideLeftButton: false })
+    const { getByLabelText } = renderScreenHelmet({ noCloseButton: false })
 
     // then
     const closeButtonNotRendering = getByLabelText('CloseButtonTest')
     expect(closeButtonNotRendering).toBeInTheDocument()
   })
 
-  it('hideLeftButton 가 true 이면, root 에서 close button 이 나타나지 않는다.', () => {
+  it('noCloseButton 가 true 이면, root 에서 close button 이 나타나지 않는다.', () => {
     // when
-    const { queryByLabelText } = renderScreenHelmet({ hideLeftButton: true })
+    const { queryByLabelText } = renderScreenHelmet({ noCloseButton: true })
 
     // then
     const closeButtonNotRendering = queryByLabelText('CloseButtonTest')
     expect(closeButtonNotRendering).not.toBeInTheDocument()
   })
 
-  it('hideLeftButton 가 false 이면, root 가 아닐 때 back button 이 나타난다.', async () => {
+  it('noBackButton 가 false 이면, root 가 아닐 때 back button 이 나타난다.', async () => {
     // given
     const { findByLabelText, getByText, findByText } = renderScreenHelmet({
-      hideLeftButton: false,
+      noBackButton: false,
     })
 
     try {
@@ -272,10 +271,10 @@ describe('ScreenHelmet - hideLeftButton: ', () => {
     }
   })
 
-  it('hideLeftButton 가 true 이면, root 가 아닐 때 back button 이 나타나지 않는다.', async () => {
+  it('noBackButton 가 true 이면, root 가 아닐 때 back button 이 나타나지 않는다.', async () => {
     // given
-    const { queryByLabelText, getByText, findByText } = renderScreenHelmet({
-      hideLeftButton: true,
+    const { getByText, findByText, findByLabelText } = renderScreenHelmet({
+      noBackButton: true,
     })
 
     try {
@@ -283,12 +282,10 @@ describe('ScreenHelmet - hideLeftButton: ', () => {
       const moveButton = getByText(/move/i)
       fireEvent.click(moveButton)
 
-      // use waitFor to avoid warning message 'When testing, code that causes React state updates should be wrapped into act
-      await waitFor(() => {
-        // then
-        const closeButtonNotRendering = queryByLabelText('BackButtonTest')
-        expect(closeButtonNotRendering).not.toBeInTheDocument()
-      })
+      // then
+      await expect(
+        findByLabelText('BackButtonTest', {}, { timeout: 300 })
+      ).rejects.toThrow()
     } finally {
       // use waitFor to avoid warning message 'When testing, code that causes React state updates should be wrapped into act
       await waitFor(async () => {
