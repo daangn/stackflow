@@ -30,7 +30,7 @@ interface IStackProps {
   animationDuration: number
   backButtonAriaLabel: string
   closeButtonAriaLabel: string
-  onClose?: () => void
+  onClose: () => void
   onDepthChange?: (depth: number) => void
 }
 const Stack: React.FC<IStackProps> = (props) => {
