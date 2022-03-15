@@ -62,10 +62,16 @@ export interface IScreenHelmetProps {
    * block event when users try to swipe back
    */
   preventSwipeBack?: boolean
+
   /**
-   * hide button from leftside of navbar in ScreenHelmet
+   * hide back button from navbar in ScreenHelmet
    */
-  hideLeftButton?: boolean
+  noBackButton?: boolean
+
+  /**
+   * hide close button from navbar in ScreenHelmet
+   */
+  noCloseButton?: boolean
 }
 const ScreenHelmet: React.FC<IScreenHelmetProps> = (props) => {
   const {
