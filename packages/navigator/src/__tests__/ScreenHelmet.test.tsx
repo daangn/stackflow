@@ -43,18 +43,18 @@ describe('ScreenHelmet - visible: ', () => {
   })
 })
 
-describe('ScreenHelmet - preventBackSwipe:  ', () => {
+describe('ScreenHelmet - preventSwipeBack:  ', () => {
   const renderScreenHelmet = ({
-    preventBackSwipe,
+    preventSwipeBack,
   }: {
-    preventBackSwipe: boolean
+    preventSwipeBack: boolean
   }): RenderResult => {
     const Example: FC = (): ReactElement => {
       const { push } = useNavigator()
 
       return (
         <div>
-          <ScreenHelmet preventBackSwipe={preventBackSwipe} />
+          <ScreenHelmet preventSwipeBack={preventSwipeBack} />
           <span>example</span>
           <button
             onClick={() => {
@@ -71,7 +71,7 @@ describe('ScreenHelmet - preventBackSwipe:  ', () => {
 
       return (
         <div>
-          <ScreenHelmet preventBackSwipe={preventBackSwipe} />
+          <ScreenHelmet preventSwipeBack={preventSwipeBack} />
           <span>another</span>
           <button
             onClick={() => {
@@ -105,10 +105,10 @@ describe('ScreenHelmet - preventBackSwipe:  ', () => {
     }
   })
 
-  it('preventBackSwipe: true 이면 edge element 를 생성하지 않는다 ', async () => {
+  it('preventSwipeBack: true 이면 edge element 를 생성하지 않는다 ', async () => {
     // when
     const { getByText, queryByTestId } = renderScreenHelmet({
-      preventBackSwipe: true,
+      preventSwipeBack: true,
     })
     const moveButton = getByText(/move/i)
     fireEvent.click(moveButton)
@@ -120,10 +120,10 @@ describe('ScreenHelmet - preventBackSwipe:  ', () => {
     })
   })
 
-  it('preventBackSwipe: false 이면 edge element 를 생성한다. ', async () => {
+  it('preventSwipeBack: false 이면 edge element 를 생성한다. ', async () => {
     // when
     const { getByText, findByTestId } = renderScreenHelmet({
-      preventBackSwipe: false,
+      preventSwipeBack: false,
     })
     const moveButton = getByText(/move/i)
     fireEvent.click(moveButton)
