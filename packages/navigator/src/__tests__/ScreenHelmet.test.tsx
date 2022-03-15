@@ -133,3 +133,169 @@ describe('ScreenHelmet - preventSwipeBack:  ', () => {
     expect(edgeElement).toBeInTheDocument()
   })
 })
+
+describe('ScreenHelmet - hideLeftButton: ', () => {
+  const renderScreenHelmet = ({
+    hideLeftButton,
+  }: {
+    hideLeftButton: boolean
+  }): RenderResult => {
+    const HomeWithoutButton: FC = (): ReactElement => {
+      const { push } = useNavigator()
+
+      return (
+        <div>
+          <ScreenHelmet hideLeftButton />
+          <button
+            onClick={() => {
+              push('/another')
+            }}
+          >
+            move
+          </button>
+        </div>
+      )
+    }
+
+    const Home: FC = (): ReactElement => {
+      const { push } = useNavigator()
+
+      return (
+        <div>
+          <ScreenHelmet />
+          <button
+            onClick={() => {
+              push('/another')
+            }}
+          >
+            move
+          </button>
+        </div>
+      )
+    }
+
+    const Another: FC = (): ReactElement => {
+      const { push } = useNavigator()
+
+      return (
+        <div>
+          <ScreenHelmet />
+          <span>another</span>
+          <button
+            onClick={() => {
+              push('/')
+            }}
+          >
+            teardown
+          </button>
+        </div>
+      )
+    }
+
+    const AnotherWithoutButton: FC = (): ReactElement => {
+      const { push } = useNavigator()
+
+      return (
+        <div>
+          <ScreenHelmet hideLeftButton />
+          <span>another</span>
+          <button
+            onClick={() => {
+              push('/')
+            }}
+          >
+            teardown
+          </button>
+        </div>
+      )
+    }
+
+    return render(
+      <Navigator
+        onClose={() => {
+          console.log('ScreenHelmet test')
+        }}
+        backButtonAriaLabel="BackButtonTest"
+        closeButtonAriaLabel="CloseButtonTest"
+      >
+        <Screen
+          path="/"
+          component={hideLeftButton ? HomeWithoutButton : Home}
+        />
+        <Screen
+          path="/another"
+          component={hideLeftButton ? AnotherWithoutButton : Another}
+        />
+      </Navigator>
+    )
+  }
+
+  it('hideLeftButton 가 false 이면, root 에서 close button 이 나타난다.', () => {
+    // when
+    const { getByLabelText } = renderScreenHelmet({ hideLeftButton: false })
+
+    // then
+    const closeButtonNotRendering = getByLabelText('CloseButtonTest')
+    expect(closeButtonNotRendering).toBeInTheDocument()
+  })
+
+  it('hideLeftButton 가 true 이면, root 에서 close button 이 나타나지 않는다.', () => {
+    // when
+    const { queryByLabelText } = renderScreenHelmet({ hideLeftButton: true })
+
+    // then
+    const closeButtonNotRendering = queryByLabelText('CloseButtonTest')
+    expect(closeButtonNotRendering).not.toBeInTheDocument()
+  })
+
+  it('hideLeftButton 가 false 이면, root 가 아닐 때 back button 이 나타난다.', async () => {
+    // given
+    const { findByLabelText, getByText, findByText } = renderScreenHelmet({
+      hideLeftButton: false,
+    })
+
+    try {
+      // when
+      const moveButton = getByText(/move/i)
+      fireEvent.click(moveButton)
+
+      // then
+      const closeButtonNotRendering = await findByLabelText('BackButtonTest')
+      expect(closeButtonNotRendering).toBeInTheDocument()
+    } finally {
+      // use waitFor to avoid warning message 'When testing, code that causes React state updates should be wrapped into act
+      await waitFor(async () => {
+        // teardown
+        const teardownButton = await findByText('teardown')
+        fireEvent.click(teardownButton)
+      })
+    }
+  })
+
+  it('hideLeftButton 가 true 이면, root 가 아닐 때 back button 이 나타나지 않는다.', async () => {
+    // given
+    const { queryByLabelText, getByText, findByText } = renderScreenHelmet({
+      hideLeftButton: true,
+    })
+
+    try {
+      // when
+      const moveButton = getByText(/move/i)
+      fireEvent.click(moveButton)
+
+      // use waitFor to avoid warning message 'When testing, code that causes React state updates should be wrapped into act
+      await waitFor(() => {
+        // then
+        const closeButtonNotRendering = queryByLabelText('BackButtonTest')
+        expect(closeButtonNotRendering).not.toBeInTheDocument()
+      })
+    } finally {
+      // use waitFor to avoid warning message 'When testing, code that causes React state updates should be wrapped into act
+      await waitFor(async () => {
+        // teardown
+        const teardownButton = await findByText('teardown')
+        fireEvent.click(teardownButton)
+      })
+    }
+  })
+})
