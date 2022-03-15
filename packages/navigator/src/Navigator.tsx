@@ -56,9 +56,9 @@ interface INavigatorProps {
   closeButtonAriaLabel?: string
 
   /**
-   * When close button clicked
+   * When close button clicked (required)
    */
-  onClose?: () => void
+  onClose: () => void
 
   /**
    * When navigation depth changed

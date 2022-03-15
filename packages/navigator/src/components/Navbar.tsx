@@ -17,7 +17,7 @@ interface INavbarProps {
   backButtonAriaLabel: string
   closeButtonAriaLabel: string
   onTopClick: () => void
-  onClose?: () => void
+  onClose: () => void
 }
 const Navbar: React.FC<INavbarProps> = (props) => {
   const { pop } = useNavigator()

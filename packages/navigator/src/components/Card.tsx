@@ -21,7 +21,7 @@ interface ICardProps {
   transitionState: 'idle' | 'enter-active' | 'exit-active'
   backButtonAriaLabel: string
   closeButtonAriaLabel: string
-  onClose?: () => void
+  onClose: () => void
 }
 const Card: React.FC<ICardProps> = (props) => {
   const { shouldAnimate } = useAnimationContext()
