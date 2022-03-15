@@ -22,7 +22,7 @@
     "build": "yarn clean && yarn build:check && NODE_ENV=production yarn build:runtime && yarn build:dts",
     "build:check": "tsc",
     "build:dts": "dts-bundle-generator ./src/index.ts -o ./index.d.ts --no-check",
-    "build:runtime": "webpack --config ./webpack/build.js",
+    "build:runtime": "yarn webpack --config ./webpack/build.js",
     "clean": "rimraf index.css && rimraf index.css.map && rimraf index.d.ts && rimraf index.js && rimraf index.js.map && rimraf node_modules",
     "prepack": "yarn clean && yarn build"
   },
