@@ -16,7 +16,7 @@ const PageScreenHelmet: React.FC = () => {
   const [visible, setVisible] = useState(true)
   const [shouldPreventSwipeBack, setPreventSwipeBack] = useState(false)
 
-  const [isNoBackButton, setNoBackButton] = useState(false)
+  const [isNoBackButton, setIsNoBackButton] = useState(false)
 
   const onTopClick = () => {
     setIsTopClicked(true)
@@ -114,7 +114,7 @@ const PageScreenHelmet: React.FC = () => {
           type="checkbox"
           checked={isNoBackButton}
           onChange={(e) => {
-            setNoBackButton(e.target.checked)
+            setIsNoBackButton(e.target.checked)
           }}
         />
       </InputGroup>
