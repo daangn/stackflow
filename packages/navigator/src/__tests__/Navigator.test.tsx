@@ -6,7 +6,7 @@ import Screen from '../Screen'
 
 import { useNavigator } from '../useNavigator'
 
-const NOOP = () => {}
+const noop = () => {}
 
 test('Navigator 에 선언한 path 로 push 하면 해당 Screen 의 component 를 렌더링한다.', async () => {
   // given
@@ -39,7 +39,7 @@ test('Navigator 에 선언한 path 로 push 하면 해당 Screen 의 component �
   }
 
   render(
-    <Navigator onClose={NOOP}>
+    <Navigator onClose={noop}>
       <Screen path="/" component={MainPage} />
       <Screen path="/target-page" component={TargetPage} />
     </Navigator>
@@ -94,7 +94,7 @@ test('Navigator 에 path 를 지정하지 않은 path 를 push 로 이동한 경
   }
 
   render(
-    <Navigator onClose={NOOP}>
+    <Navigator onClose={noop}>
       <Screen path="/" component={MainPage} />
       <Screen path="/*" component={Page404} />
     </Navigator>
@@ -154,7 +154,7 @@ test('push 후 pop 을 사용하면 이전 페이지로 이동한다.', async ()
   }
 
   render(
-    <Navigator onClose={NOOP}>
+    <Navigator onClose={noop}>
       <Screen path="/" component={MainPage} />
       <Screen path="/target-page" component={TargetPage} />
     </Navigator>
@@ -228,7 +228,7 @@ test('send data 후 pop 을 사용하면 데이터를 이전 페이지에서 확
   }
 
   render(
-    <Navigator onClose={NOOP}>
+    <Navigator onClose={noop}>
       <Screen path="/" component={MainPage} />
       <Screen path="/target-page" component={TargetPage} />
     </Navigator>
