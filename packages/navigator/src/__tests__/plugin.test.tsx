@@ -14,7 +14,7 @@ import type {
 import { composeMiddlewares } from '@karrotframe/navigator-plugin'
 
 const Page404: React.FC = () => <div>Not Found</div>
-const NOOP = () => {}
+const noop = () => {}
 
 test('인터페이스에 맞게 플러그인을 선언하면 정상적으로 렌더링한다.', () => {
   // given
@@ -57,7 +57,7 @@ test('인터페이스에 맞게 플러그인을 선언하면 정상적으로 렌
 
   // when
   render(
-    <Navigator onClose={NOOP} plugins={[simplePlugin]}>
+    <Navigator onClose={noop} plugins={[simplePlugin]}>
       <Screen path="/" component={SamplePage} />
     </Navigator>
   )
@@ -138,7 +138,7 @@ test('플러그인의 hook 에서 얻은 정보로 컴포넌트를 업데이트�
   }
 
   render(
-    <Navigator onClose={NOOP} plugins={[simplePlugin]}>
+    <Navigator onClose={noop} plugins={[simplePlugin]}>
       <Screen path="/" component={MainPage} />
       <Screen path="/target-page" component={TargetPage} />
     </Navigator>
@@ -234,7 +234,7 @@ test('플러그인을 사용해서 미들웨어의 마지막 단에 가공한 ur
   }
 
   render(
-    <Navigator onClose={NOOP} plugins={[middlewarePlugin]}>
+    <Navigator onClose={noop} plugins={[middlewarePlugin]}>
       <Screen path="/" component={Main} />
       <Screen path="/false-url" component={FalsePage} />
       <Screen path="/correct-url" component={CorrectPage} />
@@ -368,7 +368,7 @@ test('2개 이상의 플러그인을 조합해서 사용할 수 있다.', async 
   }
 
   render(
-    <Navigator onClose={NOOP} plugins={[simplePlugin, middlewarePlugin]}>
+    <Navigator onClose={noop} plugins={[simplePlugin, middlewarePlugin]}>
       <Screen path="/" component={Main} />
       <Screen path="/false-url" component={FalsePage} />
       <Screen path="/correct-url" component={CorrectPage} />
@@ -457,7 +457,7 @@ test('플러그인을 2개 이상 사용할 때 플러그인을 배열에 선언
 
   // when
   render(
-    <Navigator onClose={NOOP} plugins={[firstPlugin, secondPlugin]}>
+    <Navigator onClose={noop} plugins={[firstPlugin, secondPlugin]}>
       <Screen path="/" component={MainPage} />
       <Screen path="/move" component={MainPage} />
       <Screen path="/first-url" component={FirstPage} />

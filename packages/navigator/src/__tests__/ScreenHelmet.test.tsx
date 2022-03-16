@@ -8,7 +8,7 @@ import Navigator from '../Navigator'
 import Screen from '../Screen'
 import { useNavigator } from '../useNavigator'
 
-const NOOP = () => {}
+const noop = () => {}
 
 describe('ScreenHelmet - visible: ', () => {
   const renderScreenHelmet = ({
@@ -26,7 +26,7 @@ describe('ScreenHelmet - visible: ', () => {
     }
 
     return render(
-      <Navigator onClose={NOOP}>
+      <Navigator onClose={noop}>
         <Screen path="/" component={Example} />
       </Navigator>
     )
@@ -87,7 +87,7 @@ describe('ScreenHelmet - preventSwipeBack:  ', () => {
     }
 
     return render(
-      <Navigator onClose={NOOP} theme="Cupertino">
+      <Navigator onClose={noop} theme="Cupertino">
         <Screen path="/" component={Example} />
         <Screen path="/another" component={Another} />
       </Navigator>
