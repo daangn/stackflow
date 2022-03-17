@@ -1,5 +1,12 @@
 # @karrotframe/navigator
 
+## 0.22.0
+
+### Minor Changes
+
+- 7f8d4ff: - [BREAKING CHANGE] `onClose` props becomes required option. It should be declared with Navigator.
+  - Support visible, preventSwipeBack, noBackButton, noCloseButton option for ScreenHelmet.
+
 ## 0.21.3
 
 ### Patch Changes
