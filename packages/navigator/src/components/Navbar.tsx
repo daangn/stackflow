@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import { assignInlineVars } from '@vanilla-extract/dynamic'
 
@@ -8,6 +8,7 @@ import { INavigatorTheme } from '../types'
 import { useNavigator } from '../useNavigator'
 import * as css from './Navbar.css'
 import { useScreenHelmet } from './Stack.ContextScreenHelmet'
+import { usePlugins } from '../globalState/Plugins'
 
 interface INavbarProps {
   screenInstanceId: string
@@ -125,6 +126,33 @@ const Navbar: React.FC<INavbarProps> = (props) => {
   )
 
   const noBorder = screenHelmetProps.noBorder
+
+  const { lifecycleHooks } = usePlugins()
+
+  const onMountNavbar = useCallback(() => {
+    lifecycleHooks.forEach((hook) => {
+      const context = {
+        screenHelmetProps,
+      } as any
+      hook?.onMountNavbar?.(context)
+    })
+  }, [lifecycleHooks, screenHelmetProps])
+
+  const onUnmountNavbar = useCallback(() => {
+    lifecycleHooks.forEach((hook) => {
+      const context = {
+        screenHelmetProps,
+      } as any
+      hook?.onUnmountNavbar?.(context)
+    })
+  }, [lifecycleHooks, screenHelmetProps])
+
+  useEffect(() => {
+    onMountNavbar()
+    return () => {
+      onUnmountNavbar()
+    }
+  }, [onMountNavbar, onUnmountNavbar])
 
   return (
     <div
