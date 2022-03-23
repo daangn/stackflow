@@ -694,6 +694,90 @@ promise 인 push 이벤트를 resolve 하는 resolve 함수를 screenInstanceId 
 ]
 ```
 
+---
+
+### onMountNavbar
+
+`ScreenHelmet` 컴포넌트에 props 를 선언하면, `@karrotframe/navigator` 상단의 앱바(App Bar)를 설정할 수 있어요.
+
+상단의 앱바는 내부 구현에서 navbar 를 mount 하여 render 를 완료해요.
+
+navbar 를 mount 하는 시점에
+
+콜백 함수를 실행해요.
+
+| name                | type               | description                      | example |
+| ------------------- | ------------------ | -------------------------------- | ------- |
+| `screenHelmetProps` | IScreenHelmetProps | ScreenHelmet 의 props 값들이에요 |         |
+
+`screenHelmetProps`
+
+```typescript
+{
+  appendLeft: "button",
+  appendRight: {
+    $$typeof: Symbol(react.element)
+    key: null
+    props: {children: '', onClick: ƒ}
+    ref: null
+    type: "div"
+  },
+  closeButtonLocation: "left",
+  customBackButton: null,
+  customCloseButton: null,
+  disableScrollToTop: false,
+  noBackButton: false,
+  noBorder: false,
+  noCloseButton: false,
+  onTopClick: () => { console.log("hello world"); },
+  preventSwipeBack: false,
+  title: "Main",
+  visible: true,
+}
+```
+
+---
+
+### onUnmountNavbar
+
+`ScreenHelmet` 컴포넌트에 props 를 선언하면, `@karrotframe/navigator` 상단의 앱바(App Bar)를 설정할 수 있어요.
+
+상단의 앱바는 내부 구현에서 navbar 를 mount 하여 render 를 완료해요.
+
+mount 된 navbar 를 unmount 하는 시점에
+
+콜백 함수를 실행해요.
+
+| name                | type               | description                      | example |
+| ------------------- | ------------------ | -------------------------------- | ------- |
+| `screenHelmetProps` | IScreenHelmetProps | ScreenHelmet 의 props 값들이에요 |         |
+
+`screenHelmetProps`
+
+```typescript
+{
+  appendLeft: "button",
+  appendRight: {
+    $$typeof: Symbol(react.element)
+    key: null
+    props: {children: '', onClick: ƒ}
+    ref: null
+    type: "div"
+  },
+  closeButtonLocation: "left",
+  customBackButton: null,
+  customCloseButton: null,
+  disableScrollToTop: false,
+  noBackButton: false,
+  noBorder: false,
+  noCloseButton: false,
+  onTopClick: () => { console.log("hello world"); },
+  preventSwipeBack: false,
+  title: "Main",
+  visible: true,
+}
+```
+
 ## Interfaces
 
 ```typescript
@@ -725,5 +809,23 @@ interface IScreenInstance {
 ```typescript
 interface IScreenInstancePromise {
   resolve: (data: any | null) => void
+}
+```
+
+```typescript
+interface IScreenInstancePromise {
+  title?: React.ReactNode
+  appendLeft?: React.ReactNode
+  appendRight?: React.ReactNode
+  closeButtonLocation?: 'left' | 'right'
+  customBackButton?: React.ReactNode
+  customCloseButton?: React.ReactNode
+  noBorder?: boolean
+  disableScrollToTop?: boolean
+  onTopClick?: () => void
+  visible?: boolean
+  preventSwipeBack?: boolean
+  noBackButton?: boolean
+  noCloseButton?: boolean
 }
 ```
