@@ -39,6 +39,8 @@
   - [onMapScreenInstance](#onmapscreeninstance)
   - [beforeAddScreenInstancePromise](#beforeaddscreeninstancepromise)
   - [onAddScreenInstancePromise](#onaddscreeninstancepromise)
+  - [onMountNavbar](#onmountnavbar)
+  - [onUnmountNavbar](#onunmountnavbar)
 - [Interfaces](#interfaces)
 
 ---
