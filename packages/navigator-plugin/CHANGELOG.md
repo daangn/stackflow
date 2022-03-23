@@ -1,5 +1,11 @@
 # @karrotframe/navigator-plugin
 
+## 0.6.0
+
+### Minor Changes
+
+- ed5e5be: Support hook for navbar of ScreenHelmet
+
 ## 0.4.0
 
 ### Minor Changes
