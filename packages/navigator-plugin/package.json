@@ -1,6 +1,6 @@
 {
   "name": "@karrotframe/navigator-plugin",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "extension for @karrotframe/navigator",
   "repository": {
     "type": "git",
