@@ -2,6 +2,7 @@ import fs from 'fs'
 import { program } from 'commander'
 
 import init from './init'
+import register from './register'
 import generate from './genrerate'
 
 const generateSecond = () => {
@@ -13,6 +14,19 @@ const generateSecond = () => {
     .version(version)
 
   program.command('init').description('prepare initial settings').action(init)
+
+  program
+    .command('register')
+    .description('register a schema to repository')
+    .argument('<schemaPath>', 'path to load a schema')
+    .option(
+      '-y, --repository [path]',
+      'indicate a repository path to preserve schemas'
+    )
+    .option('-d, --debug', 'option to print all messages')
+    .action(async (schemaPath, options) => {
+      await register(schemaPath, options)
+    })
 
   program
     .command('generate')
