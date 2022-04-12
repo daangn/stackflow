@@ -26,6 +26,7 @@ This repository is inspired by @daangn/generate-routes(private repository) of [j
 - [Route Schema Definition](#route-schema-definition)
 - [Entire Schema Example](#entire-schema-example)
 - [Redefine onOpen callback for usage](#redefine-onopen-callback-for-usage)
+- [Register Schema](#register-schema)
 
 ## Installation
 
@@ -198,7 +199,9 @@ const handler = () => {
 }
 ```
 
-## Register Schema (experimental)
+## Register Schema
+
+> ❗ experimental ❗
 
 You could register schema files to your custom repository with `register` command like below:
 
