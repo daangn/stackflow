@@ -4,7 +4,7 @@ import { pascalCase } from 'pascal-case'
 import type { Route } from './types'
 import parsePathParams from '../utils/parsePathParams'
 
-type FileData = {
+type SdkData = {
   routes: Route[]
   name: string
   endpoint: string
@@ -12,7 +12,7 @@ type FileData = {
   version: number
 }
 
-const createSdk = async (metaData: FileData) => {
+const createSdk = async (metaData: SdkData) => {
   const { routes, name, endpoint, endpoints, version } = metaData
 
   const hasEndpoints = endpoints && Object.keys(endpoints).length > 0
@@ -40,7 +40,7 @@ const createSdk = async (metaData: FileData) => {
   /**
    * ${route.description}
    */
-  ${methodName}(params : {${paramsType}}, queryParams?: ${pascalCase(
+  ${methodName}(params : {${paramsType}}, queryParams: ${pascalCase(
             methodName
           )}QueryParamsType) {
     const dynamicPath = getDynamicPath('${route.path}', params);
