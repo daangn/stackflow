@@ -17,13 +17,14 @@
 
 ## 목차
 
-- [Installation](#installation)
-- [Usage](#usage)
-- [CLI Options](#cli-option)
-- [Entire Schema Definition](#entire-schema-definition)
-- [Route Schema Definition](#route-schema-definition)
-- [Entire Schema Example](#entire-schema-example)
-- [Redefine onOpen callback for usage](#redefine-onopen-callback-for-usage)
+- [설치](#설치)
+- [사용법](#사용법)
+- [CLI 옵션](#CLI-옵션)
+- [스키마 정의](#스키마-정의)
+- [Route 스키마 정의](#Route-스키마-정의)
+- [스키마 실제 예시](#스키마-실제-예시)
+- [onOpen 콜백을 재정의하기](#onOpen-콜백을-재정의하기)
+- [스키마 등록하기](#스키마-등록하기)
 
 ## 설치
 
@@ -38,7 +39,7 @@ $ yarn pathfinder init # code generate 에 필요한 파일을 생성해요
 $ yarn pathfinder generate -s schema.json # 스키마로부터 code 파일을 generate 해요
 ```
 
-## CLI Option
+## CLI 옵션
 
 - `-s, --source` : 스키마를 정의한 파일을 읽어요
 
@@ -107,7 +108,7 @@ CLI 옵션을 사용하는 대신 설정 파일을 사용할 수 있어요.
 | `version`     | Number | 스키마의 버전을 명시해요                                                                 | `1`                                          |
 | `routes`      | Array  | `Route` 정보를 담고 있는 배열이에요.                                                     |                                              |
 
-## `Route` Schema Definition
+## `Route` 스키마 정의
 
 | name          | type        | description                                                                                                                                                                                                     | example                                |
 | ------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------- |
@@ -116,7 +117,7 @@ CLI 옵션을 사용하는 대신 설정 파일을 사용할 수 있어요.
 | `path`        | String      | route page 를 설명하는 URI 에요.<br/> `:exampleId` 와 같은 형태로 params 을 명시했다면, generate 결과로 나오는 메서드의 첫번째 인자에 포함시켜요<br/> 예시 : `item/:id/comments/:subId` -> `foo({ id, subId })` | `"/product/guitar/:guitarId"`          |
 | `queryParams` | JSON Schema | generate 결과로 나오는 메서드의 두번째 인자에 포함시켜요. queryParams 의 필드는 query string 으로 사용해요                                                                                                      | 아래에 좀 더 자세히 설명했어요         |
 
-### `queryParams` example
+### `queryParams` 예제
 
 ```json
 {
@@ -175,7 +176,7 @@ CLI 옵션을 사용하는 대신 설정 파일을 사용할 수 있어요.
 }
 ```
 
-## 각 사용에 맞게 `onOpen` 콜백을 재정의하기
+## `onOpen` 콜백을 재정의하기
 
 generate 한 메서드를 각 상황에 맞게 사용할 수 있도록 `onOpen` 콜백을 재정의해요. onOpen 콜백을 사용하여 특정 router 모듈과의 결합도를 낮출 수 있어요.
 
@@ -196,7 +197,9 @@ const handler = () => {
 }
 ```
 
-## 스키마 등록하기 (실험적 기능)
+## 스키마 등록하기
+
+> ❗ 실험적 기능 ❗
 
 다음과 같이 `register` 명령어를 사용해서 독자적인 저장소에 스키마 파일들을 등록할 수 있어요.
 
