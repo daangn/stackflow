@@ -13,6 +13,10 @@
 - ✈️ handle routes with schema
 - 🛠 enable to switch generator function
 
+This repository is inspired by @daangn/generate-routes(private repository) of [juyeong1260](https://github.com/juyeong1260)
+
+- [한국어](./README.ko.md)
+
 ## Table of Contents
 
 - [Installation](#installation)
@@ -91,6 +95,7 @@ Note that option of config file would be ignored when any same option have been 
 - `output` : path for generated result.
 - `replace` : custom generator function with specific module from npm package to replace a basic built-in function.
 - `suffix` : name to describe result type.
+- `repository` : path for a repository to preserve schemas. It is explained at bottom section with more detail.
 
 ## Entire Schema Definition
 
@@ -192,3 +197,21 @@ const handler = () => {
   openExampleGuitar(params)
 }
 ```
+
+## Register Schema (experimental)
+
+You could register schema files to your custom repository with `register` command like below:
+
+```shell
+$ yarn pathfinder register https://example.com/schema -y https://schema-repository.com/example
+```
+
+You could use `-y` or `--repository` option on CLI to indicate an endpoint of schema repository,
+
+or you could declare `repository` field in the config file.
+
+But you should prepare a back-end system to preserve schemas with the repository.
+
+`register` command is just a POST request as http method for any concise usage.
+
+Therefore, you could use other commands like `CURL` instead, if you are already expert for that.
