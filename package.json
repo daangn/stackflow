@@ -1,0 +1,9 @@
+{
+  "name": "@stackflow/monorepo",
+  "version": "0.0.0",
+  "private": true,
+  "packageManager": "yarn@3.2.0",
+  "devDependencies": {
+    "typescript": "^4.6.3"
+  }
+}
