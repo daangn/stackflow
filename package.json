@@ -7,6 +7,11 @@
     "core",
     "packages/*"
   ],
+  "scripts": {
+    "format": "eslint --fix --ignore-path .gitignore",
+    "lerna:publish": "yarn build && lerna publish",
+    "version": "yarn install && git stage yarn.lock"
+  },
   "devDependencies": {
     "eslint": "^8.13.0",
     "eslint-config-airbnb": "^19.0.4",
@@ -16,6 +21,7 @@
     "eslint-plugin-react": "^7.29.4",
     "eslint-plugin-react-hooks": "^4.4.0",
     "eslint-plugin-simple-import-sort": "^7.0.0",
+    "lerna": "^4.0.0",
     "typescript": "^4.6.3"
   },
   "packageManager": "yarn@3.2.0"
