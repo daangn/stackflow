@@ -69,6 +69,11 @@ interface INavigatorProps {
    * external plugins to apply to navigator
    */
   plugins?: NavigatorPluginType[]
+
+  /**
+   * children components
+   */
+  children?: React.ReactNode
 }
 const Navigator: React.FC<INavigatorProps> = ({
   theme = 'Android',

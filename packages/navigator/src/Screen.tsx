@@ -12,6 +12,11 @@ interface IScreenProps {
    * Component
    */
   component?: React.ComponentType
+
+  /**
+   * children components
+   */
+  children?: React.ReactNode
 }
 const Screen: React.FC<IScreenProps> = (props) => {
   const { path } = props
