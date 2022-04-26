@@ -169,7 +169,7 @@ const Navbar: React.FC<INavbarProps> = (props) => {
       style={assignInlineVars({
         [vars.navbar.center.mainWidth]: `${centerMainWidth}px`,
         [vars.navbar.animationDuration]: mounted ? '0.3s' : '0',
-        [vars.navbar.translateY]: props.isNavbarVisible ? '0' : '-40px',
+        [vars.navbar.translateY]: props.isNavbarVisible ? '0' : '-2.75rem',
       })}
     >
       <div
