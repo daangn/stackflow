@@ -137,18 +137,6 @@ const Card: React.FC<ICardProps> = (props) => {
 
   const isNavbarVisible = screenHelmetVisible ?? false
 
-  const animationDuration = useMemo(() => {
-    if (!mounted) {
-      return '0'
-    }
-
-    if (isNavbarVisible) {
-      return '0.3s'
-    }
-
-    return '0.3s'
-  }, [isNavbarVisible])
-
   return (
     <div ref={props.nodeRef} className={css.container}>
       {!props.isRoot && (
@@ -187,7 +175,7 @@ const Card: React.FC<ICardProps> = (props) => {
               cupertino && props.isPresent ? true : undefined,
           })}
           style={assignInlineVars({
-            [vars.navbar.animationDuration]: animationDuration,
+            [vars.navbar.animationDuration]: mounted ? '0.3s' : '0',
           })}
         >
           <Navbar
