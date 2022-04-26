@@ -17,7 +17,7 @@ export const container = recipe({
       'constant(safe-area-inset-top) 0 0',
       'env(safe-area-inset-top) 0 0',
     ],
-    backgroundColor: '#fff',
+    backgroundColor: vars.backgroundColor,
     transform: `translateY(${vars.navbar.translateY})`,
     transition: `transform ${vars.navbar.animationDuration} ease-in-out`,
   },

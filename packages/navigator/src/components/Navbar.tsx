@@ -164,7 +164,7 @@ const Navbar: React.FC<INavbarProps> = (props) => {
     }
 
     if (props.isNavbarVisible) {
-      return '0.25s'
+      return '0.35s'
     }
 
     return '0.4s'
