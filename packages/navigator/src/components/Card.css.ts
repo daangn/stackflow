@@ -102,6 +102,7 @@ export const main = recipe({
     width: '100%',
     height: '100%',
     boxSizing: 'border-box',
+    transition: `padding-top ${vars.navbar.animationDuration} ease-in-out`,
   },
   variants: {
     cupertinoAndIsPresent: {

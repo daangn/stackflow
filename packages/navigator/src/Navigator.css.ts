@@ -14,6 +14,8 @@ const vars = createGlobalThemeContract(
         textColor: null,
         mainWidth: null,
       },
+      animationDuration: '',
+      translateY: null,
     },
     animationDuration: '',
   },
@@ -32,6 +34,8 @@ const Android = createTheme(vars, {
       textColor: '#212529',
       mainWidth: '',
     },
+    animationDuration: '',
+    translateY: '0',
   },
   animationDuration: '',
 })
@@ -48,6 +52,8 @@ const Cupertino = createTheme(vars, {
       textColor: '#212529',
       mainWidth: '',
     },
+    animationDuration: '',
+    translateY: '0',
   },
   animationDuration: '',
 })
