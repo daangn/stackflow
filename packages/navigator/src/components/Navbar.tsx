@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { assignInlineVars } from '@vanilla-extract/dynamic'
 
@@ -158,6 +158,18 @@ const Navbar: React.FC<INavbarProps> = (props) => {
     }
   }, [onMountNavbar, onUnmountNavbar])
 
+  const animationDuration = useMemo(() => {
+    if (!mounted) {
+      return '0'
+    }
+
+    if (props.isNavbarVisible) {
+      return '0.25s'
+    }
+
+    return '0.4s'
+  }, [props.isNavbarVisible])
+
   return (
     <div
       data-testid="navbar"
@@ -168,7 +180,7 @@ const Navbar: React.FC<INavbarProps> = (props) => {
       ref={navbarRef}
       style={assignInlineVars({
         [vars.navbar.center.mainWidth]: `${centerMainWidth}px`,
-        [vars.navbar.animationDuration]: mounted ? '0.4s' : '0',
+        [vars.navbar.animationDuration]: animationDuration,
         [vars.navbar.translateY]: props.isNavbarVisible ? '0' : '-2.75rem',
       })}
     >
