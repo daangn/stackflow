@@ -173,6 +173,8 @@ const Card: React.FC<ICardProps> = (props) => {
               cupertino && isNavbarVisible ? true : undefined,
             cupertinoAndIsPresent:
               cupertino && props.isPresent ? true : undefined,
+            isTopAndIsNoNavbarVisible:
+              props.isTop && !isNavbarVisible ? true : undefined,
           })}
           style={assignInlineVars({
             [vars.navbar.animationDuration]: mounted ? '0.3s' : '0',

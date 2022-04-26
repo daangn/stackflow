@@ -185,6 +185,11 @@ export const main = recipe({
         transform: 'translateY(0)',
       },
     },
+    isTopAndIsNoNavbarVisible: {
+      true: {
+        backgroundColor: '#fff',
+      },
+    },
   },
 })
 
