@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { INavigatorTheme } from '../types'
 import { useNavigator } from '../useNavigator'
@@ -137,6 +137,18 @@ const Card: React.FC<ICardProps> = (props) => {
 
   const isNavbarVisible = screenHelmetVisible ?? false
 
+  const animationDuration = useMemo(() => {
+    if (!mounted) {
+      return '0'
+    }
+
+    if (isNavbarVisible) {
+      return '0.3s'
+    }
+
+    return '0.25s'
+  }, [isNavbarVisible])
+
   return (
     <div ref={props.nodeRef} className={css.container}>
       {!props.isRoot && (
@@ -175,7 +187,7 @@ const Card: React.FC<ICardProps> = (props) => {
               cupertino && props.isPresent ? true : undefined,
           })}
           style={assignInlineVars({
-            [vars.navbar.animationDuration]: mounted ? '0.3s' : '0',
+            [vars.navbar.animationDuration]: animationDuration,
           })}
         >
           <Navbar
