@@ -143,10 +143,10 @@ const Card: React.FC<ICardProps> = (props) => {
     }
 
     if (isNavbarVisible) {
-      return '0.3s'
+      return '0.4s'
     }
 
-    return '0.3s'
+    return '0.25s'
   }, [isNavbarVisible])
 
   return (
