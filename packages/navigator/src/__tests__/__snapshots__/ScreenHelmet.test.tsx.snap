@@ -13,8 +13,8 @@ exports[`ScreenHelmet - visible:  visible: false 이면 navbar 가 나타나지 
         class="Card_mainOffset__1ok9rul9"
       >
         <div
-          class="Card_main__1ok9rulc Card_main_true__1ok9rulh Card_main_true__1ok9rulj Card_main_true__1ok9rulk"
-          style="--kf_navigator_navbar-animationDuration: 0;"
+          class="Card_main__1ok9rulc Card_main_true__1ok9rulh Card_main_true__1ok9rulj"
+          style="--kf_navigator_navbar-animationDuration: 0s;"
         >
           <div
             class="Navbar_container__x613ng0"
@@ -104,7 +104,7 @@ exports[`ScreenHelmet - visible:  visible: true 이면 navbar 가 나타난다 1
       >
         <div
           class="Card_main__1ok9rulc Card_main_true__1ok9rulh Card_main_true__1ok9ruli Card_main_true__1ok9rulj"
-          style="--kf_navigator_navbar-animationDuration: 0;"
+          style="--kf_navigator_navbar-animationDuration: 0s;"
         >
           <div
             class="Navbar_container__x613ng0"
