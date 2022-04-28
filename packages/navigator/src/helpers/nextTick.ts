@@ -1,3 +1,3 @@
 export function nextTick(callback: () => void) {
-  return Promise.resolve().then(callback)
+  setTimeout(callback, 0)
 }
