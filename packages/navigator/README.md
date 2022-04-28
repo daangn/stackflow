@@ -17,6 +17,14 @@
 
 > Core logic of Navigator depends on `react-router-dom`
 
+## ❗CAUTION❗ NOW IT IS PROVIDED only v0.23.2. YOU SHOULD UPDATE TO THIS VERSION(v0.23.2) TO USE `@karrotframe/navigator`
+
+Today, other older versions are removed in npm packages.
+
+A restore for older versions is requested to npm package supporter.
+
+Sorry for the inconvenience.
+
 ---
 
 - [Setup](#setup)
