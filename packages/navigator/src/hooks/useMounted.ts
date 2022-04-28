@@ -1,12 +1,21 @@
 import { useEffect, useReducer } from 'react'
 import { nextTick } from '../helpers'
 
-export function useMounted() {
+interface Options {
+  afterTick?: boolean
+}
+
+export function useMounted(options?: Options) {
   const [mounted, mount] = useReducer(() => true, false)
 
   useEffect(() => {
-    nextTick(() => mount())
-  }, [mount])
+    if (options?.afterTick) {
+      nextTick(() => mount())
+      return
+    }
+
+    mount()
+  }, [mount, options])
 
   return mounted
 }

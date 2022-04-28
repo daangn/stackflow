@@ -23,7 +23,7 @@ interface INavbarProps {
   onClose: () => void
 }
 const Navbar: React.FC<INavbarProps> = (props) => {
-  const mounted = useMounted()
+  const mounted = useMounted({ afterTick: true })
 
   const { pop } = useNavigator()
   const { screenHelmetProps } = useScreenHelmet()

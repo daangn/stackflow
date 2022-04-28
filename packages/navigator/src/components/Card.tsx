@@ -27,7 +27,7 @@ interface ICardProps {
   onClose: () => void
 }
 const Card: React.FC<ICardProps> = (props) => {
-  const mounted = useMounted()
+  const mounted = useMounted({ afterTick: true })
   const { shouldAnimate } = useAnimationContext()
 
   const { pop } = useNavigator()
