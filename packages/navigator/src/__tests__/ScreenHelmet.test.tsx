@@ -33,15 +33,13 @@ describe('ScreenHelmet - visible: ', () => {
   }
 
   it('visible: false 이면 navbar 가 나타나지 않는다', () => {
-    const { queryByTestId } = renderScreenHelmet({ visible: false })
-    const navBar = queryByTestId('navbar')
-    expect(navBar).not.toBeInTheDocument()
+    const { asFragment } = renderScreenHelmet({ visible: false })
+    expect(asFragment()).toMatchSnapshot()
   })
 
   it('visible: true 이면 navbar 가 나타난다', () => {
-    const { getByTestId } = renderScreenHelmet({ visible: true })
-    const navBar = getByTestId('navbar')
-    expect(navBar).toBeVisible()
+    const { asFragment } = renderScreenHelmet({ visible: true })
+    expect(asFragment()).toMatchSnapshot()
   })
 })
 
