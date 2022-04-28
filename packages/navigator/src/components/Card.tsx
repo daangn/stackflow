@@ -7,6 +7,9 @@ import { makeTranslation } from './Card.translation'
 import Navbar from './Navbar'
 import { useScreenHelmet } from './Stack.ContextScreenHelmet'
 import { useAnimationContext } from '../globalState/Animation'
+import { useMounted } from '../hooks'
+import { assignInlineVars } from '@vanilla-extract/dynamic'
+import { vars } from '../Navigator.css'
 
 interface ICardProps {
   theme: INavigatorTheme
@@ -23,7 +26,17 @@ interface ICardProps {
   closeButtonAriaLabel: string
   onClose: () => void
 }
+
+enum TransitionStatus {
+  idle,
+  enterActive,
+  exitActive,
+}
+
 const Card: React.FC<ICardProps> = (props) => {
+  const mounted = useMounted({ afterTick: true })
+  const [navBarTransitionStatus, setNavBarTransitionStatus] =
+    useState<TransitionStatus>(TransitionStatus.idle)
   const { shouldAnimate } = useAnimationContext()
 
   const { pop } = useNavigator()
@@ -34,6 +47,7 @@ const Card: React.FC<ICardProps> = (props) => {
   const frameRef = useRef<HTMLDivElement>(null)
   const frameOffsetRef = props.beforeTopFrameOffsetRef
   const edgeRef = useRef<HTMLDivElement>(null)
+  const mainRef = useRef<HTMLDivElement>(null)
 
   const android = props.theme === 'Android'
   const cupertino = props.theme === 'Cupertino'
@@ -133,6 +147,32 @@ const Card: React.FC<ICardProps> = (props) => {
 
   const isNavbarVisible = screenHelmetVisible ?? false
 
+  useEffect(() => {
+    const $main = mainRef.current
+
+    if (!$main) return
+
+    const onTransitionStart = (e: TransitionEvent) => {
+      if (e.propertyName === 'padding-top') {
+        setNavBarTransitionStatus(TransitionStatus.enterActive)
+      }
+    }
+
+    const onTransitionEnd = (e: TransitionEvent) => {
+      if (e.propertyName === 'padding-top') {
+        setNavBarTransitionStatus(TransitionStatus.exitActive)
+      }
+    }
+
+    $main.addEventListener('transitionstart', onTransitionStart)
+    $main.addEventListener('transitionend', onTransitionEnd)
+
+    return () => {
+      $main.removeEventListener('transitionstart', onTransitionStart)
+      $main.removeEventListener('transitionend', onTransitionEnd)
+    }
+  }, [mainRef])
+
   return (
     <div ref={props.nodeRef} className={css.container}>
       {!props.isRoot && (
@@ -156,6 +196,7 @@ const Card: React.FC<ICardProps> = (props) => {
         })}
       >
         <div
+          ref={mainRef}
           className={css.main({
             androidAndNoAnimate:
               android && !shouldAnimate && !isNavbarVisible ? true : undefined,
@@ -169,20 +210,27 @@ const Card: React.FC<ICardProps> = (props) => {
               cupertino && isNavbarVisible ? true : undefined,
             cupertinoAndIsPresent:
               cupertino && props.isPresent ? true : undefined,
+            isTopAndIsNavbarNotVisible:
+              props.isTop &&
+              navBarTransitionStatus === TransitionStatus.enterActive
+                ? true
+                : undefined,
+          })}
+          style={assignInlineVars({
+            [vars.navbar.animationDuration]: mounted ? '0.3s' : '0',
           })}
         >
-          {isNavbarVisible && (
-            <Navbar
-              screenInstanceId={props.screenInstanceId}
-              theme={props.theme}
-              isRoot={props.isRoot}
-              isPresent={props.isPresent}
-              backButtonAriaLabel={props.backButtonAriaLabel}
-              closeButtonAriaLabel={props.closeButtonAriaLabel}
-              onClose={props.onClose}
-              onTopClick={onTopClick}
-            />
-          )}
+          <Navbar
+            isNavbarVisible={isNavbarVisible}
+            screenInstanceId={props.screenInstanceId}
+            theme={props.theme}
+            isRoot={props.isRoot}
+            isPresent={props.isPresent}
+            backButtonAriaLabel={props.backButtonAriaLabel}
+            closeButtonAriaLabel={props.closeButtonAriaLabel}
+            onClose={props.onClose}
+            onTopClick={onTopClick}
+          />
           <div
             className={css.frameOffset({
               noAnimate: !shouldAnimate ? true : undefined,
