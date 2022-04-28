@@ -7,9 +7,6 @@ import { makeTranslation } from './Card.translation'
 import Navbar from './Navbar'
 import { useScreenHelmet } from './Stack.ContextScreenHelmet'
 import { useAnimationContext } from '../globalState/Animation'
-import { useMounted } from '../hooks'
-import { assignInlineVars } from '@vanilla-extract/dynamic'
-import { vars } from '../Navigator.css'
 
 interface ICardProps {
   theme: INavigatorTheme
@@ -27,7 +24,6 @@ interface ICardProps {
   onClose: () => void
 }
 const Card: React.FC<ICardProps> = (props) => {
-  const mounted = useMounted({ afterTick: true })
   const { shouldAnimate } = useAnimationContext()
 
   const { pop } = useNavigator()
@@ -173,24 +169,20 @@ const Card: React.FC<ICardProps> = (props) => {
               cupertino && isNavbarVisible ? true : undefined,
             cupertinoAndIsPresent:
               cupertino && props.isPresent ? true : undefined,
-            isTopAndIsNavbarNotVisible:
-              props.isTop && !isNavbarVisible ? true : undefined,
-          })}
-          style={assignInlineVars({
-            [vars.navbar.animationDuration]: mounted ? '0.3s' : '0',
           })}
         >
-          <Navbar
-            isNavbarVisible={isNavbarVisible}
-            screenInstanceId={props.screenInstanceId}
-            theme={props.theme}
-            isRoot={props.isRoot}
-            isPresent={props.isPresent}
-            backButtonAriaLabel={props.backButtonAriaLabel}
-            closeButtonAriaLabel={props.closeButtonAriaLabel}
-            onClose={props.onClose}
-            onTopClick={onTopClick}
-          />
+          {isNavbarVisible && (
+            <Navbar
+              screenInstanceId={props.screenInstanceId}
+              theme={props.theme}
+              isRoot={props.isRoot}
+              isPresent={props.isPresent}
+              backButtonAriaLabel={props.backButtonAriaLabel}
+              closeButtonAriaLabel={props.closeButtonAriaLabel}
+              onClose={props.onClose}
+              onTopClick={onTopClick}
+            />
+          )}
           <div
             className={css.frameOffset({
               noAnimate: !shouldAnimate ? true : undefined,

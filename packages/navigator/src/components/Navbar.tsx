@@ -9,10 +9,8 @@ import { useNavigator } from '../useNavigator'
 import * as css from './Navbar.css'
 import { useScreenHelmet } from './Stack.ContextScreenHelmet'
 import { usePlugins } from '../globalState/Plugins'
-import { useMounted } from '../hooks'
 
 interface INavbarProps {
-  isNavbarVisible: boolean
   screenInstanceId: string
   theme: INavigatorTheme
   isRoot: boolean
@@ -23,8 +21,6 @@ interface INavbarProps {
   onClose: () => void
 }
 const Navbar: React.FC<INavbarProps> = (props) => {
-  const mounted = useMounted({ afterTick: true })
-
   const { pop } = useNavigator()
   const { screenHelmetProps } = useScreenHelmet()
 
@@ -168,8 +164,6 @@ const Navbar: React.FC<INavbarProps> = (props) => {
       ref={navbarRef}
       style={assignInlineVars({
         [vars.navbar.center.mainWidth]: `${centerMainWidth}px`,
-        [vars.navbar.animationDuration]: mounted ? '0.3s' : '0',
-        [vars.navbar.translateY]: props.isNavbarVisible ? '0' : '-2.75rem',
       })}
     >
       <div

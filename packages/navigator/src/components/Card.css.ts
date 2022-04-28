@@ -102,7 +102,6 @@ export const main = recipe({
     width: '100%',
     height: '100%',
     boxSizing: 'border-box',
-    transition: `padding-top ${vars.navbar.animationDuration} ease-in-out`,
   },
   variants: {
     cupertinoAndIsPresent: {
@@ -183,11 +182,6 @@ export const main = recipe({
       true: {
         opacity: 1,
         transform: 'translateY(0)',
-      },
-    },
-    isTopAndIsNavbarNotVisible: {
-      true: {
-        backgroundColor: '#fff',
       },
     },
   },
