@@ -173,7 +173,7 @@ const Card: React.FC<ICardProps> = (props) => {
               cupertino && isNavbarVisible ? true : undefined,
             cupertinoAndIsPresent:
               cupertino && props.isPresent ? true : undefined,
-            isTopAndIsNoNavbarVisible:
+            isTopAndIsNavbarNotVisible:
               props.isTop && !isNavbarVisible ? true : undefined,
           })}
           style={assignInlineVars({
