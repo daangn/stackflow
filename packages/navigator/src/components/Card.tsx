@@ -217,7 +217,7 @@ const Card: React.FC<ICardProps> = (props) => {
                 : undefined,
           })}
           style={assignInlineVars({
-            [vars.navbar.animationDuration]: mounted ? '0.3s' : '1ms',
+            [vars.navbar.animationDuration]: mounted ? '0.3s' : '0s',
           })}
         >
           <Navbar
