@@ -109,7 +109,7 @@ export const main = recipe({
       true: {
         transform: 'translateY(100%)',
         willChange: 'transform',
-        transition: `transform ${vars.animationDuration}`,
+        transition: `padding-top ${vars.navbar.animationDuration} ease-in-out, transform ${vars.animationDuration}`,
         selectors: {
           [`${container_enterActive} &`]: {
             transform: 'translateY(0)',
@@ -153,7 +153,7 @@ export const main = recipe({
         transform: 'translateY(10rem)',
         transitionTimingFunction: 'cubic-bezier(0.22, 0.67, 0.39, 0.83)',
         willChange: 'transform, opacity',
-        transition: `transform ${vars.animationDuration}, opacity ${vars.animationDuration}`,
+        transition: `transform ${vars.animationDuration}, opacity ${vars.animationDuration}, padding-top ${vars.navbar.animationDuration} ease-in-out`,
         selectors: {
           [`${container_enterActive} &`]: {
             opacity: 1,
