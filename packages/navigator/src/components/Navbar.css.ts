@@ -18,8 +18,6 @@ export const container = recipe({
       'env(safe-area-inset-top) 0 0',
     ],
     backgroundColor: vars.backgroundColor,
-    transform: `translateY(${vars.navbar.translateY})`,
-    transition: `transform ${vars.navbar.animationDuration} ease-in-out`,
   },
   variants: {
     cupertinoAndIsNotPresent: {

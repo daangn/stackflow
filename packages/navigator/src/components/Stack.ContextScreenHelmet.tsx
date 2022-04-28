@@ -35,7 +35,7 @@ const ContextScreenHelmet = createContext<{
 }>(null as any)
 
 export const ProviderScreenHelmet: React.FC = (props) => {
-  const [screenHelmetVisible, setScreenHelmetVisible] = useState(true)
+  const [screenHelmetVisible, setScreenHelmetVisible] = useState(false)
   const [screenHelmetProps, setScreenHelmetProps] =
     useDeepState<IScreenHelmetProps>(makeScreenHelmetDefaultProps())
 
