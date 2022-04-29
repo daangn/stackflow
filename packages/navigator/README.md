@@ -17,21 +17,10 @@
 
 > Core logic of Navigator depends on `react-router-dom`
 
-## ❗CAUTION❗
-
-NOW `@karrotframe/navigator`, IT IS PROVIDED v0.23.2 and v0.24.1.
-
-YOU SHOULD UPDATE `@karrotframe/navigator`, IF YOU ARE USING OLDER VERSION.
-
-Today, other older versions are removed in npm packages.
-
-A restore for older versions is requested to npm package supporter.
-
-Sorry for the inconvenience.
-
 ---
 
 - [Setup](#setup)
+- [Support old versions](#support-old-versions)
 - [Components](#components)
   - [Navigator](#navigator)
   - [Screen](#screen)
@@ -61,6 +50,16 @@ import '@karrotframe/navigator/index.css'
 
 import { ... } from '@karrotframe/navigator'
 ```
+
+## Support old versions
+
+Now, `@karrotframe/navigator` is provided from version 0.23.2 or higher.
+
+If you need old versions from version 0.23.1 to lower, you should use `@karrotframe/navigator-legacy` instead. [Link](https://www.npmjs.com/package/@karrotframe/navigator-legacy)
+
+It is recommended that you should update to the latest version because it would have a subtle difference for `@karrotframe/navigator-legacy`.
+
+And `yarn add <alias-package>@npm:<package>` [command](https://classic.yarnpkg.com/lang/en/docs/cli/add/#toc-yarn-add-alias) would be helpful, if you decide to use `@karrotframe/navigator-legacy` instead of `@karrotframe/navigator`.
 
 ## Components
 
