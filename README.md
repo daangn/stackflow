@@ -8,7 +8,6 @@
 ![](https://img.shields.io/github/contributors/daangn/karrotframe)
 ![](https://img.shields.io/github/last-commit/daangn/karrotframe)
 
-
 </div>
 
 ## Getting Started
