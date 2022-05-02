@@ -3698,7 +3698,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:^16.9.0, @types/react-dom@npm:^16.9.8":
+"@types/react-dom@npm:^16.9.8":
   version: 16.9.10
   resolution: "@types/react-dom@npm:16.9.10"
   dependencies:
@@ -3748,7 +3748,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^16, @types/react@npm:^16.9.0, @types/react@npm:^16.9.46":
+"@types/react@npm:^16, @types/react@npm:^16.9.46":
   version: 16.14.3
   resolution: "@types/react@npm:16.14.3"
   dependencies:
@@ -7980,30 +7980,6 @@ __metadata:
     react-router-dom: ^5.2.0
     react-scripts: 5.0.0
     smoothscroll-polyfill: ^0.4.4
-    typescript: ~3.7.2
-  languageName: unknown
-  linkType: soft
-
-"example-with-cra@workspace:examples/with-cra":
-  version: 0.0.0-use.local
-  resolution: "example-with-cra@workspace:examples/with-cra"
-  dependencies:
-    "@karrotframe/navigator": "workspace:^"
-    "@testing-library/dom": ^6.15.0
-    "@testing-library/jest-dom": ^4.2.4
-    "@testing-library/react": ^9.3.2
-    "@testing-library/user-event": ^7.1.2
-    "@types/jest": ^24.0.0
-    "@types/node": ^12.0.0
-    "@types/react": ^16.9.0
-    "@types/react-dom": ^16.9.0
-    "@types/react-router-dom": ^5.1.5
-    customize-cra: ^1.0.0
-    react: ^16.13.1
-    react-app-rewired: ^2.1.6
-    react-dom: ^16.13.1
-    react-router-dom: ^5.2.0
-    react-scripts: 5.0.0
     typescript: ~3.7.2
   languageName: unknown
   linkType: soft
@@ -14072,7 +14048,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:^16.13.1, react-dom@npm:^16.8.0":
+"react-dom@npm:^16.8.0":
   version: 16.14.0
   resolution: "react-dom@npm:16.14.0"
   dependencies:
@@ -14253,7 +14229,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:^16.13.1, react@npm:^16.8.0":
+"react@npm:^16.8.0":
   version: 16.14.0
   resolution: "react@npm:16.14.0"
   dependencies:
