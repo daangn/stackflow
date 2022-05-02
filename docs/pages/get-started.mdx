@@ -1,0 +1,24 @@
+# Get Started
+
+```
+$ yarn add @stackflow/core
+```
+
+```tsx
+import React from 'react'
+import ReactDOM from 'react-dom'
+
+import { config } from '@stackflow/core';
+
+const { Stackflow, useFlow } = config({
+  // ...
+});
+
+const App: React.FC = () => {
+  return (
+    <Stackflow />
+  );
+};
+
+ReactDOM.render(<App />, ...)
+```

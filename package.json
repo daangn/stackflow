@@ -3,6 +3,7 @@
   "private": true,
   "license": "Apache-2.0",
   "workspaces": [
+    "docs",
     "core",
     "packages/*"
   ],
