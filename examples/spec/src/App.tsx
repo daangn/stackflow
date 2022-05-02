@@ -1,6 +1,6 @@
 import './App.css'
 
-import React from 'react'
+import React, { useState } from 'react'
 
 import { Navigator, Screen } from '@karrotframe/navigator'
 
@@ -22,9 +22,15 @@ import {
 } from '@karrotframe/navigator-plugin'
 
 const App: React.FC = () => {
+  const [theme, setTheme] = useState<'Cupertino' | 'Android'>('Cupertino')
+
+  const switchTheme = () => {
+    setTheme((prev) => (prev === 'Cupertino' ? 'Android' : 'Cupertino'))
+  }
+
   return (
     <Navigator
-      theme="Cupertino"
+      theme={theme}
       onDepthChange={(depth) => {
         console.log(depth)
       }}
@@ -33,7 +39,9 @@ const App: React.FC = () => {
       }}
       plugins={[dataPlugin, loggerMiddlewareBeforePushPlugin]}
     >
-      <Screen path="/" component={PageHome} />
+      <Screen path="/">
+        <PageHome currentTheme={theme} switchTheme={switchTheme} />
+      </Screen>
       <Screen path="/screenHelmet" component={PageScreenHelmet} />
       <Screen path="/push" component={PagePush} />
       <Screen path="/pop" component={PagePop} />

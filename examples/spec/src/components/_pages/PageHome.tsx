@@ -5,7 +5,30 @@ import { ScreenHelmet, useNavigator } from '@karrotframe/navigator'
 import ListItem from '../ListItem'
 import { useDataPlugin } from '@karrotframe/navigator-plugin'
 
-const PageHome: React.FC = () => {
+interface ThemeButtonProps {
+  currentTheme: 'Cupertino' | 'Android'
+  switchTheme: () => void
+}
+
+const ThemeButton: React.FC<ThemeButtonProps> = ({
+  currentTheme,
+  switchTheme,
+}: ThemeButtonProps) => {
+  return (
+    <button onClick={switchTheme}>
+      {currentTheme === 'Cupertino' ? 'iOS' : 'Android'}
+    </button>
+  )
+}
+
+interface PageHomeProps extends ThemeButtonProps {}
+
+const IS_DEBUG = process.env.REACT_APP_ENV === 'debug'
+
+const PageHome: React.FC<PageHomeProps> = ({
+  currentTheme,
+  switchTheme,
+}: PageHomeProps) => {
   const { push } = useNavigator()
   const { dataFromNextPage } = useDataPlugin()
   const result = useMemo(
@@ -15,7 +38,17 @@ const PageHome: React.FC = () => {
 
   return (
     <Container>
-      <ScreenHelmet title="Spec" />
+      <ScreenHelmet
+        title="Spec"
+        appendRight={
+          IS_DEBUG ? (
+            <ThemeButton
+              currentTheme={currentTheme}
+              switchTheme={switchTheme}
+            />
+          ) : null
+        }
+      />
       <ListItem
         onClick={() => {
           push('/screenHelmet')
