@@ -173,6 +173,19 @@ const Card: React.FC<ICardProps> = (props) => {
     }
   }, [mainRef])
 
+  const navbarRef = useRef<{ mounted: boolean } | null>(null)
+
+  const [activeTransition, setActiveTransition] = useState(false)
+
+  useEffect(() => {
+    if (!mounted) return
+
+    const $navbar = navbarRef.current
+    if (!$navbar) return
+
+    setActiveTransition($navbar.mounted)
+  }, [mounted])
+
   return (
     <div ref={props.nodeRef} className={css.container}>
       {!props.isRoot && (
@@ -217,10 +230,11 @@ const Card: React.FC<ICardProps> = (props) => {
                 : undefined,
           })}
           style={assignInlineVars({
-            [vars.navbar.animationDuration]: mounted ? '0.3s' : '0s',
+            [vars.navbar.animationDuration]: activeTransition ? '0.3s' : '0s',
           })}
         >
           <Navbar
+            ref={navbarRef}
             isNavbarVisible={isNavbarVisible}
             screenInstanceId={props.screenInstanceId}
             theme={props.theme}
