@@ -4,6 +4,8 @@ import { ScreenHelmet, useNavigator } from '@karrotframe/navigator'
 
 import ListItem from '../ListItem'
 import { useDataPlugin } from '@karrotframe/navigator-plugin'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faAndroid, faApple } from '@fortawesome/free-brands-svg-icons'
 
 interface ThemeButtonProps {
   currentTheme: 'Cupertino' | 'Android'
@@ -15,15 +17,19 @@ const ThemeButton: React.FC<ThemeButtonProps> = ({
   switchTheme,
 }: ThemeButtonProps) => {
   return (
-    <button onClick={switchTheme}>
-      {currentTheme === 'Cupertino' ? 'iOS' : 'Android'}
+    <button
+      onClick={switchTheme}
+      style={{ border: 'none', background: 'none', cursor: 'pointer' }}
+    >
+      <FontAwesomeIcon
+        icon={currentTheme === 'Cupertino' ? faApple : faAndroid}
+        size="2x"
+      />
     </button>
   )
 }
 
 interface PageHomeProps extends ThemeButtonProps {}
-
-const IS_DEBUG = process.env.REACT_APP_ENV === 'debug'
 
 const PageHome: React.FC<PageHomeProps> = ({
   currentTheme,
@@ -41,12 +47,7 @@ const PageHome: React.FC<PageHomeProps> = ({
       <ScreenHelmet
         title="Spec"
         appendRight={
-          IS_DEBUG ? (
-            <ThemeButton
-              currentTheme={currentTheme}
-              switchTheme={switchTheme}
-            />
-          ) : null
+          <ThemeButton currentTheme={currentTheme} switchTheme={switchTheme} />
         }
       />
       <ListItem
