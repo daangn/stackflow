@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC, ReactElement, ReactNode } from 'react'
 import { HashRouter } from 'react-router-dom'
 import { TransitionGroup } from 'react-transition-group'
 
@@ -10,7 +10,6 @@ import { ProviderIncrementalId } from './hooks'
 import * as css from './Navigator.css'
 import { INavigatorTheme } from './types'
 import type { NavigatorPluginType } from '@karrotframe/navigator-plugin'
-import wrapProvider from './helpers/wrapProvider'
 import { ProviderPlugins } from './globalState/Plugins'
 import { ProviderAnimation } from './globalState/Animation'
 
@@ -75,6 +74,24 @@ interface INavigatorProps {
    */
   children?: React.ReactNode
 }
+
+const ProviderPluginWrapper = ({
+  providers,
+  children,
+}: {
+  providers: FC[]
+  children?: ReactNode
+}) =>
+  ((children: ReactNode): ReactElement => {
+    if (!providers || (providers && providers.length === 0))
+      return React.createElement(React.Fragment, null, children)
+    const create = (index: number): ReactElement =>
+      index === providers.length - 1
+        ? React.createElement(providers[index], null, children)
+        : React.createElement(providers[index], null, create(index + 1))
+    return create(0)
+  })(children)
+
 const Navigator: React.FC<INavigatorProps> = ({
   theme = 'Android',
   animationDuration = theme === 'Android'
@@ -91,41 +108,42 @@ const Navigator: React.FC<INavigatorProps> = ({
 }) => {
   let h = (
     <ProviderIncrementalId>
-      {wrapProvider(
-        plugins.map((plugin) => plugin.provider).filter(Boolean),
-        () => (
-          <ProviderPlugins plugins={plugins}>
-            <ProviderScreens>
-              <ProviderScreenInstances>
-                <ProviderAnimation>
-                  <div
-                    className={[
-                      css.root({ theme }),
-                      ...(className ? [className] : []),
-                    ].join(' ')}
-                    style={assignInlineVars({
-                      [css.vars.animationDuration]: animationDuration + 'ms',
-                    })}
-                  >
-                    <TransitionGroup component={null}>
-                      <Stack
-                        animationDuration={animationDuration}
-                        theme={theme}
-                        onClose={onClose}
-                        backButtonAriaLabel={backButtonAriaLabel}
-                        closeButtonAriaLabel={closeButtonAriaLabel}
-                        onDepthChange={onDepthChange}
-                      >
-                        {children}
-                      </Stack>
-                    </TransitionGroup>
-                  </div>
-                </ProviderAnimation>
-              </ProviderScreenInstances>
-            </ProviderScreens>
-          </ProviderPlugins>
-        )
-      )}
+      <ProviderPluginWrapper
+        providers={
+          plugins.map((plugin) => plugin.provider).filter(Boolean) as FC[]
+        }
+      >
+        <ProviderPlugins plugins={plugins}>
+          <ProviderScreens>
+            <ProviderScreenInstances>
+              <ProviderAnimation>
+                <div
+                  className={[
+                    css.root({ theme }),
+                    ...(className ? [className] : []),
+                  ].join(' ')}
+                  style={assignInlineVars({
+                    [css.vars.animationDuration]: animationDuration + 'ms',
+                  })}
+                >
+                  <TransitionGroup component={null}>
+                    <Stack
+                      animationDuration={animationDuration}
+                      theme={theme}
+                      onClose={onClose}
+                      backButtonAriaLabel={backButtonAriaLabel}
+                      closeButtonAriaLabel={closeButtonAriaLabel}
+                      onDepthChange={onDepthChange}
+                    >
+                      {children}
+                    </Stack>
+                  </TransitionGroup>
+                </div>
+              </ProviderAnimation>
+            </ProviderScreenInstances>
+          </ProviderScreens>
+        </ProviderPlugins>
+      </ProviderPluginWrapper>
     </ProviderIncrementalId>
   )
 
