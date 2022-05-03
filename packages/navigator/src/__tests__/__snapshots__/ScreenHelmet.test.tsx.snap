@@ -19,7 +19,7 @@ exports[`ScreenHelmet - visible:  visible: false 이면 navbar 가 나타나지 
           <div
             class="Navbar_container__x613ng0"
             data-testid="navbar"
-            style="--kf_navigator_navbar-center-mainWidth: undefinedpx; --kf_navigator_navbar-animationDuration: 0; --kf_navigator_navbar-translateY: -2.75rem;"
+            style="--kf_navigator_navbar-center-mainWidth: undefinedpx; --kf_navigator_navbar-animationDuration: 0; --kf_navigator_navbar-translateY: -3.5rem;"
           >
             <div
               class="Navbar_main__x613ng2"
