@@ -4,8 +4,7 @@
   "private": true,
   "scripts": {
     "build": "react-app-rewired build",
-    "start": "react-app-rewired start",
-    "debug": "REACT_APP_ENV=debug react-app-rewired start"
+    "start": "react-app-rewired start"
   },
   "browserslist": {
     "production": [
@@ -23,6 +22,9 @@
     "@emotion/core": "^11.0.0",
     "@emotion/react": "^11.1.5",
     "@emotion/styled": "^11.1.5",
+    "@fortawesome/fontawesome-svg-core": "^6.1.1",
+    "@fortawesome/free-brands-svg-icons": "^6.1.1",
+    "@fortawesome/react-fontawesome": "^0.1.18",
     "@karrotframe/navigator": "workspace:^",
     "@karrotframe/navigator-plugin": "workspace:^",
     "@karrotframe/pulltorefresh": "workspace:^",
