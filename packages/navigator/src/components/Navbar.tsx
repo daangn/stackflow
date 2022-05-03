@@ -31,6 +31,8 @@ const Navbar: React.FC<INavbarProps> = (props) => {
   const android = props.theme === 'Android'
   const cupertino = props.theme === 'Cupertino'
 
+  const navbarHeight = android ? '-3.5rem' : '-2.75rem'
+
   const [centerMainWidth, setCenterMainWidth] = useState<number | undefined>(
     undefined
   )
@@ -169,7 +171,7 @@ const Navbar: React.FC<INavbarProps> = (props) => {
       style={assignInlineVars({
         [vars.navbar.center.mainWidth]: `${centerMainWidth}px`,
         [vars.navbar.animationDuration]: mounted ? '0.3s' : '0',
-        [vars.navbar.translateY]: props.isNavbarVisible ? '0' : '-2.75rem',
+        [vars.navbar.translateY]: props.isNavbarVisible ? '0' : navbarHeight,
       })}
     >
       <div
