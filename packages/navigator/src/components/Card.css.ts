@@ -187,7 +187,7 @@ export const main = recipe({
     },
     isTopAndIsNavbarNotVisible: {
       true: {
-        backgroundColor: '#fff',
+        backgroundColor: vars.backgroundColor,
       },
     },
   },
