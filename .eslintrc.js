@@ -8,6 +8,7 @@ module.exports = {
       1,
       { extensions: [".js", ".jsx", ".tsx"] },
     ],
+    "react/function-component-definition": "off",
     "import/prefer-default-export": "off",
     "import/no-unresolved": "off",
     "import/no-extraneous-dependencies": "off",
@@ -16,6 +17,7 @@ module.exports = {
     "react/react-in-jsx-scope": "off",
     "simple-import-sort/imports": "error",
     "simple-import-sort/exports": "error",
+    "no-unused-vars": "off",
   },
   ignorePatterns: ["**/__generated__/**/*", "**/lib/**/*", "**/dist/**/*"],
 };

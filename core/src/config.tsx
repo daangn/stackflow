@@ -1,16 +1,40 @@
 import React from "react";
 
-export function config() {
-  function Stack() {
-    return <div />;
-  }
+import { ActivityComponentType, ParamsOf } from "./ActivityComponentType";
+import { PluginType } from "./PluginType";
 
-  const useFlow = () => ({
-    push() {},
-  });
+type ConfigOptionsActivitiesBase = {
+  [activityName: string]:
+    | ActivityComponentType<any>
+    | {
+        component: ActivityComponentType<any>;
+      };
+};
 
+type ConfigOptions<Activities extends ConfigOptionsActivitiesBase> = {
+  activities: Activities;
+  plugins?: PluginType;
+};
+
+type ConfigOutput<Activities extends ConfigOptionsActivitiesBase> = {
+  Stack: () => React.ReactNode;
+  useFlow: () => {
+    push: (
+      activityName: keyof Activities,
+      options: {
+        params: ParamsOf<Activities[keyof Activities]>;
+      }
+    ) => void;
+  };
+};
+
+export function config<Activities extends ConfigOptionsActivitiesBase>(
+  input: ConfigOptions<Activities>
+): ConfigOutput<Activities> {
   return {
-    Stack,
-    useFlow,
+    Stack: () => <div>Hello, Stack!</div>,
+    useFlow: () => ({
+      push(activityName, options) {},
+    }),
   };
 }
