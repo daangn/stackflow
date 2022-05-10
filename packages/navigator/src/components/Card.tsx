@@ -1,4 +1,11 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, {
+  ReactElement,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 
 import { INavigatorTheme } from '../types'
 import { useNavigator } from '../useNavigator'
@@ -12,6 +19,7 @@ import { assignInlineVars } from '@vanilla-extract/dynamic'
 import { vars } from '../Navigator.css'
 
 interface ICardProps {
+  children: ReactNode
   theme: INavigatorTheme
   nodeRef: React.RefObject<HTMLDivElement>
   beforeTopFrameOffsetRef: React.RefObject<HTMLDivElement>
@@ -33,8 +41,11 @@ enum TransitionStatus {
   exitActive,
 }
 
-const Card: React.FC<ICardProps> = (props) => {
-  const mounted = useMounted({ afterTick: true })
+const Card: React.FC<ICardProps> = (props: ICardProps): ReactElement => {
+  const [navbarMounted, navbarMount] = useMounted({
+    afterTick: true,
+    manualMount: true,
+  })
   const [navBarTransitionStatus, setNavBarTransitionStatus] =
     useState<TransitionStatus>(TransitionStatus.idle)
   const { shouldAnimate } = useAnimationContext()
@@ -173,18 +184,9 @@ const Card: React.FC<ICardProps> = (props) => {
     }
   }, [mainRef])
 
-  const navbarRef = useRef<{ mounted: boolean } | null>(null)
-
-  const [activeTransition, setActiveTransition] = useState(false)
-
-  useEffect(() => {
-    if (!mounted) return
-
-    const $navbar = navbarRef.current
-    if (!$navbar) return
-
-    setActiveTransition($navbar.mounted)
-  }, [mounted])
+  const handleNavbarMount = useCallback(() => {
+    navbarMount()
+  }, [navbarMount])
 
   return (
     <div ref={props.nodeRef} className={css.container}>
@@ -230,21 +232,23 @@ const Card: React.FC<ICardProps> = (props) => {
                 : undefined,
           })}
           style={assignInlineVars({
-            [vars.navbar.animationDuration]: activeTransition ? '0.3s' : '0s',
+            [vars.navbar.animationDuration]: navbarMounted ? '0.3s' : '0s',
           })}
         >
-          <Navbar
-            ref={navbarRef}
-            isNavbarVisible={isNavbarVisible}
-            screenInstanceId={props.screenInstanceId}
-            theme={props.theme}
-            isRoot={props.isRoot}
-            isPresent={props.isPresent}
-            backButtonAriaLabel={props.backButtonAriaLabel}
-            closeButtonAriaLabel={props.closeButtonAriaLabel}
-            onClose={props.onClose}
-            onTopClick={onTopClick}
-          />
+          {(isNavbarVisible || navbarMounted) && (
+            <Navbar
+              isNavbarVisible={isNavbarVisible}
+              screenInstanceId={props.screenInstanceId}
+              theme={props.theme}
+              isRoot={props.isRoot}
+              isPresent={props.isPresent}
+              backButtonAriaLabel={props.backButtonAriaLabel}
+              closeButtonAriaLabel={props.closeButtonAriaLabel}
+              onClose={props.onClose}
+              onTopClick={onTopClick}
+              onMount={handleNavbarMount}
+            />
+          )}
           <div
             className={css.frameOffset({
               noAnimate: !shouldAnimate ? true : undefined,
