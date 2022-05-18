@@ -77,7 +77,8 @@ export function makeTranslation({
             if ($tabMain) {
               $tabMain.style.cssText = css`
                 visibility: visible;
-                transition: visibility 0s 0s;
+                height: 100%;
+                transition: visibility 0s 0s, height 0s 0s;
               `
             }
           }

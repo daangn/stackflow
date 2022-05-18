@@ -177,13 +177,15 @@ export const tabMain = recipe({
     backgroundColor: vars.tabMain.backgroundColor,
     position: 'relative',
     visibility: 'hidden',
-    transition: `visibility 0s ${vars.transitionDuration}`,
+    height: 0,
+    transition: `visibility 0s ${vars.transitionDuration}, height 0s ${vars.transitionDuration}`,
   },
   variants: {
     active: {
       true: {
         visibility: 'visible',
-        transition: 'visibility 0s 0s',
+        height: '100%',
+        transition: 'visibility 0s 0s, height 0s 0s',
       },
     },
   },
