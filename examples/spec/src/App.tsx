@@ -39,9 +39,12 @@ const App: React.FC = () => {
       }}
       plugins={[dataPlugin, loggerMiddlewareBeforePushPlugin]}
     >
-      <Screen path="/">
-        <PageHome currentTheme={theme} switchTheme={switchTheme} />
-      </Screen>
+      <Screen
+        path="/"
+        component={() => (
+          <PageHome currentTheme={theme} switchTheme={switchTheme} />
+        )}
+      />
       <Screen path="/screenHelmet" component={PageScreenHelmet} />
       <Screen path="/push" component={PagePush} />
       <Screen path="/pop" component={PagePop} />
