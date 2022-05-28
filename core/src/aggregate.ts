@@ -11,28 +11,42 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
 
   const initEvent = filterEvents(events, "Initialized")[0];
   const activityRegisteredEvents = filterEvents(events, "ActivityRegistered");
-  const pushedEvents = filterEvents(events, "Pushed");
 
   const registeredActivityNames = activityRegisteredEvents.map(
     (e) => e.activityName,
   );
 
-  const activities: Array<Activity> = [
-    ...pushedEvents
-      .filter((e) => registeredActivityNames.includes(e.activityName))
-      .map((e) => {
+  const activities: Array<Activity> = [];
+
+  events.forEach((e) => {
+    switch (e.name) {
+      case "Pushed": {
+        if (!registeredActivityNames.includes(e.activityName)) {
+          return;
+        }
+
         const transitionState: ActivityTransitionState =
           now - e.eventDate >= initEvent.transitionDuration
             ? "enter-done"
             : "enter-active";
 
-        return {
+        activities.push({
           activityId: e.activityId,
           activityName: e.activityName,
           transitionState,
-        };
-      }),
-  ];
+        });
+
+        break;
+      }
+      case "Popped": {
+        activities.splice(activities.length - 1, 1);
+        break;
+      }
+      default: {
+        break;
+      }
+    }
+  });
 
   const globalTransitionState = activities.find(
     (a) => a.transitionState === "enter-active",

@@ -342,3 +342,137 @@ test("aggregate - 여러번 푸시한 경우, transitionDuration 전에 푸시�
     globalTransitionState: "loading",
   });
 });
+
+test("aggregate - Pop하면 최상위 Activity가 스택에서 제외됩니다", () => {
+  const output = aggregate(
+    [
+      initializedEvent({
+        transitionDuration: 300,
+      }),
+      registeredEvent({
+        activityName: "home",
+      }),
+      makeEvent("Pushed", {
+        activityId: "a1",
+        activityName: "home",
+      }),
+      makeEvent("Pushed", {
+        activityId: "a2",
+        activityName: "home",
+      }),
+      makeEvent("Popped", {}),
+    ],
+    enoughNextDate().getTime(),
+  );
+
+  expect(output).toStrictEqual({
+    activities: [
+      {
+        activityId: "a1",
+        activityName: "home",
+        transitionState: "enter-done",
+      },
+    ],
+    globalTransitionState: "idle",
+  });
+});
+
+test("aggregate - Pop을 여러번하면 차례대로 삭제됩니다", () => {
+  const initEvents = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+    registeredEvent({
+      activityName: "home",
+    }),
+    makeEvent("Pushed", {
+      activityId: "a1",
+      activityName: "home",
+    }),
+    makeEvent("Pushed", {
+      activityId: "a2",
+      activityName: "home",
+    }),
+    makeEvent("Pushed", {
+      activityId: "a3",
+      activityName: "home",
+    }),
+  ];
+
+  const o1 = aggregate(
+    [...initEvents, makeEvent("Popped", {})],
+    enoughNextDate().getTime(),
+  );
+
+  expect(o1).toStrictEqual({
+    activities: [
+      {
+        activityId: "a1",
+        activityName: "home",
+        transitionState: "enter-done",
+      },
+      {
+        activityId: "a2",
+        activityName: "home",
+        transitionState: "enter-done",
+      },
+    ],
+    globalTransitionState: "idle",
+  });
+
+  const o2 = aggregate(
+    [...initEvents, makeEvent("Popped", {}), makeEvent("Popped", {})],
+    enoughNextDate().getTime(),
+  );
+
+  expect(o2).toStrictEqual({
+    activities: [
+      {
+        activityId: "a1",
+        activityName: "home",
+        transitionState: "enter-done",
+      },
+    ],
+    globalTransitionState: "idle",
+  });
+
+  const o3 = aggregate(
+    [
+      ...initEvents,
+      makeEvent("Popped", {}),
+      makeEvent("Popped", {}),
+      makeEvent("Popped", {}),
+    ],
+    enoughNextDate().getTime(),
+  );
+
+  expect(o3).toStrictEqual({
+    activities: [],
+    globalTransitionState: "idle",
+  });
+});
+
+test("aggregate - 현재 스택의 Activity를 초과해 Pop하면 빈 스택을 유지합니다", () => {
+  const output = aggregate(
+    [
+      initializedEvent({
+        transitionDuration: 300,
+      }),
+      registeredEvent({
+        activityName: "home",
+      }),
+      makeEvent("Pushed", {
+        activityId: "a1",
+        activityName: "home",
+      }),
+      makeEvent("Popped", {}),
+      makeEvent("Popped", {}),
+    ],
+    enoughNextDate().getTime(),
+  );
+
+  expect(output).toStrictEqual({
+    activities: [],
+    globalTransitionState: "idle",
+  });
+});
