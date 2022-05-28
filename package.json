@@ -12,6 +12,9 @@
     "lerna:publish": "yarn build && lerna publish",
     "version": "yarn install && git stage yarn.lock"
   },
+  "resolutions": {
+    "esbuild": "0.14.38"
+  },
   "devDependencies": {
     "@typescript-eslint/parser": "^5.20.0",
     "eslint": "^8.13.0",
