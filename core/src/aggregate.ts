@@ -30,10 +30,6 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
   events.forEach((e) => {
     switch (e.name) {
       case "Pushed": {
-        if (!registeredActivityNames.includes(e.activityName)) {
-          return;
-        }
-
         const transitionState: ActivityTransitionState =
           now - e.eventDate >= initEvent.transitionDuration
             ? "enter-done"
@@ -52,10 +48,6 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
         break;
       }
       case "Popped": {
-        if (activities.length === 0) {
-          return;
-        }
-
         const targetActivity = activities
           .filter((a) => a.metadata.poppedBy === null)
           .sort(
