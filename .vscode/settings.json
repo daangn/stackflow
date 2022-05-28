@@ -5,7 +5,6 @@
   },
   "typescript.tsdk": ".yarn/sdks/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
-  "eslint.nodePath": ".yarn/sdks",
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
   },
@@ -17,6 +16,5 @@
     "typescriptreact",
     "json"
   ],
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "prettier.prettierPath": ".yarn/sdks/prettier/index.js"
+  "editor.defaultFormatter": "esbenp.prettier-vscode"
 }

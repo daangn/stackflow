@@ -4,6 +4,7 @@ module.exports = {
   extends: ["airbnb", "prettier"],
   plugins: ["json-format", "simple-import-sort"],
   rules: {
+    "no-undef": "off",
     "react/jsx-filename-extension": [
       1,
       { extensions: [".js", ".jsx", ".tsx"] },

@@ -22,22 +22,32 @@
     "build:bundle:js": "node ./esbuild.config.js",
     "build:transpile:cjs": "babel src --env-name cjs --out-dir ./lib --extensions .ts,.tsx --out-file-extension .js --source-maps",
     "build:transpile:dts": "tsc --emitDeclarationOnly",
-    "build:transpile:esm": "babel src --env-name esm --out-dir ./lib --extensions .ts,.tsx --out-file-extension .mjs --source-maps"
+    "build:transpile:esm": "babel src --env-name esm --out-dir ./lib --extensions .ts,.tsx --out-file-extension .mjs --source-maps",
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.(t|j)sx?$": "@swc/jest"
+    }
+  },
+  "dependencies": {
+    "kuuid": "^0.6.0",
+    "lodash": "^4.17.21"
   },
   "devDependencies": {
     "@babel/cli": "^7.17.6",
     "@babel/core": "^7.17.9",
     "@stackflow/babel-preset": "workspace:^",
     "@stackflow/esbuild-config": "workspace:^",
-    "@types/react": "^18.0.5",
+    "@swc/core": "^1.2.182",
+    "@swc/jest": "^0.2.21",
+    "@types/jest": "^27.5.1",
+    "@types/lodash": "^4.14.182",
     "concurrently": "^7.1.0",
     "dts-bundle-generator": "^6.8.0",
     "esbuild": "^0.14.37",
-    "react": "^18.0.0",
+    "jest": "^28.1.0",
     "typescript": "^4.6.3"
-  },
-  "peerDependencies": {
-    "@types/react": ">=16.8.0",
-    "react": ">=16.8.0"
   }
 }

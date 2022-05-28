@@ -8,6 +8,13 @@
 # Swap the comments on the following lines if you don't wish to use zero-installs
 # Documentation here: https://yarnpkg.com/features/zero-installs
 !.yarn/cache
+node_modules
 #.pnp.*
 
 .DS_Store
+
+/.idea/inspectionProfiles/Project_Default.xml
+/.idea/modules.xml
+/.idea/vcs.xml
+/.idea/.gitignore
+/.idea/stackflow.iml
