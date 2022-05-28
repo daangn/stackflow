@@ -109,6 +109,9 @@ test("aggregate - 푸시하면 스택에 추가됩니다", () => {
       {
         activityId: "a1",
         activityName: "sample",
+        transition: {
+          state: "enter-done",
+        },
       },
     ],
     transition: {
@@ -142,6 +145,9 @@ test("aggregate - PushedEvent에 activityId, activityName이 다른 경우 스�
       {
         activityId: "a2",
         activityName: "sample2",
+        transition: {
+          state: "enter-done",
+        },
       },
     ],
     transition: {
@@ -206,10 +212,16 @@ test("aggregate - 다른 activityName으로 두번 푸시하면 스택에 정상
       {
         activityId: "a1",
         activityName: "sample2",
+        transition: {
+          state: "enter-done",
+        },
       },
       {
         activityId: "a2",
         activityName: "home",
+        transition: {
+          state: "enter-done",
+        },
       },
     ],
     transition: {
@@ -247,10 +259,16 @@ test("aggregate - 같은 activityName으로 두번 푸시하면 정상적으로 
       {
         activityId: "a1",
         activityName: "sample2",
+        transition: {
+          state: "enter-done",
+        },
       },
       {
         activityId: "a2",
         activityName: "sample2",
+        transition: {
+          state: "enter-done",
+        },
       },
     ],
     transition: {
@@ -281,6 +299,9 @@ test("aggregate - 푸시한 직후에는 transition.state가 loading 입니다",
       {
         activityId: "a1",
         activityName: "sample",
+        transition: {
+          state: "enter-active",
+        },
       },
     ],
     transition: {
@@ -303,7 +324,7 @@ test("aggregate - 현재 시간과 변화된 시간의 차가 InitializedEvent�
       event("Pushed", {
         activityId: "a1",
         activityName: "sample",
-        eventDate: nowTime + 150,
+        eventDate: nowTime - 150,
       }),
     ],
     nowTime,
@@ -314,6 +335,9 @@ test("aggregate - 현재 시간과 변화된 시간의 차가 InitializedEvent�
       {
         activityId: "a1",
         activityName: "sample",
+        transition: {
+          state: "enter-active",
+        },
       },
     ],
     transition: {
@@ -348,10 +372,61 @@ test("aggregate - 푸시한 이후 InitializedEvent에서 셋팅된 transitionDu
       {
         activityId: "a1",
         activityName: "sample",
+        transition: {
+          state: "enter-done",
+        },
       },
     ],
     transition: {
       state: "idle",
+    },
+  });
+});
+
+test("aggregate - 여러번 푸시한 경우, transitionDuration 전에 푸시한 Activity의 transition.state는 enter-done, 그 이후 푸시한 Activity는 enter-active 입니다", () => {
+  const nowTime = nowDate().getTime();
+
+  const output = aggregate(
+    [
+      initializedEvent({
+        transitionDuration: 300,
+      }),
+      registeredEvent({
+        activityName: "sample",
+      }),
+      event("Pushed", {
+        activityId: "a1",
+        activityName: "sample",
+        eventDate: nowTime - 350,
+      }),
+      event("Pushed", {
+        activityId: "a2",
+        activityName: "sample",
+        eventDate: nowTime - 150,
+      }),
+    ],
+    nowTime,
+  );
+
+  expect(output).toStrictEqual({
+    activities: [
+      {
+        activityId: "a1",
+        activityName: "sample",
+        transition: {
+          state: "enter-done",
+        },
+      },
+      {
+        activityId: "a2",
+        activityName: "sample",
+        transition: {
+          state: "enter-active",
+        },
+      },
+    ],
+    transition: {
+      state: "loading",
     },
   });
 });
