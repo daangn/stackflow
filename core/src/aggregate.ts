@@ -29,25 +29,19 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
         return {
           activityId: e.activityId,
           activityName: e.activityName,
-          transition: {
-            state: transitionState,
-          },
+          transitionState,
         };
       }),
   ];
 
   const globalTransitionState = activities.find(
-    (a) =>
-      a.transition.state === "enter-active" ||
-      a.transition.state === "exit-active",
+    (a) => a.transitionState === "enter-active",
   )
     ? "loading"
     : "idle";
 
   return {
     activities,
-    transition: {
-      state: globalTransitionState,
-    },
+    globalTransitionState,
   };
 }

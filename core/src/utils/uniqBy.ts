@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-unused-vars
 export function uniqBy<T>(arr: T[], by: (item: T) => string): T[] {
   const valueMap = new Map<string, true>();
 

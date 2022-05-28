@@ -30,9 +30,7 @@ test("aggregate - 만약에 InitializedEvent만 존재하는 경우, 빈 스택�
 
   expect(output).toStrictEqual({
     activities: [],
-    transition: {
-      state: "idle",
-    },
+    globalTransitionState: "idle",
   });
 });
 
@@ -61,14 +59,10 @@ test("aggregate - 푸시하면 스택에 추가됩니다", () => {
       {
         activityId: "a1",
         activityName: "sample",
-        transition: {
-          state: "enter-done",
-        },
+        transitionState: "enter-done",
       },
     ],
-    transition: {
-      state: "idle",
-    },
+    globalTransitionState: "idle",
   });
 });
 
@@ -97,14 +91,10 @@ test("aggregate - PushedEvent에 activityId, activityName이 다른 경우 스�
       {
         activityId: "a2",
         activityName: "sample2",
-        transition: {
-          state: "enter-done",
-        },
+        transitionState: "enter-done",
       },
     ],
-    transition: {
-      state: "idle",
-    },
+    globalTransitionState: "idle",
   });
 });
 
@@ -164,21 +154,15 @@ test("aggregate - 다른 activityName으로 두번 푸시하면 스택에 정상
       {
         activityId: "a1",
         activityName: "sample2",
-        transition: {
-          state: "enter-done",
-        },
+        transitionState: "enter-done",
       },
       {
         activityId: "a2",
         activityName: "home",
-        transition: {
-          state: "enter-done",
-        },
+        transitionState: "enter-done",
       },
     ],
-    transition: {
-      state: "idle",
-    },
+    globalTransitionState: "idle",
   });
 });
 
@@ -211,21 +195,15 @@ test("aggregate - 같은 activityName으로 두번 푸시하면 정상적으로 
       {
         activityId: "a1",
         activityName: "sample2",
-        transition: {
-          state: "enter-done",
-        },
+        transitionState: "enter-done",
       },
       {
         activityId: "a2",
         activityName: "sample2",
-        transition: {
-          state: "enter-done",
-        },
+        transitionState: "enter-done",
       },
     ],
-    transition: {
-      state: "idle",
-    },
+    globalTransitionState: "idle",
   });
 });
 
@@ -251,14 +229,10 @@ test("aggregate - 푸시한 직후에는 transition.state가 loading 입니다",
       {
         activityId: "a1",
         activityName: "sample",
-        transition: {
-          state: "enter-active",
-        },
+        transitionState: "enter-active",
       },
     ],
-    transition: {
-      state: "loading",
-    },
+    globalTransitionState: "loading",
   });
 });
 
@@ -287,14 +261,10 @@ test("aggregate - 현재 시간과 변화된 시간의 차가 InitializedEvent�
       {
         activityId: "a1",
         activityName: "sample",
-        transition: {
-          state: "enter-active",
-        },
+        transitionState: "enter-active",
       },
     ],
-    transition: {
-      state: "loading",
-    },
+    globalTransitionState: "loading",
   });
 });
 
@@ -324,14 +294,10 @@ test("aggregate - 푸시한 이후 InitializedEvent에서 셋팅된 transitionDu
       {
         activityId: "a1",
         activityName: "sample",
-        transition: {
-          state: "enter-done",
-        },
+        transitionState: "enter-done",
       },
     ],
-    transition: {
-      state: "idle",
-    },
+    globalTransitionState: "idle",
   });
 });
 
@@ -365,20 +331,14 @@ test("aggregate - 여러번 푸시한 경우, transitionDuration 전에 푸시�
       {
         activityId: "a1",
         activityName: "sample",
-        transition: {
-          state: "enter-done",
-        },
+        transitionState: "enter-done",
       },
       {
         activityId: "a2",
         activityName: "sample",
-        transition: {
-          state: "enter-active",
-        },
+        transitionState: "enter-active",
       },
     ],
-    transition: {
-      state: "loading",
-    },
+    globalTransitionState: "loading",
   });
 });
