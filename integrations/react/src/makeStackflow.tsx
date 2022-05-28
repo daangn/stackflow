@@ -98,28 +98,6 @@ export function makeStackflow(options: MakeStackflowOptions) {
     </CoreProvider>
   );
 
-  const Test: React.FC = () => {
-    const core = useCore();
-    const { push, pop } = useFlow();
-
-    return (
-      <div style={{ whiteSpace: "pre" }}>
-        <button
-          type="button"
-          onClick={() => {
-            push("hello");
-          }}
-        >
-          push
-        </button>
-        <button type="button" onClick={() => pop()}>
-          pop
-        </button>
-        {JSON.stringify(core.state, null, 2)}
-      </div>
-    );
-  };
-
   return {
     Stack,
     useFlow,
