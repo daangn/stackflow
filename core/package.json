@@ -13,7 +13,6 @@
   "types": "./dist/index.d.ts",
   "files": [
     "dist",
-    "lib",
     "src"
   ],
   "scripts": {
@@ -30,9 +29,6 @@
     }
   },
   "devDependencies": {
-    "@babel/cli": "^7.17.6",
-    "@babel/core": "^7.17.9",
-    "@stackflow/babel-preset": "workspace:^",
     "@stackflow/esbuild-config": "workspace:^",
     "@swc/core": "^1.2.182",
     "@swc/jest": "^0.2.21",
