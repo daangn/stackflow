@@ -4,18 +4,28 @@ import { makeEvent } from "./event-utils";
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
 
-const nowDate = () => new Date();
-const enoughNextDate = () => new Date(Date.now() + MINUTE);
+let dt = 0;
+
+const nowTime = () => new Date().getTime();
+const enoughPastTime = () => {
+  dt += 1;
+  return new Date(Date.now() - MINUTE).getTime() + dt;
+};
 
 const initializedEvent = ({
   transitionDuration,
 }: {
   transitionDuration: number;
-}) => makeEvent("Initialized", { transitionDuration });
+}) =>
+  makeEvent("Initialized", {
+    transitionDuration,
+    eventDate: enoughPastTime(),
+  });
 
 const registeredEvent = ({ activityName }: { activityName: string }) =>
   makeEvent("ActivityRegistered", {
     activityName,
+    eventDate: enoughPastTime(),
   });
 
 test("aggregate - 만약에 InitializedEvent만 존재하는 경우, 빈 스택을 내려줍니다", () => {
@@ -25,7 +35,7 @@ test("aggregate - 만약에 InitializedEvent만 존재하는 경우, 빈 스택�
         transitionDuration: 300,
       }),
     ],
-    enoughNextDate().getTime(),
+    nowTime(),
   );
 
   expect(output).toStrictEqual({
@@ -49,9 +59,10 @@ test("aggregate - 푸시하면 스택에 추가됩니다", () => {
       makeEvent("Pushed", {
         activityId: "a1",
         activityName: "sample",
+        eventDate: enoughPastTime(),
       }),
     ],
-    enoughNextDate().getTime(),
+    nowTime(),
   );
 
   expect(output).toStrictEqual({
@@ -81,9 +92,10 @@ test("aggregate - PushedEvent에 activityId, activityName이 다른 경우 스�
       makeEvent("Pushed", {
         activityId: "a2",
         activityName: "sample2",
+        eventDate: enoughPastTime(),
       }),
     ],
-    enoughNextDate().getTime(),
+    nowTime(),
   );
 
   expect(output).toStrictEqual({
@@ -114,13 +126,15 @@ test("aggregate - 같은 activityId로 여러번 푸시되는 경우 throw 합�
         makeEvent("Pushed", {
           activityId: "a1",
           activityName: "sample2",
+          eventDate: enoughPastTime(),
         }),
         makeEvent("Pushed", {
           activityId: "a1",
           activityName: "sample2",
+          eventDate: enoughPastTime(),
         }),
       ],
-      enoughNextDate().getTime(),
+      nowTime(),
     );
   }).toThrow();
 });
@@ -140,13 +154,15 @@ test("aggregate - 다른 activityName으로 두번 푸시하면 스택에 정상
       makeEvent("Pushed", {
         activityId: "a1",
         activityName: "sample2",
+        eventDate: enoughPastTime(),
       }),
       makeEvent("Pushed", {
         activityId: "a2",
         activityName: "home",
+        eventDate: enoughPastTime(),
       }),
     ],
-    enoughNextDate().getTime(),
+    nowTime(),
   );
 
   expect(output).toStrictEqual({
@@ -181,13 +197,15 @@ test("aggregate - 같은 activityName으로 두번 푸시하면 정상적으로 
       makeEvent("Pushed", {
         activityId: "a1",
         activityName: "sample2",
+        eventDate: enoughPastTime(),
       }),
       makeEvent("Pushed", {
         activityId: "a2",
         activityName: "sample2",
+        eventDate: enoughPastTime(),
       }),
     ],
-    enoughNextDate().getTime(),
+    nowTime(),
   );
 
   expect(output).toStrictEqual({
@@ -208,6 +226,8 @@ test("aggregate - 같은 activityName으로 두번 푸시하면 정상적으로 
 });
 
 test("aggregate - 푸시한 직후에는 transition.state가 loading 입니다", () => {
+  const t = nowTime();
+
   const output = aggregate(
     [
       initializedEvent({
@@ -219,9 +239,10 @@ test("aggregate - 푸시한 직후에는 transition.state가 loading 입니다",
       makeEvent("Pushed", {
         activityId: "a1",
         activityName: "sample",
+        eventDate: t,
       }),
     ],
-    nowDate().getTime(),
+    t,
   );
 
   expect(output).toStrictEqual({
@@ -237,7 +258,7 @@ test("aggregate - 푸시한 직후에는 transition.state가 loading 입니다",
 });
 
 test("aggregate - 현재 시간과 변화된 시간의 차가 InitializedEvent의 transitionDuration 보다 작다면 transition.state가 loading 입니다", () => {
-  const nowTime = nowDate().getTime();
+  const t = nowTime();
 
   const output = aggregate(
     [
@@ -250,10 +271,10 @@ test("aggregate - 현재 시간과 변화된 시간의 차가 InitializedEvent�
       makeEvent("Pushed", {
         activityId: "a1",
         activityName: "sample",
-        eventDate: nowTime - 150,
+        eventDate: t - 150,
       }),
     ],
-    nowTime,
+    t,
   );
 
   expect(output).toStrictEqual({
@@ -269,13 +290,12 @@ test("aggregate - 현재 시간과 변화된 시간의 차가 InitializedEvent�
 });
 
 test("aggregate - 푸시한 이후 InitializedEvent에서 셋팅된 transitionDuration만큼 정확하게 지난 경우 transition.state가 idle 입니다", () => {
-  const eventDate = new Date().getTime();
-  const transitionDuration = 300;
+  const t = nowTime();
 
   const output = aggregate(
     [
       initializedEvent({
-        transitionDuration,
+        transitionDuration: 300,
       }),
       registeredEvent({
         activityName: "sample",
@@ -283,10 +303,10 @@ test("aggregate - 푸시한 이후 InitializedEvent에서 셋팅된 transitionDu
       makeEvent("Pushed", {
         activityId: "a1",
         activityName: "sample",
-        eventDate,
+        eventDate: t - 300,
       }),
     ],
-    eventDate + transitionDuration,
+    t,
   );
 
   expect(output).toStrictEqual({
@@ -302,7 +322,7 @@ test("aggregate - 푸시한 이후 InitializedEvent에서 셋팅된 transitionDu
 });
 
 test("aggregate - 여러번 푸시한 경우, transitionDuration 전에 푸시한 Activity의 transition.state는 enter-done, 그 이후 푸시한 Activity는 enter-active 입니다", () => {
-  const nowTime = nowDate().getTime();
+  const t = nowTime();
 
   const output = aggregate(
     [
@@ -315,15 +335,15 @@ test("aggregate - 여러번 푸시한 경우, transitionDuration 전에 푸시�
       makeEvent("Pushed", {
         activityId: "a1",
         activityName: "sample",
-        eventDate: nowTime - 350,
+        eventDate: t - 350,
       }),
       makeEvent("Pushed", {
         activityId: "a2",
         activityName: "sample",
-        eventDate: nowTime - 150,
+        eventDate: t - 150,
       }),
     ],
-    nowTime,
+    t,
   );
 
   expect(output).toStrictEqual({
@@ -343,7 +363,7 @@ test("aggregate - 여러번 푸시한 경우, transitionDuration 전에 푸시�
   });
 });
 
-test("aggregate - Pop하면 최상위 Activity가 스택에서 제외됩니다", () => {
+test("aggregate - Pop하면 최상위 Activity가 exit-done 상태가 됩니다", () => {
   const output = aggregate(
     [
       initializedEvent({
@@ -355,14 +375,18 @@ test("aggregate - Pop하면 최상위 Activity가 스택에서 제외됩니다",
       makeEvent("Pushed", {
         activityId: "a1",
         activityName: "home",
+        eventDate: enoughPastTime(),
       }),
       makeEvent("Pushed", {
         activityId: "a2",
         activityName: "home",
+        eventDate: enoughPastTime(),
       }),
-      makeEvent("Popped", {}),
+      makeEvent("Popped", {
+        eventDate: enoughPastTime(),
+      }),
     ],
-    enoughNextDate().getTime(),
+    nowTime(),
   );
 
   expect(output).toStrictEqual({
@@ -372,12 +396,17 @@ test("aggregate - Pop하면 최상위 Activity가 스택에서 제외됩니다",
         activityName: "home",
         transitionState: "enter-done",
       },
+      {
+        activityId: "a2",
+        activityName: "home",
+        transitionState: "exit-done",
+      },
     ],
     globalTransitionState: "idle",
   });
 });
 
-test("aggregate - Pop을 여러번하면 차례대로 삭제됩니다", () => {
+test("aggregate - Pop을 여러번하면 차례대로 exit-done 상태가 됩니다", () => {
   const initEvents = [
     initializedEvent({
       transitionDuration: 300,
@@ -388,20 +417,28 @@ test("aggregate - Pop을 여러번하면 차례대로 삭제됩니다", () => {
     makeEvent("Pushed", {
       activityId: "a1",
       activityName: "home",
+      eventDate: enoughPastTime(),
     }),
     makeEvent("Pushed", {
       activityId: "a2",
       activityName: "home",
+      eventDate: enoughPastTime(),
     }),
     makeEvent("Pushed", {
       activityId: "a3",
       activityName: "home",
+      eventDate: enoughPastTime(),
     }),
   ];
 
   const o1 = aggregate(
-    [...initEvents, makeEvent("Popped", {})],
-    enoughNextDate().getTime(),
+    [
+      ...initEvents,
+      makeEvent("Popped", {
+        eventDate: enoughPastTime(),
+      }),
+    ],
+    nowTime(),
   );
 
   expect(o1).toStrictEqual({
@@ -416,13 +453,26 @@ test("aggregate - Pop을 여러번하면 차례대로 삭제됩니다", () => {
         activityName: "home",
         transitionState: "enter-done",
       },
+      {
+        activityId: "a3",
+        activityName: "home",
+        transitionState: "exit-done",
+      },
     ],
     globalTransitionState: "idle",
   });
 
   const o2 = aggregate(
-    [...initEvents, makeEvent("Popped", {}), makeEvent("Popped", {})],
-    enoughNextDate().getTime(),
+    [
+      ...initEvents,
+      makeEvent("Popped", {
+        eventDate: enoughPastTime(),
+      }),
+      makeEvent("Popped", {
+        eventDate: enoughPastTime(),
+      }),
+    ],
+    nowTime(),
   );
 
   expect(o2).toStrictEqual({
@@ -432,6 +482,16 @@ test("aggregate - Pop을 여러번하면 차례대로 삭제됩니다", () => {
         activityName: "home",
         transitionState: "enter-done",
       },
+      {
+        activityId: "a2",
+        activityName: "home",
+        transitionState: "exit-done",
+      },
+      {
+        activityId: "a3",
+        activityName: "home",
+        transitionState: "exit-done",
+      },
     ],
     globalTransitionState: "idle",
   });
@@ -439,20 +499,42 @@ test("aggregate - Pop을 여러번하면 차례대로 삭제됩니다", () => {
   const o3 = aggregate(
     [
       ...initEvents,
-      makeEvent("Popped", {}),
-      makeEvent("Popped", {}),
-      makeEvent("Popped", {}),
+      makeEvent("Popped", {
+        eventDate: enoughPastTime(),
+      }),
+      makeEvent("Popped", {
+        eventDate: enoughPastTime(),
+      }),
+      makeEvent("Popped", {
+        eventDate: enoughPastTime(),
+      }),
     ],
-    enoughNextDate().getTime(),
+    nowTime(),
   );
 
   expect(o3).toStrictEqual({
-    activities: [],
+    activities: [
+      {
+        activityId: "a1",
+        activityName: "home",
+        transitionState: "exit-done",
+      },
+      {
+        activityId: "a2",
+        activityName: "home",
+        transitionState: "exit-done",
+      },
+      {
+        activityId: "a3",
+        activityName: "home",
+        transitionState: "exit-done",
+      },
+    ],
     globalTransitionState: "idle",
   });
 });
 
-test("aggregate - 현재 스택의 Activity를 초과해 Pop하면 빈 스택을 유지합니다", () => {
+test("aggregate - 현재 스택의 Activity를 초과해 Pop하면 Activity에 영향이 없습니다", () => {
   const output = aggregate(
     [
       initializedEvent({
@@ -464,15 +546,61 @@ test("aggregate - 현재 스택의 Activity를 초과해 Pop하면 빈 스택을
       makeEvent("Pushed", {
         activityId: "a1",
         activityName: "home",
+        eventDate: enoughPastTime(),
       }),
-      makeEvent("Popped", {}),
-      makeEvent("Popped", {}),
+      makeEvent("Popped", {
+        eventDate: enoughPastTime(),
+      }),
+      makeEvent("Popped", {
+        eventDate: enoughPastTime(),
+      }),
     ],
-    enoughNextDate().getTime(),
+    nowTime(),
   );
 
   expect(output).toStrictEqual({
-    activities: [],
+    activities: [
+      {
+        activityId: "a1",
+        activityName: "home",
+        transitionState: "exit-done",
+      },
+    ],
     globalTransitionState: "idle",
+  });
+});
+
+test("aggregate - transitionDuration 이전에 Pop을 한 경우 exit-active 상태입니다", () => {
+  const t = nowTime();
+
+  const output = aggregate(
+    [
+      initializedEvent({
+        transitionDuration: 300,
+      }),
+      registeredEvent({
+        activityName: "home",
+      }),
+      makeEvent("Pushed", {
+        activityId: "a1",
+        activityName: "home",
+        eventDate: enoughPastTime(),
+      }),
+      makeEvent("Popped", {
+        eventDate: t - 150,
+      }),
+    ],
+    t,
+  );
+
+  expect(output).toStrictEqual({
+    activities: [
+      {
+        activityId: "a1",
+        activityName: "home",
+        transitionState: "exit-active",
+      },
+    ],
+    globalTransitionState: "loading",
   });
 });
