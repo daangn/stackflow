@@ -1,13 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 
-import App from "./App";
-import { CoreProvider } from "./core";
+import { Stack } from "./stackflow";
 
 const root = ReactDOM.createRoot(document.getElementById("root")!);
 
-root.render(
-  <CoreProvider>
-    <App />
-  </CoreProvider>,
-);
+root.render(<Stack />);

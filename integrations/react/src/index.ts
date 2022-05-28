@@ -1,1 +1,1 @@
-export * from "./makeCore";
+export * from "./makeStackflow";
