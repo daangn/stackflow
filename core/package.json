@@ -24,6 +24,10 @@
     "test:watch": "jest --watch"
   },
   "jest": {
+    "coveragePathIgnorePatterns": [
+      "index.ts",
+      "index.tsx"
+    ],
     "transform": {
       "^.+\\.(t|j)sx?$": "@swc/jest"
     }
