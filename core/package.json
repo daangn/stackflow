@@ -32,8 +32,7 @@
     }
   },
   "dependencies": {
-    "kuuid": "^0.6.0",
-    "lodash": "^4.17.21"
+    "kuuid": "^0.6.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.17.6",

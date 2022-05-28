@@ -3,11 +3,10 @@ import {
   ActivityTransitionState,
   AggregateOutput,
 } from "./AggregateOutput";
-import { Event } from "./events";
-import { filterEvents } from "./filterEvents";
-import { validateEvents } from "./validateEvents";
+import { DomainEvent } from "./event-types";
+import { filterEvents, validateEvents } from "./event-utils";
 
-export function aggregate(events: Event[], now: number): AggregateOutput {
+export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
   validateEvents(events);
 
   const initEvent = filterEvents(events, "Initialized")[0];

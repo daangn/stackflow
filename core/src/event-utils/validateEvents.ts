@@ -1,11 +1,11 @@
-import { Event, PushedEvent } from "./events";
+import { DomainEvent, PushedEvent } from "../event-types";
+import { uniqBy } from "../utils";
 import { filterEvents } from "./filterEvents";
-import { uniqBy } from "./uniqBy";
 
 const isActivityIdDuplicated = (pushedEvents: PushedEvent[]) =>
   uniqBy(pushedEvents, (e) => e.activityId).length !== pushedEvents.length;
 
-export function validateEvents(events: Event[]) {
+export function validateEvents(events: DomainEvent[]) {
   if (events.length === 0) {
     throw new Error("events parameter is empty");
   }

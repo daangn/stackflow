@@ -1,14 +1,14 @@
-import { event } from "./event";
 import { filterEvents } from "./filterEvents";
+import { makeEvent } from "./makeEvent";
 
 const initializedEvent = (id: string) =>
-  event("Initialized", {
+  makeEvent("Initialized", {
     transitionDuration: 300,
     id,
   });
 
 const pushedEvent = (id: string) =>
-  event("Pushed", {
+  makeEvent("Pushed", {
     activityId: "1",
     activityName: "2",
     id,

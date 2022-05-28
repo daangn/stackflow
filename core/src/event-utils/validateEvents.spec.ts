@@ -1,14 +1,14 @@
-import { event } from "./event";
+import { makeEvent } from "./makeEvent";
 import { validateEvents } from "./validateEvents";
 
 const initializedEvent = ({
   transitionDuration,
 }: {
   transitionDuration: number;
-}) => event("Initialized", { transitionDuration });
+}) => makeEvent("Initialized", { transitionDuration });
 
 const registeredEvent = ({ activityName }: { activityName: string }) =>
-  event("ActivityRegistered", {
+  makeEvent("ActivityRegistered", {
     activityName,
   });
 
@@ -46,7 +46,7 @@ test("validateEvents - 푸시했는데 해당 액티비티가 없는 경우 thro
       registeredEvent({
         activityName: "home",
       }),
-      event("Pushed", {
+      makeEvent("Pushed", {
         activityId: "a1",
         activityName: "sample",
       }),

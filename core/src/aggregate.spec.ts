@@ -1,5 +1,5 @@
 import { aggregate } from "./aggregate";
-import { event } from "./event";
+import { makeEvent } from "./event-utils";
 
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
@@ -11,10 +11,10 @@ const initializedEvent = ({
   transitionDuration,
 }: {
   transitionDuration: number;
-}) => event("Initialized", { transitionDuration });
+}) => makeEvent("Initialized", { transitionDuration });
 
 const registeredEvent = ({ activityName }: { activityName: string }) =>
-  event("ActivityRegistered", {
+  makeEvent("ActivityRegistered", {
     activityName,
   });
 
@@ -36,54 +36,6 @@ test("aggregate - 만약에 InitializedEvent만 존재하는 경우, 빈 스택�
   });
 });
 
-test("aggregate - 만약에 events 파라미터가 비어있는 경우 throw 합니다", () => {
-  expect(() => {
-    aggregate([], enoughNextDate().getTime());
-  }).toThrow();
-});
-
-test("aggregate - InitializedEvent가 중복된 경우 throw 합니다", () => {
-  expect(() => {
-    aggregate(
-      [
-        initializedEvent({
-          transitionDuration: 300,
-        }),
-        initializedEvent({
-          transitionDuration: 300,
-        }),
-      ],
-      enoughNextDate().getTime(),
-    );
-  }).toThrow();
-});
-
-test("aggregate - 빈 배열을 전달하는 경우 throw 합니다", () => {
-  expect(() => {
-    aggregate([], enoughNextDate().getTime());
-  }).toThrow();
-});
-
-test("aggregate - 푸시했는데 해당 액티비티가 없는 경우 throw 합니다", () => {
-  expect(() => {
-    aggregate(
-      [
-        initializedEvent({
-          transitionDuration: 300,
-        }),
-        registeredEvent({
-          activityName: "home",
-        }),
-        event("Pushed", {
-          activityId: "a1",
-          activityName: "sample",
-        }),
-      ],
-      enoughNextDate().getTime(),
-    );
-  }).toThrow();
-});
-
 test("aggregate - 푸시하면 스택에 추가됩니다", () => {
   const output = aggregate(
     [
@@ -96,7 +48,7 @@ test("aggregate - 푸시하면 스택에 추가됩니다", () => {
       registeredEvent({
         activityName: "sample",
       }),
-      event("Pushed", {
+      makeEvent("Pushed", {
         activityId: "a1",
         activityName: "sample",
       }),
@@ -132,7 +84,7 @@ test("aggregate - PushedEvent에 activityId, activityName이 다른 경우 스�
       registeredEvent({
         activityName: "sample2",
       }),
-      event("Pushed", {
+      makeEvent("Pushed", {
         activityId: "a2",
         activityName: "sample2",
       }),
@@ -169,11 +121,11 @@ test("aggregate - 같은 activityId로 여러번 푸시되는 경우 throw 합�
         registeredEvent({
           activityName: "sample2",
         }),
-        event("Pushed", {
+        makeEvent("Pushed", {
           activityId: "a1",
           activityName: "sample2",
         }),
-        event("Pushed", {
+        makeEvent("Pushed", {
           activityId: "a1",
           activityName: "sample2",
         }),
@@ -195,11 +147,11 @@ test("aggregate - 다른 activityName으로 두번 푸시하면 스택에 정상
       registeredEvent({
         activityName: "sample2",
       }),
-      event("Pushed", {
+      makeEvent("Pushed", {
         activityId: "a1",
         activityName: "sample2",
       }),
-      event("Pushed", {
+      makeEvent("Pushed", {
         activityId: "a2",
         activityName: "home",
       }),
@@ -242,11 +194,11 @@ test("aggregate - 같은 activityName으로 두번 푸시하면 정상적으로 
       registeredEvent({
         activityName: "sample2",
       }),
-      event("Pushed", {
+      makeEvent("Pushed", {
         activityId: "a1",
         activityName: "sample2",
       }),
-      event("Pushed", {
+      makeEvent("Pushed", {
         activityId: "a2",
         activityName: "sample2",
       }),
@@ -286,7 +238,7 @@ test("aggregate - 푸시한 직후에는 transition.state가 loading 입니다",
       registeredEvent({
         activityName: "sample",
       }),
-      event("Pushed", {
+      makeEvent("Pushed", {
         activityId: "a1",
         activityName: "sample",
       }),
@@ -321,7 +273,7 @@ test("aggregate - 현재 시간과 변화된 시간의 차가 InitializedEvent�
       registeredEvent({
         activityName: "sample",
       }),
-      event("Pushed", {
+      makeEvent("Pushed", {
         activityId: "a1",
         activityName: "sample",
         eventDate: nowTime - 150,
@@ -358,7 +310,7 @@ test("aggregate - 푸시한 이후 InitializedEvent에서 셋팅된 transitionDu
       registeredEvent({
         activityName: "sample",
       }),
-      event("Pushed", {
+      makeEvent("Pushed", {
         activityId: "a1",
         activityName: "sample",
         eventDate,
@@ -394,12 +346,12 @@ test("aggregate - 여러번 푸시한 경우, transitionDuration 전에 푸시�
       registeredEvent({
         activityName: "sample",
       }),
-      event("Pushed", {
+      makeEvent("Pushed", {
         activityId: "a1",
         activityName: "sample",
         eventDate: nowTime - 350,
       }),
-      event("Pushed", {
+      makeEvent("Pushed", {
         activityId: "a2",
         activityName: "sample",
         eventDate: nowTime - 150,
