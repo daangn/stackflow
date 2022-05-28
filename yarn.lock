@@ -3071,7 +3071,7 @@ __metadata:
     dts-bundle-generator: ^6.8.0
     esbuild: ^0.14.37
     jest: ^28.1.0
-    kuuid: ^0.6.0
+    rimraf: ^3.0.2
     typescript: ^4.6.3
   languageName: unknown
   linkType: soft
@@ -8717,13 +8717,6 @@ __metadata:
   version: 4.1.4
   resolution: "kleur@npm:4.1.4"
   checksum: 7f6db36e378045dec14acd3cbf0b1e59130c09e984ee8b8ce56dd2d2257cfff90389c1e8f8b19bd09dd5d241080566a814b4ccd99fdcef91f59ef93ec33c8a44
-  languageName: node
-  linkType: hard
-
-"kuuid@npm:^0.6.0":
-  version: 0.6.0
-  resolution: "kuuid@npm:0.6.0"
-  checksum: 816574b459f3e81dc124b8fa48c848995d1a6e0507cb3e71897d3e4aa017e5f7f6a963d4f314bbdd757e16f41dcf2753470193131ffbb30e66bbc41c8126647e
   languageName: node
   linkType: hard
 

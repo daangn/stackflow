@@ -1,10 +1,9 @@
-import { PoppedEvent, PushedEvent } from "../dist";
 import {
   Activity,
   ActivityTransitionState,
   AggregateOutput,
 } from "./AggregateOutput";
-import { DomainEvent } from "./event-types";
+import { DomainEvent, PoppedEvent, PushedEvent } from "./event-types";
 import { filterEvents, validateEvents } from "./event-utils";
 
 export function aggregate(events: DomainEvent[], now: number): AggregateOutput {

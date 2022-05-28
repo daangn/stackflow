@@ -17,12 +17,10 @@
     "src"
   ],
   "scripts": {
-    "build": "concurrently \"yarn:build:*\"",
+    "build": "yarn clean && concurrently \"yarn:build:*\"",
     "build:bundle:dts": "dts-bundle-generator -o dist/index.d.ts src/index.ts",
     "build:bundle:js": "node ./esbuild.config.js",
-    "build:transpile:cjs": "babel src --env-name cjs --out-dir ./lib --extensions .ts,.tsx --out-file-extension .js --source-maps",
-    "build:transpile:dts": "tsc --emitDeclarationOnly",
-    "build:transpile:esm": "babel src --env-name esm --out-dir ./lib --extensions .ts,.tsx --out-file-extension .mjs --source-maps",
+    "clean": "rimraf dist",
     "test": "jest",
     "test:watch": "jest --watch"
   },
@@ -30,9 +28,6 @@
     "transform": {
       "^.+\\.(t|j)sx?$": "@swc/jest"
     }
-  },
-  "dependencies": {
-    "kuuid": "^0.6.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.17.6",
@@ -47,6 +42,7 @@
     "dts-bundle-generator": "^6.8.0",
     "esbuild": "^0.14.37",
     "jest": "^28.1.0",
+    "rimraf": "^3.0.2",
     "typescript": "^4.6.3"
   }
 }
