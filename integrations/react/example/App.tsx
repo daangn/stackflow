@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 
-import { useStackflowCore } from "../src/useStackflowCore";
+import { useCore } from "./core";
 
 let activityIdCnt = 0;
 
 const App: React.FC = () => {
-  const { aggregateOutput, dispatchEvent } = useStackflowCore();
+  const { aggregateOutput, dispatchEvent } = useCore();
 
   const [newActivityName, setNewActivityName] = useState("");
   const [registeredActivityNames, setRegisteredActivityNames] = useState<

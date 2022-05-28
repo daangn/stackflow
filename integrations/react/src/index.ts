@@ -1,2 +1,1 @@
-export * from "./StackflowCoreProvider";
-export * from "./useStackflowCore";
+export * from "./makeCore";
