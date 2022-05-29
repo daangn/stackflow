@@ -6,7 +6,8 @@
     "docs",
     "core",
     "integrations/*",
-    "packages/*"
+    "packages/*",
+    "plugins/*"
   ],
   "scripts": {
     "format": "eslint --fix --ignore-path .gitignore && prettier -w .",

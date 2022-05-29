@@ -2095,18 +2095,39 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/react@workspace:integrations/react":
+"@stackflow/react@workspace:^, @stackflow/react@workspace:integrations/react":
   version: 0.0.0-use.local
   resolution: "@stackflow/react@workspace:integrations/react"
   dependencies:
     "@stackflow/core": "workspace:^"
     "@types/react": ^18.0.9
     "@types/react-dom": ^18.0.5
+    concurrently: ^7.2.1
+    dts-bundle-generator: ^6.9.0
     react: ^18.1.0
     react-dom: ^18.1.0
     react-fast-compare: ^3.2.0
+    rimraf: ^3.0.2
     vite: ^2.9.9
   peerDependencies:
+    react: ">=16.8.0"
+  languageName: unknown
+  linkType: soft
+
+"@stackflow/seed-design@workspace:packages/seed-design":
+  version: 0.0.0-use.local
+  resolution: "@stackflow/seed-design@workspace:packages/seed-design"
+  dependencies:
+    "@stackflow/esbuild-config": "workspace:^"
+    "@stackflow/react": "workspace:^"
+    "@types/react": ^18.0.10
+    concurrently: ^7.2.1
+    dts-bundle-generator: ^6.9.0
+    react: ^18.1.0
+    rimraf: ^3.0.2
+  peerDependencies:
+    "@stackflow/react": "workspace:^"
+    "@types/react": ">=16.8.0"
     react: ">=16.8.0"
   languageName: unknown
   linkType: soft
@@ -2533,25 +2554,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:^18.0.9":
-  version: 18.0.9
-  resolution: "@types/react@npm:18.0.9"
+"@types/react@npm:*, @types/react@npm:>=16, @types/react@npm:^18.0.10, @types/react@npm:^18.0.9":
+  version: 18.0.10
+  resolution: "@types/react@npm:18.0.10"
   dependencies:
     "@types/prop-types": "*"
     "@types/scheduler": "*"
     csstype: ^3.0.2
-  checksum: 162364dad716d9017ee34aabf2ea37499709ebbdef70392ae1b39225985971e1a46f121efb9c5c7da92144ee1d96d4525df806a7c1c03a5db7fd31dd034ddc7a
-  languageName: node
-  linkType: hard
-
-"@types/react@npm:>=16":
-  version: 18.0.8
-  resolution: "@types/react@npm:18.0.8"
-  dependencies:
-    "@types/prop-types": "*"
-    "@types/scheduler": "*"
-    csstype: ^3.0.2
-  checksum: 12d0e6bc390709926d8eaeb7d2edb4ef9c9fbe8eac41cb0619d958386700547bff91c880c2a12a9eb1e0d09afa4f1e86fd1b93164c627824465b72123f149f3b
+  checksum: 333c99bd46cc2190ec6f6e4f3fa6cdee07e1d4d028fb2bd895d3927d9de6e86ede57befdc79d9acbfb7b1c058091bf3b38b8de3703f83e0f8cd8d15d7457b3d8
   languageName: node
   linkType: hard
 
@@ -3845,21 +3855,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"concurrently@npm:^7.1.0":
-  version: 7.1.0
-  resolution: "concurrently@npm:7.1.0"
+"concurrently@npm:^7.1.0, concurrently@npm:^7.2.1":
+  version: 7.2.1
+  resolution: "concurrently@npm:7.2.1"
   dependencies:
     chalk: ^4.1.0
     date-fns: ^2.16.1
     lodash: ^4.17.21
     rxjs: ^6.6.3
+    shell-quote: ^1.7.3
     spawn-command: ^0.0.2-1
     supports-color: ^8.1.0
     tree-kill: ^1.2.2
-    yargs: ^16.2.0
+    yargs: ^17.3.1
   bin:
     concurrently: dist/bin/concurrently.js
-  checksum: 723996afc73af7ea914a03726c75b63be6ce83f0825b0bc54de0568ba89490e217ca88523f251fe1e5c30ee2780572dce830b530ef35e435e64c1f94cfd4e4af
+  checksum: 384e9f48f2c53a7c46b1bb1143b9dba734953c587e0c080db0c6e71dd4a58f556d096fe4fd9d2d9c601ba7ae8e6c06d452c162bbc2b6a4b16c080c1c4b8e81b4
   languageName: node
   linkType: hard
 
@@ -4477,7 +4488,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dts-bundle-generator@npm:^6.8.0":
+"dts-bundle-generator@npm:^6.8.0, dts-bundle-generator@npm:^6.9.0":
   version: 6.9.0
   resolution: "dts-bundle-generator@npm:6.9.0"
   dependencies:
@@ -8988,16 +8999,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nanoid@npm:^3.1.30":
-  version: 3.3.3
-  resolution: "nanoid@npm:3.3.3"
-  bin:
-    nanoid: bin/nanoid.cjs
-  checksum: ada019402a07464a694553c61d2dca8a4353645a7d92f2830f0d487fedff403678a0bee5323a46522752b2eab95a0bc3da98b6cccaa7c0c55cd9975130e6d6f0
-  languageName: node
-  linkType: hard
-
-"nanoid@npm:^3.3.4":
+"nanoid@npm:^3.1.30, nanoid@npm:^3.3.4":
   version: 3.3.4
   resolution: "nanoid@npm:3.3.4"
   bin:
@@ -10981,6 +10983,13 @@ __metadata:
   version: 3.0.0
   resolution: "shebang-regex@npm:3.0.0"
   checksum: 1a2bcae50de99034fcd92ad4212d8e01eedf52c7ec7830eedcf886622804fe36884278f2be8be0ea5fde3fd1c23911643a4e0f726c8685b61871c8908af01222
+  languageName: node
+  linkType: hard
+
+"shell-quote@npm:^1.7.3":
+  version: 1.7.3
+  resolution: "shell-quote@npm:1.7.3"
+  checksum: aca58e73a3a5d933d02e0bdddedc53ee14f7c2ec264f97ac915b9d4482d077a38e422aa664631d60a672cd3cdb4054eb2e6c0303f54882453dacb6483e482d34
   languageName: node
   linkType: hard
 

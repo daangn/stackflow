@@ -1,5 +1,5 @@
 {
-  "name": "@stackflow/react",
+  "name": "@stackflow/seed-design",
   "version": "1.0.0",
   "license": "Apache-2.0",
   "exports": {
@@ -19,26 +19,20 @@
     "build": "yarn clean && concurrently \"yarn:build:*\"",
     "build:bundle:dts": "dts-bundle-generator -o dist/index.d.ts src/index.ts",
     "build:bundle:js": "node ./esbuild.config.js",
-    "clean": "rimraf dist",
-    "example:start": "vite",
-    "test": "jest",
-    "test:watch": "jest --watch"
-  },
-  "dependencies": {
-    "@stackflow/core": "workspace:^",
-    "react-fast-compare": "^3.2.0"
+    "clean": "rimraf dist"
   },
   "devDependencies": {
-    "@types/react": "^18.0.9",
-    "@types/react-dom": "^18.0.5",
+    "@stackflow/esbuild-config": "workspace:^",
+    "@stackflow/react": "workspace:^",
+    "@types/react": "^18.0.10",
     "concurrently": "^7.2.1",
     "dts-bundle-generator": "^6.9.0",
     "react": "^18.1.0",
-    "react-dom": "^18.1.0",
-    "rimraf": "^3.0.2",
-    "vite": "^2.9.9"
+    "rimraf": "^3.0.2"
   },
   "peerDependencies": {
+    "@stackflow/react": "workspace:^",
+    "@types/react": ">=16.8.0",
     "react": ">=16.8.0"
   }
 }

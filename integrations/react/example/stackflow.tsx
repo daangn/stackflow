@@ -1,26 +1,27 @@
 import React from "react";
 
-import { makeStackflow } from "../src";
+import { stackflow, StackflowPlugin } from "../src";
 import Hello from "./Hello";
 
-export const { Stack, useFlow } = makeStackflow({
+function examplePlugin(): StackflowPlugin {
+  return {
+    id: new Date().getTime().toString(),
+    render({ activities }) {
+      return (
+        <div>
+          {activities.map((activity) => (
+            <div key={activity.key}>{activity.render()}</div>
+          ))}
+        </div>
+      );
+    },
+  };
+}
+
+export const { Stack, useFlow } = stackflow({
   transitionDuration: 300,
   activities: {
     Hello,
   },
-  initialActivity: () => "Hello",
-  plugins: [
-    {
-      id: "123",
-      render({ activities }) {
-        return (
-          <div>
-            {activities.map((activity) => (
-              <div key={activity.id}>{activity.render()}</div>
-            ))}
-          </div>
-        );
-      },
-    },
-  ],
+  plugins: [examplePlugin()],
 });
