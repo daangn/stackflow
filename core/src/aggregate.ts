@@ -10,11 +10,6 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
   validateEvents(events);
 
   const initEvent = filterEvents(events, "Initialized")[0];
-  const activityRegisteredEvents = filterEvents(events, "ActivityRegistered");
-
-  const registeredActivityNames = activityRegisteredEvents.map(
-    (e) => e.activityName,
-  );
 
   type ActivityMetadata = {
     pushedBy: PushedEvent;
@@ -27,20 +22,20 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
     }
   > = [];
 
-  events.forEach((e) => {
-    switch (e.name) {
+  events.forEach((event) => {
+    switch (event.name) {
       case "Pushed": {
         const transitionState: ActivityTransitionState =
-          now - e.eventDate >= initEvent.transitionDuration
+          now - event.eventDate >= initEvent.transitionDuration
             ? "enter-done"
             : "enter-active";
 
         activities.push({
-          activityId: e.activityId,
-          activityName: e.activityName,
+          id: event.activityId,
+          name: event.activityName,
           transitionState,
           metadata: {
-            pushedBy: e,
+            pushedBy: event,
             poppedBy: null,
           },
         });
@@ -60,11 +55,11 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
         }
 
         const transitionState: ActivityTransitionState =
-          now - e.eventDate >= initEvent.transitionDuration
+          now - event.eventDate >= initEvent.transitionDuration
             ? "exit-done"
             : "exit-active";
 
-        targetActivity.metadata.poppedBy = e;
+        targetActivity.metadata.poppedBy = event;
         targetActivity.transitionState = transitionState;
 
         break;
@@ -85,8 +80,8 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
 
   return {
     activities: activities.map((a) => ({
-      activityId: a.activityId,
-      activityName: a.activityName,
+      id: a.id,
+      name: a.name,
       transitionState: a.transitionState,
     })),
     globalTransitionState,

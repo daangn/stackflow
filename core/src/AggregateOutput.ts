@@ -5,8 +5,8 @@ export type ActivityTransitionState =
   | "exit-done";
 
 export type Activity = {
-  activityId: string;
-  activityName: string;
+  id: string;
+  name: string;
   transitionState: ActivityTransitionState;
 };
 

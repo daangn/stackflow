@@ -68,8 +68,8 @@ test("aggregate - 푸시하면 스택에 추가됩니다", () => {
   expect(output).toStrictEqual({
     activities: [
       {
-        activityId: "a1",
-        activityName: "sample",
+        id: "a1",
+        name: "sample",
         transitionState: "enter-done",
       },
     ],
@@ -101,8 +101,8 @@ test("aggregate - PushedEvent에 activityId, activityName이 다른 경우 스�
   expect(output).toStrictEqual({
     activities: [
       {
-        activityId: "a2",
-        activityName: "sample2",
+        id: "a2",
+        name: "sample2",
         transitionState: "enter-done",
       },
     ],
@@ -168,13 +168,13 @@ test("aggregate - 다른 activityName으로 두번 푸시하면 스택에 정상
   expect(output).toStrictEqual({
     activities: [
       {
-        activityId: "a1",
-        activityName: "sample2",
+        id: "a1",
+        name: "sample2",
         transitionState: "enter-done",
       },
       {
-        activityId: "a2",
-        activityName: "home",
+        id: "a2",
+        name: "home",
         transitionState: "enter-done",
       },
     ],
@@ -211,13 +211,13 @@ test("aggregate - 같은 activityName으로 두번 푸시하면 정상적으로 
   expect(output).toStrictEqual({
     activities: [
       {
-        activityId: "a1",
-        activityName: "sample2",
+        id: "a1",
+        name: "sample2",
         transitionState: "enter-done",
       },
       {
-        activityId: "a2",
-        activityName: "sample2",
+        id: "a2",
+        name: "sample2",
         transitionState: "enter-done",
       },
     ],
@@ -248,8 +248,8 @@ test("aggregate - 푸시한 직후에는 transition.state가 loading 입니다",
   expect(output).toStrictEqual({
     activities: [
       {
-        activityId: "a1",
-        activityName: "sample",
+        id: "a1",
+        name: "sample",
         transitionState: "enter-active",
       },
     ],
@@ -280,8 +280,8 @@ test("aggregate - 현재 시간과 변화된 시간의 차가 InitializedEvent�
   expect(output).toStrictEqual({
     activities: [
       {
-        activityId: "a1",
-        activityName: "sample",
+        id: "a1",
+        name: "sample",
         transitionState: "enter-active",
       },
     ],
@@ -312,8 +312,8 @@ test("aggregate - 푸시한 이후 InitializedEvent에서 셋팅된 transitionDu
   expect(output).toStrictEqual({
     activities: [
       {
-        activityId: "a1",
-        activityName: "sample",
+        id: "a1",
+        name: "sample",
         transitionState: "enter-done",
       },
     ],
@@ -349,13 +349,13 @@ test("aggregate - 여러번 푸시한 경우, transitionDuration 전에 푸시�
   expect(output).toStrictEqual({
     activities: [
       {
-        activityId: "a1",
-        activityName: "sample",
+        id: "a1",
+        name: "sample",
         transitionState: "enter-done",
       },
       {
-        activityId: "a2",
-        activityName: "sample",
+        id: "a2",
+        name: "sample",
         transitionState: "enter-active",
       },
     ],
@@ -392,13 +392,13 @@ test("aggregate - Pop하면 최상위 Activity가 exit-done 상태가 됩니다"
   expect(output).toStrictEqual({
     activities: [
       {
-        activityId: "a1",
-        activityName: "home",
+        id: "a1",
+        name: "home",
         transitionState: "enter-done",
       },
       {
-        activityId: "a2",
-        activityName: "home",
+        id: "a2",
+        name: "home",
         transitionState: "exit-done",
       },
     ],
@@ -444,18 +444,18 @@ test("aggregate - Pop을 여러번하면 차례대로 exit-done 상태가 됩니
   expect(o1).toStrictEqual({
     activities: [
       {
-        activityId: "a1",
-        activityName: "home",
+        id: "a1",
+        name: "home",
         transitionState: "enter-done",
       },
       {
-        activityId: "a2",
-        activityName: "home",
+        id: "a2",
+        name: "home",
         transitionState: "enter-done",
       },
       {
-        activityId: "a3",
-        activityName: "home",
+        id: "a3",
+        name: "home",
         transitionState: "exit-done",
       },
     ],
@@ -478,18 +478,18 @@ test("aggregate - Pop을 여러번하면 차례대로 exit-done 상태가 됩니
   expect(o2).toStrictEqual({
     activities: [
       {
-        activityId: "a1",
-        activityName: "home",
+        id: "a1",
+        name: "home",
         transitionState: "enter-done",
       },
       {
-        activityId: "a2",
-        activityName: "home",
+        id: "a2",
+        name: "home",
         transitionState: "exit-done",
       },
       {
-        activityId: "a3",
-        activityName: "home",
+        id: "a3",
+        name: "home",
         transitionState: "exit-done",
       },
     ],
@@ -515,18 +515,18 @@ test("aggregate - Pop을 여러번하면 차례대로 exit-done 상태가 됩니
   expect(o3).toStrictEqual({
     activities: [
       {
-        activityId: "a1",
-        activityName: "home",
+        id: "a1",
+        name: "home",
         transitionState: "exit-done",
       },
       {
-        activityId: "a2",
-        activityName: "home",
+        id: "a2",
+        name: "home",
         transitionState: "exit-done",
       },
       {
-        activityId: "a3",
-        activityName: "home",
+        id: "a3",
+        name: "home",
         transitionState: "exit-done",
       },
     ],
@@ -561,8 +561,8 @@ test("aggregate - 현재 스택의 Activity를 초과해 Pop하면 Activity에 �
   expect(output).toStrictEqual({
     activities: [
       {
-        activityId: "a1",
-        activityName: "home",
+        id: "a1",
+        name: "home",
         transitionState: "exit-done",
       },
     ],
@@ -596,8 +596,8 @@ test("aggregate - transitionDuration 이전에 Pop을 한 경우 exit-active 상
   expect(output).toStrictEqual({
     activities: [
       {
-        activityId: "a1",
-        activityName: "home",
+        id: "a1",
+        name: "home",
         transitionState: "exit-active",
       },
     ],
