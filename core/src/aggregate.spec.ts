@@ -363,7 +363,7 @@ test("aggregate - 여러번 푸시한 경우, transitionDuration 전에 푸시�
   });
 });
 
-test("aggregate - Pop하면 최상위 Activity가 exit-done 상태가 됩니다", () => {
+test("aggregate - Pop하면 최상단에 존재하는 Activity가 exit-done 상태가 됩니다", () => {
   const output = aggregate(
     [
       initializedEvent({
@@ -495,8 +495,55 @@ test("aggregate - Pop을 여러번하면 차례대로 exit-done 상태가 됩니
     ],
     globalTransitionState: "idle",
   });
+});
 
-  const o3 = aggregate(
+test("aggregate - 가장 바닥에 있는 Activity는 Pop 되지 않습니다", () => {
+  const initEvents = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+    registeredEvent({
+      activityName: "home",
+    }),
+    makeEvent("Pushed", {
+      activityId: "a1",
+      activityName: "home",
+      eventDate: enoughPastTime(),
+    }),
+    makeEvent("Pushed", {
+      activityId: "a2",
+      activityName: "home",
+      eventDate: enoughPastTime(),
+    }),
+  ];
+
+  const output1 = aggregate(
+    [
+      ...initEvents,
+      makeEvent("Popped", {
+        eventDate: enoughPastTime(),
+      }),
+    ],
+    nowTime(),
+  );
+
+  expect(output1).toStrictEqual({
+    activities: [
+      {
+        id: "a1",
+        name: "home",
+        transitionState: "enter-done",
+      },
+      {
+        id: "a2",
+        name: "home",
+        transitionState: "exit-done",
+      },
+    ],
+    globalTransitionState: "idle",
+  });
+
+  const output2 = aggregate(
     [
       ...initEvents,
       makeEvent("Popped", {
@@ -505,63 +552,19 @@ test("aggregate - Pop을 여러번하면 차례대로 exit-done 상태가 됩니
       makeEvent("Popped", {
         eventDate: enoughPastTime(),
       }),
-      makeEvent("Popped", {
-        eventDate: enoughPastTime(),
-      }),
     ],
     nowTime(),
   );
 
-  expect(o3).toStrictEqual({
+  expect(output2).toStrictEqual({
     activities: [
       {
         id: "a1",
         name: "home",
-        transitionState: "exit-done",
+        transitionState: "enter-done",
       },
       {
         id: "a2",
-        name: "home",
-        transitionState: "exit-done",
-      },
-      {
-        id: "a3",
-        name: "home",
-        transitionState: "exit-done",
-      },
-    ],
-    globalTransitionState: "idle",
-  });
-});
-
-test("aggregate - 현재 스택의 Activity를 초과해 Pop하면 Activity에 영향이 없습니다", () => {
-  const output = aggregate(
-    [
-      initializedEvent({
-        transitionDuration: 300,
-      }),
-      registeredEvent({
-        activityName: "home",
-      }),
-      makeEvent("Pushed", {
-        activityId: "a1",
-        activityName: "home",
-        eventDate: enoughPastTime(),
-      }),
-      makeEvent("Popped", {
-        eventDate: enoughPastTime(),
-      }),
-      makeEvent("Popped", {
-        eventDate: enoughPastTime(),
-      }),
-    ],
-    nowTime(),
-  );
-
-  expect(output).toStrictEqual({
-    activities: [
-      {
-        id: "a1",
         name: "home",
         transitionState: "exit-done",
       },
@@ -586,6 +589,11 @@ test("aggregate - transitionDuration 이전에 Pop을 한 경우 exit-active 상
         activityName: "home",
         eventDate: enoughPastTime(),
       }),
+      makeEvent("Pushed", {
+        activityId: "a2",
+        activityName: "home",
+        eventDate: enoughPastTime(),
+      }),
       makeEvent("Popped", {
         eventDate: t - 150,
       }),
@@ -597,6 +605,11 @@ test("aggregate - transitionDuration 이전에 Pop을 한 경우 exit-active 상
     activities: [
       {
         id: "a1",
+        name: "home",
+        transitionState: "enter-done",
+      },
+      {
+        id: "a2",
         name: "home",
         transitionState: "exit-active",
       },

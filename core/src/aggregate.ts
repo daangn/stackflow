@@ -44,6 +44,7 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
       }
       case "Popped": {
         const targetActivity = activities
+          .filter((_, i) => i > 0)
           .filter((a) => a.metadata.poppedBy === null)
           .sort(
             (a, b) =>
