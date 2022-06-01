@@ -1,6 +1,6 @@
+import { useActivity } from "@stackflow/react";
 import React from "react";
 
-import { useActivity } from "../src";
 import { useFlow } from "./stackflow";
 
 const Hello: React.FC = () => {

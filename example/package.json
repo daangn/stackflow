@@ -1,0 +1,14 @@
+{
+  "name": "@stackflow/example",
+  "private": true,
+  "scripts": {
+    "dev": "vite"
+  },
+  "dependencies": {
+    "@stackflow/core": "workspace:^",
+    "@stackflow/plugin-render": "workspace:^",
+    "@stackflow/seed-design": "workspace:^",
+    "vite": "^2.9.9"
+  },
+  "packageManager": "yarn@3.2.0"
+}

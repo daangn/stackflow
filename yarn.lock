@@ -2075,6 +2075,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@stackflow/example@workspace:example":
+  version: 0.0.0-use.local
+  resolution: "@stackflow/example@workspace:example"
+  dependencies:
+    "@stackflow/core": "workspace:^"
+    "@stackflow/plugin-render": "workspace:^"
+    "@stackflow/seed-design": "workspace:^"
+    vite: ^2.9.9
+  languageName: unknown
+  linkType: soft
+
 "@stackflow/monorepo@workspace:.":
   version: 0.0.0-use.local
   resolution: "@stackflow/monorepo@workspace:."
@@ -2095,7 +2106,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/plugin-render@workspace:plugins/render":
+"@stackflow/plugin-render@workspace:^, @stackflow/plugin-render@workspace:plugins/render":
   version: 0.0.0-use.local
   resolution: "@stackflow/plugin-render@workspace:plugins/render"
   dependencies:
@@ -2126,13 +2137,12 @@ __metadata:
     react-dom: ^18.1.0
     react-fast-compare: ^3.2.0
     rimraf: ^3.0.2
-    vite: ^2.9.9
   peerDependencies:
     react: ">=16.8.0"
   languageName: unknown
   linkType: soft
 
-"@stackflow/seed-design@workspace:packages/seed-design":
+"@stackflow/seed-design@workspace:^, @stackflow/seed-design@workspace:packages/seed-design":
   version: 0.0.0-use.local
   resolution: "@stackflow/seed-design@workspace:packages/seed-design"
   dependencies:
