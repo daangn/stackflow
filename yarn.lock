@@ -2095,6 +2095,24 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@stackflow/plugin-render@workspace:plugins/render":
+  version: 0.0.0-use.local
+  resolution: "@stackflow/plugin-render@workspace:plugins/render"
+  dependencies:
+    "@stackflow/esbuild-config": "workspace:^"
+    "@stackflow/react": "workspace:^"
+    "@types/react": ^18.0.10
+    concurrently: ^7.2.1
+    dts-bundle-generator: ^6.9.0
+    react: ^18.1.0
+    rimraf: ^3.0.2
+  peerDependencies:
+    "@stackflow/react": "workspace:^"
+    "@types/react": ">=16.8.0"
+    react: ">=16.8.0"
+  languageName: unknown
+  linkType: soft
+
 "@stackflow/react@workspace:^, @stackflow/react@workspace:integrations/react":
   version: 0.0.0-use.local
   resolution: "@stackflow/react@workspace:integrations/react"

@@ -1,0 +1,38 @@
+{
+  "name": "@stackflow/plugin-render",
+  "version": "1.0.0",
+  "license": "Apache-2.0",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "yarn clean && concurrently \"yarn:build:*\"",
+    "build:bundle:dts": "dts-bundle-generator -o dist/index.d.ts src/index.ts",
+    "build:bundle:js": "node ./esbuild.config.js",
+    "clean": "rimraf dist"
+  },
+  "devDependencies": {
+    "@stackflow/esbuild-config": "workspace:^",
+    "@stackflow/react": "workspace:^",
+    "@types/react": "^18.0.10",
+    "concurrently": "^7.2.1",
+    "dts-bundle-generator": "^6.9.0",
+    "react": "^18.1.0",
+    "rimraf": "^3.0.2"
+  },
+  "peerDependencies": {
+    "@stackflow/react": "workspace:^",
+    "@types/react": ">=16.8.0",
+    "react": ">=16.8.0"
+  }
+}
