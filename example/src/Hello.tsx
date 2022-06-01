@@ -1,4 +1,5 @@
 import { useActivity } from "@stackflow/react";
+import { CupertinoAppScreen } from "@stackflow/seed-design";
 import React from "react";
 
 import { useFlow } from "./stackflow";
@@ -6,18 +7,12 @@ import { useFlow } from "./stackflow";
 const Hello: React.FC = () => {
   const { push, pop } = useFlow();
   const { state } = useActivity();
+  console.log(state);
 
   return (
-    <div>
-      Hello, World!
-      {state.transitionState}
-      <button type="button" onClick={() => push("Hello")}>
-        go
-      </button>
-      <button type="button" onClick={() => pop()}>
-        back
-      </button>
-    </div>
+    <CupertinoAppScreen>
+      <div>Hello, World!</div>
+    </CupertinoAppScreen>
   );
 };
 

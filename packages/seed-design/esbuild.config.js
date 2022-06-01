@@ -5,6 +5,8 @@ Promise.all([
   build({
     ...config({}),
     format: "cjs",
+    external: ["@stackflow/react", "react"],
+    minify: true,
   }),
   build({
     ...config({}),
@@ -12,5 +14,7 @@ Promise.all([
     outExtension: {
       ".js": ".mjs",
     },
+    external: ["@stackflow/react", "react"],
+    minify: true,
   }),
 ]).catch(() => process.exit(1));

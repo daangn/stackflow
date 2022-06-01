@@ -355,12 +355,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.10.2, @babel/runtime@npm:^7.10.5, @babel/runtime@npm:^7.14.6, @babel/runtime@npm:^7.16.3":
-  version: 7.17.9
-  resolution: "@babel/runtime@npm:7.17.9"
+"@babel/runtime@npm:^7.10.2, @babel/runtime@npm:^7.10.5, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.14.6, @babel/runtime@npm:^7.16.3":
+  version: 7.18.3
+  resolution: "@babel/runtime@npm:7.18.3"
   dependencies:
     regenerator-runtime: ^0.13.4
-  checksum: 4d56bdb82890f386d5a57c40ef985a0ed7f0a78f789377a2d0c3e8826819e0f7f16ba0fe906d9b2241c5f7ca56630ef0653f5bb99f03771f7b87ff8af4bf5fe3
+  checksum: db8526226aa02cfa35a5a7ac1a34b5f303c62a1f000c7db48cb06c6290e616483e5036ab3c4e7a84d0f3be6d4e2148d5fe5cec9564bf955f505c3e764b83d7f1
   languageName: node
   linkType: hard
 
@@ -2084,6 +2084,7 @@ __metadata:
     "@stackflow/seed-design": "workspace:^"
     "@types/react": ^18.0.10
     "@types/react-dom": ^18.0.5
+    normalize.css: ^8.0.1
     react: ^18.1.0
     react-dom: ^18.1.0
     vite: ^2.9.9
@@ -2151,6 +2152,8 @@ __metadata:
     "@stackflow/esbuild-config": "workspace:^"
     "@stackflow/react": "workspace:^"
     "@types/react": ^18.0.10
+    "@vanilla-extract/css": ^1.7.1
+    "@vanilla-extract/recipes": ^0.2.5
     concurrently: ^7.2.1
     dts-bundle-generator: ^6.9.0
     react: ^18.1.0
@@ -2719,22 +2722,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vanilla-extract/css@npm:^1.6.8":
-  version: 1.7.0
-  resolution: "@vanilla-extract/css@npm:1.7.0"
+"@vanilla-extract/css@npm:^1.6.8, @vanilla-extract/css@npm:^1.7.1":
+  version: 1.7.1
+  resolution: "@vanilla-extract/css@npm:1.7.1"
   dependencies:
     "@emotion/hash": ^0.8.0
     "@vanilla-extract/private": ^1.0.3
     chalk: ^4.1.1
-    css-mediaquery: ^0.1.2
     css-what: ^5.0.1
     cssesc: ^3.0.0
     csstype: ^3.0.7
     deep-object-diff: ^1.1.0
     deepmerge: ^4.2.2
     escape-string-regexp: ^4.0.0
+    media-query-parser: ^2.0.2
     outdent: ^0.8.0
-  checksum: 2ecebcc25febfb4d97360a36122886f073ef1ee5e064f2e8b81bc32515ffc759265f4b698fe96cfbfba201ccd050020d139ebb33a7290b82737556968494381a
+  checksum: dbcbdd84b8fcad9234c65c3668a70e0ca229ac95c0b26c734620c80dc4258a5d4abe7abf43b7649fb83e912521e704952a4525d0757f49c4ca826f82eaa0bd30
   languageName: node
   linkType: hard
 
@@ -2766,6 +2769,15 @@ __metadata:
   version: 1.0.3
   resolution: "@vanilla-extract/private@npm:1.0.3"
   checksum: 866a71ba6804edeb0735684e7723ba78f5cf0bb40d4fb538fe6bf7d73928099e341312337b2a510ac0ce96ff8a4b39eb7f7a5fad0c842532353dd20e7278f29b
+  languageName: node
+  linkType: hard
+
+"@vanilla-extract/recipes@npm:^0.2.5":
+  version: 0.2.5
+  resolution: "@vanilla-extract/recipes@npm:0.2.5"
+  peerDependencies:
+    "@vanilla-extract/css": ^1.0.0
+  checksum: 474ab445f4166bded294d5f77e02ba9b10ec6effe08364c03396e2802848d904a2a1dd9b20466405ebda93449c5a634c2fe99cd1d12888b0f84accf4d2d72666
   languageName: node
   linkType: hard
 
@@ -4101,13 +4113,6 @@ __metadata:
     shebang-command: ^2.0.0
     which: ^2.0.1
   checksum: 671cc7c7288c3a8406f3c69a3ae2fc85555c04169e9d611def9a675635472614f1c0ed0ef80955d5b6d4e724f6ced67f0ad1bb006c2ea643488fcfef994d7f52
-  languageName: node
-  linkType: hard
-
-"css-mediaquery@npm:^0.1.2":
-  version: 0.1.2
-  resolution: "css-mediaquery@npm:0.1.2"
-  checksum: 8e26ae52d8aaaa71893f82fc485363ff0fab494b7d3b3464572aaed50714b8b538d33dbdaa69f0c02cf7f80d1f4d9a77519306c0492223ce91b3987475031a69
   languageName: node
   linkType: hard
 
@@ -8305,6 +8310,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"media-query-parser@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "media-query-parser@npm:2.0.2"
+  dependencies:
+    "@babel/runtime": ^7.12.5
+  checksum: 8ef956d9e63fe6f4041988beda69843b3a6bb48228ea2923a066f6e7c8f7c5dba75fae357318c48a97ed5beae840b8425cb7e727fc1bb77acc65f2005f8945ab
+  languageName: node
+  linkType: hard
+
 "meow@npm:^8.0.0":
   version: 8.1.2
   resolution: "meow@npm:8.1.2"
@@ -9336,6 +9350,13 @@ __metadata:
   version: 6.1.0
   resolution: "normalize-url@npm:6.1.0"
   checksum: 4a4944631173e7d521d6b80e4c85ccaeceb2870f315584fa30121f505a6dfd86439c5e3fdd8cd9e0e291290c41d0c3599f0cb12ab356722ed242584c30348e50
+  languageName: node
+  linkType: hard
+
+"normalize.css@npm:^8.0.1":
+  version: 8.0.1
+  resolution: "normalize.css@npm:8.0.1"
+  checksum: 4698cae88ec35e3f3e82f9f9402e6ffb906c27ccd6373cad88e6b3f5634fc7a043cb38702472299e5edb73825cf8b18d5fd9283f58829eddda79ea97453049a2
   languageName: node
   linkType: hard
 
