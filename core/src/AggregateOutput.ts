@@ -1,4 +1,5 @@
 export type ActivityTransitionState =
+  | "enter"
   | "enter-active"
   | "enter-done"
   | "exit-active"

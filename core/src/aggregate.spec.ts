@@ -225,10 +225,10 @@ test("aggregate - 같은 activityName으로 두번 푸시하면 정상적으로 
   });
 });
 
-test("aggregate - 푸시한 직후에는 transition.state가 loading 입니다", () => {
+test("aggregate - 푸시한 직후 64ms까지 transition.state가 enter이고 globalTransitionState가 loading 입니다. (64ms 부터는 enter-active 상태입니다)", () => {
   const t = nowTime();
 
-  const output = aggregate(
+  const o1 = aggregate(
     [
       initializedEvent({
         transitionDuration: 300,
@@ -245,7 +245,61 @@ test("aggregate - 푸시한 직후에는 transition.state가 loading 입니다",
     t,
   );
 
-  expect(output).toStrictEqual({
+  const o2 = aggregate(
+    [
+      initializedEvent({
+        transitionDuration: 300,
+      }),
+      registeredEvent({
+        activityName: "sample",
+      }),
+      makeEvent("Pushed", {
+        activityId: "a1",
+        activityName: "sample",
+        eventDate: t,
+      }),
+    ],
+    t + 32,
+  );
+
+  const o3 = aggregate(
+    [
+      initializedEvent({
+        transitionDuration: 300,
+      }),
+      registeredEvent({
+        activityName: "sample",
+      }),
+      makeEvent("Pushed", {
+        activityId: "a1",
+        activityName: "sample",
+        eventDate: t,
+      }),
+    ],
+    t + 64,
+  );
+
+  expect(o1).toStrictEqual({
+    activities: [
+      {
+        id: "a1",
+        name: "sample",
+        transitionState: "enter",
+      },
+    ],
+    globalTransitionState: "loading",
+  });
+  expect(o2).toStrictEqual({
+    activities: [
+      {
+        id: "a1",
+        name: "sample",
+        transitionState: "enter",
+      },
+    ],
+    globalTransitionState: "loading",
+  });
+  expect(o3).toStrictEqual({
     activities: [
       {
         id: "a1",
@@ -257,7 +311,7 @@ test("aggregate - 푸시한 직후에는 transition.state가 loading 입니다",
   });
 });
 
-test("aggregate - 현재 시간과 변화된 시간의 차가 InitializedEvent의 transitionDuration 보다 작다면 transition.state가 loading 입니다", () => {
+test("aggregate - 현재 시간과 변화된 시간의 차가 InitializedEvent의 transitionDuration 보다 작다면 transition.state가 enter-active 입니다", () => {
   const t = nowTime();
 
   const output = aggregate(
