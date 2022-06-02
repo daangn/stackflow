@@ -25,18 +25,10 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
   events.forEach((event) => {
     switch (event.name) {
       case "Pushed": {
-        const dt = now - event.eventDate;
-
-        const transitionState: ActivityTransitionState = (() => {
-          if (dt < 64) {
-            return "enter";
-          }
-          if (dt < initEvent.transitionDuration) {
-            return "enter-active";
-          }
-
-          return "enter-done";
-        })();
+        const transitionState: ActivityTransitionState =
+          now - event.eventDate >= initEvent.transitionDuration
+            ? "enter-done"
+            : "enter-active";
 
         activities.push({
           id: event.activityId,
@@ -81,7 +73,6 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
 
   const globalTransitionState = activities.find(
     (a) =>
-      a.transitionState === "enter" ||
       a.transitionState === "enter-active" ||
       a.transitionState === "exit-active",
   )
