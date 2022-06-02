@@ -5,11 +5,28 @@ import {
 } from "./AggregateOutput";
 import { DomainEvent, PoppedEvent, PushedEvent } from "./event-types";
 import { filterEvents, validateEvents } from "./event-utils";
+import { uniqBy } from "./utils";
 
-export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
+function compareEvents(e1: DomainEvent, e2: DomainEvent) {
+  if (e1.id < e2.id) {
+    return -1;
+  }
+  if (e1.id === e2.id) {
+    return 0;
+  }
+  return 1;
+}
+
+export function aggregate(
+  _events: DomainEvent[],
+  now: number,
+): AggregateOutput {
+  const events = uniqBy([..._events].sort(compareEvents), (e) => e.id);
+
   validateEvents(events);
 
   const initEvent = filterEvents(events, "Initialized")[0];
+  const { transitionDuration } = initEvent;
 
   type ActivityMetadata = {
     pushedBy: PushedEvent;
@@ -26,7 +43,7 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
     switch (event.name) {
       case "Pushed": {
         const transitionState: ActivityTransitionState =
-          now - event.eventDate >= initEvent.transitionDuration
+          now - event.eventDate >= transitionDuration
             ? "enter-done"
             : "enter-active";
 
@@ -56,7 +73,7 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
         }
 
         const transitionState: ActivityTransitionState =
-          now - event.eventDate >= initEvent.transitionDuration
+          now - event.eventDate >= transitionDuration
             ? "exit-done"
             : "exit-active";
 
@@ -80,10 +97,10 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
     : "idle";
 
   return {
-    activities: activities.map((a) => ({
-      id: a.id,
-      name: a.name,
-      transitionState: a.transitionState,
+    activities: activities.map((activity) => ({
+      id: activity.id,
+      name: activity.name,
+      transitionState: activity.transitionState,
     })),
     globalTransitionState,
   };

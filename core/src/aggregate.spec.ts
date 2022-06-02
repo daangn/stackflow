@@ -225,7 +225,7 @@ test("aggregate - 같은 activityName으로 두번 푸시하면 정상적으로 
   });
 });
 
-test("aggregate - 푸시한 직후에는 transition.state가 loading 입니다", () => {
+test("aggregate - 푸시한 직후에는 transition.state가 enter-active 입니다", () => {
   const t = nowTime();
 
   const output = aggregate(
@@ -257,7 +257,7 @@ test("aggregate - 푸시한 직후에는 transition.state가 loading 입니다",
   });
 });
 
-test("aggregate - 현재 시간과 변화된 시간의 차가 InitializedEvent의 transitionDuration 보다 작다면 transition.state가 loading 입니다", () => {
+test("aggregate - 현재 시간과 변화된 시간의 차가 InitializedEvent의 transitionDuration 보다 작다면 transition.state가 enter-active 입니다", () => {
   const t = nowTime();
 
   const output = aggregate(
@@ -289,7 +289,7 @@ test("aggregate - 현재 시간과 변화된 시간의 차가 InitializedEvent�
   });
 });
 
-test("aggregate - 푸시한 이후 InitializedEvent에서 셋팅된 transitionDuration만큼 정확하게 지난 경우 transition.state가 idle 입니다", () => {
+test("aggregate - 푸시한 이후 InitializedEvent에서 셋팅된 transitionDuration만큼 정확하게 지난 경우 transition.state가 enter-done 입니다", () => {
   const t = nowTime();
 
   const output = aggregate(
@@ -615,5 +615,45 @@ test("aggregate - transitionDuration 이전에 Pop을 한 경우 exit-active 상
       },
     ],
     globalTransitionState: "loading",
+  });
+});
+
+test("aggregate - 이벤트가 중복되거나 순서가 섞여도 정상적으로 작동합니다", () => {
+  const e1 = initializedEvent({
+    transitionDuration: 300,
+  });
+  const e2 = registeredEvent({
+    activityName: "home",
+  });
+  const e3 = makeEvent("Pushed", {
+    activityId: "a1",
+    activityName: "home",
+    eventDate: enoughPastTime(),
+  });
+  const e4 = makeEvent("Pushed", {
+    activityId: "a2",
+    activityName: "home",
+    eventDate: enoughPastTime(),
+  });
+  const e5 = makeEvent("Popped", {
+    eventDate: enoughPastTime(),
+  });
+
+  const output = aggregate([e5, e1, e4, e3, e5, e1, e1, e2], nowTime());
+
+  expect(output).toStrictEqual({
+    activities: [
+      {
+        id: "a1",
+        name: "home",
+        transitionState: "enter-done",
+      },
+      {
+        id: "a2",
+        name: "home",
+        transitionState: "exit-done",
+      },
+    ],
+    globalTransitionState: "idle",
   });
 });
