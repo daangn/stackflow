@@ -13,6 +13,6 @@ export const { Stack, useFlow } = stackflow({
     renderPlugin({
       persist: true,
     }),
-    historySyncPlugin({}),
+    historySyncPlugin(),
   ],
 });
