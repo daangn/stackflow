@@ -9,7 +9,20 @@ const Hello: React.FC = () => {
   const { state } = useActivity();
 
   return (
-    <div>
+    <div
+      style={{
+        backgroundColor: (() => {
+          switch (state.transitionState) {
+            case "enter-active":
+              return "yellow";
+            case "enter-done":
+              return "red";
+            default:
+              return "green";
+          }
+        })(),
+      }}
+    >
       id: {state.id}, state: {state.transitionState}{" "}
       <button
         type="button"
