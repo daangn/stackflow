@@ -1,6 +1,6 @@
 import { AggregateOutput, DispatchEvent } from "@stackflow/core";
 
-export type CoreActions = {
+export type StackflowPluginActions = {
   dispatchEvent: DispatchEvent;
   getState: () => AggregateOutput;
 };

@@ -8,7 +8,7 @@ export function renderPlugin({
   persist = true,
 }: RenderPluginOptions): StackflowPlugin {
   return () => ({
-    id: "render",
+    key: "render",
     render({ activities }) {
       if (persist) {
         return (

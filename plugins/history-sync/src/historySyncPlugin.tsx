@@ -1,70 +1,90 @@
-import { PushedEvent } from "@stackflow/core/dist/event-types";
+import { Activity } from "@stackflow/core";
 import { StackflowPlugin } from "@stackflow/react";
 
+const STATE_TAG = `${process.env.PACKAGE_NAME}@${process.env.PACKAGE_VERSION}`;
+
 interface State {
-  _TAG: "@stackflow/plugin-history-sync";
-  pushedEvent: PushedEvent;
+  _TAG: string;
+  activity: Activity;
+}
+function parseState(state: any): State | null {
+  const _state: any = state;
+
+  if (
+    typeof _state === "object" &&
+    _state !== null &&
+    "_TAG" in _state &&
+    typeof _state._TAG === "string" &&
+    _state._TAG === STATE_TAG
+  ) {
+    return state;
+  }
+
+  return null;
 }
 
-interface HistorySyncPluginOptions {}
-export function historySyncPlugin(
-  options: HistorySyncPluginOptions,
-): StackflowPlugin {
+function pushState(state: State, url: string) {
+  window.history.pushState(state, "", url);
+}
+
+function replaceState(state: State, url: string) {
+  window.history.replaceState(state, "", url);
+}
+
+export function historySyncPlugin(): StackflowPlugin {
   return () => {
-    let onPopStateCalled = false;
+    let pushFlag = false;
     let onPopStateDisposer: (() => void) | null = null;
 
-    const initHistoryState = window.history.state as State;
-
     return {
-      id: "historySync",
+      key: "historySync",
       initialPushedEvent() {
-        if (initHistoryState?._TAG !== "@stackflow/plugin-history-sync") {
+        const initHistoryState = parseState(window.history.state);
+
+        if (!initHistoryState) {
           return null;
         }
 
-        return initHistoryState.pushedEvent;
+        return initHistoryState.activity.pushedEvent;
       },
       onInit({ getState, dispatchEvent }) {
-        if (initHistoryState?._TAG !== "@stackflow/plugin-history-sync") {
+        const initHistoryState = parseState(window.history.state);
+
+        if (!initHistoryState) {
           const rootActivity = getState().activities[0];
 
-          const newState: State = {
-            _TAG: "@stackflow/plugin-history-sync",
-            pushedEvent: rootActivity.pushedEvent,
-          };
-
-          window.history.replaceState(newState, "", rootActivity.id);
+          replaceState(
+            {
+              _TAG: STATE_TAG,
+              activity: rootActivity,
+            },
+            rootActivity.id,
+          );
         }
 
         const onPopState = (e: PopStateEvent) => {
-          const { state: historyState } = e as { state: State };
+          const historyState = parseState(e.state);
 
-          if (historyState?._TAG !== "@stackflow/plugin-history-sync") {
+          if (!historyState) {
             return;
           }
-
-          if (onPopStateCalled) {
-            onPopStateCalled = false;
-            return;
-          }
-
-          onPopStateCalled = true;
 
           const { activities } = getState();
 
           const targetActivity = activities.find(
-            (activity) => activity.id === historyState.pushedEvent.activityId,
+            (activity) =>
+              activity.id === historyState.activity.pushedEvent.activityId,
           );
 
           const isBackward =
             (!targetActivity &&
-              historyState.pushedEvent.activityId < activities[0].id) ||
+              historyState.activity.pushedEvent.activityId <
+                activities[0].id) ||
             targetActivity?.transitionState === "enter-active" ||
             targetActivity?.transitionState === "enter-done";
           const isForward =
             (!targetActivity &&
-              historyState.pushedEvent.activityId >
+              historyState.activity.pushedEvent.activityId >
                 activities[activities.length - 1].id) ||
             targetActivity?.transitionState === "exit-active" ||
             targetActivity?.transitionState === "exit-done";
@@ -73,15 +93,19 @@ export function historySyncPlugin(
             dispatchEvent("Popped", {});
 
             if (!targetActivity) {
+              pushFlag = true;
+
               dispatchEvent("Pushed", {
-                ...historyState.pushedEvent,
+                ...historyState.activity.pushedEvent,
               });
             }
           }
           if (isForward) {
+            pushFlag = true;
+
             dispatchEvent("Pushed", {
-              activityId: historyState.pushedEvent.activityId,
-              activityName: historyState.pushedEvent.activityName,
+              activityId: historyState.activity.pushedEvent.activityId,
+              activityName: historyState.activity.pushedEvent.activityName,
             });
           }
         };
@@ -93,27 +117,26 @@ export function historySyncPlugin(
           window.removeEventListener("popstate", onPopState);
         };
       },
-      onPushed(_, { activity: { id, pushedEvent } }) {
-        if (onPopStateCalled) {
-          onPopStateCalled = false;
+      onPushed(_, { activity }) {
+        if (pushFlag) {
+          pushFlag = false;
           return;
         }
 
-        const state: State = {
-          _TAG: "@stackflow/plugin-history-sync",
-          pushedEvent,
-        };
-
-        window.history.pushState(state, "", id);
+        pushState(
+          {
+            _TAG: STATE_TAG,
+            activity,
+          },
+          activity.id,
+        );
       },
-      onPopped(_) {
-        if (onPopStateCalled) {
-          onPopStateCalled = false;
-          return;
-        }
-        onPopStateCalled = true;
+      onBeforePop({ preventDefault }) {
+        preventDefault();
 
-        window.history.back();
+        do {
+          window.history.back();
+        } while (!parseState(window.history.state));
       },
     };
   };

@@ -6,13 +6,14 @@ import {
   ActivityProvider,
   makeActivityId,
 } from "./activity";
+import { CoreProvider, useCore } from "./core";
 import {
-  CoreLifeCycleHook,
-  CoreLifeCycleHookInit,
-  CoreProvider,
-  useCore,
-} from "./core";
-import { StackflowPlugin } from "./StackflowPlugin";
+  PluginsProvider,
+  StackflowPlugin,
+  StackflowPluginEffectHook,
+  StackflowPluginHook,
+  usePlugins,
+} from "./plugin";
 
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
@@ -68,41 +69,38 @@ export function stackflow<T extends BaseActivities>(
 
     const prevStateRef = useRef(core.state);
 
-    const onInit = useCallback<CoreLifeCycleHookInit>(
-      (actions, aggregateOutput) => {
-        plugins.forEach((plugin) => {
-          plugin.onInit?.(actions, aggregateOutput);
-        });
+    const onInit = useCallback<StackflowPluginHook>((actions) => {
+      plugins.forEach((plugin) => {
+        plugin.onInit?.(actions);
+      });
+    }, []);
+
+    const onEffect = useCallback<StackflowPluginEffectHook<any>>(
+      (actions, effect) => {
+        switch (effect._TAG) {
+          case "PUSHED": {
+            plugins.forEach((plugin) => plugin.onPushed?.(actions, effect));
+            break;
+          }
+          case "POPPED": {
+            plugins.forEach((plugin) => plugin.onPopped?.(actions, effect));
+            break;
+          }
+          default: {
+            break;
+          }
+        }
       },
       [],
     );
 
-    const onEffect = useCallback<CoreLifeCycleHook<any>>((actions, effect) => {
-      switch (effect._TAG) {
-        case "PUSHED": {
-          plugins.forEach((plugin) => plugin.onPushed?.(actions, effect));
-          break;
-        }
-        case "POPPED": {
-          plugins.forEach((plugin) => plugin.onPopped?.(actions, effect));
-          break;
-        }
-        default: {
-          break;
-        }
-      }
-    }, []);
-
     useEffect(() => {
-      onInit?.(
-        {
-          dispatchEvent: core.dispatchEvent,
-          getState() {
-            return core.stateRef.current;
-          },
+      onInit?.({
+        dispatchEvent: core.dispatchEvent,
+        getState() {
+          return core.stateRef.current;
         },
-        core.state,
-      );
+      });
     }, []);
 
     useEffect(() => {
@@ -132,7 +130,7 @@ export function stackflow<T extends BaseActivities>(
               !!plugin.render,
           )
           .map((plugin) => (
-            <PluginRenderer key={plugin.id} plugin={plugin} />
+            <PluginRenderer key={plugin.key} plugin={plugin} />
           ))}
       </>
     );
@@ -170,14 +168,17 @@ export function stackflow<T extends BaseActivities>(
     }, []);
 
     return (
-      <CoreProvider initialEvents={initialEvents}>
-        <Main plugins={plugins} />
-      </CoreProvider>
+      <PluginsProvider plugins={plugins}>
+        <CoreProvider initialEvents={initialEvents}>
+          <Main plugins={plugins} />
+        </CoreProvider>
+      </PluginsProvider>
     );
   };
 
   const useFlow = () => {
-    const { dispatchEvent } = useCore();
+    const { dispatchEvent, stateRef } = useCore();
+    const { plugins } = usePlugins();
 
     return useMemo(
       () => ({
@@ -188,7 +189,25 @@ export function stackflow<T extends BaseActivities>(
           });
         },
         pop() {
-          dispatchEvent("Popped", {});
+          let isPrevented = false;
+
+          const preventDefault = () => {
+            isPrevented = true;
+          };
+
+          plugins.forEach((plugin) => {
+            plugin.onBeforePop?.({
+              dispatchEvent,
+              getState() {
+                return stateRef.current;
+              },
+              preventDefault,
+            });
+          });
+
+          if (!isPrevented) {
+            dispatchEvent("Popped", {});
+          }
         },
       }),
       [dispatchEvent],
