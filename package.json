@@ -12,6 +12,7 @@
   ],
   "scripts": {
     "build": "ultra -r build",
+    "clean": "ultra -r clean",
     "dev": "ultra -r dev",
     "format": "eslint --fix --ignore-path .gitignore && prettier -w .",
     "lerna:publish": "yarn build && lerna publish",

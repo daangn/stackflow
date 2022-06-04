@@ -2,6 +2,9 @@
   "name": "@stackflow/esbuild-config",
   "private": true,
   "main": "index.js",
+  "scripts": {
+    "build": "echo \"noop\""
+  },
   "dependencies": {
     "@vanilla-extract/esbuild-plugin": "^2.0.3"
   }
