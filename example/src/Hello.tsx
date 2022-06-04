@@ -1,5 +1,4 @@
 import { useActivity } from "@stackflow/react";
-import { CupertinoAppScreen } from "@stackflow/seed-design";
 import React from "react";
 
 import { useFlow } from "./stackflow";
@@ -16,9 +15,13 @@ const Hello: React.FC = () => {
             case "enter-active":
               return "yellow";
             case "enter-done":
+              return "green";
+            case "exit-active":
+              return "orange";
+            case "exit-done":
               return "red";
             default:
-              return "green";
+              return "white";
           }
         })(),
       }}
