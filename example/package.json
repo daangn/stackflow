@@ -2,6 +2,7 @@
   "name": "@stackflow/example",
   "private": true,
   "scripts": {
+    "build": "vite build",
     "dev": "vite"
   },
   "dependencies": {
