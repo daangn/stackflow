@@ -1,7 +1,12 @@
-import { Activity } from "@stackflow/core";
-import { StackflowPlugin } from "@stackflow/react";
+import { Activity, id, makeEvent } from "@stackflow/core";
+import { BaseActivities, StackflowPlugin } from "@stackflow/react";
+
+import { makeTemplate } from "./makeTemplate";
 
 const STATE_TAG = `${process.env.PACKAGE_NAME}@${process.env.PACKAGE_VERSION}`;
+
+const SECOND = 1000;
+const MINUTE = 60 * SECOND;
 
 interface State {
   _TAG: string;
@@ -31,36 +36,31 @@ function replaceState(state: State, url: string) {
   window.history.replaceState(state, "", url);
 }
 
-export function historySyncPlugin(): StackflowPlugin {
+type HistorySyncPluginOptions<T extends BaseActivities> = {
+  routes: {
+    [key in keyof T]: string;
+  };
+};
+export function historySyncPlugin<T extends BaseActivities>(
+  options: HistorySyncPluginOptions<T>,
+): StackflowPlugin {
   return () => {
     let pushFlag = false;
     let onPopStateDisposer: (() => void) | null = null;
 
     return {
       key: "historySync",
-      initialPushedEvent() {
-        const initHistoryState = parseState(window.history.state);
+      onInit({ actions: { getState, dispatchEvent } }) {
+        const rootActivity = getState().activities[0];
+        const template = makeTemplate(options.routes[rootActivity.name]);
 
-        if (!initHistoryState) {
-          return null;
-        }
-
-        return initHistoryState.activity.pushedEvent;
-      },
-      onInit({ getState, dispatchEvent }) {
-        const initHistoryState = parseState(window.history.state);
-
-        if (!initHistoryState) {
-          const rootActivity = getState().activities[0];
-
-          replaceState(
-            {
-              _TAG: STATE_TAG,
-              activity: rootActivity,
-            },
-            rootActivity.id,
-          );
-        }
+        replaceState(
+          {
+            _TAG: STATE_TAG,
+            activity: rootActivity,
+          },
+          template.fill(rootActivity.params),
+        );
 
         const onPopState = (e: PopStateEvent) => {
           const historyState = parseState(e.state);
@@ -118,26 +118,66 @@ export function historySyncPlugin(): StackflowPlugin {
           window.removeEventListener("popstate", onPopState);
         };
       },
-      onPushed(_, { activity }) {
+      onPushed({ effect: { activity } }) {
         if (pushFlag) {
           pushFlag = false;
           return;
         }
+
+        const template = makeTemplate(options.routes[activity.name]);
 
         pushState(
           {
             _TAG: STATE_TAG,
             activity,
           },
-          activity.id,
+          template.fill(activity.params),
         );
       },
-      onBeforePop({ preventDefault }) {
+      onBeforePop({ actions: { preventDefault } }) {
         preventDefault();
 
         do {
           window.history.back();
         } while (!parseState(window.history.state));
+      },
+      overrideInitialPushedEvent({ stackContext }) {
+        const initHistoryState = parseState(window.history.state);
+
+        if (initHistoryState) {
+          return initHistoryState.activity.pushedEvent;
+        }
+
+        const { req } = stackContext;
+
+        const path = stackContext?.req?.path
+          ? stackContext.req.path
+          : typeof window !== "undefined"
+          ? window.location.pathname + window.location.search
+          : null;
+
+        if (!path) {
+          return null;
+        }
+
+        const activityNames = Object.keys(options.routes);
+
+        for (let i = 0; i < activityNames.length; i += 1) {
+          const activityName = activityNames[i];
+          const template = makeTemplate(options.routes[activityName]);
+          const params = template.parse(req.path);
+
+          if (params) {
+            return makeEvent("Pushed", {
+              activityId: id(),
+              activityName,
+              params,
+              eventDate: new Date().getTime() - MINUTE,
+            });
+          }
+        }
+
+        return null;
       },
     };
   };

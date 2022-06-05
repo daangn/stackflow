@@ -7,6 +7,7 @@ module.exports = {
     "no-undef": "off",
     "no-unused-vars": "off",
     "no-underscore-dangle": "off",
+    "no-nested-ternary": "off",
     "react/jsx-filename-extension": [
       1,
       { extensions: [".js", ".jsx", ".tsx"] },
@@ -16,6 +17,8 @@ module.exports = {
     "import/no-unresolved": "off",
     "import/no-extraneous-dependencies": "off",
     "import/extensions": "off",
+    "react/require-default-props": "off",
+    "react/destructuring-assignment": "off",
     "react/prop-types": "off",
     "react/jsx-props-no-spreading": "off",
     "react/react-in-jsx-scope": "off",

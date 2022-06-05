@@ -2,17 +2,26 @@ import { historySyncPlugin } from "@stackflow/plugin-history-sync";
 import { renderPlugin } from "@stackflow/plugin-render";
 import { stackflow } from "@stackflow/react";
 
-import Hello from "./Hello";
+import Article from "./Article";
+import Home from "./Home";
+
+const activities = {
+  Home,
+  Article,
+};
 
 export const { Stack, useFlow } = stackflow({
+  activities,
   transitionDuration: 1000,
-  activities: {
-    Hello,
-  },
   plugins: [
     renderPlugin({
       persist: true,
     }),
-    historySyncPlugin(),
+    historySyncPlugin<typeof activities>({
+      routes: {
+        Home: "/",
+        Article: "/articles/:articleId",
+      },
+    }),
   ],
 });

@@ -2121,7 +2121,9 @@ __metadata:
     "@types/react": ^18.0.10
     react: ^18.1.0
     rimraf: ^3.0.2
+    url-pattern: ^1.0.3
   peerDependencies:
+    "@stackflow/core": "workspace:^"
     "@stackflow/react": "workspace:^"
     "@types/react": ">=16.8.0"
     react: ">=16.8.0"
@@ -2151,7 +2153,6 @@ __metadata:
     "@stackflow/core": "workspace:^"
     "@types/react": ^18.0.9
     react: ^18.1.0
-    react-fast-compare: ^3.2.0
     rimraf: ^3.0.2
   peerDependencies:
     react: ">=16.8.0"
@@ -12324,6 +12325,13 @@ __metadata:
   dependencies:
     prepend-http: ^2.0.0
   checksum: 1040e357750451173132228036aff1fd04abbd43eac1fb3e4fca7495a078bcb8d33cb765fe71ad7e473d9c94d98fd67adca63bd2716c815a2da066198dd37217
+  languageName: node
+  linkType: hard
+
+"url-pattern@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "url-pattern@npm:1.0.3"
+  checksum: 7f4c57707240f0eb18f4654c4206b8669de037594beb86abd090d4e3dacd4751fcb3a04e271a74cbbe2124bc573e857d8c0588c4accb17da03a62082a58559fc
   languageName: node
   linkType: hard
 

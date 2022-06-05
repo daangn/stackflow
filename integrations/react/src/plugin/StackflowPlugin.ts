@@ -15,9 +15,11 @@ export type StackflowPlugin = () => {
       render: () => React.ReactNode;
     }>;
   }) => React.ReactElement<any, any> | null;
-  initialPushedEvent?: () => PushedEvent | null;
   onInit?: StackflowPluginHook;
   onBeforePop?: StackflowPluginPreEffectHook;
   onPushed?: StackflowPluginEffectHook<"PUSHED">;
   onPopped?: StackflowPluginEffectHook<"POPPED">;
+  overrideInitialPushedEvent?: (args: {
+    stackContext: any;
+  }) => PushedEvent | null;
 };
