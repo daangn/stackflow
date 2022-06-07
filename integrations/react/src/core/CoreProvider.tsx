@@ -1,11 +1,5 @@
 import { aggregate, DomainEvent, makeEvent } from "@stackflow/core";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useReducer,
-  useState,
-} from "react";
+import React, { useEffect, useMemo, useReducer, useState } from "react";
 import isEqual from "react-fast-compare";
 
 import { loop } from "../utils";
@@ -23,43 +17,33 @@ export const CoreProvider: React.FC<CoreProviderProps> = ({
     (prevEvents: DomainEvent[], e: DomainEvent) => [...prevEvents, e],
     initialEvents,
   );
-
-  const [aggregateOutput, setAggregateOutput] = useState(
-    aggregate(events, new Date().getTime()),
-  );
+  const [state, setState] = useState(aggregate(events, new Date().getTime()));
 
   useEffect(() => {
     const { dispose } = loop(() => {
-      const nextAggregateOutput = aggregate(events, new Date().getTime());
+      const nextState = aggregate(events, new Date().getTime());
 
-      if (!isEqual(aggregateOutput, nextAggregateOutput)) {
-        setAggregateOutput(nextAggregateOutput);
+      if (!isEqual(state, nextState)) {
+        setState(nextState);
       }
-      if (nextAggregateOutput.globalTransitionState === "idle") {
+      if (nextState.globalTransitionState === "idle") {
         dispose();
       }
     });
 
     return dispose;
-  }, [events, aggregateOutput]);
-
-  const dispatchEvent: typeof makeEvent = useCallback(
-    (name, parameters) => {
-      const event = makeEvent(name, parameters);
-      addEvent(event);
-      return event;
-    },
-    [addEvent],
-  );
+  }, [events, state]);
 
   return (
     <CoreContext.Provider
       value={useMemo(
         () => ({
-          aggregateOutput,
-          dispatchEvent,
+          state,
+          dispatchEvent(name, parameters) {
+            addEvent(makeEvent(name, parameters));
+          },
         }),
-        [aggregateOutput, dispatchEvent],
+        [state, addEvent],
       )}
     >
       {children}
