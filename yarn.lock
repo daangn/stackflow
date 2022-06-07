@@ -2257,6 +2257,7 @@ __metadata:
     "@stackflow/react": "workspace:^"
     "@types/react": ^18.0.10
     "@vanilla-extract/css": ^1.7.1
+    "@vanilla-extract/dynamic": ^2.0.2
     "@vanilla-extract/recipes": ^0.2.5
     react: ^18.1.0
     rimraf: ^3.0.2
@@ -2840,6 +2841,15 @@ __metadata:
     media-query-parser: ^2.0.2
     outdent: ^0.8.0
   checksum: dbcbdd84b8fcad9234c65c3668a70e0ca229ac95c0b26c734620c80dc4258a5d4abe7abf43b7649fb83e912521e704952a4525d0757f49c4ca826f82eaa0bd30
+  languageName: node
+  linkType: hard
+
+"@vanilla-extract/dynamic@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "@vanilla-extract/dynamic@npm:2.0.2"
+  dependencies:
+    "@vanilla-extract/private": ^1.0.3
+  checksum: c6f22606bce094a5682c6d842be6d6965b9448f8973eaabdaa7a7438146458c22490c1c63345f08d2226f1c95ac20731835a5140c2c18646b2c1287b65607b84
   languageName: node
   linkType: hard
 

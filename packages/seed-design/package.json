@@ -23,6 +23,9 @@
     "clean": "rimraf dist",
     "dev": "yarn build:js --watch && yarn build:dts --watch"
   },
+  "dependencies": {
+    "@vanilla-extract/dynamic": "^2.0.2"
+  },
   "devDependencies": {
     "@stackflow/esbuild-config": "workspace:^",
     "@stackflow/react": "workspace:^",

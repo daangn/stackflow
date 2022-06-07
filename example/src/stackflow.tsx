@@ -12,7 +12,7 @@ const activities = {
 
 export const { Stack, useFlow } = stackflow({
   activities,
-  transitionDuration: 1000,
+  transitionDuration: 300,
   plugins: [
     renderPlugin({
       persist: true,
