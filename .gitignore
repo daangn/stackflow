@@ -11,10 +11,12 @@
 node_modules
 #.pnp.*
 
-.DS_Store
-
 /.idea/inspectionProfiles/Project_Default.xml
 /.idea/modules.xml
 /.idea/vcs.xml
 /.idea/.gitignore
 /.idea/stackflow.iml
+
+.DS_Store
+dist
+.ultra.cache.json

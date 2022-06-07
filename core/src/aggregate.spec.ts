@@ -28,7 +28,7 @@ const registeredEvent = ({ activityName }: { activityName: string }) =>
     eventDate: enoughPastTime(),
   });
 
-test("aggregate - 만약에 InitializedEvent만 존재하는 경우, 빈 스택을 내려줍니다", () => {
+test("aggregate - InitializedEvent만 존재하는 경우, 빈 스택을 내려줍니다", () => {
   const output = aggregate(
     [
       initializedEvent({
@@ -45,25 +45,26 @@ test("aggregate - 만약에 InitializedEvent만 존재하는 경우, 빈 스택�
 });
 
 test("aggregate - 푸시하면 스택에 추가됩니다", () => {
-  const output = aggregate(
-    [
-      initializedEvent({
-        transitionDuration: 300,
-      }),
-      registeredEvent({
-        activityName: "home",
-      }),
-      registeredEvent({
-        activityName: "sample",
-      }),
-      makeEvent("Pushed", {
-        activityId: "a1",
-        activityName: "sample",
-        eventDate: enoughPastTime(),
-      }),
-    ],
-    nowTime(),
-  );
+  const events = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+    registeredEvent({
+      activityName: "home",
+    }),
+    registeredEvent({
+      activityName: "sample",
+    }),
+    makeEvent("Pushed", {
+      activityId: "a1",
+      activityName: "sample",
+      eventDate: enoughPastTime(),
+      params: {},
+    }),
+  ];
+  const pushedEvent = events[3];
+
+  const output = aggregate(events, nowTime());
 
   expect(output).toStrictEqual({
     activities: [
@@ -71,6 +72,8 @@ test("aggregate - 푸시하면 스택에 추가됩니다", () => {
         id: "a1",
         name: "sample",
         transitionState: "enter-done",
+        params: {},
+        pushedBy: pushedEvent,
       },
     ],
     globalTransitionState: "idle",
@@ -78,25 +81,27 @@ test("aggregate - 푸시하면 스택에 추가됩니다", () => {
 });
 
 test("aggregate - PushedEvent에 activityId, activityName이 다른 경우 스택에 반영됩니다", () => {
-  const output = aggregate(
-    [
-      initializedEvent({
-        transitionDuration: 300,
-      }),
-      registeredEvent({
-        activityName: "home",
-      }),
-      registeredEvent({
-        activityName: "sample2",
-      }),
-      makeEvent("Pushed", {
-        activityId: "a2",
-        activityName: "sample2",
-        eventDate: enoughPastTime(),
-      }),
-    ],
-    nowTime(),
-  );
+  const events = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+    registeredEvent({
+      activityName: "home",
+    }),
+    registeredEvent({
+      activityName: "sample2",
+    }),
+    makeEvent("Pushed", {
+      activityId: "a2",
+      activityName: "sample2",
+      eventDate: enoughPastTime(),
+      params: {},
+    }),
+  ];
+
+  const pushedEvent = events[3];
+
+  const output = aggregate(events, nowTime());
 
   expect(output).toStrictEqual({
     activities: [
@@ -104,66 +109,86 @@ test("aggregate - PushedEvent에 activityId, activityName이 다른 경우 스�
         id: "a2",
         name: "sample2",
         transitionState: "enter-done",
+        params: {},
+        pushedBy: pushedEvent,
       },
     ],
     globalTransitionState: "idle",
   });
 });
 
-test("aggregate - 같은 activityId로 여러번 푸시되는 경우 throw 합니다", () => {
-  expect(() => {
-    aggregate(
-      [
-        initializedEvent({
-          transitionDuration: 300,
-        }),
-        registeredEvent({
-          activityName: "home",
-        }),
-        registeredEvent({
-          activityName: "sample2",
-        }),
-        makeEvent("Pushed", {
-          activityId: "a1",
-          activityName: "sample2",
-          eventDate: enoughPastTime(),
-        }),
-        makeEvent("Pushed", {
-          activityId: "a1",
-          activityName: "sample2",
-          eventDate: enoughPastTime(),
-        }),
-      ],
-      nowTime(),
-    );
-  }).toThrow();
+test("aggregate - 같은 activityId로 여러번 푸시되는 경우 이전의 만들어진 Pushed는 무시됩니다", () => {
+  const events = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+    registeredEvent({
+      activityName: "home",
+    }),
+    registeredEvent({
+      activityName: "sample2",
+    }),
+    makeEvent("Pushed", {
+      activityId: "a1",
+      activityName: "sample2",
+      eventDate: enoughPastTime(),
+      params: {},
+    }),
+    makeEvent("Pushed", {
+      activityId: "a1",
+      activityName: "sample2",
+      eventDate: enoughPastTime(),
+      params: {},
+    }),
+  ];
+
+  const pushedEvent2 = events[4];
+
+  const output = aggregate(events, nowTime());
+
+  expect(output).toEqual({
+    activities: [
+      {
+        id: "a1",
+        name: "sample2",
+        transitionState: "enter-done",
+        params: {},
+        pushedBy: pushedEvent2,
+      },
+    ],
+    globalTransitionState: "idle",
+  });
 });
 
 test("aggregate - 다른 activityName으로 두번 푸시하면 스택에 정상적으로 반영됩니다", () => {
-  const output = aggregate(
-    [
-      initializedEvent({
-        transitionDuration: 300,
-      }),
-      registeredEvent({
-        activityName: "home",
-      }),
-      registeredEvent({
-        activityName: "sample2",
-      }),
-      makeEvent("Pushed", {
-        activityId: "a1",
-        activityName: "sample2",
-        eventDate: enoughPastTime(),
-      }),
-      makeEvent("Pushed", {
-        activityId: "a2",
-        activityName: "home",
-        eventDate: enoughPastTime(),
-      }),
-    ],
-    nowTime(),
-  );
+  const events = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+    registeredEvent({
+      activityName: "home",
+    }),
+    registeredEvent({
+      activityName: "sample2",
+    }),
+    makeEvent("Pushed", {
+      activityId: "a1",
+      activityName: "sample2",
+      eventDate: enoughPastTime(),
+      params: {},
+    }),
+    makeEvent("Pushed", {
+      activityId: "a2",
+      activityName: "home",
+      eventDate: enoughPastTime(),
+      params: {},
+    }),
+  ];
+
+  const pushedEvent1 = events[3];
+  const pushedEvent2 = events[4];
+
+  const output = aggregate(events, nowTime());
 
   expect(output).toStrictEqual({
     activities: [
@@ -171,11 +196,15 @@ test("aggregate - 다른 activityName으로 두번 푸시하면 스택에 정상
         id: "a1",
         name: "sample2",
         transitionState: "enter-done",
+        params: {},
+        pushedBy: pushedEvent1,
       },
       {
         id: "a2",
         name: "home",
         transitionState: "enter-done",
+        params: {},
+        pushedBy: pushedEvent2,
       },
     ],
     globalTransitionState: "idle",
@@ -183,30 +212,34 @@ test("aggregate - 다른 activityName으로 두번 푸시하면 스택에 정상
 });
 
 test("aggregate - 같은 activityName으로 두번 푸시하면 정상적으로 스택에 반영됩니다", () => {
-  const output = aggregate(
-    [
-      initializedEvent({
-        transitionDuration: 300,
-      }),
-      registeredEvent({
-        activityName: "home",
-      }),
-      registeredEvent({
-        activityName: "sample2",
-      }),
-      makeEvent("Pushed", {
-        activityId: "a1",
-        activityName: "sample2",
-        eventDate: enoughPastTime(),
-      }),
-      makeEvent("Pushed", {
-        activityId: "a2",
-        activityName: "sample2",
-        eventDate: enoughPastTime(),
-      }),
-    ],
-    nowTime(),
-  );
+  const events = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+    registeredEvent({
+      activityName: "home",
+    }),
+    registeredEvent({
+      activityName: "sample2",
+    }),
+    makeEvent("Pushed", {
+      activityId: "a1",
+      activityName: "sample2",
+      eventDate: enoughPastTime(),
+      params: {},
+    }),
+    makeEvent("Pushed", {
+      activityId: "a2",
+      activityName: "sample2",
+      eventDate: enoughPastTime(),
+      params: {},
+    }),
+  ];
+
+  const pushedEvent1 = events[3];
+  const pushedEvent2 = events[4];
+
+  const output = aggregate(events, nowTime());
 
   expect(output).toStrictEqual({
     activities: [
@@ -214,11 +247,15 @@ test("aggregate - 같은 activityName으로 두번 푸시하면 정상적으로 
         id: "a1",
         name: "sample2",
         transitionState: "enter-done",
+        params: {},
+        pushedBy: pushedEvent1,
       },
       {
         id: "a2",
         name: "sample2",
         transitionState: "enter-done",
+        params: {},
+        pushedBy: pushedEvent2,
       },
     ],
     globalTransitionState: "idle",
@@ -228,22 +265,24 @@ test("aggregate - 같은 activityName으로 두번 푸시하면 정상적으로 
 test("aggregate - 푸시한 직후에는 transition.state가 enter-active 입니다", () => {
   const t = nowTime();
 
-  const output = aggregate(
-    [
-      initializedEvent({
-        transitionDuration: 300,
-      }),
-      registeredEvent({
-        activityName: "sample",
-      }),
-      makeEvent("Pushed", {
-        activityId: "a1",
-        activityName: "sample",
-        eventDate: t,
-      }),
-    ],
-    t,
-  );
+  const events = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+    registeredEvent({
+      activityName: "sample",
+    }),
+    makeEvent("Pushed", {
+      activityId: "a1",
+      activityName: "sample",
+      eventDate: t,
+      params: {},
+    }),
+  ];
+
+  const pushedEvent = events[2];
+
+  const output = aggregate(events, t);
 
   expect(output).toStrictEqual({
     activities: [
@@ -251,6 +290,8 @@ test("aggregate - 푸시한 직후에는 transition.state가 enter-active 입니
         id: "a1",
         name: "sample",
         transitionState: "enter-active",
+        params: {},
+        pushedBy: pushedEvent,
       },
     ],
     globalTransitionState: "loading",
@@ -259,23 +300,24 @@ test("aggregate - 푸시한 직후에는 transition.state가 enter-active 입니
 
 test("aggregate - 현재 시간과 변화된 시간의 차가 InitializedEvent의 transitionDuration 보다 작다면 transition.state가 enter-active 입니다", () => {
   const t = nowTime();
+  const events = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+    registeredEvent({
+      activityName: "sample",
+    }),
+    makeEvent("Pushed", {
+      activityId: "a1",
+      activityName: "sample",
+      eventDate: t - 150,
+      params: {},
+    }),
+  ];
 
-  const output = aggregate(
-    [
-      initializedEvent({
-        transitionDuration: 300,
-      }),
-      registeredEvent({
-        activityName: "sample",
-      }),
-      makeEvent("Pushed", {
-        activityId: "a1",
-        activityName: "sample",
-        eventDate: t - 150,
-      }),
-    ],
-    t,
-  );
+  const pushedEvent = events[2];
+
+  const output = aggregate(events, t);
 
   expect(output).toStrictEqual({
     activities: [
@@ -283,6 +325,8 @@ test("aggregate - 현재 시간과 변화된 시간의 차가 InitializedEvent�
         id: "a1",
         name: "sample",
         transitionState: "enter-active",
+        params: {},
+        pushedBy: pushedEvent,
       },
     ],
     globalTransitionState: "loading",
@@ -292,22 +336,24 @@ test("aggregate - 현재 시간과 변화된 시간의 차가 InitializedEvent�
 test("aggregate - 푸시한 이후 InitializedEvent에서 셋팅된 transitionDuration만큼 정확하게 지난 경우 transition.state가 enter-done 입니다", () => {
   const t = nowTime();
 
-  const output = aggregate(
-    [
-      initializedEvent({
-        transitionDuration: 300,
-      }),
-      registeredEvent({
-        activityName: "sample",
-      }),
-      makeEvent("Pushed", {
-        activityId: "a1",
-        activityName: "sample",
-        eventDate: t - 300,
-      }),
-    ],
-    t,
-  );
+  const events = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+    registeredEvent({
+      activityName: "sample",
+    }),
+    makeEvent("Pushed", {
+      activityId: "a1",
+      activityName: "sample",
+      eventDate: t - 300,
+      params: {},
+    }),
+  ];
+
+  const pushedEvent = events[2];
+
+  const output = aggregate(events, t);
 
   expect(output).toStrictEqual({
     activities: [
@@ -315,6 +361,8 @@ test("aggregate - 푸시한 이후 InitializedEvent에서 셋팅된 transitionDu
         id: "a1",
         name: "sample",
         transitionState: "enter-done",
+        params: {},
+        pushedBy: pushedEvent,
       },
     ],
     globalTransitionState: "idle",
@@ -324,27 +372,31 @@ test("aggregate - 푸시한 이후 InitializedEvent에서 셋팅된 transitionDu
 test("aggregate - 여러번 푸시한 경우, transitionDuration 전에 푸시한 Activity의 transition.state는 enter-done, 그 이후 푸시한 Activity는 enter-active 입니다", () => {
   const t = nowTime();
 
-  const output = aggregate(
-    [
-      initializedEvent({
-        transitionDuration: 300,
-      }),
-      registeredEvent({
-        activityName: "sample",
-      }),
-      makeEvent("Pushed", {
-        activityId: "a1",
-        activityName: "sample",
-        eventDate: t - 350,
-      }),
-      makeEvent("Pushed", {
-        activityId: "a2",
-        activityName: "sample",
-        eventDate: t - 150,
-      }),
-    ],
-    t,
-  );
+  const events = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+    registeredEvent({
+      activityName: "sample",
+    }),
+    makeEvent("Pushed", {
+      activityId: "a1",
+      activityName: "sample",
+      eventDate: t - 350,
+      params: {},
+    }),
+    makeEvent("Pushed", {
+      activityId: "a2",
+      activityName: "sample",
+      eventDate: t - 150,
+      params: {},
+    }),
+  ];
+
+  const pushedEvent1 = events[2];
+  const pushedEvent2 = events[3];
+
+  const output = aggregate(events, t);
 
   expect(output).toStrictEqual({
     activities: [
@@ -352,11 +404,15 @@ test("aggregate - 여러번 푸시한 경우, transitionDuration 전에 푸시�
         id: "a1",
         name: "sample",
         transitionState: "enter-done",
+        params: {},
+        pushedBy: pushedEvent1,
       },
       {
         id: "a2",
         name: "sample",
         transitionState: "enter-active",
+        params: {},
+        pushedBy: pushedEvent2,
       },
     ],
     globalTransitionState: "loading",
@@ -364,30 +420,34 @@ test("aggregate - 여러번 푸시한 경우, transitionDuration 전에 푸시�
 });
 
 test("aggregate - Pop하면 최상단에 존재하는 Activity가 exit-done 상태가 됩니다", () => {
-  const output = aggregate(
-    [
-      initializedEvent({
-        transitionDuration: 300,
-      }),
-      registeredEvent({
-        activityName: "home",
-      }),
-      makeEvent("Pushed", {
-        activityId: "a1",
-        activityName: "home",
-        eventDate: enoughPastTime(),
-      }),
-      makeEvent("Pushed", {
-        activityId: "a2",
-        activityName: "home",
-        eventDate: enoughPastTime(),
-      }),
-      makeEvent("Popped", {
-        eventDate: enoughPastTime(),
-      }),
-    ],
-    nowTime(),
-  );
+  const events = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+    registeredEvent({
+      activityName: "home",
+    }),
+    makeEvent("Pushed", {
+      activityId: "a1",
+      activityName: "home",
+      eventDate: enoughPastTime(),
+      params: {},
+    }),
+    makeEvent("Pushed", {
+      activityId: "a2",
+      activityName: "home",
+      eventDate: enoughPastTime(),
+      params: {},
+    }),
+    makeEvent("Popped", {
+      eventDate: enoughPastTime(),
+    }),
+  ];
+
+  const pushedEvent1 = events[2];
+  const pushedEvent2 = events[3];
+
+  const output = aggregate(events, nowTime());
 
   expect(output).toStrictEqual({
     activities: [
@@ -395,11 +455,15 @@ test("aggregate - Pop하면 최상단에 존재하는 Activity가 exit-done 상�
         id: "a1",
         name: "home",
         transitionState: "enter-done",
+        params: {},
+        pushedBy: pushedEvent1,
       },
       {
         id: "a2",
         name: "home",
         transitionState: "exit-done",
+        params: {},
+        pushedBy: pushedEvent2,
       },
     ],
     globalTransitionState: "idle",
@@ -418,18 +482,25 @@ test("aggregate - Pop을 여러번하면 차례대로 exit-done 상태가 됩니
       activityId: "a1",
       activityName: "home",
       eventDate: enoughPastTime(),
+      params: {},
     }),
     makeEvent("Pushed", {
       activityId: "a2",
       activityName: "home",
       eventDate: enoughPastTime(),
+      params: {},
     }),
     makeEvent("Pushed", {
       activityId: "a3",
       activityName: "home",
       eventDate: enoughPastTime(),
+      params: {},
     }),
   ];
+
+  const pushedEvent1 = initEvents[2];
+  const pushedEvent2 = initEvents[3];
+  const pushedEvent3 = initEvents[4];
 
   const o1 = aggregate(
     [
@@ -447,16 +518,22 @@ test("aggregate - Pop을 여러번하면 차례대로 exit-done 상태가 됩니
         id: "a1",
         name: "home",
         transitionState: "enter-done",
+        params: {},
+        pushedBy: pushedEvent1,
       },
       {
         id: "a2",
         name: "home",
         transitionState: "enter-done",
+        params: {},
+        pushedBy: pushedEvent2,
       },
       {
         id: "a3",
         name: "home",
         transitionState: "exit-done",
+        params: {},
+        pushedBy: pushedEvent3,
       },
     ],
     globalTransitionState: "idle",
@@ -481,16 +558,22 @@ test("aggregate - Pop을 여러번하면 차례대로 exit-done 상태가 됩니
         id: "a1",
         name: "home",
         transitionState: "enter-done",
+        params: {},
+        pushedBy: pushedEvent1,
       },
       {
         id: "a2",
         name: "home",
         transitionState: "exit-done",
+        params: {},
+        pushedBy: pushedEvent2,
       },
       {
         id: "a3",
         name: "home",
         transitionState: "exit-done",
+        params: {},
+        pushedBy: pushedEvent3,
       },
     ],
     globalTransitionState: "idle",
@@ -509,13 +592,18 @@ test("aggregate - 가장 바닥에 있는 Activity는 Pop 되지 않습니다", 
       activityId: "a1",
       activityName: "home",
       eventDate: enoughPastTime(),
+      params: {},
     }),
     makeEvent("Pushed", {
       activityId: "a2",
       activityName: "home",
       eventDate: enoughPastTime(),
+      params: {},
     }),
   ];
+
+  const pushedEvent1 = initEvents[2];
+  const pushedEvent2 = initEvents[3];
 
   const output1 = aggregate(
     [
@@ -533,11 +621,15 @@ test("aggregate - 가장 바닥에 있는 Activity는 Pop 되지 않습니다", 
         id: "a1",
         name: "home",
         transitionState: "enter-done",
+        params: {},
+        pushedBy: pushedEvent1,
       },
       {
         id: "a2",
         name: "home",
         transitionState: "exit-done",
+        params: {},
+        pushedBy: pushedEvent2,
       },
     ],
     globalTransitionState: "idle",
@@ -562,11 +654,15 @@ test("aggregate - 가장 바닥에 있는 Activity는 Pop 되지 않습니다", 
         id: "a1",
         name: "home",
         transitionState: "enter-done",
+        params: {},
+        pushedBy: pushedEvent1,
       },
       {
         id: "a2",
         name: "home",
         transitionState: "exit-done",
+        params: {},
+        pushedBy: pushedEvent2,
       },
     ],
     globalTransitionState: "idle",
@@ -576,30 +672,34 @@ test("aggregate - 가장 바닥에 있는 Activity는 Pop 되지 않습니다", 
 test("aggregate - transitionDuration 이전에 Pop을 한 경우 exit-active 상태입니다", () => {
   const t = nowTime();
 
-  const output = aggregate(
-    [
-      initializedEvent({
-        transitionDuration: 300,
-      }),
-      registeredEvent({
-        activityName: "home",
-      }),
-      makeEvent("Pushed", {
-        activityId: "a1",
-        activityName: "home",
-        eventDate: enoughPastTime(),
-      }),
-      makeEvent("Pushed", {
-        activityId: "a2",
-        activityName: "home",
-        eventDate: enoughPastTime(),
-      }),
-      makeEvent("Popped", {
-        eventDate: t - 150,
-      }),
-    ],
-    t,
-  );
+  const events = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+    registeredEvent({
+      activityName: "home",
+    }),
+    makeEvent("Pushed", {
+      activityId: "a1",
+      activityName: "home",
+      eventDate: enoughPastTime(),
+      params: {},
+    }),
+    makeEvent("Pushed", {
+      activityId: "a2",
+      activityName: "home",
+      eventDate: enoughPastTime(),
+      params: {},
+    }),
+    makeEvent("Popped", {
+      eventDate: t - 150,
+    }),
+  ];
+
+  const pushedEvent1 = events[2];
+  const pushedEvent2 = events[3];
+
+  const output = aggregate(events, t);
 
   expect(output).toStrictEqual({
     activities: [
@@ -607,11 +707,15 @@ test("aggregate - transitionDuration 이전에 Pop을 한 경우 exit-active 상
         id: "a1",
         name: "home",
         transitionState: "enter-done",
+        params: {},
+        pushedBy: pushedEvent1,
       },
       {
         id: "a2",
         name: "home",
         transitionState: "exit-active",
+        params: {},
+        pushedBy: pushedEvent2,
       },
     ],
     globalTransitionState: "loading",
@@ -629,11 +733,13 @@ test("aggregate - 이벤트가 중복되거나 순서가 섞여도 정상적으�
     activityId: "a1",
     activityName: "home",
     eventDate: enoughPastTime(),
+    params: {},
   });
   const e4 = makeEvent("Pushed", {
     activityId: "a2",
     activityName: "home",
     eventDate: enoughPastTime(),
+    params: {},
   });
   const e5 = makeEvent("Popped", {
     eventDate: enoughPastTime(),
@@ -647,11 +753,341 @@ test("aggregate - 이벤트가 중복되거나 순서가 섞여도 정상적으�
         id: "a1",
         name: "home",
         transitionState: "enter-done",
+        params: {},
+        pushedBy: e3,
       },
       {
         id: "a2",
         name: "home",
         transitionState: "exit-done",
+        params: {},
+        pushedBy: e4,
+      },
+    ],
+    globalTransitionState: "idle",
+  });
+});
+
+test("aggregate - 같은 activity.id로 푸시되는 경우, 기존에 푸시되어있던 액티비티를 재활용합니다", () => {
+  const t = nowTime();
+
+  const events = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+    registeredEvent({
+      activityName: "home",
+    }),
+    makeEvent("Pushed", {
+      activityId: "a1",
+      activityName: "home",
+      eventDate: enoughPastTime(),
+      params: {},
+    }),
+    makeEvent("Pushed", {
+      activityId: "a2",
+      activityName: "home",
+      eventDate: enoughPastTime(),
+      params: {},
+    }),
+    makeEvent("Pushed", {
+      activityId: "a3",
+      activityName: "home",
+      eventDate: enoughPastTime(),
+      params: {},
+    }),
+    makeEvent("Pushed", {
+      activityId: "a4",
+      activityName: "home",
+      eventDate: enoughPastTime(),
+      params: {},
+    }),
+    makeEvent("Popped", {
+      eventDate: enoughPastTime(),
+    }),
+    makeEvent("Popped", {
+      eventDate: enoughPastTime(),
+    }),
+    makeEvent("Popped", {
+      eventDate: enoughPastTime(),
+    }),
+    makeEvent("Pushed", {
+      activityId: "a2",
+      activityName: "home",
+      eventDate: t,
+      params: {},
+    }),
+  ];
+
+  const pushedEvent1 = events[2];
+  const pushedEvent3 = events[4];
+  const pushedEvent4 = events[5];
+  const pushedEvent5 = events[9];
+
+  const output = aggregate(events, t);
+
+  expect(output).toStrictEqual({
+    activities: [
+      {
+        id: "a1",
+        name: "home",
+        transitionState: "enter-done",
+        params: {},
+        pushedBy: pushedEvent1,
+      },
+      {
+        id: "a2",
+        name: "home",
+        transitionState: "enter-active",
+        params: {},
+        pushedBy: pushedEvent5,
+      },
+      {
+        id: "a3",
+        name: "home",
+        transitionState: "exit-done",
+        params: {},
+        pushedBy: pushedEvent3,
+      },
+      {
+        id: "a4",
+        name: "home",
+        transitionState: "exit-done",
+        params: {},
+        pushedBy: pushedEvent4,
+      },
+    ],
+    globalTransitionState: "loading",
+  });
+});
+
+test("aggregate - PushedEvent에 params가 담겨있는 경우 액티비티에 해당 params가 포함됩니다", () => {
+  const t = nowTime();
+
+  const events = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+    registeredEvent({
+      activityName: "sample",
+    }),
+    makeEvent("Pushed", {
+      activityId: "a1",
+      activityName: "sample",
+      eventDate: t,
+      params: {
+        hello: "world",
+      },
+    }),
+  ];
+
+  const pushedEvent = events[2];
+
+  const output = aggregate(events, t);
+
+  expect(output).toStrictEqual({
+    activities: [
+      {
+        id: "a1",
+        name: "sample",
+        transitionState: "enter-active",
+        params: {
+          hello: "world",
+        },
+        pushedBy: pushedEvent,
+      },
+    ],
+    globalTransitionState: "loading",
+  });
+});
+
+test("aggregate - ReplacedEvent가 발생한 직후 최상단의 Activity를 유지하면서 새 Activity가 추가됩니다", () => {
+  const t = nowTime();
+
+  const events = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+    registeredEvent({
+      activityName: "sample",
+    }),
+    makeEvent("Pushed", {
+      activityId: "a1",
+      activityName: "sample",
+      eventDate: enoughPastTime(),
+      params: {
+        hello: "world",
+      },
+    }),
+    makeEvent("Replaced", {
+      activityId: "a2",
+      activityName: "sample",
+      eventDate: t,
+      params: {
+        hello: "world",
+      },
+    }),
+  ];
+
+  const pushedEvent = events[2];
+  const replacedEvent = events[3];
+
+  const output = aggregate(events, t);
+
+  expect(output).toStrictEqual({
+    activities: [
+      {
+        id: "a1",
+        name: "sample",
+        transitionState: "enter-done",
+        params: {
+          hello: "world",
+        },
+
+        pushedBy: pushedEvent,
+      },
+      {
+        id: "a2",
+        name: "sample",
+        transitionState: "enter-active",
+        params: {
+          hello: "world",
+        },
+        pushedBy: replacedEvent,
+      },
+    ],
+    globalTransitionState: "loading",
+  });
+});
+
+test("aggregate - ReplacedEvent가 발생한 후 transitionDuration만큼 지난 경우 기존 최상단 Activity의 상태를 exit-done으로 바꿉니다", () => {
+  const t = nowTime();
+
+  const events = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+    registeredEvent({
+      activityName: "sample",
+    }),
+    makeEvent("Pushed", {
+      activityId: "a1",
+      activityName: "sample",
+      eventDate: enoughPastTime(),
+      params: {
+        hello: "world",
+      },
+    }),
+    makeEvent("Replaced", {
+      activityId: "a2",
+      activityName: "sample",
+      eventDate: t,
+      params: {
+        hello: "world",
+      },
+    }),
+  ];
+
+  const pushedEvent = events[2];
+  const replacedEvent = events[3];
+
+  const output = aggregate(events, t + 300);
+
+  expect(output).toStrictEqual({
+    activities: [
+      {
+        id: "a1",
+        name: "sample",
+        transitionState: "exit-done",
+        params: {
+          hello: "world",
+        },
+        pushedBy: pushedEvent,
+      },
+      {
+        id: "a2",
+        name: "sample",
+        transitionState: "enter-done",
+        params: {
+          hello: "world",
+        },
+        pushedBy: replacedEvent,
+      },
+    ],
+    globalTransitionState: "idle",
+  });
+});
+
+test("aggregate - ReplacedEvent가 발생한 후 transitionDuration만큼 지난 경우 기존 최상단 Activity의 상태를 exit-done으로 바꿉니다", () => {
+  const t = nowTime();
+
+  const events = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+    registeredEvent({
+      activityName: "sample",
+    }),
+    makeEvent("Pushed", {
+      activityId: "a1",
+      activityName: "sample",
+      eventDate: enoughPastTime(),
+      params: {
+        hello: "world",
+      },
+    }),
+    makeEvent("Replaced", {
+      activityId: "a2",
+      activityName: "sample",
+      eventDate: enoughPastTime(),
+      params: {
+        hello: "world",
+      },
+    }),
+    makeEvent("Replaced", {
+      activityId: "a3",
+      activityName: "sample",
+      eventDate: t,
+      params: {
+        hello: "world",
+      },
+    }),
+  ];
+
+  const pushedEvent = events[2];
+  const replacedEvent1 = events[3];
+  const replacedEvent2 = events[4];
+
+  const output = aggregate(events, t + 300);
+
+  expect(output).toStrictEqual({
+    activities: [
+      {
+        id: "a1",
+        name: "sample",
+        transitionState: "exit-done",
+        params: {
+          hello: "world",
+        },
+        pushedBy: pushedEvent,
+      },
+      {
+        id: "a2",
+        name: "sample",
+        transitionState: "exit-done",
+        params: {
+          hello: "world",
+        },
+        pushedBy: replacedEvent1,
+      },
+      {
+        id: "a3",
+        name: "sample",
+        transitionState: "enter-done",
+        params: {
+          hello: "world",
+        },
+        pushedBy: replacedEvent2,
       },
     ],
     globalTransitionState: "idle",

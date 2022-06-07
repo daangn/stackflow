@@ -11,6 +11,7 @@ const pushedEvent = (id: string) =>
   makeEvent("Pushed", {
     activityId: "1",
     activityName: "2",
+    params: {},
     id,
   });
 

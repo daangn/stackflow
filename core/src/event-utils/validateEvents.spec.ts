@@ -49,6 +49,7 @@ test("validateEvents - 푸시했는데 해당 액티비티가 없는 경우 thro
       makeEvent("Pushed", {
         activityId: "a1",
         activityName: "sample",
+        params: {},
       }),
     ]);
   }).toThrow();

@@ -1,14 +1,14 @@
 import { BaseDomainEvent } from "./_base";
 
-export interface PushedEventParams {
+export interface ReplacedEventParams {
   [key: string]: string | undefined;
 }
 
-export type PushedEvent = BaseDomainEvent<
-  "Pushed",
+export type ReplacedEvent = BaseDomainEvent<
+  "Replaced",
   {
     activityId: string;
     activityName: string;
-    params: PushedEventParams;
+    params: ReplacedEventParams;
   }
 >;

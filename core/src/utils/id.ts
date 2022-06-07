@@ -12,5 +12,5 @@ export function id() {
 
   counterMap.set(t, nextCounter);
 
-  return `id${t}${nextCounter.toString().padStart(4, "0")}`;
+  return Number(`${t}${nextCounter.toString().padStart(2, "0")}`).toString(16);
 }

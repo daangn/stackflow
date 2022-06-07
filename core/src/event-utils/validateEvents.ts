@@ -1,5 +1,4 @@
 import { DomainEvent } from "../event-types";
-import { uniqBy } from "../utils";
 import { filterEvents } from "./filterEvents";
 
 export function validateEvents(events: DomainEvent[]) {
@@ -24,16 +23,4 @@ export function validateEvents(events: DomainEvent[]) {
       throw new Error("the corresponding activity does not exist");
     }
   });
-
-  const pushedEventsUniqByActivityId = uniqBy(
-    pushedEvents,
-    (e) => e.activityId,
-  );
-
-  const isActivityIdDuplicated =
-    pushedEventsUniqByActivityId.length !== pushedEvents.length;
-
-  if (isActivityIdDuplicated) {
-    throw new Error("activityId is duplicate");
-  }
 }

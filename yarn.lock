@@ -2048,6 +2048,7 @@ __metadata:
     dts-bundle-generator: ^6.8.0
     esbuild: ^0.14.37
     jest: ^28.1.0
+    react-fast-compare: ^3.2.0
     rimraf: ^3.0.2
     typescript: ^4.6.3
   languageName: unknown
@@ -10267,6 +10268,13 @@ __metadata:
   peerDependencies:
     react: ^18.1.0
   checksum: bb0d48eeb0b297c79c2a03978baa29f5b3ff7ba3d070b21e34c9af1a6e7fdf0ca8b8d73e41f9214d91ad40eeb6d1f3559f884cbbc338713374a51320637c23df
+  languageName: node
+  linkType: hard
+
+"react-fast-compare@npm:^3.2.0":
+  version: 3.2.0
+  resolution: "react-fast-compare@npm:3.2.0"
+  checksum: 8ef272c825ae329f61633ce4ce7f15aa5b84e5214d88bc0823880236e03e985a13195befa2c7a4eda7db3b017dc7985729152d88445823f652403cf36c2b86aa
   languageName: node
   linkType: hard
 

@@ -3,7 +3,7 @@ import {
   ActivityTransitionState,
   AggregateOutput,
 } from "./AggregateOutput";
-import { DomainEvent, PoppedEvent, PushedEvent } from "./event-types";
+import { DomainEvent, PoppedEvent, ReplacedEvent } from "./event-types";
 import { filterEvents, validateEvents } from "./event-utils";
 import { uniqBy } from "./utils";
 
@@ -17,20 +17,16 @@ function compareEvents(e1: DomainEvent, e2: DomainEvent) {
   return 1;
 }
 
-export function aggregate(
-  _events: DomainEvent[],
-  now: number,
-): AggregateOutput {
-  const events = uniqBy([..._events].sort(compareEvents), (e) => e.id);
+export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
+  const _events = uniqBy([...events].sort(compareEvents), (e) => e.id);
 
-  validateEvents(events);
+  validateEvents(_events);
 
-  const initEvent = filterEvents(events, "Initialized")[0];
+  const initEvent = filterEvents(_events, "Initialized")[0];
   const { transitionDuration } = initEvent;
 
   type ActivityMetadata = {
-    pushedBy: PushedEvent;
-    poppedBy: PoppedEvent | null;
+    poppedBy: PoppedEvent | ReplacedEvent | null;
   };
 
   const activities: Array<
@@ -39,7 +35,7 @@ export function aggregate(
     }
   > = [];
 
-  events.forEach((event) => {
+  _events.forEach((event) => {
     switch (event.name) {
       case "Pushed": {
         const transitionState: ActivityTransitionState =
@@ -51,11 +47,40 @@ export function aggregate(
           id: event.activityId,
           name: event.activityName,
           transitionState,
+          params: event.params,
+          pushedBy: event,
           metadata: {
-            pushedBy: event,
             poppedBy: null,
           },
         });
+
+        break;
+      }
+      case "Replaced": {
+        const transitionState: ActivityTransitionState =
+          now - event.eventDate >= transitionDuration
+            ? "enter-done"
+            : "enter-active";
+
+        const targetActivity = activities
+          .filter((a) => a.metadata.poppedBy === null)
+          .sort((a, b) => b.pushedBy.eventDate - a.pushedBy.eventDate)[0];
+
+        activities.push({
+          id: event.activityId,
+          name: event.activityName,
+          transitionState,
+          params: event.params,
+          pushedBy: event,
+          metadata: {
+            poppedBy: null,
+          },
+        });
+
+        if (transitionState === "enter-done") {
+          targetActivity.metadata.poppedBy = event;
+          targetActivity.transitionState = "exit-done";
+        }
 
         break;
       }
@@ -63,10 +88,7 @@ export function aggregate(
         const targetActivity = activities
           .filter((_, i) => i > 0)
           .filter((a) => a.metadata.poppedBy === null)
-          .sort(
-            (a, b) =>
-              b.metadata.pushedBy.eventDate - a.metadata.pushedBy.eventDate,
-          )[0];
+          .sort((a, b) => b.pushedBy.eventDate - a.pushedBy.eventDate)[0];
 
         if (!targetActivity) {
           return;
@@ -89,19 +111,34 @@ export function aggregate(
   });
 
   const globalTransitionState = activities.find(
-    (a) =>
-      a.transitionState === "enter-active" ||
-      a.transitionState === "exit-active",
+    (activity) =>
+      activity.transitionState === "enter-active" ||
+      activity.transitionState === "exit-active",
   )
     ? "loading"
     : "idle";
 
-  return {
-    activities: activities.map((activity) => ({
-      id: activity.id,
-      name: activity.name,
-      transitionState: activity.transitionState,
-    })),
+  const output: AggregateOutput = {
+    activities: uniqBy(
+      activities.map((activity) => ({
+        id: activity.id,
+        name: activity.name,
+        transitionState: activity.transitionState,
+        params: activity.params,
+        pushedBy: activity.pushedBy,
+      })),
+      (activity) => activity.id,
+    ).sort((a, b) => {
+      if (a.id < b.id) {
+        return -1;
+      }
+      if (a.id === b.id) {
+        return 0;
+      }
+      return 1;
+    }),
     globalTransitionState,
   };
+
+  return output;
 }

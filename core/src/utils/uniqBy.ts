@@ -1,10 +1,19 @@
-export function uniqBy<T>(arr: T[], by: (item: T) => string): T[] {
+export function uniqBy<T>(arr: T[], by: (item: T) => string | null): T[] {
   const valueMap = new Map<string, true>();
 
-  return arr.filter((item) => {
-    const exists = !!valueMap.get(by(item));
-    valueMap.set(by(item), true);
+  return [...arr]
+    .reverse()
+    .filter((item) => {
+      const key = by(item);
 
-    return !exists;
-  });
+      if (key === null) {
+        return true;
+      }
+
+      const exists = !!valueMap.get(key);
+      valueMap.set(key, true);
+
+      return !exists;
+    })
+    .reverse();
 }
