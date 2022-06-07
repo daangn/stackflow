@@ -1,4 +1,6 @@
+export * from "./activity/ActivityComponentType";
 export * from "./activity/useActivity";
+export * from "./activity/useActivityParams";
 export * from "./core/useCore";
 export * from "./plugin/StackflowPlugin";
 export * from "./plugin/StackflowPluginActions";

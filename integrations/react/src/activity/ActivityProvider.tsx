@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React from "react";
 
 import { useCore } from "../core";
 import { ActivityContext } from "./ActivityContext";
@@ -18,9 +18,7 @@ export const ActivityProvider: React.FC<ActivityProviderProps> = ({
   );
 
   return (
-    <ActivityContext.Provider
-      value={useMemo(() => ({ state: state! }), [state])}
-    >
+    <ActivityContext.Provider value={state!}>
       {children}
     </ActivityContext.Provider>
   );

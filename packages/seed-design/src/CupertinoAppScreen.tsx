@@ -10,15 +10,15 @@ interface CupertinoAppScreenProps {
 const CupertinoAppScreen: React.FC<CupertinoAppScreenProps> = ({
   children,
 }) => {
-  const { state } = useActivity();
+  const activity = useActivity();
   const { mounted } = useMounted();
 
   const transitionState = (() => {
-    if (state.transitionState === "enter-active") {
+    if (activity.transitionState === "enter-active") {
       return mounted ? "enter" : "enter-active";
     }
 
-    return state.transitionState;
+    return activity.transitionState;
   })();
 
   return (

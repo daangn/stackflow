@@ -16,6 +16,7 @@ module.exports = {
     "import/no-unresolved": "off",
     "import/no-extraneous-dependencies": "off",
     "import/extensions": "off",
+    "react/prop-types": "off",
     "react/jsx-props-no-spreading": "off",
     "react/react-in-jsx-scope": "off",
     "simple-import-sort/imports": "error",

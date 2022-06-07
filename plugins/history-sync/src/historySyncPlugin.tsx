@@ -106,6 +106,7 @@ export function historySyncPlugin(): StackflowPlugin {
             dispatchEvent("Pushed", {
               activityId: historyState.activity.pushedEvent.activityId,
               activityName: historyState.activity.pushedEvent.activityName,
+              params: historyState.activity.pushedEvent.params,
             });
           }
         };

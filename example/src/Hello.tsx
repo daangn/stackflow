@@ -1,17 +1,27 @@
-import { useActivity } from "@stackflow/react";
+import {
+  ActivityComponentType,
+  useActivity,
+  useActivityParams,
+} from "@stackflow/react";
 import React from "react";
 
 import { useFlow } from "./stackflow";
 
-const Hello: React.FC = () => {
+export interface HelloParams {
+  hello: string;
+}
+
+const Hello: ActivityComponentType<HelloParams> = () => {
   const { push, pop } = useFlow();
-  const { state } = useActivity();
+  const activity = useActivity();
+
+  const { hello } = useActivityParams<HelloParams>();
 
   return (
     <div
       style={{
         backgroundColor: (() => {
-          switch (state.transitionState) {
+          switch (activity.transitionState) {
             case "enter-active":
               return "yellow";
             case "enter-done":
@@ -26,11 +36,13 @@ const Hello: React.FC = () => {
         })(),
       }}
     >
-      id: {state.id}, state: {state.transitionState}{" "}
+      id: {activity.id}, state: {activity.transitionState}{" "}
       <button
         type="button"
         onClick={() => {
-          push("Hello");
+          push("Hello", {
+            hello: "world",
+          });
         }}
       >
         push

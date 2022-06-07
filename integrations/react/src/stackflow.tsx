@@ -21,7 +21,7 @@ const MINUTE = 60 * SECOND;
 type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] };
 
 type BaseActivities = {
-  [activityName: string]: ActivityComponentType;
+  [activityName: string]: ActivityComponentType<any>;
 };
 
 export interface StackProps<T extends BaseActivities> {
@@ -53,7 +53,7 @@ export function stackflow<T extends BaseActivities>(
 
           return (
             <ActivityProvider key={activity.id} activityId={activity.id}>
-              <ActivityComponent />
+              <ActivityComponent {...activity.params} />
             </ActivityProvider>
           );
         },
@@ -163,6 +163,7 @@ export function stackflow<T extends BaseActivities>(
             activityId: makeActivityId(),
             activityName: initialActivity,
             eventDate: initialEventDate,
+            params: {},
           }),
       ];
     }, []);
@@ -182,10 +183,14 @@ export function stackflow<T extends BaseActivities>(
 
     return useMemo(
       () => ({
-        push(activityName: Extract<keyof T, string>) {
+        push<V extends Extract<keyof T, string>>(
+          activityName: V,
+          params: T[V] extends ActivityComponentType<infer U> ? U : {},
+        ) {
           dispatchEvent("Pushed", {
             activityId: makeActivityId(),
             activityName,
+            params,
           });
         },
         pop() {
