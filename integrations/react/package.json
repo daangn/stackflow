@@ -1,0 +1,21 @@
+{
+  "name": "@stackflow/react",
+  "version": "1.0.0",
+  "scripts": {
+    "example:start": "vite"
+  },
+  "dependencies": {
+    "@stackflow/core": "workspace:^",
+    "react-fast-compare": "^3.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.9",
+    "@types/react-dom": "^18.0.5",
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0",
+    "vite": "^2.9.9"
+  },
+  "peerDependencies": {
+    "react": ">=16.8.0"
+  }
+}

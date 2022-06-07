@@ -5,6 +5,7 @@
   "workspaces": [
     "docs",
     "core",
+    "integrations/*",
     "packages/*"
   ],
   "scripts": {
