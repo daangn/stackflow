@@ -15,6 +15,7 @@ test("differences - 알 수 없는 이유로 두 object가 다르다면, %SOMETH
             } as any,
           },
         ],
+        transitionDuration: 300,
         globalTransitionState: "idle",
       },
       {
@@ -29,6 +30,7 @@ test("differences - 알 수 없는 이유로 두 object가 다르다면, %SOMETH
             } as any,
           },
         ],
+        transitionDuration: 300,
         globalTransitionState: "loading",
       },
     ),
@@ -44,6 +46,7 @@ test("differences - 새로운 액티비티가 추가되었다면, PUSHED 이펙�
     produceEffects(
       {
         activities: [],
+        transitionDuration: 300,
         globalTransitionState: "idle",
       },
       {
@@ -58,6 +61,7 @@ test("differences - 새로운 액티비티가 추가되었다면, PUSHED 이펙�
             } as any,
           },
         ],
+        transitionDuration: 300,
         globalTransitionState: "loading",
       },
     ),
@@ -85,6 +89,7 @@ test("differences - 여러개 액티비티가 추가되었다면, PUSHED 이펙�
     produceEffects(
       {
         activities: [],
+        transitionDuration: 300,
         globalTransitionState: "idle",
       },
       {
@@ -108,6 +113,7 @@ test("differences - 여러개 액티비티가 추가되었다면, PUSHED 이펙�
             } as any,
           },
         ],
+        transitionDuration: 300,
         globalTransitionState: "loading",
       },
     ),
@@ -166,6 +172,7 @@ test("differences - 액티비티 상태가 exit-active로 변한 액티비티가
             } as any,
           },
         ],
+        transitionDuration: 300,
         globalTransitionState: "idle",
       },
       {
@@ -189,6 +196,7 @@ test("differences - 액티비티 상태가 exit-active로 변한 액티비티가
             } as any,
           },
         ],
+        transitionDuration: 300,
         globalTransitionState: "loading",
       },
     ),
@@ -235,6 +243,7 @@ test("differences - 액티비티 상태가 exit-active로 변한 액티비티가
             } as any,
           },
         ],
+        transitionDuration: 300,
         globalTransitionState: "idle",
       },
       {
@@ -258,6 +267,7 @@ test("differences - 액티비티 상태가 exit-active로 변한 액티비티가
             } as any,
           },
         ],
+        transitionDuration: 300,
         globalTransitionState: "loading",
       },
     ),
@@ -316,6 +326,7 @@ test("differences - PushedEvent로 인해 액티비티 상태가 enter-active로
             } as any,
           },
         ],
+        transitionDuration: 300,
         globalTransitionState: "idle",
       },
       {
@@ -339,6 +350,7 @@ test("differences - PushedEvent로 인해 액티비티 상태가 enter-active로
             } as any,
           },
         ],
+        transitionDuration: 300,
         globalTransitionState: "loading",
       },
     ),
@@ -385,6 +397,7 @@ test("differences - Replaced 이벤트로 인해 액티비티 상태가 enter-ac
             } as any,
           },
         ],
+        transitionDuration: 300,
         globalTransitionState: "idle",
       },
       {
@@ -417,6 +430,7 @@ test("differences - Replaced 이벤트로 인해 액티비티 상태가 enter-ac
             } as any,
           },
         ],
+        transitionDuration: 300,
         globalTransitionState: "loading",
       },
     ),

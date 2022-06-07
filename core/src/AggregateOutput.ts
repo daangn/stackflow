@@ -20,5 +20,6 @@ export type Activity = {
 
 export type AggregateOutput = {
   activities: Activity[];
+  transitionDuration: number;
   globalTransitionState: "idle" | "loading";
 };

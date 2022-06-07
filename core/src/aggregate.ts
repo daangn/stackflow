@@ -122,6 +122,7 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
       })),
       (activity) => activity.id,
     ).sort((a, b) => compareBy(a, b, (activity) => activity.id)),
+    transitionDuration,
     globalTransitionState,
   };
 

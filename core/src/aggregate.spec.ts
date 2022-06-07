@@ -7,6 +7,7 @@ const MINUTE = 60 * SECOND;
 let dt = 0;
 
 const nowTime = () => new Date().getTime();
+
 const enoughPastTime = () => {
   dt += 1;
   return new Date(Date.now() - MINUTE).getTime() + dt;
@@ -40,6 +41,7 @@ test("aggregate - InitializedEvent만 존재하는 경우, 빈 스택을 내려�
 
   expect(output).toStrictEqual({
     activities: [],
+    transitionDuration: 300,
     globalTransitionState: "idle",
   });
 });
@@ -76,6 +78,7 @@ test("aggregate - 푸시하면 스택에 추가됩니다", () => {
         pushedBy: pushedEvent,
       },
     ],
+    transitionDuration: 300,
     globalTransitionState: "idle",
   });
 });
@@ -113,6 +116,7 @@ test("aggregate - PushedEvent에 activityId, activityName이 다른 경우 스�
         pushedBy: pushedEvent,
       },
     ],
+    transitionDuration: 300,
     globalTransitionState: "idle",
   });
 });
@@ -156,6 +160,7 @@ test("aggregate - 같은 activityId로 여러번 푸시되는 경우 이전의 �
         pushedBy: pushedEvent2,
       },
     ],
+    transitionDuration: 300,
     globalTransitionState: "idle",
   });
 });
@@ -207,6 +212,7 @@ test("aggregate - 다른 activityName으로 두번 푸시하면 스택에 정상
         pushedBy: pushedEvent2,
       },
     ],
+    transitionDuration: 300,
     globalTransitionState: "idle",
   });
 });
@@ -258,6 +264,7 @@ test("aggregate - 같은 activityName으로 두번 푸시하면 정상적으로 
         pushedBy: pushedEvent2,
       },
     ],
+    transitionDuration: 300,
     globalTransitionState: "idle",
   });
 });
@@ -294,6 +301,7 @@ test("aggregate - 푸시한 직후에는 transition.state가 enter-active 입니
         pushedBy: pushedEvent,
       },
     ],
+    transitionDuration: 300,
     globalTransitionState: "loading",
   });
 });
@@ -329,6 +337,7 @@ test("aggregate - 현재 시간과 변화된 시간의 차가 InitializedEvent�
         pushedBy: pushedEvent,
       },
     ],
+    transitionDuration: 300,
     globalTransitionState: "loading",
   });
 });
@@ -365,6 +374,7 @@ test("aggregate - 푸시한 이후 InitializedEvent에서 셋팅된 transitionDu
         pushedBy: pushedEvent,
       },
     ],
+    transitionDuration: 300,
     globalTransitionState: "idle",
   });
 });
@@ -415,6 +425,7 @@ test("aggregate - 여러번 푸시한 경우, transitionDuration 전에 푸시�
         pushedBy: pushedEvent2,
       },
     ],
+    transitionDuration: 300,
     globalTransitionState: "loading",
   });
 });
@@ -466,6 +477,7 @@ test("aggregate - Pop하면 최상단에 존재하는 Activity가 exit-done 상�
         pushedBy: pushedEvent2,
       },
     ],
+    transitionDuration: 300,
     globalTransitionState: "idle",
   });
 });
@@ -536,6 +548,7 @@ test("aggregate - Pop을 여러번하면 차례대로 exit-done 상태가 됩니
         pushedBy: pushedEvent3,
       },
     ],
+    transitionDuration: 300,
     globalTransitionState: "idle",
   });
 
@@ -576,6 +589,7 @@ test("aggregate - Pop을 여러번하면 차례대로 exit-done 상태가 됩니
         pushedBy: pushedEvent3,
       },
     ],
+    transitionDuration: 300,
     globalTransitionState: "idle",
   });
 });
@@ -632,6 +646,7 @@ test("aggregate - 가장 바닥에 있는 Activity는 Pop 되지 않습니다", 
         pushedBy: pushedEvent2,
       },
     ],
+    transitionDuration: 300,
     globalTransitionState: "idle",
   });
 
@@ -665,6 +680,7 @@ test("aggregate - 가장 바닥에 있는 Activity는 Pop 되지 않습니다", 
         pushedBy: pushedEvent2,
       },
     ],
+    transitionDuration: 300,
     globalTransitionState: "idle",
   });
 });
@@ -718,6 +734,7 @@ test("aggregate - transitionDuration 이전에 Pop을 한 경우 exit-active 상
         pushedBy: pushedEvent2,
       },
     ],
+    transitionDuration: 300,
     globalTransitionState: "loading",
   });
 });
@@ -764,6 +781,7 @@ test("aggregate - 이벤트가 중복되거나 순서가 섞여도 정상적으�
         pushedBy: e4,
       },
     ],
+    transitionDuration: 300,
     globalTransitionState: "idle",
   });
 });
@@ -857,6 +875,7 @@ test("aggregate - 같은 activity.id로 푸시되는 경우, 기존에 푸시되
         pushedBy: pushedEvent4,
       },
     ],
+    transitionDuration: 300,
     globalTransitionState: "loading",
   });
 });
@@ -897,6 +916,7 @@ test("aggregate - PushedEvent에 params가 담겨있는 경우 액티비티에 �
         pushedBy: pushedEvent,
       },
     ],
+    transitionDuration: 300,
     globalTransitionState: "loading",
   });
 });
@@ -956,6 +976,7 @@ test("aggregate - ReplacedEvent가 발생한 직후 최상단의 Activity를 유
         pushedBy: replacedEvent,
       },
     ],
+    transitionDuration: 300,
     globalTransitionState: "loading",
   });
 });
@@ -1014,6 +1035,7 @@ test("aggregate - ReplacedEvent가 발생한 후 transitionDuration만큼 지난
         pushedBy: replacedEvent,
       },
     ],
+    transitionDuration: 300,
     globalTransitionState: "idle",
   });
 });
@@ -1090,6 +1112,7 @@ test("aggregate - ReplacedEvent가 발생한 후 transitionDuration만큼 지난
         pushedBy: replacedEvent2,
       },
     ],
+    transitionDuration: 300,
     globalTransitionState: "idle",
   });
 });
