@@ -19,6 +19,7 @@ export type StackflowPlugin = () => {
   onBeforePop?: StackflowPluginPreEffectHook;
   onPushed?: StackflowPluginEffectHook<"PUSHED">;
   onPopped?: StackflowPluginEffectHook<"POPPED">;
+  onReplaced?: StackflowPluginEffectHook<"REPLACED">;
   overrideInitialPushedEvent?: (args: {
     stackContext: any;
   }) => PushedEvent | null;

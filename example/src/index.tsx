@@ -5,26 +5,14 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import ReactDOMServer from "react-dom/server";
 
-import { Stack } from "./stackflow";
+import App from "./App";
 
 const root = ReactDOM.createRoot(document.getElementById("root")!);
 
-const url = new URL(window.location.href);
-
-root.render(
-  <Stack
-    fallbackActivityName="Home"
-    context={{ req: { path: url.pathname + url.search } }}
-  />,
-);
+root.render(<App />);
 
 // eslint-disable-next-line no-console
 console.log(
-  "SSR Test",
-  ReactDOMServer.renderToString(
-    <Stack
-      fallbackActivityName="Home"
-      context={{ req: { path: url.pathname + url.search } }}
-    />,
-  ),
+  "Server-side Rendering Test",
+  ReactDOMServer.renderToString(<App />),
 );

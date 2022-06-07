@@ -73,18 +73,17 @@ export function historySyncPlugin<T extends BaseActivities>(
 
           const targetActivity = activities.find(
             (activity) =>
-              activity.id === historyState.activity.pushedEvent.activityId,
+              activity.id === historyState.activity.pushedBy.activityId,
           );
 
           const isBackward =
             (!targetActivity &&
-              historyState.activity.pushedEvent.activityId <
-                activities[0].id) ||
+              historyState.activity.pushedBy.activityId < activities[0].id) ||
             targetActivity?.transitionState === "enter-active" ||
             targetActivity?.transitionState === "enter-done";
           const isForward =
             (!targetActivity &&
-              historyState.activity.pushedEvent.activityId >
+              historyState.activity.pushedBy.activityId >
                 activities[activities.length - 1].id) ||
             targetActivity?.transitionState === "exit-active" ||
             targetActivity?.transitionState === "exit-done";
@@ -96,7 +95,7 @@ export function historySyncPlugin<T extends BaseActivities>(
               pushFlag = true;
 
               dispatchEvent("Pushed", {
-                ...historyState.activity.pushedEvent,
+                ...historyState.activity.pushedBy,
               });
             }
           }
@@ -104,9 +103,9 @@ export function historySyncPlugin<T extends BaseActivities>(
             pushFlag = true;
 
             dispatchEvent("Pushed", {
-              activityId: historyState.activity.pushedEvent.activityId,
-              activityName: historyState.activity.pushedEvent.activityName,
-              params: historyState.activity.pushedEvent.params,
+              activityId: historyState.activity.pushedBy.activityId,
+              activityName: historyState.activity.pushedBy.activityName,
+              params: historyState.activity.pushedBy.params,
             });
           }
         };
@@ -134,6 +133,17 @@ export function historySyncPlugin<T extends BaseActivities>(
           template.fill(activity.params),
         );
       },
+      onReplaced({ effect: { activity } }) {
+        const template = makeTemplate(options.routes[activity.name]);
+
+        replaceState(
+          {
+            _TAG: STATE_TAG,
+            activity,
+          },
+          template.fill(activity.params),
+        );
+      },
       onBeforePop({ actions: { preventDefault } }) {
         preventDefault();
 
@@ -145,10 +155,11 @@ export function historySyncPlugin<T extends BaseActivities>(
         const initHistoryState = parseState(window.history.state);
 
         if (initHistoryState) {
-          return initHistoryState.activity.pushedEvent;
+          return {
+            ...initHistoryState.activity.pushedBy,
+            name: "Pushed",
+          };
         }
-
-        const { req } = stackContext;
 
         const path = stackContext?.req?.path
           ? stackContext.req.path
@@ -165,7 +176,7 @@ export function historySyncPlugin<T extends BaseActivities>(
         for (let i = 0; i < activityNames.length; i += 1) {
           const activityName = activityNames[i];
           const template = makeTemplate(options.routes[activityName]);
-          const params = template.parse(req.path);
+          const params = template.parse(path);
 
           if (params) {
             return makeEvent("Pushed", {

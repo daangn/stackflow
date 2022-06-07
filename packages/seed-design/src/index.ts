@@ -1,2 +1,1 @@
-export { default as AndroidAppScreen } from "./AndroidAppScreen";
-export { default as CupertinoAppScreen } from "./CupertinoAppScreen";
+export { default as AppScreen } from "./AppScreen";

@@ -4,7 +4,9 @@ export function useMounted() {
   const [mounted, mount] = useReducer(() => true, false);
 
   useEffect(() => {
-    mount();
+    setTimeout(() => {
+      mount();
+    }, 100);
   }, [mount]);
 
   return useMemo(() => ({ mounted }), [mounted]);

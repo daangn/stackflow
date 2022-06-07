@@ -1,15 +1,20 @@
 const { build } = require("esbuild");
 const config = require("@stackflow/esbuild-config");
+const pkg = require("./package.json");
 
 const watch = process.argv.includes("--watch");
+const external = Object.keys({
+  ...pkg.dependencies,
+  ...pkg.peerDependencies,
+});
 
 Promise.all([
   build({
     ...config({}),
     format: "cjs",
-    external: ["@stackflow/react", "react"],
-    minify: true,
+    external,
     watch,
+    minify: !watch,
   }),
   build({
     ...config({}),
@@ -17,8 +22,8 @@ Promise.all([
     outExtension: {
       ".js": ".mjs",
     },
-    external: ["@stackflow/react", "react"],
-    minify: true,
+    external,
     watch,
+    minify: !watch,
   }),
 ]).catch(() => process.exit(1));

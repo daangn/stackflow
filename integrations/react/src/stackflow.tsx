@@ -28,8 +28,8 @@ export type BaseActivities = {
 };
 
 export type StackProps<T extends BaseActivities, C extends {} = {}> = {
-  fallbackActivityName: Extract<keyof T, string>;
-  context: C;
+  fallbackActivityName?: Extract<keyof T, string>;
+  context?: C;
 };
 
 export type StackflowOptions<T extends BaseActivities> = {
@@ -88,6 +88,12 @@ export function stackflow<T extends BaseActivities>(
           case "POPPED": {
             plugins.forEach((plugin) =>
               plugin.onPopped?.({ actions, effect, stackContext }),
+            );
+            break;
+          }
+          case "REPLACED": {
+            plugins.forEach((plugin) =>
+              plugin.onReplaced?.({ actions, effect, stackContext }),
             );
             break;
           }
@@ -152,22 +158,25 @@ export function stackflow<T extends BaseActivities>(
       () => (options.plugins ?? []).map((plugin) => plugin()),
       [],
     );
+    const stackContext = props.context ?? {};
 
     const initialEvents = useMemo(() => {
       const initialPushedEvent =
         plugins.reduce<PushedEvent | null>(
           (_, plugin) =>
             plugin.overrideInitialPushedEvent?.({
-              stackContext: props.context,
+              stackContext,
             }) ?? null,
           null,
         ) ??
-        makeEvent("Pushed", {
-          activityId: makeActivityId(),
-          activityName: props.fallbackActivityName,
-          params: {},
-          eventDate: initialEventDate,
-        });
+        (props.fallbackActivityName
+          ? makeEvent("Pushed", {
+              activityId: makeActivityId(),
+              activityName: props.fallbackActivityName,
+              params: {},
+              eventDate: initialEventDate,
+            })
+          : null);
 
       const events = [
         makeEvent("Initialized", {
@@ -189,7 +198,7 @@ export function stackflow<T extends BaseActivities>(
     return (
       <PluginsProvider plugins={plugins}>
         <CoreProvider initialEvents={initialEvents}>
-          <StackContextProvider context={props.context}>
+          <StackContextProvider context={stackContext}>
             <Main />
           </StackContextProvider>
         </CoreProvider>
@@ -209,6 +218,16 @@ export function stackflow<T extends BaseActivities>(
           params: T[V] extends ActivityComponentType<infer U> ? U : {},
         ) {
           dispatchEvent("Pushed", {
+            activityId: makeActivityId(),
+            activityName,
+            params,
+          });
+        },
+        replace<V extends Extract<keyof T, string>>(
+          activityName: V,
+          params: T[V] extends ActivityComponentType<infer U> ? U : {},
+        ) {
+          dispatchEvent("Replaced", {
             activityId: makeActivityId(),
             activityName,
             params,
