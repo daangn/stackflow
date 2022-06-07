@@ -97,6 +97,12 @@ export function stackflow<T extends BaseActivities>(
             );
             break;
           }
+          case "%SOMETHING_CHANGED%": {
+            plugins.forEach((plugin) =>
+              plugin.onChanged?.({ actions, effect, stackContext }),
+            );
+            break;
+          }
           default: {
             break;
           }
@@ -163,10 +169,10 @@ export function stackflow<T extends BaseActivities>(
     const initialEvents = useMemo(() => {
       const initialPushedEvent =
         plugins.reduce<PushedEvent | null>(
-          (_, plugin) =>
+          (acc, plugin) =>
             plugin.overrideInitialPushedEvent?.({
               stackContext,
-            }) ?? null,
+            }) ?? acc,
           null,
         ) ??
         (props.fallbackActivityName
@@ -194,6 +200,8 @@ export function stackflow<T extends BaseActivities>(
 
       return events;
     }, []);
+
+    console.log(initialEvents);
 
     return (
       <PluginsProvider plugins={plugins}>

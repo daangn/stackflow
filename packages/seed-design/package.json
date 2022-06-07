@@ -31,6 +31,7 @@
     "@stackflow/react": "workspace:^",
     "@types/react": "^18.0.10",
     "@vanilla-extract/css": "^1.7.1",
+    "@vanilla-extract/css-utils": "^0.1.2",
     "@vanilla-extract/recipes": "^0.2.5",
     "react": "^18.1.0",
     "rimraf": "^3.0.2"

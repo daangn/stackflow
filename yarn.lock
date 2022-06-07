@@ -2257,6 +2257,7 @@ __metadata:
     "@stackflow/react": "workspace:^"
     "@types/react": ^18.0.10
     "@vanilla-extract/css": ^1.7.1
+    "@vanilla-extract/css-utils": ^0.1.2
     "@vanilla-extract/dynamic": ^2.0.2
     "@vanilla-extract/recipes": ^0.2.5
     react: ^18.1.0
@@ -2822,6 +2823,13 @@ __metadata:
     "@typescript-eslint/types": 5.21.0
     eslint-visitor-keys: ^3.0.0
   checksum: 328b18faa61872160f3e5faacb5b68022bdabd04b5414f115133245a4a1ecfb5762c67fd645ab3253005480bd25a38598f57fdc2ff2b01d830ac68b37d3d06a5
+  languageName: node
+  linkType: hard
+
+"@vanilla-extract/css-utils@npm:^0.1.2":
+  version: 0.1.2
+  resolution: "@vanilla-extract/css-utils@npm:0.1.2"
+  checksum: 002c65889910c5a1f6672f2f0451e9667aa2a5e17eeb58cf14f4eda1869c6eed9a6a25951ffa444650a65919ecb61831c05380707ab787568be10927653ed53c
   languageName: node
   linkType: hard
 

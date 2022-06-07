@@ -23,5 +23,11 @@ export const { Stack, useFlow } = stackflow({
         Article: "/articles/:articleId",
       },
     }),
+    () => ({
+      key: "my",
+      onChanged() {
+        console.log("Hello");
+      },
+    }),
   ],
 });

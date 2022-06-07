@@ -13,9 +13,9 @@ const Home: ActivityComponentType = () => {
   const activity = useActivity();
 
   return (
-    <AppScreen theme="Cupertino">
+    <AppScreen theme="cupertino" appBar={{ title: "Hello" }}>
       <div>
-        name: Home, activityId: {activity.id}, state: {activity.transitionState}{" "}
+        name: Home, state: {activity.transitionState}{" "}
         <button
           type="button"
           onClick={() => {
