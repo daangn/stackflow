@@ -1,18 +1,30 @@
 import { style } from "@vanilla-extract/css";
 
+export const fullWidth = style({
+  width: "100%",
+});
+
+export const fullHeight = style({
+  height: "100%",
+});
+
+export const top0 = style({
+  top: 0,
+});
+
+export const left0 = style({
+  left: 0,
+});
+
 export const posAbs = style({
   position: "absolute",
 });
 
-export const posAbsFull = style([
-  posAbs,
-  {
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100%",
-  },
-]);
+export const posRel = style({
+  position: "relative",
+});
+
+export const posAbsFull = style([posAbs, fullWidth, fullHeight, top0, left0]);
 
 export const flex = style({
   display: "flex",
@@ -24,3 +36,27 @@ export const flexAlignCenter = style([
     alignItems: "center",
   },
 ]);
+
+export const flexJustifyCenter = style([
+  flex,
+  {
+    justifyContent: "center",
+  },
+]);
+
+export const overflowHidden = style({
+  overflow: "hidden",
+});
+
+export const whiteSpaceNowrap = style({
+  whiteSpace: "nowrap",
+});
+
+export const textAlignCenter = style({
+  textAlign: "center",
+});
+
+export const cursorPointer = style({
+  cursor: "pointer",
+  WebkitTapHighlightColor: "transparent",
+});

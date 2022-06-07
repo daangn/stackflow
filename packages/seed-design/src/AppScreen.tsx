@@ -1,5 +1,6 @@
 import { useActivity, useCore } from "@stackflow/react";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
+import { IconBack } from "assets";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 
 import * as css from "./AppScreen.css";
@@ -8,7 +9,7 @@ import { useVariant } from "./utils";
 interface AppScreenProps {
   theme: "android" | "cupertino";
   appBar?: {
-    title: string;
+    title?: string;
   };
   children: React.ReactNode;
 }
@@ -90,16 +91,27 @@ const AppScreen: React.FC<AppScreenProps> = ({ theme, appBar, children }) => {
       })}
     >
       <div className={css.dim} />
-      <div className={css.paper({ isTop, isAppBar: !!appBar })}>{children}</div>
+      <div
+        className={css.paper({
+          isTop,
+          hasAppBar: !!appBar,
+        })}
+      >
+        {children}
+      </div>
       {appBar && (
         <div ref={appBarRef} className={css.appBar}>
-          <div className={css.appBarLeft} />
+          <div className={css.appBarLeft}>
+            <div className={css.appBarBackButton}>
+              <IconBack />
+            </div>
+          </div>
           <div ref={appBarCenterRef} className={css.appBarCenter}>
-            <div className={css.appBarCenterMain}>
+            <div className={css.appBarCenterMain({ theme })}>
               <div className={css.appBarCenterMainText}>{appBar.title}</div>
             </div>
           </div>
-          <div className={css.appBarRight} />
+          <div className={css.appBarRight}>right</div>
         </div>
       )}
     </div>

@@ -25,6 +25,22 @@ const vars = createGlobalThemeContract(
   (_, path) => `stackflow-seed-design-${path.join("-")}`,
 );
 
+const dimBackgroundColor = style({
+  backgroundColor: vars.dimBackgroundColor,
+});
+
+const background = style({
+  backgroundColor: vars.backgroundColor,
+});
+
+const opacityTransition = style({
+  transition: `opacity ${vars.transitionDuration}`,
+});
+
+const transformTransition = style({
+  transition: `transform ${vars.transitionDuration}`,
+});
+
 const android = createTheme(vars, {
   backgroundColor: "#fff",
   dimBackgroundColor: "rgba(0, 0, 0, 0.15)",
@@ -53,22 +69,6 @@ const cupertino = createTheme(vars, {
   },
 });
 
-const dimBackgroundColor = style({
-  backgroundColor: vars.dimBackgroundColor,
-});
-
-const background = style({
-  backgroundColor: vars.backgroundColor,
-});
-
-const opacityTransition = style({
-  transition: `opacity ${vars.transitionDuration}`,
-});
-
-const transformTransition = style({
-  transition: `transform ${vars.transitionDuration}`,
-});
-
 export const enterActive = style({
   display: "block",
 });
@@ -84,12 +84,7 @@ export const exitDone = style({
 });
 
 export const appScreen = recipe({
-  base: [
-    f.posAbsFull,
-    {
-      overflow: "hidden",
-    },
-  ],
+  base: [f.posAbsFull, f.overflowHidden],
   variants: {
     theme: {
       android,
@@ -124,9 +119,9 @@ export const dim = style([
 export const appBar = style([
   f.posAbs,
   f.flexAlignCenter,
+  f.fullWidth,
   background,
   {
-    width: "100%",
     height: vars.appBar.height,
     boxShadow: `inset 0px ${calc(vars.appBar.borderSize).negate()} 0 ${
       vars.appBar.borderColor
@@ -134,7 +129,36 @@ export const appBar = style([
   },
 ]);
 
-export const appBarLeft = style([]);
+export const appBarLeft = style([
+  f.flexAlignCenter,
+  f.fullHeight,
+  {
+    padding: "0 0.5rem",
+    ":empty": {
+      display: "none",
+    },
+  },
+]);
+
+export const appBarBackButton = style([
+  f.flexAlignCenter,
+  f.flexJustifyCenter,
+  f.cursorPointer,
+  {
+    color: "#000",
+    opacity: 1,
+    transition: "opacity 300ms",
+    width: "2.25rem",
+    height: "2.75rem",
+    textDecoration: "none",
+    outline: "none",
+    ":active": {
+      opacity: "0.2",
+      transition: "opacity 0s",
+    },
+  },
+]);
+
 export const appBarCenter = style([
   f.flexAlignCenter,
   {
@@ -142,34 +166,70 @@ export const appBarCenter = style([
   },
 ]);
 
-export const appBarCenterMain = style([
-  {
+export const appBarCenterMain = recipe({
+  base: {
     width: vars.appBar.center.mainWidth,
-    fontFamily: "-apple-system, BlinkMacSystemFont",
-    textAlign: "center",
-    fontWeight: 600,
-    fontSize: "1rem",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    position: "absolute",
-    top: "0",
-    left: "50%",
-    height: "100%",
-    transform: "translate(-50%)",
+  },
+  variants: {
+    theme: {
+      android: [
+        f.fullWidth,
+        {
+          justifyContent: "flex-start",
+          paddingLeft: "1rem",
+          fontSize: "1.1875rem",
+          lineHeight: "1.5",
+          fontWeight: "bold",
+          boxSizing: "border-box",
+        },
+      ],
+      cupertino: [
+        f.textAlignCenter,
+        f.flexAlignCenter,
+        f.flexJustifyCenter,
+        f.posAbs,
+        f.fullHeight,
+        f.top0,
+        {
+          fontFamily: "-apple-system, BlinkMacSystemFont",
+          fontWeight: 600,
+          fontSize: "1rem",
+          left: "50%",
+          transform: "translate(-50%)",
+        },
+      ],
+    },
+  },
+});
+
+export const appBarCenterMainText = style([
+  f.overflowHidden,
+  f.whiteSpaceNowrap,
+  f.fullWidth,
+  {
+    textOverflow: "ellipsis",
+    fontSize: "inherit",
+    fontWeight: "inherit",
   },
 ]);
 
-export const appBarCenterMainText = style({
-  overflow: "hidden",
-  textOverflow: "ellipsis",
-  fontSize: "inherit",
-  fontWeight: "inherit",
-  whiteSpace: "nowrap",
-  width: "100%",
-});
-
-export const appBarRight = style([]);
+export const appBarRight = style([
+  f.flexAlignCenter,
+  f.fullHeight,
+  f.posRel,
+  {
+    padding: "0 0.5rem",
+    marginLeft: "auto",
+    ":empty": {
+      display: "none",
+    },
+    selectors: {
+      [`${android} > &`]: {
+        padding: "0 0.5rem 0 0",
+      },
+    },
+  },
+]);
 
 export const paper = recipe({
   base: [
@@ -202,7 +262,7 @@ export const paper = recipe({
         },
       },
     },
-    isAppBar: {
+    hasAppBar: {
       true: {
         paddingTop: vars.appBar.height,
       },
