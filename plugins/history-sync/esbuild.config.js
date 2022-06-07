@@ -7,7 +7,7 @@ Promise.all([
   build({
     ...config({}),
     format: "cjs",
-    external: ["react-fast-compare"],
+    external: ["@stackflow/react", "react"],
     watch,
   }),
   build({
@@ -16,7 +16,7 @@ Promise.all([
     outExtension: {
       ".js": ".mjs",
     },
-    external: ["react-fast-compare"],
+    external: ["@stackflow/react", "react"],
     watch,
   }),
 ]).catch(() => process.exit(1));

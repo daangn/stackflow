@@ -7,12 +7,27 @@ import { useFlow } from "./stackflow";
 const Hello: React.FC = () => {
   const { push, pop } = useFlow();
   const { state } = useActivity();
-  console.log(state);
 
   return (
-    <CupertinoAppScreen>
-      <div>Hello, World!</div>
-    </CupertinoAppScreen>
+    <div>
+      id: {state.id}, state: {state.transitionState}{" "}
+      <button
+        type="button"
+        onClick={() => {
+          push("Hello");
+        }}
+      >
+        push
+      </button>
+      <button
+        type="button"
+        onClick={() => {
+          pop();
+        }}
+      >
+        pop
+      </button>
+    </div>
   );
 };
 

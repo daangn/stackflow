@@ -2044,7 +2044,6 @@ __metadata:
     "@swc/jest": ^0.2.21
     "@types/jest": ^27.5.1
     "@types/lodash": ^4.14.182
-    concurrently: ^7.1.0
     esbuild: ^0.14.37
     jest: ^28.1.0
     react-fast-compare: ^3.2.0
@@ -2080,6 +2079,7 @@ __metadata:
   resolution: "@stackflow/example@workspace:example"
   dependencies:
     "@stackflow/core": "workspace:^"
+    "@stackflow/plugin-history-sync": "workspace:^"
     "@stackflow/plugin-render": "workspace:^"
     "@stackflow/seed-design": "workspace:^"
     "@types/react": ^18.0.10
@@ -2112,6 +2112,22 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@stackflow/plugin-history-sync@workspace:^, @stackflow/plugin-history-sync@workspace:plugins/history-sync":
+  version: 0.0.0-use.local
+  resolution: "@stackflow/plugin-history-sync@workspace:plugins/history-sync"
+  dependencies:
+    "@stackflow/esbuild-config": "workspace:^"
+    "@stackflow/react": "workspace:^"
+    "@types/react": ^18.0.10
+    react: ^18.1.0
+    rimraf: ^3.0.2
+  peerDependencies:
+    "@stackflow/react": "workspace:^"
+    "@types/react": ">=16.8.0"
+    react: ">=16.8.0"
+  languageName: unknown
+  linkType: soft
+
 "@stackflow/plugin-render@workspace:^, @stackflow/plugin-render@workspace:plugins/render":
   version: 0.0.0-use.local
   resolution: "@stackflow/plugin-render@workspace:plugins/render"
@@ -2119,7 +2135,6 @@ __metadata:
     "@stackflow/esbuild-config": "workspace:^"
     "@stackflow/react": "workspace:^"
     "@types/react": ^18.0.10
-    concurrently: ^7.2.1
     react: ^18.1.0
     rimraf: ^3.0.2
   peerDependencies:
@@ -2135,7 +2150,6 @@ __metadata:
   dependencies:
     "@stackflow/core": "workspace:^"
     "@types/react": ^18.0.9
-    concurrently: ^7.2.1
     react: ^18.1.0
     react-fast-compare: ^3.2.0
     rimraf: ^3.0.2
@@ -2153,7 +2167,6 @@ __metadata:
     "@types/react": ^18.0.10
     "@vanilla-extract/css": ^1.7.1
     "@vanilla-extract/recipes": ^0.2.5
-    concurrently: ^7.2.1
     react: ^18.1.0
     rimraf: ^3.0.2
   peerDependencies:
@@ -3911,25 +3924,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"concurrently@npm:^7.1.0, concurrently@npm:^7.2.1":
-  version: 7.2.1
-  resolution: "concurrently@npm:7.2.1"
-  dependencies:
-    chalk: ^4.1.0
-    date-fns: ^2.16.1
-    lodash: ^4.17.21
-    rxjs: ^6.6.3
-    shell-quote: ^1.7.3
-    spawn-command: ^0.0.2-1
-    supports-color: ^8.1.0
-    tree-kill: ^1.2.2
-    yargs: ^17.3.1
-  bin:
-    concurrently: dist/bin/concurrently.js
-  checksum: 384e9f48f2c53a7c46b1bb1143b9dba734953c587e0c080db0c6e71dd4a58f556d096fe4fd9d2d9c601ba7ae8e6c06d452c162bbc2b6a4b16c080c1c4b8e81b4
-  languageName: node
-  linkType: hard
-
 "config-chain@npm:^1.1.12":
   version: 1.1.13
   resolution: "config-chain@npm:1.1.13"
@@ -4173,13 +4167,6 @@ __metadata:
   dependencies:
     assert-plus: ^1.0.0
   checksum: 3634c249570f7f34e3d34f866c93f866c5b417f0dd616275decae08147dcdf8fccfaa5947380ccfb0473998ea3a8057c0b4cd90c875740ee685d0624b2983598
-  languageName: node
-  linkType: hard
-
-"date-fns@npm:^2.16.1":
-  version: 2.28.0
-  resolution: "date-fns@npm:2.28.0"
-  checksum: a0516b2e4f99b8bffc6cc5193349f185f195398385bdcaf07f17c2c4a24473c99d933eb0018be4142a86a6d46cb0b06be6440ad874f15e795acbedd6fd727a1f
   languageName: node
   linkType: hard
 
@@ -10934,7 +10921,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rxjs@npm:^6.6.0, rxjs@npm:^6.6.3":
+"rxjs@npm:^6.6.0":
   version: 6.6.7
   resolution: "rxjs@npm:6.6.7"
   dependencies:
@@ -11078,13 +11065,6 @@ __metadata:
   version: 3.0.0
   resolution: "shebang-regex@npm:3.0.0"
   checksum: 1a2bcae50de99034fcd92ad4212d8e01eedf52c7ec7830eedcf886622804fe36884278f2be8be0ea5fde3fd1c23911643a4e0f726c8685b61871c8908af01222
-  languageName: node
-  linkType: hard
-
-"shell-quote@npm:^1.7.3":
-  version: 1.7.3
-  resolution: "shell-quote@npm:1.7.3"
-  checksum: aca58e73a3a5d933d02e0bdddedc53ee14f7c2ec264f97ac915b9d4482d077a38e422aa664631d60a672cd3cdb4054eb2e6c0303f54882453dacb6483e482d34
   languageName: node
   linkType: hard
 
@@ -11267,13 +11247,6 @@ __metadata:
   version: 2.0.1
   resolution: "space-separated-tokens@npm:2.0.1"
   checksum: 66e30a6382d6e3ab0a6573d510235a198202071d4ebfef8c198f10433166f0cdced4dbf0946cad3c4b2ecc336896a11f98b2ec93047e140fe7aef6fd3a21365b
-  languageName: node
-  linkType: hard
-
-"spawn-command@npm:^0.0.2-1":
-  version: 0.0.2
-  resolution: "spawn-command@npm:0.0.2"
-  checksum: e35c5d28177b4d461d33c88cc11f6f3a5079e2b132c11e1746453bbb7a0c0b8a634f07541a2a234fa4758239d88203b758def509161b651e81958894c0b4b64b
   languageName: node
   linkType: hard
 
@@ -11651,7 +11624,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"supports-color@npm:^8.0.0, supports-color@npm:^8.1.0":
+"supports-color@npm:^8.0.0":
   version: 8.1.1
   resolution: "supports-color@npm:8.1.1"
   dependencies:
@@ -11899,15 +11872,6 @@ __metadata:
   version: 0.0.3
   resolution: "tr46@npm:0.0.3"
   checksum: 726321c5eaf41b5002e17ffbd1fb7245999a073e8979085dacd47c4b4e8068ff5777142fc6726d6ca1fd2ff16921b48788b87225cbc57c72636f6efa8efbffe3
-  languageName: node
-  linkType: hard
-
-"tree-kill@npm:^1.2.2":
-  version: 1.2.2
-  resolution: "tree-kill@npm:1.2.2"
-  bin:
-    tree-kill: cli.js
-  checksum: 49117f5f410d19c84b0464d29afb9642c863bc5ba40fcb9a245d474c6d5cc64d1b177a6e6713129eb346b40aebb9d4631d967517f9fbe8251c35b21b13cd96c7
   languageName: node
   linkType: hard
 

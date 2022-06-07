@@ -5,6 +5,8 @@ module.exports = {
   plugins: ["json-format", "simple-import-sort"],
   rules: {
     "no-undef": "off",
+    "no-unused-vars": "off",
+    "no-underscore-dangle": "off",
     "react/jsx-filename-extension": [
       1,
       { extensions: [".js", ".jsx", ".tsx"] },
@@ -18,7 +20,6 @@ module.exports = {
     "react/react-in-jsx-scope": "off",
     "simple-import-sort/imports": "error",
     "simple-import-sort/exports": "error",
-    "no-unused-vars": "off",
   },
   ignorePatterns: ["**/__generated__/**/*", "**/lib/**/*", "**/dist/**/*"],
 };

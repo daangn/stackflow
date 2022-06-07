@@ -1,5 +1,7 @@
 import React from "react";
 
+import { CoreLifeCycleHook } from "./core";
+
 export interface StackflowPlugin {
   id: string;
   render?: (args: {
@@ -8,4 +10,6 @@ export interface StackflowPlugin {
       render: () => React.ReactNode;
     }>;
   }) => React.ReactElement<any, any> | null;
+  onPushed?: CoreLifeCycleHook<"PUSHED">;
+  onPopped?: CoreLifeCycleHook<"POPPED">;
 }

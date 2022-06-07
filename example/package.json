@@ -6,6 +6,7 @@
   },
   "dependencies": {
     "@stackflow/core": "workspace:^",
+    "@stackflow/plugin-history-sync": "workspace:^",
     "@stackflow/plugin-render": "workspace:^",
     "@stackflow/seed-design": "workspace:^",
     "normalize.css": "^8.0.1",

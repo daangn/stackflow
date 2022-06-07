@@ -1,12 +1,12 @@
 import { makeEvent } from "@stackflow/core";
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 
 import {
   ActivityComponentType,
   ActivityProvider,
   makeActivityId,
 } from "./activity";
-import { CoreProvider, useCore } from "./core";
+import { CoreLifeCycleHook, CoreProvider, useCore } from "./core";
 import { StackflowPlugin } from "./StackflowPlugin";
 
 const SECOND = 1000;
@@ -77,8 +77,28 @@ export function stackflow<T extends BaseActivities>(
       [],
     );
 
+    const onEffect = useCallback<CoreLifeCycleHook<any>>((actions, effect) => {
+      switch (effect._TAG) {
+        case "PUSHED": {
+          options.plugins?.forEach((plugin) =>
+            plugin.onPushed?.(actions, effect),
+          );
+          break;
+        }
+        case "POPPED": {
+          options.plugins?.forEach((plugin) =>
+            plugin.onPopped?.(actions, effect),
+          );
+          break;
+        }
+        default: {
+          break;
+        }
+      }
+    }, []);
+
     return (
-      <CoreProvider initialEvents={initialEvents}>
+      <CoreProvider initialEvents={initialEvents} onEffect={onEffect}>
         {(options.plugins ?? [])
           .filter(
             (plugin): plugin is WithRequired<typeof plugin, "render"> =>

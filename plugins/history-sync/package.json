@@ -1,0 +1,43 @@
+{
+  "name": "@stackflow/plugin-history-sync",
+  "version": "1.0.0",
+  "license": "Apache-2.0",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "yarn build:js && yarn build:dts",
+    "build:dts": "tsc --emitDeclarationOnly",
+    "build:js": "node ./esbuild.config.js",
+    "clean": "rimraf dist",
+    "dev": "yarn build:js --watch && yarn build:dts --watch"
+  },
+  "devDependencies": {
+    "@stackflow/esbuild-config": "workspace:^",
+    "@stackflow/react": "workspace:^",
+    "@types/react": "^18.0.10",
+    "react": "^18.1.0",
+    "rimraf": "^3.0.2"
+  },
+  "peerDependencies": {
+    "@stackflow/react": "workspace:^",
+    "@types/react": ">=16.8.0",
+    "react": ">=16.8.0"
+  },
+  "ultra": {
+    "concurrent": [
+      "dev",
+      "build"
+    ]
+  }
+}
