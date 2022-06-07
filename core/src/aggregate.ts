@@ -5,20 +5,13 @@ import {
 } from "./AggregateOutput";
 import { DomainEvent, PoppedEvent, ReplacedEvent } from "./event-types";
 import { filterEvents, validateEvents } from "./event-utils";
-import { uniqBy } from "./utils";
-
-function compareEvents(e1: DomainEvent, e2: DomainEvent) {
-  if (e1.id < e2.id) {
-    return -1;
-  }
-  if (e1.id === e2.id) {
-    return 0;
-  }
-  return 1;
-}
+import { compareBy, uniqBy } from "./utils";
 
 export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
-  const _events = uniqBy([...events].sort(compareEvents), (e) => e.id);
+  const _events = uniqBy(
+    [...events].sort((a, b) => compareBy(a, b, (e) => e.id)),
+    (e) => e.id,
+  );
 
   validateEvents(_events);
 
@@ -128,15 +121,7 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
         pushedBy: activity.pushedBy,
       })),
       (activity) => activity.id,
-    ).sort((a, b) => {
-      if (a.id < b.id) {
-        return -1;
-      }
-      if (a.id === b.id) {
-        return 0;
-      }
-      return 1;
-    }),
+    ).sort((a, b) => compareBy(a, b, (activity) => activity.id)),
     globalTransitionState,
   };
 
