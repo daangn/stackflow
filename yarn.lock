@@ -2045,7 +2045,6 @@ __metadata:
     "@types/jest": ^27.5.1
     "@types/lodash": ^4.14.182
     concurrently: ^7.1.0
-    dts-bundle-generator: ^6.8.0
     esbuild: ^0.14.37
     jest: ^28.1.0
     react-fast-compare: ^3.2.0
@@ -2119,7 +2118,6 @@ __metadata:
     "@stackflow/react": "workspace:^"
     "@types/react": ^18.0.10
     concurrently: ^7.2.1
-    dts-bundle-generator: ^6.9.0
     react: ^18.1.0
     rimraf: ^3.0.2
   peerDependencies:
@@ -2136,7 +2134,6 @@ __metadata:
     "@stackflow/core": "workspace:^"
     "@types/react": ^18.0.9
     concurrently: ^7.2.1
-    dts-bundle-generator: ^6.9.0
     react: ^18.1.0
     react-fast-compare: ^3.2.0
     rimraf: ^3.0.2
@@ -2155,7 +2152,6 @@ __metadata:
     "@vanilla-extract/css": ^1.7.1
     "@vanilla-extract/recipes": ^0.2.5
     concurrently: ^7.2.1
-    dts-bundle-generator: ^6.9.0
     react: ^18.1.0
     rimraf: ^3.0.2
   peerDependencies:
@@ -4520,18 +4516,6 @@ __metadata:
     p-event: ^2.1.0
     pify: ^4.0.1
   checksum: 8a26b21eee8d23352265729dba8eea9f18cba0ebfa3e064041afffeefdfe508fc31e54a08bd0606ff8b0d548466bdb2e2e32b571a8f95227efa5b7c09c261a2f
-  languageName: node
-  linkType: hard
-
-"dts-bundle-generator@npm:^6.8.0, dts-bundle-generator@npm:^6.9.0":
-  version: 6.9.0
-  resolution: "dts-bundle-generator@npm:6.9.0"
-  dependencies:
-    typescript: ">=3.0.1"
-    yargs: ^17.2.1
-  bin:
-    dts-bundle-generator: dist/bin/dts-bundle-generator.js
-  checksum: 1ea1d4fa7f206396ee69173efdbb80af5bfdaea1fc28af7e045daceaee1d2df940f8c4abf76ef9015a2fb55235e78af570719c1c1bce89bb6fad620c64a163f0
   languageName: node
   linkType: hard
 
@@ -12010,7 +11994,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:>=3.0.1, typescript@npm:^4.6.3":
+"typescript@npm:^4.6.3":
   version: 4.6.4
   resolution: "typescript@npm:4.6.4"
   bin:
@@ -12020,7 +12004,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@>=3.0.1#~builtin<compat/typescript>, typescript@patch:typescript@^4.6.3#~builtin<compat/typescript>":
+"typescript@patch:typescript@^4.6.3#~builtin<compat/typescript>":
   version: 4.6.4
   resolution: "typescript@patch:typescript@npm%3A4.6.4#~builtin<compat/typescript>::version=4.6.4&hash=bda367"
   bin:
@@ -12720,7 +12704,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yargs@npm:^17.2.1, yargs@npm:^17.3.1":
+"yargs@npm:^17.3.1":
   version: 17.5.0
   resolution: "yargs@npm:17.5.0"
   dependencies:

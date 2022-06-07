@@ -7,6 +7,7 @@ export const card = recipe({
   base: [f.posAbs],
   variants: {
     transitionState: {
+      enter: {},
       "enter-active": {},
       "enter-done": {},
       "exit-active": {},

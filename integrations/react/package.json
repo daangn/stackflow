@@ -17,7 +17,7 @@
   ],
   "scripts": {
     "build": "yarn clean && concurrently \"yarn:build:*\"",
-    "build:bundle:dts": "dts-bundle-generator -o dist/index.d.ts src/index.ts",
+    "build:bundle:dts": "tsc --emitDeclarationOnly",
     "build:bundle:js": "node ./esbuild.config.js",
     "clean": "rimraf dist",
     "test": "jest",
@@ -30,7 +30,6 @@
   "devDependencies": {
     "@types/react": "^18.0.9",
     "concurrently": "^7.2.1",
-    "dts-bundle-generator": "^6.9.0",
     "react": "^18.1.0",
     "rimraf": "^3.0.2"
   },

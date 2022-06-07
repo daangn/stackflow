@@ -11,6 +11,7 @@
     "plugins/*"
   ],
   "scripts": {
+    "build": "yarn workspaces foreach -t run build",
     "format": "eslint --fix --ignore-path .gitignore && prettier -w .",
     "lerna:publish": "yarn build && lerna publish",
     "version": "yarn install && git stage yarn.lock"
