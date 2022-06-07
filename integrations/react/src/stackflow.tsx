@@ -1,7 +1,11 @@
 import { makeEvent } from "@stackflow/core";
 import React, { useMemo } from "react";
 
-import { ActivityComponentType, ActivityProvider } from "./activity";
+import {
+  ActivityComponentType,
+  ActivityProvider,
+  makeActivityId,
+} from "./activity";
 import { CoreProvider, useCore } from "./core";
 import { StackflowPlugin } from "./StackflowPlugin";
 
@@ -65,7 +69,7 @@ export function stackflow<T extends BaseActivities>(
           }),
         ),
         makeEvent("Pushed", {
-          activityId: "initial",
+          activityId: makeActivityId(),
           activityName: initialActivity,
           eventDate: initialEventDate,
         }),
@@ -93,10 +97,8 @@ export function stackflow<T extends BaseActivities>(
     return useMemo(
       () => ({
         push(activityName: Extract<keyof T, string>) {
-          const activityId = `id${new Date().getTime().toString()}`;
-
           dispatchEvent("Pushed", {
-            activityId,
+            activityId: makeActivityId(),
             activityName,
           });
         },

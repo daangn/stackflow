@@ -16,12 +16,12 @@
     "src"
   ],
   "scripts": {
-    "build": "yarn clean && concurrently \"yarn:build:*\"",
-    "build:bundle:dts": "tsc --emitDeclarationOnly",
-    "build:bundle:js": "node ./esbuild.config.js",
+    "build": "yarn build:js && yarn build:dts",
+    "build:dts": "tsc --emitDeclarationOnly",
+    "build:js": "node ./esbuild.config.js",
     "clean": "rimraf dist",
-    "test": "jest",
-    "test:watch": "jest --watch"
+    "dev": "yarn test --watch && yarn build:js --watch && yarn build:dts --watch",
+    "test": "jest"
   },
   "jest": {
     "coveragePathIgnorePatterns": [
@@ -41,10 +41,16 @@
     "@swc/jest": "^0.2.21",
     "@types/jest": "^27.5.1",
     "@types/lodash": "^4.14.182",
-    "concurrently": "^7.1.0",
     "esbuild": "^0.14.37",
     "jest": "^28.1.0",
     "rimraf": "^3.0.2",
-    "typescript": "^4.6.3"
+    "typescript": "^4.6.3",
+    "ultra-runner": "^3.10.5"
+  },
+  "ultra": {
+    "concurrent": [
+      "dev",
+      "build"
+    ]
   }
 }

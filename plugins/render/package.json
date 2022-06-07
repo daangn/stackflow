@@ -16,16 +16,16 @@
     "src"
   ],
   "scripts": {
-    "build": "yarn clean && concurrently \"yarn:build:*\"",
-    "build:bundle:dts": "tsc --emitDeclarationOnly",
-    "build:bundle:js": "node ./esbuild.config.js",
-    "clean": "rimraf dist"
+    "build": "yarn build:js && yarn build:dts",
+    "build:dts": "tsc --emitDeclarationOnly",
+    "build:js": "node ./esbuild.config.js",
+    "clean": "rimraf dist",
+    "dev": "yarn build:js --watch && yarn build:dts --watch"
   },
   "devDependencies": {
     "@stackflow/esbuild-config": "workspace:^",
     "@stackflow/react": "workspace:^",
     "@types/react": "^18.0.10",
-    "concurrently": "^7.2.1",
     "react": "^18.1.0",
     "rimraf": "^3.0.2"
   },
@@ -33,5 +33,11 @@
     "@stackflow/react": "workspace:^",
     "@types/react": ">=16.8.0",
     "react": ">=16.8.0"
+  },
+  "ultra": {
+    "concurrent": [
+      "dev",
+      "build"
+    ]
   }
 }
