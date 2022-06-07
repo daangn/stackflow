@@ -1,12 +1,17 @@
-import { makeEvent } from "@stackflow/core";
-import React, { useCallback, useMemo } from "react";
+import { makeEvent, produceEffects } from "@stackflow/core";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 
 import {
   ActivityComponentType,
   ActivityProvider,
   makeActivityId,
 } from "./activity";
-import { CoreLifeCycleHook, CoreProvider, useCore } from "./core";
+import {
+  CoreLifeCycleHook,
+  CoreLifeCycleHookInit,
+  CoreProvider,
+  useCore,
+} from "./core";
 import { StackflowPlugin } from "./StackflowPlugin";
 
 const SECOND = 1000;
@@ -34,7 +39,7 @@ export function stackflow<T extends BaseActivities>(
   const initialEventDate = new Date().getTime() - MINUTE;
 
   interface PluginRendererProps {
-    plugin: WithRequired<StackflowPlugin, "render">;
+    plugin: WithRequired<ReturnType<StackflowPlugin>, "render">;
   }
   const PluginRenderer: React.FC<PluginRendererProps> = ({ plugin }) => {
     const core = useCore();
@@ -55,9 +60,96 @@ export function stackflow<T extends BaseActivities>(
     });
   };
 
+  interface MainProps {
+    plugins: Array<ReturnType<StackflowPlugin>>;
+  }
+  const Main: React.FC<MainProps> = ({ plugins }) => {
+    const core = useCore();
+
+    const prevStateRef = useRef(core.state);
+
+    const onInit = useCallback<CoreLifeCycleHookInit>(
+      (actions, aggregateOutput) => {
+        plugins.forEach((plugin) => {
+          plugin.onInit?.(actions, aggregateOutput);
+        });
+      },
+      [],
+    );
+
+    const onEffect = useCallback<CoreLifeCycleHook<any>>((actions, effect) => {
+      switch (effect._TAG) {
+        case "PUSHED": {
+          plugins.forEach((plugin) => plugin.onPushed?.(actions, effect));
+          break;
+        }
+        case "POPPED": {
+          plugins.forEach((plugin) => plugin.onPopped?.(actions, effect));
+          break;
+        }
+        default: {
+          break;
+        }
+      }
+    }, []);
+
+    useEffect(() => {
+      onInit?.(
+        {
+          dispatchEvent: core.dispatchEvent,
+          getState() {
+            return core.stateRef.current;
+          },
+        },
+        core.state,
+      );
+    }, []);
+
+    useEffect(() => {
+      const prevState = prevStateRef.current;
+      const effects = prevState ? produceEffects(prevState, core.state) : [];
+
+      effects.forEach((effect) => {
+        onEffect(
+          {
+            dispatchEvent: core.dispatchEvent,
+            getState() {
+              return core.stateRef.current;
+            },
+          },
+          effect,
+        );
+      });
+
+      prevStateRef.current = { ...core.state };
+    }, [core.state, core.dispatchEvent]);
+
+    return (
+      <>
+        {plugins
+          .filter(
+            (plugin): plugin is WithRequired<typeof plugin, "render"> =>
+              !!plugin.render,
+          )
+          .map((plugin) => (
+            <PluginRenderer key={plugin.id} plugin={plugin} />
+          ))}
+      </>
+    );
+  };
+
   const Stack: React.FC<StackProps<T>> = ({ initialActivity }) => {
-    const initialEvents = useMemo(
-      () => [
+    const plugins = useMemo(
+      () => (options.plugins ?? []).map((plugin) => plugin()),
+      [],
+    );
+
+    const initialEvents = useMemo(() => {
+      const initialPushedEvent = plugins
+        .find((plugin) => plugin.initialPushedEvent)
+        ?.initialPushedEvent?.();
+
+      return [
         makeEvent("Initialized", {
           transitionDuration: options.transitionDuration,
           eventDate: initialEventDate,
@@ -68,45 +160,18 @@ export function stackflow<T extends BaseActivities>(
             eventDate: initialEventDate,
           }),
         ),
-        makeEvent("Pushed", {
-          activityId: makeActivityId(),
-          activityName: initialActivity,
-          eventDate: initialEventDate,
-        }),
-      ],
-      [],
-    );
-
-    const onEffect = useCallback<CoreLifeCycleHook<any>>((actions, effect) => {
-      switch (effect._TAG) {
-        case "PUSHED": {
-          options.plugins?.forEach((plugin) =>
-            plugin.onPushed?.(actions, effect),
-          );
-          break;
-        }
-        case "POPPED": {
-          options.plugins?.forEach((plugin) =>
-            plugin.onPopped?.(actions, effect),
-          );
-          break;
-        }
-        default: {
-          break;
-        }
-      }
+        initialPushedEvent ??
+          makeEvent("Pushed", {
+            activityId: makeActivityId(),
+            activityName: initialActivity,
+            eventDate: initialEventDate,
+          }),
+      ];
     }, []);
 
     return (
-      <CoreProvider initialEvents={initialEvents} onEffect={onEffect}>
-        {(options.plugins ?? [])
-          .filter(
-            (plugin): plugin is WithRequired<typeof plugin, "render"> =>
-              !!plugin.render,
-          )
-          .map((plugin) => (
-            <PluginRenderer key={plugin.id} plugin={plugin} />
-          ))}
+      <CoreProvider initialEvents={initialEvents}>
+        <Main plugins={plugins} />
       </CoreProvider>
     );
   };

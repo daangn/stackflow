@@ -10,23 +10,21 @@ import React, {
   useEffect,
   useMemo,
   useReducer,
+  useRef,
   useState,
 } from "react";
 
 import { CoreContext } from "./CoreContext";
-import { CoreLifeCycleHook } from "./CoreLifeCycleHook";
 
 const INTERVAL_MS = 16;
 
 export interface CoreProviderProps {
   initialEvents: DomainEvent[];
   children: React.ReactNode;
-  onEffect: CoreLifeCycleHook<any>;
 }
 export const CoreProvider: React.FC<CoreProviderProps> = ({
   initialEvents,
   children,
-  onEffect,
 }) => {
   const [events, addEvent] = useReducer(
     (prevEvents: DomainEvent[], e: DomainEvent) => [...prevEvents, e],
@@ -35,6 +33,7 @@ export const CoreProvider: React.FC<CoreProviderProps> = ({
   const [state, setState] = useState(() =>
     aggregate(events, new Date().getTime()),
   );
+  const stateRef = useRef(state);
 
   const dispatchEvent = useCallback<DispatchEvent>(
     (name, parameters) => {
@@ -52,10 +51,7 @@ export const CoreProvider: React.FC<CoreProviderProps> = ({
 
       if (effects.length > 0) {
         setState(nextState);
-
-        effects.forEach((effect) => {
-          onEffect({ dispatchEvent }, effect);
-        });
+        stateRef.current = nextState;
       }
 
       if (nextState.globalTransitionState === "idle") {
@@ -66,16 +62,17 @@ export const CoreProvider: React.FC<CoreProviderProps> = ({
     return () => {
       clearInterval(interval);
     };
-  }, [events, state, onEffect, dispatchEvent]);
+  }, [events, state, dispatchEvent]);
 
   return (
     <CoreContext.Provider
       value={useMemo(
         () => ({
           state,
+          stateRef,
           dispatchEvent,
         }),
-        [state, dispatchEvent],
+        [state, stateRef, dispatchEvent],
       )}
     >
       {children}

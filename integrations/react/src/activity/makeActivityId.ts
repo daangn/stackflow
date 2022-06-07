@@ -1,3 +1,5 @@
+import { id } from "@stackflow/core";
+
 export function makeActivityId() {
-  return `Activity#${new Date().getTime().toString()}`;
+  return id();
 }

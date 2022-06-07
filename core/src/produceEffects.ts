@@ -43,6 +43,20 @@ export function produceEffects(
         activity: nextActivity,
       });
     }
+
+    const isPrevActivityPopped =
+      prevActivity?.transitionState === "exit-done" ||
+      prevActivity?.transitionState === "exit-active";
+    const isNextActivityPushed =
+      nextActivity?.transitionState === "enter-active" ||
+      nextActivity?.transitionState === "enter-done";
+
+    if (isPrevActivityPopped && isNextActivityPushed) {
+      output.push({
+        _TAG: "PUSHED",
+        activity: nextActivity,
+      });
+    }
   }
   for (
     let j =

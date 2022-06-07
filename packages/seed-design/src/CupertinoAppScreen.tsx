@@ -21,8 +21,6 @@ const CupertinoAppScreen: React.FC<CupertinoAppScreenProps> = ({
     return state.transitionState;
   })();
 
-  console.log(transitionState);
-
   return (
     <div
       className={css.card({

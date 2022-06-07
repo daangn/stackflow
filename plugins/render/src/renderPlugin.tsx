@@ -7,7 +7,7 @@ interface RenderPluginOptions {
 export function renderPlugin({
   persist = true,
 }: RenderPluginOptions): StackflowPlugin {
-  return {
+  return () => ({
     id: "render",
     render({ activities }) {
       if (persist) {
@@ -25,5 +25,5 @@ export function renderPlugin({
       const lastActivity = activities[activities.length - 1];
       return <>{lastActivity.render()}</>;
     },
-  };
+  });
 }
