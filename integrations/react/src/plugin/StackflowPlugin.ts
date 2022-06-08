@@ -2,8 +2,8 @@ import { PushedEvent } from "@stackflow/core/dist/event-types";
 import React from "react";
 
 import {
-  StackflowPluginEffectHook,
   StackflowPluginHook,
+  StackflowPluginPostEffectHook,
   StackflowPluginPreEffectHook,
 } from "./StackflowPluginHook";
 
@@ -15,12 +15,22 @@ export type StackflowPlugin = () => {
       render: () => React.ReactNode;
     }>;
   }) => React.ReactElement<any, any> | null;
+  wrapStack?: (args: {
+    stack: {
+      render: () => React.ReactNode;
+    };
+  }) => React.ReactElement<any, any> | null;
+  wrapActivity?: (args: {
+    activity: {
+      render: () => React.ReactNode;
+    };
+  }) => React.ReactElement<any, any> | null;
   onInit?: StackflowPluginHook;
   onBeforePop?: StackflowPluginPreEffectHook;
-  onPushed?: StackflowPluginEffectHook<"PUSHED">;
-  onPopped?: StackflowPluginEffectHook<"POPPED">;
-  onReplaced?: StackflowPluginEffectHook<"REPLACED">;
-  onChanged?: StackflowPluginEffectHook<"%SOMETHING_CHANGED%">;
+  onPushed?: StackflowPluginPostEffectHook<"PUSHED">;
+  onPopped?: StackflowPluginPostEffectHook<"POPPED">;
+  onReplaced?: StackflowPluginPostEffectHook<"REPLACED">;
+  onChanged?: StackflowPluginPostEffectHook<"%SOMETHING_CHANGED%">;
   overrideInitialPushedEvent?: (args: {
     stackContext: any;
   }) => PushedEvent | null;

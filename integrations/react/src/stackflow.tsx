@@ -13,8 +13,8 @@ import { CoreProvider, useCore } from "./core";
 import {
   PluginsProvider,
   StackflowPlugin,
-  StackflowPluginEffectHook,
   StackflowPluginHook,
+  StackflowPluginPostEffectHook,
   usePlugins,
 } from "./plugin";
 
@@ -46,6 +46,7 @@ export function stackflow<T extends BaseActivities>(
   }
   const PluginRenderer: React.FC<PluginRendererProps> = ({ plugin }) => {
     const core = useCore();
+    const plugins = usePlugins();
 
     return plugin.render({
       activities: core.state.activities.map((activity) => ({
@@ -53,11 +54,22 @@ export function stackflow<T extends BaseActivities>(
         render() {
           const ActivityComponent = options.activities[activity.name];
 
-          return (
+          let output = (
             <ActivityProvider key={activity.id} activityId={activity.id}>
               <ActivityComponent {...activity.params} />
             </ActivityProvider>
           );
+
+          plugins.forEach((p) => {
+            output =
+              p.wrapActivity?.({
+                activity: {
+                  render: () => output,
+                },
+              }) ?? output;
+          });
+
+          return output;
         },
       })),
     });
@@ -76,7 +88,7 @@ export function stackflow<T extends BaseActivities>(
       });
     }, []);
 
-    const onEffect = useCallback<StackflowPluginEffectHook<any>>(
+    const onEffect = useCallback<StackflowPluginPostEffectHook<any>>(
       ({ actions, effect }) => {
         switch (effect._TAG) {
           case "PUSHED": {
@@ -201,9 +213,7 @@ export function stackflow<T extends BaseActivities>(
       return events;
     }, []);
 
-    console.log(initialEvents);
-
-    return (
+    let output = (
       <PluginsProvider plugins={plugins}>
         <CoreProvider initialEvents={initialEvents}>
           <StackContextProvider context={stackContext}>
@@ -212,6 +222,17 @@ export function stackflow<T extends BaseActivities>(
         </CoreProvider>
       </PluginsProvider>
     );
+
+    plugins.forEach((plugin) => {
+      output =
+        plugin.wrapStack?.({
+          stack: {
+            render: () => output,
+          },
+        }) ?? output;
+    });
+
+    return output;
   };
 
   const useFlow = () => {

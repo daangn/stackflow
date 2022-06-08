@@ -1,6 +1,7 @@
 import { historySyncPlugin } from "@stackflow/plugin-history-sync";
 import { renderPlugin } from "@stackflow/plugin-render";
 import { stackflow } from "@stackflow/react";
+import React from "react";
 
 import Article from "./Article";
 import Home from "./Home";
@@ -21,6 +22,18 @@ export const { Stack, useFlow } = stackflow({
       routes: {
         Home: "/",
         Article: "/articles/:articleId",
+      },
+    }),
+    () => ({
+      key: "test",
+      wrapStack({ stack }) {
+        return <div className="a">{stack.render()}</div>;
+      },
+    }),
+    () => ({
+      key: "test2",
+      wrapStack({ stack }) {
+        return <div className="b">{stack.render()}</div>;
       },
     }),
   ],

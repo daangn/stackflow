@@ -12,7 +12,7 @@ export type StackflowPluginPreEffectHook = (args: {
   stackContext: any;
 }) => void;
 
-export type StackflowPluginEffectHook<T extends Effect["_TAG"]> = (args: {
+export type StackflowPluginPostEffectHook<T extends Effect["_TAG"]> = (args: {
   actions: StackflowPluginActions;
   effect: Extract<Effect, { _TAG: T }>;
   stackContext: any;
