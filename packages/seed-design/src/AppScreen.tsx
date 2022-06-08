@@ -52,7 +52,8 @@ const AppScreen: React.FC<AppScreenProps> = ({ theme, appBar, children }) => {
         .filter(
           (a) =>
             a.transitionState === "enter-active" ||
-            a.transitionState === "enter-done",
+            a.transitionState === "enter-done" ||
+            a.transitionState === "exit-active",
         )
         .findIndex((a) => a === activity),
     [core.state.activities, activity],
