@@ -70,7 +70,7 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
           },
         });
 
-        if (transitionState === "enter-done") {
+        if (targetActivity && transitionState === "enter-done") {
           targetActivity.metadata.poppedBy = event;
           targetActivity.transitionState = "exit-done";
         }
@@ -83,17 +83,15 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
           .filter((a) => a.metadata.poppedBy === null)
           .sort((a, b) => b.pushedBy.eventDate - a.pushedBy.eventDate)[0];
 
-        if (!targetActivity) {
-          return;
-        }
-
         const transitionState: ActivityTransitionState =
           now - event.eventDate >= transitionDuration
             ? "exit-done"
             : "exit-active";
 
-        targetActivity.metadata.poppedBy = event;
-        targetActivity.transitionState = transitionState;
+        if (targetActivity) {
+          targetActivity.metadata.poppedBy = event;
+          targetActivity.transitionState = transitionState;
+        }
 
         break;
       }
