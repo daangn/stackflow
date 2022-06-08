@@ -34,7 +34,7 @@ const AppScreen: React.FC<AppScreenProps> = ({ theme, appBar, children }) => {
   const appBarRef = useRef<HTMLDivElement>(null);
   const appBarCenterRef = useRef<HTMLDivElement>(null);
 
-  const isTop = useMemo(() => {
+  const isActivityTop = useMemo(() => {
     const topActivity = [...core.state.activities]
       .reverse()
       .find(
@@ -48,10 +48,14 @@ const AppScreen: React.FC<AppScreenProps> = ({ theme, appBar, children }) => {
 
   const zIndex = useMemo(
     () =>
-      [...core.state.activities].findIndex(
-        (_activity) => _activity === activity,
-      ),
-    [],
+      core.state.activities
+        .filter(
+          (a) =>
+            a.transitionState === "enter-active" ||
+            a.transitionState === "enter-done",
+        )
+        .findIndex((a) => a === activity),
+    [core.state.activities, activity],
   );
 
   const hasAppBar = !!appBar;
@@ -110,7 +114,7 @@ const AppScreen: React.FC<AppScreenProps> = ({ theme, appBar, children }) => {
       <div className={css.dim} />
       <div
         className={css.paper({
-          isTop,
+          isTop: isActivityTop,
           hasAppBar,
         })}
       >
