@@ -1040,7 +1040,7 @@ test("aggregate - ReplacedEvent가 발생한 후 transitionDuration만큼 지난
   });
 });
 
-test("aggregate - ReplacedEvent가 발생한 후 transitionDuration만큼 지난 경우 기존 최상단 Activity의 상태를 exit-done으로 바꿉니다", () => {
+test("aggregate - ReplacedEvent가 두 번 발생한 후 transitionDuration만큼 지난 경우 기존 최상단 Activity의 상태를 exit-done으로 바꿉니다", () => {
   const t = nowTime();
 
   const events = [
