@@ -17,9 +17,10 @@ const AppScreen: React.FC<AppScreenProps> = ({ theme, appBar, children }) => {
   const core = useCore();
   const activity = useActivity();
 
-  const { ref } = useVariant({
+  const { ref: appScreenRef, className: appScreen } = useVariant({
     variant: activity.transitionState,
-    classNames: {
+    base: css.appScreen({ theme }),
+    variants: {
       "enter-active": css.enterActive,
       "enter-done": css.enterDone,
       "exit-active": css.exitActive,
@@ -44,6 +45,20 @@ const AppScreen: React.FC<AppScreenProps> = ({ theme, appBar, children }) => {
 
     return topActivity === activity;
   }, [core.state.activities, activity]);
+
+  const zIndex = useMemo(
+    () =>
+      [...core.state.activities].findIndex(
+        (_activity) => _activity === activity,
+      ),
+    [],
+  );
+
+  const hasAppBar = !!appBar;
+
+  const zIndexBase = zIndex * 3;
+  const zIndexPaper = zIndexBase + (hasAppBar ? 0 : 2);
+  const zIndexAppBar = zIndexBase + 5;
 
   const [centerMainWidth, setCenterMainWidth] = useState<number | undefined>(
     undefined,
@@ -83,9 +98,11 @@ const AppScreen: React.FC<AppScreenProps> = ({ theme, appBar, children }) => {
 
   return (
     <div
-      ref={ref}
-      className={css.appScreen({ theme })}
+      ref={appScreenRef}
+      className={appScreen}
       style={assignInlineVars({
+        [css.vars.zIndexes.paper]: `${zIndexPaper}`,
+        [css.vars.zIndexes.appBar]: `${zIndexAppBar}`,
         [css.vars.transitionDuration]: `${core.state.transitionDuration}ms`,
         [css.vars.appBar.center.mainWidth]: `${centerMainWidth}px`,
       })}
@@ -94,7 +111,7 @@ const AppScreen: React.FC<AppScreenProps> = ({ theme, appBar, children }) => {
       <div
         className={css.paper({
           isTop,
-          hasAppBar: !!appBar,
+          hasAppBar,
         })}
       >
         {children}

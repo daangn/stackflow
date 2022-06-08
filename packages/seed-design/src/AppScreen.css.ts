@@ -12,13 +12,17 @@ const vars = createGlobalThemeContract(
   {
     backgroundColor: null,
     dimBackgroundColor: null,
-    transitionDuration: "",
+    transitionDuration: null,
+    zIndexes: {
+      paper: null,
+      appBar: null,
+    },
     appBar: {
-      height: "",
-      borderColor: "rgba(0, 0, 0, 0.07)",
-      borderSize: "1px",
+      height: null,
+      borderColor: null,
+      borderSize: null,
       center: {
-        mainWidth: "",
+        mainWidth: null,
       },
     },
   },
@@ -45,6 +49,10 @@ const android = createTheme(vars, {
   backgroundColor: "#fff",
   dimBackgroundColor: "rgba(0, 0, 0, 0.15)",
   transitionDuration: "",
+  zIndexes: {
+    paper: "",
+    appBar: "",
+  },
   appBar: {
     height: "3.5rem",
     borderColor: "rgba(0, 0, 0, 0.07)",
@@ -59,6 +67,10 @@ const cupertino = createTheme(vars, {
   backgroundColor: "#fff",
   dimBackgroundColor: "rgba(0, 0, 0, 0.15)",
   transitionDuration: "",
+  zIndexes: {
+    paper: "",
+    appBar: "",
+  },
   appBar: {
     height: "2.75rem",
     borderColor: "rgba(0, 0, 0, 0.12)",
@@ -126,6 +138,12 @@ export const appBar = style([
     boxShadow: `inset 0px ${calc(vars.appBar.borderSize).negate()} 0 ${
       vars.appBar.borderColor
     }`,
+    zIndex: vars.zIndexes.appBar,
+    selectors: {
+      [`${exitActive} > &`]: {
+        transform: "translateX(100%)",
+      },
+    },
   },
 ]);
 
@@ -238,6 +256,8 @@ export const paper = recipe({
     transformTransition,
     {
       transform: "translateX(100%)",
+      overflowY: "scroll",
+      zIndex: vars.zIndexes.paper,
       selectors: {
         [`${enterActive} > &`]: {
           transform: "translateX(0)",
@@ -249,6 +269,15 @@ export const paper = recipe({
     },
   ],
   variants: {
+    hasAppBar: {
+      true: [
+        f.borderBox,
+        {
+          paddingTop: vars.appBar.height,
+        },
+      ],
+      false: {},
+    },
     isTop: {
       true: {},
       false: {
@@ -260,11 +289,6 @@ export const paper = recipe({
             transform: "translateX(-5rem)",
           },
         },
-      },
-    },
-    hasAppBar: {
-      true: {
-        paddingTop: vars.appBar.height,
       },
     },
   },

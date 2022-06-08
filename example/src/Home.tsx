@@ -1,8 +1,4 @@
-import {
-  ActivityComponentType,
-  useActivity,
-  useActivityParams,
-} from "@stackflow/react";
+import { ActivityComponentType, useActivity } from "@stackflow/react";
 import { AppScreen } from "@stackflow/seed-design";
 import React from "react";
 
@@ -13,7 +9,7 @@ const Home: ActivityComponentType = () => {
   const activity = useActivity();
 
   return (
-    <AppScreen theme="cupertino" appBar={{ title: "Hello" }}>
+    <AppScreen theme="cupertino" appBar={{ title: activity.id }}>
       <div>
         name: Home, state: {activity.transitionState}{" "}
         <button
@@ -43,6 +39,14 @@ const Home: ActivityComponentType = () => {
         >
           Go Back
         </button>
+        {Array(1000)
+          .fill("")
+          .map(() => (
+            <>
+              break
+              <br />
+            </>
+          ))}
       </div>
     </AppScreen>
   );

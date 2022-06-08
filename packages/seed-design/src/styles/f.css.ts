@@ -60,3 +60,7 @@ export const cursorPointer = style({
   cursor: "pointer",
   WebkitTapHighlightColor: "transparent",
 });
+
+export const borderBox = style({
+  boxSizing: "border-box",
+});
