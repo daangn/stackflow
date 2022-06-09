@@ -8,14 +8,14 @@ import { filterEvents, validateEvents } from "./event-utils";
 import { compareBy, uniqBy } from "./utils";
 
 export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
-  const _events = uniqBy(
+  const sortedEvents = uniqBy(
     [...events].sort((a, b) => compareBy(a, b, (e) => e.id)),
     (e) => e.id,
   );
 
-  validateEvents(_events);
+  validateEvents(sortedEvents);
 
-  const initEvent = filterEvents(_events, "Initialized")[0];
+  const initEvent = filterEvents(sortedEvents, "Initialized")[0];
   const { transitionDuration } = initEvent;
 
   type ActivityMetadata = {
@@ -28,7 +28,7 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
     }
   > = [];
 
-  _events.forEach((event) => {
+  sortedEvents.forEach((event) => {
     switch (event.name) {
       case "Pushed": {
         const transitionState: ActivityTransitionState =
@@ -56,8 +56,8 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
             : "enter-active";
 
         const targetActivity = activities
-          .filter((a) => a.metadata.poppedBy === null)
-          .sort((a, b) => b.pushedBy.eventDate - a.pushedBy.eventDate)[0];
+          .filter((activity) => activity.metadata.poppedBy === null)
+          .sort((a1, a2) => a2.pushedBy.eventDate - a1.pushedBy.eventDate)[0];
 
         activities.push({
           id: event.activityId,
@@ -80,8 +80,8 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
       case "Popped": {
         const targetActivity = activities
           .filter((_, i) => i > 0)
-          .filter((a) => a.metadata.poppedBy === null)
-          .sort((a, b) => b.pushedBy.eventDate - a.pushedBy.eventDate)[0];
+          .filter((activity) => activity.metadata.poppedBy === null)
+          .sort((a1, a2) => a2.pushedBy.eventDate - a1.pushedBy.eventDate)[0];
 
         const transitionState: ActivityTransitionState =
           now - event.eventDate >= transitionDuration
