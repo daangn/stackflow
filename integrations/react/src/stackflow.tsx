@@ -45,12 +45,19 @@ export function stackflow<T extends Activities>(options: StackflowOptions<T>) {
     return plugin.renderStack({
       stack: {
         activities: stack.activities.map((activity) => ({
+          ...activity,
           key: activity.id,
-          render() {
+          render(overrideActivity) {
             const ActivityComponent = options.activities[activity.name];
 
             let output = (
-              <ActivityProvider key={activity.id} activityId={activity.id}>
+              <ActivityProvider
+                key={activity.id}
+                activity={{
+                  ...activity,
+                  ...overrideActivity,
+                }}
+              >
                 <ActivityComponent {...activity.params} />
               </ActivityProvider>
             );
@@ -59,8 +66,7 @@ export function stackflow<T extends Activities>(options: StackflowOptions<T>) {
               output =
                 p.wrapActivity?.({
                   activity: {
-                    id: activity.id,
-                    name: activity.name,
+                    ...activity,
                     render: () => output,
                   },
                 }) ?? output;

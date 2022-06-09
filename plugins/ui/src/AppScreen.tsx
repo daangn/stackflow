@@ -1,16 +1,18 @@
 import { useActivity, useStack } from "@stackflow/react";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
-import { IconBack } from "assets";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import AppBar from "AppBar";
+import React, { useMemo } from "react";
 
 import * as css from "./AppScreen.css";
 import { useVariant } from "./utils";
 
+const last = <T extends unknown>(arr: T[]) => arr[arr.length - 1];
+
+type PropOf<T> = T extends React.ComponentType<infer U> ? U : unknown;
+
 interface AppScreenProps {
   theme: "android" | "cupertino";
-  appBar?: {
-    title?: string;
-  };
+  appBar?: PropOf<typeof AppBar>;
   children: React.ReactNode;
 }
 const AppScreen: React.FC<AppScreenProps> = ({ theme, appBar, children }) => {
@@ -31,111 +33,72 @@ const AppScreen: React.FC<AppScreenProps> = ({ theme, appBar, children }) => {
     },
   });
 
-  const appBarRef = useRef<HTMLDivElement>(null);
-  const appBarCenterRef = useRef<HTMLDivElement>(null);
-
-  const isActivityTop = useMemo(() => {
-    const topActivity = [...stack.activities]
-      .reverse()
-      .find(
+  const visibleActivities = useMemo(
+    () =>
+      stack.activities.filter(
+        (activity) =>
+          activity.transitionState === "enter-active" ||
+          activity.transitionState === "enter-done" ||
+          activity.transitionState === "exit-active",
+      ),
+    [stack.activities],
+  );
+  const activeActivities = useMemo(
+    () =>
+      visibleActivities.filter(
         (activity) =>
           activity.transitionState === "enter-active" ||
           activity.transitionState === "enter-done",
-      );
+      ),
+    [visibleActivities],
+  );
 
-    return topActivity === currentActivity;
-  }, [stack.activities, currentActivity]);
+  const isActiveTop = useMemo(
+    () => last(activeActivities)?.id === currentActivity.id,
+    [activeActivities, currentActivity],
+  );
+  const isVisibleTop = useMemo(
+    () => last(visibleActivities)?.id === currentActivity.id,
+    [visibleActivities, currentActivity],
+  );
 
   const zIndex = useMemo(
     () =>
-      stack.activities
-        .filter(
-          (activity) =>
-            activity.transitionState === "enter-active" ||
-            activity.transitionState === "enter-done" ||
-            activity.transitionState === "exit-active",
-        )
-        .findIndex((activity) => activity === currentActivity),
-    [stack.activities, currentActivity],
+      visibleActivities.findIndex(
+        (activity) => activity.id === currentActivity.id,
+      ),
+    [visibleActivities, currentActivity],
   );
 
   const hasAppBar = !!appBar;
 
-  const zIndexBase = zIndex * 3;
-  const zIndexPaper = zIndexBase + (hasAppBar ? 0 : 2);
-  const zIndexAppBar = zIndexBase + 5;
-
-  const [centerMainWidth, setCenterMainWidth] = useState<number | undefined>(
-    undefined,
-  );
-
-  useEffect(() => {
-    if (theme !== "cupertino") {
-      return () => {};
-    }
-
-    const $appBar = appBarRef.current;
-    const $appBarCenter = appBarCenterRef.current;
-
-    if (!$appBar || !$appBarCenter) {
-      return () => {};
-    }
-
-    const onResize = () => {
-      const screenWidth = $appBar.clientWidth;
-
-      const leftWidth = $appBarCenter.offsetLeft;
-      const centerWidth = $appBarCenter.clientWidth;
-      const rightWidth = screenWidth - leftWidth - centerWidth;
-
-      const sideMargin = Math.max(leftWidth, rightWidth);
-
-      setCenterMainWidth(screenWidth - 2 * sideMargin);
-    };
-
-    onResize();
-    window.addEventListener("resize", onResize);
-
-    return () => {
-      window.removeEventListener("resize", onResize);
-    };
-  }, []);
+  const zIndexBase = zIndex * 4;
+  const zIndexDim = zIndexBase;
+  const zIndexPaper = zIndexBase + (hasAppBar ? 1 : 3);
+  const zIndexAppBar = zIndexBase + 6;
 
   return (
     <div
       ref={appScreenRef}
       className={appScreen}
       style={assignInlineVars({
+        [css.vars.zIndexes.dim]: `${zIndexDim}`,
         [css.vars.zIndexes.paper]: `${zIndexPaper}`,
         [css.vars.zIndexes.appBar]: `${zIndexAppBar}`,
         [css.vars.transitionDuration]: `${stack.transitionDuration}ms`,
-        [css.vars.appBar.center.mainWidth]: `${centerMainWidth}px`,
       })}
     >
       <div className={css.dim} />
       <div
         className={css.paper({
-          isTop: isActivityTop,
+          isActiveTop,
+          isVisibleTop,
           hasAppBar,
         })}
       >
         {children}
       </div>
-      {appBar && (
-        <div ref={appBarRef} className={css.appBar}>
-          <div className={css.appBarLeft}>
-            <div className={css.appBarBackButton}>
-              <IconBack />
-            </div>
-          </div>
-          <div ref={appBarCenterRef} className={css.appBarCenter}>
-            <div className={css.appBarCenterMain({ theme })}>
-              <div className={css.appBarCenterMainText}>{appBar.title}</div>
-            </div>
-          </div>
-          <div className={css.appBarRight}>right</div>
-        </div>
-      )}
+      {appBar && <AppBar {...appBar} theme={theme} />}
     </div>
   );
 };

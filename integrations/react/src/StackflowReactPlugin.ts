@@ -1,13 +1,15 @@
-import { StackflowCommonPlugin } from "@stackflow/core";
+import { Activity, StackflowCommonPlugin } from "@stackflow/core";
 import React from "react";
 
 export type StackflowReactPlugin = () => {
   renderStack?: (args: {
     stack: {
-      activities: Array<{
-        key: string;
-        render: () => React.ReactNode;
-      }>;
+      activities: Array<
+        {
+          key: string;
+          render: (overrideActivity?: Partial<Activity>) => React.ReactNode;
+        } & Activity
+      >;
     };
   }) => React.ReactElement<any, any> | null;
   wrapStack?: (args: {
@@ -17,9 +19,7 @@ export type StackflowReactPlugin = () => {
   }) => React.ReactElement<any, any> | null;
   wrapActivity?: (args: {
     activity: {
-      id: string;
-      name: string;
       render: () => React.ReactNode;
-    };
+    } & Activity;
   }) => React.ReactElement<any, any> | null;
 } & ReturnType<StackflowCommonPlugin>;

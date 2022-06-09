@@ -1,25 +1,17 @@
+import { Activity } from "@stackflow/core";
 import React from "react";
 
-import { useStack } from "../stack";
 import { ActivityContext } from "./ActivityContext";
 
 interface ActivityProviderProps {
-  activityId: string;
+  activity: Activity;
   children: React.ReactNode;
 }
 export const ActivityProvider: React.FC<ActivityProviderProps> = ({
-  activityId,
+  activity,
   children,
-}) => {
-  const stack = useStack();
-
-  const activity = stack.activities.find(
-    (activity) => activity.id === activityId,
-  );
-
-  return (
-    <ActivityContext.Provider value={activity!}>
-      {children}
-    </ActivityContext.Provider>
-  );
-};
+}) => (
+  <ActivityContext.Provider value={activity}>
+    {children}
+  </ActivityContext.Provider>
+);

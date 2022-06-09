@@ -39,14 +39,6 @@ const Home: ActivityComponentType = () => {
         >
           Go Back
         </button>
-        {Array(1000)
-          .fill("")
-          .map(() => (
-            <>
-              break
-              <br />
-            </>
-          ))}
       </div>
     </AppScreen>
   );
