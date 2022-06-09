@@ -13,14 +13,14 @@
 ## Getting Started
 
 ```bash
-$ yarn add @stackflow/core
+$ yarn add @stackflow/react
 ```
 
 ```tsx
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-import { stackflow } from '@stackflow/core';
+import { stackflow } from '@stackflow/react';
 
 const { Stack, useFlow } = stackflow({
   // ...
