@@ -1,8 +1,8 @@
 import { ActivityComponentType, useActivity } from "@stackflow/react";
-import { AppScreen } from "@stackflow/ui";
 import React from "react";
 
-import { useFlow } from "./stackflow";
+import MainLayout from "../layouts/MainLayout";
+import { useFlow } from "../stackflow";
 
 const Article: ActivityComponentType<{
   articleId: string;
@@ -12,7 +12,7 @@ const Article: ActivityComponentType<{
   const { push, pop, replace } = useFlow();
 
   return (
-    <AppScreen theme="cupertino">
+    <MainLayout>
       <div>
         name: Article, articleId: {articleId}, state: {activity.transitionState}
         <button
@@ -50,7 +50,7 @@ const Article: ActivityComponentType<{
           Go Back
         </button>
       </div>
-    </AppScreen>
+    </MainLayout>
   );
 };
 

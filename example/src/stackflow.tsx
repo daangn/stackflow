@@ -2,8 +2,8 @@ import { historySyncPlugin } from "@stackflow/plugin-history-sync";
 import { renderPlugin } from "@stackflow/plugin-render";
 import { stackflow } from "@stackflow/react";
 
-import Article from "./Article";
-import Home from "./Home";
+import Article from "./components/Article";
+import Home from "./components/Home";
 
 const activities = {
   Home,
