@@ -1,14 +1,17 @@
-import { useActivity, useStack } from "@stackflow/react";
+import { useActivity, useStack, useStackActions } from "@stackflow/react";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
+import { useSwipeBack } from "utils/useSwipeBack";
 
 import AppBar from "./AppBar";
 import * as css from "./AppScreen.css";
-import { useVariant } from "./utils";
+import { findBefore, noop, useVariant } from "./utils";
 
 const last = <T extends unknown>(arr: T[]) => arr[arr.length - 1];
 
 type PropOf<T> = T extends React.ComponentType<infer U> ? U : unknown;
+
+const appScreenPaperRefMap = new Map<string, React.RefObject<any>>();
 
 interface AppScreenProps {
   theme: "android" | "cupertino";
@@ -17,6 +20,7 @@ interface AppScreenProps {
 }
 const AppScreen: React.FC<AppScreenProps> = ({ theme, appBar, children }) => {
   const stack = useStack();
+  const stackActions = useStackActions();
   const currentActivity = useActivity();
 
   const { ref: appScreenRef, className: appScreen } = useVariant({
@@ -53,14 +57,41 @@ const AppScreen: React.FC<AppScreenProps> = ({ theme, appBar, children }) => {
     [visibleActivities],
   );
 
+  const beforeActiveActivity = useMemo(
+    () =>
+      findBefore(
+        activeActivities,
+        (activity) => activity.id === currentActivity.id,
+      ),
+    [activeActivities],
+  );
+
+  const { dimRef, paperRef, edgeRef } = useSwipeBack({
+    transitionDuration: stack.transitionDuration,
+    getBeforePaper() {
+      if (!beforeActiveActivity) {
+        return null;
+      }
+      return appScreenPaperRefMap.get(beforeActiveActivity.id)?.current;
+    },
+    onBack() {
+      stackActions.pop();
+    },
+  });
+
+  useEffect(() => {
+    appScreenPaperRefMap.set(currentActivity.id, paperRef);
+    return () => {
+      appScreenPaperRefMap.delete(currentActivity.id);
+    };
+  }, [currentActivity, paperRef]);
+
   const isActiveTop = useMemo(
     () => last(activeActivities)?.id === currentActivity.id,
     [activeActivities, currentActivity],
   );
-  const isVisibleTop = useMemo(
-    () => last(visibleActivities)?.id === currentActivity.id,
-    [visibleActivities, currentActivity],
-  );
+
+  const isRoot = activeActivities[0]?.id === currentActivity.id;
 
   const zIndex = useMemo(
     () =>
@@ -88,15 +119,19 @@ const AppScreen: React.FC<AppScreenProps> = ({ theme, appBar, children }) => {
         [css.vars.transitionDuration]: `${stack.transitionDuration}ms`,
       })}
     >
-      <div className={css.dim} />
+      <div ref={dimRef} className={css.dim} />
       <div
+        key={currentActivity.id}
+        ref={paperRef}
         className={css.paper({
           isActiveTop,
-          isVisibleTop,
           hasAppBar,
         })}
       >
         {children}
+        {!isRoot && theme === "cupertino" && (
+          <div ref={edgeRef} className={css.edge({ hasAppBar })} />
+        )}
       </div>
       {appBar && <AppBar {...appBar} theme={theme} />}
     </div>

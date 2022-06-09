@@ -50,14 +50,13 @@ export function stackflow<T extends Activities>(options: StackflowOptions<T>) {
           render(overrideActivity) {
             const ActivityComponent = options.activities[activity.name];
 
+            const nextActivity = {
+              ...activity,
+              ...overrideActivity,
+            };
+
             let output = (
-              <ActivityProvider
-                key={activity.id}
-                activity={{
-                  ...activity,
-                  ...overrideActivity,
-                }}
-              >
+              <ActivityProvider key={activity.id} activity={nextActivity}>
                 <ActivityComponent {...activity.params} />
               </ActivityProvider>
             );

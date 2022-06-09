@@ -19,9 +19,14 @@ export const appBar = recipe({
     f.posAbs,
     f.flexAlignCenter,
     f.fullWidth,
+    f.borderBox,
     background,
     {
-      height: vars.appBar.height,
+      height: [
+        `calc(${vars.appBar.height} + constant(safe-area-inset-top))`,
+        `calc(${vars.appBar.height} + env(safe-area-inset-top))`,
+      ],
+      paddingTop: ["constant(safe-area-inset-top)", "env(safe-area-inset-top)"],
       selectors: {
         [`${cupertino} &`]: {
           position: "absolute",
@@ -66,15 +71,6 @@ export const appBar = recipe({
         },
       },
     },
-    isVisibleTop: {
-      true: {
-        selectors: {
-          [`${enterDone} &`]: {
-            transition: "0s",
-          },
-        },
-      },
-    },
   },
 });
 
@@ -115,7 +111,7 @@ export const center = style([
   },
 ]);
 
-export const centerShrinked = recipe({
+export const centerMain = recipe({
   base: {
     width: vars.appBar.center.mainWidth,
     color: vars.appBar.textColor,
@@ -138,14 +134,14 @@ export const centerShrinked = recipe({
         f.flexAlignCenter,
         f.flexJustifyCenter,
         f.posAbs,
-        f.fullHeight,
-        f.top0,
         {
           fontFamily: "-apple-system, BlinkMacSystemFont",
           fontWeight: 600,
           fontSize: "1rem",
           left: "50%",
           transform: "translate(-50%)",
+          height: vars.appBar.height,
+          top: ["constant(safe-area-inset-top)", "env(safe-area-inset-top)"],
         },
       ],
     },

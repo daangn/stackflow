@@ -1,11 +1,11 @@
 import { useActivity, useStack, useStackActions } from "@stackflow/react";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useMemo } from "react";
 
 import * as css from "./AppBar.css";
 import * as appScreenCss from "./AppScreen.css";
 import { IconBack, IconClose } from "./assets";
-import { last, noop, onResize } from "./utils";
+import { last, useMaxWidth } from "./utils";
 
 interface AppBarProps {
   theme: "android" | "cupertino";
@@ -57,42 +57,16 @@ const AppBar: React.FC<AppBarProps> = ({
     () => last(activeActivities)?.id === currentActivity.id,
     [activeActivities, currentActivity],
   );
-  const isVisibleTop = useMemo(
-    () => last(visibleActivities)?.id === currentActivity.id,
-    [visibleActivities, currentActivity],
-  );
 
   const isRoot = activeActivities[0]?.id === currentActivity.id;
 
-  const appBarRef = useRef<HTMLDivElement>(null);
-  const appBarCenterRef = useRef<HTMLDivElement>(null);
-
-  const [centerMainWidth, setCenterMainWidth] = useState<number | undefined>(
-    undefined,
-  );
-
-  useEffect(() => {
-    const $appBar = appBarRef.current;
-    const $appBarCenter = appBarCenterRef.current;
-
-    if (theme !== "cupertino" || !$appBar || !$appBarCenter) {
-      return noop;
-    }
-
-    const dispose = onResize(() => {
-      const screenWidth = $appBar.clientWidth;
-
-      const leftWidth = $appBarCenter.offsetLeft;
-      const centerWidth = $appBarCenter.clientWidth;
-      const rightWidth = screenWidth - leftWidth - centerWidth;
-
-      const sideMargin = Math.max(leftWidth, rightWidth);
-
-      setCenterMainWidth(screenWidth - 2 * sideMargin);
-    });
-
-    return dispose;
-  }, []);
+  const {
+    outerRef: appBarRef,
+    innerRef: centerRef,
+    maxWidth,
+  } = useMaxWidth({
+    disable: theme === "cupertino",
+  });
 
   const onBack = () => {
     stackActions.pop();
@@ -122,10 +96,9 @@ const AppBar: React.FC<AppBarProps> = ({
       className={css.appBar({
         border,
         isActiveTop,
-        isVisibleTop,
       })}
       style={assignInlineVars({
-        [appScreenCss.vars.appBar.center.mainWidth]: `${centerMainWidth}px`,
+        [appScreenCss.vars.appBar.center.mainWidth]: `${maxWidth}px`,
       })}
     >
       <div className={css.left}>
@@ -133,9 +106,9 @@ const AppBar: React.FC<AppBarProps> = ({
         {backButton}
         {appendLeft?.()}
       </div>
-      <div ref={appBarCenterRef} className={css.center}>
+      <div ref={centerRef} className={css.center}>
         <div
-          className={css.centerShrinked({
+          className={css.centerMain({
             theme,
             hasLeft,
           })}

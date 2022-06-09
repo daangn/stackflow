@@ -1,4 +1,5 @@
 import { createTheme, createThemeContract, style } from "@vanilla-extract/css";
+import { calc } from "@vanilla-extract/css-utils";
 import { recipe } from "@vanilla-extract/recipes";
 
 import { f } from "./styles";
@@ -169,7 +170,10 @@ export const paper = recipe({
       true: [
         f.borderBox,
         {
-          paddingTop: vars.appBar.height,
+          paddingTop: [
+            `calc(${vars.appBar.height} + constant(safe-area-inset-top))`,
+            `calc(${vars.appBar.height} + env(safe-area-inset-top))`,
+          ],
         },
       ],
     },
@@ -191,13 +195,24 @@ export const paper = recipe({
         },
       },
     },
-    isVisibleTop: {
+  },
+});
+
+export const edge = recipe({
+  base: [
+    f.posAbs,
+    f.top0,
+    f.left0,
+    f.fullHeight,
+    {
+      width: "1.25rem",
+    },
+  ],
+  variants: {
+    hasAppBar: {
       true: {
-        selectors: {
-          [`${enterDone} &`]: {
-            transition: "0s",
-          },
-        },
+        top: vars.appBar.height,
+        height: calc("100%").subtract(vars.appBar.height).toString(),
       },
     },
   },

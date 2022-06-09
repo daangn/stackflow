@@ -2,6 +2,7 @@ import { globalStyle, style } from "@vanilla-extract/css";
 
 globalStyle("html, body, #root", {
   height: "100%",
+  fontFamily: "sans-serif",
 });
 
 export const container = style({

@@ -12,11 +12,9 @@ const activities = {
 
 export const { Stack, useFlow } = stackflow({
   activities,
-  transitionDuration: 300,
+  transitionDuration: 350,
   plugins: [
-    renderPlugin({
-      persist: true,
-    }),
+    renderPlugin(),
     historySyncPlugin<typeof activities>({
       routes: {
         Home: "/",
