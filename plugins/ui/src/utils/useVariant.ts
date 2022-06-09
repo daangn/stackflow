@@ -23,7 +23,7 @@ export function useVariant<V extends string>({
   const ref = useRef<any>(null);
 
   const mounted = useMounted({
-    afterRequestAnimationFrame: true,
+    afterAnimationFrame: true,
   });
 
   useEffect(() => {

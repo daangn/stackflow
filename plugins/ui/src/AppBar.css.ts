@@ -9,7 +9,6 @@ import {
   enterActive,
   enterDone,
   exitActive,
-  exitDone,
   vars,
 } from "./AppScreen.css";
 import { f } from "./styles";
@@ -19,13 +18,9 @@ export const appBar = recipe({
     f.posAbs,
     f.flexAlignCenter,
     f.fullWidth,
-    f.borderBox,
     background,
     {
-      height: [
-        `calc(${vars.appBar.height} + constant(safe-area-inset-top))`,
-        `calc(${vars.appBar.height} + env(safe-area-inset-top))`,
-      ],
+      height: vars.appBar.height,
       paddingTop: ["constant(safe-area-inset-top)", "env(safe-area-inset-top)"],
       selectors: {
         [`${cupertino} &`]: {
@@ -59,7 +54,7 @@ export const appBar = recipe({
         }`,
       },
     },
-    isActiveTop: {
+    isTopActive: {
       false: {
         selectors: {
           [`${android}${enterActive} &`]: {

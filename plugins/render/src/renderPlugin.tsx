@@ -9,11 +9,13 @@ export function renderPlugin(): StackflowReactPlugin {
     renderStack({ stack }) {
       return (
         <>
-          {stack.activities.map((activity) => (
-            <React.Fragment key={activity.key}>
-              {activity.render()}
-            </React.Fragment>
-          ))}
+          {stack.activities
+            .filter((activity) => activity.transitionState !== "exit-done")
+            .map((activity) => (
+              <React.Fragment key={activity.key}>
+                {activity.render()}
+              </React.Fragment>
+            ))}
         </>
       );
     },

@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useReducer } from "react";
 
-export function useMounted(options?: { afterRequestAnimationFrame?: boolean }) {
+export function useMounted(options?: { afterAnimationFrame?: boolean }) {
   const [mounted, mount] = useReducer(() => true, false);
 
   useEffect(() => {
-    if (options?.afterRequestAnimationFrame) {
+    if (options?.afterAnimationFrame) {
       const af = requestAnimationFrame(() => {
         mount();
       });

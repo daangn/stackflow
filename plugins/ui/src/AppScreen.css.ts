@@ -93,6 +93,11 @@ export const appScreen = recipe({
       android,
       cupertino,
     },
+    show: {
+      false: {
+        display: "none",
+      },
+    },
     transitionState: {
       "enter-active": enterActive,
       "enter-done": enterDone,
@@ -177,7 +182,7 @@ export const paper = recipe({
         },
       ],
     },
-    isActiveTop: {
+    isTopActive: {
       false: {
         selectors: {
           [`${cupertino}${enterActive} &`]: {

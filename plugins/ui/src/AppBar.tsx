@@ -5,7 +5,11 @@ import React, { useMemo } from "react";
 import * as css from "./AppBar.css";
 import * as appScreenCss from "./AppScreen.css";
 import { IconBack, IconClose } from "./assets";
-import { last, useMaxWidth } from "./utils";
+import {
+  useActiveActivities,
+  useMaxWidth,
+  useTopActiveActivity,
+} from "./utils";
 
 interface AppBarProps {
   theme: "android" | "cupertino";
@@ -29,33 +33,15 @@ const AppBar: React.FC<AppBarProps> = ({
   onClose,
   border = true,
 }) => {
-  const stack = useStack();
   const currentActivity = useActivity();
   const stackActions = useStackActions();
 
-  const visibleActivities = useMemo(
-    () =>
-      stack.activities.filter(
-        (activity) =>
-          activity.transitionState === "enter-active" ||
-          activity.transitionState === "enter-done" ||
-          activity.transitionState === "exit-active",
-      ),
-    [stack.activities],
-  );
-  const activeActivities = useMemo(
-    () =>
-      visibleActivities.filter(
-        (activity) =>
-          activity.transitionState === "enter-active" ||
-          activity.transitionState === "enter-done",
-      ),
-    [visibleActivities],
-  );
+  const activeActivities = useActiveActivities();
+  const topActiveActivity = useTopActiveActivity();
 
-  const isActiveTop = useMemo(
-    () => last(activeActivities)?.id === currentActivity.id,
-    [activeActivities, currentActivity],
+  const isTopActive = useMemo(
+    () => topActiveActivity?.id === currentActivity.id,
+    [topActiveActivity, currentActivity],
   );
 
   const isRoot = activeActivities[0]?.id === currentActivity.id;
@@ -95,7 +81,7 @@ const AppBar: React.FC<AppBarProps> = ({
       ref={appBarRef}
       className={css.appBar({
         border,
-        isActiveTop,
+        isTopActive,
       })}
       style={assignInlineVars({
         [appScreenCss.vars.appBar.center.mainWidth]: `${maxWidth}px`,

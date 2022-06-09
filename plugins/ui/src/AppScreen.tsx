@@ -5,7 +5,13 @@ import { useSwipeBack } from "utils/useSwipeBack";
 
 import AppBar from "./AppBar";
 import * as css from "./AppScreen.css";
-import { findBefore, noop, useVariant } from "./utils";
+import {
+  findBefore,
+  useTopActiveActivity,
+  useTopVisibleActivity,
+  useVariant,
+  useVisibleActivities,
+} from "./utils";
 
 const last = <T extends unknown>(arr: T[]) => arr[arr.length - 1];
 
@@ -23,9 +29,35 @@ const AppScreen: React.FC<AppScreenProps> = ({ theme, appBar, children }) => {
   const stackActions = useStackActions();
   const currentActivity = useActivity();
 
+  const visibleActivities = useVisibleActivities();
+
+  const topVisibleActivity = useTopVisibleActivity();
+  const topActiveActivity = useTopActiveActivity();
+
+  const isTopActive = useMemo(
+    () => topActiveActivity?.id === currentActivity.id,
+    [topActiveActivity, currentActivity],
+  );
+  const isTopVisible = useMemo(
+    () => topVisibleActivity?.id === currentActivity.id,
+    [topVisibleActivity, currentActivity],
+  );
+  const isRoot = visibleActivities[0]?.id === currentActivity.id;
+
+  const isBeforeTopVisibleActivity = useMemo(() => {
+    const beforeTopVisibleActivity = findBefore(
+      visibleActivities,
+      (activity) => activity.id === topVisibleActivity.id,
+    );
+    return beforeTopVisibleActivity?.id === currentActivity.id;
+  }, [visibleActivities, topVisibleActivity]);
+
   const { ref: appScreenRef, className: appScreen } = useVariant({
     variant: currentActivity.transitionState,
-    base: css.appScreen({ theme }),
+    base: css.appScreen({
+      theme,
+      show: isTopVisible || isBeforeTopVisibleActivity,
+    }),
     variants: {
       "enter-active": css.enterActive,
       "enter-done": css.enterDone,
@@ -37,42 +69,22 @@ const AppScreen: React.FC<AppScreenProps> = ({ theme, appBar, children }) => {
     },
   });
 
-  const visibleActivities = useMemo(
-    () =>
-      stack.activities.filter(
-        (activity) =>
-          activity.transitionState === "enter-active" ||
-          activity.transitionState === "enter-done" ||
-          activity.transitionState === "exit-active",
-      ),
-    [stack.activities],
-  );
-  const activeActivities = useMemo(
-    () =>
-      visibleActivities.filter(
-        (activity) =>
-          activity.transitionState === "enter-active" ||
-          activity.transitionState === "enter-done",
-      ),
-    [visibleActivities],
-  );
-
-  const beforeActiveActivity = useMemo(
+  const beforeActivity = useMemo(
     () =>
       findBefore(
-        activeActivities,
+        visibleActivities,
         (activity) => activity.id === currentActivity.id,
       ),
-    [activeActivities],
+    [visibleActivities],
   );
 
   const { dimRef, paperRef, edgeRef } = useSwipeBack({
     transitionDuration: stack.transitionDuration,
     getBeforePaper() {
-      if (!beforeActiveActivity) {
+      if (!beforeActivity) {
         return null;
       }
-      return appScreenPaperRefMap.get(beforeActiveActivity.id)?.current;
+      return appScreenPaperRefMap.get(beforeActivity.id)?.current;
     },
     onBack() {
       stackActions.pop();
@@ -85,13 +97,6 @@ const AppScreen: React.FC<AppScreenProps> = ({ theme, appBar, children }) => {
       appScreenPaperRefMap.delete(currentActivity.id);
     };
   }, [currentActivity, paperRef]);
-
-  const isActiveTop = useMemo(
-    () => last(activeActivities)?.id === currentActivity.id,
-    [activeActivities, currentActivity],
-  );
-
-  const isRoot = activeActivities[0]?.id === currentActivity.id;
 
   const zIndex = useMemo(
     () =>
@@ -124,7 +129,7 @@ const AppScreen: React.FC<AppScreenProps> = ({ theme, appBar, children }) => {
         key={currentActivity.id}
         ref={paperRef}
         className={css.paper({
-          isActiveTop,
+          isTopActive,
           hasAppBar,
         })}
       >
