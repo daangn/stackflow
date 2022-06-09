@@ -20,15 +20,15 @@ $ yarn add @stackflow/core
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-import { config } from '@stackflow/core';
+import { stackflow } from '@stackflow/core';
 
-const { Stackflow, useFlow } = config({
+const { Stack, useFlow } = stackflow({
   // ...
 });
 
 const App: React.FC = () => {
   return (
-    <Stackflow />
+    <Stack />
   );
 };
 
