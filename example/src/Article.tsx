@@ -12,7 +12,7 @@ const Article: ActivityComponentType<{
   const { push, pop, replace } = useFlow();
 
   return (
-    <AppScreen theme="cupertino">
+    <AppScreen theme="android">
       <div>
         name: Article, articleId: {articleId}, state: {activity.transitionState}
         <button

@@ -10,7 +10,7 @@ const Home: ActivityComponentType = () => {
 
   return (
     <AppScreen
-      theme="cupertino"
+      theme="android"
       appBar={{
         onClose() {
           console.log("Close");

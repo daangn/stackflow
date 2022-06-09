@@ -5,17 +5,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import * as css from "./AppBar.css";
 import * as appScreenCss from "./AppScreen.css";
 import { IconBack, IconClose } from "./assets";
-
-const noop = () => {};
-
-const onResize = (cb: () => void) => {
-  cb();
-  window.addEventListener("resize", cb);
-
-  return () => {
-    window.removeEventListener("resize", cb);
-  };
-};
+import { last, noop, onResize } from "./utils";
 
 interface AppBarProps {
   theme: "android" | "cupertino";
@@ -54,6 +44,10 @@ const AppBar: React.FC<AppBarProps> = ({
   );
 
   const isRoot = activeActivities[0]?.id === currentActivity.id;
+  const isActiveTop = useMemo(
+    () => last(activeActivities)?.id === currentActivity.id,
+    [activeActivities, currentActivity],
+  );
 
   const appBarRef = useRef<HTMLDivElement>(null);
   const appBarCenterRef = useRef<HTMLDivElement>(null);
@@ -112,6 +106,7 @@ const AppBar: React.FC<AppBarProps> = ({
       ref={appBarRef}
       className={css.appBar({
         border,
+        isActiveTop,
       })}
       style={assignInlineVars({
         [appScreenCss.vars.appBar.center.mainWidth]: `${centerMainWidth}px`,

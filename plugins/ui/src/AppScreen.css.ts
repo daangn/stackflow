@@ -182,6 +182,12 @@ export const paper = recipe({
           [`${cupertino}${enterDone} &`]: {
             transform: "translateX(-5rem)",
           },
+          [`${android}${enterActive} &`]: {
+            transform: "translateY(-2rem)",
+          },
+          [`${android}${enterDone} &`]: {
+            transform: "translateY(-2rem)",
+          },
         },
       },
     },

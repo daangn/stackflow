@@ -53,6 +53,18 @@ export const appBar = recipe({
         }`,
       },
     },
+    isActiveTop: {
+      false: {
+        selectors: {
+          [`${android}${enterActive} &`]: {
+            transform: "translateY(-2rem)",
+          },
+          [`${android}${enterDone} &`]: {
+            transform: "translateY(-2rem)",
+          },
+        },
+      },
+    },
   },
 });
 
