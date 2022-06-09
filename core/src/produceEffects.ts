@@ -1,23 +1,7 @@
 import isEqual from "react-fast-compare";
 
-import { Activity, AggregateOutput } from "./AggregateOutput";
-
-export type Effect =
-  | {
-      _TAG: "%SOMETHING_CHANGED%";
-    }
-  | {
-      _TAG: "PUSHED";
-      activity: Activity;
-    }
-  | {
-      _TAG: "POPPED";
-      activity: Activity;
-    }
-  | {
-      _TAG: "REPLACED";
-      activity: Activity;
-    };
+import { AggregateOutput } from "./AggregateOutput";
+import { Effect } from "./Effect";
 
 export function produceEffects(
   prevOutput: AggregateOutput,

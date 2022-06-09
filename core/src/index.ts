@@ -5,7 +5,9 @@ export {
   ActivityTransitionState,
   AggregateOutput,
 } from "./AggregateOutput";
+export { Effect } from "./Effect";
 export { DomainEvent } from "./event-types";
 export { DispatchEvent, makeEvent } from "./event-utils";
-export { Effect, produceEffects } from "./produceEffects";
+export * from "./plugin-types";
+export { produceEffects } from "./produceEffects";
 export { id } from "./utils";
