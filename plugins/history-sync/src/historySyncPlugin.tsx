@@ -1,5 +1,10 @@
-import { Activity, id, makeEvent } from "@stackflow/core";
-import { Activities, StackflowPlugin } from "@stackflow/react";
+import {
+  Activity,
+  id,
+  makeEvent,
+  StackflowCommonPlugin,
+} from "@stackflow/core";
+import { ActivityComponentType } from "@stackflow/react";
 
 import { makeTemplate } from "./makeTemplate";
 
@@ -36,14 +41,14 @@ function replaceState(state: State, url: string) {
   window.history.replaceState(state, "", url);
 }
 
-type HistorySyncPluginOptions<T extends Activities> = {
+type HistorySyncPluginOptions<T extends { [activityName: string]: any }> = {
   routes: {
     [key in keyof T]: string;
   };
 };
-export function historySyncPlugin<T extends Activities>(
+export function historySyncPlugin<T extends { [activityName: string]: any }>(
   options: HistorySyncPluginOptions<T>,
-): StackflowPlugin {
+): StackflowCommonPlugin {
   return () => {
     let pushFlag = false;
     let onPopStateDisposer: (() => void) | null = null;

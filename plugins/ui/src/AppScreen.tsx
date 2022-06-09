@@ -4,7 +4,7 @@ import { IconBack } from "assets";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 
 import * as css from "./AppScreen.css";
-import { useMounted, useVariant } from "./utils";
+import { useVariant } from "./utils";
 
 interface AppScreenProps {
   theme: "android" | "cupertino";

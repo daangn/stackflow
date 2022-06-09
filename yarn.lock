@@ -2206,15 +2206,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@stackflow/plugin-history-sync@workspace:plugins/history-sync"
   dependencies:
+    "@stackflow/core": "workspace:^"
     "@stackflow/esbuild-config": "workspace:^"
-    "@stackflow/react": "workspace:^"
     "@types/react": ^18.0.10
     react: ^18.1.0
     rimraf: ^3.0.2
     url-pattern: ^1.0.3
   peerDependencies:
     "@stackflow/core": "workspace:^"
-    "@stackflow/react": "workspace:^"
     "@types/react": ">=16.8.0"
     react: ">=16.8.0"
   languageName: unknown

@@ -16,7 +16,7 @@ import React, {
 } from "react";
 
 import { makeActivityId } from "../activity";
-import { usePlugins } from "../plugin";
+import { usePlugins } from "../plugins";
 import { useStackContext } from "../stack-context";
 import { Activities } from "../stackflow";
 import { StackContext } from "./StackContext";

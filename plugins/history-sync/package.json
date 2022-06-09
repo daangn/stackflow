@@ -26,15 +26,14 @@
     "url-pattern": "^1.0.3"
   },
   "devDependencies": {
+    "@stackflow/core": "workspace:^",
     "@stackflow/esbuild-config": "workspace:^",
-    "@stackflow/react": "workspace:^",
     "@types/react": "^18.0.10",
     "react": "^18.1.0",
     "rimraf": "^3.0.2"
   },
   "peerDependencies": {
     "@stackflow/core": "workspace:^",
-    "@stackflow/react": "workspace:^",
     "@types/react": ">=16.8.0",
     "react": ">=16.8.0"
   },

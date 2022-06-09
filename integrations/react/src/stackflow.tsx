@@ -1,4 +1,8 @@
-import { produceEffects } from "@stackflow/core";
+import {
+  produceEffects,
+  StackflowPluginHook,
+  StackflowPluginPostEffectHook,
+} from "@stackflow/core";
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { useStackActions } from "stack/useStackActions";
 
@@ -7,16 +11,11 @@ import {
   ActivityProvider,
   makeActivityId,
 } from "./activity";
-import {
-  PluginsProvider,
-  StackflowPlugin,
-  StackflowPluginHook,
-  StackflowPluginPostEffectHook,
-  usePlugins,
-} from "./plugin";
+import { PluginsProvider, usePlugins } from "./plugins";
 import { StackProvider, useStack } from "./stack";
 import { StackContextProvider } from "./stack-context/StackContextProvider";
 import { useStackContext } from "./stack-context/useStackContext";
+import { StackflowReactPlugin } from "./StackflowReactPlugin";
 
 type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] };
 
@@ -32,43 +31,45 @@ export type StackProps<T extends Activities, C extends {} = {}> = {
 export type StackflowOptions<T extends Activities> = {
   activities: T;
   transitionDuration: number;
-  plugins?: StackflowPlugin[];
+  plugins?: StackflowReactPlugin[];
 };
 
 export function stackflow<T extends Activities>(options: StackflowOptions<T>) {
   interface PluginRendererProps {
-    plugin: WithRequired<ReturnType<StackflowPlugin>, "render">;
+    plugin: WithRequired<ReturnType<StackflowReactPlugin>, "renderStack">;
   }
   const PluginRenderer: React.FC<PluginRendererProps> = ({ plugin }) => {
     const stack = useStack();
     const plugins = usePlugins();
 
-    return plugin.render({
-      activities: stack.activities.map((activity) => ({
-        key: activity.id,
-        render() {
-          const ActivityComponent = options.activities[activity.name];
+    return plugin.renderStack({
+      stack: {
+        activities: stack.activities.map((activity) => ({
+          key: activity.id,
+          render() {
+            const ActivityComponent = options.activities[activity.name];
 
-          let output = (
-            <ActivityProvider key={activity.id} activityId={activity.id}>
-              <ActivityComponent {...activity.params} />
-            </ActivityProvider>
-          );
+            let output = (
+              <ActivityProvider key={activity.id} activityId={activity.id}>
+                <ActivityComponent {...activity.params} />
+              </ActivityProvider>
+            );
 
-          plugins.forEach((p) => {
-            output =
-              p.wrapActivity?.({
-                activity: {
-                  id: activity.id,
-                  name: activity.name,
-                  render: () => output,
-                },
-              }) ?? output;
-          });
+            plugins.forEach((p) => {
+              output =
+                p.wrapActivity?.({
+                  activity: {
+                    id: activity.id,
+                    name: activity.name,
+                    render: () => output,
+                  },
+                }) ?? output;
+            });
 
-          return output;
-        },
-      })),
+            return output;
+          },
+        })),
+      },
     });
   };
 
@@ -147,8 +148,8 @@ export function stackflow<T extends Activities>(options: StackflowOptions<T>) {
       <>
         {plugins
           .filter(
-            (plugin): plugin is WithRequired<typeof plugin, "render"> =>
-              !!plugin.render,
+            (plugin): plugin is WithRequired<typeof plugin, "renderStack"> =>
+              !!plugin.renderStack,
           )
           .map((plugin) => (
             <PluginRenderer key={plugin.key} plugin={plugin} />
@@ -190,7 +191,6 @@ export function stackflow<T extends Activities>(options: StackflowOptions<T>) {
   };
 
   const useFlow = () => {
-    const stack = useStack();
     const stackActions = useStackActions();
     const plugins = usePlugins();
     const stackContext = useStackContext();
@@ -199,14 +199,15 @@ export function stackflow<T extends Activities>(options: StackflowOptions<T>) {
       () => ({
         push<V extends Extract<keyof T, string>>(
           activityName: V,
-          options: {
-            params: T[V] extends ActivityComponentType<infer U> ? U : {};
+          params: T[V] extends ActivityComponentType<infer U> ? U : {},
+          options?: {
+            animate?: boolean;
           },
         ) {
           stackActions.dispatchEvent("Pushed", {
             activityId: makeActivityId(),
             activityName,
-            params: options.params,
+            params,
           });
         },
         replace<V extends Extract<keyof T, string>>(

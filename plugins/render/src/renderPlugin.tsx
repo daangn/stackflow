@@ -1,19 +1,21 @@
-import { StackflowPlugin } from "@stackflow/react";
+import { StackflowReactPlugin } from "@stackflow/react";
 import React from "react";
+
+const last = <T extends unknown>(arr: T[]) => arr[arr.length - 1];
 
 interface RenderPluginOptions {
   persist?: boolean;
 }
 export function renderPlugin({
   persist = true,
-}: RenderPluginOptions): StackflowPlugin {
+}: RenderPluginOptions): StackflowReactPlugin {
   return () => ({
     key: "render",
-    render({ activities }) {
+    renderStack({ stack }) {
       if (persist) {
         return (
           <>
-            {activities.map((activity) => (
+            {stack.activities.map((activity) => (
               <React.Fragment key={activity.key}>
                 {activity.render()}
               </React.Fragment>
@@ -22,7 +24,7 @@ export function renderPlugin({
         );
       }
 
-      const lastActivity = activities[activities.length - 1];
+      const lastActivity = last(stack.activities);
       return <>{lastActivity.render()}</>;
     },
   });
