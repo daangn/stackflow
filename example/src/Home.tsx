@@ -1,5 +1,5 @@
 import { ActivityComponentType, useActivity } from "@stackflow/react";
-import { AppScreen } from "@stackflow/seed-design";
+import { AppScreen } from "@stackflow/ui";
 import React from "react";
 
 import { useFlow } from "./stackflow";

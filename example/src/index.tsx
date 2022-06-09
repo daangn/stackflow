@@ -1,5 +1,5 @@
 import "normalize.css";
-import "@stackflow/seed-design/index.css";
+import "@stackflow/ui/index.css";
 
 import React from "react";
 import ReactDOM from "react-dom/client";

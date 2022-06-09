@@ -9,7 +9,7 @@
     "@stackflow/core": "workspace:^",
     "@stackflow/plugin-history-sync": "workspace:^",
     "@stackflow/plugin-render": "workspace:^",
-    "@stackflow/seed-design": "workspace:^",
+    "@stackflow/ui": "workspace:^",
     "normalize.css": "^8.0.1",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
