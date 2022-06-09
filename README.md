@@ -13,7 +13,7 @@
 ## Getting Started
 
 ```bash
-$ yarn add @stackflow/react
+$ yarn add @stackflow/core @stackflow/react
 ```
 
 ```tsx
