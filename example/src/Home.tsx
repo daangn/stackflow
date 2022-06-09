@@ -9,7 +9,28 @@ const Home: ActivityComponentType = () => {
   const activity = useActivity();
 
   return (
-    <AppScreen theme="cupertino" appBar={{ title: activity.id }}>
+    <AppScreen
+      theme="cupertino"
+      appBar={{
+        onClose() {
+          console.log("Close");
+        },
+        closeButtonLocation: "right",
+        customBackButton() {
+          return <div>back</div>;
+        },
+        customCloseButton() {
+          return <div>close!</div>;
+        },
+        appendLeft() {
+          return <div>left</div>;
+        },
+        appendRight() {
+          return <div>right!</div>;
+        },
+        title: activity.name,
+      }}
+    >
       <div>
         name: Home, state: {activity.transitionState}{" "}
         <button

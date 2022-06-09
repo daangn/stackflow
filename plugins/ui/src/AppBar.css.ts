@@ -1,30 +1,62 @@
 import { style } from "@vanilla-extract/css";
 import { calc } from "@vanilla-extract/css-utils";
 import { recipe } from "@vanilla-extract/recipes";
-import { android, background, exitActive, vars } from "AppScreen.css";
 
+import {
+  android,
+  background,
+  cupertino,
+  enterActive,
+  enterDone,
+  exitActive,
+  vars,
+} from "./AppScreen.css";
 import { f } from "./styles";
 
-export const appBar = style([
-  f.posAbs,
-  f.flexAlignCenter,
-  f.fullWidth,
-  background,
-  {
-    height: vars.appBar.height,
-    boxShadow: `inset 0px ${calc(vars.appBar.borderSize).negate()} 0 ${
-      vars.appBar.borderColor
-    }`,
-    zIndex: vars.zIndexes.appBar,
-    selectors: {
-      [`${exitActive} > &`]: {
-        transform: "translateX(100%)",
+export const appBar = recipe({
+  base: [
+    f.posAbs,
+    f.flexAlignCenter,
+    f.fullWidth,
+    background,
+    {
+      height: vars.appBar.height,
+      selectors: {
+        [`${cupertino} &`]: {
+          position: "absolute",
+          zIndex: vars.zIndexes.appBar,
+        },
+        [`${cupertino}${exitActive} &`]: {
+          transform: "translateX(100%)",
+        },
+        [`${android} &`]: {
+          opacity: 0,
+          transform: "translateY(10rem)",
+          transition: `transform ${vars.transitionDuration}, opacity ${vars.transitionDuration}`,
+        },
+        [`${android}${enterActive} &`]: {
+          opacity: 1,
+          transform: "translateY(0)",
+        },
+        [`${android}${enterDone} &`]: {
+          opacity: 1,
+          transform: "translateY(0)",
+        },
+      },
+    },
+  ],
+  variants: {
+    border: {
+      true: {
+        boxShadow: `inset 0px ${calc(vars.appBar.borderSize).negate()} 0 ${
+          vars.appBar.borderColor
+        }`,
       },
     },
   },
-]);
+});
 
-export const appBarLeft = style([
+export const left = style([
   f.flexAlignCenter,
   f.fullHeight,
   {
@@ -35,24 +67,24 @@ export const appBarLeft = style([
   },
 ]);
 
-export const appBarBackButton = style([
+export const backButton = style([
   f.flexAlignCenter,
   f.flexJustifyCenter,
   f.cursorPointer,
+  f.resetButton,
   {
-    color: "#000",
-    opacity: 1,
+    color: vars.appBar.iconColor,
     transition: "opacity 300ms",
     width: "2.25rem",
     height: "2.75rem",
-    textDecoration: "none",
-    outline: "none",
     ":active": {
       opacity: "0.2",
       transition: "opacity 0s",
     },
   },
 ]);
+
+export const closeButton = style([backButton]);
 
 export const appBarCenter = style([
   f.flexAlignCenter,
@@ -64,6 +96,7 @@ export const appBarCenter = style([
 export const appBarCenterMain = recipe({
   base: {
     width: vars.appBar.center.mainWidth,
+    color: vars.appBar.textColor,
   },
   variants: {
     theme: {
@@ -94,6 +127,15 @@ export const appBarCenterMain = recipe({
         },
       ],
     },
+    hasLeft: {
+      true: {
+        selectors: {
+          [`${android} &`]: {
+            paddingLeft: "0.375rem",
+          },
+        },
+      },
+    },
   },
 });
 
@@ -119,7 +161,7 @@ export const appBarRight = style([
       display: "none",
     },
     selectors: {
-      [`${android} > &`]: {
+      [`${android} &`]: {
         padding: "0 0.5rem 0 0",
       },
     },

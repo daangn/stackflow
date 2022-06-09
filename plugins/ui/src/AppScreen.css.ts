@@ -16,6 +16,8 @@ const vars = createThemeContract({
     height: null,
     borderColor: null,
     borderSize: null,
+    textColor: null,
+    iconColor: null,
     center: {
       mainWidth: null,
     },
@@ -26,16 +28,12 @@ const dimBackgroundColor = style({
   backgroundColor: vars.dimBackgroundColor,
 });
 
-const opacityTransition = style({
-  transition: `opacity ${vars.transitionDuration}`,
-});
-
-const transformTransition = style({
-  transition: `transform ${vars.transitionDuration}`,
-});
-
 export const background = style({
   backgroundColor: vars.backgroundColor,
+});
+
+export const allTransitions = style({
+  transition: `transform ${vars.transitionDuration}, opacity ${vars.transitionDuration}`,
 });
 
 export const android = createTheme(vars, {
@@ -51,6 +49,8 @@ export const android = createTheme(vars, {
     height: "3.5rem",
     borderColor: "rgba(0, 0, 0, 0.07)",
     borderSize: "1px",
+    iconColor: "#212124",
+    textColor: "#212124",
     center: {
       mainWidth: "",
     },
@@ -70,6 +70,8 @@ export const cupertino = createTheme(vars, {
     height: "2.75rem",
     borderColor: "rgba(0, 0, 0, 0.12)",
     borderSize: "0.5px",
+    iconColor: "#212124",
+    textColor: "#212124",
     center: {
       mainWidth: "",
     },
@@ -102,21 +104,27 @@ export const appScreen = recipe({
 export const dim = style([
   f.posAbsFull,
   dimBackgroundColor,
-  opacityTransition,
+  allTransitions,
   {
     opacity: 0,
-    zIndex: vars.zIndexes.dim,
     selectors: {
-      [`${enterActive} > &`]: {
+      [`${cupertino} &`]: {
+        zIndex: vars.zIndexes.dim,
+      },
+      [`${android} &`]: {
+        height: "10rem",
+        background: `linear-gradient(${vars.dimBackgroundColor}, rgba(0, 0, 0, 0))`,
+      },
+      [`${enterActive} &`]: {
         opacity: 1,
       },
-      [`${enterDone} > &`]: {
+      [`${enterDone} &`]: {
         opacity: 1,
       },
-      [`${exitActive} > &`]: {
+      [`${exitActive} &`]: {
         opacity: 0,
       },
-      [`${exitDone} > &`]: {
+      [`${exitDone} &`]: {
         opacity: 0,
       },
     },
@@ -127,17 +135,31 @@ export const paper = recipe({
   base: [
     f.posAbsFull,
     background,
-    transformTransition,
+    allTransitions,
     {
-      transform: "translateX(100%)",
       overflowY: "scroll",
-      zIndex: vars.zIndexes.paper,
       selectors: {
-        [`${enterActive} > &`]: {
+        [`${cupertino} &`]: {
+          transform: "translateX(100%)",
+          zIndex: vars.zIndexes.paper,
+        },
+        [`${cupertino}${enterActive} &`]: {
           transform: "translateX(0)",
         },
-        [`${enterDone} > &`]: {
+        [`${cupertino}${enterDone} &`]: {
           transform: "translateX(0)",
+        },
+        [`${android} &`]: {
+          opacity: 0,
+          transform: "translateY(10rem)",
+        },
+        [`${android}${enterActive} &`]: {
+          opacity: 1,
+          transform: "translateY(0)",
+        },
+        [`${android}${enterDone} &`]: {
+          opacity: 1,
+          transform: "translateY(0)",
         },
       },
     },
@@ -154,10 +176,10 @@ export const paper = recipe({
     isActiveTop: {
       false: {
         selectors: {
-          [`${enterActive} > &`]: {
+          [`${cupertino}${enterActive} &`]: {
             transform: "translateX(-5rem)",
           },
-          [`${enterDone} > &`]: {
+          [`${cupertino}${enterDone} &`]: {
             transform: "translateX(-5rem)",
           },
         },
@@ -166,7 +188,7 @@ export const paper = recipe({
     isVisibleTop: {
       true: {
         selectors: {
-          [`${enterDone} > &`]: {
+          [`${enterDone} &`]: {
             transition: "0s",
           },
         },

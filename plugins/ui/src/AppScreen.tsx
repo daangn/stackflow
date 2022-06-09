@@ -1,8 +1,8 @@
 import { useActivity, useStack } from "@stackflow/react";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
-import AppBar from "AppBar";
 import React, { useMemo } from "react";
 
+import AppBar from "./AppBar";
 import * as css from "./AppScreen.css";
 import { useVariant } from "./utils";
 
@@ -12,7 +12,7 @@ type PropOf<T> = T extends React.ComponentType<infer U> ? U : unknown;
 
 interface AppScreenProps {
   theme: "android" | "cupertino";
-  appBar?: PropOf<typeof AppBar>;
+  appBar?: Omit<PropOf<typeof AppBar>, "theme">;
   children: React.ReactNode;
 }
 const AppScreen: React.FC<AppScreenProps> = ({ theme, appBar, children }) => {

@@ -128,7 +128,10 @@ export function stackflow<T extends Activities>(options: StackflowOptions<T>) {
 
     useEffect(() => {
       onInit?.({
-        actions: stackActions,
+        actions: {
+          dispatchEvent: stackActions.dispatchEvent,
+          getState: stackActions.getState,
+        },
         stackContext,
       });
     }, []);
@@ -141,7 +144,10 @@ export function stackflow<T extends Activities>(options: StackflowOptions<T>) {
 
       effects.forEach((effect) => {
         triggerEffect({
-          actions: stackActions,
+          actions: {
+            dispatchEvent: stackActions.dispatchEvent,
+            getState: stackActions.getState,
+          },
           effect,
           stackContext,
         });
@@ -198,8 +204,6 @@ export function stackflow<T extends Activities>(options: StackflowOptions<T>) {
 
   const useFlow = () => {
     const stackActions = useStackActions();
-    const plugins = usePlugins();
-    const stackContext = useStackContext();
 
     return useMemo(
       () => ({
@@ -210,7 +214,7 @@ export function stackflow<T extends Activities>(options: StackflowOptions<T>) {
             animate?: boolean;
           },
         ) {
-          stackActions.dispatchEvent("Pushed", {
+          stackActions.push({
             activityId: makeActivityId(),
             activityName,
             params,
@@ -219,34 +223,18 @@ export function stackflow<T extends Activities>(options: StackflowOptions<T>) {
         replace<V extends Extract<keyof T, string>>(
           activityName: V,
           params: T[V] extends ActivityComponentType<infer U> ? U : {},
+          options?: {
+            animate?: boolean;
+          },
         ) {
-          stackActions.dispatchEvent("Replaced", {
+          stackActions.replace({
             activityId: makeActivityId(),
             activityName,
             params,
           });
         },
         pop() {
-          let isPrevented = false;
-
-          const preventDefault = () => {
-            isPrevented = true;
-          };
-
-          plugins.forEach((plugin) => {
-            plugin.onBeforePop?.({
-              actions: {
-                dispatchEvent: stackActions.dispatchEvent,
-                getState: stackActions.getState,
-                preventDefault,
-              },
-              stackContext,
-            });
-          });
-
-          if (!isPrevented) {
-            stackActions.dispatchEvent("Popped", {});
-          }
+          stackActions.pop();
         },
       }),
       [dispatchEvent],

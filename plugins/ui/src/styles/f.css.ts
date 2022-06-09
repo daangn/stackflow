@@ -64,3 +64,10 @@ export const cursorPointer = style({
 export const borderBox = style({
   boxSizing: "border-box",
 });
+
+export const resetButton = style({
+  appearance: "none",
+  border: 0,
+  padding: 0,
+  background: "none",
+});
