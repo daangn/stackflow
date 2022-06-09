@@ -5,6 +5,17 @@ import * as css from "./AppBar.css";
 import * as appScreenCss from "./AppScreen.css";
 import { IconBack } from "./assets";
 
+const noop = () => {};
+
+const onResize = (cb: () => void) => {
+  cb();
+  window.addEventListener("resize", cb);
+
+  return () => {
+    window.removeEventListener("resize", cb);
+  };
+};
+
 interface AppBarProps {
   theme: "android" | "cupertino";
   title?: string;
@@ -18,18 +29,14 @@ const AppBar: React.FC<AppBarProps> = ({ theme, title }) => {
   );
 
   useEffect(() => {
-    if (theme !== "cupertino") {
-      return () => {};
-    }
-
     const $appBar = appBarRef.current;
     const $appBarCenter = appBarCenterRef.current;
 
-    if (!$appBar || !$appBarCenter) {
-      return () => {};
+    if (theme !== "cupertino" || !$appBar || !$appBarCenter) {
+      return noop;
     }
 
-    const onResize = () => {
+    const dispose = onResize(() => {
       const screenWidth = $appBar.clientWidth;
 
       const leftWidth = $appBarCenter.offsetLeft;
@@ -39,14 +46,9 @@ const AppBar: React.FC<AppBarProps> = ({ theme, title }) => {
       const sideMargin = Math.max(leftWidth, rightWidth);
 
       setCenterMainWidth(screenWidth - 2 * sideMargin);
-    };
+    });
 
-    onResize();
-    window.addEventListener("resize", onResize);
-
-    return () => {
-      window.removeEventListener("resize", onResize);
-    };
+    return dispose;
   }, []);
 
   return (
