@@ -9,6 +9,7 @@ import {
   enterActive,
   enterDone,
   exitActive,
+  exitDone,
   vars,
 } from "./AppScreen.css";
 import { f } from "./styles";
@@ -61,6 +62,15 @@ export const appBar = recipe({
           },
           [`${android}${enterDone} &`]: {
             transform: "translateY(-2rem)",
+          },
+        },
+      },
+    },
+    isVisibleTop: {
+      true: {
+        selectors: {
+          [`${enterDone} &`]: {
+            transition: "0s",
           },
         },
       },

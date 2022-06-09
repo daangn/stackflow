@@ -33,21 +33,36 @@ const AppBar: React.FC<AppBarProps> = ({
   const currentActivity = useActivity();
   const stackActions = useStackActions();
 
-  const activeActivities = useMemo(
+  const visibleActivities = useMemo(
     () =>
       stack.activities.filter(
         (activity) =>
           activity.transitionState === "enter-active" ||
-          activity.transitionState === "enter-done",
+          activity.transitionState === "enter-done" ||
+          activity.transitionState === "exit-active",
       ),
     [stack.activities],
   );
+  const activeActivities = useMemo(
+    () =>
+      visibleActivities.filter(
+        (activity) =>
+          activity.transitionState === "enter-active" ||
+          activity.transitionState === "enter-done",
+      ),
+    [visibleActivities],
+  );
 
-  const isRoot = activeActivities[0]?.id === currentActivity.id;
   const isActiveTop = useMemo(
     () => last(activeActivities)?.id === currentActivity.id,
     [activeActivities, currentActivity],
   );
+  const isVisibleTop = useMemo(
+    () => last(visibleActivities)?.id === currentActivity.id,
+    [visibleActivities, currentActivity],
+  );
+
+  const isRoot = activeActivities[0]?.id === currentActivity.id;
 
   const appBarRef = useRef<HTMLDivElement>(null);
   const appBarCenterRef = useRef<HTMLDivElement>(null);
@@ -107,6 +122,7 @@ const AppBar: React.FC<AppBarProps> = ({
       className={css.appBar({
         border,
         isActiveTop,
+        isVisibleTop,
       })}
       style={assignInlineVars({
         [appScreenCss.vars.appBar.center.mainWidth]: `${centerMainWidth}px`,
