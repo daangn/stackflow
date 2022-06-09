@@ -18,7 +18,9 @@ const Article: ActivityComponentType<{
         <button
           type="button"
           onClick={() => {
-            push("Home", {});
+            push("Home", {
+              params: {},
+            });
           }}
         >
           Home

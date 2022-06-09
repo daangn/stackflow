@@ -1,15 +1,12 @@
-import { makeEvent, produceEffects } from "@stackflow/core";
-import { PushedEvent } from "@stackflow/core/dist/event-types";
+import { produceEffects } from "@stackflow/core";
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
-import { StackContextProvider } from "stack/StackContextProvider";
-import { useStackContext } from "stack/useStackContext";
+import { useStackActions } from "stack/useStackActions";
 
 import {
   ActivityComponentType,
   ActivityProvider,
   makeActivityId,
 } from "./activity";
-import { CoreProvider, useCore } from "./core";
 import {
   PluginsProvider,
   StackflowPlugin,
@@ -17,39 +14,37 @@ import {
   StackflowPluginPostEffectHook,
   usePlugins,
 } from "./plugin";
-
-const SECOND = 1000;
-const MINUTE = 60 * SECOND;
+import { StackProvider, useStack } from "./stack";
+import { StackContextProvider } from "./stack-context/StackContextProvider";
+import { useStackContext } from "./stack-context/useStackContext";
 
 type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] };
 
-export type BaseActivities = {
+export type Activities = {
   [activityName: string]: ActivityComponentType<any>;
 };
 
-export type StackProps<T extends BaseActivities, C extends {} = {}> = {
+export type StackProps<T extends Activities, C extends {} = {}> = {
   fallbackActivityName?: Extract<keyof T, string>;
   context?: C;
 };
 
-export type StackflowOptions<T extends BaseActivities> = {
+export type StackflowOptions<T extends Activities> = {
   activities: T;
   transitionDuration: number;
   plugins?: StackflowPlugin[];
 };
 
-export function stackflow<T extends BaseActivities>(
-  options: StackflowOptions<T>,
-) {
+export function stackflow<T extends Activities>(options: StackflowOptions<T>) {
   interface PluginRendererProps {
     plugin: WithRequired<ReturnType<StackflowPlugin>, "render">;
   }
   const PluginRenderer: React.FC<PluginRendererProps> = ({ plugin }) => {
-    const core = useCore();
+    const stack = useStack();
     const plugins = usePlugins();
 
     return plugin.render({
-      activities: core.state.activities.map((activity) => ({
+      activities: stack.activities.map((activity) => ({
         key: activity.id,
         render() {
           const ActivityComponent = options.activities[activity.name];
@@ -64,6 +59,8 @@ export function stackflow<T extends BaseActivities>(
             output =
               p.wrapActivity?.({
                 activity: {
+                  id: activity.id,
+                  name: activity.name,
                   render: () => output,
                 },
               }) ?? output;
@@ -76,11 +73,10 @@ export function stackflow<T extends BaseActivities>(
   };
 
   const Main: React.FC = () => {
-    const core = useCore();
+    const stack = useStack();
+    const stackActions = useStackActions();
     const plugins = usePlugins();
     const stackContext = useStackContext();
-
-    const prevStateRef = useRef(core.state);
 
     const onInit = useCallback<StackflowPluginHook>((actions) => {
       plugins.forEach((plugin) => {
@@ -88,7 +84,7 @@ export function stackflow<T extends BaseActivities>(
       });
     }, []);
 
-    const onEffect = useCallback<StackflowPluginPostEffectHook<any>>(
+    const triggerEffect = useCallback<StackflowPluginPostEffectHook<any>>(
       ({ actions, effect }) => {
         switch (effect._TAG) {
           case "PUSHED": {
@@ -125,35 +121,27 @@ export function stackflow<T extends BaseActivities>(
 
     useEffect(() => {
       onInit?.({
-        actions: {
-          dispatchEvent: core.dispatchEvent,
-          getState() {
-            return core.stateRef.current;
-          },
-        },
+        actions: stackActions,
         stackContext,
       });
     }, []);
 
+    const prevStateRef = useRef(stack);
+
     useEffect(() => {
       const prevState = prevStateRef.current;
-      const effects = prevState ? produceEffects(prevState, core.state) : [];
+      const effects = prevState ? produceEffects(prevState, stack) : [];
 
       effects.forEach((effect) => {
-        onEffect({
-          actions: {
-            dispatchEvent: core.dispatchEvent,
-            getState() {
-              return core.stateRef.current;
-            },
-          },
+        triggerEffect({
+          actions: stackActions,
           effect,
           stackContext,
         });
       });
 
-      prevStateRef.current = { ...core.state };
-    }, [core.state, core.dispatchEvent]);
+      prevStateRef.current = { ...stack };
+    }, [stack, stackActions]);
 
     return (
       <>
@@ -169,58 +157,24 @@ export function stackflow<T extends BaseActivities>(
     );
   };
 
-  const initialEventDate = new Date().getTime() - MINUTE;
-
   const Stack: React.FC<StackProps<T>> = (props) => {
     const plugins = useMemo(
       () => (options.plugins ?? []).map((plugin) => plugin()),
       [],
     );
-    const stackContext = props.context ?? {};
-
-    const initialEvents = useMemo(() => {
-      const initialPushedEvent =
-        plugins.reduce<PushedEvent | null>(
-          (acc, plugin) =>
-            plugin.overrideInitialPushedEvent?.({
-              stackContext,
-            }) ?? acc,
-          null,
-        ) ??
-        (props.fallbackActivityName
-          ? makeEvent("Pushed", {
-              activityId: makeActivityId(),
-              activityName: props.fallbackActivityName,
-              params: {},
-              eventDate: initialEventDate,
-            })
-          : null);
-
-      const events = [
-        makeEvent("Initialized", {
-          transitionDuration: options.transitionDuration,
-          eventDate: initialEventDate,
-        }),
-        ...Object.keys(options.activities).map((activityName) =>
-          makeEvent("ActivityRegistered", {
-            activityName,
-            eventDate: initialEventDate,
-          }),
-        ),
-        ...(initialPushedEvent ? [initialPushedEvent] : []),
-      ];
-
-      return events;
-    }, []);
 
     let output = (
-      <PluginsProvider plugins={plugins}>
-        <CoreProvider initialEvents={initialEvents}>
-          <StackContextProvider context={stackContext}>
+      <StackContextProvider context={props.context ?? {}}>
+        <PluginsProvider plugins={plugins}>
+          <StackProvider
+            activities={options.activities}
+            fallbackActivityName={props.fallbackActivityName}
+            transitionDuration={options.transitionDuration}
+          >
             <Main />
-          </StackContextProvider>
-        </CoreProvider>
-      </PluginsProvider>
+          </StackProvider>
+        </PluginsProvider>
+      </StackContextProvider>
     );
 
     plugins.forEach((plugin) => {
@@ -236,7 +190,8 @@ export function stackflow<T extends BaseActivities>(
   };
 
   const useFlow = () => {
-    const { dispatchEvent, stateRef } = useCore();
+    const stack = useStack();
+    const stackActions = useStackActions();
     const plugins = usePlugins();
     const stackContext = useStackContext();
 
@@ -244,19 +199,21 @@ export function stackflow<T extends BaseActivities>(
       () => ({
         push<V extends Extract<keyof T, string>>(
           activityName: V,
-          params: T[V] extends ActivityComponentType<infer U> ? U : {},
+          options: {
+            params: T[V] extends ActivityComponentType<infer U> ? U : {};
+          },
         ) {
-          dispatchEvent("Pushed", {
+          stackActions.dispatchEvent("Pushed", {
             activityId: makeActivityId(),
             activityName,
-            params,
+            params: options.params,
           });
         },
         replace<V extends Extract<keyof T, string>>(
           activityName: V,
           params: T[V] extends ActivityComponentType<infer U> ? U : {},
         ) {
-          dispatchEvent("Replaced", {
+          stackActions.dispatchEvent("Replaced", {
             activityId: makeActivityId(),
             activityName,
             params,
@@ -272,10 +229,8 @@ export function stackflow<T extends BaseActivities>(
           plugins.forEach((plugin) => {
             plugin.onBeforePop?.({
               actions: {
-                dispatchEvent,
-                getState() {
-                  return stateRef.current;
-                },
+                dispatchEvent: stackActions.dispatchEvent,
+                getState: stackActions.getState,
                 preventDefault,
               },
               stackContext,
@@ -283,7 +238,7 @@ export function stackflow<T extends BaseActivities>(
           });
 
           if (!isPrevented) {
-            dispatchEvent("Popped", {});
+            stackActions.dispatchEvent("Popped", {});
           }
         },
       }),

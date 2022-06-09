@@ -8,6 +8,7 @@ module.exports = {
     "no-unused-vars": "off",
     "no-underscore-dangle": "off",
     "no-nested-ternary": "off",
+    "no-shadow": "off",
     "react/jsx-filename-extension": [
       1,
       { extensions: [".js", ".jsx", ".tsx"] },

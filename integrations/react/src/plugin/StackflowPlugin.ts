@@ -22,6 +22,8 @@ export type StackflowPlugin = () => {
   }) => React.ReactElement<any, any> | null;
   wrapActivity?: (args: {
     activity: {
+      id: string;
+      name: string;
       render: () => React.ReactNode;
     };
   }) => React.ReactElement<any, any> | null;

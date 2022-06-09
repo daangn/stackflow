@@ -1,5 +1,5 @@
 import { Activity, id, makeEvent } from "@stackflow/core";
-import { BaseActivities, StackflowPlugin } from "@stackflow/react";
+import { Activities, StackflowPlugin } from "@stackflow/react";
 
 import { makeTemplate } from "./makeTemplate";
 
@@ -36,12 +36,12 @@ function replaceState(state: State, url: string) {
   window.history.replaceState(state, "", url);
 }
 
-type HistorySyncPluginOptions<T extends BaseActivities> = {
+type HistorySyncPluginOptions<T extends Activities> = {
   routes: {
     [key in keyof T]: string;
   };
 };
-export function historySyncPlugin<T extends BaseActivities>(
+export function historySyncPlugin<T extends Activities>(
   options: HistorySyncPluginOptions<T>,
 ): StackflowPlugin {
   return () => {
@@ -50,6 +50,45 @@ export function historySyncPlugin<T extends BaseActivities>(
 
     return {
       key: "historySync",
+      overrideInitialPushedEvent({ stackContext }) {
+        const initHistoryState = parseState(window.history.state);
+
+        if (initHistoryState) {
+          return {
+            ...initHistoryState.activity.pushedBy,
+            name: "Pushed",
+          };
+        }
+
+        const path = stackContext?.req?.path
+          ? stackContext.req.path
+          : typeof window !== "undefined"
+          ? window.location.pathname + window.location.search
+          : null;
+
+        if (!path) {
+          return null;
+        }
+
+        const activityNames = Object.keys(options.routes);
+
+        for (let i = 0; i < activityNames.length; i += 1) {
+          const activityName = activityNames[i];
+          const template = makeTemplate(options.routes[activityName]);
+          const params = template.parse(path);
+
+          if (params) {
+            return makeEvent("Pushed", {
+              activityId: id(),
+              activityName,
+              params,
+              eventDate: new Date().getTime() - MINUTE,
+            });
+          }
+        }
+
+        return null;
+      },
       onInit({ actions: { getState, dispatchEvent } }) {
         const rootActivity = getState().activities[0];
         const template = makeTemplate(options.routes[rootActivity.name]);
@@ -150,45 +189,6 @@ export function historySyncPlugin<T extends BaseActivities>(
         do {
           window.history.back();
         } while (!parseState(window.history.state));
-      },
-      overrideInitialPushedEvent({ stackContext }) {
-        const initHistoryState = parseState(window.history.state);
-
-        if (initHistoryState) {
-          return {
-            ...initHistoryState.activity.pushedBy,
-            name: "Pushed",
-          };
-        }
-
-        const path = stackContext?.req?.path
-          ? stackContext.req.path
-          : typeof window !== "undefined"
-          ? window.location.pathname + window.location.search
-          : null;
-
-        if (!path) {
-          return null;
-        }
-
-        const activityNames = Object.keys(options.routes);
-
-        for (let i = 0; i < activityNames.length; i += 1) {
-          const activityName = activityNames[i];
-          const template = makeTemplate(options.routes[activityName]);
-          const params = template.parse(path);
-
-          if (params) {
-            return makeEvent("Pushed", {
-              activityId: id(),
-              activityName,
-              params,
-              eventDate: new Date().getTime() - MINUTE,
-            });
-          }
-        }
-
-        return null;
       },
     };
   };

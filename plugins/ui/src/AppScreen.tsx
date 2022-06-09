@@ -1,10 +1,10 @@
-import { useActivity, useCore } from "@stackflow/react";
+import { useActivity, useStack } from "@stackflow/react";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
 import { IconBack } from "assets";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 
 import * as css from "./AppScreen.css";
-import { useVariant } from "./utils";
+import { useMounted, useVariant } from "./utils";
 
 interface AppScreenProps {
   theme: "android" | "cupertino";
@@ -14,11 +14,11 @@ interface AppScreenProps {
   children: React.ReactNode;
 }
 const AppScreen: React.FC<AppScreenProps> = ({ theme, appBar, children }) => {
-  const core = useCore();
-  const activity = useActivity();
+  const stack = useStack();
+  const currentActivity = useActivity();
 
   const { ref: appScreenRef, className: appScreen } = useVariant({
-    variant: activity.transitionState,
+    variant: currentActivity.transitionState,
     base: css.appScreen({ theme }),
     variants: {
       "enter-active": css.enterActive,
@@ -35,28 +35,28 @@ const AppScreen: React.FC<AppScreenProps> = ({ theme, appBar, children }) => {
   const appBarCenterRef = useRef<HTMLDivElement>(null);
 
   const isActivityTop = useMemo(() => {
-    const topActivity = [...core.state.activities]
+    const topActivity = [...stack.activities]
       .reverse()
       .find(
-        (_activity) =>
-          _activity.transitionState === "enter-active" ||
-          _activity.transitionState === "enter-done",
+        (activity) =>
+          activity.transitionState === "enter-active" ||
+          activity.transitionState === "enter-done",
       );
 
-    return topActivity === activity;
-  }, [core.state.activities, activity]);
+    return topActivity === currentActivity;
+  }, [stack.activities, currentActivity]);
 
   const zIndex = useMemo(
     () =>
-      core.state.activities
+      stack.activities
         .filter(
-          (a) =>
-            a.transitionState === "enter-active" ||
-            a.transitionState === "enter-done" ||
-            a.transitionState === "exit-active",
+          (activity) =>
+            activity.transitionState === "enter-active" ||
+            activity.transitionState === "enter-done" ||
+            activity.transitionState === "exit-active",
         )
-        .findIndex((a) => a === activity),
-    [core.state.activities, activity],
+        .findIndex((activity) => activity === currentActivity),
+    [stack.activities, currentActivity],
   );
 
   const hasAppBar = !!appBar;
@@ -108,7 +108,7 @@ const AppScreen: React.FC<AppScreenProps> = ({ theme, appBar, children }) => {
       style={assignInlineVars({
         [css.vars.zIndexes.paper]: `${zIndexPaper}`,
         [css.vars.zIndexes.appBar]: `${zIndexAppBar}`,
-        [css.vars.transitionDuration]: `${core.state.transitionDuration}ms`,
+        [css.vars.transitionDuration]: `${stack.transitionDuration}ms`,
         [css.vars.appBar.center.mainWidth]: `${centerMainWidth}px`,
       })}
     >

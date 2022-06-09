@@ -15,7 +15,9 @@ const Home: ActivityComponentType = () => {
         <button
           type="button"
           onClick={() => {
-            push("Home", {});
+            push("Home", {
+              params: {},
+            });
           }}
         >
           Home
@@ -24,8 +26,10 @@ const Home: ActivityComponentType = () => {
           type="button"
           onClick={() => {
             push("Article", {
-              articleId: "123",
-              referrer: "home",
+              params: {
+                articleId: "123",
+                referrer: "home",
+              },
             });
           }}
         >

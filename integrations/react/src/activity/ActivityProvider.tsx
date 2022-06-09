@@ -1,6 +1,6 @@
 import React from "react";
 
-import { useCore } from "../core";
+import { useStack } from "../stack";
 import { ActivityContext } from "./ActivityContext";
 
 interface ActivityProviderProps {
@@ -11,14 +11,14 @@ export const ActivityProvider: React.FC<ActivityProviderProps> = ({
   activityId,
   children,
 }) => {
-  const core = useCore();
+  const stack = useStack();
 
-  const state = core.state.activities.find(
+  const activity = stack.activities.find(
     (activity) => activity.id === activityId,
   );
 
   return (
-    <ActivityContext.Provider value={state!}>
+    <ActivityContext.Provider value={activity!}>
       {children}
     </ActivityContext.Provider>
   );
