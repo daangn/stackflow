@@ -9,7 +9,7 @@ import { last, noop, onResize } from "./utils";
 
 interface AppBarProps {
   theme: "android" | "cupertino";
-  title?: string;
+  title?: React.ReactNode;
   appendLeft?: () => React.ReactNode;
   appendRight?: () => React.ReactNode;
   closeButtonLocation?: "left" | "right";
@@ -117,17 +117,21 @@ const AppBar: React.FC<AppBarProps> = ({
         {backButton}
         {appendLeft?.()}
       </div>
-      <div ref={appBarCenterRef} className={css.appBarCenter}>
+      <div ref={appBarCenterRef} className={css.center}>
         <div
-          className={css.appBarCenterMain({
+          className={css.centerShrinked({
             theme,
             hasLeft,
           })}
         >
-          <div className={css.appBarCenterMainText}>{title}</div>
+          {typeof title === "string" ? (
+            <div className={css.centerText}>{title}</div>
+          ) : (
+            title
+          )}
         </div>
       </div>
-      <div className={css.appBarRight}>
+      <div className={css.right}>
         {appendRight?.()}
         {closeButtonLocation === "right" && closeButton}
       </div>

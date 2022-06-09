@@ -98,14 +98,14 @@ export const backButton = style([
 
 export const closeButton = style([backButton]);
 
-export const appBarCenter = style([
+export const center = style([
   f.flexAlignCenter,
   {
     flex: 1,
   },
 ]);
 
-export const appBarCenterMain = recipe({
+export const centerShrinked = recipe({
   base: {
     width: vars.appBar.center.mainWidth,
     color: vars.appBar.textColor,
@@ -151,7 +151,7 @@ export const appBarCenterMain = recipe({
   },
 });
 
-export const appBarCenterMainText = style([
+export const centerText = style([
   f.overflowHidden,
   f.whiteSpaceNowrap,
   f.fullWidth,
@@ -162,7 +162,7 @@ export const appBarCenterMainText = style([
   },
 ]);
 
-export const appBarRight = style([
+export const right = style([
   f.flexAlignCenter,
   f.fullHeight,
   f.posRel,
