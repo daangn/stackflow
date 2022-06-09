@@ -45,6 +45,7 @@ type HistorySyncPluginOptions<T extends { [activityName: string]: any }> = {
   routes: {
     [key in keyof T]: string;
   };
+  fallbackActivityName: keyof T;
 };
 export function historySyncPlugin<T extends { [activityName: string]: any }>(
   options: HistorySyncPluginOptions<T>,
@@ -92,7 +93,12 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
           }
         }
 
-        return null;
+        return makeEvent("Pushed", {
+          activityId: id(),
+          activityName: options.fallbackActivityName as string,
+          params: {},
+          eventDate: new Date().getTime() - MINUTE,
+        });
       },
       onInit({ actions: { getState, dispatchEvent } }) {
         const rootActivity = getState().activities[0];

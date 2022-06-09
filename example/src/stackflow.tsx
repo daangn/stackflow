@@ -22,6 +22,7 @@ export const { Stack, useFlow } = stackflow({
         Home: "/",
         Article: "/articles/:articleId",
       },
+      fallbackActivityName: "Home",
     }),
   ],
 });
