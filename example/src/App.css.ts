@@ -6,20 +6,9 @@ globalStyle("html, body, #root", {
 });
 
 export const container = style({
-  height: "100%",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  backgroundColor: "#eee",
-});
-
-export const centered = style({
-  maxWidth: "22.5rem",
-  maxHeight: "40rem",
   width: "100%",
   height: "100%",
-  position: "relative",
-  backgroundColor: "#fff",
-  borderRadius: ".5rem",
-  overflow: "hidden",
+  top: 0,
+  left: 0,
+  position: "absolute",
 });

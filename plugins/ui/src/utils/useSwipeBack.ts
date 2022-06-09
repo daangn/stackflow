@@ -89,11 +89,18 @@ export function useSwipeBack({
           `,
           $paper,
         );
-        set("", $beforePaper);
+        set(
+          css`
+            transform: translateX(0);
+            transition: transform ${transitionDuration}ms;
+          `,
+          $beforePaper,
+        );
 
         setTimeout(() => {
           set("", $dim);
           set("", $paper);
+          set("", $beforePaper);
         }, transitionDuration);
       });
     }
