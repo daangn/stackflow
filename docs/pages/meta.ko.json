@@ -1,5 +1,6 @@
 {
   "index": "Stackflow 시작하기",
-  "guided-tour": "가이드 투어",
-  "api-reference": "API"
+  "guided-tour": "살펴보기",
+  "api-reference": "API",
+  "plugins": "기본 플러그인"
 }

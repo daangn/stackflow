@@ -1,0 +1,5 @@
+{
+  "render": "@stackflow/plugin-render",
+  "ui": "@stackflow/plugin-ui",
+  "history-sync": "@stackflow/plugin-history-sync"
+}

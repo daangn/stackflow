@@ -1,3 +1,7 @@
 {
-  "activity": "Activity"
+  "activity": "Activity",
+  "stack": "Stack",
+  "navigating": "Navigating",
+  "ui-customizing": "UI Customizing",
+  "write-plugin": "Write a Plugin"
 }

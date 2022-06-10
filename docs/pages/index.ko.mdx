@@ -42,4 +42,24 @@ export const { Stack, useFlow } = stackflow({
 });
 ```
 
+Stackflow는 기본적으로 UI(DOM과 CSS)를 포함하지 않아요. 원하는 렌더링 결과를 얻기 위해서는 플러그인 추가가 필요해요. 다음 명령어로 render 플러그인과 ui 플러그인을 추가해요.
+
+```bash
+$ yarn add @stackflow/plugin-render @stackflow/plugin-ui
+```
+
+그리고 `stackflow()` 함수의 `plugins` 필드에 해당 플러그인을 초기화해줘요.
+
+```typescript
+import { stackflow } from "@stackflow/react";
+import { renderPlugin } from "@stackflow/plugin-render";
+import { uiPlugin } from "@stackflow/plugin-ui";
+
+export const { Stack, useFlow } = stackflow({
+  transitionDuration: 350,
+  activities: {},
+  plugins: [renderPlugin(), uiPlugin()],
+});
+```
+
 여기까지 완료되셨다면 다음으로 넘어가서 액티비티를 등록하는 방법에 대해서 알아볼게요.
