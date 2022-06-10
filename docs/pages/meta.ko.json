@@ -2,5 +2,6 @@
   "index": "Stackflow 시작하기",
   "guided-tour": "살펴보기",
   "api-reference": "API",
-  "plugins": "기본 플러그인"
+  "plugins": "기본 플러그인",
+  "help": "도움 구하기"
 }
