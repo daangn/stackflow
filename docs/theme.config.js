@@ -1,7 +1,7 @@
 export default {
   projectLink: "https://github.com/daangn/stackflow",
   docsRepositoryBase: "https://github.com/daangn/stackflow",
-  titleSuffix: " – Nextra",
+  titleSuffix: " - Stackflow",
   defaultMenuCollapsed: false,
   nextLinks: true,
   prevLinks: true,
@@ -10,9 +10,9 @@ export default {
   customSearch: null,
   darkMode: true,
   footer: true,
-  footerText: `${new Date().getFullYear()}`,
+  footerText: `MIT ${new Date().getFullYear()} © Stackflow`,
   footerEditLink: false,
-  logo: <div>stackflow</div>,
+  logo: <img src="/logo.svg" alt="Stackflow" />,
   head: (
     <>
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
