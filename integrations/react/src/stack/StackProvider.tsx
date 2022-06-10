@@ -5,7 +5,6 @@ import {
   makeEvent,
   produceEffects,
 } from "@stackflow/core";
-import { PushedEvent } from "@stackflow/core/dist/event-types";
 import React, {
   useCallback,
   useEffect,
@@ -20,6 +19,8 @@ import { usePlugins } from "../plugins";
 import { useStackContext } from "../stack-context";
 import { Activities } from "../stackflow";
 import { StackContext } from "./StackContext";
+
+type PushedEvent = Extract<DomainEvent, { name: "Pushed" }>;
 
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
