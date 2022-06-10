@@ -20,7 +20,7 @@ export default {
         name="description"
         content="Mobile-first stack navigator framework with Composable Plugin System (supports iOS/Android WebView, React Native and also Desktop environment)"
       />
-      <meta name="og:title" content="stackflow" />
+      <meta name="og:title" content="Stackflow" />
     </>
   ),
   i18n: [
