@@ -50,13 +50,13 @@ export function stackflow<T extends Activities>(options: StackflowOptions<T>) {
           render(overrideActivity) {
             const ActivityComponent = options.activities[activity.name];
 
-            const nextActivity = {
+            const overridenActivity = {
               ...activity,
               ...overrideActivity,
             };
 
             let output = (
-              <ActivityProvider key={activity.id} activity={nextActivity}>
+              <ActivityProvider key={activity.id} value={overridenActivity}>
                 <ActivityComponent {...activity.params} />
               </ActivityProvider>
             );
@@ -176,8 +176,8 @@ export function stackflow<T extends Activities>(options: StackflowOptions<T>) {
     );
 
     let output = (
-      <StackContextProvider context={props.context ?? {}}>
-        <PluginsProvider plugins={plugins}>
+      <StackContextProvider value={props.context ?? {}}>
+        <PluginsProvider value={plugins}>
           <StackProvider
             activities={options.activities}
             fallbackActivityName={props.fallbackActivityName}

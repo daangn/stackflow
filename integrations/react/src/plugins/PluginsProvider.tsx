@@ -1,14 +1,3 @@
-import React from "react";
+import { PluginsContext } from "./PluginsContext";
 
-import { PluginsContext, PluginsContextValue } from "./PluginsContext";
-
-interface PluginsProviderProps {
-  plugins: PluginsContextValue;
-  children: React.ReactNode;
-}
-export const PluginsProvider: React.FC<PluginsProviderProps> = ({
-  plugins,
-  children,
-}) => (
-  <PluginsContext.Provider value={plugins}>{children}</PluginsContext.Provider>
-);
+export const PluginsProvider = PluginsContext.Provider;

@@ -9,6 +9,8 @@ export type StackflowCommonPlugin = () => {
   key: string;
   onInit?: StackflowPluginHook;
   onBeforePop?: StackflowPluginPreEffectHook;
+  onBeforePush?: StackflowPluginPreEffectHook;
+  onBeforeReplace?: StackflowPluginPreEffectHook;
   onPushed?: StackflowPluginPostEffectHook<"PUSHED">;
   onPopped?: StackflowPluginPostEffectHook<"POPPED">;
   onReplaced?: StackflowPluginPostEffectHook<"REPLACED">;
