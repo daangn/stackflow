@@ -1,6 +1,5 @@
 {
   "index": "Getting Started",
-  "step-by-step-guide": "Step-by-step Guide",
-  "prerequisites": "Prerequisites",
-  "installation-and-setup": "Installation and Setup"
+  "guided-tour": "A Guided Tour",
+  "api-reference": "API"
 }

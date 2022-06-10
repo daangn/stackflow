@@ -21,9 +21,25 @@ import Callout from "nextra-theme-docs/callout";
   2022년 6월 시점에서는 React와 React DOM까지 레퍼런스로 지원하고 있어요.
 </Callout>
 
-시작해보시려면 아래 자료를 확인하세요.
+## 설치 및 설정하기
 
-- [단계별 시작 가이드](./step-by-step-guide)를 통해 가장 기초적인 부분부터 하나씩 따라해보면서 감을 잡아봐요.
-- 본격적으로 Stackflow를 사용하기 위한 [사전 준비사항](./prerequisites)을 알아보고 [설치 및 설정하기](./installation-and-setup) 문서를 확인해요.
-- 가이드 투어를 통해 Stackflow에 대한 자세한 설명을 확인하고, 예제를 활용해 학습해요.
-- API 레퍼런스를 통해, 어떤 함수들이 제공되는지, 그리고 입력과 출력에 대한 자세한 설명을 확인하세요.
+React 프로젝트 내에서 다음 명령어로 Stackflow를 설치하세요.
+
+```bash
+$ yarn add @stackflow/core @stackflow/react
+```
+
+프로젝트 내에 JavaScript(TypeScript) 파일을 하나 생성하고, stackflow() 함수를 호출해 `<Stack />`과 `useFlow()` 함수를 생성해요.
+
+그리고 다른 컴포넌트에서 `<Stack />`과 `useFlow()`를 활용할 수 있도록 `export ...` 해줘요.
+
+```typescript
+import { stackflow } from "@stackflow/react";
+
+export const { Stack, useFlow } = stackflow({
+  transitionDuration: 350,
+  activities: {},
+});
+```
+
+여기까지 완료되셨다면 다음으로 넘어가서 액티비티를 등록하는 방법에 대해서 알아볼게요.
