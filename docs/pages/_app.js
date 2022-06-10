@@ -1,4 +1,5 @@
 import "nextra-theme-docs/style.css";
+import "../styles/global.css";
 
 import React from "react";
 
