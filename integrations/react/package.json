@@ -23,16 +23,15 @@
     "dev": "yarn build:js --watch && yarn build:dts --watch",
     "test": "jest"
   },
-  "dependencies": {
-    "@stackflow/core": "workspace:^"
-  },
   "devDependencies": {
+    "@stackflow/core": "workspace:^",
     "@types/react": "^18.0.9",
     "react": "^18.1.0",
     "rimraf": "^3.0.2",
     "typescript": "^4.6.3"
   },
   "peerDependencies": {
+    "@stackflow/core": "workspace:^",
     "react": ">=16.8.0"
   },
   "ultra": {

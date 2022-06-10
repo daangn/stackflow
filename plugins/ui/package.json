@@ -1,5 +1,5 @@
 {
-  "name": "@stackflow/ui",
+  "name": "@stackflow/plugin-ui",
   "version": "1.0.0",
   "license": "Apache-2.0",
   "exports": {
@@ -27,6 +27,7 @@
     "@vanilla-extract/dynamic": "^2.0.2"
   },
   "devDependencies": {
+    "@stackflow/core": "workspace:^",
     "@stackflow/esbuild-config": "workspace:^",
     "@stackflow/react": "workspace:^",
     "@types/react": "^18.0.10",
@@ -38,6 +39,7 @@
     "typescript": "^4.6.3"
   },
   "peerDependencies": {
+    "@stackflow/core": "workspace:^",
     "@stackflow/react": "workspace:^",
     "@types/react": ">=16.8.0",
     "react": ">=16.8.0"

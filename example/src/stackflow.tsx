@@ -1,5 +1,6 @@
 import { historySyncPlugin } from "@stackflow/plugin-history-sync";
 import { renderPlugin } from "@stackflow/plugin-render";
+import { uiPlugin } from "@stackflow/plugin-ui";
 import { stackflow } from "@stackflow/react";
 
 import Article from "./components/Article";
@@ -22,5 +23,6 @@ export const { Stack, useFlow } = stackflow({
       },
       fallbackActivityName: "Home",
     }),
+    uiPlugin(),
   ],
 });

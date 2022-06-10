@@ -55,11 +55,7 @@ export function stackflow<T extends Activities>(options: StackflowOptions<T>) {
               ...overrideActivity,
             };
 
-            let output = (
-              <ActivityProvider key={activity.id} value={overridenActivity}>
-                <ActivityComponent {...activity.params} />
-              </ActivityProvider>
-            );
+            let output = <ActivityComponent {...activity.params} />;
 
             plugins.forEach((p) => {
               output =
@@ -71,7 +67,11 @@ export function stackflow<T extends Activities>(options: StackflowOptions<T>) {
                 }) ?? output;
             });
 
-            return output;
+            return (
+              <ActivityProvider key={activity.id} value={overridenActivity}>
+                {output}
+              </ActivityProvider>
+            );
           },
         })),
       },
