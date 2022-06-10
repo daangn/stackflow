@@ -9,10 +9,18 @@ import App from "./App";
 
 const root = ReactDOM.createRoot(document.getElementById("root")!);
 
-root.render(<App />);
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+);
 
 // eslint-disable-next-line no-console
 console.log(
   "Server-side Rendering Test",
-  ReactDOMServer.renderToString(<App />),
+  ReactDOMServer.renderToString(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>,
+  ),
 );

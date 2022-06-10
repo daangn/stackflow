@@ -1,7 +1,7 @@
 import { AppScreen } from "@stackflow/ui";
 import React from "react";
 
-const theme = "cupertino";
+const theme = "android";
 
 interface MainLayoutProps {
   children: React.ReactNode;
