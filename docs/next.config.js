@@ -8,4 +8,8 @@ module.exports = withNextra({
   eslint: {
     ignoreDuringBuilds: true,
   },
+  i18n: {
+    locales: ["en", "ko"],
+    defaultLocale: "en",
+  },
 });

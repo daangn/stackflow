@@ -23,4 +23,8 @@ export default {
       <meta name="og:title" content="stackflow" />
     </>
   ),
+  i18n: [
+    { locale: "en", text: "English" },
+    { locale: "ko", text: "한국어" },
+  ],
 };
