@@ -9,7 +9,7 @@ import Callout from "nextra-theme-docs/callout";
 - `cupertino` 테마에서 스와이프백을 통한 뒤로가기 동작을 지원해요.
 - 전환되는 화면에 필요한 파라미터를 전달해요.
 
-그렇다면 Stackflow는 기존 Navigation 라이브러리와 대비해서, 어떤 장점을 가지고 있을까요?
+그렇다면 **Stackflow**는 기존 Navigation 라이브러리와 대비해서, 어떤 장점을 가지고 있을까요?
 
 - UI 없이 스택 및 전환에 대한 상태만 따로 사용할 수 있어요. 원하는 입맛대로 UI를 뜯어서 사용할 수 있어요.
 - 플러그인 인터페이스를 통해 원하는 추가 확장 기능을 라이프사이클 사이에 주입할 수 있어요.
@@ -23,7 +23,7 @@ import Callout from "nextra-theme-docs/callout";
 
 ## 설치 및 설정하기
 
-React 프로젝트 내에서 다음 명령어로 Stackflow를 설치해요.
+React 프로젝트 내에서 다음 명령어로 **Stackflow**를 설치해요.
 
 ```bash
 $ yarn add @stackflow/core @stackflow/react
@@ -43,7 +43,7 @@ export const { Stack, useFlow } = stackflow({
 });
 ```
 
-Stackflow는 기본적으로 UI(DOM과 CSS)를 포함하지 않아요. 원하는 렌더링 결과를 얻기 위해서는 플러그인 추가가 필요해요. 다음 명령어로 `render` 플러그인과 `ui` 플러그인을 설치해요.
+**Stackflow**는 기본적으로 UI(DOM과 CSS)를 포함하지 않아요. 원하는 렌더링 결과를 얻기 위해서는 플러그인 추가가 필요해요. 다음 명령어로 `@stackflow/plugin-render` 플러그인과 `@stackflow/plugin-ui` 플러그인을 설치해요.
 
 ```bash
 $ yarn add @stackflow/plugin-render @stackflow/plugin-ui
@@ -85,5 +85,7 @@ const App: React.FC = () => {
 
 export default App;
 ```
+
+---
 
 여기까지 완료되셨다면 다음으로 넘어가서 액티비티를 등록하는 방법에 대해서 알아볼게요.

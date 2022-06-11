@@ -32,6 +32,8 @@ export default MyActivity;
  * stackflow.ts
  */
 import { stackflow } from "@stackflow/react";
+import { renderPlugin } from "@stackflow/plugin-render";
+import { uiPlugin } from "@stackflow/plugin-ui";
 import MyActivity from "./MyActivity";
 
 const { Stack, useFlow } = stackflow({
@@ -70,6 +72,8 @@ export default MyActivity;
  * stackflow.ts
  */
 import { stackflow } from "@stackflow/react";
+import { renderPlugin } from "@stackflow/plugin-render";
+import { uiPlugin } from "@stackflow/plugin-ui";
 import MyActivity from "./MyActivity";
 
 const { Stack, useFlow } = stackflow({
@@ -141,5 +145,7 @@ export default MyActivity;
 <Callout type="error" emoji="🚫">
   **경고** - 초기 액티비티에는 필수 파라미터가 존재하면 안돼요.
 </Callout>
+
+---
 
 액티비티를 성공적으로 잘 등록했나요? 그렇다면 이제 등록된 액티비티를 어떻게 열고, 그 사이를 어떻게 탐험할 수 있는지 알아볼게요.
