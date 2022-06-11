@@ -1,4 +1,4 @@
-import { useActivity, useStack, useStackActions } from "@stackflow/react";
+import { useActions, useActivity, useStack } from "@stackflow/react";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
 import React, { useEffect, useMemo } from "react";
 import { useSwipeBack } from "utils/useSwipeBack";
@@ -26,11 +26,10 @@ interface AppScreenProps {
 }
 const AppScreen: React.FC<AppScreenProps> = ({ theme, appBar, children }) => {
   const stack = useStack();
-  const stackActions = useStackActions();
+  const actions = useActions();
+
   const currentActivity = useActivity();
-
   const visibleActivities = useVisibleActivities();
-
   const topVisibleActivity = useTopVisibleActivity();
   const topActiveActivity = useTopActiveActivity();
 
@@ -87,7 +86,7 @@ const AppScreen: React.FC<AppScreenProps> = ({ theme, appBar, children }) => {
       return appScreenPaperRefMap.get(beforeActivity.id)?.current;
     },
     onBack() {
-      stackActions.pop();
+      actions.pop();
     },
   });
 

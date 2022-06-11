@@ -1,4 +1,4 @@
-import { useActivity, useStack, useStackActions } from "@stackflow/react";
+import { useActions, useActivity } from "@stackflow/react";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
 import React, { useMemo } from "react";
 
@@ -33,9 +33,9 @@ const AppBar: React.FC<AppBarProps> = ({
   onClose,
   border = true,
 }) => {
-  const currentActivity = useActivity();
-  const stackActions = useStackActions();
+  const actions = useActions();
 
+  const currentActivity = useActivity();
   const activeActivities = useActiveActivities();
   const topActiveActivity = useTopActiveActivity();
 
@@ -55,7 +55,7 @@ const AppBar: React.FC<AppBarProps> = ({
   });
 
   const onBack = () => {
-    stackActions.pop();
+    actions.pop();
   };
 
   const backButton = !isRoot && (

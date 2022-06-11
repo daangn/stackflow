@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 
-import { useCoreActions } from "../core";
+import { useCoreActions } from "./core";
 
-export const useStackActions = () => {
+export const useActions = () => {
   const coreActions = useCoreActions();
 
   return useMemo(
