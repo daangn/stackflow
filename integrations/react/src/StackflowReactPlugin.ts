@@ -19,12 +19,12 @@ export type StackflowReactPlugin = () => {
     };
   }) => React.ReactElement<any, any> | null;
   wrapStack?: (args: {
-    stack: {
+    stack: AggregateOutput & {
       render: () => React.ReactNode;
     };
   }) => React.ReactElement<any, any> | null;
   wrapActivity?: (args: {
-    activity: {
+    activity: Activity & {
       render: () => React.ReactNode;
     };
   }) => React.ReactElement<any, any> | null;
