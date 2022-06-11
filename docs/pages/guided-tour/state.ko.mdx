@@ -1,8 +1,10 @@
+import DiagramTransitioningStack from "../../components/DiagramTransitioningStack.tsx";
+
 # 상태 가져오기
 
 **Stackflow**의 내부 상태는 한마디로 표현하면, **전환 상태**를 가진 **스택** 자료구조에요.
 
-**[여기에 삽화]**
+<DiagramTransitioningStack />
 
 `activities` 필드로 접근할 수 있는 액티비티는 기본적인 존재와 관련된 정보 이외에, ID, 이름, 그리고 현재 시점의 전환 상태 등의 상태값들을 가져요. 이러한 상태값들을 이리저리 활용해 `@stackflow/plugin-ui`가 만들어졌답니다. (여러분도 충분히 만들 수 있어요!)
 

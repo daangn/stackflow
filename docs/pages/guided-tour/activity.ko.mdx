@@ -1,8 +1,9 @@
 import Callout from "nextra-theme-docs/callout";
+import DiagramActivity from "../../components/DiagramActivity.tsx";
 
 # 액티비티
 
-**[여기에 삽화]**
+<DiagramActivity />
 
 화면에 하나씩 쌓이는 화면 하나하나를 액티비티라고 해요. 액티비티는 다음과 같은 속성을 갖고, 필요한 경우 `useActivity()` 훅을 통해 가져올 수 있어요.
 
@@ -86,9 +87,7 @@ const { Stack, useFlow } = stackflow({
 });
 ```
 
-성공적으로 초기 액티비티가 등록됐다면 다음과 같은 화면을 확인하실 수 있어요.
-
-**[여기에 스크린샷]**
+성공적으로 초기 액티비티가 등록됐다면 화면에서 렌더링 된 결과를 눈으로 확인하실 수 있어요.
 
 <Callout emoji="💡">
   TypeScript에서 `MyActivity` 값이 자동으로 완성되는 경험을 해보셨나요?
