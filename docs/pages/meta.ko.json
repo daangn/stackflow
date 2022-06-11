@@ -1,7 +1,9 @@
 {
   "index": "Stackflow 시작하기",
   "guided-tour": "가이드",
-  "plugins": "플러그인",
-  "api-reference": "API",
+  "architectures": "설계와 원칙",
+  "react-api": "React API",
+  "react-plugins": "React 플러그인",
+  "common-plugins": "공용 플러그인",
   "help": "도움 구하기"
 }
