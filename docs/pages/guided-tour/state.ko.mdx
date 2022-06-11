@@ -53,8 +53,8 @@ export default MyActivity;
 
 | 필드 이름                     | 설명                                             | 타입              |
 | ----------------------------- | ------------------------------------------------ | ----------------- |
-| `stack.activities`            | 액티비티 목록                                    | `Array<Activity>` |
-| `stack.transitionDuration`    | `stackflow()`에서 설정한 `transitionDuration` 값 | `number`          |
+| `stack.activities`            | 액티비티 목록                                    | Activity[]        |
+| `stack.transitionDuration`    | `stackflow()`에서 설정한 `transitionDuration` 값 | Number            |
 | `stack.globalTransitionState` | 액티비티가 현재 움직이고 있는지 여부             | `idle`, `loading` |
 
 ## 액티비티 상태를 렌더링에 활용하기
@@ -97,10 +97,10 @@ export default MyActivity;
 
 | 필드 이름                  | 설명                       | 타입                                                     |
 | -------------------------- | -------------------------- | -------------------------------------------------------- |
-| `activity.id`              | 액티비티 ID                | `string`                                                 |
-| `activity.name`            | 등록된 액티비티 이름       | `string`                                                 |
+| `activity.id`              | 액티비티 ID                | String                                                   |
+| `activity.name`            | 등록된 액티비티 이름       | String                                                   |
 | `activity.transitionState` | 액티비티의 전환 상태       | `enter-active`, `enter-done`, `exit-active`, `exit-done` |
-| `activity.params`          | 액티비티에 전달된 파라미터 | `object`                                                 |
+| `activity.params`          | 액티비티에 전달된 파라미터 | Object                                                   |
 
 ---
 
