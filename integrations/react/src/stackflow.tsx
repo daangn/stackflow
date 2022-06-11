@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 
 import { ActivityComponentType, makeActivityId } from "./activity";
 import { ContextProvider } from "./context";
-import { CoreProvider, useCore } from "./core";
+import { CoreProvider, useCoreActions } from "./core";
 import EffectManager from "./EffectManager";
 import MainRenderer from "./MainRenderer";
 import { PluginsProvider } from "./plugins";
@@ -56,7 +56,7 @@ export function stackflow<T extends Activities>(options: StackflowOptions<T>) {
   };
 
   const useFlow = () => {
-    const core = useCore();
+    const coreActions = useCoreActions();
 
     return useMemo(
       () => ({
@@ -67,7 +67,7 @@ export function stackflow<T extends Activities>(options: StackflowOptions<T>) {
             animate?: boolean;
           },
         ) {
-          core.push({
+          coreActions.push({
             activityId: makeActivityId(),
             activityName,
             params,
@@ -80,17 +80,17 @@ export function stackflow<T extends Activities>(options: StackflowOptions<T>) {
             animate?: boolean;
           },
         ) {
-          core.replace({
+          coreActions.replace({
             activityId: makeActivityId(),
             activityName,
             params,
           });
         },
         pop(options?: { animate?: boolean }) {
-          core.pop();
+          coreActions.pop();
         },
       }),
-      [core.push, core.replace, core.pop],
+      [coreActions.push, coreActions.replace, coreActions.pop],
     );
   };
 

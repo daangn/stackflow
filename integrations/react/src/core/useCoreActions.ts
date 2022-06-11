@@ -3,13 +3,13 @@ import React, { useCallback, useMemo } from "react";
 
 import { useContext } from "../context";
 import { usePlugins } from "../plugins";
-import { CoreContext } from "./CoreContext";
+import { CoreActionsContext } from "./CoreActionsContext";
 
-export const useCore = () => {
+export const useCoreActions = () => {
   const plugins = usePlugins();
   const context = useContext();
 
-  const { state, dispatchEvent, getState } = React.useContext(CoreContext);
+  const { dispatchEvent, getState } = React.useContext(CoreActionsContext);
 
   const triggerPreEffectHook = useCallback(
     (preEffect: Effect["_TAG"]) => {
@@ -28,7 +28,6 @@ export const useCore = () => {
                 getState,
                 preventDefault,
               },
-              context,
             });
             break;
           case "REPLACED":
@@ -38,7 +37,6 @@ export const useCore = () => {
                 getState,
                 preventDefault,
               },
-              context,
             });
             break;
           case "POPPED":
@@ -48,7 +46,6 @@ export const useCore = () => {
                 getState,
                 preventDefault,
               },
-              context,
             });
             break;
           default:
@@ -117,13 +114,12 @@ export const useCore = () => {
 
   return useMemo(
     () => ({
-      state,
       dispatchEvent,
       getState,
       push,
       replace,
       pop,
     }),
-    [state, dispatchEvent, getState, push, replace, pop],
+    [dispatchEvent, getState, push, replace, pop],
   );
 };

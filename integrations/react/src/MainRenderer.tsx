@@ -1,6 +1,6 @@
 import React from "react";
 
-import { useCore } from "./core";
+import { useCoreState } from "./core";
 import PluginRenderer from "./PluginRenderer";
 import { usePlugins } from "./plugins";
 import { WithRequired } from "./utils";
@@ -9,7 +9,7 @@ interface MainRendererProps {
   activities: { [key: string]: React.ComponentType };
 }
 const MainRenderer: React.FC<MainRendererProps> = ({ activities }) => {
-  const core = useCore();
+  const coreState = useCoreState();
   const plugins = usePlugins();
 
   let output = (
@@ -33,7 +33,7 @@ const MainRenderer: React.FC<MainRendererProps> = ({ activities }) => {
     output =
       plugin.wrapStack?.({
         stack: {
-          ...core.state,
+          ...coreState,
           render() {
             return output;
           },

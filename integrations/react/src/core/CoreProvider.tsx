@@ -18,12 +18,12 @@ import { makeActivityId } from "../activity";
 import { useContext } from "../context";
 import { usePlugins } from "../plugins";
 import { Activities } from "../stackflow";
-import { CoreContext } from "./CoreContext";
+import { CoreActionsContext } from "./CoreActionsContext";
+import { CoreStateContext } from "./CoreStateContext";
 
 type PushedEvent = Extract<DomainEvent, { name: "Pushed" }>;
 
 const SECOND = 1000;
-const MINUTE = 60 * SECOND;
 
 // 60fps
 const INTERVAL_MS = SECOND / 60;
@@ -127,17 +127,18 @@ export const CoreProvider: React.FC<CoreProviderProps> = ({
   }, [events, state, dispatchEvent]);
 
   return (
-    <CoreContext.Provider
-      value={useMemo(
-        () => ({
-          state,
-          getState,
-          dispatchEvent,
-        }),
-        [state, getState, dispatchEvent],
-      )}
-    >
-      {children}
-    </CoreContext.Provider>
+    <CoreStateContext.Provider value={state}>
+      <CoreActionsContext.Provider
+        value={useMemo(
+          () => ({
+            getState,
+            dispatchEvent,
+          }),
+          [getState, dispatchEvent],
+        )}
+      >
+        {children}
+      </CoreActionsContext.Provider>
+    </CoreStateContext.Provider>
   );
 };

@@ -5,12 +5,14 @@ import {
 } from "@stackflow/core";
 import React, { useCallback, useEffect, useRef } from "react";
 
-import { useCore } from "./core";
+import { useCoreActions, useCoreState } from "./core";
 import { usePlugins } from "./plugins";
 
 const EffectManager: React.FC = () => {
-  const core = useCore();
   const plugins = usePlugins();
+
+  const coreState = useCoreState();
+  const coreActions = useCoreActions();
 
   const onInit = useCallback<StackflowPluginHook>((actions) => {
     plugins.forEach((plugin) => {
@@ -48,30 +50,30 @@ const EffectManager: React.FC = () => {
   useEffect(() => {
     onInit?.({
       actions: {
-        dispatchEvent: core.dispatchEvent,
-        getState: core.getState,
+        dispatchEvent: coreActions.dispatchEvent,
+        getState: coreActions.getState,
       },
     });
   }, []);
 
-  const prevStateRef = useRef(core.state);
+  const prevStateRef = useRef(coreState);
 
   useEffect(() => {
     const prevState = prevStateRef.current;
-    const effects = prevState ? produceEffects(prevState, core.state) : [];
+    const effects = prevState ? produceEffects(prevState, coreState) : [];
 
     effects.forEach((effect) => {
       triggerEffect({
         actions: {
-          dispatchEvent: core.dispatchEvent,
-          getState: core.getState,
+          dispatchEvent: coreActions.dispatchEvent,
+          getState: coreActions.getState,
         },
         effect,
       });
     });
 
-    prevStateRef.current = { ...core.state };
-  }, [core]);
+    prevStateRef.current = { ...coreState };
+  }, [coreState]);
 
   return null;
 };

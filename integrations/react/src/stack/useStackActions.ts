@@ -1,16 +1,16 @@
 import { useMemo } from "react";
 
-import { useCore } from "../core";
+import { useCoreActions } from "../core";
 
 export const useStackActions = () => {
-  const core = useCore();
+  const coreActions = useCoreActions();
 
   return useMemo(
     () => ({
-      push: core.push,
-      replace: core.replace,
-      pop: core.pop,
+      push: coreActions.push,
+      replace: coreActions.replace,
+      pop: coreActions.pop,
     }),
-    [core],
+    [coreActions],
   );
 };

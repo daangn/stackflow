@@ -1,7 +1,7 @@
 import React from "react";
 
 import { ActivityProvider } from "./activity";
-import { useCore } from "./core";
+import { useCoreState } from "./core";
 import { usePlugins } from "./plugins";
 import { StackProvider } from "./stack";
 import { StackflowReactPlugin } from "./StackflowReactPlugin";
@@ -15,15 +15,15 @@ const PluginRenderer: React.FC<PluginRendererProps> = ({
   activities,
   plugin,
 }) => {
-  const core = useCore();
+  const coreState = useCoreState();
   const plugins = usePlugins();
 
   return plugin.render({
     stack: {
-      ...core.state,
+      ...coreState,
       render(overrideStack) {
         const stack = {
-          ...core.state,
+          ...coreState,
           ...overrideStack,
         };
 
