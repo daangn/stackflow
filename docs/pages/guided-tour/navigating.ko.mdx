@@ -1,13 +1,166 @@
 # 탐색하기
 
-탐색하기를 시작하기 전에, 아까 등록한 `<Stack />` 컴포넌트
-
-## fallbackActivityName
+성공적으로 액티비티를 등록했다면, 이제 액티비티 사이를 이동해볼 차례에요. **Stackflow**에서는 `useFlow()`를 통해 액티비티를 쌓거나, 교체하거나, 삭제할 수 있도록 지원하고 있어요. 한번 알아볼까요?
 
 ## 새 액티비티 쌓기
 
+`stackflow.ts`에서 생성했던 `useFlow()` 훅을 사용해요. 해당 훅 내에 `push()` 함수를 통해 다음과 같이 새 액티비티를 쌓을 수 있어요.
+
+```tsx
+/**
+ * MyActivity.tsx
+ */
+import { ActivityComponentType } from "@stackflow/react";
+import { useFlow } from "./stackflow";
+
+const MyActivity: ActivityComponentType = () => {
+  const { push } = useFlow();
+
+  const onClick = () => {
+    push("Article", {
+      title: "Hello, World!",
+    });
+  };
+
+  return (
+    <div>
+      My Activity
+      <button onClick={onClick}>Go to article page</button>
+    </div>
+  );
+};
+
+export default MyActivity;
+```
+
+`push()`는 첫번째 파라미터로 이동할 액티비티의 이름, 두번째 파라미터로 이동할 액티비티의 파라미터, 세번째 파라미터로 추가 옵션을 받아요. 세번째 파라미터인 추가 옵션은 선택적으로 넘기지 않을 수 있어요. (기본값을 사용해요)
+
+```typescript
+push("액티비티_이름", {
+  /* 액티비티 파라미터 */
+});
+
+// 또는
+push(
+  "액티비티_이름",
+  {
+    /* 액티비티 파라미터 */
+  },
+  {
+    /* 추가 옵션 */
+  },
+);
+```
+
+`push()` 함수의 세번째 파라미터인 추가 옵션에는 다음과 같은 값이 있어요.
+
+| 옵션명    | 역할                     | 타입    | 기본값 |
+| --------- | ------------------------ | ------- | ------ |
+| `animate` | 애니메이션을 켜거나 꺼요 | Boolean | `true` |
+
 ## 현재 액티비티 교체하기
 
+다음으로 스택에 새로운 액티비티를 추가하지 않고 현재 액티비티를 교체하는 방법에 대해서 살펴봐요. `stackflow.ts`에서 생성했던 `useFlow()` 훅의 `replace()` 함수를 통해 다음과 같이 현재 액티비티를 교체할 수 있어요.
+
+```tsx
+/**
+ * MyActivity.tsx
+ */
+import { ActivityComponentType } from "@stackflow/react";
+import { useFlow } from "./stackflow";
+
+const MyActivity: ActivityComponentType = () => {
+  const { replace } = useFlow();
+
+  const onClick = () => {
+    replace("Article", {
+      title: "Hello, World!",
+    });
+  };
+
+  return (
+    <div>
+      My Activity
+      <button onClick={onClick}>Go to article page</button>
+    </div>
+  );
+};
+
+export default MyActivity;
+```
+
+`replace()`는 `push()`와 비슷한 API를 갖고 있어요. 첫번째 파라미터로 이동할 액티비티의 이름, 두번째 파라미터로 이동할 액티비티의 파라미터, 세번째 파라미터로 추가 옵션을 받아요. 세번째 파라미터인 추가 옵션은 선택적으로 넘기지 않을 수 있어요. (기본값을 사용해요)
+
+```typescript
+replace("액티비티_이름", {
+  /* 액티비티 파라미터 */
+});
+
+// 또는
+replace(
+  "액티비티_이름",
+  {
+    /* 액티비티 파라미터 */
+  },
+  {
+    /* 추가 옵션 */
+  },
+);
+```
+
+`replace()` 함수의 세번째 파라미터인 추가 옵션에는 다음과 같은 값이 있어요.
+
+| 옵션명    | 역할                     | 타입    | 기본값 |
+| --------- | ------------------------ | ------- | ------ |
+| `animate` | 애니메이션을 켜거나 꺼요 | Boolean | `true` |
+
 ## 현재 액티비티 삭제하기
+
+마지막으로 현재 액티비티를 삭제하고 이전 액티비티로 돌아가는 방법에 대해서 살펴봐요. `stackflow.ts`에서 생성했던 `useFlow()` 훅의 `pop()` 함수를 통해 다음과 같이 현재 액티비티를 삭제할 수 있어요.
+
+```tsx
+/**
+ * Article.tsx
+ */
+import { ActivityComponentType } from "@stackflow/react";
+import { pop } from "./stackflow";
+
+type ArticleProps = {
+  title: string;
+};
+const Article: ActivityComponentType<ArticleProps> = ({ title }) => {
+  const { pop } = useFlow();
+
+  const onClick = () => {
+    pop();
+  };
+
+  return (
+    <div>
+      <h1>{title}</h1>
+      <button onClick={onClick}>back</button>
+    </div>
+  );
+};
+
+export default MyActivity;
+```
+
+`pop()`은 첫번째 파라미터로 추가 옵션을 받아요. 첫번째 파라미터인 추가 옵션은 선택적으로 넘기지 않을 수 있어요. (기본값을 사용해요)
+
+```typescript
+pop();
+
+// 또는
+pop({
+  /* 추가 옵션 */
+});
+```
+
+`pop()` 함수의 첫번째 파라미터인 추가 옵션에는 다음과 같은 값이 있어요.
+
+| 옵션명    | 역할                     | 타입    | 기본값 |
+| --------- | ------------------------ | ------- | ------ |
+| `animate` | 애니메이션을 켜거나 꺼요 | Boolean | `true` |
 
 ## 브라우저 히스토리와 싱크하기
