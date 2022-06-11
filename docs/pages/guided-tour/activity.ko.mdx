@@ -35,6 +35,8 @@ import { stackflow } from "@stackflow/react";
 import MyActivity from "./MyActivity";
 
 const { Stack, useFlow } = stackflow({
+  transitionDuration: 350,
+  plugins: [renderPlugin(), uiPlugin()],
   activities: {
     MyActivity,
   },
@@ -61,29 +63,34 @@ export default MyActivity;
 
 ## 초기 액티비티 등록하기
 
-액티비티를 성공적으로 등록하셨나요? 하지만 이전에 초기화해놓은 `<Stack />` 컴포넌트에는 아무것도 렌더링되고 있지 않을거에요. 왜냐하면, 초기 액티비티를 설정해주지 않았으니까요. 다음과 같이 등록한 `<Stack />` 컴포넌트에 `fallbackActivityName`을 입력해주세요.
+액티비티를 성공적으로 등록하셨나요? 하지만 이전에 초기화해놓은 `<Stack />` 컴포넌트에는 아무것도 렌더링되고 있지 않을거에요. 왜냐하면, 초기 액티비티를 설정해주지 않았으니까요. 초기에 특정 액티비티를 로드하고 싶다면, 다음과 같이 옵션에 `initialActicity`를 추가해주세요.
 
-```tsx
+```typescript
 /**
- * App.tsx
+ * stackflow.ts
  */
-import React from "react";
-import { Stack } from "./stackflow";
+import { stackflow } from "@stackflow/react";
+import MyActivity from "./MyActivity";
 
-const App: React.FC = () => {
-  return (
-    <div>
-      <Stack fallbackActivityName="MyActivity" />
-    </div>
-  );
-};
-
-export default App;
+const { Stack, useFlow } = stackflow({
+  transitionDuration: 350,
+  plugins: [renderPlugin(), uiPlugin()],
+  activities: {
+    MyActivity,
+  },
+  initialActivity: () => "MyActivity",
+});
 ```
 
 성공적으로 초기 액티비티가 등록됐다면 다음과 같은 화면을 확인하실 수 있어요.
 
 **여기에 스크린샷**
+
+<Callout emoji="💡">
+  TypeScript에서 `MyActivity` 값이 자동으로 완성되는 경험을 해보셨나요?
+  **Stackflow**는 이런 자동완성 경험을 통해 여러분의 개발생산성 향상을
+  도와줄거에요.
+</Callout>
 
 ## 액티비티에 필요한 파라미터 등록하기
 
@@ -126,5 +133,13 @@ const Article: React.FC<ArticleProps> = ({ title }) => {
 
 export default MyActivity;
 ```
+
+<Callout type="warning" emoji="⚠️">
+  **주의** - 만약 꼭 필요한 파라미터가 없는 경우 치명적인 오류가 발생할 수
+  있어요.
+</Callout>
+<Callout type="error" emoji="🚫">
+  **경고** - 초기 액티비티에는 필수 파라미터가 존재하면 안돼요.
+</Callout>
 
 액티비티를 성공적으로 잘 등록했나요? 그렇다면 이제 등록된 액티비티를 어떻게 열고, 그 사이를 어떻게 탐험할 수 있는지 알아볼게요.

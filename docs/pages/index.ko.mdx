@@ -38,11 +38,12 @@ import { stackflow } from "@stackflow/react";
 
 export const { Stack, useFlow } = stackflow({
   transitionDuration: 350,
+  plugins: [],
   activities: {},
 });
 ```
 
-Stackflow는 기본적으로 UI(DOM과 CSS)를 포함하지 않아요. 원하는 렌더링 결과를 얻기 위해서는 플러그인 추가가 필요해요. 다음 명령어로 `render` 플러그인과 `ui` 플러그인을 추가해요.
+Stackflow는 기본적으로 UI(DOM과 CSS)를 포함하지 않아요. 원하는 렌더링 결과를 얻기 위해서는 플러그인 추가가 필요해요. 다음 명령어로 `render` 플러그인과 `ui` 플러그인을 설치해요.
 
 ```bash
 $ yarn add @stackflow/plugin-render @stackflow/plugin-ui
@@ -60,8 +61,8 @@ import { uiPlugin } from "@stackflow/plugin-ui";
 
 export const { Stack, useFlow } = stackflow({
   transitionDuration: 350,
-  activities: {},
   plugins: [renderPlugin(), uiPlugin()],
+  activities: {},
 });
 ```
 
