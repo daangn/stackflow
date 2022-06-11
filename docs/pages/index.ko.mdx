@@ -51,6 +51,9 @@ $ yarn add @stackflow/plugin-render @stackflow/plugin-ui
 그리고 다음과 같이 `stackflow()` 함수의 `plugins` 필드에 해당 플러그인을 초기화해줘요.
 
 ```typescript
+/**
+ * stackflow.ts
+ */
 import { stackflow } from "@stackflow/react";
 import { renderPlugin } from "@stackflow/plugin-render";
 import { uiPlugin } from "@stackflow/plugin-ui";
@@ -60,6 +63,26 @@ export const { Stack, useFlow } = stackflow({
   activities: {},
   plugins: [renderPlugin(), uiPlugin()],
 });
+```
+
+그리고 원하는 렌더링 위치에 다음과 같이 `<Stack />` 컴포넌트를 초기화 해줘요.
+
+```tsx
+/**
+ * App.tsx
+ */
+import React from "react";
+import { Stack } from "./stackflow";
+
+const App: React.FC = () => {
+  return (
+    <div>
+      <Stack />
+    </div>
+  );
+};
+
+export default App;
 ```
 
 여기까지 완료되셨다면 다음으로 넘어가서 액티비티를 등록하는 방법에 대해서 알아볼게요.

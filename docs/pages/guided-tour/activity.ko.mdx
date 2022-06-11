@@ -2,6 +2,8 @@ import Callout from "nextra-theme-docs/callout";
 
 # 액티비티
 
+**여기에 삽화**
+
 화면에 하나씩 쌓이는 화면 하나하나를 액티비티라고 해요. 액티비티는 다음과 같은 속성을 갖고, 필요한 경우 `useActivity()` 훅을 통해 가져올 수 있어요.
 
 | 이름      | 설명                                               | 타입                                                     |
@@ -16,7 +18,7 @@ import Callout from "nextra-theme-docs/callout";
 
 ```tsx
 /**
- * MyComponent.tsx
+ * MyActivity.tsx
  */
 import { ActivityComponentType } from "@stackflow/react";
 
@@ -27,7 +29,7 @@ const MyActivity: ActivityComponentType = () => {
 export default MyActivity;
 
 /**
- * myStackflow.ts
+ * stackflow.ts
  */
 import { stackflow } from "@stackflow/react";
 import MyActivity from "./MyActivity";
@@ -46,7 +48,7 @@ const { Stack, useFlow } = stackflow({
 
 ```tsx
 /**
- * MyComponent.tsx
+ * MyActivity.tsx
  */
 import React from "react";
 
@@ -56,6 +58,32 @@ const MyActivity: React.FC = () => {
 
 export default MyActivity;
 ```
+
+## 초기 액티비티 등록하기
+
+액티비티를 성공적으로 등록하셨나요? 하지만 이전에 초기화해놓은 `<Stack />` 컴포넌트에는 아무것도 렌더링되고 있지 않을거에요. 왜냐하면, 초기 액티비티를 설정해주지 않았으니까요. 다음과 같이 등록한 `<Stack />` 컴포넌트에 `fallbackActivityName`을 입력해주세요.
+
+```tsx
+/**
+ * App.tsx
+ */
+import React from "react";
+import { Stack } from "./stackflow";
+
+const App: React.FC = () => {
+  return (
+    <div>
+      <Stack fallbackActivityName="MyActivity" />
+    </div>
+  );
+};
+
+export default App;
+```
+
+성공적으로 초기 액티비티가 등록됐다면 다음과 같은 화면을 확인하실 수 있어요.
+
+**여기에 스크린샷**
 
 ## 액티비티에 필요한 파라미터 등록하기
 
