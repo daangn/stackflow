@@ -90,7 +90,7 @@ export function stackflow<T extends Activities>(options: StackflowOptions<T>) {
           core.pop();
         },
       }),
-      [dispatchEvent],
+      [core.push, core.replace, core.pop],
     );
   };
 

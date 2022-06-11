@@ -5,14 +5,12 @@ import {
 } from "@stackflow/core";
 import React, { useCallback, useEffect, useRef } from "react";
 
-import { useContext } from "./context";
 import { useCore } from "./core";
 import { usePlugins } from "./plugins";
 
 const EffectManager: React.FC = () => {
   const core = useCore();
   const plugins = usePlugins();
-  const context = useContext();
 
   const onInit = useCallback<StackflowPluginHook>((actions) => {
     plugins.forEach((plugin) => {
@@ -24,27 +22,19 @@ const EffectManager: React.FC = () => {
     ({ actions, effect }) => {
       switch (effect._TAG) {
         case "PUSHED": {
-          plugins.forEach((plugin) =>
-            plugin.onPushed?.({ actions, effect, context }),
-          );
+          plugins.forEach((plugin) => plugin.onPushed?.({ actions, effect }));
           break;
         }
         case "POPPED": {
-          plugins.forEach((plugin) =>
-            plugin.onPopped?.({ actions, effect, context }),
-          );
+          plugins.forEach((plugin) => plugin.onPopped?.({ actions, effect }));
           break;
         }
         case "REPLACED": {
-          plugins.forEach((plugin) =>
-            plugin.onReplaced?.({ actions, effect, context }),
-          );
+          plugins.forEach((plugin) => plugin.onReplaced?.({ actions, effect }));
           break;
         }
         case "%SOMETHING_CHANGED%": {
-          plugins.forEach((plugin) =>
-            plugin.onChanged?.({ actions, effect, context }),
-          );
+          plugins.forEach((plugin) => plugin.onChanged?.({ actions, effect }));
           break;
         }
         default: {
@@ -61,7 +51,6 @@ const EffectManager: React.FC = () => {
         dispatchEvent: core.dispatchEvent,
         getState: core.getState,
       },
-      context,
     });
   }, []);
 
@@ -78,7 +67,6 @@ const EffectManager: React.FC = () => {
           getState: core.getState,
         },
         effect,
-        context,
       });
     });
 

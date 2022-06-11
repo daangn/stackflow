@@ -47,10 +47,7 @@ export const CoreProvider: React.FC<CoreProviderProps> = ({
     const initialEventDate = new Date().getTime() - transitionDuration;
 
     const initialPushedEventByPlugin = plugins.reduce<PushedEvent | null>(
-      (acc, plugin) =>
-        plugin.initialPushedEvent?.({
-          context,
-        }) ?? acc,
+      (acc, plugin) => plugin.initialPushedEvent?.() ?? acc,
       null,
     );
 
