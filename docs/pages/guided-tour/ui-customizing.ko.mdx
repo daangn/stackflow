@@ -1,6 +1,6 @@
 # UI 커스터마이징
 
-`@stackflow/plugin-ui`의 `uiPlugin()`은 기본적으로 모든 액티비티에 UI를 입혀요. UI 커스터마이징을 위해서는 해당 플러그인을 제외해요.
+`@stackflow/plugin-ui`의 `uiPlugin()`은 기본적으로 모든 액티비티에 UI를 입혀요. UI 커스터마이징을 위해서는 `uiPlugin`에 exclude 옵션을 활용해 원하는 액티비티의 플러그인 적용을 해제해요.
 
 ```typescript
 /**
@@ -29,9 +29,53 @@ const { Stack, useFlow } = stackflow({
       fallbackActivity: "MyActivity",
     }),
   ],
-  // UI 커스터마이징을 위해 uiPlugin을 삭제해요
-  // uiPlugin(),
+  uiPlugin({
+    exclude: [
+      "MyActivity",
+    ]
+  }),
 });
 ```
 
-## 현재 액티비티의 상태 가져오기
+이후에 원하는 컴포넌트에서 `useActivity()`, `useStack()` 등의 상태를 이용해서 자유롭게 UI를 커스터마이징해요.
+
+만약 `@stackflow/plugin-ui`에서 제공되는 UI를 활용하고 싶으시다면, 제공되는 `AppScreen` 컴포넌트를 활용해요.
+
+```tsx
+/**
+ * MyActivity.tsx
+ */
+import { ActivityComponentType } from "@stackflow/react";
+import { AppScreen } from "@stackflow/plugin-ui";
+import { useFlow } from "./stackflow";
+
+const MyActivity: ActivityComponentType = () => {
+  const { push } = useFlow();
+
+  const onClick = () => {
+    push("Article", {
+      title: "Hello, World!",
+    });
+  };
+
+  return (
+    <AppScreen
+      theme="android"
+      appBar={{
+        title: "My Activity",
+      }}
+    >
+      <div>
+        My Activity
+        <button onClick={onClick}>Go to article page</button>
+      </div>
+    </AppScreen>
+  );
+};
+
+export default MyActivity;
+```
+
+---
+
+혹시 본인만의 UI, 로직을 다른 개발자와 공유하고 싶으신가요? 다음으로 넘어가서 플러그인 작성 방법에 대해서 알아봐요.
