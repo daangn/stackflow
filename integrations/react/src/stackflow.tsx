@@ -31,7 +31,7 @@ export type StackflowOptions<T extends Activities> = {
   activities: T;
   transitionDuration: number;
   initialActivity?: (args: { stackContext: any }) => Extract<keyof T, string>;
-  plugins?: StackflowReactPlugin[];
+  plugins?: Array<StackflowReactPlugin | StackflowReactPlugin[]>;
 };
 
 export function stackflow<T extends Activities>(options: StackflowOptions<T>) {
@@ -171,7 +171,16 @@ export function stackflow<T extends Activities>(options: StackflowOptions<T>) {
 
   const Stack: React.FC<StackProps> = (props) => {
     const plugins = useMemo(
-      () => (options.plugins ?? []).map((plugin) => plugin()),
+      () =>
+        (options.plugins ?? [])
+          .reduce<StackflowReactPlugin[]>(
+            (plugins, plugin) => [
+              ...plugins,
+              ...(Array.isArray(plugin) ? plugin : [plugin]),
+            ],
+            [],
+          )
+          .map((plugin) => plugin()),
       [],
     );
 
