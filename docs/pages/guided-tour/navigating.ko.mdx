@@ -208,7 +208,7 @@ const { Stack, useFlow } = stackflow({
         MyActivity: "/my-activity",
         Article: "/articles/:title",
       },
-      fallbackActivity: "MyActivity",
+      fallbackActivity: () => "MyActivity",
     }),
   ],
   // historySyncPlugin이 해당 옵션을 덮어쓰므로 initialActivity는 더 이상 작동하지 않아요.

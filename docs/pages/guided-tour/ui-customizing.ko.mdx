@@ -26,7 +26,7 @@ const { Stack, useFlow } = stackflow({
         MyActivity: "/my-activity",
         Article: "/articles/:title",
       },
-      fallbackActivity: "MyActivity",
+      fallbackActivity: () => "MyActivity",
     }),
   ],
   uiPlugin({
