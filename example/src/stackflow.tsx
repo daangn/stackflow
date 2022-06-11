@@ -14,6 +14,7 @@ const activities = {
 export const { Stack, useFlow } = stackflow({
   activities,
   transitionDuration: 350,
+  initialActivity: () => "Home",
   plugins: [
     renderPlugin(),
     historySyncPlugin<typeof activities>({
@@ -21,7 +22,7 @@ export const { Stack, useFlow } = stackflow({
         Home: "/",
         Article: "/articles/:articleId",
       },
-      fallbackActivityName: "Home",
+      fallbackActivity: "Home",
     }),
     uiPlugin(),
   ],

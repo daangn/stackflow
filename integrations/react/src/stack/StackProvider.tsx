@@ -33,12 +33,12 @@ const INITIAL_EVENT_DATE = new Date().getTime() - MINUTE;
 export interface StackProviderProps {
   activities: Activities;
   transitionDuration: number;
-  fallbackActivityName?: string;
+  initialActivity?: (args: { stackContext: any }) => string;
   children: React.ReactNode;
 }
 export const StackProvider: React.FC<StackProviderProps> = ({
-  fallbackActivityName,
   transitionDuration,
+  initialActivity,
   activities,
   children,
 }) => {
@@ -55,17 +55,17 @@ export const StackProvider: React.FC<StackProviderProps> = ({
         null,
       );
 
-    const fallbackInitialPushedEvent = fallbackActivityName
+    const initialPushedEventByOption = initialActivity
       ? makeEvent("Pushed", {
           activityId: makeActivityId(),
-          activityName: fallbackActivityName,
+          activityName: initialActivity({ stackContext }),
           params: {},
           eventDate: INITIAL_EVENT_DATE,
         })
       : null;
 
     const initialPushedEvent =
-      overridenInitialPushedEventByPlugin ?? fallbackInitialPushedEvent;
+      overridenInitialPushedEventByPlugin ?? initialPushedEventByOption;
 
     const activityRegisteredEvents = Object.keys(activities).map(
       (activityName) =>

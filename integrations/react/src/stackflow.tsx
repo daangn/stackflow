@@ -23,14 +23,14 @@ export type Activities = {
   [activityName: string]: ActivityComponentType<any>;
 };
 
-export type StackProps<T extends Activities, C extends {} = {}> = {
-  fallbackActivityName?: Extract<keyof T, string>;
+export type StackProps<C extends {} = {}> = {
   context?: C;
 };
 
 export type StackflowOptions<T extends Activities> = {
   activities: T;
   transitionDuration: number;
+  initialActivity?: (args: { stackContext: any }) => Extract<keyof T, string>;
   plugins?: StackflowReactPlugin[];
 };
 
@@ -169,7 +169,7 @@ export function stackflow<T extends Activities>(options: StackflowOptions<T>) {
     );
   };
 
-  const Stack: React.FC<StackProps<T>> = (props) => {
+  const Stack: React.FC<StackProps> = (props) => {
     const plugins = useMemo(
       () => (options.plugins ?? []).map((plugin) => plugin()),
       [],
@@ -180,7 +180,7 @@ export function stackflow<T extends Activities>(options: StackflowOptions<T>) {
         <PluginsProvider value={plugins}>
           <StackProvider
             activities={options.activities}
-            fallbackActivityName={props.fallbackActivityName}
+            initialActivity={options.initialActivity}
             transitionDuration={options.transitionDuration}
           >
             <Main />
