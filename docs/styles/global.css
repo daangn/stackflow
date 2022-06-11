@@ -1,3 +1,13 @@
 html {
   word-break: keep-all;
 }
+
+/* override nextra */
+.nextra-container > nav {
+  background: rgba(255, 255, 255, 0.75) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+.dark .nextra-container > nav.dark\:bg-dark {
+  background: rgba(17, 17, 17, 0.5) !important;
+}
