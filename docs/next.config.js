@@ -9,7 +9,7 @@ module.exports = withNextra({
     ignoreDuringBuilds: true,
   },
   i18n: {
-    locales: ["en", "ko"],
-    defaultLocale: "en",
+    locales: ["ko"],
+    defaultLocale: "ko",
   },
 });
