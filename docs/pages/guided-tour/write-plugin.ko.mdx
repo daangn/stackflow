@@ -1,1 +1,182 @@
+import Callout from "nextra-theme-docs/callout";
+
 # 플러그인 작성하기
+
+**Stackflow**는 플러그인 인터페이스를 통해 다른 사람이 작성한 확장 로직을 쉽게 내 어플리케이션과 연동할 수 있도록 도와요. 플러그인을 통해 나의 문제를 해결하고, 이를 예쁘게 감싸서 다른 사람과 공유해보세요.
+
+## 프리셋 만들기
+
+**Stackflow** 플러그인을 출판하는 가장 쉬운 방법은 다른 사람이 만든 플러그인들을 조합해서 프리셋으로 제공하는 것이에요. 다음과 같이 여러 플러그인을 Array로 묶어서 나만의 프리셋을 만들 수 있어요.
+
+```typescript
+import { renderPlugin } from "@stackflow/plugin-render";
+import { uiPlugin } from "@stackflow/plugin-ui";
+import { stackflow } from "@stackflow/react";
+
+const myPlugin = () => [renderPlugin(), uiPlugin()];
+
+stackflow({
+  // ...
+  plugins: [myPlugin()],
+});
+```
+
+## 기본 인터페이스
+
+플러그인은 함수의 형태로 다음과 같은 인터페이스를 필수로 반환해야해요.
+
+| 필드 | 설명                                                                                            |
+| ---- | ----------------------------------------------------------------------------------------------- |
+| key  | 플러그인이 Array 형태로 리액트 트리 내에 렌더링 될때 `key` 값으로 부여할 고유한 String 값이에요 |
+
+내 앱에 나만의 첫 플러그인 개발을 시도해보려면 다음과 같이 inline 함수로 시작해보세요. (어렵지 않아요!)
+
+```typescript
+import { renderPlugin } from "@stackflow/plugin-render";
+import { uiPlugin } from "@stackflow/plugin-ui";
+import { stackflow } from "@stackflow/react";
+
+stackflow({
+  // ...
+  plugins: [
+    renderPlugin(),
+    uiPlugin(),
+    () => {
+      return {
+        key: "my-plugin",
+      };
+    },
+  ],
+});
+```
+
+## 렌더링 추가하기
+
+렌더링을 새로 추가하고 싶다면, `render` API를 사용할 수 있어요. Stack 상태를 이용해 어떻게 DOM을 최적화할지 결정하고 싶거나, 때에 따라 새로 얹을 새로운 DOM 트리가 필요하다면 `render` API를 활용하세요.
+
+```tsx
+stackflow({
+  // ...
+  plugins: [
+    () => {
+      return {
+        key: "my-plugin",
+        render({ stack }) {
+          return (
+            <div className="my-rendering">
+              {stack.render().activities.map((activity) => (
+                <div className="my-activity" key={activity.id}>
+                  {activity.render()}
+                </div>
+              ))}
+            </div>
+          );
+        },
+      };
+    },
+  ],
+});
+```
+
+다음과 같이 UI에 전달되는 스택 상태를 덮어 쓸 수도 있어요.
+
+```tsx
+stackflow({
+  // ...
+  plugins: [
+    () => {
+      return {
+        key: "my-plugin",
+        render({ stack }) {
+          return (
+            <div className="my-rendering">
+              {stack
+                .render({
+                  // 여기서 stack 상태를 덮어쓸 수 있어요.
+                })
+                .activities.map((activity) => (
+                  <div className="my-activity" key={activity.id}>
+                    {activity.render({
+                      // 여기서 activity 상태를 덮어쓸 수 있어요.
+                    })}
+                  </div>
+                ))}
+            </div>
+          );
+        },
+      };
+    },
+  ],
+});
+```
+
+<Callout emoji="💡">
+  덮어써진 상태값은 메인 스택에는 영향을 주지 않고, 해당 렌더링 하위의 React 의
+  `useStack()`, `useActivity()`에만 적용돼요.
+</Callout>
+
+## 스택 감싸기
+
+최상단에 Context API Provider를 추가하고 싶거나, 최상단을 특정 DOM으로 감싸고 싶다면 `wrapStack` 인터페이스를 활용하세요.
+
+```tsx
+stackflow({
+  // ...
+  plugins: [
+    () => {
+      return {
+        key: "my-plugin",
+        wrapStack({ stack }) {
+          // 여기서 인자로 가져온 stack 정보를 활용할 수 있습니다
+          return <div className="my-plugin">{stack.render()}</div>;
+        },
+      };
+    },
+  ],
+});
+```
+
+<Callout type="warning" emoji="⚠️">
+  **주의** - `wrapStack` API는 모든 렌더링에 함께 적용돼요. 의도치 않은 사이드
+  이펙트가 생길 수 있으니 주의해서 사용해요.
+</Callout>
+
+## 액티비티 감싸기
+
+각 액티비티를 Context API Provider를 추가하고 싶거나, 특정 DOM으로 감싸고 싶다면 `wrapActivity` 인터페이스를 활용하세요.
+
+```tsx
+stackflow({
+  // ...
+  plugins: [
+    () => {
+      return {
+        key: "my-plugin",
+        wrapActivity({ activity }) {
+          // 여기서 인자로 가져온 activity 정보를 활용할 수 있습니다
+          return <div className="my-activity">{activity.render()}</div>;
+        },
+      };
+    },
+  ],
+});
+```
+
+<Callout type="warning" emoji="⚠️">
+  **주의** - `wrapActivity` API는 모든 렌더링에 함께 적용돼요. 의도치 않은
+  사이드 이펙트가 생길 수 있으니 주의해서 사용해요.
+</Callout>
+
+## 라이프사이클 훅
+
+기능을 확장하거나 외부의 상태와 동기화하고 싶으신가요? 스택 상태가 변화할때마다 특정 동작을 하거나, 또는 스택 상태가 변경되기 이전에 함수를 호출할 수 있어요.
+
+### `onInit`
+
+### `onBeforePush`, `onBeforeReplace`, `onBeforePop`
+
+### `onPushed`, `onReplaced`, `onPopped`
+
+### `onChanged`
+
+## 첫 액티비티 결정하기
