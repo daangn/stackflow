@@ -48,8 +48,8 @@ export function stackflow<T extends Activities>(options: StackflowOptions<T>) {
             transitionDuration={options.transitionDuration}
           >
             <MainRenderer activities={options.activities} />
+            <EffectManager />
           </StackProvider>
-          <EffectManager />
         </PluginsProvider>
       </StackContextProvider>
     );

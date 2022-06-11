@@ -16,8 +16,8 @@ const MainRenderer: React.FC<MainRendererProps> = ({ activities }) => {
     <>
       {plugins
         .filter(
-          (plugin): plugin is WithRequired<typeof plugin, "renderStack"> =>
-            !!plugin.renderStack,
+          (plugin): plugin is WithRequired<typeof plugin, "render"> =>
+            !!plugin.render,
         )
         .map((plugin) => (
           <PluginRenderer

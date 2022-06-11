@@ -6,14 +6,16 @@ import {
 import React from "react";
 
 export type StackflowReactPlugin = () => {
-  renderStack?: (args: {
+  render?: (args: {
     stack: AggregateOutput & {
-      activities: Array<
-        {
-          key: string;
-          render: (overrideActivity?: Partial<Activity>) => React.ReactNode;
-        } & Activity
-      >;
+      render: (overrideStack?: Partial<AggregateOutput>) => {
+        activities: Array<
+          Activity & {
+            key: string;
+            render: (overrideActivity?: Partial<Activity>) => React.ReactNode;
+          }
+        >;
+      };
     };
   }) => React.ReactElement<any, any> | null;
   wrapStack?: (args: {

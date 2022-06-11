@@ -8,7 +8,7 @@ import { WithRequired } from "./utils";
 
 interface PluginRendererProps {
   activities: { [key: string]: React.ComponentType };
-  plugin: WithRequired<ReturnType<StackflowReactPlugin>, "renderStack">;
+  plugin: WithRequired<ReturnType<StackflowReactPlugin>, "render">;
 }
 const PluginRenderer: React.FC<PluginRendererProps> = ({
   activities,
@@ -17,39 +17,44 @@ const PluginRenderer: React.FC<PluginRendererProps> = ({
   const stack = useStack();
   const plugins = usePlugins();
 
-  return plugin.renderStack({
+  return plugin.render({
     stack: {
       ...stack,
-      activities: stack.activities.map((activity) => ({
-        ...activity,
-        key: activity.id,
-        render(overrideActivity) {
-          const ActivityComponent = activities[activity.name];
-
-          const overridenActivity = {
+      render(overrideStack) {
+        return {
+          activities: stack.activities.map((activity) => ({
             ...activity,
-            ...overrideActivity,
-          };
+            key: activity.id,
+            render(overrideActivity) {
+              const ActivityComponent = activities[activity.name];
 
-          let output = <ActivityComponent {...activity.params} />;
+              let output = <ActivityComponent {...activity.params} />;
 
-          plugins.forEach((p) => {
-            output =
-              p.wrapActivity?.({
-                activity: {
-                  ...activity,
-                  render: () => output,
-                },
-              }) ?? output;
-          });
+              plugins.forEach((p) => {
+                output =
+                  p.wrapActivity?.({
+                    activity: {
+                      ...activity,
+                      render: () => output,
+                    },
+                  }) ?? output;
+              });
 
-          return (
-            <ActivityProvider key={activity.id} value={overridenActivity}>
-              {output}
-            </ActivityProvider>
-          );
-        },
-      })),
+              return (
+                <ActivityProvider
+                  key={activity.id}
+                  value={{
+                    ...activity,
+                    ...overrideActivity,
+                  }}
+                >
+                  {output}
+                </ActivityProvider>
+              );
+            },
+          })),
+        };
+      },
     },
   });
 };
