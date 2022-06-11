@@ -1,11 +1,7 @@
-import {
-  Activity,
-  AggregateOutput,
-  StackflowCommonPlugin,
-} from "@stackflow/core";
+import { Activity, AggregateOutput, StackflowPlugin } from "@stackflow/core";
 import React from "react";
 
-export type StackflowReactPlugin = () => {
+export type StackflowReactPlugin = (args: { context: any }) => {
   render?: (args: {
     stack: AggregateOutput & {
       render: (overrideStack?: Partial<AggregateOutput>) => {
@@ -28,4 +24,4 @@ export type StackflowReactPlugin = () => {
       render: () => React.ReactNode;
     };
   }) => React.ReactElement<any, any> | null;
-} & ReturnType<StackflowCommonPlugin>;
+} & ReturnType<StackflowPlugin>;

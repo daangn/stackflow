@@ -1,3 +1,3 @@
-export * from "./StackflowCommonPlugin";
+export * from "./StackflowPlugin";
 export * from "./StackflowPluginActions";
 export * from "./StackflowPluginHook";

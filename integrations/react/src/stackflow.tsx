@@ -35,7 +35,7 @@ export function stackflow<T extends Activities>(options: StackflowOptions<T>) {
             ],
             [],
           )
-          .map((plugin) => plugin()),
+          .map((plugin) => plugin({ context: props.context })),
       [],
     );
 

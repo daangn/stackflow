@@ -1,9 +1,4 @@
-import {
-  Activity,
-  id,
-  makeEvent,
-  StackflowCommonPlugin,
-} from "@stackflow/core";
+import { Activity, id, makeEvent, StackflowPlugin } from "@stackflow/core";
 
 import { makeTemplate } from "./makeTemplate";
 
@@ -48,14 +43,14 @@ type HistorySyncPluginOptions<T extends { [activityName: string]: any }> = {
 };
 export function historySyncPlugin<T extends { [activityName: string]: any }>(
   options: HistorySyncPluginOptions<T>,
-): StackflowCommonPlugin {
-  return () => {
+): StackflowPlugin {
+  return ({ context }) => {
     let pushFlag = false;
     let onPopStateDisposer: (() => void) | null = null;
 
     return {
       key: "historySync",
-      initialPushedEvent({ context }) {
+      initialPushedEvent() {
         const initHistoryState = parseState(window.history.state);
 
         if (initHistoryState) {

@@ -5,7 +5,7 @@ import {
   StackflowPluginPreEffectHook,
 } from "./StackflowPluginHook";
 
-export type StackflowCommonPlugin = () => {
+export type StackflowPlugin = (args: { context: any }) => {
   key: string;
   onInit?: StackflowPluginHook;
   onBeforePop?: StackflowPluginPreEffectHook;
@@ -15,5 +15,5 @@ export type StackflowCommonPlugin = () => {
   onPopped?: StackflowPluginPostEffectHook<"POPPED">;
   onReplaced?: StackflowPluginPostEffectHook<"REPLACED">;
   onChanged?: StackflowPluginPostEffectHook<"%SOMETHING_CHANGED%">;
-  initialPushedEvent?: (args: { context: any }) => PushedEvent | null;
+  initialPushedEvent?: () => PushedEvent | null;
 };
