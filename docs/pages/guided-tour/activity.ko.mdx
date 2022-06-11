@@ -1,7 +1,102 @@
+import Callout from "nextra-theme-docs/callout";
+
 # 액티비티
 
-## 액티비티란?
+화면에 하나씩 쌓이는 화면 하나하나를 액티비티라고 해요. 액티비티는 다음과 같은 속성을 갖고, 필요한 경우 `useActivity()` 훅을 통해 가져올 수 있어요.
+
+| 이름      | 설명                                               | 타입                                                     |
+| --------- | -------------------------------------------------- | -------------------------------------------------------- |
+| id        | 화면에 활성화되는 액티비티마다 가지는 고유한 ID 값 | String                                                   |
+| name      | 등록된 액티비티의 이름                             | String                                                   |
+| 전환 상태 | 현재 액티비티의 전환 상태                          | `enter-active`, `enter-done`, `exit-active`, `exit-done` |
 
 ## 액티비티 등록하기
 
-## 액티비티에 파라미터 등록하기
+액티비티를 실제로 사용하기 위해서는 사용하기 전 `stackflow()` 함수에 등록이 필요해요. 액티비티는 `ActivityComponentType`이라는 타입으로 선언되는 리액트 컴포넌트에요.
+
+```tsx
+/**
+ * MyComponent.tsx
+ */
+import { ActivityComponentType } from "@stackflow/react";
+
+const MyActivity: ActivityComponentType = () => {
+  return <div>My Activity</div>;
+};
+
+export default MyActivity;
+
+/**
+ * myStackflow.ts
+ */
+import { stackflow } from "@stackflow/react";
+import MyActivity from "./MyActivity";
+
+const { Stack, useFlow } = stackflow({
+  activities: {
+    MyActivity,
+  },
+});
+```
+
+<Callout emoji="💡">
+  `ActivityComponentType`은 `React.ComponentType`와 호환돼요. 따라서 기존에
+  활용하시던 `React.FC`, `React.Component` 등을 그대로 활용할 수 있어요.
+</Callout>
+
+```tsx
+/**
+ * MyComponent.tsx
+ */
+import React from "react";
+
+const MyActivity: React.FC = () => {
+  return <div>My Activity</div>;
+};
+
+export default MyActivity;
+```
+
+## 액티비티에 필요한 파라미터 등록하기
+
+해당 액티비티가 사용될 때, 특정 파라미터가 필요한 경우가 있어요. 이런 경우 다음과 같이 액티비티의 Props로 해당 파라미터를 선언해요.
+
+```tsx
+/**
+ * Article.tsx
+ */
+import { ActivityComponentType } from "@stackflow/react";
+
+type ArticleProps = {
+  title: string;
+};
+const Article: ActivityComponentType<ArticleProps> = ({ title }) => {
+  return (
+    <div>
+      <h1>{title}</h1>
+    </div>
+  );
+};
+
+export default MyActivity;
+
+/**
+ * 또는
+ */
+import React from "react";
+
+type ArticleProps = {
+  title: string;
+};
+const Article: React.FC<ArticleProps> = ({ title }) => {
+  return (
+    <div>
+      <h1>{title}</h1>
+    </div>
+  );
+};
+
+export default MyActivity;
+```
+
+액티비티를 성공적으로 잘 등록했나요? 그렇다면 이제 등록된 액티비티를 어떻게 열고, 그 사이를 어떻게 탐험할 수 있는지 알아볼게요.
