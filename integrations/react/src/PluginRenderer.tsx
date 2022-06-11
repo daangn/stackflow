@@ -19,6 +19,7 @@ const PluginRenderer: React.FC<PluginRendererProps> = ({
 
   return plugin.renderStack({
     stack: {
+      ...stack,
       activities: stack.activities.map((activity) => ({
         ...activity,
         key: activity.id,

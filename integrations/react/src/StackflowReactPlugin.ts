@@ -1,9 +1,13 @@
-import { Activity, StackflowCommonPlugin } from "@stackflow/core";
+import {
+  Activity,
+  AggregateOutput,
+  StackflowCommonPlugin,
+} from "@stackflow/core";
 import React from "react";
 
 export type StackflowReactPlugin = () => {
   renderStack?: (args: {
-    stack: {
+    stack: AggregateOutput & {
       activities: Array<
         {
           key: string;
@@ -15,7 +19,7 @@ export type StackflowReactPlugin = () => {
   wrapStack?: (args: {
     stack: {
       render: () => React.ReactNode;
-    };
+    } & AggregateOutput;
   }) => React.ReactElement<any, any> | null;
   wrapActivity?: (args: {
     activity: {

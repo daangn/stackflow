@@ -6,6 +6,9 @@ const last = <T extends unknown>(arr: T[]) => arr[arr.length - 1];
 export function renderPlugin(): StackflowReactPlugin {
   return () => ({
     key: "render",
+    wrapStack({ stack }) {
+      return <>{stack.render()}</>;
+    },
     renderStack({ stack }) {
       return (
         <>
