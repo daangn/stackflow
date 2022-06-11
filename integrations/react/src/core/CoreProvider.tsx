@@ -24,7 +24,7 @@ type PushedEvent = Extract<DomainEvent, { name: "Pushed" }>;
 
 const SECOND = 1000;
 
-// 60fps
+// 60FPS
 const INTERVAL_MS = SECOND / 60;
 
 export interface CoreProviderProps {
