@@ -1,7 +1,7 @@
 {
   "activity": "액티비티",
   "navigating": "탐색하기",
-  "stack": "스택",
+  "state": "상태 가져오기",
   "ui-customizing": "UI 커스터마이징",
   "write-plugin": "플러그인 작성하기"
 }

@@ -1,0 +1,105 @@
+# 상태 가져오기
+
+**Stackflow**의 내부 상태는 한마디로 표현하면, **전환 상태**를 가진 **스택** 자료구조에요.
+
+**[여기에 삽화]**
+
+`activities` 필드로 접근할 수 있는 액티비티는 기본적인 존재와 관련된 정보 이외에, ID, 이름, 그리고 현재 시점의 전환 상태 등의 상태값들을 가져요. 이러한 상태값들을 이리저리 활용해 `@stackflow/plugin-ui`가 만들어졌답니다. (여러분도 충분히 만들 수 있어요!)
+
+## 스택 상태를 렌더링에 활용하기
+
+스택 상태를 UI 컴포넌트에서 가져오려면, `useStack()` 훅을 활용해요.
+
+```tsx
+/**
+ * MyActivity.tsx
+ */
+import { ActivityComponentType, useStack } from "@stackflow/react";
+import { useFlow } from "./stackflow";
+
+const MyActivity: ActivityComponentType = () => {
+  const stack = useStack();
+  const { replace } = useFlow();
+
+  const onClick = () => {
+    replace("Article", {
+      title: "Hello, World!",
+    });
+  };
+
+  useEffect(() => {
+    console.log("현재 쌓여진 액티비티들:", stack.activities);
+    console.log("전체 전환 상태:", stack.globalTransitionState);
+    console.log(
+      "초기에 설정된 Transition Duration 옵션",
+      stack.transitionDuration,
+    );
+  }, [stack]);
+
+  return (
+    <div>
+      My Activity
+      <button onClick={onClick}>Go to article page</button>
+    </div>
+  );
+};
+
+export default MyActivity;
+```
+
+스택 상태에는 다음과 같은 필드들이 존재해요.
+
+| 필드 이름                     | 설명                                             | 타입              |
+| ----------------------------- | ------------------------------------------------ | ----------------- |
+| `stack.activities`            | 액티비티 목록                                    | `Array<Activity>` |
+| `stack.transitionDuration`    | `stackflow()`에서 설정한 `transitionDuration` 값 | `number`          |
+| `stack.globalTransitionState` | 액티비티가 현재 움직이고 있는지 여부             | `idle`, `loading` |
+
+## 액티비티 상태를 렌더링에 활용하기
+
+현재 액티비티의 정보를 가져오기 위해 `useActivity()` 훅을 사용할 수 있어요.
+
+```tsx
+/**
+ * MyActivity.tsx
+ */
+import { ActivityComponentType, useStack } from "@stackflow/react";
+import { useFlow } from "./stackflow";
+
+const MyActivity: ActivityComponentType = () => {
+  const activity = useActivity();
+  const { replace } = useFlow();
+
+  const onClick = () => {
+    replace("Article", {
+      title: "Hello, World!",
+    });
+  };
+
+  useEffect(() => {
+    console.log("현재 액티비티의 전환 상태:", activity.transitionState);
+  }, [stack]);
+
+  return (
+    <div>
+      My Activity
+      <button onClick={onClick}>Go to article page</button>
+    </div>
+  );
+};
+
+export default MyActivity;
+```
+
+액티비티 상태에는 다음과 같은 필드들이 존재해요.
+
+| 필드 이름                  | 설명                       | 타입                                                     |
+| -------------------------- | -------------------------- | -------------------------------------------------------- |
+| `activity.id`              | 액티비티 ID                | `string`                                                 |
+| `activity.name`            | 등록된 액티비티 이름       | `string`                                                 |
+| `activity.transitionState` | 액티비티의 전환 상태       | `enter-active`, `enter-done`, `exit-active`, `exit-done` |
+| `activity.params`          | 액티비티에 전달된 파라미터 | `object`                                                 |
+
+---
+
+스택과 액티비티 상태에 대한 이해가 얼추 되셨나요? 그렇다면 이제 `@stackflow/plugin-ui`를 떼어내고, 나만의 UI를 만들어봐요.
