@@ -23,6 +23,9 @@
     "dev": "yarn build:js --watch && yarn build:dts --watch",
     "test": "jest"
   },
+  "dependencies": {
+    "react-fast-compare": "^3.2.0"
+  },
   "devDependencies": {
     "@stackflow/core": "workspace:^",
     "@types/react": "^18.0.9",

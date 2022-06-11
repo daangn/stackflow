@@ -3,16 +3,15 @@ import {
   DispatchEvent,
   DomainEvent,
   makeEvent,
-  produceEffects,
 } from "@stackflow/core";
 import React, {
   useCallback,
   useEffect,
   useMemo,
-  useReducer,
   useRef,
   useState,
 } from "react";
+import isEqual from "react-fast-compare";
 
 import { makeActivityId } from "../activity";
 import { useContext } from "../context";
@@ -86,32 +85,34 @@ export const CoreProvider: React.FC<CoreProviderProps> = ({
     return events;
   }, []);
 
-  const [events, addEvent] = useReducer(
-    (prevEvents: DomainEvent[], e: DomainEvent) => [...prevEvents, e],
-    initialEvents,
+  const initialState = useMemo(
+    () => aggregate(initialEvents, new Date().getTime()),
+    [],
   );
 
-  const [state, setState] = useState(() =>
-    aggregate(events, new Date().getTime()),
-  );
-  const stateRef = useRef(state);
+  const [state, setState] = useState(() => initialState);
+
+  const eventsRef = useRef(initialEvents);
+  const stateRef = useRef(initialState);
   const getState = useCallback(() => stateRef.current, [stateRef]);
 
   const dispatchEvent = useCallback<DispatchEvent>(
     (name, parameters) => {
-      addEvent(makeEvent(name, parameters));
+      const newEvent = makeEvent(name, parameters);
+      const events = [...eventsRef.current, newEvent];
+      eventsRef.current = events;
+
+      setState(aggregate(events, new Date().getTime()));
     },
-    [addEvent],
+    [eventsRef, setState],
   );
 
   useEffect(() => {
     const interval = setInterval(() => {
-      const t = new Date().getTime();
-      const nextState = aggregate(events, t);
+      const events = eventsRef.current;
+      const nextState = aggregate(events, new Date().getTime());
 
-      const effects = produceEffects(state, nextState);
-
-      if (effects.length > 0) {
+      if (!isEqual(state, nextState)) {
         setState(nextState);
         stateRef.current = nextState;
       }
@@ -124,7 +125,7 @@ export const CoreProvider: React.FC<CoreProviderProps> = ({
     return () => {
       clearInterval(interval);
     };
-  }, [events, state, dispatchEvent]);
+  }, [eventsRef, state, setState]);
 
   return (
     <CoreStateContext.Provider value={state}>
