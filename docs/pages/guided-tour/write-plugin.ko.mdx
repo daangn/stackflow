@@ -262,3 +262,29 @@ Pre-effect 훅에는 `onBeforePush`, `onBeforeReplace`, `onBeforePop`이 있어�
 | `effect`                   | 해당 이펙트 훅을 촉발시킨 이펙트를 가져올 수 있어요                                             |
 
 ## 첫 액티비티 결정하기
+
+`initialPushedEvent` API를 통해 기존에 존재하는 `initialActivity` 동작을 덮어쓸 수 있어요. (이벤트에 대한 자세한 설명은 원칙과 설계 문서를 참고하세요)
+
+```tsx
+import { makeEvent } from "@stackflow/core";
+
+stackflow({
+  // ...
+  plugins: [
+    () => {
+      return {
+        key: "my-plugin",
+        initialPushedEvent() {
+          return makeEvent("Pushed", {
+            // ...
+          });
+        },
+      };
+    },
+  ],
+});
+```
+
+---
+
+여기까지 전부 이해하셨다면, **Stackflow**에 대해서 잘 활용하실 수 있을거에요. 만약 추가적인 정보가 필요하시거나, 이슈 제보 또는 도움이 필요하시다면 **Stackflow** 한국 커뮤니티를 방문해주세요. 수고 많으셨습니다.
