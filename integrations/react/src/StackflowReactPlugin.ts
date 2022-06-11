@@ -21,11 +21,11 @@ export type StackflowReactPlugin = () => {
   wrapStack?: (args: {
     stack: {
       render: () => React.ReactNode;
-    } & AggregateOutput;
+    };
   }) => React.ReactElement<any, any> | null;
   wrapActivity?: (args: {
     activity: {
       render: () => React.ReactNode;
-    } & Activity;
+    };
   }) => React.ReactElement<any, any> | null;
 } & ReturnType<StackflowCommonPlugin>;

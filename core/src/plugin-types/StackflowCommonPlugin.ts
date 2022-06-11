@@ -15,7 +15,5 @@ export type StackflowCommonPlugin = () => {
   onPopped?: StackflowPluginPostEffectHook<"POPPED">;
   onReplaced?: StackflowPluginPostEffectHook<"REPLACED">;
   onChanged?: StackflowPluginPostEffectHook<"%SOMETHING_CHANGED%">;
-  overrideInitialPushedEvent?: (args: {
-    stackContext: any;
-  }) => PushedEvent | null;
+  initialPushedEvent?: (args: { context: any }) => PushedEvent | null;
 };

@@ -1,11 +1,11 @@
 import React, { useMemo } from "react";
 
 import { ActivityComponentType, makeActivityId } from "./activity";
+import { ContextProvider } from "./context";
+import { CoreProvider, useCore } from "./core";
 import EffectManager from "./EffectManager";
 import MainRenderer from "./MainRenderer";
 import { PluginsProvider } from "./plugins";
-import { StackProvider, useStackActions } from "./stack";
-import { StackContextProvider } from "./stack-context";
 import { StackflowReactPlugin } from "./StackflowReactPlugin";
 
 export type Activities = {
@@ -19,7 +19,7 @@ export type StackProps<C extends {} = {}> = {
 export type StackflowOptions<T extends Activities> = {
   activities: T;
   transitionDuration: number;
-  initialActivity?: (args: { stackContext: any }) => Extract<keyof T, string>;
+  initialActivity?: (args: { context: any }) => Extract<keyof T, string>;
   plugins?: Array<StackflowReactPlugin | StackflowReactPlugin[]>;
 };
 
@@ -40,23 +40,23 @@ export function stackflow<T extends Activities>(options: StackflowOptions<T>) {
     );
 
     return (
-      <StackContextProvider value={props.context ?? {}}>
+      <ContextProvider value={props.context ?? {}}>
         <PluginsProvider value={plugins}>
-          <StackProvider
+          <CoreProvider
             activities={options.activities}
             initialActivity={options.initialActivity}
             transitionDuration={options.transitionDuration}
           >
             <MainRenderer activities={options.activities} />
             <EffectManager />
-          </StackProvider>
+          </CoreProvider>
         </PluginsProvider>
-      </StackContextProvider>
+      </ContextProvider>
     );
   };
 
   const useFlow = () => {
-    const stackActions = useStackActions();
+    const core = useCore();
 
     return useMemo(
       () => ({
@@ -67,7 +67,7 @@ export function stackflow<T extends Activities>(options: StackflowOptions<T>) {
             animate?: boolean;
           },
         ) {
-          stackActions.push({
+          core.push({
             activityId: makeActivityId(),
             activityName,
             params,
@@ -80,14 +80,14 @@ export function stackflow<T extends Activities>(options: StackflowOptions<T>) {
             animate?: boolean;
           },
         ) {
-          stackActions.replace({
+          core.replace({
             activityId: makeActivityId(),
             activityName,
             params,
           });
         },
         pop(options?: { animate?: boolean }) {
-          stackActions.pop();
+          core.pop();
         },
       }),
       [dispatchEvent],

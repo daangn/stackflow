@@ -4,7 +4,6 @@ import {
   makeEvent,
   StackflowCommonPlugin,
 } from "@stackflow/core";
-import { ActivityComponentType } from "@stackflow/react";
 
 import { makeTemplate } from "./makeTemplate";
 
@@ -56,7 +55,7 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
 
     return {
       key: "historySync",
-      overrideInitialPushedEvent({ stackContext }) {
+      initialPushedEvent({ context }) {
         const initHistoryState = parseState(window.history.state);
 
         if (initHistoryState) {
@@ -66,8 +65,8 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
           };
         }
 
-        const path = stackContext?.req?.path
-          ? stackContext.req.path
+        const path = context?.req?.path
+          ? context.req.path
           : typeof window !== "undefined"
           ? window.location.pathname + window.location.search
           : null;

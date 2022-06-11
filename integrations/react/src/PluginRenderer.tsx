@@ -1,8 +1,9 @@
 import React from "react";
 
 import { ActivityProvider } from "./activity";
-import { usePlugins } from "./plugins/usePlugins";
-import { useStack } from "./stack";
+import { useCore } from "./core";
+import { usePlugins } from "./plugins";
+import { StackProvider } from "./stack";
 import { StackflowReactPlugin } from "./StackflowReactPlugin";
 import { WithRequired } from "./utils";
 
@@ -14,13 +15,18 @@ const PluginRenderer: React.FC<PluginRendererProps> = ({
   activities,
   plugin,
 }) => {
-  const stack = useStack();
+  const core = useCore();
   const plugins = usePlugins();
 
   return plugin.render({
     stack: {
-      ...stack,
+      ...core.state,
       render(overrideStack) {
+        const stack = {
+          ...core.state,
+          ...overrideStack,
+        };
+
         return {
           activities: stack.activities.map((activity) => ({
             ...activity,
@@ -41,15 +47,17 @@ const PluginRenderer: React.FC<PluginRendererProps> = ({
               });
 
               return (
-                <ActivityProvider
-                  key={activity.id}
-                  value={{
-                    ...activity,
-                    ...overrideActivity,
-                  }}
-                >
-                  {output}
-                </ActivityProvider>
+                <StackProvider value={stack}>
+                  <ActivityProvider
+                    key={activity.id}
+                    value={{
+                      ...activity,
+                      ...overrideActivity,
+                    }}
+                  >
+                    {output}
+                  </ActivityProvider>
+                </StackProvider>
               );
             },
           })),

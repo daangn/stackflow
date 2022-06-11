@@ -1,9 +1,4 @@
-import { AggregateOutput, DispatchEvent } from "@stackflow/core";
+import { AggregateOutput } from "@stackflow/core";
 import { createContext } from "react";
 
-export interface StackContextValue {
-  state: AggregateOutput;
-  getState: () => AggregateOutput;
-  dispatchEvent: DispatchEvent;
-}
-export const StackContext = createContext<StackContextValue>(null as any);
+export const StackContext = createContext<AggregateOutput>(null as any);

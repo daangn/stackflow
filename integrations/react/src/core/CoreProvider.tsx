@@ -15,10 +15,10 @@ import React, {
 } from "react";
 
 import { makeActivityId } from "../activity";
+import { useContext } from "../context";
 import { usePlugins } from "../plugins";
-import { useStackContext } from "../stack-context";
 import { Activities } from "../stackflow";
-import { StackContext } from "./StackContext";
+import { CoreContext } from "./CoreContext";
 
 type PushedEvent = Extract<DomainEvent, { name: "Pushed" }>;
 
@@ -28,57 +28,56 @@ const MINUTE = 60 * SECOND;
 // 60fps
 const INTERVAL_MS = SECOND / 60;
 
-const INITIAL_EVENT_DATE = new Date().getTime() - MINUTE;
-
-export interface StackProviderProps {
+export interface CoreProviderProps {
   activities: Activities;
   transitionDuration: number;
-  initialActivity?: (args: { stackContext: any }) => string;
+  initialActivity?: (args: { context: any }) => string;
   children: React.ReactNode;
 }
-export const StackProvider: React.FC<StackProviderProps> = ({
+export const CoreProvider: React.FC<CoreProviderProps> = ({
   transitionDuration,
   initialActivity,
   activities,
   children,
 }) => {
   const plugins = usePlugins();
-  const stackContext = useStackContext();
+  const context = useContext();
 
   const initialEvents = useMemo(() => {
-    const overridenInitialPushedEventByPlugin =
-      plugins.reduce<PushedEvent | null>(
-        (acc, plugin) =>
-          plugin.overrideInitialPushedEvent?.({
-            stackContext,
-          }) ?? acc,
-        null,
-      );
+    const initialEventDate = new Date().getTime() - transitionDuration;
+
+    const initialPushedEventByPlugin = plugins.reduce<PushedEvent | null>(
+      (acc, plugin) =>
+        plugin.initialPushedEvent?.({
+          context,
+        }) ?? acc,
+      null,
+    );
 
     const initialPushedEventByOption = initialActivity
       ? makeEvent("Pushed", {
           activityId: makeActivityId(),
-          activityName: initialActivity({ stackContext }),
+          activityName: initialActivity({ context }),
           params: {},
-          eventDate: INITIAL_EVENT_DATE,
+          eventDate: initialEventDate,
         })
       : null;
 
     const initialPushedEvent =
-      overridenInitialPushedEventByPlugin ?? initialPushedEventByOption;
+      initialPushedEventByPlugin ?? initialPushedEventByOption;
 
     const activityRegisteredEvents = Object.keys(activities).map(
       (activityName) =>
         makeEvent("ActivityRegistered", {
           activityName,
-          eventDate: INITIAL_EVENT_DATE,
+          eventDate: initialEventDate,
         }),
     );
 
     const events: DomainEvent[] = [
       makeEvent("Initialized", {
         transitionDuration,
-        eventDate: INITIAL_EVENT_DATE,
+        eventDate: initialEventDate,
       }),
       ...activityRegisteredEvents,
     ];
@@ -131,7 +130,7 @@ export const StackProvider: React.FC<StackProviderProps> = ({
   }, [events, state, dispatchEvent]);
 
   return (
-    <StackContext.Provider
+    <CoreContext.Provider
       value={useMemo(
         () => ({
           state,
@@ -142,6 +141,6 @@ export const StackProvider: React.FC<StackProviderProps> = ({
       )}
     >
       {children}
-    </StackContext.Provider>
+    </CoreContext.Provider>
   );
 };

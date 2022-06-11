@@ -5,15 +5,14 @@ import {
 } from "@stackflow/core";
 import React, { useCallback, useEffect, useRef } from "react";
 
+import { useContext } from "./context";
+import { useCore } from "./core";
 import { usePlugins } from "./plugins";
-import { useStack, useStackActions } from "./stack";
-import { useStackContext } from "./stack-context";
 
 const EffectManager: React.FC = () => {
-  const stack = useStack();
-  const stackActions = useStackActions();
+  const core = useCore();
   const plugins = usePlugins();
-  const stackContext = useStackContext();
+  const context = useContext();
 
   const onInit = useCallback<StackflowPluginHook>((actions) => {
     plugins.forEach((plugin) => {
@@ -26,25 +25,25 @@ const EffectManager: React.FC = () => {
       switch (effect._TAG) {
         case "PUSHED": {
           plugins.forEach((plugin) =>
-            plugin.onPushed?.({ actions, effect, stackContext }),
+            plugin.onPushed?.({ actions, effect, context }),
           );
           break;
         }
         case "POPPED": {
           plugins.forEach((plugin) =>
-            plugin.onPopped?.({ actions, effect, stackContext }),
+            plugin.onPopped?.({ actions, effect, context }),
           );
           break;
         }
         case "REPLACED": {
           plugins.forEach((plugin) =>
-            plugin.onReplaced?.({ actions, effect, stackContext }),
+            plugin.onReplaced?.({ actions, effect, context }),
           );
           break;
         }
         case "%SOMETHING_CHANGED%": {
           plugins.forEach((plugin) =>
-            plugin.onChanged?.({ actions, effect, stackContext }),
+            plugin.onChanged?.({ actions, effect, context }),
           );
           break;
         }
@@ -59,32 +58,32 @@ const EffectManager: React.FC = () => {
   useEffect(() => {
     onInit?.({
       actions: {
-        dispatchEvent: stackActions.dispatchEvent,
-        getState: stackActions.getState,
+        dispatchEvent: core.dispatchEvent,
+        getState: core.getState,
       },
-      stackContext,
+      context,
     });
   }, []);
 
-  const prevStateRef = useRef(stack);
+  const prevStateRef = useRef(core.state);
 
   useEffect(() => {
     const prevState = prevStateRef.current;
-    const effects = prevState ? produceEffects(prevState, stack) : [];
+    const effects = prevState ? produceEffects(prevState, core.state) : [];
 
     effects.forEach((effect) => {
       triggerEffect({
         actions: {
-          dispatchEvent: stackActions.dispatchEvent,
-          getState: stackActions.getState,
+          dispatchEvent: core.dispatchEvent,
+          getState: core.getState,
         },
         effect,
-        stackContext,
+        context,
       });
     });
 
-    prevStateRef.current = { ...stack };
-  }, [stack, stackActions]);
+    prevStateRef.current = { ...core.state };
+  }, [core]);
 
   return null;
 };
