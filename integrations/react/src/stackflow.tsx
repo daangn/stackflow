@@ -232,7 +232,7 @@ export function stackflow<T extends Activities>(options: StackflowOptions<T>) {
             params,
           });
         },
-        pop() {
+        pop(options?: { animate?: boolean }) {
           stackActions.pop();
         },
       }),
