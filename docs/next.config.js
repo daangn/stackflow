@@ -5,7 +5,6 @@ const withNextra = require("nextra")({
 });
 
 module.exports = withNextra({
-  pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
   eslint: {
     ignoreDuringBuilds: true,
   },
