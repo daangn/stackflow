@@ -34,6 +34,7 @@ export default {
         content="Mobile-first stack navigator framework with Composable Plugin System (supports iOS/Android WebView, React Native and also Desktop environment)"
       />
       <meta name="og:title" content="Stackflow" />
+      <link rel="shortcut icon" href="/favicon.png" />
     </>
   ),
   i18n: [{ locale: "ko", text: "한국어" }],
