@@ -1,3 +1,37 @@
 # UI 커스터마이징
 
+`@stackflow/plugin-ui`의 `uiPlugin()`은 기본적으로 모든 액티비티에 UI를 입혀요. UI 커스터마이징을 위해서는 해당 플러그인을 제외해요.
+
+```typescript
+/**
+ * stackflow.ts
+ */
+import { stackflow } from "@stackflow/react";
+import { renderPlugin } from "@stackflow/plugin-render";
+import { uiPlugin } from "@stackflow/plugin-ui";
+import { historySyncPlugin } from "@stackflow/plugin-history-sync";
+import MyActivity from "./MyActivity";
+import Article from "./Article";
+
+const { Stack, useFlow } = stackflow({
+  transitionDuration: 350,
+  activities: {
+    MyActivity,
+    Article,
+  },
+  plugins: [
+    renderPlugin(),
+    historySyncPlugin({
+      routes: {
+        MyActivity: "/my-activity",
+        Article: "/articles/:title",
+      },
+      fallbackActivity: "MyActivity",
+    }),
+  ],
+  // UI 커스터마이징을 위해 uiPlugin을 삭제해요
+  // uiPlugin(),
+});
+```
+
 ## 현재 액티비티의 상태 가져오기
