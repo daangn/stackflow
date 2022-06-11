@@ -1,4 +1,5 @@
 import Callout from "nextra-theme-docs/callout";
+import DiagramEffectHook from "../../components/DiagramEffectHook.tsx";
 
 # 플러그인 작성하기
 
@@ -175,13 +176,9 @@ stackflow({
   사이드 이펙트가 생길 수 있으니 주의해서 사용해요.
 </Callout>
 
-## 라이프사이클 훅
+## 초기화 시점에 동작 주입하기
 
-기능을 확장하거나 외부의 상태와 동기화하고 싶으신가요? 스택 상태가 변화할때마다 특정 동작을 하거나, 또는 스택 상태가 변경되기 이전에 함수를 호출할 수 있어요.
-
-### `onInit`
-
-`<Stack />` 컴포넌트가 최초로 초기화 될때 호출돼요.
+`<Stack />` 컴포넌트가 최초로 초기화 될 때 로직을 호출하고 싶다면 `onInit` 훅을 사용해요.
 
 ```tsx
 stackflow({
@@ -204,10 +201,64 @@ stackflow({
   않은 부수효과가 없도록 신경써주세요.
 </Callout>
 
-### `onBeforePush`, `onBeforeReplace`, `onBeforePop`
+## 이펙트 훅
 
-### `onPushed`, `onReplaced`, `onPopped`
+기능을 확장하거나 외부의 상태와 동기화하고 싶으신가요? 스택 상태가 변화할때마다 특정 동작을 하거나, 또는 스택 상태가 변경되기 이전에 함수를 호출할 수 있어요.
 
-### `onChanged`
+스택 상태는 유저의 행동으로 인해, push, replace, pop이 호출됐을때 변화하기 시작해요. 해당 시점부터 스택 상태가 변화하기 전(Pre-effect)과 변화한 뒤 UI까지 반영된 이후 (Post-effect)에 특정 동작을 수행할 수 있어요.
+
+<DiagramEffectHook />
+
+### Post-effects
+
+Post-effect 훅에는 `onPushed`, `onReplaced`, `onPopped`, `onChanged`가 있어요. Post-effect 훅은 UI까지 모두 반영된 이후에 호출되기 때문에, 해당 변화를 다시 돌이키거나 취소할 수 없어요. Post-effect 훅은 다음과 같은 인자를 사용할 수 있어요.
+
+| 필드                      | 설명                                                                                            |
+| ------------------------- | ----------------------------------------------------------------------------------------------- |
+| `actions.getState()`      | 현재 스택의 상태를 가져올 수 있어요                                                             |
+| `actions.dispatchEvent()` | 코어에 새 이벤트를 추가해요 (이벤트에 대한 자세한 설명은 설계와 원칙 문서에서 확인할 수 있어요) |
+| `effect`                  | 해당 이펙트 훅을 촉발시킨 이펙트를 가져올 수 있어요                                             |
+
+```tsx
+stackflow({
+  // ...
+  plugins: [
+    () => {
+      return {
+        key: "my-plugin",
+        onPushed(actions, effect) {
+          // actions.getState()
+          // actions.dispatchEvent(...)
+          // 를 활용할 수 있어요
+          console.log("Pushed!");
+          console.log("Effect:", effect);
+        },
+      };
+    },
+  ],
+});
+```
+
+<Callout emoji="💡">
+  `onChanged` 훅은 스택 상태가 변경될때마다 구별없이 모두 호출돼요. 따라서
+  `onPushed`, `onReplaced`, `onPopped`와 함께 사용하면, 두 이펙트 훅 모두
+  호출돼요.
+</Callout>
+<Callout type="error" emoji="🚫">
+  **경고** - 만약 이펙트 훅 내부에서 해당 이펙트를 촉발하는 이벤트를
+  dispatch하는 경우 이펙트 훅과 맞물려서 무한 루프가 돌 수 있어요.
+  `actions.dispatchEvent()`를 활용하는 경우 주의해서 사용하세요.
+</Callout>
+
+### Pre-effects
+
+Pre-effect 훅에는 `onBeforePush`, `onBeforeReplace`, `onBeforePop`이 있어요. Pre-effect 훅은 아직 Core에 해당 이벤트가 전달되기 전에 호출되기 때문에, 해당 이벤트를 취소할 수 있어요. Pre-effect 훅은 다음과 같은 인자를 사용할 수 있어요.
+
+| 필드                       | 설명                                                                                            |
+| -------------------------- | ----------------------------------------------------------------------------------------------- |
+| `actions.preventDefault()` | (추가) 기본 동작을 취소해요.                                                                    |
+| `actions.getState()`       | 현재 스택의 상태를 가져올 수 있어요                                                             |
+| `actions.dispatchEvent()`  | 코어에 새 이벤트를 추가해요 (이벤트에 대한 자세한 설명은 설계와 원칙 문서에서 확인할 수 있어요) |
+| `effect`                   | 해당 이펙트 훅을 촉발시킨 이펙트를 가져올 수 있어요                                             |
 
 ## 첫 액티비티 결정하기
