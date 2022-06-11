@@ -4,5 +4,5 @@
   "useFlow": "useFlow()",
   "useActivity": "useActivity()",
   "useStack": "useStack()",
-  "useStackActions": "useStackActions()"
+  "useActions": "useActions()"
 }
