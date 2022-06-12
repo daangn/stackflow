@@ -51,7 +51,7 @@ const AppBar: React.FC<AppBarProps> = ({
     innerRef: centerRef,
     maxWidth,
   } = useMaxWidth({
-    disable: theme === "cupertino",
+    enable: theme === "cupertino",
   });
 
   const onBack = () => {

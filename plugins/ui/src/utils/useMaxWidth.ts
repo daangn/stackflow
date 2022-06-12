@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { noop } from "./noop";
 import { onResize } from "./onResize";
 
-export function useMaxWidth({ disable }: { disable: boolean }) {
+export function useMaxWidth({ enable }: { enable: boolean }) {
   const outerRef = useRef<any>(null);
   const innerRef = useRef<any>(null);
 
@@ -13,7 +13,7 @@ export function useMaxWidth({ disable }: { disable: boolean }) {
     const $outer = outerRef.current;
     const $inner = innerRef.current;
 
-    if (disable || !$outer || !$inner) {
+    if (!enable || !$outer || !$inner) {
       return noop;
     }
 
