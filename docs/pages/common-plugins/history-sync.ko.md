@@ -32,4 +32,4 @@
 
 #### Defined in
 
-[historySyncPlugin.tsx:44](https://github.com/daangn/stackflow/blob/5c80059/plugins/history-sync/src/historySyncPlugin.tsx#L44)
+[historySyncPlugin.tsx:44](https://github.com/daangn/stackflow/blob/76eebf4/plugins/history-sync/src/historySyncPlugin.tsx#L44)

@@ -20,7 +20,7 @@
 
 #### Defined in
 
-[AppScreen.tsx:27](https://github.com/daangn/stackflow/blob/5c80059/plugins/ui/src/AppScreen.tsx#L27)
+[AppScreen.tsx:27](https://github.com/daangn/stackflow/blob/76eebf4/plugins/ui/src/AppScreen.tsx#L27)
 
 ## Functions
 
@@ -46,4 +46,4 @@
 
 #### Defined in
 
-[uiPlugin.tsx:16](https://github.com/daangn/stackflow/blob/5c80059/plugins/ui/src/uiPlugin.tsx#L16)
+[uiPlugin.tsx:16](https://github.com/daangn/stackflow/blob/76eebf4/plugins/ui/src/uiPlugin.tsx#L16)
