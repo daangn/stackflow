@@ -33,7 +33,7 @@
 
 #### Defined in
 
-[integrations/react/src/stackflow.tsx:11](https://github.com/daangn/stackflow/blob/2412bfd/integrations/react/src/stackflow.tsx#L11)
+[integrations/react/src/stackflow.tsx:11](https://github.com/daangn/stackflow/blob/5c80059/integrations/react/src/stackflow.tsx#L11)
 
 ___
 
@@ -49,7 +49,7 @@ ___
 
 #### Defined in
 
-[integrations/react/src/activity/ActivityComponentType.tsx:4](https://github.com/daangn/stackflow/blob/2412bfd/integrations/react/src/activity/ActivityComponentType.tsx#L4)
+[integrations/react/src/activity/ActivityComponentType.tsx:4](https://github.com/daangn/stackflow/blob/5c80059/integrations/react/src/activity/ActivityComponentType.tsx#L4)
 
 ___
 
@@ -71,7 +71,7 @@ ___
 
 #### Defined in
 
-[integrations/react/src/stackflow.tsx:15](https://github.com/daangn/stackflow/blob/2412bfd/integrations/react/src/stackflow.tsx#L15)
+[integrations/react/src/stackflow.tsx:15](https://github.com/daangn/stackflow/blob/5c80059/integrations/react/src/stackflow.tsx#L15)
 
 ___
 
@@ -96,7 +96,7 @@ ___
 
 #### Defined in
 
-[integrations/react/src/stackflow.tsx:19](https://github.com/daangn/stackflow/blob/2412bfd/integrations/react/src/stackflow.tsx#L19)
+[integrations/react/src/stackflow.tsx:19](https://github.com/daangn/stackflow/blob/5c80059/integrations/react/src/stackflow.tsx#L19)
 
 ___
 
@@ -121,7 +121,7 @@ ___
 
 #### Defined in
 
-[integrations/react/src/StackflowReactPlugin.ts:4](https://github.com/daangn/stackflow/blob/2412bfd/integrations/react/src/StackflowReactPlugin.ts#L4)
+[integrations/react/src/StackflowReactPlugin.ts:4](https://github.com/daangn/stackflow/blob/5c80059/integrations/react/src/StackflowReactPlugin.ts#L4)
 
 ## Functions
 
@@ -152,7 +152,7 @@ ___
 
 #### Defined in
 
-[integrations/react/src/stackflow.tsx:26](https://github.com/daangn/stackflow/blob/2412bfd/integrations/react/src/stackflow.tsx#L26)
+[integrations/react/src/stackflow.tsx:26](https://github.com/daangn/stackflow/blob/5c80059/integrations/react/src/stackflow.tsx#L26)
 
 ___
 
@@ -172,7 +172,7 @@ ___
 
 #### Defined in
 
-[integrations/react/src/useActions.ts:5](https://github.com/daangn/stackflow/blob/2412bfd/integrations/react/src/useActions.ts#L5)
+[integrations/react/src/useActions.ts:5](https://github.com/daangn/stackflow/blob/5c80059/integrations/react/src/useActions.ts#L5)
 
 ___
 
@@ -186,7 +186,7 @@ ___
 
 #### Defined in
 
-[integrations/react/src/activity/useActivity.ts:5](https://github.com/daangn/stackflow/blob/2412bfd/integrations/react/src/activity/useActivity.ts#L5)
+[integrations/react/src/activity/useActivity.ts:5](https://github.com/daangn/stackflow/blob/5c80059/integrations/react/src/activity/useActivity.ts#L5)
 
 ___
 
@@ -206,7 +206,7 @@ ___
 
 #### Defined in
 
-[integrations/react/src/activity/useActivityParams.ts:6](https://github.com/daangn/stackflow/blob/2412bfd/integrations/react/src/activity/useActivityParams.ts#L6)
+[integrations/react/src/activity/useActivityParams.ts:6](https://github.com/daangn/stackflow/blob/5c80059/integrations/react/src/activity/useActivityParams.ts#L6)
 
 ___
 
@@ -220,7 +220,7 @@ ___
 
 #### Defined in
 
-[integrations/react/src/plugins/usePlugins.ts:5](https://github.com/daangn/stackflow/blob/2412bfd/integrations/react/src/plugins/usePlugins.ts#L5)
+[integrations/react/src/plugins/usePlugins.ts:5](https://github.com/daangn/stackflow/blob/5c80059/integrations/react/src/plugins/usePlugins.ts#L5)
 
 ___
 
@@ -234,4 +234,4 @@ ___
 
 #### Defined in
 
-[integrations/react/src/stack/useStack.ts:5](https://github.com/daangn/stackflow/blob/2412bfd/integrations/react/src/stack/useStack.ts#L5)
+[integrations/react/src/stack/useStack.ts:5](https://github.com/daangn/stackflow/blob/5c80059/integrations/react/src/stack/useStack.ts#L5)

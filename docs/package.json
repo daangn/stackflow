@@ -4,11 +4,16 @@
   "description": "Mobile-first stack navigator framework with Composable Plugin System",
   "scripts": {
     "build": "yarn generate && next build",
-    "generate": "yarn workspace @stackflow/monorepo typedoc && node ./generate.js",
+    "generate": "node ./generate.js",
     "start": "next"
   },
   "dependencies": {
     "@mdx-js/react": "^2.1.1",
+    "@stackflow/core": "workspace:^",
+    "@stackflow/plugin-history-sync": "workspace:^",
+    "@stackflow/plugin-render": "workspace:^",
+    "@stackflow/plugin-ui": "workspace:^",
+    "@stackflow/react": "workspace:^",
     "next": "^12.1.6",
     "nextra": "^2.0.0-beta.5",
     "nextra-theme-docs": "^2.0.0-beta.5",

@@ -16,12 +16,12 @@
     "src"
   ],
   "scripts": {
-    "build": "yarn build:js && yarn build:dts",
+    "build": "yarn build:js && yarn build:dts && yarn build:docs",
+    "build:docs": "typedoc",
     "build:dts": "tsc --emitDeclarationOnly",
     "build:js": "node ./esbuild.config.js",
     "clean": "rimraf dist && rimraf docs",
-    "dev": "yarn build:js --watch && yarn build:dts --watch",
-    "typedoc": "typedoc"
+    "dev": "yarn build:js --watch && yarn build:dts --watch"
   },
   "devDependencies": {
     "@stackflow/core": "workspace:^",

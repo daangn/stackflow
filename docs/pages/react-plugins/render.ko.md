@@ -20,4 +20,4 @@
 
 #### Defined in
 
-[renderPlugin.tsx:6](https://github.com/daangn/stackflow/blob/2412bfd/plugins/render/src/renderPlugin.tsx#L6)
+[renderPlugin.tsx:6](https://github.com/daangn/stackflow/blob/5c80059/plugins/render/src/renderPlugin.tsx#L6)
