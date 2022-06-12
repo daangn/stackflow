@@ -4,6 +4,7 @@
   "description": "Mobile-first stack navigator framework with Composable Plugin System",
   "scripts": {
     "build": "next build",
+    "generate": "yarn workspace @stackflow/monorepo build",
     "start": "next"
   },
   "dependencies": {

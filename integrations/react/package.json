@@ -16,10 +16,11 @@
     "src"
   ],
   "scripts": {
-    "build": "yarn build:js && yarn build:dts",
+    "build": "yarn build:js && yarn build:dts && yarn build:docs",
+    "build:docs": "typedoc",
     "build:dts": "tsc --emitDeclarationOnly",
     "build:js": "node ./esbuild.config.js",
-    "clean": "rimraf dist",
+    "clean": "rimraf dist && rimraf docs",
     "dev": "yarn build:js --watch && yarn build:dts --watch",
     "test": "jest"
   },
@@ -31,6 +32,8 @@
     "@types/react": "^18.0.9",
     "react": "^18.1.0",
     "rimraf": "^3.0.2",
+    "typedoc": "^0.22.17",
+    "typedoc-plugin-markdown": "^3.12.1",
     "typescript": "^4.6.3"
   },
   "peerDependencies": {
