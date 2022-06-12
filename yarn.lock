@@ -2212,6 +2212,8 @@ __metadata:
     "@types/react": ^18.0.10
     react: ^18.1.0
     rimraf: ^3.0.2
+    typedoc: ^0.22.17
+    typedoc-plugin-markdown: ^3.12.1
     typescript: ^4.6.3
     url-pattern: ^1.0.3
   peerDependencies:
@@ -2231,6 +2233,8 @@ __metadata:
     "@types/react": ^18.0.10
     react: ^18.1.0
     rimraf: ^3.0.2
+    typedoc: ^0.22.17
+    typedoc-plugin-markdown: ^3.12.1
     typescript: ^4.6.3
   peerDependencies:
     "@stackflow/core": "workspace:^"
@@ -2254,6 +2258,8 @@ __metadata:
     "@vanilla-extract/recipes": ^0.2.5
     react: ^18.1.0
     rimraf: ^3.0.2
+    typedoc: ^0.22.17
+    typedoc-plugin-markdown: ^3.12.1
     typescript: ^4.6.3
   peerDependencies:
     "@stackflow/core": "workspace:^"
