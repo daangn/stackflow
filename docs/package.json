@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "description": "Mobile-first stack navigator framework with Composable Plugin System",
   "scripts": {
-    "build": "next build",
-    "generate": "yarn workspace @stackflow/monorepo build",
+    "build": "yarn generate && next build",
+    "generate": "yarn workspace @stackflow/monorepo typedoc && node ./generate.js",
     "start": "next"
   },
   "dependencies": {

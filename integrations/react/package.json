@@ -16,13 +16,13 @@
     "src"
   ],
   "scripts": {
-    "build": "yarn build:js && yarn build:dts && yarn build:docs",
-    "build:docs": "typedoc",
+    "build": "yarn build:js && yarn build:dts",
     "build:dts": "tsc --emitDeclarationOnly",
     "build:js": "node ./esbuild.config.js",
     "clean": "rimraf dist && rimraf docs",
     "dev": "yarn build:js --watch && yarn build:dts --watch",
-    "test": "jest"
+    "test": "jest",
+    "typedoc": "typedoc"
   },
   "dependencies": {
     "react-fast-compare": "^3.2.0"

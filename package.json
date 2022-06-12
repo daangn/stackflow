@@ -16,6 +16,7 @@
     "dev": "ultra -r dev",
     "format": "eslint --fix --ignore-path .gitignore && prettier -w .",
     "lerna:publish": "yarn build && lerna publish",
+    "typedoc": "ultra -r --build typedoc",
     "version": "yarn install && git stage yarn.lock"
   },
   "resolutions": {
