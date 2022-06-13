@@ -59,6 +59,15 @@ export const CoreProvider: React.FC<CoreProviderProps> = ({
         })
       : null;
 
+    if (initialPushedEventByPlugin && initialPushedEventByOption) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        `Stackflow - ` +
+          ` Some plugin overrides an "initialActivity" option.` +
+          ` The "initialActivity" option you set to "${initialPushedEventByOption.activityName}" in the "stackflow" is ignored.`,
+      );
+    }
+
     const initialPushedEvent =
       initialPushedEventByPlugin ?? initialPushedEventByOption;
 
