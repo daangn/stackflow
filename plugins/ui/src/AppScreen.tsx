@@ -13,8 +13,6 @@ import {
   useVisibleActivities,
 } from "./utils";
 
-const last = <T extends unknown>(arr: T[]) => arr[arr.length - 1];
-
 type PropOf<T> = T extends React.ComponentType<infer U> ? U : unknown;
 
 const appScreenPaperRefMap = new Map<string, React.RefObject<any>>();
@@ -22,9 +20,15 @@ const appScreenPaperRefMap = new Map<string, React.RefObject<any>>();
 interface AppScreenProps {
   theme: "android" | "cupertino";
   appBar?: Omit<PropOf<typeof AppBar>, "theme">;
+  backgroundColor?: string;
   children: React.ReactNode;
 }
-const AppScreen: React.FC<AppScreenProps> = ({ theme, appBar, children }) => {
+const AppScreen: React.FC<AppScreenProps> = ({
+  theme,
+  appBar,
+  children,
+  backgroundColor = css.vars.backgroundColor,
+}) => {
   const stack = useStack();
   const actions = useActions();
 
@@ -121,6 +125,7 @@ const AppScreen: React.FC<AppScreenProps> = ({ theme, appBar, children }) => {
         [css.vars.zIndexes.paper]: `${zIndexPaper}`,
         [css.vars.zIndexes.appBar]: `${zIndexAppBar}`,
         [css.vars.transitionDuration]: `${stack.transitionDuration}ms`,
+        [css.vars.backgroundColor]: backgroundColor,
       })}
     >
       <div ref={dimRef} className={css.dim} />

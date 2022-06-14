@@ -21,6 +21,9 @@ interface AppBarProps {
   customCloseButton?: () => React.ReactNode;
   onClose?: () => void;
   border?: boolean;
+  iconColor?: string;
+  textColor?: string;
+  borderColor?: string;
 }
 const AppBar: React.FC<AppBarProps> = ({
   theme,
@@ -32,6 +35,9 @@ const AppBar: React.FC<AppBarProps> = ({
   customCloseButton,
   onClose,
   border = true,
+  iconColor = appScreenCss.vars.appBar.iconColor,
+  textColor = appScreenCss.vars.appBar.textColor,
+  borderColor = appScreenCss.vars.appBar.borderColor,
 }) => {
   const actions = useActions();
 
@@ -85,6 +91,9 @@ const AppBar: React.FC<AppBarProps> = ({
       })}
       style={assignInlineVars({
         [appScreenCss.vars.appBar.center.mainWidth]: `${maxWidth}px`,
+        [appScreenCss.vars.appBar.iconColor]: iconColor,
+        [appScreenCss.vars.appBar.textColor]: textColor,
+        [appScreenCss.vars.appBar.borderColor]: borderColor,
       })}
     >
       <div className={css.left}>
