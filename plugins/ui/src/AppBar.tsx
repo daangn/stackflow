@@ -6,6 +6,7 @@ import * as css from "./AppBar.css";
 import * as appScreenCss from "./AppScreen.css";
 import { IconBack, IconClose } from "./assets";
 import {
+  compactMap,
   useActiveActivities,
   useMaxWidth,
   useTopActiveActivity,
@@ -35,9 +36,9 @@ const AppBar: React.FC<AppBarProps> = ({
   customCloseButton,
   onClose,
   border = true,
-  iconColor = appScreenCss.vars.appBar.iconColor,
-  textColor = appScreenCss.vars.appBar.textColor,
-  borderColor = appScreenCss.vars.appBar.borderColor,
+  iconColor,
+  textColor,
+  borderColor,
 }) => {
   const actions = useActions();
 
@@ -89,12 +90,14 @@ const AppBar: React.FC<AppBarProps> = ({
         border,
         isTopActive,
       })}
-      style={assignInlineVars({
-        [appScreenCss.vars.appBar.center.mainWidth]: `${maxWidth}px`,
-        [appScreenCss.vars.appBar.iconColor]: iconColor,
-        [appScreenCss.vars.appBar.textColor]: textColor,
-        [appScreenCss.vars.appBar.borderColor]: borderColor,
-      })}
+      style={assignInlineVars(
+        compactMap({
+          [appScreenCss.vars.appBar.center.mainWidth]: `${maxWidth}px`,
+          [appScreenCss.vars.appBar.iconColor]: iconColor,
+          [appScreenCss.vars.appBar.textColor]: textColor,
+          [appScreenCss.vars.appBar.borderColor]: borderColor,
+        }),
+      )}
     >
       <div className={css.left}>
         {closeButtonLocation === "left" && closeButton}

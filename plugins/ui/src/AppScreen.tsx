@@ -6,6 +6,7 @@ import { useSwipeBack } from "utils/useSwipeBack";
 import AppBar from "./AppBar";
 import * as css from "./AppScreen.css";
 import {
+  compactMap,
   findBefore,
   useTopActiveActivity,
   useTopVisibleActivity,
@@ -27,7 +28,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
   theme,
   appBar,
   children,
-  backgroundColor = css.vars.backgroundColor,
+  backgroundColor,
 }) => {
   const stack = useStack();
   const actions = useActions();
@@ -120,13 +121,15 @@ const AppScreen: React.FC<AppScreenProps> = ({
     <div
       ref={appScreenRef}
       className={appScreen}
-      style={assignInlineVars({
-        [css.vars.zIndexes.dim]: `${zIndexDim}`,
-        [css.vars.zIndexes.paper]: `${zIndexPaper}`,
-        [css.vars.zIndexes.appBar]: `${zIndexAppBar}`,
-        [css.vars.transitionDuration]: `${stack.transitionDuration}ms`,
-        [css.vars.backgroundColor]: backgroundColor,
-      })}
+      style={assignInlineVars(
+        compactMap({
+          [css.vars.zIndexes.dim]: `${zIndexDim}`,
+          [css.vars.zIndexes.paper]: `${zIndexPaper}`,
+          [css.vars.zIndexes.appBar]: `${zIndexAppBar}`,
+          [css.vars.transitionDuration]: `${stack.transitionDuration}ms`,
+          [css.vars.backgroundColor]: backgroundColor,
+        }),
+      )}
     >
       <div ref={dimRef} className={css.dim} />
       <div

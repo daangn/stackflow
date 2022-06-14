@@ -1,3 +1,4 @@
+export * from "./compactMap";
 export * from "./findAfter";
 export * from "./findBefore";
 export * from "./last";
