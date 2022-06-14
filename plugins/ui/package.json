@@ -28,9 +28,9 @@
     "@vanilla-extract/dynamic": "^2.0.2"
   },
   "devDependencies": {
-    "@stackflow/core": "workspace:^",
-    "@stackflow/esbuild-config": "workspace:^",
-    "@stackflow/react": "workspace:^",
+    "@stackflow/core": "^0.1.0",
+    "@stackflow/esbuild-config": "^0.1.0",
+    "@stackflow/react": "^0.1.0",
     "@types/react": "^18.0.10",
     "@vanilla-extract/css": "^1.7.1",
     "@vanilla-extract/css-utils": "^0.1.2",
@@ -42,8 +42,8 @@
     "typescript": "^4.6.3"
   },
   "peerDependencies": {
-    "@stackflow/core": "workspace:^",
-    "@stackflow/react": "workspace:^",
+    "@stackflow/core": "^0.1.0",
+    "@stackflow/react": "^0.1.0",
     "@types/react": ">=16.8.0",
     "react": ">=16.8.0"
   },

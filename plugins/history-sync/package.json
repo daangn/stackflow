@@ -27,8 +27,8 @@
     "url-pattern": "^1.0.3"
   },
   "devDependencies": {
-    "@stackflow/core": "workspace:^",
-    "@stackflow/esbuild-config": "workspace:^",
+    "@stackflow/core": "^0.1.0",
+    "@stackflow/esbuild-config": "^0.1.0",
     "@types/react": "^18.0.10",
     "react": "^18.1.0",
     "rimraf": "^3.0.2",
@@ -37,7 +37,7 @@
     "typescript": "^4.6.3"
   },
   "peerDependencies": {
-    "@stackflow/core": "workspace:^",
+    "@stackflow/core": "^0.1.0",
     "@types/react": ">=16.8.0",
     "react": ">=16.8.0"
   },

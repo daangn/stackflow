@@ -2122,11 +2122,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@stackflow/core@workspace:^, @stackflow/core@workspace:core":
+"@stackflow/core@^0.1.0, @stackflow/core@workspace:core":
   version: 0.0.0-use.local
   resolution: "@stackflow/core@workspace:core"
   dependencies:
-    "@stackflow/esbuild-config": "workspace:^"
+    "@stackflow/esbuild-config": ^0.1.0
     "@swc/core": ^1.2.182
     "@swc/jest": ^0.2.21
     "@types/jest": ^27.5.1
@@ -2145,11 +2145,11 @@ __metadata:
   resolution: "@stackflow/docs@workspace:docs"
   dependencies:
     "@mdx-js/react": ^2.1.1
-    "@stackflow/core": "workspace:^"
-    "@stackflow/plugin-history-sync": "workspace:^"
-    "@stackflow/plugin-render": "workspace:^"
-    "@stackflow/plugin-ui": "workspace:^"
-    "@stackflow/react": "workspace:^"
+    "@stackflow/core": ^0.1.0
+    "@stackflow/plugin-history-sync": ^0.1.0
+    "@stackflow/plugin-render": ^0.1.0
+    "@stackflow/plugin-ui": ^0.1.0
+    "@stackflow/react": ^0.1.0
     next: ^12.1.6
     nextra: ^2.0.0-beta.5
     nextra-theme-docs: ^2.0.0-beta.5
@@ -2158,7 +2158,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/esbuild-config@workspace:^, @stackflow/esbuild-config@workspace:packages/esbuild-config":
+"@stackflow/esbuild-config@^0.1.0, @stackflow/esbuild-config@workspace:packages/esbuild-config":
   version: 0.0.0-use.local
   resolution: "@stackflow/esbuild-config@workspace:packages/esbuild-config"
   dependencies:
@@ -2170,10 +2170,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@stackflow/example@workspace:example"
   dependencies:
-    "@stackflow/core": "workspace:^"
-    "@stackflow/plugin-history-sync": "workspace:^"
-    "@stackflow/plugin-render": "workspace:^"
-    "@stackflow/plugin-ui": "workspace:^"
+    "@stackflow/core": ^0.1.0
+    "@stackflow/plugin-history-sync": ^0.1.0
+    "@stackflow/plugin-render": ^0.1.0
+    "@stackflow/plugin-ui": ^0.1.0
     "@types/react": ^18.0.10
     "@types/react-dom": ^18.0.5
     "@vanilla-extract/css": ^1.7.1
@@ -2208,12 +2208,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/plugin-history-sync@workspace:^, @stackflow/plugin-history-sync@workspace:plugins/history-sync":
+"@stackflow/plugin-history-sync@^0.1.0, @stackflow/plugin-history-sync@workspace:plugins/history-sync":
   version: 0.0.0-use.local
   resolution: "@stackflow/plugin-history-sync@workspace:plugins/history-sync"
   dependencies:
-    "@stackflow/core": "workspace:^"
-    "@stackflow/esbuild-config": "workspace:^"
+    "@stackflow/core": ^0.1.0
+    "@stackflow/esbuild-config": ^0.1.0
     "@types/react": ^18.0.10
     react: ^18.1.0
     rimraf: ^3.0.2
@@ -2222,19 +2222,19 @@ __metadata:
     typescript: ^4.6.3
     url-pattern: ^1.0.3
   peerDependencies:
-    "@stackflow/core": "workspace:^"
+    "@stackflow/core": ^0.1.0
     "@types/react": ">=16.8.0"
     react: ">=16.8.0"
   languageName: unknown
   linkType: soft
 
-"@stackflow/plugin-render@workspace:^, @stackflow/plugin-render@workspace:plugins/render":
+"@stackflow/plugin-render@^0.1.0, @stackflow/plugin-render@workspace:plugins/render":
   version: 0.0.0-use.local
   resolution: "@stackflow/plugin-render@workspace:plugins/render"
   dependencies:
-    "@stackflow/core": "workspace:^"
-    "@stackflow/esbuild-config": "workspace:^"
-    "@stackflow/react": "workspace:^"
+    "@stackflow/core": ^0.1.0
+    "@stackflow/esbuild-config": ^0.1.0
+    "@stackflow/react": ^0.1.0
     "@types/react": ^18.0.10
     react: ^18.1.0
     rimraf: ^3.0.2
@@ -2242,20 +2242,20 @@ __metadata:
     typedoc-plugin-markdown: ^3.12.1
     typescript: ^4.6.3
   peerDependencies:
-    "@stackflow/core": "workspace:^"
-    "@stackflow/react": "workspace:^"
+    "@stackflow/core": ^0.1.0
+    "@stackflow/react": ^0.1.0
     "@types/react": ">=16.8.0"
     react: ">=16.8.0"
   languageName: unknown
   linkType: soft
 
-"@stackflow/plugin-ui@workspace:^, @stackflow/plugin-ui@workspace:plugins/ui":
+"@stackflow/plugin-ui@^0.1.0, @stackflow/plugin-ui@workspace:plugins/ui":
   version: 0.0.0-use.local
   resolution: "@stackflow/plugin-ui@workspace:plugins/ui"
   dependencies:
-    "@stackflow/core": "workspace:^"
-    "@stackflow/esbuild-config": "workspace:^"
-    "@stackflow/react": "workspace:^"
+    "@stackflow/core": ^0.1.0
+    "@stackflow/esbuild-config": ^0.1.0
+    "@stackflow/react": ^0.1.0
     "@types/react": ^18.0.10
     "@vanilla-extract/css": ^1.7.1
     "@vanilla-extract/css-utils": ^0.1.2
@@ -2267,18 +2267,18 @@ __metadata:
     typedoc-plugin-markdown: ^3.12.1
     typescript: ^4.6.3
   peerDependencies:
-    "@stackflow/core": "workspace:^"
-    "@stackflow/react": "workspace:^"
+    "@stackflow/core": ^0.1.0
+    "@stackflow/react": ^0.1.0
     "@types/react": ">=16.8.0"
     react: ">=16.8.0"
   languageName: unknown
   linkType: soft
 
-"@stackflow/react@workspace:^, @stackflow/react@workspace:integrations/react":
+"@stackflow/react@^0.1.0, @stackflow/react@workspace:integrations/react":
   version: 0.0.0-use.local
   resolution: "@stackflow/react@workspace:integrations/react"
   dependencies:
-    "@stackflow/core": "workspace:^"
+    "@stackflow/core": ^0.1.0
     "@types/react": ^18.0.9
     react: ^18.1.0
     react-fast-compare: ^3.2.0
@@ -2287,7 +2287,7 @@ __metadata:
     typedoc-plugin-markdown: ^3.12.1
     typescript: ^4.6.3
   peerDependencies:
-    "@stackflow/core": "workspace:^"
+    "@stackflow/core": ^0.1.0
     react: ">=16.8.0"
   languageName: unknown
   linkType: soft

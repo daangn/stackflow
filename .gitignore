@@ -20,3 +20,5 @@ node_modules
 .DS_Store
 dist
 .ultra.cache.json
+
+lerna-debug.log

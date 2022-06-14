@@ -1,6 +1,5 @@
 {
   "name": "@stackflow/docs",
-  "version": "0.0.0",
   "private": true,
   "description": "Mobile-first stack navigator framework with Composable Plugin System",
   "scripts": {
@@ -10,11 +9,11 @@
   },
   "dependencies": {
     "@mdx-js/react": "^2.1.1",
-    "@stackflow/core": "workspace:^",
-    "@stackflow/plugin-history-sync": "workspace:^",
-    "@stackflow/plugin-render": "workspace:^",
-    "@stackflow/plugin-ui": "workspace:^",
-    "@stackflow/react": "workspace:^",
+    "@stackflow/core": "^0.1.0",
+    "@stackflow/plugin-history-sync": "^0.1.0",
+    "@stackflow/plugin-render": "^0.1.0",
+    "@stackflow/plugin-ui": "^0.1.0",
+    "@stackflow/react": "^0.1.0",
     "next": "^12.1.6",
     "nextra": "^2.0.0-beta.5",
     "nextra-theme-docs": "^2.0.0-beta.5",
