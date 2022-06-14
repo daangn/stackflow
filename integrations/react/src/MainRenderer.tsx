@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import { useCoreState } from "./core";
 import PluginRenderer from "./PluginRenderer";
@@ -12,20 +12,32 @@ const MainRenderer: React.FC<MainRendererProps> = ({ activities }) => {
   const coreState = useCoreState();
   const plugins = usePlugins();
 
+  const renderPlugins = plugins.filter(
+    (plugin): plugin is WithRequired<typeof plugin, "render"> =>
+      !!plugin.render,
+  );
+
+  useEffect(() => {
+    if (renderPlugins.length === 0) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        `Stackflow -` +
+          ` There is no rendering plugin, so "<Stack />" doesn't render anything.` +
+          ` If you want to render some UI, use "@stackflow/plugin-render"` +
+          ` or add another rendering plugin.`,
+      );
+    }
+  }, [renderPlugins]);
+
   let output = (
     <>
-      {plugins
-        .filter(
-          (plugin): plugin is WithRequired<typeof plugin, "render"> =>
-            !!plugin.render,
-        )
-        .map((plugin) => (
-          <PluginRenderer
-            activities={activities}
-            key={plugin.key}
-            plugin={plugin}
-          />
-        ))}
+      {renderPlugins.map((plugin) => (
+        <PluginRenderer
+          activities={activities}
+          key={plugin.key}
+          plugin={plugin}
+        />
+      ))}
     </>
   );
 
