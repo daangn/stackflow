@@ -72,11 +72,11 @@ export function useSwipeBack({
       }
     }
 
-    function resetTranslation() {
+    function resetTranslation({ ok }: { ok: boolean }) {
       requestAnimationFrame(() => {
         set(
           css`
-            opacity: 0;
+            opacity: ${ok ? 0 : 1};
             transition: opacity ${transitionDuration}ms;
           `,
           $dim,
@@ -84,14 +84,14 @@ export function useSwipeBack({
         set(
           css`
             overflow-y: hidden;
-            transform: translateX(100%);
+            transform: translateX(${ok ? "100%" : "0"});
             transition: transform ${transitionDuration}ms;
           `,
           $paper,
         );
         set(
           css`
-            transform: translateX(0);
+            transform: translateX(${ok ? "0" : "-5rem"});
             transition: transform ${transitionDuration}ms;
           `,
           $beforePaper,
@@ -152,7 +152,7 @@ export function useSwipeBack({
       }
 
       resetState();
-      resetTranslation();
+      resetTranslation({ ok });
     };
 
     $edge.addEventListener("touchstart", onTouchStart, { passive: true });
