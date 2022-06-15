@@ -16,7 +16,7 @@ export default {
   customSearch: null,
   darkMode: true,
   footer: true,
-  footerText: `MIT ${new Date().getFullYear()} © Stackflow`,
+  footerText: `Apache-2.0 ${new Date().getFullYear()} © Stackflow`,
   footerEditLink: false,
   logo: (
     <div
