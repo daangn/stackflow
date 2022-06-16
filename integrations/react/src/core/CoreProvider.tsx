@@ -14,9 +14,9 @@ import React, {
 import isEqual from "react-fast-compare";
 
 import { makeActivityId } from "../activity";
+import { BaseActivities } from "../BaseActivities";
 import { useContext } from "../context";
 import { usePlugins } from "../plugins";
-import { Activities } from "../stackflow";
 import { CoreActionsContext } from "./CoreActionsContext";
 import { CoreStateContext } from "./CoreStateContext";
 
@@ -28,7 +28,7 @@ const SECOND = 1000;
 const INTERVAL_MS = SECOND / 60;
 
 export interface CoreProviderProps {
-  activities: Activities;
+  activities: BaseActivities;
   transitionDuration: number;
   initialActivity?: (args: { context: any }) => string;
   children: React.ReactNode;
