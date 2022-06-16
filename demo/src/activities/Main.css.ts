@@ -32,12 +32,12 @@ export const appBarRight = style([
 
 export const scrollable = style([
   f.flex1,
+  f.overflowScroll,
   {
     paddingTop: [
       `calc(${cssVars.appBar.height} + constant(safe-area-inset-top))`,
       `calc(${cssVars.appBar.height} + env(safe-area-inset-top))`,
     ],
-    overflow: "scroll",
   },
 ]);
 

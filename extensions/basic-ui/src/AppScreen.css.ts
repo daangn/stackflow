@@ -144,6 +144,10 @@ export const paper = recipe({
     allTransitions,
     {
       overflowY: "scroll",
+      WebkitOverflowScrolling: "touch",
+      "::-webkit-scrollbar": {
+        display: "none",
+      },
       selectors: {
         [`${cupertino} &`]: {
           transform: "translateX(100%)",

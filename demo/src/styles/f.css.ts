@@ -83,3 +83,11 @@ export const overflowHidden = style({
   transform: "translate3d(0, 0, 0)",
   maskImage: "-webkit-radial-gradient(white, black)",
 });
+
+export const overflowScroll = style({
+  overflowY: "scroll",
+  WebkitOverflowScrolling: "touch",
+  "::-webkit-scrollbar": {
+    display: "none",
+  },
+});
