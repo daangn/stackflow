@@ -3,7 +3,7 @@ import { style } from "@vanilla-extract/css";
 
 import { f } from "../styles";
 
-export const wrapper = style([f.posAbsFull, f.flexColumn]);
+export const wrapper = style([f.posAbsFull, f.flexColumn, f.rootLineHeight]);
 
 export const appBarLeft = style([
   f.flex,

@@ -91,3 +91,7 @@ export const overflowScroll = style({
     display: "none",
   },
 });
+
+export const rootLineHeight = style({
+  lineHeight: "1.15",
+});

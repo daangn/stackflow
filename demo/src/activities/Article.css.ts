@@ -3,7 +3,11 @@ import { style } from "@vanilla-extract/css";
 
 import { f } from "../styles";
 
-export const container = style([f.posAbsFull, f.overflowScroll]);
+export const container = style([
+  f.posAbsFull,
+  f.overflowScroll,
+  f.rootLineHeight,
+]);
 
 export const image = style([
   f.posRel,
