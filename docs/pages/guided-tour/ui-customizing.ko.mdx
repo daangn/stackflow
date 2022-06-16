@@ -1,52 +1,15 @@
 # UI 커스터마이징
 
-`@stackflow/plugin-ui`의 `uiPlugin()`은 기본적으로 모든 액티비티에 UI를 입혀요. UI 커스터마이징을 위해서는 `uiPlugin`에 exclude 옵션을 활용해 원하는 액티비티의 플러그인 적용을 해제해요.
+원하는 컴포넌트에서 `useActivity()`, `useStack()` 등의 상태를 이용해서 자유롭게 UI를 커스터마이징해요.
 
-```typescript
-/**
- * stackflow.ts
- */
-import { stackflow } from "@stackflow/react";
-import { renderPlugin } from "@stackflow/plugin-render";
-import { uiPlugin } from "@stackflow/plugin-ui";
-import { historySyncPlugin } from "@stackflow/plugin-history-sync";
-import MyActivity from "./MyActivity";
-import Article from "./Article";
-
-const { Stack, useFlow } = stackflow({
-  transitionDuration: 350,
-  activities: {
-    MyActivity,
-    Article,
-  },
-  plugins: [
-    renderPlugin(),
-    historySyncPlugin({
-      routes: {
-        MyActivity: "/my-activity",
-        Article: "/articles/:title",
-      },
-      fallbackActivity: () => "MyActivity",
-    }),
-  ],
-  uiPlugin({
-    exclude: [
-      "MyActivity",
-    ]
-  }),
-});
-```
-
-이후에 원하는 컴포넌트에서 `useActivity()`, `useStack()` 등의 상태를 이용해서 자유롭게 UI를 커스터마이징해요.
-
-만약 `@stackflow/plugin-ui`에서 제공되는 UI를 활용하고 싶으시다면, 제공되는 `AppScreen` 컴포넌트를 활용해요.
+만약 `@stackflow/basic-ui`에서 제공되는 UI를 활용하고 싶으시다면, 제공되는 `AppScreen` 컴포넌트를 활용해요.
 
 ```tsx
 /**
  * MyActivity.tsx
  */
 import { ActivityComponentType } from "@stackflow/react";
-import { AppScreen } from "@stackflow/plugin-ui";
+import { AppScreen } from "@stackflow/basic-ui";
 import { useFlow } from "./stackflow";
 
 const MyActivity: ActivityComponentType = () => {

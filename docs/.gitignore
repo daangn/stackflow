@@ -1,7 +1,5 @@
 .next
 
 # auto generated documents
-/pages/react-api.ko.md
-/pages/common-plugins/history-sync.ko.md
-/pages/react-plugins/render.ko.md
-/pages/react-plugins/ui.ko.md
+/pages/api-references/**/*
+!/pages/api-references/meta.*.json

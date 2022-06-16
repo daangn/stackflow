@@ -12,30 +12,41 @@ const reactApi = fs.readFileSync(
   "utf-8",
 );
 const pluginHistorySyncApi = fs.readFileSync(
-  "../plugins/history-sync/docs/modules.md",
+  "../extensions/plugin-history-sync/docs/modules.md",
   "utf-8",
 );
 const pluginRenderApi = fs.readFileSync(
-  "../plugins/render/docs/modules.md",
+  "../extensions/plugin-renderer-basic/docs/modules.md",
   "utf-8",
 );
-const pluginUiApi = fs.readFileSync("../plugins/ui/docs/modules.md", "utf-8");
+const pluginUiApi = fs.readFileSync(
+  "../extensions/basic-ui/docs/modules.md",
+  "utf-8",
+);
 
 const escapedReactApi = escapeMdx(reactApi);
 const escapedPluginHistorySyncApi = escapeMdx(pluginHistorySyncApi);
 const escapedPluginRenderApi = escapeMdx(pluginRenderApi);
 const escapedPluginUiApi = escapeMdx(pluginUiApi);
 
-fs.writeFileSync("./pages/react-api.ko.md", escapedReactApi, "utf-8");
+fs.writeFileSync(
+  "./pages/api-references/react.ko.md",
+  escapedReactApi,
+  "utf-8",
+);
 
 fs.writeFileSync(
-  "./pages/common-plugins/history-sync.ko.md",
+  "./pages/api-references/plugin-history-sync.ko.md",
   escapedPluginHistorySyncApi,
   "utf-8",
 );
 fs.writeFileSync(
-  "./pages/react-plugins/render.ko.md",
+  "./pages/api-references/plugin-renderer-basic.ko.md",
   escapedPluginRenderApi,
   "utf-8",
 );
-fs.writeFileSync("./pages/react-plugins/ui.ko.md", escapedPluginUiApi, "utf-8");
+fs.writeFileSync(
+  "./pages/api-references/basic-ui.ko.md",
+  escapedPluginUiApi,
+  "utf-8",
+);

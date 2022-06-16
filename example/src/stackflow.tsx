@@ -1,6 +1,5 @@
 import { historySyncPlugin } from "@stackflow/plugin-history-sync";
-import { renderPlugin } from "@stackflow/plugin-render";
-import { uiPlugin } from "@stackflow/plugin-ui";
+import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
 import { stackflow } from "@stackflow/react";
 
 import Article from "./components/Article";
@@ -16,7 +15,7 @@ export const { Stack, useFlow } = stackflow({
   transitionDuration: 350,
   initialActivity: () => "Home",
   plugins: [
-    renderPlugin(),
+    basicRendererPlugin(),
     historySyncPlugin<typeof activities>({
       routes: {
         Home: "/",
@@ -24,6 +23,5 @@ export const { Stack, useFlow } = stackflow({
       },
       fallbackActivity: () => "Home",
     }),
-    uiPlugin(),
   ],
 });

@@ -1,3 +1,4 @@
+import { AppScreen } from "@stackflow/basic-ui";
 import { ActivityComponentType, useActivity } from "@stackflow/react";
 import React from "react";
 
@@ -13,36 +14,38 @@ const Home: ActivityComponentType = () => {
   const activity = useActivity();
 
   return (
-    <div>
-      name: Home, state: {activity.transitionState} <MemoizationTest />
-      <button
-        type="button"
-        onClick={() => {
-          push("Home", {});
-        }}
-      >
-        Home
-      </button>
-      <button
-        type="button"
-        onClick={() => {
-          push("Article", {
-            articleId: "123",
-            referrer: "home",
-          });
-        }}
-      >
-        Article
-      </button>
-      <button
-        type="button"
-        onClick={() => {
-          pop();
-        }}
-      >
-        Go Back
-      </button>
-    </div>
+    <AppScreen theme="cupertino">
+      <div>
+        name: Home, state: {activity.transitionState} <MemoizationTest />
+        <button
+          type="button"
+          onClick={() => {
+            push("Home", {});
+          }}
+        >
+          Home
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            push("Article", {
+              articleId: "123",
+              referrer: "home",
+            });
+          }}
+        >
+          Article
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            pop();
+          }}
+        >
+          Go Back
+        </button>
+      </div>
+    </AppScreen>
   );
 };
 

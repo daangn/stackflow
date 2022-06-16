@@ -22,46 +22,46 @@ import DiagramActivity from "../../components/DiagramActivity.tsx";
  * MyActivity.tsx
  */
 import { ActivityComponentType } from "@stackflow/react";
+import { AppScreen } from "@stackflow/basic-ui";
 
 const MyActivity: ActivityComponentType = () => {
-  return <div>My Activity</div>;
+  return (
+    <AppScreen theme="cupertino" appBar={{ title: "My Activity" }}>
+      <div>My Activity</div>
+    </AppScreen>
+  );
 };
 
 export default MyActivity;
-
-/**
- * stackflow.ts
- */
-import { stackflow } from "@stackflow/react";
-import { renderPlugin } from "@stackflow/plugin-render";
-import { uiPlugin } from "@stackflow/plugin-ui";
-import MyActivity from "./MyActivity";
-
-const { Stack, useFlow } = stackflow({
-  transitionDuration: 350,
-  plugins: [renderPlugin(), uiPlugin()],
-  activities: {
-    MyActivity,
-  },
-});
 ```
 
 <Callout emoji="💡">
   `ActivityComponentType`은 `React.ComponentType`와 호환돼요. 따라서 기존에
   활용하시던 `React.FC`, `React.Component` 등을 그대로 활용할 수 있어요.
 </Callout>
+<Callout emoji="💡">
+  **Stackflow**는 기본적으로 UI를 제공하지 않아요. 대신
+  `@stackflow/basic-ui`에서 기본 iOS(`cupertino`), Android(`android`) UI를
+  제공하고 있어요.
+</Callout>
+
+액티비티를 잘 선언했다면, 다음과 같이 `stackflow()` 함수의 `activities` 필드에 등록해요.
 
 ```tsx
 /**
- * MyActivity.tsx
+ * stackflow.ts
  */
-import React from "react";
+import { stackflow } from "@stackflow/react";
+import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
+import MyActivity from "./MyActivity";
 
-const MyActivity: React.FC = () => {
-  return <div>My Activity</div>;
-};
-
-export default MyActivity;
+const { Stack, useFlow } = stackflow({
+  transitionDuration: 350,
+  plugins: [basicRendererPlugin()],
+  activities: {
+    MyActivity,
+  },
+});
 ```
 
 ## 초기 액티비티 등록하기
@@ -73,13 +73,12 @@ export default MyActivity;
  * stackflow.ts
  */
 import { stackflow } from "@stackflow/react";
-import { renderPlugin } from "@stackflow/plugin-render";
-import { uiPlugin } from "@stackflow/plugin-ui";
+import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
 import MyActivity from "./MyActivity";
 
 const { Stack, useFlow } = stackflow({
   transitionDuration: 350,
-  plugins: [renderPlugin(), uiPlugin()],
+  plugins: [basicRendererPlugin()],
   activities: {
     MyActivity,
   },
@@ -104,33 +103,40 @@ const { Stack, useFlow } = stackflow({
  * Article.tsx
  */
 import { ActivityComponentType } from "@stackflow/react";
+import { AppScreen } from "@stackflow/basic-ui";
 
-type ArticleProps = {
+type ArticleParams = {
   title: string;
 };
-const Article: ActivityComponentType<ArticleProps> = ({ title }) => {
+const Article: ActivityComponentType<ArticleParams> = ({ title }) => {
   return (
-    <div>
-      <h1>{title}</h1>
-    </div>
+    <AppScreen theme="cupertion" appBar={{ title: "Article" }}>
+      <div>
+        <h1>{title}</h1>
+      </div>
+    </AppScreen>
   );
 };
 
 export default Article;
+```
 
-/**
- * 또는
- */
+또는,
+
+```tsx
 import React from "react";
+import { AppScreen } from "@stackflow/basic-ui";
 
-type ArticleProps = {
+type ArticleParams = {
   title: string;
 };
-const Article: React.FC<ArticleProps> = ({ title }) => {
+const Article: React.FC<ArticleParams> = ({ title }) => {
   return (
-    <div>
-      <h1>{title}</h1>
-    </div>
+    <AppScreen theme="cupertion" appBar={{ title: "Article" }}>
+      <div>
+        <h1>{title}</h1>
+      </div>
+    </AppScreen>
   );
 };
 
@@ -138,8 +144,8 @@ export default Article;
 ```
 
 <Callout type="warning" emoji="⚠️">
-  **주의** - 만약 꼭 필요한 파라미터가 없는 경우 치명적인 오류가 발생할 수
-  있어요.
+  **주의** - 만약 꼭 필요한 파라미터를 이전 화면이 넘겨주지 않은 경우 치명적인
+  오류가 발생할 수 있어요.
 </Callout>
 <Callout type="error" emoji="🚫">
   **경고** - 초기 액티비티에는 필수 파라미터가 존재하면 안돼요.

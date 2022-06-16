@@ -6,10 +6,10 @@
     "dev": "vite --host 0.0.0.0"
   },
   "dependencies": {
+    "@stackflow/basic-ui": "^0.1.0",
     "@stackflow/core": "^0.1.0",
     "@stackflow/plugin-history-sync": "^0.1.0",
-    "@stackflow/plugin-render": "^0.1.0",
-    "@stackflow/plugin-ui": "^0.1.0",
+    "@stackflow/plugin-renderer-basic": "^0.1.0",
     "normalize.css": "^8.0.1",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",

@@ -6,7 +6,7 @@ import DiagramTransitioningStack from "../../components/DiagramTransitioningStac
 
 <DiagramTransitioningStack />
 
-`activities` 필드로 접근할 수 있는 액티비티는 기본적인 존재와 관련된 정보 이외에, ID, 이름, 그리고 현재 시점의 전환 상태 등의 상태값들을 가져요. 이러한 상태값들을 이리저리 활용해 `@stackflow/plugin-ui`가 만들어졌답니다. (여러분도 충분히 만들 수 있어요!)
+`activities` 필드로 접근할 수 있는 액티비티는 기본적인 존재와 관련된 정보 이외에, ID, 이름, 그리고 현재 시점의 전환 상태 등의 상태값들을 가져요. 이러한 상태값들을 이리저리 활용해 `@stackflow/basic-ui`가 만들어졌답니다. (여러분도 충분히 만들 수 있어요!)
 
 ## 스택 상태를 렌더링에 활용하기
 
@@ -17,6 +17,7 @@ import DiagramTransitioningStack from "../../components/DiagramTransitioningStac
  * MyActivity.tsx
  */
 import { ActivityComponentType, useStack } from "@stackflow/react";
+import { AppScreen } from "@stackflow/basic-ui";
 import { useFlow } from "./stackflow";
 
 const MyActivity: ActivityComponentType = () => {
@@ -39,10 +40,12 @@ const MyActivity: ActivityComponentType = () => {
   }, [stack]);
 
   return (
-    <div>
-      My Activity
-      <button onClick={onClick}>Go to article page</button>
-    </div>
+    <AppScreen theme="cupertino" appBar={{ title: "My Activity" }}>
+      <div>
+        My Activity
+        <button onClick={onClick}>Go to article page</button>
+      </div>
+    </AppScreen>
   );
 };
 
@@ -65,7 +68,8 @@ export default MyActivity;
 /**
  * MyActivity.tsx
  */
-import { ActivityComponentType, useStack } from "@stackflow/react";
+import { ActivityComponentType, useActivity } from "@stackflow/react";
+import { AppScreen } from "@stackflow/basic-ui";
 import { useFlow } from "./stackflow";
 
 const MyActivity: ActivityComponentType = () => {
@@ -83,10 +87,12 @@ const MyActivity: ActivityComponentType = () => {
   }, [stack]);
 
   return (
-    <div>
-      My Activity
-      <button onClick={onClick}>Go to article page</button>
-    </div>
+    <AppScreen theme="cupertino" appBar={{ title: "My Activity" }}>
+      <div>
+        My Activity
+        <button onClick={onClick}>Go to article page</button>
+      </div>
+    </AppScreen>
   );
 };
 
@@ -104,4 +110,4 @@ export default MyActivity;
 
 ---
 
-스택과 액티비티 상태에 대한 이해가 얼추 되셨나요? 그렇다면 이제 `@stackflow/plugin-ui`를 떼어내고, 나만의 UI를 만들어봐요.
+스택과 액티비티 상태에 대한 이해가 얼추 되셨나요? 그렇다면 이제 `@stackflow/basic-ui`를 떼어내고, 나만의 UI를 만들어봐요.

@@ -1,9 +1,7 @@
 import { StackflowReactPlugin } from "@stackflow/react";
 import React from "react";
 
-const last = <T extends unknown>(arr: T[]) => arr[arr.length - 1];
-
-export function renderPlugin(): StackflowReactPlugin {
+export function basicRendererPlugin(): StackflowReactPlugin {
   return () => ({
     key: "render",
     render({ stack }) {

@@ -8,7 +8,7 @@
     "example",
     "integrations/*",
     "packages/*",
-    "plugins/*"
+    "extensions/*"
   ],
   "scripts": {
     "build": "ultra -r build",

@@ -13,6 +13,7 @@ import Callout from "nextra-theme-docs/callout";
  * MyActivity.tsx
  */
 import { ActivityComponentType } from "@stackflow/react";
+import { AppScreen } from "@stackflow/basic-ui";
 import { useFlow } from "./stackflow";
 
 const MyActivity: ActivityComponentType = () => {
@@ -25,10 +26,12 @@ const MyActivity: ActivityComponentType = () => {
   };
 
   return (
-    <div>
-      My Activity
-      <button onClick={onClick}>Go to article page</button>
-    </div>
+    <AppScreen theme="cupertino" appBar={{ title: "My Activity" }}>
+      <div>
+        My Activity
+        <button onClick={onClick}>Go to article page</button>
+      </div>
+    </AppScreen>
   );
 };
 
@@ -75,6 +78,7 @@ push(
  * MyActivity.tsx
  */
 import { ActivityComponentType } from "@stackflow/react";
+import { AppScreen } from "@stackflow/basic-ui";
 import { useFlow } from "./stackflow";
 
 const MyActivity: ActivityComponentType = () => {
@@ -87,10 +91,12 @@ const MyActivity: ActivityComponentType = () => {
   };
 
   return (
-    <div>
-      My Activity
-      <button onClick={onClick}>Go to article page</button>
-    </div>
+    <AppScreen theme="cupertino" appBar={{ title: "My Activity" }}>
+      <div>
+        My Activity
+        <button onClick={onClick}>Go to article page</button>
+      </div>
+    </AppScreen>
   );
 };
 
@@ -131,12 +137,13 @@ replace(
  * Article.tsx
  */
 import { ActivityComponentType } from "@stackflow/react";
+import { AppScreen } from "@stackflow/basic-ui";
 import { useFlow } from "./stackflow";
 
-type ArticleProps = {
+type ArticleParams = {
   title: string;
 };
-const Article: ActivityComponentType<ArticleProps> = ({ title }) => {
+const Article: ActivityComponentType<ArticleParams> = ({ title }) => {
   const { pop } = useFlow();
 
   const onClick = () => {
@@ -144,10 +151,12 @@ const Article: ActivityComponentType<ArticleProps> = ({ title }) => {
   };
 
   return (
-    <div>
-      <h1>{title}</h1>
-      <button onClick={onClick}>back</button>
-    </div>
+    <AppScreen theme="cupertion" appBar={{ title: "Article" }}>
+      <div>
+        <h1>{title}</h1>
+        <button onClick={onClick}>back</button>
+      </div>
+    </AppScreen>
   );
 };
 
@@ -188,8 +197,7 @@ $ yarn add @stackflow/plugin-history-sync
  * stackflow.ts
  */
 import { stackflow } from "@stackflow/react";
-import { renderPlugin } from "@stackflow/plugin-render";
-import { uiPlugin } from "@stackflow/plugin-ui";
+import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
 import { historySyncPlugin } from "@stackflow/plugin-history-sync";
 import MyActivity from "./MyActivity";
 import Article from "./Article";
@@ -201,8 +209,7 @@ const { Stack, useFlow } = stackflow({
     Article,
   },
   plugins: [
-    renderPlugin(),
-    uiPlugin(),
+    basicRendererPlugin(),
     historySyncPlugin({
       routes: {
         MyActivity: "/my-activity",

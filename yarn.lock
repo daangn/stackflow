@@ -2122,6 +2122,31 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@stackflow/basic-ui@^0.1.0, @stackflow/basic-ui@workspace:extensions/basic-ui":
+  version: 0.0.0-use.local
+  resolution: "@stackflow/basic-ui@workspace:extensions/basic-ui"
+  dependencies:
+    "@stackflow/core": ^0.1.0
+    "@stackflow/esbuild-config": ^0.1.0
+    "@stackflow/react": ^0.1.0
+    "@types/react": ^18.0.10
+    "@vanilla-extract/css": ^1.7.1
+    "@vanilla-extract/css-utils": ^0.1.2
+    "@vanilla-extract/dynamic": ^2.0.2
+    "@vanilla-extract/recipes": ^0.2.5
+    react: ^18.1.0
+    rimraf: ^3.0.2
+    typedoc: ^0.22.17
+    typedoc-plugin-markdown: ^3.12.1
+    typescript: ^4.6.3
+  peerDependencies:
+    "@stackflow/core": ^0.1.0
+    "@stackflow/react": ^0.1.0
+    "@types/react": ">=16.8.0"
+    react: ">=16.8.0"
+  languageName: unknown
+  linkType: soft
+
 "@stackflow/core@^0.1.0, @stackflow/core@workspace:core":
   version: 0.0.0-use.local
   resolution: "@stackflow/core@workspace:core"
@@ -2145,10 +2170,10 @@ __metadata:
   resolution: "@stackflow/docs@workspace:docs"
   dependencies:
     "@mdx-js/react": ^2.1.1
+    "@stackflow/basic-ui": ^0.1.0
     "@stackflow/core": ^0.1.0
     "@stackflow/plugin-history-sync": ^0.1.0
-    "@stackflow/plugin-render": ^0.1.0
-    "@stackflow/plugin-ui": ^0.1.0
+    "@stackflow/plugin-renderer-basic": ^0.1.0
     "@stackflow/react": ^0.1.0
     next: ^12.1.6
     nextra: ^2.0.0-beta.5
@@ -2170,10 +2195,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@stackflow/example@workspace:example"
   dependencies:
+    "@stackflow/basic-ui": ^0.1.0
     "@stackflow/core": ^0.1.0
     "@stackflow/plugin-history-sync": ^0.1.0
-    "@stackflow/plugin-render": ^0.1.0
-    "@stackflow/plugin-ui": ^0.1.0
+    "@stackflow/plugin-renderer-basic": ^0.1.0
     "@types/react": ^18.0.10
     "@types/react-dom": ^18.0.5
     "@vanilla-extract/css": ^1.7.1
@@ -2208,9 +2233,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/plugin-history-sync@^0.1.0, @stackflow/plugin-history-sync@workspace:plugins/history-sync":
+"@stackflow/plugin-history-sync@^0.1.0, @stackflow/plugin-history-sync@workspace:extensions/plugin-history-sync":
   version: 0.0.0-use.local
-  resolution: "@stackflow/plugin-history-sync@workspace:plugins/history-sync"
+  resolution: "@stackflow/plugin-history-sync@workspace:extensions/plugin-history-sync"
   dependencies:
     "@stackflow/core": ^0.1.0
     "@stackflow/esbuild-config": ^0.1.0
@@ -2228,39 +2253,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/plugin-render@^0.1.0, @stackflow/plugin-render@workspace:plugins/render":
+"@stackflow/plugin-renderer-basic@^0.1.0, @stackflow/plugin-renderer-basic@workspace:extensions/plugin-renderer-basic":
   version: 0.0.0-use.local
-  resolution: "@stackflow/plugin-render@workspace:plugins/render"
+  resolution: "@stackflow/plugin-renderer-basic@workspace:extensions/plugin-renderer-basic"
   dependencies:
     "@stackflow/core": ^0.1.0
     "@stackflow/esbuild-config": ^0.1.0
     "@stackflow/react": ^0.1.0
     "@types/react": ^18.0.10
-    react: ^18.1.0
-    rimraf: ^3.0.2
-    typedoc: ^0.22.17
-    typedoc-plugin-markdown: ^3.12.1
-    typescript: ^4.6.3
-  peerDependencies:
-    "@stackflow/core": ^0.1.0
-    "@stackflow/react": ^0.1.0
-    "@types/react": ">=16.8.0"
-    react: ">=16.8.0"
-  languageName: unknown
-  linkType: soft
-
-"@stackflow/plugin-ui@^0.1.0, @stackflow/plugin-ui@workspace:plugins/ui":
-  version: 0.0.0-use.local
-  resolution: "@stackflow/plugin-ui@workspace:plugins/ui"
-  dependencies:
-    "@stackflow/core": ^0.1.0
-    "@stackflow/esbuild-config": ^0.1.0
-    "@stackflow/react": ^0.1.0
-    "@types/react": ^18.0.10
-    "@vanilla-extract/css": ^1.7.1
-    "@vanilla-extract/css-utils": ^0.1.2
-    "@vanilla-extract/dynamic": ^2.0.2
-    "@vanilla-extract/recipes": ^0.2.5
     react: ^18.1.0
     rimraf: ^3.0.2
     typedoc: ^0.22.17

@@ -23,7 +23,7 @@ const MainRenderer: React.FC<MainRendererProps> = ({ activities }) => {
       console.warn(
         `Stackflow -` +
           ` There is no rendering plugin, so "<Stack />" doesn't render anything.` +
-          ` If you want to render some UI, use "@stackflow/plugin-render"` +
+          ` If you want to render some UI, use "@stackflow/plugin-renderer-basic"` +
           ` or add another rendering plugin.`,
       );
     }

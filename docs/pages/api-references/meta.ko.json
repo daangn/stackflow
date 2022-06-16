@@ -1,0 +1,6 @@
+{
+  "react": "@stackflow/react",
+  "plugin-renderer-basic": "@stackflow/plugin-renderer-basic",
+  "plugin-history-sync": "@stackflow/plugin-history-sync",
+  "basic-ui": "@stackflow/basic-ui"
+}
