@@ -5,7 +5,7 @@
   "workspaces": [
     "docs",
     "core",
-    "example",
+    "demo",
     "integrations/*",
     "packages/*",
     "extensions/*"

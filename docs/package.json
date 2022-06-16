@@ -11,6 +11,7 @@
     "@mdx-js/react": "^2.1.1",
     "@stackflow/basic-ui": "^0.1.0",
     "@stackflow/core": "^0.1.0",
+    "@stackflow/demo": "^0.0.0",
     "@stackflow/plugin-history-sync": "^0.1.0",
     "@stackflow/plugin-renderer-basic": "^0.1.0",
     "@stackflow/react": "^0.1.0",
@@ -18,6 +19,11 @@
     "nextra": "^2.0.0-beta.5",
     "nextra-theme-docs": "^2.0.0-beta.5",
     "react": "^18.1.0",
-    "react-dom": "^18.1.0"
+    "react-dom": "^18.1.0",
+    "simple-reveal": "^0.6.0"
+  },
+  "devDependencies": {
+    "@seed-design/stylesheet": "^1.0.0-alpha.0",
+    "react-lazy-load-image-component": "^1.5.4"
   }
 }

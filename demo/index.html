@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>@stackflow/demo</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <script>
+      (() => {
+        var e = document.documentElement;
+        e.dataset.seed = "";
+        var pd = window.matchMedia("(prefers-color-scheme: dark)"),
+          a = () => {
+            e.dataset.seedScaleColor = pd.matches ? "dark" : "light";
+          };
+        "addEventListener" in pd
+          ? pd.addEventListener("change", a)
+          : "addListener" in pd && pd.addListener(a),
+          a();
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="./src/main.tsx"></script>
+  </body>
+</html>

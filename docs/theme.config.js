@@ -14,7 +14,7 @@ export default {
   search: true,
   // unstable_flexsearch: true,
   customSearch: null,
-  darkMode: true,
+  darkMode: false,
   footer: true,
   footerText: `Apache-2.0 ${new Date().getFullYear()} © Stackflow`,
   footerEditLink: false,
