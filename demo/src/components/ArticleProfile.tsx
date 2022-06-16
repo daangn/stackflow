@@ -25,7 +25,7 @@ const ArticleProfile: React.FC = () => {
         <div className={css.ratingImg}>
           <ImageProfileRating />
         </div>
-        <div className={css.ratingCaption}>Karrot Rating</div>
+        <div className={css.ratingCaption}>Rating</div>
       </div>
     </div>
   );

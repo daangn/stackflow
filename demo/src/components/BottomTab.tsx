@@ -37,7 +37,7 @@ const BottomTab: React.FC = () => (
       <div className={css.buttonIcon}>
         <IconProfile />
       </div>
-      <div className={css.buttonLabel}>My Karrot</div>
+      <div className={css.buttonLabel}>My</div>
     </button>
   </div>
 );
