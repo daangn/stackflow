@@ -1,5 +1,6 @@
 {
   "name": "@stackflow/docs",
+  "version": "0.1.0",
   "private": true,
   "description": "Mobile-first stack navigator framework with Composable Plugin System",
   "scripts": {
