@@ -1,0 +1,97 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/github-workflow.json
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+name: Build
+
+env:
+  GITHUB_TOKEN: ${{ github.token }}
+
+jobs:
+  build-all:
+    name: Build all packages
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v1
+        with:
+          node-version: "16"
+
+      - uses: actions/cache@v2
+        with:
+          path: |
+            .yarn/unplugged/
+            .yarn/build-state.yml
+            .yarn/install-state.gz
+            node_modules
+          key: ${{ runner.os }}-yarn-v1-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-v1
+
+      - name: Install the unplugged dependencies and check that the Yarn files do not change during the installation process. If an error occurs, run "yarn install" and commit and push.
+        run: |
+          yarn install --immutable
+        shell: bash
+
+      - uses: martijnhols/actions-cache/restore@v3
+        with:
+          path: |
+            core/dist/
+            core/.ultra.cache.json
+            demo/build/
+            demo/dist/
+            demo/.ultra.cache.json
+            docs/.next/
+            docs/.ultra.cache.json
+            extensions/basic-ui/dist/
+            extensions/basic-ui/docs/
+            extensions/basic-ui/.ultra.cache.json
+            extensions/plugin-history-sync/dist/
+            extensions/plugin-history-sync/docs/
+            extensions/plugin-history-sync/.ultra.cache.json
+            extensions/plugin-renderer-basic/dist/
+            extensions/plugin-renderer-basic/docs/
+            extensions/plugin-renderer-basic/.ultra.cache.json
+            integrations/react/dist/
+            integrations/react/docs/
+            integrations/react/.ultra.cache.json
+            packages/esbuild-config/.ultra.cache.json
+          key: ultra-cache-main-v1
+          restore-keys: |
+            ultra-cache-main-v1
+
+      - name: Build the entire monorepo
+        run: |
+          yarn build
+
+      - uses: martijnhols/actions-cache/save@v3
+        if: github.event_name == 'push'
+        with:
+          path: |
+            core/dist/
+            core/.ultra.cache.json
+            demo/build/
+            demo/dist/
+            demo/.ultra.cache.json
+            docs/.next/
+            docs/.ultra.cache.json
+            extensions/basic-ui/dist/
+            extensions/basic-ui/docs/
+            extensions/basic-ui/.ultra.cache.json
+            extensions/plugin-history-sync/dist/
+            extensions/plugin-history-sync/docs/
+            extensions/plugin-history-sync/.ultra.cache.json
+            extensions/plugin-renderer-basic/dist/
+            extensions/plugin-renderer-basic/docs/
+            extensions/plugin-renderer-basic/.ultra.cache.json
+            integrations/react/dist/
+            integrations/react/docs/
+            integrations/react/.ultra.cache.json
+            packages/esbuild-config/.ultra.cache.json
+          key: ultra-cache-main-v1

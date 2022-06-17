@@ -1,7 +1,6 @@
 import { useActions, useActivity, useStack } from "@stackflow/react";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
 import React, { useEffect, useMemo } from "react";
-import { useSwipeBack } from "utils/useSwipeBack";
 
 import AppBar from "./AppBar";
 import * as css from "./AppScreen.css";
@@ -13,6 +12,7 @@ import {
   useVariant,
   useVisibleActivities,
 } from "./utils";
+import { useSwipeBack } from "./utils/useSwipeBack";
 
 type PropOf<T> = T extends React.ComponentType<infer U> ? U : unknown;
 

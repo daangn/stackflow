@@ -12,11 +12,13 @@
   ],
   "scripts": {
     "build": "ultra -r build",
+    "build:dts": "ultra -r --build build:dts",
     "clean": "ultra -r clean",
     "dev": "ultra -r dev",
     "format": "eslint --fix --ignore-path .gitignore && prettier -w .",
     "lerna:publish": "yarn build && lerna publish",
     "lerna:publish:canary": "yarn build && lerna publish --canary",
+    "test": "yarn build && ultra -r test",
     "version": "yarn install && git stage yarn.lock"
   },
   "resolutions": {
