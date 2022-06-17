@@ -2179,7 +2179,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/demo@^0.0.0, @stackflow/demo@workspace:demo":
+"@stackflow/demo@^0.1.0, @stackflow/demo@workspace:demo":
   version: 0.0.0-use.local
   resolution: "@stackflow/demo@workspace:demo"
   dependencies:
@@ -2216,7 +2216,7 @@ __metadata:
     "@seed-design/stylesheet": ^1.0.0-alpha.0
     "@stackflow/basic-ui": ^0.1.0
     "@stackflow/core": ^0.1.0
-    "@stackflow/demo": ^0.0.0
+    "@stackflow/demo": ^0.1.0
     "@stackflow/plugin-history-sync": ^0.1.0
     "@stackflow/plugin-renderer-basic": ^0.1.0
     "@stackflow/react": ^0.1.0

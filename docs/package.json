@@ -12,7 +12,7 @@
     "@mdx-js/react": "^2.1.1",
     "@stackflow/basic-ui": "^0.1.0",
     "@stackflow/core": "^0.1.0",
-    "@stackflow/demo": "^0.0.0",
+    "@stackflow/demo": "^0.1.0",
     "@stackflow/plugin-history-sync": "^0.1.0",
     "@stackflow/plugin-renderer-basic": "^0.1.0",
     "@stackflow/react": "^0.1.0",
