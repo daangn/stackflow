@@ -58,6 +58,14 @@ export type StackflowOutput<T extends BaseActivities> = {
 export function stackflow<T extends BaseActivities>(
   options: StackflowOptions<T>,
 ): StackflowOutput<T> {
+  const activities = Object.entries(options.activities).reduce(
+    (acc, [key, Component]) => ({
+      ...acc,
+      [key]: React.memo(Component),
+    }),
+    {},
+  );
+
   return {
     Stack(props) {
       const plugins = useMemo(
@@ -78,11 +86,11 @@ export function stackflow<T extends BaseActivities>(
         <ContextProvider value={props.context ?? {}}>
           <PluginsProvider value={plugins}>
             <CoreProvider
-              activities={options.activities}
+              activities={activities}
               initialActivity={options.initialActivity}
               transitionDuration={options.transitionDuration}
             >
-              <MainRenderer activities={options.activities} />
+              <MainRenderer activities={activities} />
               <EffectManager />
             </CoreProvider>
           </PluginsProvider>

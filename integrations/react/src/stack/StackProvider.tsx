@@ -1,6 +1,7 @@
 import { AggregateOutput } from "@stackflow/core";
 import React from "react";
 
+import { useMemoDeep } from "../utils";
 import { StackContext } from "./StackContext";
 
 interface StackProviderProps {
@@ -10,4 +11,8 @@ interface StackProviderProps {
 export const StackProvider: React.FC<StackProviderProps> = ({
   children,
   value,
-}) => <StackContext.Provider value={value}>{children}</StackContext.Provider>;
+}) => (
+  <StackContext.Provider value={useMemoDeep(value)}>
+    {children}
+  </StackContext.Provider>
+);

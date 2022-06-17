@@ -71,6 +71,17 @@ export const CoreProvider: React.FC<CoreProviderProps> = ({
     const initialPushedEvent =
       initialPushedEventByPlugin ?? initialPushedEventByOption;
 
+    if (!initialPushedEvent) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        `Stackflow - ` +
+          ` There is no initial activity.` +
+          " If you want to set the initial activity," +
+          " add the `initialActivity` option of the `stackflow()` function or" +
+          " add a plugin that sets the initial activity. (e.g. `@stackflow/plugin-history-sync`)",
+      );
+    }
+
     const activityRegisteredEvents = Object.keys(activities).map(
       (activityName) =>
         makeEvent("ActivityRegistered", {
