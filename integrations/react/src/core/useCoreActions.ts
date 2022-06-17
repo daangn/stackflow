@@ -9,7 +9,7 @@ export const useCoreActions = () => {
   const plugins = usePlugins();
   const context = useContext();
 
-  const { dispatchEvent, getState } = React.useContext(CoreActionsContext);
+  const { dispatchEvent, getStack } = React.useContext(CoreActionsContext);
 
   const triggerPreEffectHook = useCallback(
     (preEffect: Effect["_TAG"]) => {
@@ -25,7 +25,7 @@ export const useCoreActions = () => {
             plugin.onBeforePush?.({
               actions: {
                 dispatchEvent,
-                getState,
+                getStack,
                 preventDefault,
               },
             });
@@ -34,7 +34,7 @@ export const useCoreActions = () => {
             plugin.onBeforeReplace?.({
               actions: {
                 dispatchEvent,
-                getState,
+                getStack,
                 preventDefault,
               },
             });
@@ -43,7 +43,7 @@ export const useCoreActions = () => {
             plugin.onBeforePop?.({
               actions: {
                 dispatchEvent,
-                getState,
+                getStack,
                 preventDefault,
               },
             });
@@ -55,7 +55,7 @@ export const useCoreActions = () => {
 
       return { isPrevented };
     },
-    [plugins, dispatchEvent, getState, context],
+    [plugins, dispatchEvent, getStack, context],
   );
 
   const push = useCallback(
@@ -115,11 +115,11 @@ export const useCoreActions = () => {
   return useMemo(
     () => ({
       dispatchEvent,
-      getState,
+      getStack,
       push,
       replace,
       pop,
     }),
-    [dispatchEvent, getState, push, replace, pop],
+    [dispatchEvent, getStack, push, replace, pop],
   );
 };

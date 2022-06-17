@@ -103,7 +103,7 @@ export const CoreProvider: React.FC<CoreProviderProps> = ({
 
   const eventsRef = useRef(initialEvents);
   const stateRef = useRef(initialState);
-  const getState = useCallback(() => stateRef.current, [stateRef]);
+  const getStack = useCallback(() => stateRef.current, [stateRef]);
 
   const dispatchEvent = useCallback<DispatchEvent>(
     (name, parameters) => {
@@ -141,10 +141,10 @@ export const CoreProvider: React.FC<CoreProviderProps> = ({
       <CoreActionsContext.Provider
         value={useMemo(
           () => ({
-            getState,
+            getStack,
             dispatchEvent,
           }),
-          [getState, dispatchEvent],
+          [getStack, dispatchEvent],
         )}
       >
         {children}

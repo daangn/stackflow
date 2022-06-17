@@ -94,8 +94,8 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
           eventDate: new Date().getTime() - MINUTE,
         });
       },
-      onInit({ actions: { getState, dispatchEvent } }) {
-        const rootActivity = getState().activities[0];
+      onInit({ actions: { getStack, dispatchEvent } }) {
+        const rootActivity = getStack().activities[0];
         const template = makeTemplate(options.routes[rootActivity.name]);
 
         replaceState(
@@ -113,7 +113,7 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
             return;
           }
 
-          const { activities } = getState();
+          const { activities } = getStack();
 
           const targetActivity = activities.find(
             (activity) =>

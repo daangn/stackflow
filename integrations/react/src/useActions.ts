@@ -5,6 +5,9 @@ import { BaseActivities } from "./BaseActivities";
 import { useCoreActions } from "./core";
 
 export type UseActionsOutputType<T extends BaseActivities> = {
+  /**
+   * Push new activity
+   */
   push: <V extends Extract<keyof T, string>>(
     activityName: V,
     params: T[V] extends ActivityComponentType<infer U> ? U : {},
@@ -12,6 +15,10 @@ export type UseActionsOutputType<T extends BaseActivities> = {
       animate?: boolean;
     },
   ) => void;
+
+  /**
+   * Push new activity in the top and remove current top activity when new activity is activated
+   */
   replace: <V extends Extract<keyof T, string>>(
     activityName: V,
     params: T[V] extends ActivityComponentType<infer U> ? U : {},
@@ -19,6 +26,10 @@ export type UseActionsOutputType<T extends BaseActivities> = {
       animate?: boolean;
     },
   ) => void;
+
+  /**
+   * Remove top activity
+   */
   pop: (options?: { animate?: boolean }) => void;
 };
 

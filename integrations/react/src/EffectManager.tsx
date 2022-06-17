@@ -51,7 +51,7 @@ const EffectManager: React.FC = () => {
     onInit?.({
       actions: {
         dispatchEvent: coreActions.dispatchEvent,
-        getState: coreActions.getState,
+        getStack: coreActions.getStack,
       },
     });
   }, []);
@@ -66,7 +66,7 @@ const EffectManager: React.FC = () => {
       triggerEffect({
         actions: {
           dispatchEvent: coreActions.dispatchEvent,
-          getState: coreActions.getState,
+          getStack: coreActions.getStack,
         },
         effect,
       });

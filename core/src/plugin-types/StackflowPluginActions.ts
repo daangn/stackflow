@@ -2,6 +2,13 @@ import { AggregateOutput } from "../AggregateOutput";
 import { DispatchEvent } from "../event-utils";
 
 export type StackflowPluginActions = {
+  /**
+   * Dispatch new event to the core
+   */
   dispatchEvent: DispatchEvent;
-  getState: () => AggregateOutput;
+
+  /**
+   * Get current stack state
+   */
+  getStack: () => AggregateOutput;
 };

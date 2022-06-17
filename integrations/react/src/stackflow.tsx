@@ -10,21 +10,51 @@ import { StackflowReactPlugin } from "./StackflowReactPlugin";
 import { useActions, UseActionsOutputType } from "./useActions";
 
 export type StackProps<C extends {} = {}> = {
+  /**
+   * Context data to pass to plugins in render time
+   */
   context?: C;
 };
 export type StackComponentType = React.FC<StackProps>;
 
 export type StackflowOptions<T extends BaseActivities> = {
+  /**
+   * Register activities used in your app
+   */
   activities: T;
+
+  /**
+   * Transition duration for stack animation (millisecond)
+   */
   transitionDuration: number;
+
+  /**
+   * Set the first activity to load at the bottom
+   * (It can be overwritten by plugin)
+   */
   initialActivity?: (args: { context: any }) => Extract<keyof T, string>;
+
+  /**
+   * Inject stackflow plugins
+   */
   plugins?: Array<StackflowReactPlugin | StackflowReactPlugin[]>;
 };
+
 export type StackflowOutput<T extends BaseActivities> = {
+  /**
+   * Created `<Stack />` component
+   */
   Stack: StackComponentType;
+
+  /**
+   * Created `useFlow()` hooks
+   */
   useFlow: () => UseActionsOutputType<T>;
 };
 
+/**
+ * Make `<Stack />` component and `useFlow()` hooks that strictly typed with `activities`
+ */
 export function stackflow<T extends BaseActivities>(
   options: StackflowOptions<T>,
 ): StackflowOutput<T> {
