@@ -22,10 +22,10 @@ export const appBar = recipe({
     {
       height: vars.appBar.height,
       paddingTop: ["constant(safe-area-inset-top)", "env(safe-area-inset-top)"],
+      zIndex: vars.zIndexes.appBar,
       selectors: {
         [`${cupertino} &`]: {
           position: "absolute",
-          zIndex: vars.zIndexes.appBar,
         },
         [`${cupertino}${exitActive} &`]: {
           transform: "translateX(100%)",

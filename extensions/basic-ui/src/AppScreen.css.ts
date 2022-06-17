@@ -113,10 +113,8 @@ export const dim = style([
   allTransitions,
   {
     opacity: 0,
+    zIndex: vars.zIndexes.dim,
     selectors: {
-      [`${cupertino} &`]: {
-        zIndex: vars.zIndexes.dim,
-      },
       [`${android} &`]: {
         height: "10rem",
         background: `linear-gradient(${vars.dimBackgroundColor}, rgba(0, 0, 0, 0))`,
@@ -148,10 +146,10 @@ export const paper = recipe({
       "::-webkit-scrollbar": {
         display: "none",
       },
+      zIndex: vars.zIndexes.paper,
       selectors: {
         [`${cupertino} &`]: {
           transform: "translateX(100%)",
-          zIndex: vars.zIndexes.paper,
         },
         [`${cupertino}${enterActive} &`]: {
           transform: "translateX(0)",
