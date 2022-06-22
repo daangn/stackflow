@@ -101,7 +101,9 @@ const Tabs: React.FC<ITabsProps> = (props) => {
 
   const [lazyMap, setLazyMap] = useState<{
     [tabKey: string]: true | undefined
-  }>({})
+  }>({
+    [props.activeTabKey]: true,
+  })
 
   useEffect(() => {
     setLazyMap((prevState) => ({
