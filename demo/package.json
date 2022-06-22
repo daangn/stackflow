@@ -17,8 +17,8 @@
     "src"
   ],
   "scripts": {
-    "build": "yarn build:js && yarn build:dts && yarn build:docs",
-    "build:docs": "vite build",
+    "build": "yarn build:js && yarn build:dts && yarn build:app",
+    "build:app": "vite build",
     "build:dts": "tsc --emitDeclarationOnly",
     "build:js": "node ./esbuild.config.js",
     "clean": "rimraf dist && rimraf build",

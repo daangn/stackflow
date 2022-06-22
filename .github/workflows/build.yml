@@ -50,16 +50,12 @@ jobs:
             docs/.next/
             docs/.ultra.cache.json
             extensions/basic-ui/dist/
-            extensions/basic-ui/docs/
             extensions/basic-ui/.ultra.cache.json
             extensions/plugin-history-sync/dist/
-            extensions/plugin-history-sync/docs/
             extensions/plugin-history-sync/.ultra.cache.json
             extensions/plugin-renderer-basic/dist/
-            extensions/plugin-renderer-basic/docs/
             extensions/plugin-renderer-basic/.ultra.cache.json
             integrations/react/dist/
-            integrations/react/docs/
             integrations/react/.ultra.cache.json
             packages/esbuild-config/.ultra.cache.json
           key: ultra-cache-main-v1
@@ -82,16 +78,12 @@ jobs:
             docs/.next/
             docs/.ultra.cache.json
             extensions/basic-ui/dist/
-            extensions/basic-ui/docs/
             extensions/basic-ui/.ultra.cache.json
             extensions/plugin-history-sync/dist/
-            extensions/plugin-history-sync/docs/
             extensions/plugin-history-sync/.ultra.cache.json
             extensions/plugin-renderer-basic/dist/
-            extensions/plugin-renderer-basic/docs/
             extensions/plugin-renderer-basic/.ultra.cache.json
             integrations/react/dist/
-            integrations/react/docs/
             integrations/react/.ultra.cache.json
             packages/esbuild-config/.ultra.cache.json
           key: ultra-cache-main-v1
