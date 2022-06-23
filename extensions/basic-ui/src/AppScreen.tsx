@@ -48,7 +48,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
   );
   const isRoot = visibleActivities[0]?.id === currentActivity.id;
 
-  const isBeforeTopVisibleActivity = useMemo(() => {
+  const isBeforeTopVisible = useMemo(() => {
     const beforeTopVisibleActivity = findBefore(
       visibleActivities,
       (activity) => activity.id === topVisibleActivity.id,
@@ -60,7 +60,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
     variant: currentActivity.transitionState,
     base: css.appScreen({
       theme,
-      show: isTopVisible || isBeforeTopVisibleActivity,
+      show: isTopVisible || isBeforeTopVisible || isTopActive,
     }),
     variants: {
       "enter-active": css.enterActive,
@@ -136,7 +136,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
         key={currentActivity.id}
         ref={paperRef}
         className={css.paper({
-          isTopActive,
+          offset: !isTopActive,
           hasAppBar,
         })}
       >

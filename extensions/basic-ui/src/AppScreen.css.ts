@@ -184,8 +184,8 @@ export const paper = recipe({
         },
       ],
     },
-    isTopActive: {
-      false: {
+    offset: {
+      true: {
         selectors: {
           [`${cupertino}${enterActive} &`]: {
             transform: "translateX(-5rem)",
