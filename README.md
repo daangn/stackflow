@@ -1,6 +1,6 @@
 <div align="center">
 
-<a href="https://www.stackflow.so/" target="_blank">
+<a href="https://stackflow.so/" target="_blank">
 
 <img alt="demo" src="./demo.png" width="320">
 
@@ -14,7 +14,7 @@
 
 ## Introduction
 
-> Karrotframe is rebranded with **"Stackflow"**. View full documentation and demo on [https://stackflow.so](https://www.stackflow.so/)
+> Karrotframe is rebranded with **"Stackflow"**. View full documentation and demo on [https://stackflow.so](https://stackflow.so/)
 
 **Stackflow** is a project that implements Stack Navigation UX, which is mainly used in mobile devices (iOS/Android, etc.) in a JavaScript environment. So, it can help to easily develop hybrid apps and webviews.
 
