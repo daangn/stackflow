@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/plugin-history-sync",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "license": "Apache-2.0",
   "exports": {
     ".": {
@@ -26,8 +26,8 @@
     "url-pattern": "^1.0.3"
   },
   "devDependencies": {
-    "@stackflow/core": "^0.2.0",
-    "@stackflow/esbuild-config": "^0.2.0",
+    "@stackflow/core": "^0.2.1",
+    "@stackflow/esbuild-config": "^0.2.1",
     "@types/react": "^18.0.10",
     "react": "^18.1.0",
     "rimraf": "^3.0.2",
