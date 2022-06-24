@@ -7,11 +7,15 @@ const STATE_TAG = `${process.env.PACKAGE_NAME}@${process.env.PACKAGE_VERSION}`;
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
 
+function getCurrentState() {
+  return window.history.state;
+}
+
 interface State {
   _TAG: string;
   activity: Activity;
 }
-function parseState(state: any): State | null {
+function parseState({ state }: { state: unknown }): State | null {
   const _state: any = state;
 
   if (
@@ -21,18 +25,36 @@ function parseState(state: any): State | null {
     typeof _state._TAG === "string" &&
     _state._TAG === STATE_TAG
   ) {
-    return state;
+    return state as State;
   }
 
   return null;
 }
 
-function pushState(state: State, url: string) {
-  window.history.pushState(state, "", url);
+function pushState({
+  state,
+  url,
+  useHash,
+}: {
+  state: State;
+  url: string;
+  useHash?: boolean;
+}) {
+  const nextUrl = useHash ? `${window.location.pathname}#${url}` : url;
+  window.history.pushState(state, "", nextUrl);
 }
 
-function replaceState(state: State, url: string) {
-  window.history.replaceState(state, "", url);
+function replaceState({
+  state,
+  url,
+  useHash,
+}: {
+  state: State;
+  url: string;
+  useHash?: boolean;
+}) {
+  const nextUrl = useHash ? `${window.location.pathname}#${url}` : url;
+  window.history.replaceState(state, "", nextUrl);
 }
 
 type HistorySyncPluginOptions<T extends { [activityName: string]: any }> = {
@@ -40,6 +62,7 @@ type HistorySyncPluginOptions<T extends { [activityName: string]: any }> = {
     [key in keyof T]: string;
   };
   fallbackActivity: (args: { context: any }) => Extract<keyof T, string>;
+  useHash?: boolean;
 };
 export function historySyncPlugin<T extends { [activityName: string]: any }>(
   options: HistorySyncPluginOptions<T>,
@@ -51,7 +74,7 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
     return {
       key: "historySync",
       initialPushedEvent() {
-        const initHistoryState = parseState(window.history.state);
+        const initHistoryState = parseState(getCurrentState());
 
         if (initHistoryState) {
           return {
@@ -98,13 +121,14 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
         const rootActivity = getStack().activities[0];
         const template = makeTemplate(options.routes[rootActivity.name]);
 
-        replaceState(
-          {
+        replaceState({
+          url: template.fill(rootActivity.params),
+          state: {
             _TAG: STATE_TAG,
             activity: rootActivity,
           },
-          template.fill(rootActivity.params),
-        );
+          useHash: options.useHash,
+        });
 
         const onPopState = (e: PopStateEvent) => {
           const historyState = parseState(e.state);
@@ -169,31 +193,33 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
 
         const template = makeTemplate(options.routes[activity.name]);
 
-        pushState(
-          {
+        pushState({
+          url: template.fill(activity.params),
+          state: {
             _TAG: STATE_TAG,
             activity,
           },
-          template.fill(activity.params),
-        );
+          useHash: options.useHash,
+        });
       },
       onReplaced({ effect: { activity } }) {
         const template = makeTemplate(options.routes[activity.name]);
 
-        replaceState(
-          {
+        replaceState({
+          url: template.fill(activity.params),
+          state: {
             _TAG: STATE_TAG,
             activity,
           },
-          template.fill(activity.params),
-        );
+          useHash: options.useHash,
+        });
       },
       onBeforePop({ actions: { preventDefault } }) {
         preventDefault();
 
         do {
           window.history.back();
-        } while (!parseState(window.history.state));
+        } while (!parseState(getCurrentState()));
       },
     };
   };
