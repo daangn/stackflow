@@ -158,11 +158,13 @@ export function useSwipeBack({
     $edge.addEventListener("touchstart", onTouchStart, { passive: true });
     $edge.addEventListener("touchmove", onTouchMove, { passive: true });
     $edge.addEventListener("touchend", onTouchEnd, { passive: true });
+    $edge.addEventListener("touchcancel", onTouchEnd, { passive: true });
 
     return () => {
       $edge.removeEventListener("touchstart", onTouchStart);
       $edge.removeEventListener("touchmove", onTouchMove);
       $edge.removeEventListener("touchend", onTouchEnd);
+      $edge.removeEventListener("touchcancel", onTouchEnd);
     };
   }, [dimRef, paperRef, edgeRef, onBack]);
 
