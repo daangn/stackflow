@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/demo",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "private": true,
   "exports": {
     ".": {
@@ -30,7 +30,7 @@
     "@seed-design/stylesheet": "^1.0.0-alpha.0",
     "@stackflow/basic-ui": "^0.2.3",
     "@stackflow/core": "^0.2.1",
-    "@stackflow/plugin-history-sync": "^0.3.0",
+    "@stackflow/plugin-history-sync": "^0.3.1",
     "@stackflow/plugin-renderer-basic": "^0.2.3",
     "@stackflow/react": "^0.2.3",
     "@vanilla-extract/css": "^1.7.1",
