@@ -8,7 +8,7 @@ const SECOND = 1000;
 const MINUTE = 60 * SECOND;
 
 function getCurrentState() {
-  return window.history.state;
+  return window.history.state ?? {};
 }
 
 interface State {
