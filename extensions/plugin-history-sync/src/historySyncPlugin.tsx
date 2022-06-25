@@ -8,14 +8,14 @@ const SECOND = 1000;
 const MINUTE = 60 * SECOND;
 
 function getCurrentState() {
-  return window.history.state ?? {};
+  return window.history.state;
 }
 
 interface State {
   _TAG: string;
   activity: Activity;
 }
-function parseState({ state }: { state: unknown }): State | null {
+function parseState(state: unknown): State | null {
   const _state: any = state;
 
   if (
