@@ -11,7 +11,7 @@ function getCurrentState() {
   return window.history.state;
 }
 
-function denormalizeRoute(route: string | string[]) {
+function normalizeRoute(route: string | string[]) {
   return typeof route === "string" ? [route] : route;
 }
 
@@ -101,7 +101,7 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
 
         for (let i = 0; i < activityNames.length; i += 1) {
           const activityName = activityNames[i];
-          const routes = denormalizeRoute(options.routes[activityName]);
+          const routes = normalizeRoute(options.routes[activityName]);
 
           for (let j = 0; j < routes.length; j += 1) {
             const route = routes[j];
@@ -130,7 +130,7 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
       onInit({ actions: { getStack, dispatchEvent } }) {
         const rootActivity = getStack().activities[0];
         const template = makeTemplate(
-          denormalizeRoute(options.routes[rootActivity.name])[0],
+          normalizeRoute(options.routes[rootActivity.name])[0],
         );
 
         replaceState({
@@ -204,7 +204,7 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
         }
 
         const template = makeTemplate(
-          denormalizeRoute(options.routes[activity.name])[0],
+          normalizeRoute(options.routes[activity.name])[0],
         );
 
         pushState({
@@ -218,7 +218,7 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
       },
       onReplaced({ effect: { activity } }) {
         const template = makeTemplate(
-          denormalizeRoute(options.routes[activity.name])[0],
+          normalizeRoute(options.routes[activity.name])[0],
         );
 
         replaceState({
