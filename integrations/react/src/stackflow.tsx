@@ -37,7 +37,7 @@ export type StackflowOptions<T extends BaseActivities> = {
   /**
    * Inject stackflow plugins
    */
-  plugins?: Array<StackflowReactPlugin | StackflowReactPlugin[]>;
+  plugins?: Array<StackflowReactPlugin<T> | StackflowReactPlugin<T>[]>;
 };
 
 export type StackflowOutput<T extends BaseActivities> = {
@@ -71,7 +71,7 @@ export function stackflow<T extends BaseActivities>(
       const plugins = useMemo(
         () =>
           (options.plugins ?? [])
-            .reduce<StackflowReactPlugin[]>(
+            .reduce<StackflowReactPlugin<T>[]>(
               (plugins, plugin) => [
                 ...plugins,
                 ...(Array.isArray(plugin) ? plugin : [plugin]),

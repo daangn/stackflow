@@ -1,7 +1,11 @@
 import { Activity, AggregateOutput, StackflowPlugin } from "@stackflow/core";
 import React from "react";
 
-export type StackflowReactPlugin = (args: { context: any }) => {
+import { BaseActivities } from "./BaseActivities";
+
+export type StackflowReactPlugin<T extends BaseActivities> = (args: {
+  context: any;
+}) => {
   /**
    * Determine how to render by using the stack state
    */
