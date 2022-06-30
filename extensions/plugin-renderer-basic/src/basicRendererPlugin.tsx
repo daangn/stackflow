@@ -1,7 +1,9 @@
-import { StackflowReactPlugin } from "@stackflow/react";
+import { BaseActivities, StackflowReactPlugin } from "@stackflow/react";
 import React from "react";
 
-export function basicRendererPlugin(): StackflowReactPlugin {
+export function basicRendererPlugin<
+  T extends BaseActivities,
+>(): StackflowReactPlugin<T> {
   return () => ({
     key: "render",
     render({ stack }) {

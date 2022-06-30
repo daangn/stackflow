@@ -3,7 +3,7 @@ import React from "react";
 
 import { BaseActivities } from "./BaseActivities";
 
-export type StackflowReactPlugin<T extends BaseActivities = {}> = (args: {
+export type StackflowReactPlugin<T extends BaseActivities> = (args: {
   context: any;
 }) => {
   /**

@@ -9,7 +9,7 @@ import { WithRequired } from "./utils";
 
 interface PluginRendererProps {
   activities: { [key: string]: React.ComponentType };
-  plugin: WithRequired<ReturnType<StackflowReactPlugin>, "render">;
+  plugin: WithRequired<ReturnType<StackflowReactPlugin<{}>>, "render">;
 }
 const PluginRenderer: React.FC<PluginRendererProps> = ({
   activities,
