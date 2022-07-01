@@ -1,4 +1,3 @@
-import { historySyncPlugin } from "@stackflow/plugin-history-sync";
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
 import { stackflow } from "@stackflow/react";
 
@@ -13,14 +12,5 @@ export const { Stack, useFlow } = stackflow({
   transitionDuration: 350,
   activities,
   initialActivity: () => "Main",
-  plugins: [
-    basicRendererPlugin(),
-    historySyncPlugin({
-      routes: {
-        Article: "/articles/:articleId",
-        Main: "/",
-      },
-      fallbackActivity: () => "Article",
-    }),
-  ],
+  plugins: [basicRendererPlugin()],
 });
