@@ -28,6 +28,7 @@
   "devDependencies": {
     "@stackflow/core": "^0.2.1",
     "@stackflow/esbuild-config": "^0.2.1",
+    "@stackflow/react": "^0.2.3",
     "@types/react": "^18.0.10",
     "react": "^18.1.0",
     "rimraf": "^3.0.2",
@@ -35,6 +36,7 @@
   },
   "peerDependencies": {
     "@stackflow/core": "^0.1.0",
+    "@stackflow/react": "^0.2.3",
     "@types/react": ">=16.8.0",
     "react": ">=16.8.0"
   },
