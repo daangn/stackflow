@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/plugin-renderer-basic",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "license": "Apache-2.0",
   "exports": {
     ".": {
@@ -25,7 +25,7 @@
   "devDependencies": {
     "@stackflow/core": "^0.2.1",
     "@stackflow/esbuild-config": "^0.2.1",
-    "@stackflow/react": "^0.2.3",
+    "@stackflow/react": "^0.3.0",
     "@types/react": "^18.0.10",
     "react": "^18.1.0",
     "rimraf": "^3.0.2",
