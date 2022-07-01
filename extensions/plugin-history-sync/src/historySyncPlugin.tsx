@@ -12,6 +12,10 @@ function getCurrentState() {
   return window.history.state;
 }
 
+function normalizeRoute(route: string | string[]) {
+  return typeof route === "string" ? [route] : route;
+}
+
 interface State {
   _TAG: string;
   activity: Activity;
@@ -60,7 +64,7 @@ function replaceState({
 
 type HistorySyncPluginOptions<T extends { [activityName: string]: any }> = {
   routes: {
-    [key in keyof T]: string;
+    [key in keyof T]: string | string[];
   };
   fallbackActivity: (args: { context: any }) => Extract<keyof T, string>;
   useHash?: boolean;
@@ -98,16 +102,23 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
 
         for (let i = 0; i < activityNames.length; i += 1) {
           const activityName = activityNames[i];
-          const template = makeTemplate(options.routes[activityName]);
-          const params = template.parse(path);
+          const routes = normalizeRoute(options.routes[activityName]);
 
-          if (params) {
-            return makeEvent("Pushed", {
-              activityId: id(),
-              activityName,
-              params,
-              eventDate: new Date().getTime() - MINUTE,
-            });
+          for (let j = 0; j < routes.length; j += 1) {
+            const route = routes[j];
+
+            const template = makeTemplate(route);
+            const params = template.parse(path);
+            const matched = !!params;
+
+            if (matched) {
+              return makeEvent("Pushed", {
+                activityId: id(),
+                activityName,
+                params,
+                eventDate: new Date().getTime() - MINUTE,
+              });
+            }
           }
         }
 
@@ -120,7 +131,9 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
       },
       onInit({ actions: { getStack, dispatchEvent } }) {
         const rootActivity = getStack().activities[0];
-        const template = makeTemplate(options.routes[rootActivity.name]);
+        const template = makeTemplate(
+          normalizeRoute(options.routes[rootActivity.name])[0],
+        );
 
         replaceState({
           url: template.fill(rootActivity.params),
@@ -192,7 +205,9 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
           return;
         }
 
-        const template = makeTemplate(options.routes[activity.name]);
+        const template = makeTemplate(
+          normalizeRoute(options.routes[activity.name])[0],
+        );
 
         pushState({
           url: template.fill(activity.params),
@@ -204,7 +219,9 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
         });
       },
       onReplaced({ effect: { activity } }) {
-        const template = makeTemplate(options.routes[activity.name]);
+        const template = makeTemplate(
+          normalizeRoute(options.routes[activity.name])[0],
+        );
 
         replaceState({
           url: template.fill(activity.params),
