@@ -108,8 +108,9 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
 
             const template = makeTemplate(route);
             const params = template.parse(path);
+            const matched = !!params;
 
-            if (params) {
+            if (matched) {
               return makeEvent("Pushed", {
                 activityId: id(),
                 activityName,
