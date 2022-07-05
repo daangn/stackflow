@@ -15,6 +15,7 @@ export type Activity = {
   name: string;
   transitionState: ActivityTransitionState;
   params: ActivityParams;
+  preloadRef?: unknown;
   pushedBy: PushedEvent | ReplacedEvent;
 };
 
