@@ -68,6 +68,8 @@ type HistorySyncPluginOptions<T extends { [activityName: string]: any }> = {
   };
   fallbackActivity: (args: { context: any }) => Extract<keyof T, string>;
   useHash?: boolean;
+  experimental_initialPreloadRef?: (path: string) => Promise<any>;
+  experimental_preloadRef?: (path: string) => Promise<any>;
 };
 export function historySyncPlugin<T extends { [activityName: string]: any }>(
   options: HistorySyncPluginOptions<T>,
@@ -115,17 +117,28 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
               return makeEvent("Pushed", {
                 activityId: id(),
                 activityName,
-                params,
+                params: {
+                  ...params,
+                },
+                preloadRef: options.experimental_initialPreloadRef?.(path),
                 eventDate: new Date().getTime() - MINUTE,
               });
             }
           }
         }
 
+        const fallbackActivityName = options.fallbackActivity({ context });
+        const fallbackActivityRoutes = normalizeRoute(
+          options.routes[fallbackActivityName],
+        );
+
         return makeEvent("Pushed", {
           activityId: id(),
-          activityName: options.fallbackActivity({ context }),
+          activityName: fallbackActivityName,
           params: {},
+          preloadRef: options.experimental_initialPreloadRef?.(
+            fallbackActivityRoutes[0],
+          ),
           eventDate: new Date().getTime() - MINUTE,
         });
       },
@@ -230,6 +243,17 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
             activity,
           },
           useHash: options.useHash,
+        });
+      },
+      onBeforePush({ params, actions: { overrideParams } }) {
+        const template = makeTemplate(
+          normalizeRoute(options.routes[params.activityName])[0],
+        );
+        const path = template.fill(params.params);
+
+        overrideParams({
+          ...params,
+          preloadRef: options.experimental_preloadRef?.(path),
         });
       },
       onBeforePop({ actions: { preventDefault } }) {
