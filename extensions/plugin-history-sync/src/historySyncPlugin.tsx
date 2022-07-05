@@ -78,8 +78,11 @@ type HistorySyncPluginOptions<T extends { [activityName: string]: any }> = {
   };
   fallbackActivity: (args: { context: any }) => Extract<keyof T, string>;
   useHash?: boolean;
-  experimental_initialPreloadRef?: (path: string) => any;
-  experimental_preloadRef?: (path: string) => any;
+  experimental_initialPreloadRef?: (args: {
+    context: any;
+    path: string;
+  }) => any;
+  experimental_preloadRef?: (args: { context: any; path: string }) => any;
 };
 export function historySyncPlugin<T extends { [activityName: string]: any }>(
   options: HistorySyncPluginOptions<T>,
@@ -130,7 +133,10 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
                 params: {
                   ...params,
                 },
-                preloadRef: options.experimental_initialPreloadRef?.(path),
+                preloadRef: options.experimental_initialPreloadRef?.({
+                  context,
+                  path,
+                }),
                 eventDate: new Date().getTime() - MINUTE,
               });
             }
@@ -146,9 +152,10 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
           activityId: id(),
           activityName: fallbackActivityName,
           params: {},
-          preloadRef: options.experimental_initialPreloadRef?.(
-            fallbackActivityRoutes[0],
-          ),
+          preloadRef: options.experimental_initialPreloadRef?.({
+            context,
+            path: fallbackActivityRoutes[0],
+          }),
           eventDate: new Date().getTime() - MINUTE,
         });
       },
@@ -268,7 +275,10 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
 
         overrideParams({
           ...params,
-          preloadRef: options.experimental_preloadRef?.(path),
+          preloadRef: options.experimental_preloadRef?.({
+            context,
+            path,
+          }),
         });
       },
       onBeforePop({ actions: { preventDefault } }) {
