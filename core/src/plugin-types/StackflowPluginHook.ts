@@ -5,8 +5,12 @@ export type StackflowPluginHook = (args: {
   actions: StackflowPluginActions;
 }) => void;
 
-export type StackflowPluginPreEffectHook = (args: {
-  actions: StackflowPluginActions & { preventDefault: () => void };
+export type StackflowPluginPreEffectHook<T> = (args: {
+  params: T;
+  actions: StackflowPluginActions & {
+    preventDefault: () => void;
+    overrideParams: (params: T) => void;
+  };
 }) => void;
 
 export type StackflowPluginPostEffectHook<T extends Effect["_TAG"]> = (args: {

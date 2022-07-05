@@ -1,4 +1,5 @@
-import { PushedEvent } from "../event-types";
+import { PoppedEvent, PushedEvent, ReplacedEvent } from "../event-types";
+import { BaseDomainEvent } from "../event-types/_base";
 import {
   StackflowPluginHook,
   StackflowPluginPostEffectHook,
@@ -19,17 +20,23 @@ export type StackflowPlugin = (args: { context: any }) => {
   /**
    * Called before the `pop()` function of `useActions()` is called and the corresponding signal is delivered to the core
    */
-  onBeforePop?: StackflowPluginPreEffectHook;
+  onBeforePop?: StackflowPluginPreEffectHook<
+    Omit<PoppedEvent, keyof BaseDomainEvent>
+  >;
 
   /**
    * Called before the `push()` function of `useActions()` is called and the corresponding signal is delivered to the core
    */
-  onBeforePush?: StackflowPluginPreEffectHook;
+  onBeforePush?: StackflowPluginPreEffectHook<
+    Omit<PushedEvent, keyof BaseDomainEvent>
+  >;
 
   /**
    * Called before the `replace()` function of `useActions()` is called and the corresponding signal is delivered to the core
    */
-  onBeforeReplace?: StackflowPluginPreEffectHook;
+  onBeforeReplace?: StackflowPluginPreEffectHook<
+    Omit<ReplacedEvent, keyof BaseDomainEvent>
+  >;
 
   /**
    * Called when the push procedure is complete and the actual rendering is finished

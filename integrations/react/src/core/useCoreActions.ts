@@ -5,6 +5,8 @@ import { useContext } from "../context";
 import { usePlugins } from "../plugins";
 import { CoreActionsContext } from "./CoreActionsContext";
 
+const copy = (obj: unknown) => JSON.parse(JSON.stringify(obj));
+
 export const useCoreActions = () => {
   const plugins = usePlugins();
   const context = useContext();
@@ -12,39 +14,49 @@ export const useCoreActions = () => {
   const { dispatchEvent, getStack } = React.useContext(CoreActionsContext);
 
   const triggerPreEffectHook = useCallback(
-    (preEffect: Effect["_TAG"]) => {
+    (preEffect: Effect["_TAG"], initialParams: unknown) => {
       let isPrevented = false;
+      let params = copy(initialParams);
 
       const preventDefault = () => {
         isPrevented = true;
+      };
+      const overrideParams = (newParams: unknown) => {
+        params = copy(newParams);
       };
 
       plugins.forEach((plugin) => {
         switch (preEffect) {
           case "PUSHED":
             plugin.onBeforePush?.({
+              params,
               actions: {
                 dispatchEvent,
                 getStack,
                 preventDefault,
+                overrideParams,
               },
             });
             break;
           case "REPLACED":
             plugin.onBeforeReplace?.({
+              params,
               actions: {
                 dispatchEvent,
                 getStack,
                 preventDefault,
+                overrideParams,
               },
             });
             break;
           case "POPPED":
             plugin.onBeforePop?.({
+              params,
               actions: {
                 dispatchEvent,
                 getStack,
                 preventDefault,
+                overrideParams,
               },
             });
             break;
@@ -53,7 +65,10 @@ export const useCoreActions = () => {
         }
       });
 
-      return { isPrevented };
+      return {
+        isPrevented,
+        params,
+      };
     },
     [plugins, dispatchEvent, getStack, context],
   );
@@ -68,13 +83,18 @@ export const useCoreActions = () => {
       activityName: string;
       params: { [key: string]: string };
     }) => {
-      const { isPrevented } = triggerPreEffectHook("PUSHED");
-
-      if (!isPrevented) {
-        dispatchEvent("Pushed", {
+      const { isPrevented, params: eventParams } = triggerPreEffectHook(
+        "PUSHED",
+        {
           activityId,
           activityName,
           params,
+        },
+      );
+
+      if (!isPrevented) {
+        dispatchEvent("Pushed", {
+          ...eventParams,
         });
       }
     },
@@ -91,13 +111,18 @@ export const useCoreActions = () => {
       activityName: string;
       params: { [key: string]: string };
     }) => {
-      const { isPrevented } = triggerPreEffectHook("REPLACED");
-
-      if (!isPrevented) {
-        dispatchEvent("Replaced", {
+      const { isPrevented, params: eventParams } = triggerPreEffectHook(
+        "REPLACED",
+        {
           activityId,
           activityName,
           params,
+        },
+      );
+
+      if (!isPrevented) {
+        dispatchEvent("Replaced", {
+          ...eventParams,
         });
       }
     },
@@ -105,10 +130,13 @@ export const useCoreActions = () => {
   );
 
   const pop = useCallback(() => {
-    const { isPrevented } = triggerPreEffectHook("POPPED");
+    const { isPrevented, params: eventParams } = triggerPreEffectHook(
+      "POPPED",
+      {},
+    );
 
     if (!isPrevented) {
-      dispatchEvent("Popped", {});
+      dispatchEvent("Popped", eventParams);
     }
   }, [dispatchEvent]);
 
