@@ -9,6 +9,10 @@ const SECOND = 1000;
 const MINUTE = 60 * SECOND;
 
 function getCurrentState() {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
   return window.history.state;
 }
 
@@ -45,6 +49,9 @@ function pushState({
   url: string;
   useHash?: boolean;
 }) {
+  if (typeof window === "undefined") {
+    return;
+  }
   const nextUrl = useHash ? `${window.location.pathname}#${url}` : url;
   window.history.pushState(state, "", nextUrl);
 }
@@ -58,6 +65,9 @@ function replaceState({
   url: string;
   useHash?: boolean;
 }) {
+  if (typeof window === "undefined") {
+    return;
+  }
   const nextUrl = useHash ? `${window.location.pathname}#${url}` : url;
   window.history.replaceState(state, "", nextUrl);
 }
@@ -206,10 +216,15 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
         };
 
         onPopStateDisposer?.();
-        window.addEventListener("popstate", onPopState);
+
+        if (typeof window !== "undefined") {
+          window.addEventListener("popstate", onPopState);
+        }
 
         onPopStateDisposer = () => {
-          window.removeEventListener("popstate", onPopState);
+          if (typeof window !== "undefined") {
+            window.removeEventListener("popstate", onPopState);
+          }
         };
       },
       onPushed({ effect: { activity } }) {
@@ -260,7 +275,9 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
         preventDefault();
 
         do {
-          window.history.back();
+          if (typeof window !== "undefined") {
+            window.history.back();
+          }
         } while (!parseState(getCurrentState()));
       },
     };
