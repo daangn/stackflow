@@ -96,18 +96,24 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
       initialPushedEvent() {
         const initHistoryState = parseState(getCurrentState());
 
-        if (initHistoryState) {
-          return {
-            ...initHistoryState.activity.pushedBy,
-            name: "Pushed",
-          };
-        }
-
         const path = context?.req?.path
           ? context.req.path
           : typeof window !== "undefined"
           ? window.location.pathname + window.location.search
           : null;
+
+        const preloadRef = options.experimental_initialPreloadRef?.({
+          context,
+          path,
+        });
+
+        if (initHistoryState) {
+          return {
+            ...initHistoryState.activity.pushedBy,
+            ...(preloadRef ? { preloadRef } : null),
+            name: "Pushed",
+          };
+        }
 
         if (!path) {
           return null;
@@ -133,11 +139,8 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
                 params: {
                   ...params,
                 },
-                preloadRef: options.experimental_initialPreloadRef?.({
-                  context,
-                  path,
-                }),
                 eventDate: new Date().getTime() - MINUTE,
+                ...(preloadRef ? { preloadRef } : null),
               });
             }
           }
@@ -147,16 +150,17 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
         const fallbackActivityRoutes = normalizeRoute(
           options.routes[fallbackActivityName],
         );
+        const fallbackPreloadRef = options.experimental_initialPreloadRef?.({
+          context,
+          path: fallbackActivityRoutes[0],
+        });
 
         return makeEvent("Pushed", {
           activityId: id(),
           activityName: fallbackActivityName,
           params: {},
-          preloadRef: options.experimental_initialPreloadRef?.({
-            context,
-            path: fallbackActivityRoutes[0],
-          }),
           eventDate: new Date().getTime() - MINUTE,
+          ...(fallbackPreloadRef ? { preloadRef: fallbackPreloadRef } : null),
         });
       },
       onInit({ actions: { getStack, dispatchEvent } }) {
