@@ -68,8 +68,8 @@ type HistorySyncPluginOptions<T extends { [activityName: string]: any }> = {
   };
   fallbackActivity: (args: { context: any }) => Extract<keyof T, string>;
   useHash?: boolean;
-  experimental_initialPreloadRef?: (path: string) => Promise<any>;
-  experimental_preloadRef?: (path: string) => Promise<any>;
+  experimental_initialPreloadRef?: (path: string) => any;
+  experimental_preloadRef?: (path: string) => any;
 };
 export function historySyncPlugin<T extends { [activityName: string]: any }>(
   options: HistorySyncPluginOptions<T>,
