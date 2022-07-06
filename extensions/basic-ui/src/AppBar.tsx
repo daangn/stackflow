@@ -13,7 +13,7 @@ import {
 } from "./utils";
 
 interface AppBarProps {
-  theme: "android" | "cupertino";
+  theme?: "android" | "cupertino";
   title?: React.ReactNode;
   appendLeft?: () => React.ReactNode;
   appendRight?: () => React.ReactNode;
@@ -107,7 +107,6 @@ const AppBar: React.FC<AppBarProps> = ({
       <div ref={centerRef} className={css.center}>
         <div
           className={css.centerMain({
-            theme,
             hasLeft,
           })}
         >

@@ -19,7 +19,7 @@ type PropOf<T> = T extends React.ComponentType<infer U> ? U : unknown;
 const appScreenPaperRefMap = new Map<string, React.RefObject<any>>();
 
 interface AppScreenProps {
-  theme: "android" | "cupertino";
+  theme?: "android" | "cupertino";
   appBar?: Omit<PropOf<typeof AppBar>, "theme">;
   backgroundColor?: string;
   children: React.ReactNode;

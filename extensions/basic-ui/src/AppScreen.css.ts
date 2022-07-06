@@ -37,6 +37,9 @@ export const allTransitions = style({
   transition: `transform ${vars.transitionDuration}, opacity ${vars.transitionDuration}`,
 });
 
+export const staticAndroid = ":root[data-stackflow-basic-ui-theme=android]";
+export const staticCupertino = ":root[data-stackflow-basic-ui-theme=cupertino]";
+
 export const android = createTheme(vars, {
   backgroundColor: "#fff",
   dimBackgroundColor: "rgba(0, 0, 0, 0.15)",
@@ -115,7 +118,7 @@ export const dim = style([
     opacity: 0,
     zIndex: vars.zIndexes.dim,
     selectors: {
-      [`${android} &`]: {
+      [`${android} &, ${staticAndroid} &`]: {
         height: "10rem",
         background: `linear-gradient(${vars.dimBackgroundColor}, rgba(0, 0, 0, 0))`,
       },
@@ -148,24 +151,24 @@ export const paper = recipe({
       },
       zIndex: vars.zIndexes.paper,
       selectors: {
-        [`${cupertino} &`]: {
+        [`${cupertino} &, ${staticCupertino} &`]: {
           transform: "translateX(100%)",
         },
-        [`${cupertino}${enterActive} &`]: {
+        [`${cupertino}${enterActive} &, ${staticCupertino} ${enterActive} &`]: {
           transform: "translateX(0)",
         },
-        [`${cupertino}${enterDone} &`]: {
+        [`${cupertino}${enterDone} &, ${staticCupertino} ${enterDone} &`]: {
           transform: "translateX(0)",
         },
-        [`${android} &`]: {
+        [`${android} &, ${staticAndroid} &`]: {
           opacity: 0,
           transform: "translateY(10rem)",
         },
-        [`${android}${enterActive} &`]: {
+        [`${android}${enterActive} &, ${staticAndroid} ${enterActive} &`]: {
           opacity: 1,
           transform: "translateY(0)",
         },
-        [`${android}${enterDone} &`]: {
+        [`${android}${enterDone} &, ${staticAndroid} ${enterDone} &`]: {
           opacity: 1,
           transform: "translateY(0)",
         },
@@ -187,16 +190,17 @@ export const paper = recipe({
     offset: {
       true: {
         selectors: {
-          [`${cupertino}${enterActive} &`]: {
+          [`${cupertino}${enterActive} &, ${staticCupertino} ${enterActive} &`]:
+            {
+              transform: "translateX(-5rem)",
+            },
+          [`${cupertino}${enterDone} &, ${staticCupertino} ${enterDone} &`]: {
             transform: "translateX(-5rem)",
           },
-          [`${cupertino}${enterDone} &`]: {
-            transform: "translateX(-5rem)",
-          },
-          [`${android}${enterActive} &`]: {
+          [`${android}${enterActive} &, ${staticAndroid} ${enterActive} &`]: {
             transform: "translateY(-2rem)",
           },
-          [`${android}${enterDone} &`]: {
+          [`${android}${enterDone} &, ${staticAndroid} ${enterDone} &`]: {
             transform: "translateY(-2rem)",
           },
         },

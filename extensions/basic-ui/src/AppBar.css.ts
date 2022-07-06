@@ -9,6 +9,8 @@ import {
   enterActive,
   enterDone,
   exitActive,
+  staticAndroid,
+  staticCupertino,
   vars,
 } from "./AppScreen.css";
 import { f } from "./styles";
@@ -24,22 +26,22 @@ export const appBar = recipe({
       paddingTop: ["constant(safe-area-inset-top)", "env(safe-area-inset-top)"],
       zIndex: vars.zIndexes.appBar,
       selectors: {
-        [`${cupertino} &`]: {
+        [`${cupertino} &, ${staticCupertino} &`]: {
           position: "absolute",
         },
-        [`${cupertino}${exitActive} &`]: {
+        [`${cupertino}${exitActive} &, ${staticCupertino} ${exitActive} &`]: {
           transform: "translateX(100%)",
         },
-        [`${android} &`]: {
+        [`${android} &, ${staticAndroid} &`]: {
           opacity: 0,
           transform: "translateY(10rem)",
           transition: `transform ${vars.transitionDuration}, opacity ${vars.transitionDuration}`,
         },
-        [`${android}${enterActive} &`]: {
+        [`${android}${enterActive} &, ${staticAndroid} ${enterActive} &`]: {
           opacity: 1,
           transform: "translateY(0)",
         },
-        [`${android}${enterDone} &`]: {
+        [`${android}${enterDone} &, ${staticAndroid} ${enterDone} &`]: {
           opacity: 1,
           transform: "translateY(0)",
         },
@@ -57,10 +59,10 @@ export const appBar = recipe({
     isTopActive: {
       false: {
         selectors: {
-          [`${android}${enterActive} &`]: {
+          [`${android}${enterActive} &, ${staticAndroid} ${enterActive} &`]: {
             transform: "translateY(-2rem)",
           },
-          [`${android}${enterDone} &`]: {
+          [`${android}${enterDone} &, ${staticAndroid} ${enterDone} &`]: {
             transform: "translateY(-2rem)",
           },
         },
@@ -110,40 +112,37 @@ export const centerMain = recipe({
   base: {
     width: vars.appBar.center.mainWidth,
     color: vars.appBar.textColor,
+    selectors: {
+      [`${android} &, ${staticAndroid} &`]: {
+        width: "100%",
+        justifyContent: "flex-start",
+        paddingLeft: "1rem",
+        fontSize: "1.1875rem",
+        lineHeight: "1.5",
+        fontWeight: "bold",
+        boxSizing: "border-box",
+      },
+      [`${cupertino} &, ${staticCupertino} &`]: {
+        position: "absolute",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        textAlign: "center",
+        fontFamily: "-apple-system, BlinkMacSystemFont",
+        fontWeight: 600,
+        fontSize: "1rem",
+        left: "50%",
+        transform: "translate(-50%)",
+        height: vars.appBar.height,
+        top: ["constant(safe-area-inset-top)", "env(safe-area-inset-top)"],
+      },
+    },
   },
   variants: {
-    theme: {
-      android: [
-        f.fullWidth,
-        {
-          justifyContent: "flex-start",
-          paddingLeft: "1rem",
-          fontSize: "1.1875rem",
-          lineHeight: "1.5",
-          fontWeight: "bold",
-          boxSizing: "border-box",
-        },
-      ],
-      cupertino: [
-        f.textAlignCenter,
-        f.flexAlignCenter,
-        f.flexJustifyCenter,
-        f.posAbs,
-        {
-          fontFamily: "-apple-system, BlinkMacSystemFont",
-          fontWeight: 600,
-          fontSize: "1rem",
-          left: "50%",
-          transform: "translate(-50%)",
-          height: vars.appBar.height,
-          top: ["constant(safe-area-inset-top)", "env(safe-area-inset-top)"],
-        },
-      ],
-    },
     hasLeft: {
       true: {
         selectors: {
-          [`${android} &`]: {
+          [`${android} &, ${staticAndroid} &`]: {
             paddingLeft: "0.375rem",
           },
         },
@@ -174,7 +173,7 @@ export const right = style([
       display: "none",
     },
     selectors: {
-      [`${android} &`]: {
+      [`${android} &, ${staticAndroid} &`]: {
         padding: "0 0.5rem 0 0",
       },
     },
