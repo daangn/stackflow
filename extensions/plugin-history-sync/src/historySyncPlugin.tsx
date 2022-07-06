@@ -83,6 +83,7 @@ type HistorySyncPluginOptions<T extends { [activityName: string]: any }> = {
     path: string;
   }) => any;
   experimental_preloadRef?: (args: { context: any; path: string }) => any;
+  experimental_startTransition?: (cb: () => void) => void;
 };
 export function historySyncPlugin<T extends { [activityName: string]: any }>(
   options: HistorySyncPluginOptions<T>,
@@ -108,6 +109,9 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
         path,
       });
     }
+
+    const startTransition =
+      options.experimental_startTransition ?? ((cb) => cb());
 
     return {
       key: "historySync",
@@ -233,9 +237,11 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
                 activityParams: historyState.activity.params,
               });
 
-              dispatchEvent("Pushed", {
-                ...historyState.activity.pushedBy,
-                ...(preloadRef ? { preloadRef } : null),
+              startTransition(() => {
+                dispatchEvent("Pushed", {
+                  ...historyState.activity.pushedBy,
+                  ...(preloadRef ? { preloadRef } : null),
+                });
               });
             }
           }
@@ -247,11 +253,13 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
               activityParams: historyState.activity.params,
             });
 
-            dispatchEvent("Pushed", {
-              activityId: historyState.activity.pushedBy.activityId,
-              activityName: historyState.activity.pushedBy.activityName,
-              params: historyState.activity.pushedBy.params,
-              ...(preloadRef ? { preloadRef } : null),
+            startTransition(() => {
+              dispatchEvent("Pushed", {
+                activityId: historyState.activity.pushedBy.activityId,
+                activityName: historyState.activity.pushedBy.activityName,
+                params: historyState.activity.pushedBy.params,
+                ...(preloadRef ? { preloadRef } : null),
+              });
             });
           }
         };
