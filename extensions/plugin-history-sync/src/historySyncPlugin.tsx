@@ -81,8 +81,13 @@ type HistorySyncPluginOptions<T extends { [activityName: string]: any }> = {
   experimental_initialPreloadRef?: (args: {
     context: any;
     path: string;
+    activityId: string;
   }) => any;
-  experimental_preloadRef?: (args: { context: any; path: string }) => any;
+  experimental_preloadRef?: (args: {
+    context: any;
+    path: string;
+    activityId: string;
+  }) => any;
   experimental_startTransition?: (cb: () => void) => void;
 };
 export function historySyncPlugin<T extends { [activityName: string]: any }>(
@@ -93,9 +98,11 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
     let onPopStateDisposer: (() => void) | null = null;
 
     function getPreloadRef({
+      activityId,
       activityName,
       activityParams,
     }: {
+      activityId: string;
       activityName: string;
       activityParams: ActivityParams;
     }) {
@@ -105,6 +112,7 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
       const path = template.fill(activityParams);
 
       return options.experimental_preloadRef?.({
+        activityId,
         context,
         path,
       });
@@ -124,12 +132,13 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
           ? window.location.pathname + window.location.search
           : null;
 
-        const preloadRef = options.experimental_initialPreloadRef?.({
-          context,
-          path,
-        });
-
         if (initHistoryState) {
+          const preloadRef = options.experimental_initialPreloadRef?.({
+            context,
+            path,
+            activityId: initHistoryState.activity.id,
+          });
+
           return {
             ...initHistoryState.activity.pushedBy,
             ...(preloadRef ? { preloadRef } : null),
@@ -155,8 +164,16 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
             const matched = !!params;
 
             if (matched) {
+              const activityId = id();
+
+              const preloadRef = options.experimental_initialPreloadRef?.({
+                activityId,
+                context,
+                path,
+              });
+
               return makeEvent("Pushed", {
-                activityId: id(),
+                activityId,
                 activityName,
                 params: {
                   ...params,
@@ -172,13 +189,16 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
         const fallbackActivityRoutes = normalizeRoute(
           options.routes[fallbackActivityName],
         );
+        const fallbackActivityId = id();
+
         const fallbackPreloadRef = options.experimental_initialPreloadRef?.({
           context,
           path: fallbackActivityRoutes[0],
+          activityId: fallbackActivityId,
         });
 
         return makeEvent("Pushed", {
-          activityId: id(),
+          activityId: fallbackActivityId,
           activityName: fallbackActivityName,
           params: {},
           eventDate: new Date().getTime() - MINUTE,
@@ -233,6 +253,7 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
               pushFlag = true;
 
               const preloadRef = getPreloadRef({
+                activityId: historyState.activity.id,
                 activityName: historyState.activity.name,
                 activityParams: historyState.activity.params,
               });
@@ -249,6 +270,7 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
             pushFlag = true;
 
             const preloadRef = getPreloadRef({
+              activityId: historyState.activity.id,
               activityName: historyState.activity.name,
               activityParams: historyState.activity.params,
             });
@@ -311,6 +333,7 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
       },
       onBeforePush({ params, actions: { overrideParams } }) {
         const preloadRef = getPreloadRef({
+          activityId: params.activityId,
           activityName: params.activityName,
           activityParams: params.params,
         });
