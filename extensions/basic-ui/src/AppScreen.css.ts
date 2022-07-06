@@ -1,12 +1,30 @@
-import { createTheme, createThemeContract, style } from "@vanilla-extract/css";
+import {
+  createGlobalTheme,
+  createGlobalThemeContract,
+  createThemeContract,
+  style,
+} from "@vanilla-extract/css";
 import { calc } from "@vanilla-extract/css-utils";
 import { recipe } from "@vanilla-extract/recipes";
 
 import { f } from "./styles";
 
-const vars = createThemeContract({
-  backgroundColor: null,
-  dimBackgroundColor: null,
+export const vars = createGlobalThemeContract(
+  {
+    backgroundColor: null,
+    dimBackgroundColor: null,
+    appBar: {
+      height: null,
+      borderColor: null,
+      borderSize: null,
+      textColor: null,
+      iconColor: null,
+    },
+  },
+  (_value, path) => `stackflow-basic-ui-${path.join("-")}`,
+);
+
+export const localVars = createThemeContract({
   transitionDuration: null,
   zIndexes: {
     dim: null,
@@ -14,15 +32,47 @@ const vars = createThemeContract({
     appBar: null,
   },
   appBar: {
-    height: null,
-    borderColor: null,
-    borderSize: null,
-    textColor: null,
-    iconColor: null,
     center: {
       mainWidth: null,
     },
   },
+});
+
+export const rootAndroid = ":root[data-stackflow-basic-ui-theme=android]";
+export const rootCupertino = ":root[data-stackflow-basic-ui-theme=cupertino]";
+
+export const android = style({});
+export const cupertino = style({});
+
+createGlobalTheme(`${android}, ${rootAndroid}`, vars, {
+  backgroundColor: "#fff",
+  dimBackgroundColor: "rgba(0, 0, 0, 0.15)",
+  appBar: {
+    height: "3.5rem",
+    borderColor: "rgba(0, 0, 0, 0.07)",
+    borderSize: "1px",
+    iconColor: "#212124",
+    textColor: "#212124",
+  },
+});
+
+createGlobalTheme(`${cupertino}, ${rootCupertino}`, vars, {
+  backgroundColor: "#fff",
+  dimBackgroundColor: "rgba(0, 0, 0, 0.15)",
+  appBar: {
+    height: "2.75rem",
+    borderColor: "rgba(0, 0, 0, 0.12)",
+    borderSize: "0.5px",
+    iconColor: "#212124",
+    textColor: "#212124",
+  },
+});
+
+export const enterActive = style({});
+export const enterDone = style({});
+export const exitActive = style({});
+export const exitDone = style({
+  transform: "translateX(100%)",
 });
 
 const dimBackgroundColor = style({
@@ -34,59 +84,7 @@ export const background = style({
 });
 
 export const allTransitions = style({
-  transition: `transform ${vars.transitionDuration}, opacity ${vars.transitionDuration}`,
-});
-
-export const staticAndroid = ":root[data-stackflow-basic-ui-theme=android]";
-export const staticCupertino = ":root[data-stackflow-basic-ui-theme=cupertino]";
-
-export const android = createTheme(vars, {
-  backgroundColor: "#fff",
-  dimBackgroundColor: "rgba(0, 0, 0, 0.15)",
-  transitionDuration: "",
-  zIndexes: {
-    dim: "",
-    paper: "",
-    appBar: "",
-  },
-  appBar: {
-    height: "3.5rem",
-    borderColor: "rgba(0, 0, 0, 0.07)",
-    borderSize: "1px",
-    iconColor: "#212124",
-    textColor: "#212124",
-    center: {
-      mainWidth: "",
-    },
-  },
-});
-
-export const cupertino = createTheme(vars, {
-  backgroundColor: "#fff",
-  dimBackgroundColor: "rgba(0, 0, 0, 0.15)",
-  transitionDuration: "",
-  zIndexes: {
-    dim: "",
-    paper: "",
-    appBar: "",
-  },
-  appBar: {
-    height: "2.75rem",
-    borderColor: "rgba(0, 0, 0, 0.12)",
-    borderSize: "0.5px",
-    iconColor: "#212124",
-    textColor: "#212124",
-    center: {
-      mainWidth: "",
-    },
-  },
-});
-
-export const enterActive = style({});
-export const enterDone = style({});
-export const exitActive = style({});
-export const exitDone = style({
-  transform: "translateX(100%)",
+  transition: `transform ${localVars.transitionDuration}, opacity ${localVars.transitionDuration}`,
 });
 
 export const appScreen = recipe({
@@ -116,9 +114,9 @@ export const dim = style([
   allTransitions,
   {
     opacity: 0,
-    zIndex: vars.zIndexes.dim,
+    zIndex: localVars.zIndexes.dim,
     selectors: {
-      [`${android} &, ${staticAndroid} &`]: {
+      [`${android} &, ${rootAndroid} &`]: {
         height: "10rem",
         background: `linear-gradient(${vars.dimBackgroundColor}, rgba(0, 0, 0, 0))`,
       },
@@ -149,26 +147,26 @@ export const paper = recipe({
       "::-webkit-scrollbar": {
         display: "none",
       },
-      zIndex: vars.zIndexes.paper,
+      zIndex: localVars.zIndexes.paper,
       selectors: {
-        [`${cupertino} &, ${staticCupertino} &`]: {
+        [`${cupertino} &, ${rootCupertino} &`]: {
           transform: "translateX(100%)",
         },
-        [`${cupertino}${enterActive} &, ${staticCupertino} ${enterActive} &`]: {
+        [`${cupertino}${enterActive} &, ${rootCupertino} ${enterActive} &`]: {
           transform: "translateX(0)",
         },
-        [`${cupertino}${enterDone} &, ${staticCupertino} ${enterDone} &`]: {
+        [`${cupertino}${enterDone} &, ${rootCupertino} ${enterDone} &`]: {
           transform: "translateX(0)",
         },
-        [`${android} &, ${staticAndroid} &`]: {
+        [`${android} &, ${rootAndroid} &`]: {
           opacity: 0,
           transform: "translateY(10rem)",
         },
-        [`${android}${enterActive} &, ${staticAndroid} ${enterActive} &`]: {
+        [`${android}${enterActive} &, ${rootAndroid} ${enterActive} &`]: {
           opacity: 1,
           transform: "translateY(0)",
         },
-        [`${android}${enterDone} &, ${staticAndroid} ${enterDone} &`]: {
+        [`${android}${enterDone} &, ${rootAndroid} ${enterDone} &`]: {
           opacity: 1,
           transform: "translateY(0)",
         },
@@ -190,17 +188,16 @@ export const paper = recipe({
     offset: {
       true: {
         selectors: {
-          [`${cupertino}${enterActive} &, ${staticCupertino} ${enterActive} &`]:
-            {
-              transform: "translateX(-5rem)",
-            },
-          [`${cupertino}${enterDone} &, ${staticCupertino} ${enterDone} &`]: {
+          [`${cupertino}${enterActive} &, ${rootCupertino} ${enterActive} &`]: {
             transform: "translateX(-5rem)",
           },
-          [`${android}${enterActive} &, ${staticAndroid} ${enterActive} &`]: {
+          [`${cupertino}${enterDone} &, ${rootCupertino} ${enterDone} &`]: {
+            transform: "translateX(-5rem)",
+          },
+          [`${android}${enterActive} &, ${rootAndroid} ${enterActive} &`]: {
             transform: "translateY(-2rem)",
           },
-          [`${android}${enterDone} &, ${staticAndroid} ${enterDone} &`]: {
+          [`${android}${enterDone} &, ${rootAndroid} ${enterDone} &`]: {
             transform: "translateY(-2rem)",
           },
         },
@@ -228,5 +225,3 @@ export const edge = recipe({
     },
   },
 });
-
-export { vars };

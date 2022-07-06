@@ -92,10 +92,10 @@ const AppBar: React.FC<AppBarProps> = ({
       })}
       style={assignInlineVars(
         compactMap({
-          [appScreenCss.vars.appBar.center.mainWidth]: `${maxWidth}px`,
           [appScreenCss.vars.appBar.iconColor]: iconColor,
           [appScreenCss.vars.appBar.textColor]: textColor,
           [appScreenCss.vars.appBar.borderColor]: borderColor,
+          [appScreenCss.localVars.appBar.center.mainWidth]: `${maxWidth}px`,
         }),
       )}
     >

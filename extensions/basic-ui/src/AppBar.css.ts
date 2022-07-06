@@ -9,8 +9,9 @@ import {
   enterActive,
   enterDone,
   exitActive,
-  staticAndroid,
-  staticCupertino,
+  localVars,
+  rootAndroid,
+  rootCupertino,
   vars,
 } from "./AppScreen.css";
 import { f } from "./styles";
@@ -24,24 +25,24 @@ export const appBar = recipe({
     {
       height: vars.appBar.height,
       paddingTop: ["constant(safe-area-inset-top)", "env(safe-area-inset-top)"],
-      zIndex: vars.zIndexes.appBar,
+      zIndex: localVars.zIndexes.appBar,
       selectors: {
-        [`${cupertino} &, ${staticCupertino} &`]: {
+        [`${cupertino} &, ${rootCupertino} &`]: {
           position: "absolute",
         },
-        [`${cupertino}${exitActive} &, ${staticCupertino} ${exitActive} &`]: {
+        [`${cupertino}${exitActive} &, ${rootCupertino} ${exitActive} &`]: {
           transform: "translateX(100%)",
         },
-        [`${android} &, ${staticAndroid} &`]: {
+        [`${android} &, ${rootAndroid} &`]: {
           opacity: 0,
           transform: "translateY(10rem)",
-          transition: `transform ${vars.transitionDuration}, opacity ${vars.transitionDuration}`,
+          transition: `transform ${localVars.transitionDuration}, opacity ${localVars.transitionDuration}`,
         },
-        [`${android}${enterActive} &, ${staticAndroid} ${enterActive} &`]: {
+        [`${android}${enterActive} &, ${rootAndroid} ${enterActive} &`]: {
           opacity: 1,
           transform: "translateY(0)",
         },
-        [`${android}${enterDone} &, ${staticAndroid} ${enterDone} &`]: {
+        [`${android}${enterDone} &, ${rootAndroid} ${enterDone} &`]: {
           opacity: 1,
           transform: "translateY(0)",
         },
@@ -59,10 +60,10 @@ export const appBar = recipe({
     isTopActive: {
       false: {
         selectors: {
-          [`${android}${enterActive} &, ${staticAndroid} ${enterActive} &`]: {
+          [`${android}${enterActive} &, ${rootAndroid} ${enterActive} &`]: {
             transform: "translateY(-2rem)",
           },
-          [`${android}${enterDone} &, ${staticAndroid} ${enterDone} &`]: {
+          [`${android}${enterDone} &, ${rootAndroid} ${enterDone} &`]: {
             transform: "translateY(-2rem)",
           },
         },
@@ -110,10 +111,10 @@ export const center = style([
 
 export const centerMain = recipe({
   base: {
-    width: vars.appBar.center.mainWidth,
+    width: localVars.appBar.center.mainWidth,
     color: vars.appBar.textColor,
     selectors: {
-      [`${android} &, ${staticAndroid} &`]: {
+      [`${android} &, ${rootAndroid} &`]: {
         width: "100%",
         justifyContent: "flex-start",
         paddingLeft: "1rem",
@@ -122,7 +123,7 @@ export const centerMain = recipe({
         fontWeight: "bold",
         boxSizing: "border-box",
       },
-      [`${cupertino} &, ${staticCupertino} &`]: {
+      [`${cupertino} &, ${rootCupertino} &`]: {
         position: "absolute",
         display: "flex",
         alignItems: "center",
@@ -142,7 +143,7 @@ export const centerMain = recipe({
     hasLeft: {
       true: {
         selectors: {
-          [`${android} &, ${staticAndroid} &`]: {
+          [`${android} &, ${rootAndroid} &`]: {
             paddingLeft: "0.375rem",
           },
         },
@@ -173,7 +174,7 @@ export const right = style([
       display: "none",
     },
     selectors: {
-      [`${android} &, ${staticAndroid} &`]: {
+      [`${android} &, ${rootAndroid} &`]: {
         padding: "0 0.5rem 0 0",
       },
     },

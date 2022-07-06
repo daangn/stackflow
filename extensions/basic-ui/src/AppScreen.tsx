@@ -123,11 +123,11 @@ const AppScreen: React.FC<AppScreenProps> = ({
       className={appScreen}
       style={assignInlineVars(
         compactMap({
-          [css.vars.zIndexes.dim]: `${zIndexDim}`,
-          [css.vars.zIndexes.paper]: `${zIndexPaper}`,
-          [css.vars.zIndexes.appBar]: `${zIndexAppBar}`,
-          [css.vars.transitionDuration]: `${stack.transitionDuration}ms`,
           [css.vars.backgroundColor]: backgroundColor,
+          [css.localVars.zIndexes.dim]: `${zIndexDim}`,
+          [css.localVars.zIndexes.paper]: `${zIndexPaper}`,
+          [css.localVars.zIndexes.appBar]: `${zIndexAppBar}`,
+          [css.localVars.transitionDuration]: `${stack.transitionDuration}ms`,
         }),
       )}
     >
