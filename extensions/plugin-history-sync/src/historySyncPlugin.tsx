@@ -1,4 +1,4 @@
-import { Activity, id, makeEvent } from "@stackflow/core";
+import { Activity, ActivityParams, id, makeEvent } from "@stackflow/core";
 import { StackflowReactPlugin } from "@stackflow/react";
 
 import { makeTemplate } from "./makeTemplate";
@@ -9,6 +9,10 @@ const SECOND = 1000;
 const MINUTE = 60 * SECOND;
 
 function getCurrentState() {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
   return window.history.state;
 }
 
@@ -45,6 +49,9 @@ function pushState({
   url: string;
   useHash?: boolean;
 }) {
+  if (typeof window === "undefined") {
+    return;
+  }
   const nextUrl = useHash ? `${window.location.pathname}#${url}` : url;
   window.history.pushState(state, "", nextUrl);
 }
@@ -58,6 +65,9 @@ function replaceState({
   url: string;
   useHash?: boolean;
 }) {
+  if (typeof window === "undefined") {
+    return;
+  }
   const nextUrl = useHash ? `${window.location.pathname}#${url}` : url;
   window.history.replaceState(state, "", nextUrl);
 }
@@ -68,6 +78,17 @@ type HistorySyncPluginOptions<T extends { [activityName: string]: any }> = {
   };
   fallbackActivity: (args: { context: any }) => Extract<keyof T, string>;
   useHash?: boolean;
+  experimental_initialPreloadRef?: (args: {
+    context: any;
+    path: string;
+    activityId: string;
+  }) => any;
+  experimental_preloadRef?: (args: {
+    context: any;
+    path: string;
+    activityId: string;
+  }) => any;
+  experimental_startTransition?: (cb: () => void) => void;
 };
 export function historySyncPlugin<T extends { [activityName: string]: any }>(
   options: HistorySyncPluginOptions<T>,
@@ -76,23 +97,54 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
     let pushFlag = false;
     let onPopStateDisposer: (() => void) | null = null;
 
+    function getPreloadRef({
+      activityId,
+      activityName,
+      activityParams,
+    }: {
+      activityId: string;
+      activityName: string;
+      activityParams: ActivityParams;
+    }) {
+      const template = makeTemplate(
+        normalizeRoute(options.routes[activityName])[0],
+      );
+      const path = template.fill(activityParams);
+
+      return options.experimental_preloadRef?.({
+        activityId,
+        context,
+        path,
+      });
+    }
+
+    const startTransition =
+      options.experimental_startTransition ?? ((cb) => cb());
+
     return {
       key: "historySync",
       initialPushedEvent() {
         const initHistoryState = parseState(getCurrentState());
-
-        if (initHistoryState) {
-          return {
-            ...initHistoryState.activity.pushedBy,
-            name: "Pushed",
-          };
-        }
 
         const path = context?.req?.path
           ? context.req.path
           : typeof window !== "undefined"
           ? window.location.pathname + window.location.search
           : null;
+
+        if (initHistoryState) {
+          const preloadRef = options.experimental_initialPreloadRef?.({
+            context,
+            path,
+            activityId: initHistoryState.activity.id,
+          });
+
+          return {
+            ...initHistoryState.activity.pushedBy,
+            ...(preloadRef ? { preloadRef } : null),
+            name: "Pushed",
+          };
+        }
 
         if (!path) {
           return null;
@@ -112,21 +164,45 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
             const matched = !!params;
 
             if (matched) {
+              const activityId = id();
+
+              const preloadRef = options.experimental_initialPreloadRef?.({
+                activityId,
+                context,
+                path,
+              });
+
               return makeEvent("Pushed", {
-                activityId: id(),
+                activityId,
                 activityName,
-                params,
+                params: {
+                  ...params,
+                },
                 eventDate: new Date().getTime() - MINUTE,
+                ...(preloadRef ? { preloadRef } : null),
               });
             }
           }
         }
 
+        const fallbackActivityName = options.fallbackActivity({ context });
+        const fallbackActivityRoutes = normalizeRoute(
+          options.routes[fallbackActivityName],
+        );
+        const fallbackActivityId = id();
+
+        const fallbackPreloadRef = options.experimental_initialPreloadRef?.({
+          context,
+          path: fallbackActivityRoutes[0],
+          activityId: fallbackActivityId,
+        });
+
         return makeEvent("Pushed", {
-          activityId: id(),
-          activityName: options.fallbackActivity({ context }),
+          activityId: fallbackActivityId,
+          activityName: fallbackActivityName,
           params: {},
           eventDate: new Date().getTime() - MINUTE,
+          ...(fallbackPreloadRef ? { preloadRef: fallbackPreloadRef } : null),
         });
       },
       onInit({ actions: { getStack, dispatchEvent } }) {
@@ -176,27 +252,50 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
             if (!targetActivity) {
               pushFlag = true;
 
-              dispatchEvent("Pushed", {
-                ...historyState.activity.pushedBy,
+              const preloadRef = getPreloadRef({
+                activityId: historyState.activity.id,
+                activityName: historyState.activity.name,
+                activityParams: historyState.activity.params,
+              });
+
+              startTransition(() => {
+                dispatchEvent("Pushed", {
+                  ...historyState.activity.pushedBy,
+                  ...(preloadRef ? { preloadRef } : null),
+                });
               });
             }
           }
           if (isForward) {
             pushFlag = true;
 
-            dispatchEvent("Pushed", {
-              activityId: historyState.activity.pushedBy.activityId,
-              activityName: historyState.activity.pushedBy.activityName,
-              params: historyState.activity.pushedBy.params,
+            const preloadRef = getPreloadRef({
+              activityId: historyState.activity.id,
+              activityName: historyState.activity.name,
+              activityParams: historyState.activity.params,
+            });
+
+            startTransition(() => {
+              dispatchEvent("Pushed", {
+                activityId: historyState.activity.pushedBy.activityId,
+                activityName: historyState.activity.pushedBy.activityName,
+                params: historyState.activity.pushedBy.params,
+                ...(preloadRef ? { preloadRef } : null),
+              });
             });
           }
         };
 
         onPopStateDisposer?.();
-        window.addEventListener("popstate", onPopState);
+
+        if (typeof window !== "undefined") {
+          window.addEventListener("popstate", onPopState);
+        }
 
         onPopStateDisposer = () => {
-          window.removeEventListener("popstate", onPopState);
+          if (typeof window !== "undefined") {
+            window.removeEventListener("popstate", onPopState);
+          }
         };
       },
       onPushed({ effect: { activity } }) {
@@ -232,11 +331,25 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
           useHash: options.useHash,
         });
       },
+      onBeforePush({ actionParams, actions: { overrideActionParams } }) {
+        const preloadRef = getPreloadRef({
+          activityId: actionParams.activityId,
+          activityName: actionParams.activityName,
+          activityParams: actionParams.params,
+        });
+
+        overrideActionParams({
+          ...actionParams,
+          ...(preloadRef ? { preloadRef } : null),
+        });
+      },
       onBeforePop({ actions: { preventDefault } }) {
         preventDefault();
 
         do {
-          window.history.back();
+          if (typeof window !== "undefined") {
+            window.history.back();
+          }
         } while (!parseState(getCurrentState()));
       },
     };
