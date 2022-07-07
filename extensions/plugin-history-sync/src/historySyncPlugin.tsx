@@ -331,15 +331,15 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
           useHash: options.useHash,
         });
       },
-      onBeforePush({ params, actions: { overrideParams } }) {
+      onBeforePush({ actionParams, actions: { overrideActionParams } }) {
         const preloadRef = getPreloadRef({
-          activityId: params.activityId,
-          activityName: params.activityName,
-          activityParams: params.params,
+          activityId: actionParams.activityId,
+          activityName: actionParams.activityName,
+          activityParams: actionParams.params,
         });
 
-        overrideParams({
-          ...params,
+        overrideActionParams({
+          ...actionParams,
           ...(preloadRef ? { preloadRef } : null),
         });
       },

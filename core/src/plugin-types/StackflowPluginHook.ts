@@ -6,10 +6,10 @@ export type StackflowPluginHook = (args: {
 }) => void;
 
 export type StackflowPluginPreEffectHook<T> = (args: {
-  params: T;
+  actionParams: T;
   actions: StackflowPluginActions & {
     preventDefault: () => void;
-    overrideParams: (params: T) => void;
+    overrideActionParams: (params: T) => void;
   };
 }) => void;
 

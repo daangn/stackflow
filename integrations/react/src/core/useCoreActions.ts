@@ -14,49 +14,49 @@ export const useCoreActions = () => {
   const { dispatchEvent, getStack } = React.useContext(CoreActionsContext);
 
   const triggerPreEffectHook = useCallback(
-    (preEffect: Effect["_TAG"], initialParams: unknown) => {
+    (preEffect: Effect["_TAG"], initialActionParams: unknown) => {
       let isPrevented = false;
-      let params = copy(initialParams);
+      let actionParams = copy(initialActionParams);
 
       const preventDefault = () => {
         isPrevented = true;
       };
-      const overrideParams = (newParams: unknown) => {
-        params = copy(newParams);
+      const overrideActionParams = (newActionParams: unknown) => {
+        actionParams = copy(newActionParams);
       };
 
       plugins.forEach((plugin) => {
         switch (preEffect) {
           case "PUSHED":
             plugin.onBeforePush?.({
-              params,
+              actionParams,
               actions: {
                 dispatchEvent,
                 getStack,
                 preventDefault,
-                overrideParams,
+                overrideActionParams,
               },
             });
             break;
           case "REPLACED":
             plugin.onBeforeReplace?.({
-              params,
+              actionParams,
               actions: {
                 dispatchEvent,
                 getStack,
                 preventDefault,
-                overrideParams,
+                overrideActionParams,
               },
             });
             break;
           case "POPPED":
             plugin.onBeforePop?.({
-              params,
+              actionParams,
               actions: {
                 dispatchEvent,
                 getStack,
                 preventDefault,
-                overrideParams,
+                overrideActionParams,
               },
             });
             break;
@@ -67,7 +67,7 @@ export const useCoreActions = () => {
 
       return {
         isPrevented,
-        params,
+        params: actionParams,
       };
     },
     [plugins, dispatchEvent, getStack, context],
