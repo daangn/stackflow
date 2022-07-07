@@ -13,7 +13,7 @@ import {
 } from "./utils";
 
 interface AppBarProps {
-  theme: "android" | "cupertino";
+  theme?: "android" | "cupertino";
   title?: React.ReactNode;
   appendLeft?: () => React.ReactNode;
   appendRight?: () => React.ReactNode;
@@ -92,10 +92,10 @@ const AppBar: React.FC<AppBarProps> = ({
       })}
       style={assignInlineVars(
         compactMap({
-          [appScreenCss.vars.appBar.center.mainWidth]: `${maxWidth}px`,
           [appScreenCss.vars.appBar.iconColor]: iconColor,
           [appScreenCss.vars.appBar.textColor]: textColor,
           [appScreenCss.vars.appBar.borderColor]: borderColor,
+          [appScreenCss.localVars.appBar.center.mainWidth]: `${maxWidth}px`,
         }),
       )}
     >
@@ -107,7 +107,6 @@ const AppBar: React.FC<AppBarProps> = ({
       <div ref={centerRef} className={css.center}>
         <div
           className={css.centerMain({
-            theme,
             hasLeft,
           })}
         >

@@ -19,7 +19,7 @@ type PropOf<T> = T extends React.ComponentType<infer U> ? U : unknown;
 const appScreenPaperRefMap = new Map<string, React.RefObject<any>>();
 
 interface AppScreenProps {
-  theme: "android" | "cupertino";
+  theme?: "android" | "cupertino";
   appBar?: Omit<PropOf<typeof AppBar>, "theme">;
   backgroundColor?: string;
   children: React.ReactNode;
@@ -123,11 +123,11 @@ const AppScreen: React.FC<AppScreenProps> = ({
       className={appScreen}
       style={assignInlineVars(
         compactMap({
-          [css.vars.zIndexes.dim]: `${zIndexDim}`,
-          [css.vars.zIndexes.paper]: `${zIndexPaper}`,
-          [css.vars.zIndexes.appBar]: `${zIndexAppBar}`,
-          [css.vars.transitionDuration]: `${stack.transitionDuration}ms`,
           [css.vars.backgroundColor]: backgroundColor,
+          [css.localVars.zIndexes.dim]: `${zIndexDim}`,
+          [css.localVars.zIndexes.paper]: `${zIndexPaper}`,
+          [css.localVars.zIndexes.appBar]: `${zIndexAppBar}`,
+          [css.localVars.transitionDuration]: `${stack.transitionDuration}ms`,
         }),
       )}
     >
