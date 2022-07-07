@@ -32,7 +32,7 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
     switch (event.name) {
       case "Pushed": {
         const transitionState: ActivityTransitionState =
-          now - event.eventDate >= transitionDuration
+          event.noAnimate || ((now - event.eventDate) >= transitionDuration)
             ? "enter-done"
             : "enter-active";
 

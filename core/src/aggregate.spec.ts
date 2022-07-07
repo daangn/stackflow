@@ -1223,3 +1223,46 @@ test("aggregate - preloadRef와 함께 ReplacedEvent가 발생한 직후 최상�
     globalTransitionState: "loading",
   });
 });
+
+test("aggregate - animate가 false이면 eventDate가 transitionDuration을 충족하지 않아도 enter-done 상태가 된다. ", () => {
+  const t = nowTime();
+
+  const events = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+    registeredEvent({
+      activityName: "sample",
+    }),
+    makeEvent("Pushed", {
+      activityId: "a1",
+      activityName: "sample",
+      eventDate: t - 150,
+      noAnimate: true,
+      params: {
+        hello: "world",
+      },
+    })
+  ];
+
+  const pushedEvent = events[2];
+
+  const output = aggregate(events, t);
+
+  expect(output).toStrictEqual({
+    activities: [
+      {
+        id: "a1",
+        name: "sample",
+        transitionState: "enter-done",
+        params: {
+          hello: "world",
+        },
+        pushedBy: pushedEvent,
+      }
+    ],
+    transitionDuration: 300,
+    globalTransitionState: "idle",
+  });
+});
+
