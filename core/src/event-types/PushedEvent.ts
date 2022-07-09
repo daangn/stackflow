@@ -11,6 +11,6 @@ export type PushedEvent = BaseDomainEvent<
     activityName: string;
     params: PushedEventParams;
     preloadRef?: unknown;
-    noAnimate?: boolean;
+    skipEnterActiveState?: boolean;
   }
 >;

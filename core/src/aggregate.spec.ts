@@ -1238,7 +1238,7 @@ test("aggregate - animate가 false이면 eventDate가 transitionDuration을 충�
       activityId: "a1",
       activityName: "sample",
       eventDate: t - 150,
-      noAnimate: true,
+      skipEnterActiveState: true,
       params: {
         hello: "world",
       },
