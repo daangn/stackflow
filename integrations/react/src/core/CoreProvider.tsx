@@ -56,7 +56,7 @@ export const CoreProvider: React.FC<CoreProviderProps> = ({
           activityName: initialActivity({ context }),
           params: {},
           eventDate: initialEventDate,
-          skipEnterActiveState: true
+          skipEnterActiveState: false,
         })
       : null;
 

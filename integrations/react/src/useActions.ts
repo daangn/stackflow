@@ -45,7 +45,7 @@ export function useActions<
           activityId: makeActivityId(),
           activityName,
           params,
-          options
+          options,
         });
       },
       replace(activityName, params, options) {
@@ -56,7 +56,7 @@ export function useActions<
         });
       },
       pop(options) {
-        coreActions.pop();
+        coreActions.pop(options);
       },
     }),
     [coreActions.push, coreActions.replace, coreActions.pop],
