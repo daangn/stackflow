@@ -127,7 +127,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
           [css.localVars.zIndexes.dim]: `${zIndexDim}`,
           [css.localVars.zIndexes.paper]: `${zIndexPaper}`,
           [css.localVars.zIndexes.appBar]: `${zIndexAppBar}`,
-          [css.localVars.transitionDuration]: `${stack.transitionDuration}ms`,
+          [css.localVars.transitionDuration]: stack.globalTransitionState === 'loading' ? `${stack.transitionDuration}ms` : '0ms',
         }),
       )}
     >
