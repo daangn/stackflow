@@ -45,6 +45,7 @@ export function useActions<
           activityId: makeActivityId(),
           activityName,
           params,
+          options
         });
       },
       replace(activityName, params, options) {

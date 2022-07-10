@@ -51,11 +51,12 @@ export const CoreProvider: React.FC<CoreProviderProps> = ({
     );
 
     const initialPushedEventByOption = initialActivity
-      ? makeEvent("Pushed", {
+      ? makeEvent<PushedEvent>("Pushed", {
           activityId: makeActivityId(),
           activityName: initialActivity({ context }),
           params: {},
           eventDate: initialEventDate,
+          skipEnterActiveState: true
         })
       : null;
 

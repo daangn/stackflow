@@ -78,10 +78,12 @@ export const useCoreActions = () => {
       activityId,
       activityName,
       params,
+      options
     }: {
       activityId: string;
       activityName: string;
       params: { [key: string]: string };
+      options?: { animate?: boolean; };
     }) => {
       const { isPrevented, params: eventParams } = triggerPreEffectHook(
         "PUSHED",
@@ -92,9 +94,14 @@ export const useCoreActions = () => {
         },
       );
 
+      const eventOptions = {
+        skipEnterActiveState: !options?.animate
+      }
+
       if (!isPrevented) {
         dispatchEvent("Pushed", {
           ...eventParams,
+          ...eventOptions
         });
       }
     },
