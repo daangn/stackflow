@@ -113,10 +113,14 @@ export const useCoreActions = () => {
       activityId,
       activityName,
       params,
+      options
     }: {
       activityId: string;
       activityName: string;
       params: { [key: string]: string };
+      options?: {
+        animate?: boolean;
+      }
     }) => {
       const { isPrevented, params: eventParams } = triggerPreEffectHook(
         "REPLACED",
@@ -127,9 +131,14 @@ export const useCoreActions = () => {
         },
       );
 
+      const eventOptions = {
+        skipEnterActiveState: options && options.animate !== undefined && options.animate != null ? !options.animate : false,
+      };
+
       if (!isPrevented) {
         dispatchEvent("Replaced", {
           ...eventParams,
+          ...eventOptions
         });
       }
     },

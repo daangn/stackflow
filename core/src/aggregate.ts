@@ -53,6 +53,7 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
       }
       case "Replaced": {
         const transitionState: ActivityTransitionState =
+          event.skipEnterActiveState ||
           now - event.eventDate >= transitionDuration
             ? "enter-done"
             : "enter-active";

@@ -53,6 +53,7 @@ export function useActions<
           activityId: makeActivityId(),
           activityName,
           params,
+          options
         });
       },
       pop(options) {
