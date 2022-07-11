@@ -62,6 +62,10 @@ ReactDOM.render(<App />, ...)
 - Usher ([@irrationnelle](https://github.com/irrationnelle)) - [Karrot](https://careers.ca.karrotmarket.com/)
 - Levi ([@ginger-kang](https://github.com/ginger-kang)) - [Karrot](https://careers.ca.karrotmarket.com/)
 
+## Contribution Guide
+
+To contribute new features or options to **Stackflow**, please check [Contribution Guide](./CONTRIBUTING.md)
+
 ## License
 
 Apache 2.0
