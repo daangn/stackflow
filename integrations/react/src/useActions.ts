@@ -4,6 +4,20 @@ import { ActivityComponentType, makeActivityId } from "./activity";
 import { BaseActivities } from "./BaseActivities";
 import { useCoreActions } from "./core";
 
+function parseActionOptions(options?: { animate?: boolean }) {
+  if (!options) {
+    return { skipActiveState: false };
+  }
+
+  const isNullableAnimateOption =
+    options.animate === undefined || options.animate == null;
+  if (isNullableAnimateOption) {
+    return { skipActiveState: false };
+  }
+
+  return { skipActiveState: !options.animate };
+}
+
 export type UseActionsOutputType<T extends BaseActivities> = {
   /**
    * Push new activity
@@ -45,6 +59,7 @@ export function useActions<
           activityId: makeActivityId(),
           activityName,
           params,
+          skipEnterActiveState: parseActionOptions(options).skipActiveState,
         });
       },
       replace(activityName, params, options) {
@@ -52,10 +67,13 @@ export function useActions<
           activityId: makeActivityId(),
           activityName,
           params,
+          skipEnterActiveState: parseActionOptions(options).skipActiveState,
         });
       },
       pop(options) {
-        coreActions.pop();
+        coreActions.pop({
+          skipExitActiveState: parseActionOptions(options).skipActiveState,
+        });
       },
     }),
     [coreActions.push, coreActions.replace, coreActions.pop],

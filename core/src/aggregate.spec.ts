@@ -1223,3 +1223,160 @@ test("aggregate - preloadRef와 함께 ReplacedEvent가 발생한 직후 최상�
     globalTransitionState: "loading",
   });
 });
+
+test("aggregate - skipEnterActiveState가 true이면 eventDate가 transitionDuration을 충족하지 않아도 enter-done 상태가 된다. ", () => {
+  const t = nowTime();
+
+  const events = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+    registeredEvent({
+      activityName: "sample",
+    }),
+    makeEvent("Pushed", {
+      activityId: "a1",
+      activityName: "sample",
+      eventDate: t - 150,
+      skipEnterActiveState: true,
+      params: {
+        hello: "world",
+      },
+    }),
+  ];
+
+  const pushedEvent = events[2];
+
+  const output = aggregate(events, t);
+
+  expect(output).toStrictEqual({
+    activities: [
+      {
+        id: "a1",
+        name: "sample",
+        transitionState: "enter-done",
+        params: {
+          hello: "world",
+        },
+        pushedBy: pushedEvent,
+      },
+    ],
+    transitionDuration: 300,
+    globalTransitionState: "idle",
+  });
+});
+
+test("aggregate - skipExitActiveState가 true이면 eventDate가 transitionDuration을 충족하지 않아도 exit-done 상태가 된다. ", () => {
+  const t = nowTime();
+
+  const events = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+    registeredEvent({
+      activityName: "home",
+    }),
+    makeEvent("Pushed", {
+      activityId: "a1",
+      activityName: "home",
+      eventDate: enoughPastTime(),
+      params: {},
+    }),
+    makeEvent("Pushed", {
+      activityId: "a2",
+      activityName: "home",
+      eventDate: enoughPastTime(),
+      params: {},
+    }),
+    makeEvent("Popped", {
+      eventDate: t - 150,
+      skipExitActiveState: true,
+    }),
+  ];
+
+  const pushedEvent1 = events[2];
+  const pushedEvent2 = events[3];
+
+  const output = aggregate(events, t);
+
+  expect(output).toStrictEqual({
+    activities: [
+      {
+        id: "a1",
+        name: "home",
+        transitionState: "enter-done",
+        params: {},
+        pushedBy: pushedEvent1,
+      },
+      {
+        id: "a2",
+        name: "home",
+        transitionState: "exit-done",
+        params: {},
+        pushedBy: pushedEvent2,
+      },
+    ],
+    transitionDuration: 300,
+    globalTransitionState: "idle",
+  });
+});
+
+test("aggregate - skipExitActiveState가 true이면 ReplacedEvent가 발생한 직후 기존 최상단의 Activity는 바로 exit-done 상태가 되고 현재 최상단의 Activity는 바로 enter-done 상태가 됩니다.", () => {
+  const t = nowTime();
+
+  const events = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+    registeredEvent({
+      activityName: "sample",
+    }),
+    makeEvent("Pushed", {
+      activityId: "a1",
+      activityName: "sample",
+      eventDate: enoughPastTime(),
+      params: {
+        hello: "world",
+      },
+    }),
+    makeEvent("Replaced", {
+      activityId: "a2",
+      activityName: "sample",
+      eventDate: t,
+      skipEnterActiveState: true,
+      params: {
+        hello: "world",
+      },
+    }),
+  ];
+
+  const pushedEvent = events[2];
+  const replacedEvent = events[3];
+
+  const output = aggregate(events, t);
+
+  expect(output).toStrictEqual({
+    activities: [
+      {
+        id: "a1",
+        name: "sample",
+        transitionState: "exit-done",
+        params: {
+          hello: "world",
+        },
+        pushedBy: pushedEvent,
+      },
+      {
+        id: "a2",
+        name: "sample",
+        transitionState: "enter-done",
+        params: {
+          hello: "world",
+        },
+        pushedBy: replacedEvent,
+      },
+    ],
+    transitionDuration: 300,
+    globalTransitionState: "idle",
+  });
+});

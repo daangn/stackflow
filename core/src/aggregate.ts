@@ -32,6 +32,7 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
     switch (event.name) {
       case "Pushed": {
         const transitionState: ActivityTransitionState =
+          event.skipEnterActiveState ||
           now - event.eventDate >= transitionDuration
             ? "enter-done"
             : "enter-active";
@@ -52,6 +53,7 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
       }
       case "Replaced": {
         const transitionState: ActivityTransitionState =
+          event.skipEnterActiveState ||
           now - event.eventDate >= transitionDuration
             ? "enter-done"
             : "enter-active";
@@ -86,6 +88,7 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
           .sort((a1, a2) => a2.pushedBy.eventDate - a1.pushedBy.eventDate)[0];
 
         const transitionState: ActivityTransitionState =
+          event.skipExitActiveState ||
           now - event.eventDate >= transitionDuration
             ? "exit-done"
             : "exit-active";

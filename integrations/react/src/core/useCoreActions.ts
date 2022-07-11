@@ -78,10 +78,12 @@ export const useCoreActions = () => {
       activityId,
       activityName,
       params,
+      skipEnterActiveState,
     }: {
       activityId: string;
       activityName: string;
       params: { [key: string]: string };
+      skipEnterActiveState?: boolean;
     }) => {
       const { isPrevented, params: eventParams } = triggerPreEffectHook(
         "PUSHED",
@@ -89,6 +91,7 @@ export const useCoreActions = () => {
           activityId,
           activityName,
           params,
+          skipEnterActiveState,
         },
       );
 
@@ -106,10 +109,12 @@ export const useCoreActions = () => {
       activityId,
       activityName,
       params,
+      skipEnterActiveState,
     }: {
       activityId: string;
       activityName: string;
       params: { [key: string]: string };
+      skipEnterActiveState?: boolean;
     }) => {
       const { isPrevented, params: eventParams } = triggerPreEffectHook(
         "REPLACED",
@@ -117,6 +122,7 @@ export const useCoreActions = () => {
           activityId,
           activityName,
           params,
+          skipEnterActiveState,
         },
       );
 
@@ -129,16 +135,20 @@ export const useCoreActions = () => {
     [dispatchEvent],
   );
 
-  const pop = useCallback(() => {
-    const { isPrevented, params: eventParams } = triggerPreEffectHook(
-      "POPPED",
-      {},
-    );
+  const pop = useCallback(
+    (params?: { skipExitActiveState?: boolean }) => {
+      const initialParams = params ?? {};
+      const { isPrevented, params: eventParams } = triggerPreEffectHook(
+        "POPPED",
+        initialParams,
+      );
 
-    if (!isPrevented) {
-      dispatchEvent("Popped", eventParams);
-    }
-  }, [dispatchEvent]);
+      if (!isPrevented) {
+        dispatchEvent("Popped", { ...eventParams });
+      }
+    },
+    [dispatchEvent],
+  );
 
   return useMemo(
     () => ({

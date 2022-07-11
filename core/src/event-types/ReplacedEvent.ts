@@ -11,5 +11,6 @@ export type ReplacedEvent = BaseDomainEvent<
     activityName: string;
     params: ReplacedEventParams;
     preloadRef?: unknown;
+    skipEnterActiveState?: boolean;
   }
 >;
