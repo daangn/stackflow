@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { ActivityComponentType, makeActivityId } from "./activity";
 import { BaseActivities } from "./BaseActivities";
 import { useCoreActions } from "./core";
+import { checkToSkipActiveState } from "./utils";
 
 export type UseActionsOutputType<T extends BaseActivities> = {
   /**
@@ -45,7 +46,7 @@ export function useActions<
           activityId: makeActivityId(),
           activityName,
           params,
-          options,
+          skipEnterActiveState: checkToSkipActiveState(options)
         });
       },
       replace(activityName, params, options) {
@@ -53,11 +54,13 @@ export function useActions<
           activityId: makeActivityId(),
           activityName,
           params,
-          options
+          skipEnterActiveState: checkToSkipActiveState(options)
         });
       },
       pop(options) {
-        coreActions.pop(options);
+        coreActions.pop({
+          skipExitActiveState: checkToSkipActiveState(options)
+        });
       },
     }),
     [coreActions.push, coreActions.replace, coreActions.pop],

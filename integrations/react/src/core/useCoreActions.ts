@@ -78,12 +78,12 @@ export const useCoreActions = () => {
       activityId,
       activityName,
       params,
-      options,
+      skipEnterActiveState,
     }: {
       activityId: string;
       activityName: string;
       params: { [key: string]: string };
-      options?: { animate?: boolean };
+      skipEnterActiveState?: boolean
     }) => {
       const { isPrevented, params: eventParams } = triggerPreEffectHook(
         "PUSHED",
@@ -91,17 +91,13 @@ export const useCoreActions = () => {
           activityId,
           activityName,
           params,
+          skipEnterActiveState,
         },
       );
-
-      const eventOptions = {
-        skipEnterActiveState: options && options.animate !== undefined && options.animate != null ? !options.animate : false,
-      };
 
       if (!isPrevented) {
         dispatchEvent("Pushed", {
           ...eventParams,
-          ...eventOptions,
         });
       }
     },
@@ -113,14 +109,12 @@ export const useCoreActions = () => {
       activityId,
       activityName,
       params,
-      options
+      skipEnterActiveState
     }: {
       activityId: string;
       activityName: string;
       params: { [key: string]: string };
-      options?: {
-        animate?: boolean;
-      }
+      skipEnterActiveState?: boolean;
     }) => {
       const { isPrevented, params: eventParams } = triggerPreEffectHook(
         "REPLACED",
@@ -128,17 +122,13 @@ export const useCoreActions = () => {
           activityId,
           activityName,
           params,
+          skipEnterActiveState
         },
       );
-
-      const eventOptions = {
-        skipEnterActiveState: options && options.animate !== undefined && options.animate != null ? !options.animate : false,
-      };
 
       if (!isPrevented) {
         dispatchEvent("Replaced", {
           ...eventParams,
-          ...eventOptions
         });
       }
     },
@@ -146,18 +136,15 @@ export const useCoreActions = () => {
   );
 
   const pop = useCallback(
-    (options?: { animate?: boolean }) => {
+    (params?: { skipExitActiveState?: boolean }) => {
+      const initialParams =  params ?? {};
       const { isPrevented, params: eventParams } = triggerPreEffectHook(
         "POPPED",
-        {},
+        initialParams,
       );
 
-      const eventOptions = {
-        skipExitActiveState: options && options.animate !== undefined && options.animate != null ? !options.animate : false,
-      };
-
       if (!isPrevented) {
-        dispatchEvent("Popped", { ...eventParams, ...eventOptions });
+        dispatchEvent("Popped", { ...eventParams });
       }
     },
     [dispatchEvent],
