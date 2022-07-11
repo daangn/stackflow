@@ -4,19 +4,18 @@ import { ActivityComponentType, makeActivityId } from "./activity";
 import { BaseActivities } from "./BaseActivities";
 import { useCoreActions } from "./core";
 
-function parseActionState (options?: {
-  animate?: boolean;
-}) {
-  if(!options) {
-    return { skipActiveState: false }
+function parseActionState(options?: { animate?: boolean }) {
+  if (!options) {
+    return { skipActiveState: false };
   }
 
-  const isNullableAnimateOption = options.animate === undefined || options.animate == null
-  if(isNullableAnimateOption) {
-    return { skipActiveState: false }
+  const isNullableAnimateOption =
+    options.animate === undefined || options.animate == null;
+  if (isNullableAnimateOption) {
+    return { skipActiveState: false };
   }
 
-  return { skipActiveState: !options.animate }
+  return { skipActiveState: !options.animate };
 }
 
 export type UseActionsOutputType<T extends BaseActivities> = {
@@ -60,7 +59,7 @@ export function useActions<
           activityId: makeActivityId(),
           activityName,
           params,
-          skipEnterActiveState: parseActionState(options).skipActiveState
+          skipEnterActiveState: parseActionState(options).skipActiveState,
         });
       },
       replace(activityName, params, options) {
@@ -68,12 +67,12 @@ export function useActions<
           activityId: makeActivityId(),
           activityName,
           params,
-          skipEnterActiveState: parseActionState(options).skipActiveState
+          skipEnterActiveState: parseActionState(options).skipActiveState,
         });
       },
       pop(options) {
         coreActions.pop({
-          skipExitActiveState: parseActionState(options).skipActiveState
+          skipExitActiveState: parseActionState(options).skipActiveState,
         });
       },
     }),

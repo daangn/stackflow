@@ -83,7 +83,7 @@ export const useCoreActions = () => {
       activityId: string;
       activityName: string;
       params: { [key: string]: string };
-      skipEnterActiveState?: boolean
+      skipEnterActiveState?: boolean;
     }) => {
       const { isPrevented, params: eventParams } = triggerPreEffectHook(
         "PUSHED",
@@ -109,7 +109,7 @@ export const useCoreActions = () => {
       activityId,
       activityName,
       params,
-      skipEnterActiveState
+      skipEnterActiveState,
     }: {
       activityId: string;
       activityName: string;
@@ -122,7 +122,7 @@ export const useCoreActions = () => {
           activityId,
           activityName,
           params,
-          skipEnterActiveState
+          skipEnterActiveState,
         },
       );
 
@@ -137,7 +137,7 @@ export const useCoreActions = () => {
 
   const pop = useCallback(
     (params?: { skipExitActiveState?: boolean }) => {
-      const initialParams =  params ?? {};
+      const initialParams = params ?? {};
       const { isPrevented, params: eventParams } = triggerPreEffectHook(
         "POPPED",
         initialParams,
