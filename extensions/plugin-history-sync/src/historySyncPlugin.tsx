@@ -79,14 +79,20 @@ type HistorySyncPluginOptions<T extends { [activityName: string]: any }> = {
   fallbackActivity: (args: { context: any }) => Extract<keyof T, string>;
   useHash?: boolean;
   experimental_initialPreloadRef?: (args: {
-    context: any;
     path: string;
+    route: string;
     activityId: string;
+    activityName: string;
+    activityParams: ActivityParams;
+    context: any;
   }) => any;
   experimental_preloadRef?: (args: {
-    context: any;
     path: string;
+    route: string;
     activityId: string;
+    activityName: string;
+    activityParams: ActivityParams;
+    context: any;
   }) => any;
   experimental_startTransition?: (cb: () => void) => void;
 };
@@ -106,15 +112,17 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
       activityName: string;
       activityParams: ActivityParams;
     }) {
-      const template = makeTemplate(
-        normalizeRoute(options.routes[activityName])[0],
-      );
+      const route = normalizeRoute(options.routes[activityName])[0];
+      const template = makeTemplate(route);
       const path = template.fill(activityParams);
 
       return options.experimental_preloadRef?.({
-        activityId,
-        context,
         path,
+        route,
+        activityId,
+        activityName,
+        activityParams,
+        context,
       });
     }
 
@@ -133,10 +141,16 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
           : null;
 
         if (initHistoryState) {
+          const activityName = initHistoryState.activity.name;
+          const route = normalizeRoute(options.routes[activityName])[0];
+
           const preloadRef = options.experimental_initialPreloadRef?.({
-            context,
             path,
+            route,
             activityId: initHistoryState.activity.id,
+            activityName: initHistoryState.activity.name,
+            activityParams: initHistoryState.activity.params,
+            context,
           });
 
           return {
@@ -160,23 +174,26 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
             const route = routes[j];
 
             const template = makeTemplate(route);
-            const params = template.parse(path);
-            const matched = !!params;
+            const activityParams = template.parse(path);
+            const matched = !!activityParams;
 
             if (matched) {
               const activityId = id();
 
               const preloadRef = options.experimental_initialPreloadRef?.({
-                activityId,
-                context,
                 path,
+                route,
+                activityId,
+                activityName,
+                activityParams,
+                context,
               });
 
               return makeEvent("Pushed", {
                 activityId,
                 activityName,
                 params: {
-                  ...params,
+                  ...activityParams,
                 },
                 eventDate: new Date().getTime() - MINUTE,
                 ...(preloadRef ? { preloadRef } : null),
@@ -185,16 +202,19 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
           }
         }
 
+        const fallbackActivityId = id();
         const fallbackActivityName = options.fallbackActivity({ context });
         const fallbackActivityRoutes = normalizeRoute(
           options.routes[fallbackActivityName],
         );
-        const fallbackActivityId = id();
 
         const fallbackPreloadRef = options.experimental_initialPreloadRef?.({
-          context,
           path: fallbackActivityRoutes[0],
+          route: fallbackActivityRoutes[0],
           activityId: fallbackActivityId,
+          activityName: fallbackActivityName,
+          activityParams: {},
+          context,
         });
 
         return makeEvent("Pushed", {
