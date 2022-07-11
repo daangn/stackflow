@@ -82,6 +82,7 @@ type HistorySyncPluginOptions<T extends { [activityName: string]: any }> = {
     path: string;
     route: string;
     activityId: string;
+    activityName: string;
     activityParams: ActivityParams;
     context: any;
   }) => any;
@@ -89,6 +90,7 @@ type HistorySyncPluginOptions<T extends { [activityName: string]: any }> = {
     path: string;
     route: string;
     activityId: string;
+    activityName: string;
     activityParams: ActivityParams;
     context: any;
   }) => any;
@@ -118,6 +120,7 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
         path,
         route,
         activityId,
+        activityName,
         activityParams,
         context,
       });
@@ -145,6 +148,7 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
             path,
             route,
             activityId: initHistoryState.activity.id,
+            activityName: initHistoryState.activity.name,
             activityParams: initHistoryState.activity.params,
             context,
           });
@@ -180,6 +184,7 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
                 path,
                 route,
                 activityId,
+                activityName,
                 activityParams,
                 context,
               });
@@ -207,6 +212,7 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
           path: fallbackActivityRoutes[0],
           route: fallbackActivityRoutes[0],
           activityId: fallbackActivityId,
+          activityName: fallbackActivityName,
           activityParams: {},
           context,
         });
