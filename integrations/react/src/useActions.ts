@@ -4,7 +4,7 @@ import { ActivityComponentType, makeActivityId } from "./activity";
 import { BaseActivities } from "./BaseActivities";
 import { useCoreActions } from "./core";
 
-function parseActionState(options?: { animate?: boolean }) {
+function parseActionOptions(options?: { animate?: boolean }) {
   if (!options) {
     return { skipActiveState: false };
   }
@@ -59,7 +59,7 @@ export function useActions<
           activityId: makeActivityId(),
           activityName,
           params,
-          skipEnterActiveState: parseActionState(options).skipActiveState,
+          skipEnterActiveState: parseActionOptions(options).skipActiveState,
         });
       },
       replace(activityName, params, options) {
@@ -67,12 +67,12 @@ export function useActions<
           activityId: makeActivityId(),
           activityName,
           params,
-          skipEnterActiveState: parseActionState(options).skipActiveState,
+          skipEnterActiveState: parseActionOptions(options).skipActiveState,
         });
       },
       pop(options) {
         coreActions.pop({
-          skipExitActiveState: parseActionState(options).skipActiveState,
+          skipExitActiveState: parseActionOptions(options).skipActiveState,
         });
       },
     }),
