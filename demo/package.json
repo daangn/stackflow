@@ -22,7 +22,7 @@
     "build:dts": "tsc --emitDeclarationOnly",
     "build:js": "node ./esbuild.config.js",
     "clean": "rimraf dist && rimraf build",
-    "dev": "yarn build:js --watch && yarn build:dts --watch && yarn dev:app",
+    "dev": "yarn dev:app && yarn build:js --watch && yarn build:dts --watch",
     "dev:app": "vite --host 0.0.0.0"
   },
   "dependencies": {
