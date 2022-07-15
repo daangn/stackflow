@@ -72,17 +72,17 @@ function replaceState({
   window.history.replaceState(state, "", nextUrl);
 }
 
-type HistorySyncPluginOptions<T extends { [activityName: string]: any }> = {
+type HistorySyncPluginOptions<K extends string> = {
   routes: {
-    [key in keyof T]: string | string[];
+    [key in K]: string | string[];
   };
-  fallbackActivity: (args: { context: any }) => Extract<keyof T, string>;
+  fallbackActivity: (args: { context: any }) => K;
   useHash?: boolean;
   experimental_initialPreloadRef?: (args: {
     path: string;
     route: string;
     activityId: string;
-    activityName: string;
+    activityName: K;
     activityParams: ActivityParams;
     context: any;
   }) => any;
@@ -90,15 +90,17 @@ type HistorySyncPluginOptions<T extends { [activityName: string]: any }> = {
     path: string;
     route: string;
     activityId: string;
-    activityName: string;
+    activityName: K;
     activityParams: ActivityParams;
     context: any;
   }) => any;
   experimental_startTransition?: (cb: () => void) => void;
 };
 export function historySyncPlugin<T extends { [activityName: string]: any }>(
-  options: HistorySyncPluginOptions<T>,
+  options: HistorySyncPluginOptions<Extract<keyof T, string>>,
 ): StackflowReactPlugin<T> {
+  type K = Extract<keyof T, string>;
+
   return ({ context }) => {
     let pushFlag = false;
     let onPopStateDisposer: (() => void) | null = null;
@@ -109,7 +111,7 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
       activityParams,
     }: {
       activityId: string;
-      activityName: string;
+      activityName: K;
       activityParams: ActivityParams;
     }) {
       const route = normalizeRoute(options.routes[activityName])[0];
@@ -148,7 +150,7 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
             path,
             route,
             activityId: initHistoryState.activity.id,
-            activityName: initHistoryState.activity.name,
+            activityName: initHistoryState.activity.name as K,
             activityParams: initHistoryState.activity.params,
             context,
           });
@@ -167,7 +169,7 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
         const activityNames = Object.keys(options.routes);
 
         for (let i = 0; i < activityNames.length; i += 1) {
-          const activityName = activityNames[i];
+          const activityName = activityNames[i] as K;
           const routes = normalizeRoute(options.routes[activityName]);
 
           for (let j = 0; j < routes.length; j += 1) {
@@ -274,7 +276,7 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
 
               const preloadRef = getPreloadRef({
                 activityId: historyState.activity.id,
-                activityName: historyState.activity.name,
+                activityName: historyState.activity.name as K,
                 activityParams: historyState.activity.params,
               });
 
@@ -291,7 +293,7 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
 
             const preloadRef = getPreloadRef({
               activityId: historyState.activity.id,
-              activityName: historyState.activity.name,
+              activityName: historyState.activity.name as K,
               activityParams: historyState.activity.params,
             });
 
@@ -354,7 +356,7 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
       onBeforePush({ actionParams, actions: { overrideActionParams } }) {
         const preloadRef = getPreloadRef({
           activityId: actionParams.activityId,
-          activityName: actionParams.activityName,
+          activityName: actionParams.activityName as K,
           activityParams: actionParams.params,
         });
 
