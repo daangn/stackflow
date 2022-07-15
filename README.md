@@ -56,6 +56,12 @@ const App: React.FC = () => {
 ReactDOM.render(<App />, ...)
 ```
 
+## Integration Examples
+
+- [SPA with Vite](./demo)
+- [SSG with Gatsby](https://github.com/daangn/stackflow-example-gatsby)
+- [SSR with Next.js](https://github.com/daangn/stackflow-example-nextjs) (💥 Not Recommended)
+
 ## Authors
 
 - Tony ([@tonyfromundefined](https://github.com/tonyfromundefined)) - [Karrot](https://careers.ca.karrotmarket.com/)
