@@ -107,16 +107,16 @@ const Main: React.FC = () => {
         appendRight: appBarRight,
       }}
     >
-      <div className={css.wrapper}>
-        <div className={css.scrollable}>
-          {cards.map((card) => (
-            <FeedCard key={card.articleId} {...card} />
-          ))}
-        </div>
+      <div className={css.scrollable}>
+        {cards.map((card) => (
+          <FeedCard key={card.articleId} {...card} />
+        ))}
+      </div>
+      {/* <div className={css.wrapper}>
         <div className={css.bottom}>
           <BottomTab />
         </div>
-      </div>
+      </div> */}
     </Layout>
   );
 };

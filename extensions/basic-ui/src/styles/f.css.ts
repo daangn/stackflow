@@ -24,6 +24,10 @@ export const posRel = style({
   position: "relative",
 });
 
+export const posFixed = style({
+  position: "fixed",
+});
+
 export const posAbsFull = style([posAbs, fullWidth, fullHeight, top0, left0]);
 
 export const flex = style({
@@ -46,6 +50,10 @@ export const flexJustifyCenter = style([
 
 export const overflowHidden = style({
   overflow: "hidden",
+});
+
+export const overflowXHidden = style({
+  overflowX: "hidden",
 });
 
 export const whiteSpaceNowrap = style({

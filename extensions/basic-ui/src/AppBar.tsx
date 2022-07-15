@@ -25,6 +25,7 @@ interface AppBarProps {
   iconColor?: string;
   textColor?: string;
   borderColor?: string;
+  useFixed?: boolean;
 }
 const AppBar: React.FC<AppBarProps> = ({
   theme,
@@ -39,6 +40,7 @@ const AppBar: React.FC<AppBarProps> = ({
   iconColor,
   textColor,
   borderColor,
+  useFixed,
 }) => {
   const actions = useActions();
 
@@ -89,6 +91,7 @@ const AppBar: React.FC<AppBarProps> = ({
       className={css.appBar({
         border,
         isTopActive,
+        useFixed,
       })}
       style={assignInlineVars(
         compactMap({

@@ -5,7 +5,7 @@ import { f } from "../styles";
 
 export const container = style([
   f.posAbsFull,
-  f.overflowScroll,
+  // f.overflowScroll,
   f.rootLineHeight,
 ]);
 

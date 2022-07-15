@@ -28,6 +28,7 @@ const Layout: React.FC<LayoutProps> = ({ appBar, children }) => {
         iconColor: vars.$scale.color.gray900,
         ...appBar,
       }}
+      useBodyScroll
     >
       {children}
     </AppScreen>

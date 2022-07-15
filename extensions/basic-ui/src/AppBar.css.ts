@@ -27,9 +27,6 @@ export const appBar = recipe({
       paddingTop: ["constant(safe-area-inset-top)", "env(safe-area-inset-top)"],
       zIndex: localVars.zIndexes.appBar,
       selectors: {
-        [`${cupertino} &, ${rootCupertino} &`]: {
-          position: "absolute",
-        },
         [`${cupertino}${exitActive} &, ${rootCupertino} ${exitActive} &`]: {
           transform: "translateX(100%)",
         },
@@ -68,6 +65,9 @@ export const appBar = recipe({
           },
         },
       },
+    },
+    useFixed: {
+      true: [f.posFixed, f.top0],
     },
   },
 });

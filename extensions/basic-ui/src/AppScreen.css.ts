@@ -88,7 +88,7 @@ export const allTransitions = style({
 });
 
 export const appScreen = recipe({
-  base: [f.posAbsFull, f.overflowHidden],
+  base: [f.posAbsFull],
   variants: {
     theme: {
       android,
@@ -222,6 +222,14 @@ export const edge = recipe({
         top: vars.appBar.height,
         height: calc("100%").subtract(vars.appBar.height).toString(),
       },
+    },
+    useFixed: {
+      true: [
+        f.posFixed,
+        {
+          zIndex: localVars.zIndexes.appBar,
+        },
+      ],
     },
   },
 });

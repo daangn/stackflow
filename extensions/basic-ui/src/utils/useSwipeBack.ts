@@ -12,7 +12,7 @@ function set(cssText: string, el?: HTMLElement | null) {
   }
 }
 
-export function useSwipeBack({
+export function useSwipeBack<T extends HTMLElement>({
   getBeforePaper,
   transitionDuration,
   onBack,
@@ -21,19 +21,21 @@ export function useSwipeBack({
   transitionDuration: number;
   onBack: () => void;
 }) {
+  const paperRef = useRef<T>(null);
+
   const dimRef = useRef<any>(null);
-  const paperRef = useRef<any>(null);
   const edgeRef = useRef<any>(null);
 
   useEffect(() => {
-    const $dim = dimRef.current;
-    const $paper = paperRef.current;
-    const $edge = edgeRef.current;
     const $beforePaper = getBeforePaper();
 
-    if (!$dim || !$paper || !$edge) {
+    if (!paperRef.current || !dimRef.current || !edgeRef.current) {
       return noop;
     }
+
+    const $paper = paperRef.current;
+    const $dim = dimRef.current;
+    const $edge = edgeRef.current;
 
     let _rAFLock = false;
 

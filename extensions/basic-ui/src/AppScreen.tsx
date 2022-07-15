@@ -1,6 +1,6 @@
 import { useActions, useActivity, useStack } from "@stackflow/react";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 
 import AppBar from "./AppBar";
 import * as css from "./AppScreen.css";
@@ -22,16 +22,19 @@ interface AppScreenProps {
   theme?: "android" | "cupertino";
   appBar?: Omit<PropOf<typeof AppBar>, "theme">;
   backgroundColor?: string;
+  useBodyScroll?: boolean;
   children: React.ReactNode;
 }
 const AppScreen: React.FC<AppScreenProps> = ({
   theme,
   appBar,
-  children,
   backgroundColor,
+  useBodyScroll,
+  children,
 }) => {
   const stack = useStack();
   const actions = useActions();
+  const scrollTopRef = useRef(0);
 
   const currentActivity = useActivity();
   const visibleActivities = useVisibleActivities();
@@ -82,7 +85,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
     [visibleActivities],
   );
 
-  const { dimRef, paperRef, edgeRef } = useSwipeBack({
+  const { dimRef, paperRef, edgeRef } = useSwipeBack<HTMLDivElement>({
     transitionDuration: stack.transitionDuration,
     getBeforePaper() {
       if (!beforeActivity) {
@@ -101,6 +104,50 @@ const AppScreen: React.FC<AppScreenProps> = ({
       appScreenPaperRefMap.delete(currentActivity.id);
     };
   }, [currentActivity, paperRef]);
+
+  const bodyScroll =
+    !!useBodyScroll &&
+    currentActivity.transitionState === "enter-done" &&
+    isTopActive;
+
+  useEffect(() => {
+    const $paper = paperRef.current;
+
+    if (!$paper) {
+      return;
+    }
+
+    if (bodyScroll) {
+      $paper.style.cssText = `overflow: visible;`;
+      window.scroll({ top: scrollTopRef.current });
+    } else {
+      $paper.style.cssText = ``;
+      $paper.scroll({ top: scrollTopRef.current });
+    }
+  }, [paperRef, bodyScroll, scrollTopRef]);
+
+  useEffect(() => {
+    const $paper = paperRef.current;
+
+    if (!$paper) {
+      return () => {};
+    }
+
+    const onWindowScroll = () => {
+      scrollTopRef.current = window.scrollY;
+    };
+    const onPaperScroll = () => {
+      scrollTopRef.current = $paper.scrollTop;
+    };
+
+    $paper.addEventListener("scroll", onPaperScroll);
+    window.addEventListener("scroll", onWindowScroll);
+
+    return () => {
+      $paper.removeEventListener("scroll", onPaperScroll);
+      window.removeEventListener("scroll", onWindowScroll);
+    };
+  }, [paperRef, scrollTopRef]);
 
   const zIndex = useMemo(
     () =>
@@ -144,11 +191,17 @@ const AppScreen: React.FC<AppScreenProps> = ({
         })}
       >
         {children}
-        {!isRoot && theme === "cupertino" && (
-          <div ref={edgeRef} className={css.edge({ hasAppBar })} />
-        )}
       </div>
-      {appBar && <AppBar {...appBar} theme={theme} />}
+      {!isRoot && theme === "cupertino" && (
+        <div
+          ref={edgeRef}
+          className={css.edge({
+            hasAppBar,
+            useFixed: bodyScroll,
+          })}
+        />
+      )}
+      {appBar && <AppBar {...appBar} theme={theme} useFixed={bodyScroll} />}
     </div>
   );
 };

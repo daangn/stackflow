@@ -6,3 +6,8 @@ body {
   -moz-osx-font-smoothing: grayscale;
   color: var(--seed-scale-color-gray-900);
 }
+
+#root {
+  overflow-x: hidden;
+  width: 100vw;
+}
