@@ -56,6 +56,14 @@ const App: React.FC = () => {
 ReactDOM.render(<App />, ...)
 ```
 
+## Integration Examples
+
+- [Standalone](./demo)
+- [Gatsby](https://github.com/daangn/stackflow-example-gatsby)
+- [Next.js](https://github.com/daangn/stackflow-example-nextjs) (💥 Not Recommended)
+
+> To integrate **Stackflow** with a specific framework with routing capabilities, the framework requires an extension to manually call the preload API. However, Next.js does not officially support the preload API.
+
 ## Authors
 
 - Tony ([@tonyfromundefined](https://github.com/tonyfromundefined)) - [Karrot](https://careers.ca.karrotmarket.com/)
