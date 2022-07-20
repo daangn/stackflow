@@ -1,7 +1,7 @@
 {
   "name": "@stackflow/plugin-history-sync",
   "version": "0.6.0",
-  "license": "Apache-2.0",
+  "license": "MIT",
   "exports": {
     ".": {
       "require": "./dist/index.js",

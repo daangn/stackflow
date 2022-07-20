@@ -2,6 +2,7 @@
   "name": "@stackflow/esbuild-config",
   "version": "0.2.1",
   "main": "index.js",
+  "license": "MIT",
   "scripts": {
     "build": "echo \"noop\""
   },

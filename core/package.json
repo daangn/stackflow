@@ -1,7 +1,7 @@
 {
   "name": "@stackflow/core",
   "version": "0.4.0",
-  "license": "Apache-2.0",
+  "license": "MIT",
   "exports": {
     ".": {
       "require": "./dist/index.js",
