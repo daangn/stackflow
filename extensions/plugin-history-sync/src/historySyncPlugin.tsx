@@ -8,8 +8,10 @@ const STATE_TAG = `${process.env.PACKAGE_NAME}@${process.env.PACKAGE_VERSION}`;
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
 
+const isServer = typeof window === "undefined";
+
 function getCurrentState() {
-  if (typeof window === "undefined") {
+  if (isServer) {
     return null;
   }
 
@@ -49,7 +51,7 @@ function pushState({
   url: string;
   useHash?: boolean;
 }) {
-  if (typeof window === "undefined") {
+  if (isServer) {
     return;
   }
   const nextUrl = useHash ? `${window.location.pathname}#${url}` : url;
@@ -65,7 +67,7 @@ function replaceState({
   url: string;
   useHash?: boolean;
 }) {
-  if (typeof window === "undefined") {
+  if (isServer) {
     return;
   }
   const nextUrl = useHash ? `${window.location.pathname}#${url}` : url;
@@ -134,24 +136,22 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
       initialPushedEvent() {
         const initHistoryState = parseState(getCurrentState());
 
-        const path = context?.req?.path
-          ? context.req.path
-          : typeof window !== "undefined"
-          ? window.location.pathname + window.location.search
-          : null;
-
         if (initHistoryState) {
           const activityName = initHistoryState.activity.name;
           const route = normalizeRoute(options.routes[activityName])[0];
+          const template = makeTemplate(route);
+          const path = template.fill(initHistoryState.activity.params);
 
-          const preloadRef = options.experimental_initialPreloadRef?.({
-            path,
-            route,
-            activityId: initHistoryState.activity.id,
-            activityName: initHistoryState.activity.name,
-            activityParams: initHistoryState.activity.params,
-            context,
-          });
+          const preloadRef = path
+            ? options.experimental_initialPreloadRef?.({
+                path,
+                route,
+                activityId: initHistoryState.activity.id,
+                activityName: initHistoryState.activity.name,
+                activityParams: initHistoryState.activity.params,
+                context,
+              })
+            : null;
 
           return {
             ...initHistoryState.activity.pushedBy,
@@ -159,6 +159,23 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
             name: "Pushed",
           };
         }
+
+        function resolvePath() {
+          if (context?.req?.path) {
+            return context.req.path;
+          }
+          if (isServer) {
+            return null;
+          }
+
+          if (options.useHash) {
+            return window.location.hash.split("#")[1];
+          } else {
+            return window.location.pathname + window.location.search;
+          }
+        }
+
+        const path: string | null = resolvePath();
 
         if (!path) {
           return null;
@@ -308,12 +325,12 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
 
         onPopStateDisposer?.();
 
-        if (typeof window !== "undefined") {
+        if (!isServer) {
           window.addEventListener("popstate", onPopState);
         }
 
         onPopStateDisposer = () => {
-          if (typeof window !== "undefined") {
+          if (!isServer) {
             window.removeEventListener("popstate", onPopState);
           }
         };
