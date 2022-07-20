@@ -30,7 +30,13 @@ const { Stack, useFlow } = stackflow({
         MyArticle: "/articles/:articleId",
         NotFoundPage: "/404",
       },
+      /**
+       * If a URL that does not correspond to the URL template is given, it moves to the `fallbackActivity`.
+       */
       fallbackActivity: ({ context }) => "NotFoundPage",
+      /**
+       * Uses the hash portion of the URL (i.e. window.location.hash)
+       */
       useHash: false,
     })
   ],
