@@ -142,16 +142,14 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
           const template = makeTemplate(route);
           const path = template.fill(initHistoryState.activity.params);
 
-          const preloadRef = path
-            ? options.experimental_initialPreloadRef?.({
-                path,
-                route,
-                activityId: initHistoryState.activity.id,
-                activityName: initHistoryState.activity.name,
-                activityParams: initHistoryState.activity.params,
-                context,
-              })
-            : null;
+          const preloadRef = options.experimental_initialPreloadRef?.({
+            path,
+            route,
+            activityId: initHistoryState.activity.id,
+            activityName: initHistoryState.activity.name,
+            activityParams: initHistoryState.activity.params,
+            context,
+          });
 
           return {
             ...initHistoryState.activity.pushedBy,
