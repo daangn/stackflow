@@ -3,6 +3,7 @@
   "version": "0.4.0",
   "private": true,
   "description": "Mobile-first stack navigator framework with Composable Plugin System",
+  "license": "MIT",
   "scripts": {
     "build": "next build",
     "start": "next"
