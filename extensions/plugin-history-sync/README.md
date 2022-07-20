@@ -1,6 +1,6 @@
 # @stackflow/plugin-history-sync
 
-Synchronizes the stack state with the current browser's History
+Synchronizes the stack state with the current browser's history
 
 - [Documentation](https://stackflow.so)
 
