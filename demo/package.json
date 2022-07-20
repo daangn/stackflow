@@ -4,8 +4,8 @@
   "private": true,
   "exports": {
     ".": {
-      "require": "./dist/index.js",
-      "import": "./dist/index.mjs"
+      "require": "./dist/stackflow.js",
+      "import": "./dist/stackflow.mjs"
     },
     "./index.css": "./dist/index.css"
   },
