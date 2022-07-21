@@ -170,9 +170,9 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
 
           if (options.useHash) {
             return window.location.hash.split("#")[1] ?? '/';
-          } else {
-            return window.location.pathname + window.location.search;
           }
+
+          return window.location.pathname + window.location.search;
         }
 
         const path = resolvePath();
