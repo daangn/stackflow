@@ -124,6 +124,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
       style={assignInlineVars(
         compactMap({
           [css.vars.backgroundColor]: backgroundColor,
+          [css.vars.appBar.height]: appBar?.height,
           [css.localVars.zIndexes.dim]: `${zIndexDim}`,
           [css.localVars.zIndexes.paper]: `${zIndexPaper}`,
           [css.localVars.zIndexes.appBar]: `${zIndexAppBar}`,
