@@ -161,60 +161,57 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
         }
 
         function resolvePath() {
-          if (context?.req?.path) {
-            return context.req.path;
+          if (context?.req?.path && typeof context.req.path === 'string') {
+            return context.req.path as string
           }
           if (isServer) {
             return null;
           }
 
           if (options.useHash) {
-            return window.location.hash.split("#")[1];
-          } else {
-            return window.location.pathname + window.location.search;
+            return window.location.hash.split("#")[1] ?? '/';
           }
+
+          return window.location.pathname + window.location.search;
         }
 
-        const path: string | null = resolvePath();
-
-        if (!path) {
-          return null;
-        }
-
+        const path = resolvePath();
         const activityNames = Object.keys(options.routes);
 
-        for (let i = 0; i < activityNames.length; i += 1) {
-          const activityName = activityNames[i] as K;
-          const routes = normalizeRoute(options.routes[activityName]);
-
-          for (let j = 0; j < routes.length; j += 1) {
-            const route = routes[j];
-
-            const template = makeTemplate(route);
-            const activityParams = template.parse(path);
-            const matched = !!activityParams;
-
-            if (matched) {
-              const activityId = id();
-
-              const preloadRef = options.experimental_initialPreloadRef?.({
-                path,
-                route,
-                activityId,
-                activityName,
-                activityParams,
-                context,
-              });
-
-              return makeEvent("Pushed", {
-                activityId,
-                activityName,
-                params: {
-                  ...activityParams,
-                },
-                eventDate: new Date().getTime() - MINUTE,
-                ...(preloadRef ? { preloadRef } : null),
-              });
+        if (path) {
+          for (let i = 0; i < activityNames.length; i += 1) {
+            const activityName = activityNames[i] as K;
+            const routes = normalizeRoute(options.routes[activityName]);
+  
+            for (let j = 0; j < routes.length; j += 1) {
+              const route = routes[j];
+  
+              const template = makeTemplate(route);
+              const activityParams = template.parse(path);
+              const matched = !!activityParams;
+  
+              if (matched) {
+                const activityId = id();
+  
+                const preloadRef = options.experimental_initialPreloadRef?.({
+                  path,
+                  route,
+                  activityId,
+                  activityName,
+                  activityParams,
+                  context,
+                });
+  
+                return makeEvent("Pushed", {
+                  activityId,
+                  activityName,
+                  params: {
+                    ...activityParams,
+                  },
+                  eventDate: new Date().getTime() - MINUTE,
+                  ...(preloadRef ? { preloadRef } : null),
+                });
+              }
             }
           }
         }
