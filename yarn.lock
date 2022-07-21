@@ -2177,7 +2177,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/demo@^0.4.1, @stackflow/demo@workspace:demo":
+"@stackflow/demo@^0.4.2, @stackflow/demo@workspace:demo":
   version: 0.0.0-use.local
   resolution: "@stackflow/demo@workspace:demo"
   dependencies:
@@ -2185,7 +2185,7 @@ __metadata:
     "@seed-design/stylesheet": ^1.0.0-alpha.0
     "@stackflow/basic-ui": ^0.5.1
     "@stackflow/core": ^0.4.1
-    "@stackflow/plugin-history-sync": ^0.6.1
+    "@stackflow/plugin-history-sync": ^0.6.2
     "@stackflow/plugin-renderer-basic": ^0.5.1
     "@stackflow/react": ^0.5.1
     "@types/react": ^18.0.10
@@ -2214,8 +2214,8 @@ __metadata:
     "@seed-design/stylesheet": ^1.0.0-alpha.0
     "@stackflow/basic-ui": ^0.5.1
     "@stackflow/core": ^0.4.1
-    "@stackflow/demo": ^0.4.1
-    "@stackflow/plugin-history-sync": ^0.6.1
+    "@stackflow/demo": ^0.4.2
+    "@stackflow/plugin-history-sync": ^0.6.2
     "@stackflow/plugin-renderer-basic": ^0.5.1
     "@stackflow/react": ^0.5.1
     next: ^12.1.6
@@ -2257,7 +2257,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/plugin-history-sync@^0.6.1, @stackflow/plugin-history-sync@workspace:extensions/plugin-history-sync":
+"@stackflow/plugin-history-sync@^0.6.2, @stackflow/plugin-history-sync@workspace:extensions/plugin-history-sync":
   version: 0.0.0-use.local
   resolution: "@stackflow/plugin-history-sync@workspace:extensions/plugin-history-sync"
   dependencies:
