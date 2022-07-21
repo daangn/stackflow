@@ -25,6 +25,7 @@ interface AppBarProps {
   iconColor?: string;
   textColor?: string;
   borderColor?: string;
+  height?: string;
 }
 const AppBar: React.FC<AppBarProps> = ({
   theme,
@@ -39,6 +40,7 @@ const AppBar: React.FC<AppBarProps> = ({
   iconColor,
   textColor,
   borderColor,
+  height,
 }) => {
   const actions = useActions();
 
@@ -95,6 +97,7 @@ const AppBar: React.FC<AppBarProps> = ({
           [appScreenCss.vars.appBar.iconColor]: iconColor,
           [appScreenCss.vars.appBar.textColor]: textColor,
           [appScreenCss.vars.appBar.borderColor]: borderColor,
+          [appScreenCss.vars.appBar.height]: height,
           [appScreenCss.localVars.appBar.center.mainWidth]: `${maxWidth}px`,
         }),
       )}
