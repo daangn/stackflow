@@ -1,3 +1,4 @@
+import { ActivityComponentType } from "@stackflow/react";
 import React from "react";
 
 import IconBell from "../assets/IconBell";
@@ -82,7 +83,7 @@ const cards = [
   },
 ];
 
-const Main: React.FC = () => {
+const Main: ActivityComponentType = () => {
   const appBarLeft = () => (
     <div className={css.appBarLeft}>
       Woolston

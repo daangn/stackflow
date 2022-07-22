@@ -1,6 +1,7 @@
 import React from "react";
 
 import { ActivityProvider } from "./activity";
+import { BaseActivities } from "./BaseActivities";
 import { useCoreState } from "./core";
 import { usePlugins } from "./plugins";
 import { StackProvider } from "./stack";
@@ -8,7 +9,7 @@ import { StackflowReactPlugin } from "./StackflowReactPlugin";
 import { WithRequired } from "./utils";
 
 interface PluginRendererProps {
-  activities: { [key: string]: React.ComponentType };
+  activities: BaseActivities;
   plugin: WithRequired<ReturnType<StackflowReactPlugin>, "render">;
 }
 const PluginRenderer: React.FC<PluginRendererProps> = ({
@@ -34,7 +35,7 @@ const PluginRenderer: React.FC<PluginRendererProps> = ({
             render(overrideActivity) {
               const ActivityComponent = activities[activity.name];
 
-              let output = <ActivityComponent {...activity.params} />;
+              let output = <ActivityComponent params={activity.params} />;
 
               plugins.forEach((p) => {
                 output =
