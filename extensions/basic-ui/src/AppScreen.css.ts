@@ -29,6 +29,7 @@ export const localVars = createThemeContract({
   zIndexes: {
     dim: null,
     paper: null,
+    edge: null,
     appBar: null,
   },
   appBar: {
@@ -214,6 +215,7 @@ export const edge = recipe({
     f.fullHeight,
     {
       width: "1.25rem",
+      zIndex: localVars.zIndexes.edge,
     },
   ],
   variants: {
