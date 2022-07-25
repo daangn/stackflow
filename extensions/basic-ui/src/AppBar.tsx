@@ -54,6 +54,10 @@ const AppBar: React.FC<AppBarProps> = ({
   );
 
   const isRoot = activeActivities[0]?.id === currentActivity.id;
+  const isAfterRoot = activeActivities[1]?.id === currentActivity.id;
+  const isPushedByReplace = currentActivity.pushedBy.name === "Replaced";
+
+  const isCloseButtonVisible = isRoot || (isAfterRoot && isPushedByReplace);
 
   const {
     outerRef: appBarRef,
@@ -67,13 +71,13 @@ const AppBar: React.FC<AppBarProps> = ({
     actions.pop();
   };
 
-  const backButton = !isRoot && (
+  const backButton = !isCloseButtonVisible && (
     <button type="button" className={css.backButton} onClick={onBack}>
       {customBackButton ? customBackButton() : <IconBack />}
     </button>
   );
 
-  const closeButton = onClose && isRoot && (
+  const closeButton = onClose && isCloseButtonVisible && (
     <button type="button" className={css.closeButton} onClick={onClose}>
       {customCloseButton ? customCloseButton() : <IconClose />}
     </button>
