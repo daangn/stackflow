@@ -65,6 +65,10 @@ export const borderBox = style({
   boxSizing: "border-box",
 });
 
+export const contentBox = style({
+  boxSizing: "content-box",
+});
+
 export const resetButton = style({
   appearance: "none",
   border: 0,
