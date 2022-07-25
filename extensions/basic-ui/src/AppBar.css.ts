@@ -21,6 +21,7 @@ export const appBar = recipe({
     f.posAbs,
     f.flexAlignCenter,
     f.fullWidth,
+    f.contentBox,
     background,
     {
       height: vars.appBar.height,
