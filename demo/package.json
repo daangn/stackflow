@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/demo",
-  "version": "0.4.5",
+  "version": "0.5.0",
   "private": true,
   "license": "MIT",
   "exports": {
@@ -29,11 +29,11 @@
   "dependencies": {
     "@seed-design/design-token": "^1.0.0-alpha.0",
     "@seed-design/stylesheet": "^1.0.0-alpha.0",
-    "@stackflow/basic-ui": "^0.5.4",
+    "@stackflow/basic-ui": "^0.6.0",
     "@stackflow/core": "^0.4.1",
-    "@stackflow/plugin-history-sync": "^0.6.2",
-    "@stackflow/plugin-renderer-basic": "^0.5.1",
-    "@stackflow/react": "^0.5.1",
+    "@stackflow/plugin-history-sync": "^0.7.0",
+    "@stackflow/plugin-renderer-basic": "^0.6.0",
+    "@stackflow/react": "^0.6.0",
     "@vanilla-extract/css": "^1.7.1",
     "lorem-ipsum": "^2.0.8",
     "normalize.css": "^8.0.1",
