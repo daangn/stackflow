@@ -112,11 +112,11 @@ const AppScreen: React.FC<AppScreenProps> = ({
 
   const hasAppBar = !!appBar;
 
-  const zIndexBase = zIndex * 4;
+  const zIndexBase = zIndex * 5;
   const zIndexDim = zIndexBase;
   const zIndexPaper = zIndexBase + (theme === "cupertino" && hasAppBar ? 1 : 3);
   const zIndexEdge = zIndexBase + 4;
-  const zIndexAppBar = zIndexBase + 6;
+  const zIndexAppBar = zIndexBase + 7;
 
   return (
     <div
