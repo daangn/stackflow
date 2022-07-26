@@ -2308,7 +2308,7 @@ __metadata:
     typescript: ^4.7.4
   peerDependencies:
     "@stackflow/core": ^0.1.0
-    "@types/react": ^18.0.9
+    "@types/react": ">=16.8.0"
     react: ">=16.8.0"
   languageName: unknown
   linkType: soft
