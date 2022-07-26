@@ -112,10 +112,11 @@ const AppScreen: React.FC<AppScreenProps> = ({
 
   const hasAppBar = !!appBar;
 
-  const zIndexBase = zIndex * 4;
+  const zIndexBase = zIndex * 5;
   const zIndexDim = zIndexBase;
   const zIndexPaper = zIndexBase + (theme === "cupertino" && hasAppBar ? 1 : 3);
-  const zIndexAppBar = zIndexBase + 6;
+  const zIndexEdge = zIndexBase + 4;
+  const zIndexAppBar = zIndexBase + 7;
 
   return (
     <div
@@ -127,6 +128,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
           [css.vars.appBar.height]: appBar?.height,
           [css.localVars.zIndexes.dim]: `${zIndexDim}`,
           [css.localVars.zIndexes.paper]: `${zIndexPaper}`,
+          [css.localVars.zIndexes.edge]: `${zIndexEdge}`,
           [css.localVars.zIndexes.appBar]: `${zIndexAppBar}`,
           [css.localVars.transitionDuration]:
             stack.globalTransitionState === "loading"
@@ -145,10 +147,10 @@ const AppScreen: React.FC<AppScreenProps> = ({
         })}
       >
         {children}
-        {!isRoot && theme === "cupertino" && (
-          <div ref={edgeRef} className={css.edge({ hasAppBar })} />
-        )}
       </div>
+      {!isRoot && theme === "cupertino" && (
+        <div ref={edgeRef} className={css.edge({ hasAppBar })} />
+      )}
       {appBar && <AppBar {...appBar} theme={theme} />}
     </div>
   );
