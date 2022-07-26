@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import React, { useMemo } from "react";
 
 import { ActivityComponentType, makeActivityId } from "./activity";
 import { BaseActivities } from "./BaseActivities";
@@ -19,6 +19,11 @@ function parseActionOptions(options?: { animate?: boolean }) {
 }
 
 export type UseActionsOutputType<T extends BaseActivities> = {
+  /**
+   * Is transition pending
+   */
+  pending: boolean;
+
   /**
    * Push new activity
    */
@@ -47,35 +52,61 @@ export type UseActionsOutputType<T extends BaseActivities> = {
   pop: (options?: { animate?: boolean }) => void;
 };
 
+const useTransition: () => [boolean, React.TransitionStartFunction] =
+  React.useTransition ?? (() => [false, (cb: () => void) => cb()]);
+
 export function useActions<
   T extends BaseActivities,
 >(): UseActionsOutputType<T> {
   const coreActions = useCoreActions();
+  const [pending, startTransition] = useTransition();
 
   return useMemo(
     () => ({
+      pending,
       push(activityName, params, options) {
-        coreActions.push({
-          activityId: makeActivityId(),
-          activityName,
-          params,
-          skipEnterActiveState: parseActionOptions(options).skipActiveState,
+        if (pending) {
+          return;
+        }
+        startTransition(() => {
+          coreActions.push({
+            activityId: makeActivityId(),
+            activityName,
+            params,
+            skipEnterActiveState: parseActionOptions(options).skipActiveState,
+          });
         });
       },
       replace(activityName, params, options) {
-        coreActions.replace({
-          activityId: makeActivityId(),
-          activityName,
-          params,
-          skipEnterActiveState: parseActionOptions(options).skipActiveState,
+        if (pending) {
+          return;
+        }
+        startTransition(() => {
+          coreActions.replace({
+            activityId: makeActivityId(),
+            activityName,
+            params,
+            skipEnterActiveState: parseActionOptions(options).skipActiveState,
+          });
         });
       },
       pop(options) {
-        coreActions.pop({
-          skipExitActiveState: parseActionOptions(options).skipActiveState,
+        if (pending) {
+          return;
+        }
+        startTransition(() => {
+          coreActions.pop({
+            skipExitActiveState: parseActionOptions(options).skipActiveState,
+          });
         });
       },
     }),
-    [coreActions.push, coreActions.replace, coreActions.pop],
+    [
+      coreActions.push,
+      coreActions.replace,
+      coreActions.pop,
+      pending,
+      startTransition,
+    ],
   );
 }

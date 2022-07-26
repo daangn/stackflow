@@ -1,5 +1,6 @@
 import { Activity, ActivityParams, id, makeEvent } from "@stackflow/core";
 import { StackflowReactPlugin } from "@stackflow/react";
+import React from "react";
 
 import { makeTemplate } from "./makeTemplate";
 
@@ -74,6 +75,9 @@ function replaceState({
   window.history.replaceState(state, "", nextUrl);
 }
 
+const startTransition: React.TransitionStartFunction =
+  React.startTransition ?? ((cb: () => void) => cb());
+
 type HistorySyncPluginOptions<K extends string> = {
   routes: {
     [key in K]: string | string[];
@@ -96,7 +100,6 @@ type HistorySyncPluginOptions<K extends string> = {
     activityParams: ActivityParams;
     context: any;
   }) => any;
-  experimental_startTransition?: (cb: () => void) => void;
 };
 export function historySyncPlugin<T extends { [activityName: string]: any }>(
   options: HistorySyncPluginOptions<Extract<keyof T, string>>,
@@ -130,9 +133,6 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
       });
     }
 
-    const startTransition =
-      options.experimental_startTransition ?? ((cb) => cb());
-
     return {
       key: "historySync",
       initialPushedEvent() {
@@ -161,15 +161,15 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
         }
 
         function resolvePath() {
-          if (context?.req?.path && typeof context.req.path === 'string') {
-            return context.req.path as string
+          if (context?.req?.path && typeof context.req.path === "string") {
+            return context.req.path as string;
           }
           if (isServer) {
             return null;
           }
 
           if (options.useHash) {
-            return window.location.hash.split("#")[1] ?? '/';
+            return window.location.hash.split("#")[1] ?? "/";
           }
 
           return window.location.pathname + window.location.search;
@@ -182,17 +182,17 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
           for (let i = 0; i < activityNames.length; i += 1) {
             const activityName = activityNames[i] as K;
             const routes = normalizeRoute(options.routes[activityName]);
-  
+
             for (let j = 0; j < routes.length; j += 1) {
               const route = routes[j];
-  
+
               const template = makeTemplate(route);
               const activityParams = template.parse(path);
               const matched = !!activityParams;
-  
+
               if (matched) {
                 const activityId = id();
-  
+
                 const preloadRef = options.experimental_initialPreloadRef?.({
                   path,
                   route,
@@ -201,7 +201,7 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
                   activityParams,
                   context,
                 });
-  
+
                 return makeEvent("Pushed", {
                   activityId,
                   activityName,
