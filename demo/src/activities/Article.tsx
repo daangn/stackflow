@@ -1,4 +1,4 @@
-import { useActivityParams } from "@stackflow/react";
+import { ActivityComponentType, useActivityParams } from "@stackflow/react";
 import React from "react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
@@ -64,7 +64,7 @@ export interface ArticleParams {
   articleId: string;
   title: string;
 }
-const Article: React.FC<ArticleParams> = () => {
+const Article: ActivityComponentType<ArticleParams> = () => {
   const { articleId, title } = useActivityParams<{
     articleId: string;
     title: string;

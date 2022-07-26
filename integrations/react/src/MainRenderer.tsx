@@ -1,12 +1,13 @@
 import React, { useEffect } from "react";
 
+import { BaseActivities } from "./BaseActivities";
 import { useCoreState } from "./core";
 import PluginRenderer from "./PluginRenderer";
 import { usePlugins } from "./plugins";
 import { WithRequired } from "./utils";
 
 interface MainRendererProps {
-  activities: { [key: string]: React.ComponentType };
+  activities: BaseActivities;
 }
 const MainRenderer: React.FC<MainRendererProps> = ({ activities }) => {
   const coreState = useCoreState();
