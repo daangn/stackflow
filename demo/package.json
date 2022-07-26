@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/demo",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "private": true,
   "license": "MIT",
   "exports": {
@@ -29,7 +29,7 @@
   "dependencies": {
     "@seed-design/design-token": "^1.0.0-alpha.0",
     "@seed-design/stylesheet": "^1.0.0-alpha.0",
-    "@stackflow/basic-ui": "^0.5.3",
+    "@stackflow/basic-ui": "^0.5.4",
     "@stackflow/core": "^0.4.1",
     "@stackflow/plugin-history-sync": "^0.6.2",
     "@stackflow/plugin-renderer-basic": "^0.5.1",
