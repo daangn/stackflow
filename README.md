@@ -76,4 +76,4 @@ To contribute new features or options to **Stackflow**, please check [Contributi
 
 ## License
 
-Apache 2.0
+MIT
