@@ -2277,6 +2277,21 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@stackflow/plugin-preload@workspace:extensions/plugin-preload":
+  version: 0.0.0-use.local
+  resolution: "@stackflow/plugin-preload@workspace:extensions/plugin-preload"
+  dependencies:
+    "@stackflow/core": ^0.4.1
+    "@stackflow/esbuild-config": ^0.2.2
+    "@stackflow/react": ^0.6.0
+    rimraf: ^3.0.2
+    typescript: ^4.7.4
+  peerDependencies:
+    "@stackflow/core": 0
+    "@stackflow/react": 0
+  languageName: unknown
+  linkType: soft
+
 "@stackflow/plugin-renderer-basic@^0.6.0, @stackflow/plugin-renderer-basic@workspace:extensions/plugin-renderer-basic":
   version: 0.0.0-use.local
   resolution: "@stackflow/plugin-renderer-basic@workspace:extensions/plugin-renderer-basic"
