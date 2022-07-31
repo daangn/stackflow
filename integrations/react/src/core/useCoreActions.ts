@@ -1,7 +1,13 @@
 import { Effect } from "@stackflow/core";
+import {
+  PoppedEvent,
+  PushedEvent,
+  ReplacedEvent,
+} from "@stackflow/core/dist/event-types";
+import { BaseDomainEvent } from "@stackflow/core/dist/event-types/_base";
 import React, { useCallback, useMemo } from "react";
 
-import { useContext } from "../context";
+import { useInitContext } from "../init-context";
 import { usePlugins } from "../plugins";
 import { CoreActionsContext } from "./CoreActionsContext";
 
@@ -9,9 +15,71 @@ const copy = (obj: unknown) => JSON.parse(JSON.stringify(obj));
 
 export const useCoreActions = () => {
   const plugins = usePlugins();
-  const context = useContext();
+  const initContext = useInitContext();
 
   const { dispatchEvent, getStack } = React.useContext(CoreActionsContext);
+
+  const push = useCallback(
+    (params: Omit<PushedEvent, keyof BaseDomainEvent>) => {
+      // eslint-disable-next-line no-use-before-define
+      const { isPrevented, params: eventParams } = triggerPreEffectHook(
+        "PUSHED",
+        params,
+      );
+
+      if (!isPrevented) {
+        dispatchEvent("Pushed", {
+          ...eventParams,
+        });
+      }
+    },
+    [dispatchEvent],
+  );
+
+  const replace = useCallback(
+    (params: Omit<ReplacedEvent, keyof BaseDomainEvent>) => {
+      // eslint-disable-next-line no-use-before-define
+      const { isPrevented, params: eventParams } = triggerPreEffectHook(
+        "REPLACED",
+        params,
+      );
+
+      if (!isPrevented) {
+        dispatchEvent("Replaced", {
+          ...eventParams,
+        });
+      }
+    },
+    [dispatchEvent],
+  );
+
+  const pop = useCallback(
+    (params?: Omit<PoppedEvent, keyof BaseDomainEvent>) => {
+      const initialParams = params ?? {};
+
+      // eslint-disable-next-line no-use-before-define
+      const { isPrevented, params: eventParams } = triggerPreEffectHook(
+        "POPPED",
+        initialParams,
+      );
+
+      if (!isPrevented) {
+        dispatchEvent("Popped", { ...eventParams });
+      }
+    },
+    [dispatchEvent],
+  );
+
+  const coreActions = useMemo(
+    () => ({
+      dispatchEvent,
+      getStack,
+      push,
+      replace,
+      pop,
+    }),
+    [dispatchEvent, getStack, push, replace, pop],
+  );
 
   const triggerPreEffectHook = useCallback(
     (preEffect: Effect["_TAG"], initialActionParams: unknown) => {
@@ -31,8 +99,7 @@ export const useCoreActions = () => {
             plugin.onBeforePush?.({
               actionParams,
               actions: {
-                dispatchEvent,
-                getStack,
+                ...coreActions,
                 preventDefault,
                 overrideActionParams,
               },
@@ -42,8 +109,7 @@ export const useCoreActions = () => {
             plugin.onBeforeReplace?.({
               actionParams,
               actions: {
-                dispatchEvent,
-                getStack,
+                ...coreActions,
                 preventDefault,
                 overrideActionParams,
               },
@@ -53,8 +119,7 @@ export const useCoreActions = () => {
             plugin.onBeforePop?.({
               actionParams,
               actions: {
-                dispatchEvent,
-                getStack,
+                ...coreActions,
                 preventDefault,
                 overrideActionParams,
               },
@@ -70,94 +135,8 @@ export const useCoreActions = () => {
         params: actionParams,
       };
     },
-    [plugins, dispatchEvent, getStack, context],
+    [plugins, initContext],
   );
 
-  const push = useCallback(
-    ({
-      activityId,
-      activityName,
-      params,
-      skipEnterActiveState,
-    }: {
-      activityId: string;
-      activityName: string;
-      params: { [key: string]: string };
-      skipEnterActiveState?: boolean;
-    }) => {
-      const { isPrevented, params: eventParams } = triggerPreEffectHook(
-        "PUSHED",
-        {
-          activityId,
-          activityName,
-          params,
-          skipEnterActiveState,
-        },
-      );
-
-      if (!isPrevented) {
-        dispatchEvent("Pushed", {
-          ...eventParams,
-        });
-      }
-    },
-    [dispatchEvent],
-  );
-
-  const replace = useCallback(
-    ({
-      activityId,
-      activityName,
-      params,
-      skipEnterActiveState,
-    }: {
-      activityId: string;
-      activityName: string;
-      params: { [key: string]: string };
-      skipEnterActiveState?: boolean;
-    }) => {
-      const { isPrevented, params: eventParams } = triggerPreEffectHook(
-        "REPLACED",
-        {
-          activityId,
-          activityName,
-          params,
-          skipEnterActiveState,
-        },
-      );
-
-      if (!isPrevented) {
-        dispatchEvent("Replaced", {
-          ...eventParams,
-        });
-      }
-    },
-    [dispatchEvent],
-  );
-
-  const pop = useCallback(
-    (params?: { skipExitActiveState?: boolean }) => {
-      const initialParams = params ?? {};
-      const { isPrevented, params: eventParams } = triggerPreEffectHook(
-        "POPPED",
-        initialParams,
-      );
-
-      if (!isPrevented) {
-        dispatchEvent("Popped", { ...eventParams });
-      }
-    },
-    [dispatchEvent],
-  );
-
-  return useMemo(
-    () => ({
-      dispatchEvent,
-      getStack,
-      push,
-      replace,
-      pop,
-    }),
-    [dispatchEvent, getStack, push, replace, pop],
-  );
+  return coreActions;
 };

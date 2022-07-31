@@ -49,10 +49,7 @@ const EffectManager: React.FC = () => {
 
   useEffect(() => {
     onInit?.({
-      actions: {
-        dispatchEvent: coreActions.dispatchEvent,
-        getStack: coreActions.getStack,
-      },
+      actions: coreActions,
     });
   }, []);
 
@@ -64,10 +61,7 @@ const EffectManager: React.FC = () => {
 
     effects.forEach((effect) => {
       triggerEffect({
-        actions: {
-          dispatchEvent: coreActions.dispatchEvent,
-          getStack: coreActions.getStack,
-        },
+        actions: coreActions,
         effect,
       });
     });

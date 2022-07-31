@@ -1,9 +1,9 @@
 import React, { useMemo } from "react";
 
 import { BaseActivities } from "./BaseActivities";
-import { ContextProvider } from "./context";
 import { CoreProvider } from "./core";
 import EffectManager from "./EffectManager";
+import { InitContextProvider } from "./init-context";
 import MainRenderer from "./MainRenderer";
 import { PluginsProvider } from "./plugins";
 import { StackflowReactPlugin } from "./StackflowReactPlugin";
@@ -32,7 +32,7 @@ export type StackflowOptions<T extends BaseActivities> = {
    * Set the first activity to load at the bottom
    * (It can be overwritten by plugin)
    */
-  initialActivity?: (args: { context: any }) => Extract<keyof T, string>;
+  initialActivity?: (args: { initContext: any }) => Extract<keyof T, string>;
 
   /**
    * Inject stackflow plugins
@@ -83,7 +83,7 @@ export function stackflow<T extends BaseActivities>(
       );
 
       return (
-        <ContextProvider value={props.initContext ?? {}}>
+        <InitContextProvider value={props.initContext ?? {}}>
           <PluginsProvider value={plugins}>
             <CoreProvider
               activities={activities}
@@ -94,7 +94,7 @@ export function stackflow<T extends BaseActivities>(
               <EffectManager />
             </CoreProvider>
           </PluginsProvider>
-        </ContextProvider>
+        </InitContextProvider>
       );
     },
     useFlow: useActions,

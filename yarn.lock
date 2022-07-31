@@ -2186,6 +2186,7 @@ __metadata:
     "@stackflow/basic-ui": ^0.6.0
     "@stackflow/core": ^0.4.1
     "@stackflow/plugin-history-sync": ^0.7.0
+    "@stackflow/plugin-preload": ^0.1.0
     "@stackflow/plugin-renderer-basic": ^0.6.0
     "@stackflow/react": ^0.6.0
     "@types/react": ^18.0.10
@@ -2277,7 +2278,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/plugin-preload@workspace:extensions/plugin-preload":
+"@stackflow/plugin-preload@^0.1.0, @stackflow/plugin-preload@workspace:extensions/plugin-preload":
   version: 0.0.0-use.local
   resolution: "@stackflow/plugin-preload@workspace:extensions/plugin-preload"
   dependencies:

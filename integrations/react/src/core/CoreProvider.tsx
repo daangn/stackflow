@@ -15,7 +15,7 @@ import isEqual from "react-fast-compare";
 
 import { makeActivityId } from "../activity";
 import { BaseActivities } from "../BaseActivities";
-import { useContext } from "../context";
+import { useInitContext } from "../init-context";
 import { usePlugins } from "../plugins";
 import { CoreActionsContext } from "./CoreActionsContext";
 import { CoreStateContext } from "./CoreStateContext";
@@ -27,12 +27,10 @@ const SECOND = 1000;
 // 60FPS
 const INTERVAL_MS = SECOND / 60;
 
-const copy = (obj: unknown) => JSON.parse(JSON.stringify(obj));
-
 export interface CoreProviderProps {
   activities: BaseActivities;
   transitionDuration: number;
-  initialActivity?: (args: { context: any }) => string;
+  initialActivity?: (args: { initContext: any }) => string;
   children: React.ReactNode;
 }
 export const CoreProvider: React.FC<CoreProviderProps> = ({
@@ -42,7 +40,7 @@ export const CoreProvider: React.FC<CoreProviderProps> = ({
   children,
 }) => {
   const plugins = usePlugins();
-  const context = useContext();
+  const initContext = useInitContext();
 
   const initialEvents = useMemo(() => {
     const initialEventDate = new Date().getTime() - transitionDuration;
@@ -50,7 +48,7 @@ export const CoreProvider: React.FC<CoreProviderProps> = ({
     const initialPushedEventByOption = initialActivity
       ? makeEvent("Pushed", {
           activityId: makeActivityId(),
-          activityName: initialActivity({ context }),
+          activityName: initialActivity({ initContext }),
           params: {},
           eventDate: initialEventDate,
           skipEnterActiveState: false,

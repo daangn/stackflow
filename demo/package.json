@@ -32,6 +32,7 @@
     "@stackflow/basic-ui": "^0.6.0",
     "@stackflow/core": "^0.4.1",
     "@stackflow/plugin-history-sync": "^0.7.0",
+    "@stackflow/plugin-preload": "^0.1.0",
     "@stackflow/plugin-renderer-basic": "^0.6.0",
     "@stackflow/react": "^0.6.0",
     "@vanilla-extract/css": "^1.7.1",
