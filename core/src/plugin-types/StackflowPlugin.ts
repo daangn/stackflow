@@ -6,7 +6,7 @@ import {
   StackflowPluginPreEffectHook,
 } from "./StackflowPluginHook";
 
-export type StackflowPlugin = (args: { context: any }) => {
+export type StackflowPlugin = () => {
   /**
    * Unique string value to be given as a key value when the plugin is rendered in the React Tree in the form of an array
    */
@@ -61,5 +61,7 @@ export type StackflowPlugin = (args: { context: any }) => {
   /**
    * Specifies the first `PushedEvent` (Overrides the `initialActivity` option specified in the `stackflow()` function)
    */
-  initialPushedEvent?: () => PushedEvent | null;
+  overrideInitialPushedEvent?: (args: {
+    pushedEvent: PushedEvent | null;
+  }) => PushedEvent | null;
 };

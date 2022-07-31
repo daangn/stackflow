@@ -27,6 +27,8 @@ const SECOND = 1000;
 // 60FPS
 const INTERVAL_MS = SECOND / 60;
 
+const copy = (obj: unknown) => JSON.parse(JSON.stringify(obj));
+
 export interface CoreProviderProps {
   activities: BaseActivities;
   transitionDuration: number;
@@ -45,11 +47,6 @@ export const CoreProvider: React.FC<CoreProviderProps> = ({
   const initialEvents = useMemo(() => {
     const initialEventDate = new Date().getTime() - transitionDuration;
 
-    const initialPushedEventByPlugin = plugins.reduce<PushedEvent | null>(
-      (acc, plugin) => plugin.initialPushedEvent?.() ?? acc,
-      null,
-    );
-
     const initialPushedEventByOption = initialActivity
       ? makeEvent("Pushed", {
           activityId: makeActivityId(),
@@ -60,17 +57,25 @@ export const CoreProvider: React.FC<CoreProviderProps> = ({
         })
       : null;
 
-    if (initialPushedEventByPlugin && initialPushedEventByOption) {
+    const initialPushedEventAfterPlugin = plugins.reduce<PushedEvent | null>(
+      (pushedEvent, plugin) =>
+        plugin.overrideInitialPushedEvent?.({ pushedEvent }) ?? pushedEvent,
+      initialPushedEventByOption,
+    );
+
+    const isPushedEventOverriden =
+      initialPushedEventAfterPlugin !== initialPushedEventByOption;
+
+    if (initialPushedEventByOption && isPushedEventOverriden) {
       // eslint-disable-next-line no-console
       console.warn(
         `Stackflow - ` +
           ` Some plugin overrides an "initialActivity" option.` +
-          ` The "initialActivity" option you set to "${initialPushedEventByOption.activityName}" in the "stackflow" is ignored.`,
+          ` The "initialActivity" option you set to "${initialPushedEventByOption.activityName}" in the "stackflow" is overriden.`,
       );
     }
 
-    const initialPushedEvent =
-      initialPushedEventByPlugin ?? initialPushedEventByOption;
+    const initialPushedEvent = initialPushedEventAfterPlugin;
 
     if (!initialPushedEvent) {
       // eslint-disable-next-line no-console

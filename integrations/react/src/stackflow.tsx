@@ -13,7 +13,7 @@ export type StackProps<C extends {} = {}> = {
   /**
    * Context data to pass to plugins in render time
    */
-  context?: C;
+  initContext?: C;
 };
 export type StackComponentType = React.FC<StackProps>;
 
@@ -78,12 +78,12 @@ export function stackflow<T extends BaseActivities>(
               ],
               [],
             )
-            .map((plugin) => plugin({ context: props.context })),
+            .map((plugin) => plugin({ initContext: props.initContext })),
         [],
       );
 
       return (
-        <ContextProvider value={props.context ?? {}}>
+        <ContextProvider value={props.initContext ?? {}}>
           <PluginsProvider value={plugins}>
             <CoreProvider
               activities={activities}
