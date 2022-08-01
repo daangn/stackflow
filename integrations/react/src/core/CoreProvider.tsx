@@ -61,12 +61,12 @@ export const CoreProvider: React.FC<CoreProviderProps> = ({
       initialPushedEventByOption,
     );
 
-    const isPushedEventOverriden =
+    const isInitialActivityIgnored =
       !!initialPushedEventAfterPlugin &&
       !!initialPushedEventByOption &&
       initialPushedEventAfterPlugin.id !== initialPushedEventByOption.id;
 
-    if (isPushedEventOverriden) {
+    if (isInitialActivityIgnored) {
       // eslint-disable-next-line no-console
       console.warn(
         `Stackflow - ` +
