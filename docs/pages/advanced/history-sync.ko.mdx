@@ -33,7 +33,7 @@ const { Stack, useFlow } = stackflow({
     historySyncPlugin({
       routes: {
         MyActivity: "/my-activity",
-        Article: "/articles/:articleId-:title",
+        Article: "/articles/:articleId",
       },
       fallbackActivity: () => "MyActivity",
     }),
