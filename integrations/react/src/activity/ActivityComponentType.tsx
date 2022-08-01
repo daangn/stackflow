@@ -1,5 +1,5 @@
-import { ActivityParams } from "@stackflow/core";
 import React from "react";
 
-export type ActivityComponentType<T extends ActivityParams<T> = {}> =
-  React.ComponentType<{ params: T }>;
+export type ActivityComponentType<
+  T extends { [K in keyof T]: string | undefined } = {},
+> = React.ComponentType<{ params: T }>;

@@ -1,7 +1,6 @@
 export { aggregate } from "./aggregate";
 export {
   Activity,
-  ActivityParams,
   ActivityTransitionState,
   AggregateOutput,
 } from "./AggregateOutput";

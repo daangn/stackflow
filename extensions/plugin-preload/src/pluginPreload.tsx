@@ -1,14 +1,12 @@
-import { ActivityParams } from "@stackflow/core";
 import { StackflowReactPlugin } from "@stackflow/react";
+import React from "react";
+
+import { Loader } from "./Loader";
+import { LoadersProvider } from "./LoadersContext";
 
 type PreloadPluginOptions<K extends string> = {
   loaders: {
-    [activityName in K]: (args: {
-      activityId: string;
-      activityParams: ActivityParams;
-      initContext: any;
-      eventContext: any;
-    }) => any;
+    [activityName in K]: Loader;
   };
 };
 
@@ -17,20 +15,27 @@ export function preloadPlugin<T extends { [activityName: string]: any }>(
 ): StackflowReactPlugin<T> {
   return ({ initContext }) => ({
     key: "plugin-preload",
+    wrapStack({ stack }) {
+      return (
+        <LoadersProvider loaders={options.loaders}>
+          {stack.render()}
+        </LoadersProvider>
+      );
+    },
     overrideInitialPushedEvent({ pushedEvent }) {
       if (!pushedEvent) {
         return null;
       }
 
-      const { activityId, activityName, params, eventContext } = pushedEvent;
+      const { activityName, params, eventContext } = pushedEvent;
 
       const loader = options.loaders[activityName];
 
       const preloadRef = loader({
-        activityId,
         activityParams: params,
         eventContext,
         initContext,
+        isInitialActivity: true,
       });
 
       return {
@@ -39,12 +44,11 @@ export function preloadPlugin<T extends { [activityName: string]: any }>(
       };
     },
     onBeforePush({ actionParams, actions: { overrideActionParams } }) {
-      const { activityId, activityName, params, eventContext } = actionParams;
+      const { activityName, params, eventContext } = actionParams;
 
       const loader = options.loaders[activityName];
 
       const preloadRef = loader({
-        activityId,
         activityParams: params,
         eventContext,
         initContext,
@@ -56,12 +60,11 @@ export function preloadPlugin<T extends { [activityName: string]: any }>(
       });
     },
     onBeforeReplace({ actionParams, actions: { overrideActionParams } }) {
-      const { activityId, activityName, params, eventContext } = actionParams;
+      const { activityName, params, eventContext } = actionParams;
 
       const loader = options.loaders[activityName];
 
       const preloadRef = loader({
-        activityId,
         activityParams: params,
         eventContext,
         initContext,
