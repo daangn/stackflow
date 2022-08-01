@@ -8,5 +8,5 @@ import { ActivityContext } from "./ActivityContext";
 export function useActivityParams<
   T extends { [key in keyof T]: string | undefined },
 >(): T {
-  return useContext(ActivityContext).params as any;
+  return useContext(ActivityContext).params as T;
 }

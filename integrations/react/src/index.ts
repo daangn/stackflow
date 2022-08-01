@@ -1,6 +1,7 @@
 export * from "./activity/ActivityComponentType";
 export * from "./activity/useActivity";
 export * from "./activity/useActivityParams";
+export * from "./activity/useActivityPreloadRef";
 export * from "./init-context/useInitContext";
 export * from "./stack/useStack";
 export * from "./stackflow";
