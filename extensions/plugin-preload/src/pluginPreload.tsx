@@ -1,17 +1,23 @@
-import { StackflowReactPlugin } from "@stackflow/react";
+import { ActivityComponentType, StackflowReactPlugin } from "@stackflow/react";
 import React from "react";
 
 import { Loader } from "./Loader";
 import { LoadersProvider } from "./LoadersContext";
 
-type PreloadPluginOptions<K extends string> = {
+type PreloadPluginOptions<
+  T extends { [activityName: string]: ActivityComponentType },
+> = {
   loaders: {
-    [activityName in K]: Loader;
+    [key in Extract<keyof T, string>]: T[key] extends ActivityComponentType<
+      infer U
+    >
+      ? Loader<U>
+      : never;
   };
 };
 
 export function preloadPlugin<T extends { [activityName: string]: any }>(
-  options: PreloadPluginOptions<Extract<keyof T, string>>,
+  options: PreloadPluginOptions<T>,
 ): StackflowReactPlugin<T> {
   return ({ initContext }) => ({
     key: "plugin-preload",
