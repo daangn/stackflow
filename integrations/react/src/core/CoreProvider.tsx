@@ -62,14 +62,16 @@ export const CoreProvider: React.FC<CoreProviderProps> = ({
     );
 
     const isPushedEventOverriden =
-      initialPushedEventAfterPlugin !== initialPushedEventByOption;
+      !!initialPushedEventAfterPlugin &&
+      !!initialPushedEventByOption &&
+      initialPushedEventAfterPlugin.id !== initialPushedEventByOption.id;
 
-    if (initialPushedEventByOption && isPushedEventOverriden) {
+    if (isPushedEventOverriden) {
       // eslint-disable-next-line no-console
       console.warn(
         `Stackflow - ` +
           ` Some plugin overrides an "initialActivity" option.` +
-          ` The "initialActivity" option you set to "${initialPushedEventByOption.activityName}" in the "stackflow" is overriden.`,
+          ` The "initialActivity" option you set to "${initialPushedEventByOption.activityName}" in the "stackflow" is ignored.`,
       );
     }
 
