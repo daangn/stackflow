@@ -12,7 +12,9 @@ export function usePreloader<T extends BaseActivities>() {
     <K extends Extract<keyof T, string>>(
       activityName: K,
       activityParams: T[K] extends ActivityComponentType<infer U> ? U : {},
-      eventContext?: any,
+      options?: {
+        eventContext?: any;
+      },
     ) => {
       const loader = loaders[activityName];
 
@@ -22,7 +24,7 @@ export function usePreloader<T extends BaseActivities>() {
 
       return loader({
         activityParams,
-        eventContext,
+        eventContext: options?.eventContext,
         initContext,
       });
     },
