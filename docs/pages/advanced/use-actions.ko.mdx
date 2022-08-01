@@ -1,0 +1,34 @@
+# useActions
+
+`useFlow()`는 액티비티의 선언된 타입을 활용해요. 따라서 `useFlow()`와 액티비티 코드는 서로 맞물리면서 순환 참조 (Circular Dependency)를 일으켜요.
+`useActions()` 훅을 사용하면 이러한 순환 참조를 제거할 수 있어요.
+
+```typescript
+/**
+ * stackflow.ts
+ */
+import { stackflow } from "@stackflow/react";
+
+const activities = {
+  // ...
+};
+
+export type TypeActivities = typeof activities;
+
+export const { Stack } = stackflow({
+  activities,
+  // ...
+});
+
+/**
+ * useMyFlow.ts
+ */
+import { useActions } from "@stackflow/react";
+
+// 다음과 같이 구현이 아닌 타입만 가져와서 사용해요.
+import type { TypeActivities } from "./stackflow";
+
+const useMyFlow = () => {
+  return useActions<TypeActivities>();
+};
+```

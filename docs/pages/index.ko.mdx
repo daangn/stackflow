@@ -41,8 +41,8 @@ import { stackflow } from "@stackflow/react";
 
 export const { Stack, useFlow } = stackflow({
   transitionDuration: 350,
-  plugins: [],
   activities: {},
+  plugins: [],
 });
 ```
 
@@ -51,6 +51,10 @@ export const { Stack, useFlow } = stackflow({
 **Stackflow**는 기본적으로 UI(DOM과 CSS) 구현을 포함하지 않아요. 원하는 렌더링 결과를 얻기 위해서는 플러그인 추가가 필요해요. 다음 명령어로 `@stackflow/plugin-renderer-basic` 플러그인과 `@stackflow/basic-ui` 확장을 설치해요.
 
 ```bash
+# 앞서 설치한 스택 상태 관리 패키지
+$ yarn add @stackflow/core @stackflow/react
+
+# 기본적인 UI 구현을 위한 패키지
 $ yarn add @stackflow/plugin-renderer-basic @stackflow/basic-ui
 ```
 
@@ -65,8 +69,8 @@ import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
 
 export const { Stack, useFlow } = stackflow({
   transitionDuration: 350,
-  plugins: [basicRendererPlugin()],
   activities: {},
+  plugins: [basicRendererPlugin()],
 });
 ```
 
