@@ -6,15 +6,13 @@ export type ActivityTransitionState =
   | "exit-active"
   | "exit-done";
 
-export type ActivityParams<T = { [key: string]: string | undefined }> = {
-  [key in keyof T]: string | undefined;
-};
-
 export type Activity = {
   id: string;
   name: string;
   transitionState: ActivityTransitionState;
-  params: ActivityParams;
+  params: {
+    [key: string]: string | undefined;
+  };
   preloadRef?: unknown;
   pushedBy: PushedEvent | ReplacedEvent;
 };

@@ -27,9 +27,9 @@ export type UseActionsOutputType<T extends BaseActivities> = {
   /**
    * Push new activity
    */
-  push: <V extends Extract<keyof T, string>>(
-    activityName: V,
-    params: T[V] extends ActivityComponentType<infer U> ? U : {},
+  push: <K extends Extract<keyof T, string>>(
+    activityName: K,
+    params: T[K] extends ActivityComponentType<infer U> ? U : {},
     options?: {
       animate?: boolean;
     },
@@ -38,9 +38,9 @@ export type UseActionsOutputType<T extends BaseActivities> = {
   /**
    * Push new activity in the top and remove current top activity when new activity is activated
    */
-  replace: <V extends Extract<keyof T, string>>(
-    activityName: V,
-    params: T[V] extends ActivityComponentType<infer U> ? U : {},
+  replace: <K extends Extract<keyof T, string>>(
+    activityName: K,
+    params: T[K] extends ActivityComponentType<infer U> ? U : {},
     options?: {
       animate?: boolean;
     },

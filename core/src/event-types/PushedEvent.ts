@@ -12,5 +12,6 @@ export type PushedEvent = BaseDomainEvent<
     params: PushedEventParams;
     preloadRef?: unknown;
     skipEnterActiveState?: boolean;
+    eventContext?: {};
   }
 >;

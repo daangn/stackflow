@@ -12,5 +12,6 @@ export type ReplacedEvent = BaseDomainEvent<
     params: ReplacedEventParams;
     preloadRef?: unknown;
     skipEnterActiveState?: boolean;
+    eventContext?: {};
   }
 >;

@@ -2186,6 +2186,7 @@ __metadata:
     "@stackflow/basic-ui": ^0.6.0
     "@stackflow/core": ^0.4.1
     "@stackflow/plugin-history-sync": ^0.7.0
+    "@stackflow/plugin-preload": ^0.1.0
     "@stackflow/plugin-renderer-basic": ^0.6.0
     "@stackflow/react": ^0.6.0
     "@types/react": ^18.0.10
@@ -2274,6 +2275,21 @@ __metadata:
     "@stackflow/react": 0
     "@types/react": ">=16.8.0"
     react: ">=16.8.0"
+  languageName: unknown
+  linkType: soft
+
+"@stackflow/plugin-preload@^0.1.0, @stackflow/plugin-preload@workspace:extensions/plugin-preload":
+  version: 0.0.0-use.local
+  resolution: "@stackflow/plugin-preload@workspace:extensions/plugin-preload"
+  dependencies:
+    "@stackflow/core": ^0.4.1
+    "@stackflow/esbuild-config": ^0.2.2
+    "@stackflow/react": ^0.6.0
+    rimraf: ^3.0.2
+    typescript: ^4.7.4
+  peerDependencies:
+    "@stackflow/core": 0
+    "@stackflow/react": 0
   languageName: unknown
   linkType: soft
 

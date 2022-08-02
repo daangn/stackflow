@@ -7,14 +7,13 @@ import * as css from "./AppScreen.css";
 import {
   compactMap,
   findBefore,
+  PropOf,
   useTopActiveActivity,
   useTopVisibleActivity,
   useVariant,
   useVisibleActivities,
 } from "./utils";
 import { useSwipeBack } from "./utils/useSwipeBack";
-
-type PropOf<T> = T extends React.ComponentType<infer U> ? U : unknown;
 
 const appScreenPaperRefMap = new Map<string, React.RefObject<any>>();
 

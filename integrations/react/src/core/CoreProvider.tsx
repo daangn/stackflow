@@ -15,7 +15,7 @@ import isEqual from "react-fast-compare";
 
 import { makeActivityId } from "../activity";
 import { BaseActivities } from "../BaseActivities";
-import { useContext } from "../context";
+import { useInitContext } from "../init-context";
 import { usePlugins } from "../plugins";
 import { CoreActionsContext } from "./CoreActionsContext";
 import { CoreStateContext } from "./CoreStateContext";
@@ -30,7 +30,7 @@ const INTERVAL_MS = SECOND / 60;
 export interface CoreProviderProps {
   activities: BaseActivities;
   transitionDuration: number;
-  initialActivity?: (args: { context: any }) => string;
+  initialActivity?: (args: { initContext: any }) => string;
   children: React.ReactNode;
 }
 export const CoreProvider: React.FC<CoreProviderProps> = ({
@@ -40,27 +40,33 @@ export const CoreProvider: React.FC<CoreProviderProps> = ({
   children,
 }) => {
   const plugins = usePlugins();
-  const context = useContext();
+  const initContext = useInitContext();
 
   const initialEvents = useMemo(() => {
     const initialEventDate = new Date().getTime() - transitionDuration;
 
-    const initialPushedEventByPlugin = plugins.reduce<PushedEvent | null>(
-      (acc, plugin) => plugin.initialPushedEvent?.() ?? acc,
-      null,
-    );
-
     const initialPushedEventByOption = initialActivity
       ? makeEvent("Pushed", {
           activityId: makeActivityId(),
-          activityName: initialActivity({ context }),
+          activityName: initialActivity({ initContext }),
           params: {},
           eventDate: initialEventDate,
           skipEnterActiveState: false,
         })
       : null;
 
-    if (initialPushedEventByPlugin && initialPushedEventByOption) {
+    const initialPushedEventAfterPlugin = plugins.reduce<PushedEvent | null>(
+      (pushedEvent, plugin) =>
+        plugin.overrideInitialPushedEvent?.({ pushedEvent }) ?? pushedEvent,
+      initialPushedEventByOption,
+    );
+
+    const isInitialActivityIgnored =
+      !!initialPushedEventAfterPlugin &&
+      !!initialPushedEventByOption &&
+      initialPushedEventAfterPlugin.id !== initialPushedEventByOption.id;
+
+    if (isInitialActivityIgnored) {
       // eslint-disable-next-line no-console
       console.warn(
         `Stackflow - ` +
@@ -69,8 +75,7 @@ export const CoreProvider: React.FC<CoreProviderProps> = ({
       );
     }
 
-    const initialPushedEvent =
-      initialPushedEventByPlugin ?? initialPushedEventByOption;
+    const initialPushedEvent = initialPushedEventAfterPlugin;
 
     if (!initialPushedEvent) {
       // eslint-disable-next-line no-console

@@ -18,6 +18,7 @@
     "format": "eslint --fix --ignore-path .gitignore && prettier -w .",
     "lerna:publish": "yarn build && lerna publish",
     "lerna:publish:canary": "yarn build && lerna publish --canary",
+    "lerna:publish:force": "yarn build && lerna publish --force-publish",
     "test": "yarn build && ultra -r test",
     "typecheck": "tsc --noEmit",
     "version": "yarn install && git stage yarn.lock"

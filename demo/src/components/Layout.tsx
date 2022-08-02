@@ -4,7 +4,7 @@ import React from "react";
 
 import { useAppScreenTheme } from "../AppScreenThemeContext";
 
-type PropOf<T> = T extends React.ComponentType<infer U> ? U : unknown;
+type PropOf<T> = T extends React.ComponentType<infer U> ? U : never;
 
 interface LayoutProps {
   appBar?: PropOf<typeof AppScreen>["appBar"];

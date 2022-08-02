@@ -1,4 +1,4 @@
-import { Activity, ActivityParams, id, makeEvent } from "@stackflow/core";
+import { Activity, id, makeEvent } from "@stackflow/core";
 import { StackflowReactPlugin } from "@stackflow/react";
 import React from "react";
 
@@ -82,87 +82,36 @@ type HistorySyncPluginOptions<K extends string> = {
   routes: {
     [key in K]: string | string[];
   };
-  fallbackActivity: (args: { context: any }) => K;
+  fallbackActivity: (args: { initContext: any }) => K;
   useHash?: boolean;
-  experimental_initialPreloadRef?: (args: {
-    path: string;
-    route: string;
-    activityId: string;
-    activityName: K;
-    activityParams: ActivityParams;
-    context: any;
-  }) => any;
-  experimental_preloadRef?: (args: {
-    path: string;
-    route: string;
-    activityId: string;
-    activityName: K;
-    activityParams: ActivityParams;
-    context: any;
-  }) => any;
 };
 export function historySyncPlugin<T extends { [activityName: string]: any }>(
   options: HistorySyncPluginOptions<Extract<keyof T, string>>,
 ): StackflowReactPlugin<T> {
   type K = Extract<keyof T, string>;
 
-  return ({ context }) => {
+  return ({ initContext }) => {
     let pushFlag = false;
     let onPopStateDisposer: (() => void) | null = null;
 
-    function getPreloadRef({
-      activityId,
-      activityName,
-      activityParams,
-    }: {
-      activityId: string;
-      activityName: K;
-      activityParams: ActivityParams;
-    }) {
-      const route = normalizeRoute(options.routes[activityName])[0];
-      const template = makeTemplate(route);
-      const path = template.fill(activityParams);
-
-      return options.experimental_preloadRef?.({
-        path,
-        route,
-        activityId,
-        activityName,
-        activityParams,
-        context,
-      });
-    }
-
     return {
       key: "historySync",
-      initialPushedEvent() {
+      overrideInitialPushedEvent() {
         const initHistoryState = parseState(getCurrentState());
 
         if (initHistoryState) {
-          const activityName = initHistoryState.activity.name;
-          const route = normalizeRoute(options.routes[activityName])[0];
-          const template = makeTemplate(route);
-          const path = template.fill(initHistoryState.activity.params);
-
-          const preloadRef = options.experimental_initialPreloadRef?.({
-            path,
-            route,
-            activityId: initHistoryState.activity.id,
-            activityName: initHistoryState.activity.name as K,
-            activityParams: initHistoryState.activity.params,
-            context,
-          });
-
           return {
             ...initHistoryState.activity.pushedBy,
-            ...(preloadRef ? { preloadRef } : null),
             name: "Pushed",
           };
         }
 
         function resolvePath() {
-          if (context?.req?.path && typeof context.req.path === "string") {
-            return context.req.path as string;
+          if (
+            initContext?.req?.path &&
+            typeof initContext.req.path === "string"
+          ) {
+            return initContext.req.path as string;
           }
           if (isServer) {
             return null;
@@ -193,15 +142,6 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
               if (matched) {
                 const activityId = id();
 
-                const preloadRef = options.experimental_initialPreloadRef?.({
-                  path,
-                  route,
-                  activityId,
-                  activityName,
-                  activityParams,
-                  context,
-                });
-
                 return makeEvent("Pushed", {
                   activityId,
                   activityName,
@@ -209,7 +149,11 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
                     ...activityParams,
                   },
                   eventDate: new Date().getTime() - MINUTE,
-                  ...(preloadRef ? { preloadRef } : null),
+                  eventContext: {
+                    "plugin-history-sync": {
+                      path,
+                    },
+                  },
                 });
               }
             }
@@ -217,29 +161,25 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
         }
 
         const fallbackActivityId = id();
-        const fallbackActivityName = options.fallbackActivity({ context });
+        const fallbackActivityName = options.fallbackActivity({ initContext });
         const fallbackActivityRoutes = normalizeRoute(
           options.routes[fallbackActivityName],
         );
-
-        const fallbackPreloadRef = options.experimental_initialPreloadRef?.({
-          path: fallbackActivityRoutes[0],
-          route: fallbackActivityRoutes[0],
-          activityId: fallbackActivityId,
-          activityName: fallbackActivityName,
-          activityParams: {},
-          context,
-        });
+        const fallbackActivityPath = fallbackActivityRoutes[0];
 
         return makeEvent("Pushed", {
           activityId: fallbackActivityId,
           activityName: fallbackActivityName,
           params: {},
           eventDate: new Date().getTime() - MINUTE,
-          ...(fallbackPreloadRef ? { preloadRef: fallbackPreloadRef } : null),
+          eventContext: {
+            "plugin-history-sync": {
+              path: fallbackActivityPath,
+            },
+          },
         });
       },
-      onInit({ actions: { getStack, dispatchEvent } }) {
+      onInit({ actions: { getStack, dispatchEvent, push } }) {
         const rootActivity = getStack().activities[0];
         const template = makeTemplate(
           normalizeRoute(options.routes[rootActivity.name])[0],
@@ -286,16 +226,9 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
             if (!targetActivity) {
               pushFlag = true;
 
-              const preloadRef = getPreloadRef({
-                activityId: historyState.activity.id,
-                activityName: historyState.activity.name as K,
-                activityParams: historyState.activity.params,
-              });
-
               startTransition(() => {
-                dispatchEvent("Pushed", {
+                push({
                   ...historyState.activity.pushedBy,
-                  ...(preloadRef ? { preloadRef } : null),
                 });
               });
             }
@@ -303,18 +236,11 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
           if (isForward) {
             pushFlag = true;
 
-            const preloadRef = getPreloadRef({
-              activityId: historyState.activity.id,
-              activityName: historyState.activity.name as K,
-              activityParams: historyState.activity.params,
-            });
-
             startTransition(() => {
-              dispatchEvent("Pushed", {
+              push({
                 activityId: historyState.activity.pushedBy.activityId,
                 activityName: historyState.activity.pushedBy.activityName,
                 params: historyState.activity.pushedBy.params,
-                ...(preloadRef ? { preloadRef } : null),
               });
             });
           }
@@ -366,15 +292,35 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
         });
       },
       onBeforePush({ actionParams, actions: { overrideActionParams } }) {
-        const preloadRef = getPreloadRef({
-          activityId: actionParams.activityId,
-          activityName: actionParams.activityName as K,
-          activityParams: actionParams.params,
-        });
+        const template = makeTemplate(
+          normalizeRoute(options.routes[actionParams.activityName])[0],
+        );
+        const path = template.fill(actionParams.params);
 
         overrideActionParams({
           ...actionParams,
-          ...(preloadRef ? { preloadRef } : null),
+          eventContext: {
+            ...actionParams.eventContext,
+            "plugin-history-sync": {
+              path,
+            },
+          },
+        });
+      },
+      onBeforeReplace({ actionParams, actions: { overrideActionParams } }) {
+        const template = makeTemplate(
+          normalizeRoute(options.routes[actionParams.activityName])[0],
+        );
+        const path = template.fill(actionParams.params);
+
+        overrideActionParams({
+          ...actionParams,
+          eventContext: {
+            ...actionParams.eventContext,
+            "plugin-history-sync": {
+              path,
+            },
+          },
         });
       },
       onBeforePop({ actions: { preventDefault } }) {
