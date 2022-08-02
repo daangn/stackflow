@@ -3,7 +3,7 @@ import React, { createContext, useContext } from "react";
 import { Loader } from "./Loader";
 
 export type LoadersMap = {
-  [activityName: string]: Loader;
+  [activityName in string]?: Loader;
 };
 
 export const LoadersContext = createContext<LoadersMap>(null as any);

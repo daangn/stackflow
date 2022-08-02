@@ -8,7 +8,7 @@ type PreloadPluginOptions<
   T extends { [activityName: string]: ActivityComponentType },
 > = {
   loaders: {
-    [key in Extract<keyof T, string>]: T[key] extends ActivityComponentType<
+    [key in Extract<keyof T, string>]?: T[key] extends ActivityComponentType<
       infer U
     >
       ? Loader<U>
@@ -37,6 +37,10 @@ export function preloadPlugin<T extends { [activityName: string]: any }>(
 
       const loader = options.loaders[activityName];
 
+      if (!loader) {
+        return pushedEvent;
+      }
+
       const preloadRef = loader({
         activityParams: params,
         eventContext,
@@ -54,6 +58,10 @@ export function preloadPlugin<T extends { [activityName: string]: any }>(
 
       const loader = options.loaders[activityName];
 
+      if (!loader) {
+        return;
+      }
+
       const preloadRef = loader({
         activityParams: params,
         eventContext,
@@ -69,6 +77,10 @@ export function preloadPlugin<T extends { [activityName: string]: any }>(
       const { activityName, params, eventContext } = actionParams;
 
       const loader = options.loaders[activityName];
+
+      if (!loader) {
+        return;
+      }
 
       const preloadRef = loader({
         activityParams: params,
