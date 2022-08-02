@@ -22,7 +22,7 @@
     "build:js": "node ./esbuild.config.js",
     "clean": "rimraf dist",
     "dev": "yarn test --watch && yarn build:js --watch && yarn build:dts --watch",
-    "test": "jest"
+    "test": "yarn jest"
   },
   "jest": {
     "coveragePathIgnorePatterns": [
@@ -40,7 +40,7 @@
     "@stackflow/esbuild-config": "^0.8.0",
     "@swc/core": "^1.2.182",
     "@swc/jest": "^0.2.21",
-    "@types/jest": "^27.5.1",
+    "@types/jest": "^28.1.6",
     "@types/lodash": "^4.14.182",
     "esbuild": "^0.14.37",
     "jest": "^28.1.0",

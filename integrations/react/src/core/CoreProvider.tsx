@@ -1,9 +1,5 @@
-import {
-  aggregate,
-  DispatchEvent,
-  DomainEvent,
-  makeEvent,
-} from "@stackflow/core";
+import type { DispatchEvent, DomainEvent } from "@stackflow/core";
+import { aggregate, makeEvent } from "@stackflow/core";
 import React, {
   useCallback,
   useEffect,
@@ -14,7 +10,7 @@ import React, {
 import isEqual from "react-fast-compare";
 
 import { makeActivityId } from "../activity";
-import { BaseActivities } from "../BaseActivities";
+import type { BaseActivities } from "../BaseActivities";
 import { useInitContext } from "../init-context";
 import { usePlugins } from "../plugins";
 import { CoreActionsContext } from "./CoreActionsContext";

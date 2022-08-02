@@ -7,15 +7,13 @@ Render the activity that should be rendered by default using the stack state.
 ## Usage
 
 ```typescript
-import { stackflow } from '@stackflow/react'
-import { basicRendererPlugin } from '@stackflow/plugin-renderer-basic'
+import { stackflow } from "@stackflow/react";
+import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
 
 const { Stack, useFlow } = stackflow({
   activities: {
     // ...
   },
-  plugins: [
-    basicRendererPlugin(),
-  ],
-})
+  plugins: [basicRendererPlugin()],
+});
 ```

@@ -1,4 +1,4 @@
-import { AggregateOutput, DispatchEvent } from "@stackflow/core";
+import type { AggregateOutput, DispatchEvent } from "@stackflow/core";
 import { createContext } from "react";
 
 export interface CoreActionsContextValue {

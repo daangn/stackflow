@@ -1,9 +1,10 @@
-import {
-  produceEffects,
+import type {
   StackflowPluginHook,
   StackflowPluginPostEffectHook,
 } from "@stackflow/core";
-import React, { useCallback, useEffect, useRef } from "react";
+import { produceEffects } from "@stackflow/core";
+import type React from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 import { useCoreActions, useCoreState } from "./core";
 import { usePlugins } from "./plugins";

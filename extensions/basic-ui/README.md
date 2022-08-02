@@ -7,16 +7,13 @@ Render the UI within the activity using the global stack state. It provides `cup
 ## Usage
 
 ```tsx
-import { AppScreen } from '@stackflow/basic-ui'
+import { AppScreen } from "@stackflow/basic-ui";
 
 const Something: React.FC = () => {
   return (
-    <AppScreen
-      theme="cupertino"
-      appBar={{ title: "Home" }}
-    >
+    <AppScreen theme="cupertino" appBar={{ title: "Home" }}>
       <div>Hello, World</div>
     </AppScreen>
-  )
-}
+  );
+};
 ```

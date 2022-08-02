@@ -7,11 +7,11 @@ Synchronizes the stack state with the current browser's history
 ## Usage
 
 ```typescript
-import { stackflow } from '@stackflow/react'
-import { historySyncPlugin } from '@stackflow/plugin-history-sync'
-import { MyHome } from './MyHome'
-import { MyArticle } from './MyArticle'
-import { NotFoundPage } from './NotFoundPage'
+import { stackflow } from "@stackflow/react";
+import { historySyncPlugin } from "@stackflow/plugin-history-sync";
+import { MyHome } from "./MyHome";
+import { MyArticle } from "./MyArticle";
+import { NotFoundPage } from "./NotFoundPage";
 
 const { Stack, useFlow } = stackflow({
   activities: {
@@ -38,7 +38,7 @@ const { Stack, useFlow } = stackflow({
        * Uses the hash portion of the URL (i.e. window.location.hash)
        */
       useHash: false,
-    })
+    }),
   ],
-})
+});
 ```

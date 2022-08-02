@@ -18,7 +18,14 @@ node_modules
 /.idea/stackflow.iml
 
 .DS_Store
-dist
+lerna-debug.log
+
+# Ultra runner cache
 .ultra.cache.json
 
-lerna-debug.log
+# Build artifacts
+build
+coverage
+dist
+lib
+.next

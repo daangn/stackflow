@@ -1,4 +1,5 @@
-import { ActivityComponentType, useInitContext } from "@stackflow/react";
+import type { ActivityComponentType } from "@stackflow/react";
+import { useInitContext } from "@stackflow/react";
 import { useMemo } from "react";
 
 import { useLoaders } from "./LoadersContext";
