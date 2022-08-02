@@ -122,7 +122,7 @@ const Navbar: React.FC<INavbarProps> = (props: INavbarProps): ReactElement => {
         {props.theme === 'Cupertino' && props.isPresent ? (
           <IconClose className={css.svgIcon} />
         ) : (
-          <IconBack className={css.svgIconClose} />
+          <IconBack className={css.svgIcon} />
         )}
       </a>
     ))
