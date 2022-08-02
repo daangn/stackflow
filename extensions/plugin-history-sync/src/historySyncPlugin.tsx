@@ -1,5 +1,6 @@
-import { Activity, id, makeEvent } from "@stackflow/core";
-import { StackflowReactPlugin } from "@stackflow/react";
+import type { Activity } from "@stackflow/core";
+import { id, makeEvent } from "@stackflow/core";
+import type { StackflowReactPlugin } from "@stackflow/react";
 import React from "react";
 
 import { makeTemplate } from "./makeTemplate";

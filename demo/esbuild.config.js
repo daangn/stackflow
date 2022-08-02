@@ -11,9 +11,7 @@ const external = Object.keys({
 Promise.all([
   build({
     ...config({
-      entryPoints: [
-        "./src/stackflow.ts",
-      ],
+      entryPoints: ["./src/stackflow.ts"],
     }),
     format: "cjs",
     external,
@@ -22,9 +20,7 @@ Promise.all([
   }),
   build({
     ...config({
-      entryPoints: [
-        "./src/stackflow.ts",
-      ],
+      entryPoints: ["./src/stackflow.ts"],
     }),
     format: "esm",
     outExtension: {

@@ -1,5 +1,9 @@
-import { Activity, AggregateOutput, StackflowPlugin } from "@stackflow/core";
-import React from "react";
+import type {
+  Activity,
+  AggregateOutput,
+  StackflowPlugin,
+} from "@stackflow/core";
+import type React from "react";
 
 export type StackflowReactPlugin<T = never> = (args: { initContext: any }) => {
   /**

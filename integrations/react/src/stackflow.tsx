@@ -1,13 +1,14 @@
 import React, { useMemo } from "react";
 
-import { BaseActivities } from "./BaseActivities";
+import type { BaseActivities } from "./BaseActivities";
 import { CoreProvider } from "./core";
 import EffectManager from "./EffectManager";
 import { InitContextProvider } from "./init-context";
 import MainRenderer from "./MainRenderer";
 import { PluginsProvider } from "./plugins";
-import { StackflowReactPlugin } from "./StackflowReactPlugin";
-import { useActions, UseActionsOutputType } from "./useActions";
+import type { StackflowReactPlugin } from "./StackflowReactPlugin";
+import type { UseActionsOutputType } from "./useActions";
+import { useActions } from "./useActions";
 
 export type StackProps<C extends {} = {}> = {
   /**

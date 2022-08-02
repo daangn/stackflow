@@ -1,7 +1,10 @@
-import { ActivityComponentType, StackflowReactPlugin } from "@stackflow/react";
+import type {
+  ActivityComponentType,
+  StackflowReactPlugin,
+} from "@stackflow/react";
 import React from "react";
 
-import { Loader } from "./Loader";
+import type { Loader } from "./Loader";
 import { LoadersProvider } from "./LoadersContext";
 
 type PreloadPluginOptions<

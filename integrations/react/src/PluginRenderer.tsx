@@ -1,12 +1,12 @@
 import React from "react";
 
 import { ActivityProvider } from "./activity";
-import { BaseActivities } from "./BaseActivities";
+import type { BaseActivities } from "./BaseActivities";
 import { useCoreState } from "./core";
 import { usePlugins } from "./plugins";
 import { StackProvider } from "./stack";
-import { StackflowReactPlugin } from "./StackflowReactPlugin";
-import { WithRequired } from "./utils";
+import type { StackflowReactPlugin } from "./StackflowReactPlugin";
+import type { WithRequired } from "./utils";
 
 interface PluginRendererProps {
   activities: BaseActivities;

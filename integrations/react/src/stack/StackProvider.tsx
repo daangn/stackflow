@@ -1,4 +1,4 @@
-import { AggregateOutput } from "@stackflow/core";
+import type { AggregateOutput } from "@stackflow/core";
 import React from "react";
 
 import { useMemoDeep } from "../utils";

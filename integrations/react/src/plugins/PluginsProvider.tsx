@@ -1,6 +1,7 @@
 import React from "react";
 
-import { PluginsContext, PluginsContextValue } from "./PluginsContext";
+import type { PluginsContextValue } from "./PluginsContext";
+import { PluginsContext } from "./PluginsContext";
 
 interface PluginsProviderProps {
   children: React.ReactNode;

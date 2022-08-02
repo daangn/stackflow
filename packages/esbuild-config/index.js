@@ -9,7 +9,9 @@ const config = ({ entryPoints = ["./src/index.ts"], outdir = "dist" }) => ({
   external: ["react"],
   plugins: [
     vanillaExtractPlugin({
-      externals: ["@vanilla-extract"],
+      esbuildOptions: {
+        external: ["@vanilla-extract"],
+      },
     }),
   ],
   sourcemap: true,

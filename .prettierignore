@@ -1,5 +1,11 @@
 .gitignore
 .yarn
-/dist
-/lib
 .pnp.*
+
+lib
+dist
+build
+.next
+.ultra.cache.json
+
+coverage

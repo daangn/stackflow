@@ -2,7 +2,11 @@ module.exports = {
   root: true,
   parser: "@typescript-eslint/parser",
   extends: ["airbnb", "prettier"],
-  plugins: ["json-format", "simple-import-sort"],
+  plugins: [
+    "json-format",
+    "simple-import-sort",
+    "@typescript-eslint/eslint-plugin",
+  ],
   rules: {
     "no-undef": "off",
     "no-unused-vars": "off",
@@ -13,6 +17,13 @@ module.exports = {
     "react/jsx-filename-extension": [
       1,
       { extensions: [".js", ".jsx", ".tsx"] },
+    ],
+    "@typescript-eslint/consistent-type-imports": [
+      1,
+      {
+        prefer: "type-imports",
+        disallowTypeAnnotations: false,
+      },
     ],
     "react/function-component-definition": "off",
     "import/prefer-default-export": "off",

@@ -1,10 +1,10 @@
-import { Effect } from "@stackflow/core";
-import {
+import type { Effect } from "@stackflow/core";
+import type {
   PoppedEvent,
   PushedEvent,
   ReplacedEvent,
 } from "@stackflow/core/dist/event-types";
-import { BaseDomainEvent } from "@stackflow/core/dist/event-types/_base";
+import type { BaseDomainEvent } from "@stackflow/core/dist/event-types/_base";
 import React, { useCallback, useMemo } from "react";
 
 import { useInitContext } from "../init-context";

@@ -1,7 +1,8 @@
 import React, { useMemo } from "react";
 
-import { ActivityComponentType, makeActivityId } from "./activity";
-import { BaseActivities } from "./BaseActivities";
+import type { ActivityComponentType } from "./activity";
+import { makeActivityId } from "./activity";
+import type { BaseActivities } from "./BaseActivities";
 import { useCoreActions } from "./core";
 
 function parseActionOptions(options?: { animate?: boolean }) {

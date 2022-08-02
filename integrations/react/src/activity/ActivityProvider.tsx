@@ -1,4 +1,4 @@
-import { Activity } from "@stackflow/core";
+import type { Activity } from "@stackflow/core";
 import React from "react";
 
 import { useMemoDeep } from "../utils";

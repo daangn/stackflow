@@ -1,6 +1,6 @@
 import React, { createContext, useContext } from "react";
 
-import { Loader } from "./Loader";
+import type { Loader } from "./Loader";
 
 export type LoadersMap = {
   [activityName in string]?: Loader;
