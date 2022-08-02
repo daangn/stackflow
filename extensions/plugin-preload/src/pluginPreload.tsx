@@ -12,7 +12,7 @@ type PreloadPluginOptions<
       infer U
     >
       ? Loader<U>
-      : never;
+      : Loader<{}>;
   };
 };
 
