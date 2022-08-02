@@ -1,6 +1,10 @@
 const { vanillaExtractPlugin } = require("@vanilla-extract/esbuild-plugin");
 
-const config = ({ entryPoints = ["./src/index.ts"], outdir = "dist" }) => ({
+const config = ({
+  entryPoints = ["./src/index.ts"],
+  outdir = "dist",
+  vanillaExtractExternal = [],
+}) => ({
   entryPoints,
   outdir,
   target: "es2015",
@@ -10,7 +14,7 @@ const config = ({ entryPoints = ["./src/index.ts"], outdir = "dist" }) => ({
   plugins: [
     vanillaExtractPlugin({
       esbuildOptions: {
-        external: ["@vanilla-extract"],
+        external: ["@stackflow", ...vanillaExtractExternal],
       },
     }),
   ],

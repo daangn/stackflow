@@ -2929,6 +2929,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@vanilla-extract/css", "npm:1.7.2"],\
             ["@vanilla-extract/css-utils", "npm:0.1.2"],\
             ["@vanilla-extract/dynamic", "npm:2.0.2"],\
+            ["@vanilla-extract/private", "npm:1.0.3"],\
             ["@vanilla-extract/recipes", "virtual:02aa09927e444537789a88e2326854f8ed924037369b25e987f6e88db646eb6fd2fa1d55102fe0f7d547cd9f33ba7a70166b49cbe7ee8424639d51e172239671#npm:0.2.5"],\
             ["esbuild", "npm:0.14.51"],\
             ["react", "npm:18.2.0"],\
@@ -2956,6 +2957,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@vanilla-extract/css", "npm:1.7.2"],\
             ["@vanilla-extract/css-utils", "npm:0.1.2"],\
             ["@vanilla-extract/dynamic", "npm:2.0.2"],\
+            ["@vanilla-extract/private", "npm:1.0.3"],\
             ["@vanilla-extract/recipes", "virtual:02aa09927e444537789a88e2326854f8ed924037369b25e987f6e88db646eb6fd2fa1d55102fe0f7d547cd9f33ba7a70166b49cbe7ee8424639d51e172239671#npm:0.2.5"],\
             ["esbuild", "npm:0.14.51"],\
             ["react", "npm:18.2.0"],\
@@ -2994,6 +2996,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@seed-design/stylesheet", "npm:1.0.0-alpha.3"],\
             ["@stackflow/basic-ui", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/basic-ui"],\
             ["@stackflow/core", "workspace:core"],\
+            ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
             ["@stackflow/plugin-history-sync", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-history-sync"],\
             ["@stackflow/plugin-preload", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-preload"],\
             ["@stackflow/plugin-renderer-basic", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-renderer-basic"],\
@@ -3004,6 +3007,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@vanilla-extract/css", "npm:1.7.2"],\
             ["@vanilla-extract/vite-plugin", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#npm:3.2.1"],\
             ["@vitejs/plugin-react", "npm:1.3.2"],\
+            ["esbuild", "npm:0.14.51"],\
             ["lorem-ipsum", "npm:2.0.8"],\
             ["normalize.css", "npm:8.0.1"],\
             ["random-picture", "npm:4.0.6"],\
@@ -10081,10 +10085,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["lilconfig", [\
-        ["npm:2.0.5", {\
-          "packageLocation": "./.yarn/cache/lilconfig-npm-2.0.5-ba2b9195a0-f7bb9e4265.zip/node_modules/lilconfig/",\
+        ["npm:2.0.6", {\
+          "packageLocation": "./.yarn/cache/lilconfig-npm-2.0.6-6231346eaf-40a3cd72f1.zip/node_modules/lilconfig/",\
           "packageDependencies": [\
-            ["lilconfig", "npm:2.0.5"]\
+            ["lilconfig", "npm:2.0.6"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -12784,7 +12788,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["postcss-load-config", "virtual:57c7a58b08e0c87515ae1334c19c02fc56b33b4194dbc25088e78b5dcd7475d3829e8d78a7aa41dbd6ca8f82dae0dc0ffc4da550e528f4d79a70cdea1d573195#npm:3.1.4"],\
             ["@types/postcss", null],\
             ["@types/ts-node", null],\
-            ["lilconfig", "npm:2.0.5"],\
+            ["lilconfig", "npm:2.0.6"],\
             ["postcss", "npm:8.4.14"],\
             ["ts-node", null],\
             ["yaml", "npm:1.10.2"]\

@@ -25,7 +25,9 @@
     "dev": "yarn build:js --watch && yarn build:dts --watch"
   },
   "dependencies": {
-    "@vanilla-extract/dynamic": "^2.0.2"
+    "@vanilla-extract/dynamic": "^2.0.2",
+    "@vanilla-extract/private": "^1.0.3",
+    "@vanilla-extract/recipes": "^0.2.5"
   },
   "devDependencies": {
     "@stackflow/core": "^0.8.0",
@@ -34,7 +36,6 @@
     "@types/react": "^18.0.10",
     "@vanilla-extract/css": "^1.7.2",
     "@vanilla-extract/css-utils": "^0.1.2",
-    "@vanilla-extract/recipes": "^0.2.5",
     "esbuild": "^0.14.51",
     "react": "^18.1.0",
     "rimraf": "^3.0.2",

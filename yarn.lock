@@ -2147,6 +2147,7 @@ __metadata:
     "@vanilla-extract/css": ^1.7.2
     "@vanilla-extract/css-utils": ^0.1.2
     "@vanilla-extract/dynamic": ^2.0.2
+    "@vanilla-extract/private": ^1.0.3
     "@vanilla-extract/recipes": ^0.2.5
     esbuild: ^0.14.51
     react: ^18.1.0
@@ -2186,6 +2187,7 @@ __metadata:
     "@seed-design/stylesheet": ^1.0.0-alpha.0
     "@stackflow/basic-ui": ^0.8.0
     "@stackflow/core": ^0.8.0
+    "@stackflow/esbuild-config": ^0.8.0
     "@stackflow/plugin-history-sync": ^0.8.0
     "@stackflow/plugin-preload": ^0.8.0
     "@stackflow/plugin-renderer-basic": ^0.8.0
@@ -2196,6 +2198,7 @@ __metadata:
     "@vanilla-extract/css": ^1.7.2
     "@vanilla-extract/vite-plugin": ^3.2.1
     "@vitejs/plugin-react": ^1.3.2
+    esbuild: ^0.14.51
     lorem-ipsum: ^2.0.8
     normalize.css: ^8.0.1
     random-picture: ^4.0.6
@@ -8142,9 +8145,9 @@ __metadata:
   linkType: hard
 
 "lilconfig@npm:^2.0.5":
-  version: 2.0.5
-  resolution: "lilconfig@npm:2.0.5"
-  checksum: f7bb9e42656f06930ad04e583026f087508ae408d3526b8b54895e934eb2a966b7aafae569656f2c79a29fe6d779b3ec44ba577e80814734c8655d6f71cdf2d1
+  version: 2.0.6
+  resolution: "lilconfig@npm:2.0.6"
+  checksum: 40a3cd72f103b1be5975f2ac1850810b61d4053e20ab09be8d3aeddfe042187e1ba70b4651a7e70f95efa1642e7dc8b2ae395b317b7d7753b241b43cef7c0f7d
   languageName: node
   linkType: hard
 
