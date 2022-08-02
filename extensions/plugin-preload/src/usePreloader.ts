@@ -1,19 +1,21 @@
 import { ActivityComponentType, useInitContext } from "@stackflow/react";
-import { BaseActivities } from "@stackflow/react/dist/BaseActivities";
 import { useMemo } from "react";
 
 import { useLoaders } from "./LoadersContext";
 
-type Preload<T extends BaseActivities> = <K extends Extract<keyof T, string>>(
-  activityName: K,
-  activityParams: T[K] extends ActivityComponentType<infer U> ? U : {},
-  options?: {
-    eventContext?: any;
-  },
-) => any;
+type PreloadFunc<T extends { [activityName: string]: ActivityComponentType }> =
+  <K extends Extract<keyof T, string>>(
+    activityName: K,
+    activityParams: T[K] extends ActivityComponentType<infer U> ? U : {},
+    options?: {
+      eventContext?: any;
+    },
+  ) => any;
 
-export function usePreloader<T extends BaseActivities>(): {
-  preload: Preload<T>;
+export function usePreloader<
+  T extends { [activityName: string]: ActivityComponentType },
+>(): {
+  preload: PreloadFunc<T>;
 } {
   const loaders = useLoaders();
   const initContext = useInitContext();
