@@ -2246,7 +2246,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/esbuild-config@^0.8.0, @stackflow/esbuild-config@workspace:^, @stackflow/esbuild-config@workspace:packages/esbuild-config":
+"@stackflow/esbuild-config@^0.8.0, @stackflow/esbuild-config@workspace:packages/esbuild-config":
   version: 0.0.0-use.local
   resolution: "@stackflow/esbuild-config@workspace:packages/esbuild-config"
   dependencies:
@@ -2346,7 +2346,7 @@ __metadata:
   resolution: "@stackflow/react@workspace:integrations/react"
   dependencies:
     "@stackflow/core": ^0.8.0
-    "@stackflow/esbuild-config": "workspace:^"
+    "@stackflow/esbuild-config": ^0.8.0
     "@types/react": ^18.0.9
     esbuild: ^0.14.51
     react: ^18.1.0
