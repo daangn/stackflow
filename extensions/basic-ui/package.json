@@ -35,6 +35,7 @@
     "@vanilla-extract/css": "^1.7.1",
     "@vanilla-extract/css-utils": "^0.1.2",
     "@vanilla-extract/recipes": "^0.2.5",
+    "esbuild": "^0.14.51",
     "react": "^18.1.0",
     "rimraf": "^3.0.2",
     "typescript": "^4.7.4"

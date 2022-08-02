@@ -7,7 +7,11 @@ const config = ({ entryPoints = ["./src/index.ts"], outdir = "dist" }) => ({
   bundle: true,
   minify: false,
   external: ["react"],
-  plugins: [vanillaExtractPlugin()],
+  plugins: [
+    vanillaExtractPlugin({
+      externals: ["@vanilla-extract"],
+    }),
+  ],
   sourcemap: true,
 });
 

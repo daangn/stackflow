@@ -2148,6 +2148,7 @@ __metadata:
     "@vanilla-extract/css-utils": ^0.1.2
     "@vanilla-extract/dynamic": ^2.0.2
     "@vanilla-extract/recipes": ^0.2.5
+    esbuild: ^0.14.51
     react: ^18.1.0
     rimraf: ^3.0.2
     typescript: ^4.7.4
@@ -2229,11 +2230,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/esbuild-config@^0.8.0, @stackflow/esbuild-config@workspace:packages/esbuild-config":
+"@stackflow/esbuild-config@^0.8.0, @stackflow/esbuild-config@workspace:^, @stackflow/esbuild-config@workspace:packages/esbuild-config":
   version: 0.0.0-use.local
   resolution: "@stackflow/esbuild-config@workspace:packages/esbuild-config"
   dependencies:
-    "@vanilla-extract/esbuild-plugin": ^2.0.3
+    "@vanilla-extract/esbuild-plugin": ^2.1.0
   languageName: unknown
   linkType: soft
 
@@ -2266,6 +2267,7 @@ __metadata:
     "@stackflow/esbuild-config": ^0.8.0
     "@stackflow/react": ^0.8.0
     "@types/react": ^18.0.10
+    esbuild: ^0.14.51
     react: ^18.1.0
     rimraf: ^3.0.2
     typescript: ^4.7.4
@@ -2285,11 +2287,16 @@ __metadata:
     "@stackflow/core": ^0.8.0
     "@stackflow/esbuild-config": ^0.8.0
     "@stackflow/react": ^0.8.0
+    "@types/react": ^18.0.10
+    esbuild: ^0.14.51
+    react: ^18.1.0
     rimraf: ^3.0.2
     typescript: ^4.7.4
   peerDependencies:
     "@stackflow/core": 0
     "@stackflow/react": 0
+    "@types/react": ">=16.8.0"
+    react: ">=16.8.0"
   languageName: unknown
   linkType: soft
 
@@ -2301,6 +2308,7 @@ __metadata:
     "@stackflow/esbuild-config": ^0.8.0
     "@stackflow/react": ^0.8.0
     "@types/react": ^18.0.10
+    esbuild: ^0.14.51
     react: ^18.1.0
     rimraf: ^3.0.2
     typescript: ^4.7.4
@@ -2317,7 +2325,9 @@ __metadata:
   resolution: "@stackflow/react@workspace:integrations/react"
   dependencies:
     "@stackflow/core": ^0.8.0
+    "@stackflow/esbuild-config": "workspace:^"
     "@types/react": ^18.0.9
+    esbuild: ^0.14.51
     react: ^18.1.0
     react-fast-compare: ^3.2.0
     rimraf: ^3.0.2
@@ -2922,6 +2932,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@vanilla-extract/css@npm:^1.7.2":
+  version: 1.7.2
+  resolution: "@vanilla-extract/css@npm:1.7.2"
+  dependencies:
+    "@emotion/hash": ^0.8.0
+    "@vanilla-extract/private": ^1.0.3
+    chalk: ^4.1.1
+    css-what: ^5.0.1
+    cssesc: ^3.0.0
+    csstype: ^3.0.7
+    deep-object-diff: ^1.1.0
+    deepmerge: ^4.2.2
+    escape-string-regexp: ^4.0.0
+    media-query-parser: ^2.0.2
+    outdent: ^0.8.0
+  checksum: 7e0f4b77532ae6c42de14237eea0f3a0269648f1515c7bf52bcbc45205179060b18530d44452fcf4031e990d60c450c6673b27fadf1d16fe8c202503e809fffd
+  languageName: node
+  linkType: hard
+
 "@vanilla-extract/dynamic@npm:^2.0.2":
   version: 2.0.2
   resolution: "@vanilla-extract/dynamic@npm:2.0.2"
@@ -2931,27 +2960,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vanilla-extract/esbuild-plugin@npm:^2.0.3":
-  version: 2.0.3
-  resolution: "@vanilla-extract/esbuild-plugin@npm:2.0.3"
+"@vanilla-extract/esbuild-plugin@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "@vanilla-extract/esbuild-plugin@npm:2.1.0"
   dependencies:
-    "@vanilla-extract/integration": ^3.0.0
-  checksum: f0494eaa7c9ff9321fd8ab7792e8a7c1c353d53c62db200ecf6de02b72140b2dbe0a73c7cf428bc3fffa3be0bfd7adf15ffe4cb1100ce390fc977d6ae16f1a3e
-  languageName: node
-  linkType: hard
-
-"@vanilla-extract/integration@npm:^3.0.0":
-  version: 3.0.1
-  resolution: "@vanilla-extract/integration@npm:3.0.1"
-  dependencies:
-    "@vanilla-extract/css": ^1.6.8
-    esbuild: ^0.11.16
-    eval: 0.1.6
-    find-up: ^5.0.0
-    javascript-stringify: ^2.0.1
-    lodash: ^4.17.21
-    outdent: ^0.8.0
-  checksum: 0cbce0e5a96c5e48414e5c16c2f78d3e3de8b6a911d8a706bc5f03c8fdfc0a7ca1261eb5b322b8cf9821a4a2f6d7fe4d58456bef1fd6e29670a7851be6bb73f8
+    "@vanilla-extract/integration": ^5.0.0
+  checksum: 0f33a33552a8d944258ec2cdf3b75fd7a447a22a82f0a3d0001c9e8b5f646e33ebd723bb6d9c99ed0836c722ac271bcf0830abee929f1e7e551dbe099394925c
   languageName: node
   linkType: hard
 
@@ -2967,6 +2981,21 @@ __metadata:
     lodash: ^4.17.21
     outdent: ^0.8.0
   checksum: 24a686193555cd6fcf56829c4485e3a9aa520a468c9c9567f965c8d2c5a34d0bdf9616e4d2b77299978d8db9abc930fbdf86c2dfe2bd7a1b1ea101826469a4ca
+  languageName: node
+  linkType: hard
+
+"@vanilla-extract/integration@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "@vanilla-extract/integration@npm:5.0.0"
+  dependencies:
+    "@vanilla-extract/css": ^1.7.2
+    esbuild: ^0.11.16
+    eval: 0.1.6
+    find-up: ^5.0.0
+    javascript-stringify: ^2.0.1
+    lodash: ^4.17.21
+    outdent: ^0.8.0
+  checksum: fc8d6ea3a36be1520b66f8bb4e060bc3d4d40256a8c0f8a8e8153b1ee346adba7ab3e9772ca2901c3f80531786468de377ef02a1d4dc7edc56b0c0a6a85fd373
   languageName: node
   linkType: hard
 
@@ -12400,11 +12429,11 @@ __metadata:
 
 "typescript@patch:typescript@^4.7.4#~builtin<compat/typescript>":
   version: 4.7.4
-  resolution: "typescript@patch:typescript@npm%3A4.7.4#~builtin<compat/typescript>::version=4.7.4&hash=bda367"
+  resolution: "typescript@patch:typescript@npm%3A4.7.4#~builtin<compat/typescript>::version=4.7.4&hash=f456af"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 96d3030cb01143570567cb4f3a616b10df65f658f0e74e853e77a089a6a954e35c800be7db8b9bfe9a1ae05d9c2897e281359f65e4caa1caf266368e1c4febd3
+  checksum: 9096d8f6c16cb80ef3bf96fcbbd055bf1c4a43bd14f3b7be45a9fbe7ada46ec977f604d5feed3263b4f2aa7d4c7477ce5f9cd87de0d6feedec69a983f3a4f93e
   languageName: node
   linkType: hard
 
