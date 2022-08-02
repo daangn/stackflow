@@ -2,10 +2,12 @@
 .yarn
 .pnp.*
 
-lib
-dist
-build
-.next
+# Ultra runner cache
 .ultra.cache.json
 
+# Build artifacts
+build
 coverage
+dist
+lib
+.next

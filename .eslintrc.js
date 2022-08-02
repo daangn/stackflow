@@ -18,13 +18,6 @@ module.exports = {
       1,
       { extensions: [".js", ".jsx", ".tsx"] },
     ],
-    "@typescript-eslint/consistent-type-imports": [
-      1,
-      {
-        prefer: "type-imports",
-        disallowTypeAnnotations: false,
-      },
-    ],
     "react/function-component-definition": "off",
     "import/prefer-default-export": "off",
     "import/no-unresolved": "off",
@@ -37,6 +30,13 @@ module.exports = {
     "react/react-in-jsx-scope": "off",
     "simple-import-sort/imports": "error",
     "simple-import-sort/exports": "error",
+    "@typescript-eslint/consistent-type-imports": [
+      1,
+      {
+        prefer: "type-imports",
+        disallowTypeAnnotations: false,
+      },
+    ],
   },
   ignorePatterns: ["**/__generated__/**/*", "**/lib/**/*", "**/dist/**/*"],
 };
