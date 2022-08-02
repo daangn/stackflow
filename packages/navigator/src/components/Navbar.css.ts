@@ -226,9 +226,3 @@ export const svgIcon = style({
   width: '1.5rem',
   height: '1.5rem',
 })
-
-export const svgIconClose = style({
-  width: '1.5rem',
-  height: '1.5rem',
-  paddingRight: '1rem',
-})
