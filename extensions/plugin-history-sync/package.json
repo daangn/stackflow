@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/plugin-history-sync",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "license": "MIT",
   "exports": {
     ".": {
@@ -27,9 +27,9 @@
     "url-pattern": "^1.0.3"
   },
   "devDependencies": {
-    "@stackflow/core": "^0.7.0",
-    "@stackflow/esbuild-config": "^0.7.0",
-    "@stackflow/react": "^0.7.0",
+    "@stackflow/core": "^0.8.0",
+    "@stackflow/esbuild-config": "^0.8.0",
+    "@stackflow/react": "^0.8.0",
     "@types/react": "^18.0.10",
     "react": "^18.1.0",
     "rimraf": "^3.0.2",
