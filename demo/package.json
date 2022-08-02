@@ -10,9 +10,9 @@
     },
     "./stackflow.css": "./dist/stackflow.css"
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
+  "main": "./dist/stackflow.js",
+  "module": "./dist/stackflow.mjs",
+  "types": "./dist/stackflow.d.ts",
   "files": [
     "dist",
     "src"
