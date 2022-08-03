@@ -111,13 +111,6 @@ const Main: ActivityComponentType = () => {
     >
       <div className={css.wrapper}>
         <div className={css.scrollable}>
-          {/* eslint-disable-next-line */}
-          <Link
-            activityName="Article"
-            activityParams={{ articleId: "1234", title: "hello" }}
-          >
-            to Article
-          </Link>
           {cards.map((card) => (
             <FeedCard key={card.articleId} {...card} />
           ))}
