@@ -1,4 +1,4 @@
-import { ActivityComponentType } from "@stackflow/react";
+import type { ActivityComponentType } from "@stackflow/react";
 import React from "react";
 
 import IconBell from "../assets/IconBell";
@@ -8,6 +8,7 @@ import IconSettings from "../assets/IconSettings";
 import BottomTab from "../components/BottomTab";
 import FeedCard from "../components/FeedCard";
 import Layout from "../components/Layout";
+import { Link } from "../Link";
 import * as css from "./Main.css";
 
 const cards = [
@@ -110,6 +111,13 @@ const Main: ActivityComponentType = () => {
     >
       <div className={css.wrapper}>
         <div className={css.scrollable}>
+          {/* eslint-disable-next-line */}
+          <Link
+            activityName="Article"
+            activityParams={{ articleId: "1234", title: "hello" }}
+          >
+            to Article
+          </Link>
           {cards.map((card) => (
             <FeedCard key={card.articleId} {...card} />
           ))}

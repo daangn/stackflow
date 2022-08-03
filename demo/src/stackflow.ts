@@ -8,9 +8,12 @@ const activities = {
   Main,
   Article,
 };
+
 export const { Stack, useFlow } = stackflow({
   transitionDuration: 350,
   activities,
   initialActivity: () => "Main",
   plugins: [basicRendererPlugin()],
 });
+
+export type TypeActivities = typeof activities;

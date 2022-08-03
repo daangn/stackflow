@@ -10,92 +10,98 @@ import React, { useEffect, useMemo, useReducer, useRef } from "react";
 
 import { omit } from "./omit";
 
-export type AnchorProps = React.DetailedHTMLProps<
-  React.AnchorHTMLAttributes<HTMLAnchorElement>,
-  HTMLAnchorElement
+export type AnchorProps = Omit<
+  React.DetailedHTMLProps<
+    React.AnchorHTMLAttributes<HTMLAnchorElement>,
+    HTMLAnchorElement
+  >,
+  "ref"
 >;
 
-export type LinkProps<
-  T extends { [activityName: string]: ActivityComponentType },
-  K extends string,
-> = {
+export type LinkProps<K extends string, P> = {
   activityName: K;
-  activityParams: T[K] extends ActivityComponentType<infer U> ? U : never;
+  activityParams: P;
   animate?: boolean;
 } & AnchorProps;
 
-export function Link<
-  T extends { [activityName: string]: ActivityComponentType },
->(props: LinkProps<T, Extract<keyof T, string>>) {
-  const routes = useRoutes();
+export type TypeLink<T extends { [activityName: string]: unknown }> = <
+  K extends Extract<keyof T, string>,
+>(
+  props: LinkProps<K, T[K] extends ActivityComponentType<infer U> ? U : never>,
+) => React.ReactElement | null;
 
-  const [preloaded, flagPreloaded] = useReducer(() => true, false);
-  const { preload } = usePreloader<T>();
+export const Link: TypeLink<{}> = React.forwardRef(
+  (props: LinkProps, ref: React.ForwardedRef<HTMLAnchorElement>) => {
+    const routes = useRoutes();
 
-  const { push } = useActions();
+    const [preloaded, flagPreloaded] = useReducer(() => true, false);
+    const { preload } = usePreloader();
 
-  const anchorRef = useRef<HTMLAnchorElement>(null);
-  const href = useMemo(() => {
-    const route = routes[props.activityName];
+    const { push } = useActions();
 
-    if (!route) {
-      return undefined;
-    }
+    const href = useMemo(() => {
+      const route = routes[props.activityName];
 
-    const template = makeTemplate(normalizeRoute(route)[0]);
-    const path = template.fill(props.activityParams);
-
-    return path;
-  }, [routes, props.activityName, props.activityParams]);
-
-  useEffect(() => {
-    if (preloaded || !anchorRef.current) {
-      return () => {};
-    }
-
-    const $anchor = anchorRef.current;
-
-    const observer = new IntersectionObserver(([{ isIntersecting }]) => {
-      if (isIntersecting) {
-        preload(props.activityName, props.activityParams, {
-          eventContext: {
-            path: href,
-          },
-        });
-        flagPreloaded();
+      if (!route) {
+        return undefined;
       }
-    });
 
-    observer.observe($anchor);
+      const template = makeTemplate(normalizeRoute(route)[0]);
+      const path = template.fill(props.activityParams);
 
-    return () => {
-      observer.unobserve($anchor);
-      observer.disconnect();
-    };
-  }, [anchorRef, flagPreloaded]);
+      return path;
+    }, [routes, props.activityName, props.activityParams]);
 
-  const anchorProps = useMemo(
-    () => omit(props, ["activityName", "activityParams", "animate"]),
-    [props],
-  );
+    useEffect(() => {
+      if (preloaded || !ref || !("current" in ref) || !ref.current) {
+        return () => {};
+      }
 
-  return (
-    <a
-      href={href}
-      onClick={(e) => {
-        e.preventDefault();
+      const $anchor = ref.current;
 
-        push(
-          props.activityName,
-          props.activityParams,
-          typeof props.animate === "undefined" || props.animate === null
-            ? {}
-            : { animate: props.animate },
-        );
-      }}
-      {...anchorProps}
-    >
-      {props.children}
-    </a>
-  );
-}
+      const observer = new IntersectionObserver(([{ isIntersecting }]) => {
+        if (isIntersecting) {
+          preload(props.activityName, props.activityParams, {
+            eventContext: {
+              path: href,
+            },
+          });
+          flagPreloaded();
+        }
+      });
+
+      observer.observe($anchor);
+
+      return () => {
+        observer.unobserve($anchor);
+        observer.disconnect();
+      };
+    }, [ref, flagPreloaded]);
+
+    const anchorProps = useMemo(
+      () => omit(props, ["activityName", "activityParams", "animate"]),
+      [props],
+    );
+
+    return (
+      <a
+        ref={ref}
+        href={href}
+        onClick={(e) => {
+          e.preventDefault();
+
+          push(
+            props.activityName,
+            props.activityParams,
+            typeof props.animate === "undefined" || props.animate === null
+              ? {}
+              : { animate: props.animate },
+          );
+        }}
+        {...anchorProps}
+      >
+        {props.children}
+      </a>
+    );
+  },
+);

@@ -9,9 +9,9 @@ import { useMemo } from "react";
 
 import { useLoaders } from "./LoadersContext";
 
-export type PreloadFunc<
-  T extends { [activityName: string]: ActivityComponentType },
-> = <K extends Extract<keyof T, string>>(
+export type PreloadFunc<T extends { [activityName: string]: unknown }> = <
+  K extends Extract<keyof T, string>,
+>(
   activityName: K,
   activityParams: T[K] extends ActivityComponentType<infer U> ? U : {},
   options?: {
@@ -19,9 +19,7 @@ export type PreloadFunc<
   },
 ) => any;
 
-export function usePreloader<
-  T extends { [activityName: string]: ActivityComponentType },
->(): {
+export function usePreloader<T extends { [activityName: string]: unknown }>(): {
   preload: PreloadFunc<T>;
 } {
   const loaders = useLoaders();
