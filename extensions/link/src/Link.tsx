@@ -8,6 +8,7 @@ import type { ActivityComponentType } from "@stackflow/react";
 import { useActions } from "@stackflow/react";
 import React, { useEffect, useMemo, useReducer, useRef } from "react";
 
+import { mergeRefs } from "./mergeRefs";
 import { omit } from "./omit";
 
 export type AnchorProps = Omit<
@@ -24,20 +25,20 @@ export type LinkProps<K extends string, P> = {
   animate?: boolean;
 } & AnchorProps;
 
-export type TypeLink<T extends { [activityName: string]: unknown }> = <
+export type TypeLink<T extends { [activityName: string]: unknown } = {}> = <
   K extends Extract<keyof T, string>,
 >(
   props: LinkProps<K, T[K] extends ActivityComponentType<infer U> ? U : never>,
 ) => React.ReactElement | null;
 
-export const Link: TypeLink<{}> = React.forwardRef(
-  (props: LinkProps, ref: React.ForwardedRef<HTMLAnchorElement>) => {
+export const Link: TypeLink = React.forwardRef(
+  (props, ref: React.ForwardedRef<HTMLAnchorElement>) => {
     const routes = useRoutes();
-
-    const [preloaded, flagPreloaded] = useReducer(() => true, false);
     const { preload } = usePreloader();
-
     const { push } = useActions();
+
+    const anchorRef = useRef<HTMLAnchorElement>(null);
+    const [preloaded, flagPreloaded] = useReducer(() => true, false);
 
     const href = useMemo(() => {
       const route = routes[props.activityName];
@@ -53,11 +54,11 @@ export const Link: TypeLink<{}> = React.forwardRef(
     }, [routes, props.activityName, props.activityParams]);
 
     useEffect(() => {
-      if (preloaded || !ref || !("current" in ref) || !ref.current) {
+      if (preloaded || !anchorRef.current) {
         return () => {};
       }
 
-      const $anchor = ref.current;
+      const $anchor = anchorRef.current;
 
       const observer = new IntersectionObserver(([{ isIntersecting }]) => {
         if (isIntersecting) {
@@ -76,28 +77,31 @@ export const Link: TypeLink<{}> = React.forwardRef(
         observer.unobserve($anchor);
         observer.disconnect();
       };
-    }, [ref, flagPreloaded]);
+    }, [anchorRef, flagPreloaded]);
 
-    const anchorProps = useMemo(
-      () => omit(props, ["activityName", "activityParams", "animate"]),
-      [props],
-    );
+    const anchorProps = omit(props, [
+      "activityName",
+      "activityParams",
+      "animate",
+    ]);
+
+    const onClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+      e.preventDefault();
+
+      push(
+        props.activityName,
+        props.activityParams,
+        typeof props.animate === "undefined" || props.animate === null
+          ? {}
+          : { animate: props.animate },
+      );
+    };
 
     return (
       <a
-        ref={ref}
+        ref={mergeRefs(ref, anchorRef)}
         href={href}
-        onClick={(e) => {
-          e.preventDefault();
-
-          push(
-            props.activityName,
-            props.activityParams,
-            typeof props.animate === "undefined" || props.animate === null
-              ? {}
-              : { animate: props.animate },
-          );
-        }}
+        onClick={onClick}
         {...anchorProps}
       >
         {props.children}
