@@ -17,13 +17,14 @@ export type AnchorProps = Omit<
     React.AnchorHTMLAttributes<HTMLAnchorElement>,
     HTMLAnchorElement
   >,
-  "ref"
+  "ref" | "href"
 >;
 
 export type LinkProps<K, P> = {
   activityName: K;
   activityParams: P;
   animate?: boolean;
+  replace?: boolean;
 } & AnchorProps;
 
 export type TypeLink<T extends { [activityName: string]: unknown } = {}> = <
@@ -36,7 +37,7 @@ export const Link: TypeLink = React.forwardRef(
   (props, ref: React.ForwardedRef<HTMLAnchorElement>) => {
     const routes = useRoutes();
     const { preload } = usePreloader();
-    const { push } = useActions();
+    const { push, replace } = useActions();
 
     const anchorRef = useRef<HTMLAnchorElement>(null);
     const [preloaded, flagPreloaded] = useReducer(() => true, false);
@@ -93,13 +94,23 @@ export const Link: TypeLink = React.forwardRef(
 
       e.preventDefault();
 
-      push(
-        props.activityName,
-        props.activityParams,
-        typeof props.animate === "undefined" || props.animate === null
-          ? {}
-          : { animate: props.animate },
-      );
+      if (props.replace) {
+        replace(
+          props.activityName,
+          props.activityParams,
+          typeof props.animate === "undefined" || props.animate === null
+            ? {}
+            : { animate: props.animate },
+        );
+      } else {
+        push(
+          props.activityName,
+          props.activityParams,
+          typeof props.animate === "undefined" || props.animate === null
+            ? {}
+            : { animate: props.animate },
+        );
+      }
     };
 
     return (
