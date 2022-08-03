@@ -1,17 +1,23 @@
+import {
+  makeTemplate,
+  normalizeRoute,
+  useRoutes,
+} from "@stackflow/plugin-history-sync";
 import type { ActivityComponentType } from "@stackflow/react";
 import { useInitContext } from "@stackflow/react";
 import { useMemo } from "react";
 
 import { useLoaders } from "./LoadersContext";
 
-type PreloadFunc<T extends { [activityName: string]: ActivityComponentType }> =
-  <K extends Extract<keyof T, string>>(
-    activityName: K,
-    activityParams: T[K] extends ActivityComponentType<infer U> ? U : {},
-    options?: {
-      eventContext?: any;
-    },
-  ) => any;
+export type PreloadFunc<
+  T extends { [activityName: string]: ActivityComponentType },
+> = <K extends Extract<keyof T, string>>(
+  activityName: K,
+  activityParams: T[K] extends ActivityComponentType<infer U> ? U : {},
+  options?: {
+    eventContext?: any;
+  },
+) => any;
 
 export function usePreloader<
   T extends { [activityName: string]: ActivityComponentType },
@@ -19,6 +25,8 @@ export function usePreloader<
   preload: PreloadFunc<T>;
 } {
   const loaders = useLoaders();
+  const routes = useRoutes();
+
   const initContext = useInitContext();
 
   return useMemo(
@@ -30,9 +38,18 @@ export function usePreloader<
           return null;
         }
 
+        const route = routes[activityName];
+        const template = route
+          ? makeTemplate(normalizeRoute(route)[0])
+          : undefined;
+        const path = template?.fill(activityParams);
+
         return loader({
           activityParams,
-          eventContext: options?.eventContext,
+          eventContext: {
+            ...(path ? { path } : null),
+            ...options?.eventContext,
+          },
           initContext,
         });
       },

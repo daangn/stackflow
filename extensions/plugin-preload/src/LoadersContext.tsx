@@ -6,7 +6,7 @@ export type LoadersMap = {
   [activityName in string]?: Loader;
 };
 
-export const LoadersContext = createContext<LoadersMap>(null as any);
+export const LoadersContext = createContext<LoadersMap>({});
 
 interface LoadersProviderProps {
   loaders: LoadersMap;

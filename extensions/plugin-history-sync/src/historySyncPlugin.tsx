@@ -4,6 +4,8 @@ import type { StackflowReactPlugin } from "@stackflow/react";
 import React from "react";
 
 import { makeTemplate } from "./makeTemplate";
+import { normalizeRoute } from "./normalizeRoute";
+import { RoutesProvider } from "./RoutesContext";
 
 const STATE_TAG = `${process.env.PACKAGE_NAME}@${process.env.PACKAGE_VERSION}`;
 
@@ -18,10 +20,6 @@ function getCurrentState() {
   }
 
   return window.history.state;
-}
-
-function normalizeRoute(route: string | string[]) {
-  return typeof route === "string" ? [route] : route;
 }
 
 interface State {
@@ -96,7 +94,14 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
     let onPopStateDisposer: (() => void) | null = null;
 
     return {
-      key: "historySync",
+      key: "plugin-history-sync",
+      wrapStack({ stack }) {
+        return (
+          <RoutesProvider routes={options.routes}>
+            {stack.render()}
+          </RoutesProvider>
+        );
+      },
       overrideInitialPushedEvent() {
         const initHistoryState = parseState(getCurrentState());
 
@@ -151,9 +156,7 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
                   },
                   eventDate: new Date().getTime() - MINUTE,
                   eventContext: {
-                    "plugin-history-sync": {
-                      path,
-                    },
+                    path,
                   },
                 });
               }
@@ -174,9 +177,7 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
           params: {},
           eventDate: new Date().getTime() - MINUTE,
           eventContext: {
-            "plugin-history-sync": {
-              path: fallbackActivityPath,
-            },
+            path: fallbackActivityPath,
           },
         });
       },
@@ -302,9 +303,7 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
           ...actionParams,
           eventContext: {
             ...actionParams.eventContext,
-            "plugin-history-sync": {
-              path,
-            },
+            path,
           },
         });
       },
@@ -318,9 +317,7 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
           ...actionParams,
           eventContext: {
             ...actionParams.eventContext,
-            "plugin-history-sync": {
-              path,
-            },
+            path,
           },
         });
       },
