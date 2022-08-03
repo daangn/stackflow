@@ -6,6 +6,7 @@ import {
 import { usePreloader } from "@stackflow/plugin-preload";
 import type { ActivityComponentType } from "@stackflow/react";
 import { useActions } from "@stackflow/react";
+import { isModifiedEvent } from "isModifiedEvent";
 import React, { useEffect, useMemo, useReducer, useRef } from "react";
 
 import { mergeRefs } from "./mergeRefs";
@@ -85,7 +86,11 @@ export const Link: TypeLink = React.forwardRef(
       "animate",
     ]);
 
-    const onClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+    const onClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+      if (isModifiedEvent(e)) {
+        return;
+      }
+
       e.preventDefault();
 
       push(
