@@ -1,4 +1,4 @@
-import { BaseDomainEvent } from "./_base";
+import type { BaseDomainEvent } from "./_base";
 
 export type ActivityRegisteredEvent = BaseDomainEvent<
   "ActivityRegistered",

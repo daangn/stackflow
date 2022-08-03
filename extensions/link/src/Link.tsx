@@ -19,7 +19,7 @@ export type AnchorProps = Omit<
   "ref"
 >;
 
-export type LinkProps<K extends string, P> = {
+export type LinkProps<K, P> = {
   activityName: K;
   activityParams: P;
   animate?: boolean;

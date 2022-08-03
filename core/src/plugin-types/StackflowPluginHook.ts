@@ -1,5 +1,5 @@
-import { Effect } from "../Effect";
-import { StackflowPluginActions } from "./StackflowPluginActions";
+import type { Effect } from "../Effect";
+import type { StackflowPluginActions } from "./StackflowPluginActions";
 
 export type StackflowPluginHook = (args: {
   actions: StackflowPluginActions;

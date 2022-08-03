@@ -1,5 +1,5 @@
-import { DomainEvent } from "../event-types";
-import { BaseDomainEvent } from "../event-types/_base";
+import type { DomainEvent } from "../event-types";
+import type { BaseDomainEvent } from "../event-types/_base";
 import { id } from "../utils";
 
 export function makeEvent<T extends DomainEvent["name"]>(

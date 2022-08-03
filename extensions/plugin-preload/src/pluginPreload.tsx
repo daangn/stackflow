@@ -17,7 +17,7 @@ type PreloadPluginOptions<T extends { [activityName: string]: unknown }> = {
   };
 };
 
-export function preloadPlugin<T extends { [activityName: string]: any }>(
+export function preloadPlugin<T extends { [activityName: string]: unknown }>(
   options: PreloadPluginOptions<T>,
 ): StackflowReactPlugin<T> {
   return ({ initContext }) => ({

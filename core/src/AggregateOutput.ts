@@ -1,4 +1,4 @@
-import { PushedEvent, ReplacedEvent } from "./event-types";
+import type { PushedEvent, ReplacedEvent } from "./event-types";
 
 export type ActivityTransitionState =
   | "enter-active"

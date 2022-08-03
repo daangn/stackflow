@@ -1,4 +1,4 @@
-import { DomainEvent } from "../event-types";
+import type { DomainEvent } from "../event-types";
 import { filterEvents } from "./filterEvents";
 
 export function validateEvents(events: DomainEvent[]) {

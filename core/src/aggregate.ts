@@ -1,9 +1,9 @@
-import {
+import type {
   Activity,
   ActivityTransitionState,
   AggregateOutput,
 } from "./AggregateOutput";
-import { DomainEvent, PoppedEvent, ReplacedEvent } from "./event-types";
+import type { DomainEvent, PoppedEvent, ReplacedEvent } from "./event-types";
 import { filterEvents, validateEvents } from "./event-utils";
 import { compareBy, uniqBy } from "./utils";
 

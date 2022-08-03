@@ -1,7 +1,7 @@
 import isEqual from "react-fast-compare";
 
-import { AggregateOutput } from "./AggregateOutput";
-import { Effect } from "./Effect";
+import type { AggregateOutput } from "./AggregateOutput";
+import type { Effect } from "./Effect";
 
 export function produceEffects(
   prevOutput: AggregateOutput,
