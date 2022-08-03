@@ -11,7 +11,7 @@ It can be used only when both `@stackflow/plugin-history-sync` and `@stackflow/p
 
 ## Usage
 
-```tsx
+```typescript
 /**
  * stackflow.ts
  */
