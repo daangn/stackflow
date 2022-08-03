@@ -33,19 +33,21 @@ export function usePreloader<
     () => ({
       preload(activityName, activityParams, options) {
         const loader = loaders[activityName];
-        const route = routes[activityName];
 
-        if (!loader || !route) {
+        if (!loader) {
           return null;
         }
 
-        const template = makeTemplate(normalizeRoute(route)[0]);
-        const path = template.fill(activityParams);
+        const route = routes[activityName];
+        const template = route
+          ? makeTemplate(normalizeRoute(route)[0])
+          : undefined;
+        const path = template?.fill(activityParams);
 
         return loader({
           activityParams,
           eventContext: {
-            path,
+            ...(path ? { path } : null),
             ...options?.eventContext,
           },
           initContext,
