@@ -8,7 +8,6 @@ import IconSettings from "../assets/IconSettings";
 import BottomTab from "../components/BottomTab";
 import FeedCard from "../components/FeedCard";
 import Layout from "../components/Layout";
-import { Link } from "../Link";
 import * as css from "./Main.css";
 
 const cards = [

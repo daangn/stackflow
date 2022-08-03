@@ -61,10 +61,10 @@ const recommenderCard = [
   },
 ];
 
-export type ArticleParams = {
+export interface ArticleParams {
   articleId: string;
   title: string;
-};
+}
 
 const Article: ActivityComponentType<ArticleParams> = () => {
   const { articleId, title } = useActivityParams<{
