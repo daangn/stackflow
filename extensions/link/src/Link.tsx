@@ -6,9 +6,9 @@ import {
 import { usePreloader } from "@stackflow/plugin-preload";
 import type { ActivityComponentType } from "@stackflow/react";
 import { useActions } from "@stackflow/react";
-import { isModifiedEvent } from "isModifiedEvent";
 import React, { useEffect, useMemo, useReducer, useRef } from "react";
 
+import { isModifiedEvent } from "./isModifiedEvent";
 import { mergeRefs } from "./mergeRefs";
 import { omit } from "./omit";
 
