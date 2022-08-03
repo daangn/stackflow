@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/plugin-renderer-basic",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "license": "MIT",
   "exports": {
     ".": {
@@ -24,9 +24,9 @@
     "dev": "yarn build:js --watch && yarn build:dts --watch"
   },
   "devDependencies": {
-    "@stackflow/core": "^0.9.0",
+    "@stackflow/core": "^0.9.1",
     "@stackflow/esbuild-config": "^0.9.0",
-    "@stackflow/react": "^0.9.0",
+    "@stackflow/react": "^0.9.1",
     "@types/react": "^18.0.10",
     "esbuild": "^0.14.51",
     "react": "^18.1.0",
