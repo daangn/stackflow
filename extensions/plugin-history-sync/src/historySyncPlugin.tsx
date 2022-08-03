@@ -2,6 +2,7 @@ import type { Activity } from "@stackflow/core";
 import { id, makeEvent } from "@stackflow/core";
 import type { StackflowReactPlugin } from "@stackflow/react";
 import React from "react";
+import { RoutesContext, RoutesProvider } from "RoutesContext";
 
 import { makeTemplate } from "./makeTemplate";
 
@@ -97,6 +98,13 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
 
     return {
       key: "historySync",
+      wrapStack({ stack }) {
+        return (
+          <RoutesProvider routes={options.routes}>
+            {stack.render()}
+          </RoutesProvider>
+        );
+      },
       overrideInitialPushedEvent() {
         const initHistoryState = parseState(getCurrentState());
 
