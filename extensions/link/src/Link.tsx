@@ -4,9 +4,9 @@ import {
   useRoutes,
 } from "@stackflow/plugin-history-sync";
 import type { ActivityComponentType } from "@stackflow/react";
-import { omit } from "omit";
 import React, { useEffect, useMemo, useReducer, useRef } from "react";
 
+import { omit } from "./omit";
 import { usePreloader } from "./usePreloader";
 
 export type AnchorProps = React.DetailedHTMLProps<

@@ -1,11 +1,11 @@
 import type { Activity } from "@stackflow/core";
 import { id, makeEvent } from "@stackflow/core";
 import type { StackflowReactPlugin } from "@stackflow/react";
-import { normalizeRoute } from "normalizeRoute";
 import React from "react";
-import { RoutesProvider } from "RoutesContext";
 
 import { makeTemplate } from "./makeTemplate";
+import { normalizeRoute } from "./normalizeRoute";
+import { RoutesProvider } from "./RoutesContext";
 
 const STATE_TAG = `${process.env.PACKAGE_NAME}@${process.env.PACKAGE_VERSION}`;
 
