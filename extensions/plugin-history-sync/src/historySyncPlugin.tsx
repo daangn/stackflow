@@ -94,7 +94,7 @@ export function historySyncPlugin<T extends { [activityName: string]: any }>(
     let onPopStateDisposer: (() => void) | null = null;
 
     return {
-      key: "historySync",
+      key: "plugin-history-sync",
       wrapStack({ stack }) {
         return (
           <RoutesProvider routes={options.routes}>

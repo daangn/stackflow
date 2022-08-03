@@ -1,9 +1,9 @@
-import { StackflowReactPlugin } from "@stackflow/react";
+import type { StackflowReactPlugin } from "@stackflow/react";
 import React from "react";
 
 export function basicRendererPlugin(): StackflowReactPlugin {
   return () => ({
-    key: "render",
+    key: "plugin-renderer-basic",
     render({ stack }) {
       return (
         <>
