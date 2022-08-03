@@ -2328,7 +2328,6 @@ __metadata:
     typescript: ^4.7.4
   peerDependencies:
     "@stackflow/core": 0
-    "@stackflow/plugin-history-sync": 0
     "@stackflow/react": 0
     "@types/react": ">=16.8.0"
     react: ">=16.8.0"
