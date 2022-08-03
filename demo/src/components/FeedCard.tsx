@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import { useFlow } from "../stackflow";
@@ -18,6 +18,7 @@ const FeedCard: React.FC<FeedCardProps> = ({
   region,
   daysAgo,
 }) => {
+  const btnRef = useRef<HTMLButtonElement>(null);
   const { push } = useFlow();
 
   const imageUrl = `https://picsum.photos/800/800/?id=${articleId}`;
@@ -29,9 +30,32 @@ const FeedCard: React.FC<FeedCardProps> = ({
     });
   };
 
+  useEffect(() => {
+    if (!btnRef.current) {
+      return () => {};
+    }
+
+    const $btn = btnRef.current;
+
+    const observer = new IntersectionObserver((e) => {
+      console.log("intersect!", title, e[0].isIntersecting);
+    });
+
+    observer.observe($btn);
+
+    return () => {
+      observer.unobserve($btn);
+    };
+  }, []);
+
   return (
     <div className={css.container}>
-      <button type="button" className={css.button} onClick={onClick}>
+      <button
+        ref={btnRef}
+        type="button"
+        className={css.button}
+        onClick={onClick}
+      >
         <div className={css.thumbnail}>
           <LazyLoadImage
             src={imageUrl}
