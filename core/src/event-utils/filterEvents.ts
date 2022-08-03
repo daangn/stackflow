@@ -1,4 +1,4 @@
-import { DomainEvent } from "../event-types";
+import type { DomainEvent } from "../event-types";
 
 export function filterEvents<T extends DomainEvent["name"]>(
   events: DomainEvent[],

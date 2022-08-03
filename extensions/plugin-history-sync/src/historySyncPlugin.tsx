@@ -84,7 +84,9 @@ type HistorySyncPluginOptions<K extends string> = {
   fallbackActivity: (args: { initContext: any }) => K;
   useHash?: boolean;
 };
-export function historySyncPlugin<T extends { [activityName: string]: any }>(
+export function historySyncPlugin<
+  T extends { [activityName: string]: unknown },
+>(
   options: HistorySyncPluginOptions<Extract<keyof T, string>>,
 ): StackflowReactPlugin<T> {
   type K = Extract<keyof T, string>;

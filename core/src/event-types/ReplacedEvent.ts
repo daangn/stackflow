@@ -1,4 +1,4 @@
-import { BaseDomainEvent } from "./_base";
+import type { BaseDomainEvent } from "./_base";
 
 export interface ReplacedEventParams {
   [key: string]: string | undefined;

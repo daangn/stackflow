@@ -1,8 +1,8 @@
-import { ActivityRegisteredEvent } from "./ActivityRegisteredEvent";
-import { InitializedEvent } from "./InitializedEvent";
-import { PoppedEvent } from "./PoppedEvent";
-import { PushedEvent } from "./PushedEvent";
-import { ReplacedEvent } from "./ReplacedEvent";
+import type { ActivityRegisteredEvent } from "./ActivityRegisteredEvent";
+import type { InitializedEvent } from "./InitializedEvent";
+import type { PoppedEvent } from "./PoppedEvent";
+import type { PushedEvent } from "./PushedEvent";
+import type { ReplacedEvent } from "./ReplacedEvent";
 
 export type DomainEvent =
   | ActivityRegisteredEvent

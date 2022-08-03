@@ -31,7 +31,7 @@ module.exports = {
     "simple-import-sort/imports": "error",
     "simple-import-sort/exports": "error",
     "@typescript-eslint/consistent-type-imports": [
-      1,
+      "error",
       {
         prefer: "type-imports",
         disallowTypeAnnotations: false,

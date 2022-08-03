@@ -1,7 +1,7 @@
-import { AggregateOutput } from "../AggregateOutput";
-import { PoppedEvent, PushedEvent, ReplacedEvent } from "../event-types";
-import { BaseDomainEvent } from "../event-types/_base";
-import { DispatchEvent } from "../event-utils";
+import type { AggregateOutput } from "../AggregateOutput";
+import type { PoppedEvent, PushedEvent, ReplacedEvent } from "../event-types";
+import type { BaseDomainEvent } from "../event-types/_base";
+import type { DispatchEvent } from "../event-utils";
 
 export type StackflowPluginActions = {
   /**

@@ -1,6 +1,6 @@
-import { PoppedEvent, PushedEvent, ReplacedEvent } from "../event-types";
-import { BaseDomainEvent } from "../event-types/_base";
-import {
+import type { PoppedEvent, PushedEvent, ReplacedEvent } from "../event-types";
+import type { BaseDomainEvent } from "../event-types/_base";
+import type {
   StackflowPluginHook,
   StackflowPluginPostEffectHook,
   StackflowPluginPreEffectHook,

@@ -8,94 +8,104 @@ import type { ActivityComponentType } from "@stackflow/react";
 import { useActions } from "@stackflow/react";
 import React, { useEffect, useMemo, useReducer, useRef } from "react";
 
+import { mergeRefs } from "./mergeRefs";
 import { omit } from "./omit";
 
-export type AnchorProps = React.DetailedHTMLProps<
-  React.AnchorHTMLAttributes<HTMLAnchorElement>,
-  HTMLAnchorElement
+export type AnchorProps = Omit<
+  React.DetailedHTMLProps<
+    React.AnchorHTMLAttributes<HTMLAnchorElement>,
+    HTMLAnchorElement
+  >,
+  "ref"
 >;
 
-export type LinkProps<
-  T extends { [activityName: string]: ActivityComponentType },
-  K extends string,
-> = {
+export type LinkProps<K, P> = {
   activityName: K;
-  activityParams: T[K] extends ActivityComponentType<infer U> ? U : never;
+  activityParams: P;
   animate?: boolean;
 } & AnchorProps;
 
-export function Link<
-  T extends { [activityName: string]: ActivityComponentType },
->(props: LinkProps<T, Extract<keyof T, string>>) {
-  const routes = useRoutes();
+export type TypeLink<T extends { [activityName: string]: unknown } = {}> = <
+  K extends Extract<keyof T, string>,
+>(
+  props: LinkProps<K, T[K] extends ActivityComponentType<infer U> ? U : never>,
+) => React.ReactElement | null;
 
-  const [preloaded, flagPreloaded] = useReducer(() => true, false);
-  const { preload } = usePreloader<T>();
+export const Link: TypeLink = React.forwardRef(
+  (props, ref: React.ForwardedRef<HTMLAnchorElement>) => {
+    const routes = useRoutes();
+    const { preload } = usePreloader();
+    const { push } = useActions();
 
-  const { push } = useActions();
+    const anchorRef = useRef<HTMLAnchorElement>(null);
+    const [preloaded, flagPreloaded] = useReducer(() => true, false);
 
-  const anchorRef = useRef<HTMLAnchorElement>(null);
-  const href = useMemo(() => {
-    const route = routes[props.activityName];
+    const href = useMemo(() => {
+      const route = routes[props.activityName];
 
-    if (!route) {
-      return undefined;
-    }
-
-    const template = makeTemplate(normalizeRoute(route)[0]);
-    const path = template.fill(props.activityParams);
-
-    return path;
-  }, [routes, props.activityName, props.activityParams]);
-
-  useEffect(() => {
-    if (preloaded || !anchorRef.current) {
-      return () => {};
-    }
-
-    const $anchor = anchorRef.current;
-
-    const observer = new IntersectionObserver(([{ isIntersecting }]) => {
-      if (isIntersecting) {
-        preload(props.activityName, props.activityParams, {
-          eventContext: {
-            path: href,
-          },
-        });
-        flagPreloaded();
+      if (!route) {
+        return undefined;
       }
-    });
 
-    observer.observe($anchor);
+      const template = makeTemplate(normalizeRoute(route)[0]);
+      const path = template.fill(props.activityParams);
 
-    return () => {
-      observer.unobserve($anchor);
-      observer.disconnect();
+      return path;
+    }, [routes, props.activityName, props.activityParams]);
+
+    useEffect(() => {
+      if (preloaded || !anchorRef.current) {
+        return () => {};
+      }
+
+      const $anchor = anchorRef.current;
+
+      const observer = new IntersectionObserver(([{ isIntersecting }]) => {
+        if (isIntersecting) {
+          preload(props.activityName, props.activityParams, {
+            eventContext: {
+              path: href,
+            },
+          });
+          flagPreloaded();
+        }
+      });
+
+      observer.observe($anchor);
+
+      return () => {
+        observer.unobserve($anchor);
+        observer.disconnect();
+      };
+    }, [anchorRef, flagPreloaded]);
+
+    const anchorProps = omit(props, [
+      "activityName",
+      "activityParams",
+      "animate",
+    ]);
+
+    const onClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+      e.preventDefault();
+
+      push(
+        props.activityName,
+        props.activityParams,
+        typeof props.animate === "undefined" || props.animate === null
+          ? {}
+          : { animate: props.animate },
+      );
     };
-  }, [anchorRef, flagPreloaded]);
 
-  const anchorProps = useMemo(
-    () => omit(props, ["activityName", "activityParams", "animate"]),
-    [props],
-  );
-
-  return (
-    <a
-      href={href}
-      onClick={(e) => {
-        e.preventDefault();
-
-        push(
-          props.activityName,
-          props.activityParams,
-          typeof props.animate === "undefined" || props.animate === null
-            ? {}
-            : { animate: props.animate },
-        );
-      }}
-      {...anchorProps}
-    >
-      {props.children}
-    </a>
-  );
-}
+    return (
+      <a
+        ref={mergeRefs(ref, anchorRef)}
+        href={href}
+        onClick={onClick}
+        {...anchorProps}
+      >
+        {props.children}
+      </a>
+    );
+  },
+);

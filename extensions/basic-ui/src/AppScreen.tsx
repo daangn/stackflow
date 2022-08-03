@@ -4,10 +4,11 @@ import React, { useEffect, useMemo } from "react";
 
 import AppBar from "./AppBar";
 import * as css from "./AppScreen.css";
+import type {
+  PropOf} from "./utils";
 import {
   compactMap,
   findBefore,
-  PropOf,
   useTopActiveActivity,
   useTopVisibleActivity,
   useVariant,
