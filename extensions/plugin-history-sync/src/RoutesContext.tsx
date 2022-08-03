@@ -4,7 +4,7 @@ export type RoutesMap = {
   [activityName in string]?: string | string[];
 };
 
-export const RoutesContext = createContext<RoutesMap>(null as any);
+export const RoutesContext = createContext<RoutesMap>({});
 
 interface RoutesProviderProps {
   routes: RoutesMap;

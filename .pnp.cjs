@@ -3164,9 +3164,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@stackflow/plugin-preload", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-preload"],\
             ["@stackflow/core", "workspace:core"],\
             ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
+            ["@stackflow/plugin-history-sync", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-history-sync"],\
             ["@stackflow/react", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:integrations/react"],\
             ["@types/react", "npm:18.0.15"],\
             ["@types/stackflow__core", null],\
+            ["@types/stackflow__plugin-history-sync", null],\
             ["@types/stackflow__react", null],\
             ["esbuild", "npm:0.14.51"],\
             ["react", "npm:18.2.0"],\
@@ -3175,9 +3177,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "packagePeers": [\
             "@stackflow/core",\
+            "@stackflow/plugin-history-sync",\
             "@stackflow/react",\
             "@types/react",\
             "@types/stackflow__core",\
+            "@types/stackflow__plugin-history-sync",\
             "@types/stackflow__react",\
             "react"\
           ],\
@@ -3189,6 +3193,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@stackflow/plugin-preload", "workspace:extensions/plugin-preload"],\
             ["@stackflow/core", "workspace:core"],\
             ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
+            ["@stackflow/plugin-history-sync", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-history-sync"],\
             ["@stackflow/react", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:integrations/react"],\
             ["@types/react", "npm:18.0.15"],\
             ["esbuild", "npm:0.14.51"],\

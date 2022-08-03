@@ -3,10 +3,11 @@ import {
   normalizeRoute,
   useRoutes,
 } from "@stackflow/plugin-history-sync";
-import { useLoaders } from "@stackflow/plugin-preload";
 import type { ActivityComponentType } from "@stackflow/react";
 import { useInitContext } from "@stackflow/react";
 import { useMemo } from "react";
+
+import { useLoaders } from "./LoadersContext";
 
 export type PreloadFunc<
   T extends { [activityName: string]: ActivityComponentType },
@@ -25,6 +26,7 @@ export function usePreloader<
 } {
   const loaders = useLoaders();
   const routes = useRoutes();
+
   const initContext = useInitContext();
 
   return useMemo(

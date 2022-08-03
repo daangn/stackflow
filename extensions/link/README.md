@@ -1,6 +1,6 @@
 # @stackflow/link
 
-It mimics the `<Link />` component behavior provided by Gatsby or Next.js. Also, by providing `usePreloader()` hook, you can call specific preloader function imperatively at any time based on activity information.
+It mimics the `<Link />` component behavior provided by Gatsby or Next.js.
 
 ## Dependencies
 
@@ -46,7 +46,7 @@ export type TypeActivities = typeof activities;
 import { createLink } from "@stackflow/link";
 import type { TypeActivities } from "./stackflow";
 
-export const { Link, usePreloader } = createLink<TypeActivities>();
+export const { Link } = createLink<TypeActivities>();
 ```
 
 ```tsx

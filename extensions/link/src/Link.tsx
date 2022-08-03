@@ -3,12 +3,12 @@ import {
   normalizeRoute,
   useRoutes,
 } from "@stackflow/plugin-history-sync";
+import { usePreloader } from "@stackflow/plugin-preload";
 import type { ActivityComponentType } from "@stackflow/react";
 import { useActions } from "@stackflow/react";
 import React, { useEffect, useMemo, useReducer, useRef } from "react";
 
 import { omit } from "./omit";
-import { usePreloader } from "./usePreloader";
 
 export type AnchorProps = React.DetailedHTMLProps<
   React.AnchorHTMLAttributes<HTMLAnchorElement>,
@@ -30,7 +30,7 @@ export function Link<
   const routes = useRoutes();
 
   const [preloaded, flagPreloaded] = useReducer(() => true, false);
-  const { preload } = usePreloader();
+  const { preload } = usePreloader<T>();
 
   const { push } = useActions();
 
@@ -67,6 +67,7 @@ export function Link<
     });
 
     observer.observe($anchor);
+
     return () => {
       observer.unobserve($anchor);
       observer.disconnect();
