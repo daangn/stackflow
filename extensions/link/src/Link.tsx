@@ -4,6 +4,7 @@ import {
   useRoutes,
 } from "@stackflow/plugin-history-sync";
 import type { ActivityComponentType } from "@stackflow/react";
+import { useActions } from "@stackflow/react";
 import React, { useEffect, useMemo, useReducer, useRef } from "react";
 
 import { omit } from "./omit";
@@ -20,17 +21,20 @@ export type LinkProps<
 > = {
   activityName: K;
   activityParams: T[K] extends ActivityComponentType<infer U> ? U : never;
+  animate?: boolean;
 } & AnchorProps;
 
 export function Link<
   T extends { [activityName: string]: ActivityComponentType },
 >(props: LinkProps<T, Extract<keyof T, string>>) {
   const routes = useRoutes();
+
+  const [preloaded, flagPreloaded] = useReducer(() => true, false);
   const { preload } = usePreloader();
 
-  const anchorRef = useRef<HTMLAnchorElement>(null);
-  const [preloaded, flagPreloaded] = useReducer(() => true, false);
+  const { push } = useActions();
 
+  const anchorRef = useRef<HTMLAnchorElement>(null);
   const href = useMemo(() => {
     const route = routes[props.activityName];
 
@@ -70,12 +74,26 @@ export function Link<
   }, [anchorRef, flagPreloaded]);
 
   const anchorProps = useMemo(
-    () => omit(props, ["activityName", "activityParams"]),
+    () => omit(props, ["activityName", "activityParams", "animate"]),
     [props],
   );
 
   return (
-    <a href={href} {...anchorProps}>
+    <a
+      href={href}
+      onClick={(e) => {
+        e.preventDefault();
+
+        push(
+          props.activityName,
+          props.activityParams,
+          typeof props.animate === "undefined" || props.animate === null
+            ? {}
+            : { animate: props.animate },
+        );
+      }}
+      {...anchorProps}
+    >
       {props.children}
     </a>
   );
