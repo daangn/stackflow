@@ -24,6 +24,7 @@
     "version": "yarn install && git stage yarn.lock"
   },
   "resolutions": {
+    "@mdx-js/react": "2.1.1",
     "esbuild": "0.14.51"
   },
   "devDependencies": {

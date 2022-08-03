@@ -2336,31 +2336,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "SOFT"\
         }],\
-        ["npm:2.1.2", {\
-          "packageLocation": "./.yarn/cache/@mdx-js-react-npm-2.1.2-d399dcf3c9-c1114c6834.zip/node_modules/@mdx-js/react/",\
-          "packageDependencies": [\
-            ["@mdx-js/react", "npm:2.1.2"]\
-          ],\
-          "linkType": "SOFT"\
-        }],\
         ["virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#npm:2.1.1", {\
           "packageLocation": "./.yarn/__virtual__/@mdx-js-react-virtual-058fd78644/0/cache/@mdx-js-react-npm-2.1.1-9ddd2e5958-e6f1f0a3a7.zip/node_modules/@mdx-js/react/",\
           "packageDependencies": [\
             ["@mdx-js/react", "virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#npm:2.1.1"],\
-            ["@types/mdx", "npm:2.0.1"],\
-            ["@types/react", "npm:18.0.15"],\
-            ["react", "npm:18.2.0"]\
-          ],\
-          "packagePeers": [\
-            "@types/react",\
-            "react"\
-          ],\
-          "linkType": "HARD"\
-        }],\
-        ["virtual:e22ce90a7e5b96cb11ec40ecb69fd41ded3581754584180e739c3892bbf03b0bd604d03869c65278a12ae7510f98b667ee17f1589490d659f4665322c3fa7093#npm:2.1.2", {\
-          "packageLocation": "./.yarn/__virtual__/@mdx-js-react-virtual-104bdd8463/0/cache/@mdx-js-react-npm-2.1.2-d399dcf3c9-c1114c6834.zip/node_modules/@mdx-js/react/",\
-          "packageDependencies": [\
-            ["@mdx-js/react", "virtual:e22ce90a7e5b96cb11ec40ecb69fd41ded3581754584180e739c3892bbf03b0bd604d03869c65278a12ae7510f98b667ee17f1589490d659f4665322c3fa7093#npm:2.1.2"],\
             ["@types/mdx", "npm:2.0.1"],\
             ["@types/react", "npm:18.0.15"],\
             ["react", "npm:18.2.0"]\
@@ -11677,7 +11656,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/nextra-theme-docs-virtual-e22ce90a7e/0/cache/nextra-theme-docs-npm-2.0.0-beta.5-32581fb62a-274c0c41b1.zip/node_modules/nextra-theme-docs/",\
           "packageDependencies": [\
             ["nextra-theme-docs", "virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#npm:2.0.0-beta.5"],\
-            ["@mdx-js/react", "virtual:e22ce90a7e5b96cb11ec40ecb69fd41ded3581754584180e739c3892bbf03b0bd604d03869c65278a12ae7510f98b667ee17f1589490d659f4665322c3fa7093#npm:2.1.2"],\
+            ["@mdx-js/react", "virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#npm:2.1.1"],\
             ["@reach/skip-nav", "virtual:e22ce90a7e5b96cb11ec40ecb69fd41ded3581754584180e739c3892bbf03b0bd604d03869c65278a12ae7510f98b667ee17f1589490d659f4665322c3fa7093#npm:0.11.2"],\
             ["@types/next", null],\
             ["@types/react", "npm:18.0.15"],\
