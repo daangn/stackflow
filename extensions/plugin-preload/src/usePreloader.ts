@@ -15,7 +15,7 @@ export type PreloadFunc<T extends { [activityName: string]: unknown }> = <
   activityName: K,
   activityParams: T[K] extends ActivityComponentType<infer U> ? U : {},
   options?: {
-    eventContext?: any;
+    eventContext?: {};
   },
 ) => any;
 

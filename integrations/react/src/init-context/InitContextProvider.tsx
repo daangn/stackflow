@@ -4,7 +4,7 @@ import { InitContextContext } from "./InitContextContext";
 
 interface InitContextProviderProps {
   children: React.ReactNode;
-  value: any;
+  value: unknown;
 }
 export const InitContextProvider: React.FC<InitContextProviderProps> = ({
   children,

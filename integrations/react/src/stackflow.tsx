@@ -10,11 +10,11 @@ import type { StackflowReactPlugin } from "./StackflowReactPlugin";
 import type { UseActionsOutputType } from "./useActions";
 import { useActions } from "./useActions";
 
-export type StackProps<C extends {} = {}> = {
+export type StackProps = {
   /**
    * Context data to pass to plugins in render time
    */
-  initContext?: C;
+  initContext?: {};
 };
 export type StackComponentType = React.FC<StackProps>;
 

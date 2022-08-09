@@ -5,5 +5,5 @@ import { useActivity } from "@stackflow/react";
  */
 export function useActivityPreloadRef<T>(): T {
   const { eventContext } = useActivity();
-  return (eventContext as any).preloadRef;
+  return (eventContext as any)?.preloadRef;
 }
