@@ -14,7 +14,7 @@ export type Activity = {
     [key: string]: string | undefined;
   };
   pushedBy: PushedEvent | ReplacedEvent;
-  activityContext?: {};
+  context?: {};
 };
 
 export type AggregateOutput = {

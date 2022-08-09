@@ -122,7 +122,7 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
         pushedBy: activity.pushedBy,
         ...(activity.pushedBy.activityContext
           ? {
-              activityContext: activity.pushedBy.activityContext,
+              context: activity.pushedBy.activityContext,
             }
           : null),
       })),

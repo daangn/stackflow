@@ -1305,7 +1305,7 @@ test("aggregate - PushedEvent에 activityContext가 담겨있는 경우 액티�
         name: "sample",
         transitionState: "enter-active",
         params: {},
-        activityContext: {
+        context: {
           hello: "world",
         },
         pushedBy: pushedEvent,
@@ -1358,7 +1358,7 @@ test("aggregate - ReplacedEvent에 activityContext가 담겨있는 경우 액티
         name: "sample",
         transitionState: "enter-active",
         params: {},
-        activityContext: {
+        context: {
           hello: "world1",
         },
         pushedBy: pushedEvent,
@@ -1368,7 +1368,7 @@ test("aggregate - ReplacedEvent에 activityContext가 담겨있는 경우 액티
         name: "sample",
         transitionState: "enter-active",
         params: {},
-        activityContext: {
+        context: {
           hello: "world2",
         },
         pushedBy: replacedEvent,
