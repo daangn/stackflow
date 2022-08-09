@@ -16,10 +16,15 @@ Karrotframe의 경우,
 
 이러한 멘탈 모델을 옮겨간다고 생각하고 이사를 하면 좋아요.
 
+<Callout emoji="⚡️">
+  기존 Path 기반의 라우팅을 **Stackflow**에서 사용하기 위해서는
+  [`@stackflow/plugin-history-sync`](/advanced/history-sync) 적용이 필요해요.
+</Callout>
+
 <Callout type="warning" emoji="⚠️">
-  아래 가이드는 부분적인 컨셉을 담고있고 100% 기능을 커버하지 않아요.
+  본 마이그레이션 가이드는 부분적인 컨셉을 담고있고 100% 기능을 커버하지 않아요.
   Karrotframe에서 쓰던 기능은 전부 다 옮겨왔으므로, 혹시 추가적으로 필요하다고
-  생각되는 기능이 있으시다면 문서를 찬찬히 살펴보시는걸 추천해요.
+  생각되는 기능이 있으시다면 문서를 찬찬히 살펴보시면 찾으실 수 있을거에요.
 </Callout>
 
 ## 1. Navigator를 Stack으로 옮겨가기
@@ -142,8 +147,6 @@ const SomethingPage = () => {
  * to-be:
  */
 const SomethingPage = () => {
-  const { foo } = useActivityParams();
-
   return (
     <AppScreen theme="cupertino">
       <div>Hello, World!</div>

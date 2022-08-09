@@ -70,9 +70,9 @@ const MyActivity: ActivityComponentType = () => {
 };
 ```
 
-만약 특정 시점에 다음 화면의 API를 미리 가져오고 싶다면, `plugin-preload`에서 제공하는 `usePreloader()` 훅을 통해 `preload` 함수를 사용할 수 있어요.
+만약 특정 시점에 다음 화면의 API를 미리 가져오고 싶다면, `@stackflow/plugin-preload`에서 제공하는 `usePreloader()` 훅을 통해 `preload` 함수를 사용할 수 있어요.
 
-`createPreloader()` 함수를 통해 안전하게 타입된 `usePreloader()` 훅을 만들어요.
+`createPreloader()` 함수를 통해 Type-safe한 `usePreloader()` 훅을 만들어요.
 
 ```typescript
 /**
@@ -81,7 +81,7 @@ const MyActivity: ActivityComponentType = () => {
 import { createPreloader } from "@stackflow/plugin-preload";
 import type { TypeActivities } from "./stackflow";
 
-// 등록된 액티비티의 전체 타입을 Generic으로 전달해, 안전하게 타입된 usePreloader 훅을 사용해요
+// 등록된 액티비티의 전체 타입을 제네릭으로 전달해, Type-safe하게 usePreloader() 훅을 사용해요
 export const { usePreloader } = createPreloader<TypeActivities>();
 ```
 
@@ -96,7 +96,7 @@ const MyActivity:  = () => {
   const { preload } = usePreloader();
 
   useEffect(() => {
-    // 특정 시점에 미리 데이터를 가져와요
+    // `MyActivity` 컴포넌트를 렌더링할 때 `Article` 컴포넌트가 필요로하는 데이터를 가져와요.
     preload("Article", {
       /* ... */
     });
@@ -116,7 +116,7 @@ const MyActivity:  = () => {
 $ yarn add @stackflow/link
 ```
 
-`createLink()` 함수를 통해 안전하게 타입된 Link 컴포넌트를 만들어요.
+`createLink()` 함수를 통해 Type-safe한 Link 컴포넌트를 만들어요.
 
 ```typescript
 /**
@@ -125,6 +125,7 @@ $ yarn add @stackflow/link
 import { createLink } from "@stackflow/link";
 import type { TypeActivities } from "./stackflow";
 
+// 마찬가지로 액티비티의 전체 타입을 제네릭으로 전달해, Type-safe하게 <Link /> 컴포넌트를 사용해요
 export const { Link } = createLink<TypeActivities>();
 ```
 
@@ -152,7 +153,7 @@ const MyComponent = () => {
 ```
 
 <Callout emoji="⚡️">
-  `<Link />` 컴포넌트는 기본적으로 사용자의 뷰포트 안에 해당 컴포넌트가
-  노출되었을때 미리 데이터를 가져와요. 따라서, 사용자에게 로딩이 없는 탐험
-  경험을 제공할 수 있어요.
+  `<Link />` 컴포넌트는 내부적으로 `usePreloader()` 훅을 사용해, 사용자의 뷰포트
+  안에 해당 컴포넌트가 노출되었을때 미리 데이터를 가져와요. 따라서, 사용자에게
+  로딩이 없는 탐험 경험을 제공할 수 있어요.
 </Callout>
