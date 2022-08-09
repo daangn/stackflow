@@ -157,7 +157,7 @@ export function historySyncPlugin<
                     ...activityParams,
                   },
                   eventDate: new Date().getTime() - MINUTE,
-                  eventContext: {
+                  activityContext: {
                     path,
                   },
                 });
@@ -178,7 +178,7 @@ export function historySyncPlugin<
           activityName: fallbackActivityName,
           params: {},
           eventDate: new Date().getTime() - MINUTE,
-          eventContext: {
+          activityContext: {
             path: fallbackActivityPath,
           },
         });
@@ -303,8 +303,8 @@ export function historySyncPlugin<
 
         overrideActionParams({
           ...actionParams,
-          eventContext: {
-            ...actionParams.eventContext,
+          activityContext: {
+            ...actionParams.activityContext,
             path,
           },
         });
@@ -317,8 +317,8 @@ export function historySyncPlugin<
 
         overrideActionParams({
           ...actionParams,
-          eventContext: {
-            ...actionParams.eventContext,
+          activityContext: {
+            ...actionParams.activityContext,
             path,
           },
         });

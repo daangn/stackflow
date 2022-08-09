@@ -4,6 +4,6 @@ export type PoppedEvent = BaseDomainEvent<
   "Popped",
   {
     skipExitActiveState?: boolean;
-    eventContext?: {};
+    activityContext?: {};
   }
 >;

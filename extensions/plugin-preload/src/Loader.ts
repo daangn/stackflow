@@ -1,7 +1,7 @@
 export type Loader<P extends { [key in keyof P]: string | undefined } = {}> =
   (args: {
     activityParams: P;
-    eventContext: unknown;
+    activityContext: unknown;
     initContext: unknown;
     isInitialActivity?: boolean;
   }) => unknown;

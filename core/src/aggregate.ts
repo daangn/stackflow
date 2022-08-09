@@ -120,9 +120,9 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
         transitionState: activity.transitionState,
         params: activity.params,
         pushedBy: activity.pushedBy,
-        ...(activity.pushedBy.eventContext
+        ...(activity.pushedBy.activityContext
           ? {
-              eventContext: activity.pushedBy.eventContext,
+              activityContext: activity.pushedBy.activityContext,
             }
           : null),
       })),

@@ -28,7 +28,7 @@ const { Stack, useFlow } = stackflow({
     // ...
     preloadPlugin({
       loaders: {
-        MyHome({ activityName, activityParams }) {
+        MyHome({ activityParams }) {
           // implement your own preload function using activity information
           // when activity pushed, loader is automatically triggered before rendering
         },

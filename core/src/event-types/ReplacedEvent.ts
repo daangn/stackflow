@@ -11,6 +11,6 @@ export type ReplacedEvent = BaseDomainEvent<
     activityName: string;
     params: ReplacedEventParams;
     skipEnterActiveState?: boolean;
-    eventContext?: {};
+    activityContext?: {};
   }
 >;
