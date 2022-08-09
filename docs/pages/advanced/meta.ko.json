@@ -1,4 +1,5 @@
 {
   "history-sync": "히스토리와 동기화하기",
-  "use-actions": "useActions 활용하기"
+  "fix-use-flow": "useFlow 순환참조 해결하기",
+  "preloading": "미리 API 호출하기"
 }
