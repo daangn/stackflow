@@ -1272,3 +1272,109 @@ test("aggregate - skipExitActiveState가 true이면 ReplacedEvent가 발생한 �
     globalTransitionState: "idle",
   });
 });
+
+test("aggregate - PushedEvent에 activityContext가 담겨있는 경우 액티비티에 해당 activityContext가 포함됩니다", () => {
+  const t = nowTime();
+
+  const events = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+    registeredEvent({
+      activityName: "sample",
+    }),
+    makeEvent("Pushed", {
+      activityId: "a1",
+      activityName: "sample",
+      eventDate: t,
+      params: {},
+      activityContext: {
+        hello: "world",
+      },
+    }),
+  ];
+
+  const pushedEvent = events[2];
+
+  const output = aggregate(events, t);
+
+  expect(output).toStrictEqual({
+    activities: [
+      {
+        id: "a1",
+        name: "sample",
+        transitionState: "enter-active",
+        params: {},
+        activityContext: {
+          hello: "world",
+        },
+        pushedBy: pushedEvent,
+      },
+    ],
+    transitionDuration: 300,
+    globalTransitionState: "loading",
+  });
+});
+
+test("aggregate - ReplacedEvent에 activityContext가 담겨있는 경우 액티비티에 해당 activityContext가 포함됩니다", () => {
+  const t = nowTime();
+
+  const events = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+    registeredEvent({
+      activityName: "sample",
+    }),
+    makeEvent("Pushed", {
+      activityId: "a1",
+      activityName: "sample",
+      eventDate: t,
+      params: {},
+      activityContext: {
+        hello: "world1",
+      },
+    }),
+    makeEvent("Replaced", {
+      activityId: "a2",
+      activityName: "sample",
+      eventDate: t,
+      params: {},
+      activityContext: {
+        hello: "world2",
+      },
+    }),
+  ];
+
+  const pushedEvent = events[2];
+  const replacedEvent = events[3];
+
+  const output = aggregate(events, t);
+
+  expect(output).toStrictEqual({
+    activities: [
+      {
+        id: "a1",
+        name: "sample",
+        transitionState: "enter-active",
+        params: {},
+        activityContext: {
+          hello: "world1",
+        },
+        pushedBy: pushedEvent,
+      },
+      {
+        id: "a2",
+        name: "sample",
+        transitionState: "enter-active",
+        params: {},
+        activityContext: {
+          hello: "world2",
+        },
+        pushedBy: replacedEvent,
+      },
+    ],
+    transitionDuration: 300,
+    globalTransitionState: "loading",
+  });
+});
