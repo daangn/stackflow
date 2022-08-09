@@ -51,7 +51,10 @@ export function preloadPlugin<T extends { [activityName: string]: unknown }>(
 
       return {
         ...pushedEvent,
-        preloadRef,
+        eventContext: {
+          ...pushedEvent.eventContext,
+          preloadRef,
+        },
       };
     },
     onBeforePush({ actionParams, actions: { overrideActionParams } }) {
@@ -71,7 +74,10 @@ export function preloadPlugin<T extends { [activityName: string]: unknown }>(
 
       overrideActionParams({
         ...actionParams,
-        preloadRef,
+        eventContext: {
+          ...eventContext,
+          preloadRef,
+        },
       });
     },
     onBeforeReplace({ actionParams, actions: { overrideActionParams } }) {
@@ -91,7 +97,10 @@ export function preloadPlugin<T extends { [activityName: string]: unknown }>(
 
       overrideActionParams({
         ...actionParams,
-        preloadRef,
+        eventContext: {
+          ...eventContext,
+          preloadRef,
+        },
       });
     },
   });

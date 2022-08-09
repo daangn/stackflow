@@ -1116,115 +1116,7 @@ test("aggregate - ReplacedEvent가 두 번 발생한 후 transitionDuration만�
   });
 });
 
-test("aggregate - preloadRef와 함께 푸시하면 스택에 추가됩니다", () => {
-  const events = [
-    initializedEvent({
-      transitionDuration: 300,
-    }),
-    registeredEvent({
-      activityName: "home",
-    }),
-    registeredEvent({
-      activityName: "sample",
-    }),
-    makeEvent("Pushed", {
-      activityId: "a1",
-      activityName: "sample",
-      eventDate: enoughPastTime(),
-      params: {},
-      preloadRef: {
-        hello: "world",
-      },
-    }),
-  ];
-  const pushedEvent = events[3];
-
-  const output = aggregate(events, nowTime());
-
-  expect(output).toStrictEqual({
-    activities: [
-      {
-        id: "a1",
-        name: "sample",
-        transitionState: "enter-done",
-        params: {},
-        preloadRef: {
-          hello: "world",
-        },
-        pushedBy: pushedEvent,
-      },
-    ],
-    transitionDuration: 300,
-    globalTransitionState: "idle",
-  });
-});
-
-test("aggregate - preloadRef와 함께 ReplacedEvent가 발생한 직후 최상단의 Activity를 유지하면서 preloadRef를 가진 새 Activity가 추가됩니다", () => {
-  const t = nowTime();
-
-  const events = [
-    initializedEvent({
-      transitionDuration: 300,
-    }),
-    registeredEvent({
-      activityName: "sample",
-    }),
-    makeEvent("Pushed", {
-      activityId: "a1",
-      activityName: "sample",
-      eventDate: enoughPastTime(),
-      params: {
-        hello: "world",
-      },
-    }),
-    makeEvent("Replaced", {
-      activityId: "a2",
-      activityName: "sample",
-      eventDate: t,
-      params: {
-        hello: "world",
-      },
-      preloadRef: {
-        hello: "world2",
-      },
-    }),
-  ];
-
-  const pushedEvent = events[2];
-  const replacedEvent = events[3];
-
-  const output = aggregate(events, t);
-
-  expect(output).toStrictEqual({
-    activities: [
-      {
-        id: "a1",
-        name: "sample",
-        transitionState: "enter-done",
-        params: {
-          hello: "world",
-        },
-        pushedBy: pushedEvent,
-      },
-      {
-        id: "a2",
-        name: "sample",
-        transitionState: "enter-active",
-        params: {
-          hello: "world",
-        },
-        preloadRef: {
-          hello: "world2",
-        },
-        pushedBy: replacedEvent,
-      },
-    ],
-    transitionDuration: 300,
-    globalTransitionState: "loading",
-  });
-});
-
-test("aggregate - skipEnterActiveState가 true이면 eventDate가 transitionDuration을 충족하지 않아도 enter-done 상태가 된다. ", () => {
+test("aggregate - skipEnterActiveState가 true이면 eventDate가 transitionDuration을 충족하지 않아도 enter-done 상태가 됩니다.", () => {
   const t = nowTime();
 
   const events = [
@@ -1266,7 +1158,7 @@ test("aggregate - skipEnterActiveState가 true이면 eventDate가 transitionDura
   });
 });
 
-test("aggregate - skipExitActiveState가 true이면 eventDate가 transitionDuration을 충족하지 않아도 exit-done 상태가 된다. ", () => {
+test("aggregate - skipExitActiveState가 true이면 eventDate가 transitionDuration을 충족하지 않아도 exit-done 상태가 됩니다. ", () => {
   const t = nowTime();
 
   const events = [

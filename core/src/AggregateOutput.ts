@@ -13,8 +13,8 @@ export type Activity = {
   params: {
     [key: string]: string | undefined;
   };
-  preloadRef?: unknown;
   pushedBy: PushedEvent | ReplacedEvent;
+  eventContext?: {};
 };
 
 export type AggregateOutput = {

@@ -10,7 +10,6 @@ export type PushedEvent = BaseDomainEvent<
     activityId: string;
     activityName: string;
     params: PushedEventParams;
-    preloadRef?: unknown;
     skipEnterActiveState?: boolean;
     eventContext?: {};
   }
