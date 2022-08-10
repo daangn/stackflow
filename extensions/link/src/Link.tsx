@@ -65,7 +65,7 @@ export const Link: TypeLink = React.forwardRef(
       const observer = new IntersectionObserver(([{ isIntersecting }]) => {
         if (isIntersecting) {
           preload(props.activityName, props.activityParams, {
-            eventContext: {
+            activityContext: {
               path: href,
             },
           });

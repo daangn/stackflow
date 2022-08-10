@@ -15,7 +15,7 @@ export type PreloadFunc<T extends { [activityName: string]: unknown }> = <
   activityName: K,
   activityParams: T[K] extends ActivityComponentType<infer U> ? U : {},
   options?: {
-    eventContext?: any;
+    activityContext?: {};
   },
 ) => any;
 
@@ -44,9 +44,9 @@ export function usePreloader<T extends { [activityName: string]: unknown }>(): {
 
         return loader({
           activityParams,
-          eventContext: {
+          activityContext: {
             ...(path ? { path } : null),
-            ...options?.eventContext,
+            ...options?.activityContext,
           },
           initContext,
         });

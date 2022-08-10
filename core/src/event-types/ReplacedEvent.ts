@@ -10,8 +10,7 @@ export type ReplacedEvent = BaseDomainEvent<
     activityId: string;
     activityName: string;
     params: ReplacedEventParams;
-    preloadRef?: unknown;
     skipEnterActiveState?: boolean;
-    eventContext?: {};
+    activityContext?: {};
   }
 >;

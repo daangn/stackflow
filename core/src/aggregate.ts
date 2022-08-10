@@ -42,7 +42,7 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
           name: event.activityName,
           transitionState,
           params: event.params,
-          preloadRef: event.preloadRef,
+          context: event.activityContext,
           pushedBy: event,
           metadata: {
             poppedBy: null,
@@ -67,7 +67,7 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
           name: event.activityName,
           transitionState,
           params: event.params,
-          preloadRef: event.preloadRef,
+          context: event.activityContext,
           pushedBy: event,
           metadata: {
             poppedBy: null,
@@ -122,9 +122,9 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
         transitionState: activity.transitionState,
         params: activity.params,
         pushedBy: activity.pushedBy,
-        ...(activity.preloadRef
+        ...(activity.context
           ? {
-              preloadRef: activity.preloadRef,
+              context: activity.context,
             }
           : null),
       })),

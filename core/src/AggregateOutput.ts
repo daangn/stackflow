@@ -13,7 +13,7 @@ export type Activity = {
   params: {
     [key: string]: string | undefined;
   };
-  preloadRef?: unknown;
+  context?: {};
   pushedBy: PushedEvent | ReplacedEvent;
 };
 

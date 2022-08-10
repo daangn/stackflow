@@ -34,7 +34,7 @@ export function preloadPlugin<T extends { [activityName: string]: unknown }>(
         return null;
       }
 
-      const { activityName, params, eventContext } = pushedEvent;
+      const { activityName, params, activityContext } = pushedEvent;
 
       const loader = options.loaders[activityName];
 
@@ -44,18 +44,21 @@ export function preloadPlugin<T extends { [activityName: string]: unknown }>(
 
       const preloadRef = loader({
         activityParams: params,
-        eventContext,
+        activityContext,
         initContext,
         isInitialActivity: true,
       });
 
       return {
         ...pushedEvent,
-        preloadRef,
+        activityContext: {
+          ...pushedEvent.activityContext,
+          preloadRef,
+        },
       };
     },
     onBeforePush({ actionParams, actions: { overrideActionParams } }) {
-      const { activityName, params, eventContext } = actionParams;
+      const { activityName, params, activityContext } = actionParams;
 
       const loader = options.loaders[activityName];
 
@@ -65,17 +68,20 @@ export function preloadPlugin<T extends { [activityName: string]: unknown }>(
 
       const preloadRef = loader({
         activityParams: params,
-        eventContext,
+        activityContext,
         initContext,
       });
 
       overrideActionParams({
         ...actionParams,
-        preloadRef,
+        activityContext: {
+          ...activityContext,
+          preloadRef,
+        },
       });
     },
     onBeforeReplace({ actionParams, actions: { overrideActionParams } }) {
-      const { activityName, params, eventContext } = actionParams;
+      const { activityName, params, activityContext } = actionParams;
 
       const loader = options.loaders[activityName];
 
@@ -85,13 +91,16 @@ export function preloadPlugin<T extends { [activityName: string]: unknown }>(
 
       const preloadRef = loader({
         activityParams: params,
-        eventContext,
+        activityContext,
         initContext,
       });
 
       overrideActionParams({
         ...actionParams,
-        preloadRef,
+        activityContext: {
+          ...activityContext,
+          preloadRef,
+        },
       });
     },
   });

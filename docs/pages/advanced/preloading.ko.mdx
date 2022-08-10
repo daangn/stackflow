@@ -57,7 +57,8 @@ export type TypeActivities = typeof activities;
  * MyActivity.tsx
  */
 import React from "react";
-import { ActivityComponentType, useActivityPreloadRef } from "@stackflow/react";
+import { ActivityComponentType } from "@stackflow/react";
+import { useActivityPreloadRef } from "@stackflow/plugin-preload";
 
 const MyActivity: ActivityComponentType = () => {
   const preloadRef = useActivityPreloadRef();
