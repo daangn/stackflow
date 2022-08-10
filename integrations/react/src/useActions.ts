@@ -72,16 +72,14 @@ export function useActions<
       push(activityName, params, options) {
         const activityId = makeActivityId();
 
-        if (!pending) {
-          startTransition(() => {
-            coreActions.push({
-              activityId,
-              activityName,
-              params,
-              skipEnterActiveState: parseActionOptions(options).skipActiveState,
-            });
+        startTransition(() => {
+          coreActions.push({
+            activityId,
+            activityName,
+            params,
+            skipEnterActiveState: parseActionOptions(options).skipActiveState,
           });
-        }
+        });
 
         return {
           activityId,
@@ -90,29 +88,25 @@ export function useActions<
       replace(activityName, params, options) {
         const activityId = makeActivityId();
 
-        if (!pending) {
-          startTransition(() => {
-            coreActions.replace({
-              activityId: makeActivityId(),
-              activityName,
-              params,
-              skipEnterActiveState: parseActionOptions(options).skipActiveState,
-            });
+        startTransition(() => {
+          coreActions.replace({
+            activityId: makeActivityId(),
+            activityName,
+            params,
+            skipEnterActiveState: parseActionOptions(options).skipActiveState,
           });
-        }
+        });
 
         return {
           activityId,
         };
       },
       pop(options) {
-        if (!pending) {
-          startTransition(() => {
-            coreActions.pop({
-              skipExitActiveState: parseActionOptions(options).skipActiveState,
-            });
+        startTransition(() => {
+          coreActions.pop({
+            skipExitActiveState: parseActionOptions(options).skipActiveState,
           });
-        }
+        });
       },
     }),
     [
