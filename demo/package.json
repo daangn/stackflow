@@ -30,6 +30,7 @@
     "@seed-design/design-token": "^1.0.0-alpha.0",
     "@seed-design/stylesheet": "^1.0.0-alpha.0",
     "@stackflow/basic-ui": "^0.10.0",
+    "@stackflow/compat-await-push": "^0.9.0",
     "@stackflow/core": "^0.10.0",
     "@stackflow/link": "^0.10.0",
     "@stackflow/plugin-history-sync": "^0.10.0",

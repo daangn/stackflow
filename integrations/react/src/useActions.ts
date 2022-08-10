@@ -34,7 +34,9 @@ export type UseActionsOutputType<T extends BaseActivities> = {
     options?: {
       animate?: boolean;
     },
-  ) => void;
+  ) => {
+    activityId: string;
+  };
 
   /**
    * Push new activity in the top and remove current top activity when new activity is activated
@@ -45,7 +47,9 @@ export type UseActionsOutputType<T extends BaseActivities> = {
     options?: {
       animate?: boolean;
     },
-  ) => void;
+  ) => {
+    activityId: string;
+  };
 
   /**
    * Remove top activity
@@ -66,22 +70,24 @@ export function useActions<
     () => ({
       pending,
       push(activityName, params, options) {
-        if (pending) {
-          return;
-        }
+        const activityId = makeActivityId();
+
         startTransition(() => {
           coreActions.push({
-            activityId: makeActivityId(),
+            activityId,
             activityName,
             params,
             skipEnterActiveState: parseActionOptions(options).skipActiveState,
           });
         });
+
+        return {
+          activityId,
+        };
       },
       replace(activityName, params, options) {
-        if (pending) {
-          return;
-        }
+        const activityId = makeActivityId();
+
         startTransition(() => {
           coreActions.replace({
             activityId: makeActivityId(),
@@ -90,11 +96,12 @@ export function useActions<
             skipEnterActiveState: parseActionOptions(options).skipActiveState,
           });
         });
+
+        return {
+          activityId,
+        };
       },
       pop(options) {
-        if (pending) {
-          return;
-        }
         startTransition(() => {
           coreActions.pop({
             skipExitActiveState: parseActionOptions(options).skipActiveState,

@@ -2161,6 +2161,26 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@stackflow/compat-await-push@^0.9.0, @stackflow/compat-await-push@workspace:extensions/compat-await-push":
+  version: 0.0.0-use.local
+  resolution: "@stackflow/compat-await-push@workspace:extensions/compat-await-push"
+  dependencies:
+    "@stackflow/core": ^0.10.0
+    "@stackflow/esbuild-config": ^0.10.0
+    "@stackflow/react": ^0.10.0
+    "@types/react": ^18.0.10
+    esbuild: ^0.14.51
+    react: ^18.1.0
+    rimraf: ^3.0.2
+    typescript: ^4.7.4
+  peerDependencies:
+    "@stackflow/core": 0
+    "@stackflow/react": 0
+    "@types/react": ">=16.8.0"
+    react: ">=16.8.0"
+  languageName: unknown
+  linkType: soft
+
 "@stackflow/core@^0.10.0, @stackflow/core@workspace:core":
   version: 0.0.0-use.local
   resolution: "@stackflow/core@workspace:core"
@@ -2186,6 +2206,7 @@ __metadata:
     "@seed-design/design-token": ^1.0.0-alpha.0
     "@seed-design/stylesheet": ^1.0.0-alpha.0
     "@stackflow/basic-ui": ^0.10.0
+    "@stackflow/compat-await-push": ^0.9.0
     "@stackflow/core": ^0.10.0
     "@stackflow/esbuild-config": ^0.10.0
     "@stackflow/link": ^0.10.0
