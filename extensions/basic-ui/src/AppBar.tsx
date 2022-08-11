@@ -17,10 +17,19 @@ interface AppBarProps {
   title?: React.ReactNode;
   appendLeft?: () => React.ReactNode;
   appendRight?: () => React.ReactNode;
+  backButton?:
+    | {
+        customIcon?: () => React.ReactNode;
+        onBackButtonClick?: () => void;
+      }
+    | (() => React.ReactNode);
+  closeButton?:
+    | {
+        customIcon?: () => React.ReactNode;
+        onCloseButtonClick?: () => void;
+      }
+    | (() => React.ReactNode);
   closeButtonLocation?: "left" | "right";
-  customBackButton?: () => React.ReactNode;
-  customCloseButton?: () => React.ReactNode;
-  onClose?: () => void;
   border?: boolean;
   iconColor?: string;
   textColor?: string;
@@ -32,10 +41,9 @@ const AppBar: React.FC<AppBarProps> = ({
   title,
   appendLeft,
   appendRight,
+  backButton,
+  closeButton,
   closeButtonLocation = "left",
-  customBackButton,
-  customCloseButton,
-  onClose,
   border = true,
   iconColor,
   textColor,
@@ -71,17 +79,43 @@ const AppBar: React.FC<AppBarProps> = ({
     actions.pop();
   };
 
-  const backButton = !isCloseButtonVisible && (
-    <button type="button" className={css.backButton} onClick={onBack}>
-      {customBackButton ? customBackButton() : <IconBack />}
-    </button>
-  );
+  const renderBackButton = () => {
+    if (isCloseButtonVisible) {
+      return null;
+    }
+    if (typeof backButton === "function") {
+      return backButton();
+    }
 
-  const closeButton = onClose && isCloseButtonVisible && (
-    <button type="button" className={css.closeButton} onClick={onClose}>
-      {customCloseButton ? customCloseButton() : <IconClose />}
-    </button>
-  );
+    return (
+      <button
+        type="button"
+        className={css.backButton}
+        onClick={backButton?.onBackButtonClick ?? onBack}
+      >
+        {backButton?.customIcon ? backButton.customIcon() : <IconBack />}
+      </button>
+    );
+  };
+
+  const renderCloseButton = () => {
+    if (!closeButton || !isCloseButtonVisible) {
+      return null;
+    }
+    if (typeof closeButton === "function") {
+      return closeButton();
+    }
+
+    return (
+      <button
+        type="button"
+        className={css.closeButton}
+        onClick={closeButton.onCloseButtonClick}
+      >
+        {closeButton.customIcon ? closeButton.customIcon() : <IconClose />}
+      </button>
+    );
+  };
 
   const hasLeft = !!(
     (closeButtonLocation === "left" && closeButton) ||
@@ -107,8 +141,8 @@ const AppBar: React.FC<AppBarProps> = ({
       )}
     >
       <div className={css.left}>
-        {closeButtonLocation === "left" && closeButton}
-        {backButton}
+        {closeButtonLocation === "left" && renderCloseButton()}
+        {renderBackButton()}
         {appendLeft?.()}
       </div>
       <div ref={centerRef} className={css.center}>
@@ -126,7 +160,7 @@ const AppBar: React.FC<AppBarProps> = ({
       </div>
       <div className={css.right}>
         {appendRight?.()}
-        {closeButtonLocation === "right" && closeButton}
+        {closeButtonLocation === "right" && renderCloseButton()}
       </div>
     </div>
   );
