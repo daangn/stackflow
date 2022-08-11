@@ -15,6 +15,7 @@ export function isModifiedEvent(
     event.ctrlKey ||
     event.shiftKey ||
     event.altKey || // triggers resource download
+    event.defaultPrevented ||
     (event.nativeEvent && event.nativeEvent.which === 2)
   );
 }

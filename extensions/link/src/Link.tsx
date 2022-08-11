@@ -89,6 +89,10 @@ export const Link: TypeLink = React.forwardRef(
     ]);
 
     const onClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+      if (props.onClick) {
+        props.onClick(e);
+      }
+
       if (isModifiedEvent(e)) {
         return;
       }
@@ -111,10 +115,6 @@ export const Link: TypeLink = React.forwardRef(
             ? {}
             : { animate: props.animate },
         );
-      }
-
-      if (props.onClick) {
-        props.onClick(e);
       }
     };
 
