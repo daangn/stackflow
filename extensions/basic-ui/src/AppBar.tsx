@@ -7,6 +7,7 @@ import * as appScreenCss from "./AppScreen.css";
 import { IconBack, IconClose } from "./assets";
 import {
   compactMap,
+  noop,
   useActiveActivities,
   useMaxWidth,
   useTopActiveActivity,
@@ -19,16 +20,20 @@ interface AppBarProps {
   appendRight?: () => React.ReactNode;
   backButton?:
     | {
-        customIcon?: () => React.ReactNode;
+        renderIcon?: () => React.ReactNode;
         onClick?: () => void;
       }
-    | (() => React.ReactNode);
+    | {
+        render?: () => React.ReactNode;
+      };
   closeButton?:
     | {
-        customIcon?: () => React.ReactNode;
+        renderIcon?: () => React.ReactNode;
         onClick?: () => void;
       }
-    | (() => React.ReactNode);
+    | {
+        render?: () => React.ReactNode;
+      };
   closeButtonLocation?: "left" | "right";
   border?: boolean;
   iconColor?: string;
@@ -83,17 +88,34 @@ const AppBar: React.FC<AppBarProps> = ({
     if (isCloseButtonVisible) {
       return null;
     }
-    if (typeof backButton === "function") {
-      return backButton();
+
+    if (!backButton) {
+      return (
+        <button type="button" className={css.backButton} onClick={onBack}>
+          <IconBack />
+        </button>
+      );
+    }
+
+    if ("render" in backButton && backButton.render) {
+      return backButton.render?.();
     }
 
     return (
       <button
         type="button"
         className={css.backButton}
-        onClick={backButton?.onClick ?? onBack}
+        onClick={
+          "onClick" in backButton && backButton.onClick
+            ? backButton.onClick
+            : onBack
+        }
       >
-        {backButton?.customIcon ? backButton.customIcon() : <IconBack />}
+        {"renderIcon" in backButton && backButton.renderIcon ? (
+          backButton.renderIcon()
+        ) : (
+          <IconBack />
+        )}
       </button>
     );
   };
@@ -102,17 +124,21 @@ const AppBar: React.FC<AppBarProps> = ({
     if (!closeButton || !isCloseButtonVisible) {
       return null;
     }
-    if (typeof closeButton === "function") {
-      return closeButton();
+    if ("render" in closeButton && closeButton.render) {
+      return closeButton.render();
     }
 
     return (
       <button
         type="button"
         className={css.closeButton}
-        onClick={closeButton.onClick}
+        onClick={"onClick" in closeButton ? closeButton.onClick : noop}
       >
-        {closeButton.customIcon ? closeButton.customIcon() : <IconClose />}
+        {"renderIcon" in closeButton && closeButton.renderIcon ? (
+          closeButton.renderIcon()
+        ) : (
+          <IconClose />
+        )}
       </button>
     );
   };
