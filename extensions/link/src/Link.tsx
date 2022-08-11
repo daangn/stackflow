@@ -8,7 +8,6 @@ import type { ActivityComponentType } from "@stackflow/react";
 import { useActions } from "@stackflow/react";
 import React, { useEffect, useMemo, useReducer, useRef } from "react";
 
-import { isModifiedEvent } from "./isModifiedEvent";
 import { mergeRefs } from "./mergeRefs";
 import { omit } from "./omit";
 
@@ -93,28 +92,35 @@ export const Link: TypeLink = React.forwardRef(
         props.onClick(e);
       }
 
-      if (isModifiedEvent(e)) {
-        return;
-      }
+      if (
+        (e.button === 0 &&
+          !(e.currentTarget.target && e.currentTarget.target !== "_self")) ||
+        (!e.defaultPrevented &&
+          !e.metaKey &&
+          !e.altKey && // triggers resource download
+          !e.ctrlKey &&
+          !e.shiftKey &&
+          !(e.nativeEvent && e.nativeEvent.which === 2))
+      ) {
+        e.preventDefault();
 
-      e.preventDefault();
-
-      if (props.replace) {
-        replace(
-          props.activityName,
-          props.activityParams,
-          typeof props.animate === "undefined" || props.animate === null
-            ? {}
-            : { animate: props.animate },
-        );
-      } else {
-        push(
-          props.activityName,
-          props.activityParams,
-          typeof props.animate === "undefined" || props.animate === null
-            ? {}
-            : { animate: props.animate },
-        );
+        if (props.replace) {
+          replace(
+            props.activityName,
+            props.activityParams,
+            typeof props.animate === "undefined" || props.animate === null
+              ? {}
+              : { animate: props.animate },
+          );
+        } else {
+          push(
+            props.activityName,
+            props.activityParams,
+            typeof props.animate === "undefined" || props.animate === null
+              ? {}
+              : { animate: props.animate },
+          );
+        }
       }
     };
 
