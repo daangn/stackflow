@@ -85,6 +85,7 @@ export const Link: TypeLink = React.forwardRef(
       "activityName",
       "activityParams",
       "animate",
+      "onClick",
     ]);
 
     const onClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -110,6 +111,10 @@ export const Link: TypeLink = React.forwardRef(
             ? {}
             : { animate: props.animate },
         );
+      }
+
+      if (props.onClick) {
+        props.onClick(e);
       }
     };
 
