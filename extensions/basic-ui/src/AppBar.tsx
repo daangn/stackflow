@@ -20,13 +20,13 @@ interface AppBarProps {
   backButton?:
     | {
         customIcon?: () => React.ReactNode;
-        onBackButtonClick?: () => void;
+        onClick?: () => void;
       }
     | (() => React.ReactNode);
   closeButton?:
     | {
         customIcon?: () => React.ReactNode;
-        onCloseButtonClick?: () => void;
+        onClick?: () => void;
       }
     | (() => React.ReactNode);
   closeButtonLocation?: "left" | "right";
@@ -91,7 +91,7 @@ const AppBar: React.FC<AppBarProps> = ({
       <button
         type="button"
         className={css.backButton}
-        onClick={backButton?.onBackButtonClick ?? onBack}
+        onClick={backButton?.onClick ?? onBack}
       >
         {backButton?.customIcon ? backButton.customIcon() : <IconBack />}
       </button>
@@ -110,7 +110,7 @@ const AppBar: React.FC<AppBarProps> = ({
       <button
         type="button"
         className={css.closeButton}
-        onClick={closeButton.onCloseButtonClick}
+        onClick={closeButton.onClick}
       >
         {closeButton.customIcon ? closeButton.customIcon() : <IconClose />}
       </button>
