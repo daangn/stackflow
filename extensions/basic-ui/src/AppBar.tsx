@@ -7,6 +7,7 @@ import * as appScreenCss from "./AppScreen.css";
 import { IconBack, IconClose } from "./assets";
 import {
   compactMap,
+  noop,
   useActiveActivities,
   useMaxWidth,
   useTopActiveActivity,
@@ -17,10 +18,23 @@ interface AppBarProps {
   title?: React.ReactNode;
   appendLeft?: () => React.ReactNode;
   appendRight?: () => React.ReactNode;
+  backButton?:
+    | {
+        renderIcon?: () => React.ReactNode;
+        onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+      }
+    | {
+        render?: () => React.ReactNode;
+      };
+  closeButton?:
+    | {
+        renderIcon?: () => React.ReactNode;
+        onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
+      }
+    | {
+        render?: () => React.ReactNode;
+      };
   closeButtonLocation?: "left" | "right";
-  customBackButton?: () => React.ReactNode;
-  customCloseButton?: () => React.ReactNode;
-  onClose?: () => void;
   border?: boolean;
   iconColor?: string;
   textColor?: string;
@@ -32,10 +46,9 @@ const AppBar: React.FC<AppBarProps> = ({
   title,
   appendLeft,
   appendRight,
+  backButton,
+  closeButton,
   closeButtonLocation = "left",
-  customBackButton,
-  customCloseButton,
-  onClose,
   border = true,
   iconColor,
   textColor,
@@ -67,21 +80,66 @@ const AppBar: React.FC<AppBarProps> = ({
     enable: theme === "cupertino",
   });
 
-  const onBack = () => {
-    actions.pop();
+  const onBack = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (backButton && "onClick" in backButton && backButton.onClick) {
+      backButton.onClick(e);
+    }
+
+    if (!e.defaultPrevented) {
+      actions.pop();
+    }
   };
 
-  const backButton = !isCloseButtonVisible && (
-    <button type="button" className={css.backButton} onClick={onBack}>
-      {customBackButton ? customBackButton() : <IconBack />}
-    </button>
-  );
+  const renderBackButton = () => {
+    if (isCloseButtonVisible) {
+      return null;
+    }
 
-  const closeButton = onClose && isCloseButtonVisible && (
-    <button type="button" className={css.closeButton} onClick={onClose}>
-      {customCloseButton ? customCloseButton() : <IconClose />}
-    </button>
-  );
+    if (!backButton) {
+      return (
+        <button type="button" className={css.backButton} onClick={onBack}>
+          <IconBack />
+        </button>
+      );
+    }
+
+    if ("render" in backButton && backButton.render) {
+      return backButton.render?.();
+    }
+
+    return (
+      <button type="button" className={css.backButton} onClick={onBack}>
+        {"renderIcon" in backButton && backButton.renderIcon ? (
+          backButton.renderIcon()
+        ) : (
+          <IconBack />
+        )}
+      </button>
+    );
+  };
+
+  const renderCloseButton = () => {
+    if (!closeButton || !isCloseButtonVisible) {
+      return null;
+    }
+    if ("render" in closeButton && closeButton.render) {
+      return closeButton.render();
+    }
+
+    return (
+      <button
+        type="button"
+        className={css.closeButton}
+        onClick={"onClick" in closeButton ? closeButton.onClick : noop}
+      >
+        {"renderIcon" in closeButton && closeButton.renderIcon ? (
+          closeButton.renderIcon()
+        ) : (
+          <IconClose />
+        )}
+      </button>
+    );
+  };
 
   const hasLeft = !!(
     (closeButtonLocation === "left" && closeButton) ||
@@ -107,8 +165,8 @@ const AppBar: React.FC<AppBarProps> = ({
       )}
     >
       <div className={css.left}>
-        {closeButtonLocation === "left" && closeButton}
-        {backButton}
+        {closeButtonLocation === "left" && renderCloseButton()}
+        {renderBackButton()}
         {appendLeft?.()}
       </div>
       <div ref={centerRef} className={css.center}>
@@ -126,7 +184,7 @@ const AppBar: React.FC<AppBarProps> = ({
       </div>
       <div className={css.right}>
         {appendRight?.()}
-        {closeButtonLocation === "right" && closeButton}
+        {closeButtonLocation === "right" && renderCloseButton()}
       </div>
     </div>
   );
