@@ -21,7 +21,7 @@ interface AppBarProps {
   backButton?:
     | {
         renderIcon?: () => React.ReactNode;
-        onClick?: () => void;
+        onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
       }
     | {
         render?: () => React.ReactNode;
@@ -29,7 +29,7 @@ interface AppBarProps {
   closeButton?:
     | {
         renderIcon?: () => React.ReactNode;
-        onClick?: () => void;
+        onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
       }
     | {
         render?: () => React.ReactNode;
@@ -80,8 +80,14 @@ const AppBar: React.FC<AppBarProps> = ({
     enable: theme === "cupertino",
   });
 
-  const onBack = () => {
-    actions.pop();
+  const onBack = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (backButton && "onClick" in backButton && backButton.onClick) {
+      backButton.onClick(e);
+    }
+
+    if (!e.defaultPrevented) {
+      actions.pop();
+    }
   };
 
   const renderBackButton = () => {
@@ -102,15 +108,7 @@ const AppBar: React.FC<AppBarProps> = ({
     }
 
     return (
-      <button
-        type="button"
-        className={css.backButton}
-        onClick={
-          "onClick" in backButton && backButton.onClick
-            ? backButton.onClick
-            : onBack
-        }
-      >
+      <button type="button" className={css.backButton} onClick={onBack}>
         {"renderIcon" in backButton && backButton.renderIcon ? (
           backButton.renderIcon()
         ) : (
