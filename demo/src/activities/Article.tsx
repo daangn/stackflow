@@ -1,11 +1,13 @@
 import type { ActivityComponentType } from "@stackflow/react";
-import { useActivityParams } from "@stackflow/react";
+import { useActivity, useActivityParams, useStack } from "@stackflow/react";
+import { motion } from "framer-motion";
 import React from "react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import ArticleCard from "../components/ArticleCard";
 import ArticleProfile from "../components/ArticleProfile";
 import Layout from "../components/Layout";
+import { useTopActiveActivity } from "../hooks";
 import * as css from "./Article.css";
 
 const recommenderCard = [
@@ -67,6 +69,9 @@ export interface ArticleParams {
 }
 
 const Article: ActivityComponentType<ArticleParams> = () => {
+  const activity = useActivity();
+  const topActiveActivity = useTopActiveActivity();
+
   const { articleId, title } = useActivityParams<{
     articleId: string;
     title: string;
@@ -77,14 +82,35 @@ const Article: ActivityComponentType<ArticleParams> = () => {
     <Layout>
       <div className={css.container}>
         <div className={css.image}>
-          <div className={css.imageInner}>
-            <LazyLoadImage
-              src={imageUrl}
-              effect="opacity"
-              width="100%"
-              height="100%"
-            />
-          </div>
+          {activity.id === topActiveActivity.id ? (
+            <motion.div
+              className={css.imageInner}
+              layoutId={`article-image-${articleId}`}
+              transition={{
+                layout: {
+                  duration: 0.35,
+                },
+              }}
+            >
+              <LazyLoadImage
+                src={imageUrl}
+                effect="opacity"
+                visibleByDefault
+                width="100%"
+                height="100%"
+              />
+            </motion.div>
+          ) : (
+            <div className={css.imageInner}>
+              <LazyLoadImage
+                src={imageUrl}
+                effect="opacity"
+                visibleByDefault
+                width="100%"
+                height="100%"
+              />
+            </div>
+          )}
         </div>
         <ArticleProfile />
         <div className={css.content}>

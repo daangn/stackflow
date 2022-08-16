@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import React from "react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
@@ -32,14 +33,22 @@ const FeedCard: React.FC<FeedCardProps> = ({
   return (
     <div className={css.container}>
       <button type="button" className={css.button} onClick={onClick}>
-        <div className={css.thumbnail}>
+        <motion.div
+          className={css.thumbnail}
+          layoutId={`article-image-${articleId}`}
+          transition={{
+            layout: {
+              duration: 0.35,
+            },
+          }}
+        >
           <LazyLoadImage
             src={imageUrl}
             effect="opacity"
             width={108}
             height={108}
           />
-        </div>
+        </motion.div>
         <div className={css.right}>
           <div className={css.title}>{title}</div>
           <div className={css.subtitle}>

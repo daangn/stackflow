@@ -37,6 +37,7 @@
     "@stackflow/plugin-preload": "^0.11.0",
     "@stackflow/plugin-renderer-basic": "^0.11.0",
     "@stackflow/react": "^0.11.0",
+    "framer-motion": "^7.2.0",
     "lorem-ipsum": "^2.0.8",
     "normalize.css": "^8.0.1",
     "random-picture": "^4.0.6",
