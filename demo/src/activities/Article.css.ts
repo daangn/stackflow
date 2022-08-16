@@ -15,7 +15,6 @@ export const image = style([
     width: "100%",
     height: 0,
     paddingBottom: "100%",
-    background: vars.$scale.color.gray100,
   },
 ]);
 

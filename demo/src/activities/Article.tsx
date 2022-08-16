@@ -100,7 +100,7 @@ const Article: ActivityComponentType<ArticleParams> = () => {
                 height="100%"
               />
             </motion.div>
-          ) : (
+          ) : activity.transitionState === "enter-done" ? (
             <div className={css.imageInner}>
               <LazyLoadImage
                 src={imageUrl}
@@ -110,7 +110,7 @@ const Article: ActivityComponentType<ArticleParams> = () => {
                 height="100%"
               />
             </div>
-          )}
+          ) : null}
         </div>
         <ArticleProfile />
         <div className={css.content}>
