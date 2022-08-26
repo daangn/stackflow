@@ -46,7 +46,13 @@ const ContextScreenInstances = createContext<{
   }) => void
 }>(null as any)
 
-export const ProviderScreenInstances: React.FC = ({ children }) => {
+interface ProviderScreenInstancesProps {
+  children: React.ReactNode
+}
+
+export const ProviderScreenInstances: React.FC<
+  ProviderScreenInstancesProps
+> = ({ children }: ProviderScreenInstancesProps) => {
   const { lifecycleHooks } = usePlugins()
 
   const [screenInstances, setScreenInstances] = useState<IScreenInstance[]>([])
@@ -101,7 +107,7 @@ export const ProviderScreenInstances: React.FC = ({ children }) => {
         hook?.onInsertScreenInstance?.(context)
       })
     },
-    [setScreenInstances, screenInstances]
+    [setScreenInstances]
   )
 
   const mapScreenInstance = useCallback(

@@ -4,7 +4,7 @@ import styled from '@emotion/styled'
 import { ScreenHelmet, useParams } from '@karrotframe/navigator'
 
 const PageUseParams: React.FC = () => {
-  const { param } = useParams<{ param: string }>()
+  const { param } = useParams()
 
   return (
     <Container>

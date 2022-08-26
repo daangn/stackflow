@@ -1,22 +1,15 @@
 import { Action, Location } from 'history'
-import { DependencyList, useEffect, useRef } from 'react'
-import { useHistory, useLocation } from 'react-router-dom'
+import { DependencyList, useEffect, useMemo, useRef } from 'react'
+import { useLocation, useNavigationType } from 'react-router-dom'
 
 import { parseNavigatorSearchParams } from '../helpers'
 
-export function useHistoryPopEffect(
-  callbacks: {
-    forward: (location: Location<unknown>, action: Action) => void
-    backward: (
-      location: Location<unknown>,
-      action: Action,
-      depth: number
-    ) => void
-  },
-  deps?: DependencyList | undefined
-) {
-  const history = useHistory()
+export function useHistoryPopEffect(callbacks: {
+  forward: (location: Location, action: Action) => void
+  backward: (location: Location, action: Action, depth: number) => void
+}) {
   const location = useLocation()
+  const navigationType = useNavigationType()
 
   const locationKeyStack = useRef<string[]>([])
 
@@ -36,104 +29,104 @@ export function useHistoryPopEffect(
   }, [location.search])
 
   useEffect(() => {
-    return history.listen((location, action) => {
-      const locationKey = location.pathname + location.search
+    const locationKey = location.pathname + location.search
 
-      switch (action) {
-        case 'PUSH': {
-          if (
-            locationKeyStack.current[locationKeyStack.current.length - 1] !==
-            locationKey
-          ) {
-            locationKeyStack.current.push(locationKey)
-          }
-          break
-        }
-        case 'REPLACE': {
-          locationKeyStack.current[locationKeyStack.current.length - 1] =
-            locationKey
-          break
-        }
-        case 'POP': {
-          const ptr = locationKeyStack.current.findIndex(
-            (key) => key === locationKey
+    switch (navigationType) {
+      case 'POP': {
+        const ptr = locationKeyStack.current.findIndex(
+          (key) => key === locationKey
+        )
+        if (ptr > -1) {
+          const depth = locationKeyStack.current.length - ptr
+          locationKeyStack.current = locationKeyStack.current.filter(
+            (_, idx) => idx <= ptr
           )
-          if (ptr > -1) {
-            const depth = locationKeyStack.current.length - ptr
-            locationKeyStack.current = locationKeyStack.current.filter(
-              (_, idx) => idx <= ptr
-            )
-            callbacks.backward?.(location, action, depth)
-          } else {
-            locationKeyStack.current.push(locationKey)
-            callbacks.forward?.(location, action)
-          }
+          callbacks.backward?.(location, navigationType, depth)
+        } else {
+          locationKeyStack.current.push(locationKey)
+          callbacks.forward?.(location, navigationType)
         }
+        break
       }
-    })
-  }, deps)
+      case 'PUSH': {
+        if (
+          locationKeyStack.current[locationKeyStack.current.length - 1] !==
+          locationKey
+        ) {
+          locationKeyStack.current.push(locationKey)
+        }
+        break
+      }
+      case 'REPLACE': {
+        locationKeyStack.current[locationKeyStack.current.length - 1] =
+          locationKey
+        break
+      }
+    }
+  }, [location])
 }
 
 export function useHistoryPushEffect(
-  callback: (location: Location<unknown>, action: Action) => void,
+  callback: (location: Location, action: Action) => void,
   deps?: DependencyList | undefined
 ) {
-  const history = useHistory()
   const location = useLocation()
+  const navigationType = useNavigationType()
+
   const locationKeyStack = useRef<string[]>([])
+
+  const currentDeps = useMemo(() => deps || [], deps)
 
   useEffect(() => {
     locationKeyStack.current = [location.pathname + location.search]
   }, [])
 
   useEffect(() => {
-    return history.listen((location, action) => {
-      const locationKey = location.pathname + location.search
+    const locationKey = location.pathname + location.search
 
-      switch (action) {
-        case 'PUSH': {
-          if (
-            locationKeyStack.current[locationKeyStack.current.length - 1] !==
-            locationKey
-          ) {
-            locationKeyStack.current.push(locationKey)
-            callback(location, action)
-          }
-          break
+    switch (navigationType) {
+      case 'PUSH': {
+        if (
+          locationKeyStack.current[locationKeyStack.current.length - 1] !==
+          locationKey
+        ) {
+          locationKeyStack.current.push(locationKey)
+          callback(location, navigationType)
         }
-        case 'REPLACE': {
-          locationKeyStack.current[locationKeyStack.current.length - 1] =
-            locationKey
-          break
-        }
-        case 'POP': {
-          const ptr = locationKeyStack.current.findIndex(
-            (key) => key === locationKey
+        break
+      }
+      case 'REPLACE': {
+        locationKeyStack.current[locationKeyStack.current.length - 1] =
+          locationKey
+        break
+      }
+      case 'POP': {
+        const ptr = locationKeyStack.current.findIndex(
+          (key) => key === locationKey
+        )
+        if (ptr > -1) {
+          locationKeyStack.current = locationKeyStack.current.filter(
+            (_, idx) => idx <= ptr
           )
-          if (ptr > -1) {
-            locationKeyStack.current = locationKeyStack.current.filter(
-              (_, idx) => idx <= ptr
-            )
-          } else {
-            locationKeyStack.current.push(locationKey)
-          }
+        } else {
+          locationKeyStack.current.push(locationKey)
         }
       }
-    })
-  }, deps)
+    }
+  }, [...currentDeps, location, navigationType])
 }
 
 export function useHistoryReplaceEffect(
-  callback: (location: Location<unknown>, action: Action) => void,
+  callback: (location: Location, action: Action) => void,
   deps?: DependencyList | undefined
 ) {
-  const history = useHistory()
+  const currentDeps = useMemo(() => deps || [], deps)
+  const location = useLocation()
+  const navigationType = useNavigationType()
 
   useEffect(() => {
-    return history.listen((location, action) => {
-      if (action === 'REPLACE') {
-        callback(location, action)
-      }
-    })
-  }, deps)
+    if (navigationType === 'REPLACE') {
+      callback(location, navigationType)
+    }
+  }, [...currentDeps, location, navigationType])
 }

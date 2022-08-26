@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
-import { matchPath, useHistory, useLocation } from 'react-router-dom'
+import { matchPath, useLocation, useNavigate } from 'react-router-dom'
 
+import type { IScreen } from '../globalState'
 import { useScreenInstances, useScreens } from '../globalState'
 import { makeNavigatorSearchParams } from '../helpers'
 import { useIncrementalId } from '../hooks'
@@ -9,7 +10,7 @@ import { usePush } from './Stack.usePush'
 function useInitialize() {
   const makeId = useIncrementalId()
   const location = useLocation()
-  const history = useHistory()
+  const navigate = useNavigate()
 
   const { screens } = useScreens()
   const { screenInstances } = useScreenInstances()
@@ -33,9 +34,8 @@ function useInitialize() {
 
     if (screenInstances.length === 0) {
       const matchScreen = Object.values(screens).find(
-        (screen) =>
-          screen &&
-          matchPath(location.pathname, { exact: true, path: screen.path })
+        (screen: IScreen | undefined) =>
+          screen && matchPath(screen.path, location.pathname)
       )
 
       if (matchScreen) {
@@ -47,9 +47,9 @@ function useInitialize() {
         })
       }
 
-      history.replace(
-        `${location.pathname}?${navigatorSearchParams.toString()}`
-      )
+      navigate(`${location.pathname}?${navigatorSearchParams.toString()}`, {
+        replace: true,
+      })
     }
 
     return () => {

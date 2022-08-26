@@ -1,13 +1,13 @@
 /// <reference types="react/next" />
 /// <reference types="react-dom/next" />
 
-import '@karrotframe/navigator/index.css'
+import '@karrotframe/navigator/lib/index.css'
 import '@karrotframe/tabs/index.css'
 import './index.css'
 import './shims'
 
 import React from 'react'
-import ReactDOM from 'react-dom'
+import ReactDOM from 'react-dom/client'
 
 import App from './App'
 import * as serviceWorker from './serviceWorker'

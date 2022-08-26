@@ -26,6 +26,7 @@ declare global {
 }
 
 interface IStackProps {
+  children: React.ReactNode
   theme: INavigatorTheme
   animationDuration: number
   backButtonAriaLabel: string

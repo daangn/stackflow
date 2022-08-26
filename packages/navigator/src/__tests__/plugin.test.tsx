@@ -22,7 +22,9 @@ test('인터페이스에 맞게 플러그인을 선언하면 정상적으로 렌
     data: any
     setData: (data: any) => void
   }>(null as any)
-  const SimplePluginProvider: React.FC = (props) => {
+  const SimplePluginProvider: React.FC<{ children: React.ReactNode }> = (
+    props
+  ) => {
     const [data, setData] = useState<any>('hello plugin!')
     return (
       <SimplePluginContext.Provider value={{ data, setData }}>
@@ -73,7 +75,9 @@ test('플러그인의 hook 에서 얻은 정보로 컴포넌트를 업데이트�
     data: any
     setData: (data: any) => void
   }>(null as any)
-  const SimplePluginProvider: React.FC = (props) => {
+  const SimplePluginProvider: React.FC<{ children: React.ReactNode }> = (
+    props
+  ) => {
     const [data, setData] = useState<any>('hello plugin!')
     return (
       <SimplePluginContext.Provider value={{ data, setData }}>
@@ -264,7 +268,9 @@ test('2개 이상의 플러그인을 조합해서 사용할 수 있다.', async 
     data: any
     setData: (data: any) => void
   }>(null as any)
-  const SimplePluginProvider: React.FC = (props) => {
+  const SimplePluginProvider: React.FC<{ children: React.ReactNode }> = (
+    props
+  ) => {
     const [data, setData] = useState<any>('hello plugin!')
     return (
       <SimplePluginContext.Provider value={{ data, setData }}>

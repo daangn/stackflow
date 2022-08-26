@@ -67,7 +67,7 @@ interface INavigatorProps {
   /**
    * external plugins to apply to navigator
    */
-  plugins?: NavigatorPluginType[]
+  plugins?: Array<NavigatorPluginType>
 
   /**
    * children components

@@ -20,8 +20,8 @@
   },
   "dependencies": {
     "@emotion/core": "^11.0.0",
-    "@emotion/react": "^11.1.5",
-    "@emotion/styled": "^11.1.5",
+    "@emotion/react": "^11.10.0",
+    "@emotion/styled": "^11.10.0",
     "@fortawesome/fontawesome-svg-core": "^6.1.1",
     "@fortawesome/free-brands-svg-icons": "^6.1.1",
     "@fortawesome/react-fontawesome": "^0.1.18",
@@ -29,13 +29,13 @@
     "@karrotframe/navigator-plugin": "workspace:^",
     "@karrotframe/pulltorefresh": "workspace:^",
     "@karrotframe/tabs": "workspace:^",
-    "react": "next",
-    "react-dom": "next",
-    "react-router-dom": "^5.2.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.3.0",
     "smoothscroll-polyfill": "^0.4.4"
   },
   "devDependencies": {
-    "@babel/core": "^7.11.6",
+    "@babel/core": "^7.18.13",
     "@emotion/babel-plugin": "^11.2.0",
     "@testing-library/dom": "^6.15.0",
     "@testing-library/jest-dom": "^4.2.4",
@@ -43,13 +43,12 @@
     "@testing-library/user-event": "^7.1.2",
     "@types/jest": "^24.0.0",
     "@types/node": "^12.0.0",
-    "@types/react": "^17.0.19",
-    "@types/react-dom": "^17.0.9",
-    "@types/react-router-dom": "^5.1.5",
+    "@types/react": "^18.0.17",
+    "@types/react-dom": "^18.0.6",
     "@types/smoothscroll-polyfill": "^0",
     "customize-cra": "^1.0.0",
-    "react-app-rewired": "^2.1.6",
-    "react-scripts": "5.0.0",
-    "typescript": "~3.7.2"
+    "react-app-rewired": "^2.2.1",
+    "react-scripts": "^5.0.1",
+    "typescript": "^4.8.2"
   }
 }

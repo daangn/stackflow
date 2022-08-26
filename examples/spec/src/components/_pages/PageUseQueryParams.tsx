@@ -1,11 +1,11 @@
 import React from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 import styled from '@emotion/styled'
 import { ScreenHelmet, useQueryParams } from '@karrotframe/navigator'
 
 const PageUseQueryParams: React.FC = () => {
-  const history = useHistory()
+  const navigate = useNavigate()
   const { hello } = useQueryParams<{ hello: 'world' }>({
     ignoreNestedRoutes: false,
   })
@@ -16,7 +16,7 @@ const PageUseQueryParams: React.FC = () => {
       hello: {hello}
       <button
         onClick={() => {
-          history.push('/useQueryParams?hello=somethingotherworld')
+          navigate('/useQueryParams?hello=somethingotherworld')
         }}
       >
         change hello

@@ -9,7 +9,6 @@
     "sourceMap": true,
     "declaration": true,
     "esModuleInterop": true,
-    "noImplicitReturns": false,
     "noImplicitThis": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
@@ -19,8 +18,10 @@
     "allowSyntheticDefaultImports": true,
     "jsxFactory": "",
     "skipLibCheck": true,
-    "noEmit": true,
-    "downlevelIteration": true
+    "downlevelIteration": true,
+    "allowJs": true,
+    "emitDeclarationOnly": true,
+    "isolatedModules": false,
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist", "example"]

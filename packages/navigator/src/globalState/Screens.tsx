@@ -7,7 +7,7 @@ import React, {
 } from 'react'
 import { usePlugins } from './Plugins'
 
-interface IScreen {
+export interface IScreen {
   id: string
   path: string
   Component: React.ComponentType
@@ -22,7 +22,13 @@ const ContextScreens = createContext<{
   registerScreen: (screen: IScreen) => () => void
 }>(null as any)
 
-export const ProviderScreens: React.FC = (props) => {
+interface ProviderScreensProps {
+  children: React.ReactNode
+}
+
+export const ProviderScreens: React.FC<ProviderScreensProps> = (
+  props: ProviderScreensProps
+) => {
   const [screens, setScreens] = useState<IScreenMap>({})
   const { lifecycleHooks } = usePlugins()
 
@@ -36,7 +42,7 @@ export const ProviderScreens: React.FC = (props) => {
         hook?.onRegisterScreen?.(context)
       })
     },
-    [lifecycleHooks, screens]
+    [lifecycleHooks]
   )
 
   const beforeRegisterScreen = useCallback(
@@ -49,7 +55,7 @@ export const ProviderScreens: React.FC = (props) => {
         hook?.beforeRegisterScreen?.(context)
       })
     },
-    [lifecycleHooks, screens]
+    [lifecycleHooks]
   )
 
   const registerScreen = useCallback((screen: IScreen) => {

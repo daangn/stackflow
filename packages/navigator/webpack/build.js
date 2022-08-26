@@ -9,7 +9,7 @@ module.exports = {
     index: path.resolve('./src/index.ts'),
   },
   output: {
-    path: path.resolve('./'),
+    path: path.resolve('./lib'),
     filename: '[name].js',
     libraryTarget: 'umd',
   },
@@ -62,6 +62,8 @@ module.exports = {
   plugins: [
     new ForkTsCheckerWebpackPlugin(),
     new VanillaExtractPlugin(),
-    new MiniCssExtractPlugin(),
+    new MiniCssExtractPlugin({
+      filename: 'index.css',
+    }),
   ],
 }

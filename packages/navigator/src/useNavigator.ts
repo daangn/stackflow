@@ -1,5 +1,5 @@
-import { useCallback, useMemo } from 'react'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useCallback, useMemo, useEffect, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 import { useScreenInstance } from './components/Stack.ContextScreenInstance'
 import { useScreenInstances } from './globalState'
@@ -13,11 +13,11 @@ import { useIncrementalId } from './hooks'
 import { useAnimationContext } from './globalState/Animation'
 
 export function useNavigator() {
-  const history = useHistory()
   const location = useLocation()
   const screenInfo = useScreenInstance()
   const makeId = useIncrementalId()
   const { lifecycleHooks } = usePlugins()
+  const navigate = useNavigate()
 
   const {
     screenInstances,
@@ -25,6 +25,20 @@ export function useNavigator() {
     screenInstancePromiseMap,
     addScreenInstancePromise,
   } = useScreenInstances()
+
+  const [depth, setDepth] = useState(0)
+  const [data, setData] = useState<any>(null)
+
+  useEffect(() => {
+    const targetScreenInstance = screenInstances[screenInstancePtr - depth]
+
+    const targetPromise =
+      targetScreenInstance && screenInstancePromiseMap[targetScreenInstance.id]
+
+    if (targetScreenInstance) {
+      targetPromise?.resolve(data)
+    }
+  }, [location, depth, data])
 
   const { activeAnimation } = useAnimationContext()
 
@@ -56,7 +70,7 @@ export function useNavigator() {
   )
 
   const onPushed = useCallback(
-    (to) => {
+    (to: string) => {
       lifecycleHooks.forEach((hook) => {
         const context = {
           to,
@@ -75,7 +89,7 @@ export function useNavigator() {
   )
 
   const beforeReplace = useCallback(
-    (to) => {
+    (to: string) => {
       lifecycleHooks.forEach((hook) => {
         const context = {
           to,
@@ -92,7 +106,7 @@ export function useNavigator() {
   )
 
   const onReplaced = useCallback(
-    (to) => {
+    (to: string) => {
       lifecycleHooks.forEach((hook) => {
         const context = {
           to,
@@ -140,9 +154,9 @@ export function useNavigator() {
         onPushed(to)
         const animate = options?.animate ?? true
         activeAnimation(animate)
-        history.push(`${pathname}?${navigatorSearchParams.toString()}`)
+        navigate(`${pathname}?${navigatorSearchParams.toString()}`)
       }),
-    [screenInfo, history]
+    [screenInfo]
   )
 
   const replace = useCallback(
@@ -166,10 +180,12 @@ export function useNavigator() {
       onReplaced(to)
       nextTick(() => {
         activeAnimation(!!options?.animate)
-        history.replace(`${pathname}?${navigatorSearchParams.toString()}`)
+        navigate(`${pathname}?${navigatorSearchParams.toString()}`, {
+          replace: true,
+        })
       })
     },
-    [history, screenInstanceId, present]
+    [screenInstanceId, present]
   )
 
   const beforePop = useCallback(() => {
@@ -233,7 +249,7 @@ export function useNavigator() {
       }
     ) => {
       beforePop()
-      const targetScreenInstance = screenInstances[screenInstancePtr - depth]
+      setDepth(depth)
 
       const backwardCount = screenInstances
         .filter(
@@ -242,19 +258,6 @@ export function useNavigator() {
         )
         .map((screenInstance) => screenInstance.nestedRouteCount)
         .reduce((acc, current) => acc + current + 1, 0)
-
-      const targetPromise =
-        targetScreenInstance &&
-        screenInstancePromiseMap[targetScreenInstance.id]
-      let _data: any = null
-
-      const dispose = history.listen(() => {
-        dispose()
-
-        if (targetScreenInstance) {
-          targetPromise?.resolve(_data ?? null)
-        }
-      })
 
       /**
        * Send data to `await push()`
@@ -265,7 +268,7 @@ export function useNavigator() {
          */
         data: T
       ) {
-        _data = data
+        setData(data)
         // FIXME: 'onPoppedWithData' and 'onPopped' should be unified later
         onPoppedWithData(data)
       }
@@ -273,14 +276,14 @@ export function useNavigator() {
       nextTick(() => {
         const animate = options?.animate ?? true
         activeAnimation(animate)
-        history.go(-backwardCount)
+        navigate(-backwardCount)
       })
 
       return {
         send,
       }
     },
-    [screenInstances, screenInstancePtr, screenInstancePromiseMap, history]
+    [screenInstances, screenInstancePtr, screenInstancePromiseMap]
   )
 
   return useMemo(

@@ -10,6 +10,7 @@ interface ProviderScreenInstanceProps {
   as: string
   isTop: boolean
   isRoot: boolean
+  children: React.ReactNode
 }
 export const ProviderScreenInstance: React.FC<ProviderScreenInstanceProps> = (
   props
@@ -21,6 +22,7 @@ export const ProviderScreenInstance: React.FC<ProviderScreenInstanceProps> = (
       as: props.as,
       isTop: props.isTop,
       isRoot: props.isRoot,
+      children: props.children,
     }),
     [
       props.screenInstanceId,
@@ -28,6 +30,7 @@ export const ProviderScreenInstance: React.FC<ProviderScreenInstanceProps> = (
       props.as,
       props.isTop,
       props.isRoot,
+      props.children,
     ]
   )
   return (

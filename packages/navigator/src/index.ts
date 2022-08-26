@@ -1,4 +1,4 @@
-export { useLocation, useRouteMatch } from 'react-router-dom'
+export { useLocation } from 'react-router-dom'
 
 export { default as Navigator } from './Navigator'
 export { default as Screen } from './Screen'

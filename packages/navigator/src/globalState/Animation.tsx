@@ -16,7 +16,13 @@ const AnimationContext = createContext<AnimationContextProps>(
   null as unknown as any
 )
 
-export const ProviderAnimation: FC = ({ children }): ReactElement => {
+interface ProviderAnimationProps {
+  children: React.ReactNode
+}
+
+export const ProviderAnimation: FC<ProviderAnimationProps> = ({
+  children,
+}: ProviderAnimationProps): ReactElement => {
   const [animation, activeAnimation] = useState(true)
   const shouldAnimate = useMemo(() => animation, [animation])
 
