@@ -15,6 +15,8 @@ export type Activity = {
   };
   context?: {};
   pushedBy: PushedEvent | ReplacedEvent;
+  isTop: boolean;
+  isRoot: boolean;
 };
 
 export type AggregateOutput = {

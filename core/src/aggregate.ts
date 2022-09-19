@@ -47,6 +47,8 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
           metadata: {
             poppedBy: null,
           },
+          isTop: false,
+          isRoot: false,
         });
 
         break;
@@ -72,6 +74,8 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
           metadata: {
             poppedBy: null,
           },
+          isTop: false,
+          isRoot: false,
         });
 
         if (targetActivity && transitionState === "enter-done") {
@@ -106,6 +110,23 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
     }
   });
 
+  const visibleActivities = uniqBy(
+    activities.filter(
+      (activity) =>
+        activity.transitionState === "enter-active" ||
+        activity.transitionState === "enter-done" ||
+        activity.transitionState === "exit-active",
+    ),
+    (activity) => activity.id,
+  );
+
+  if (visibleActivities[0]) {
+    visibleActivities[0].isRoot = true;
+  }
+  if (visibleActivities[visibleActivities.length - 1]) {
+    visibleActivities[visibleActivities.length - 1].isTop = true;
+  }
+
   const globalTransitionState = activities.find(
     (activity) =>
       activity.transitionState === "enter-active" ||
@@ -122,6 +143,8 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
         transitionState: activity.transitionState,
         params: activity.params,
         pushedBy: activity.pushedBy,
+        isTop: activity.isTop,
+        isRoot: activity.isRoot,
         ...(activity.context
           ? {
               context: activity.context,
