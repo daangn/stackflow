@@ -333,8 +333,8 @@ test("differences - 액티비티 상태가 exit-active로 변한 액티비티가
         pushedBy: {
           name: "Pushed",
         } as any,
-        isRoot: false,
-        isTop: true,
+        isRoot: true,
+        isTop: false,
       },
     },
   ]);
