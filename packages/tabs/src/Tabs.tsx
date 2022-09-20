@@ -113,43 +113,54 @@ const Tabs: React.FC<ITabsProps> = (props) => {
   }, [props.activeTabKey])
 
   useEffect(() => {
+    if (!props.useInlineButtons) {
+      return
+    }
+
+    showActiveTab(props.tabs[activeTabIndex])
+  }, [props.useInlineButtons, activeTabIndex])
+
+  useEffect(() => {
     setIsSwipeDisabled(props.disableSwipe ?? false)
   }, [props.disableSwipe])
+
+  const showActiveTab = (tab: ITab) => {
+    const MIN_SCROLL_MARGIN = 64
+    const nextTabIndex = props.tabs.findIndex((t) => t === tab)
+
+    const $tabBar = tabBarRef.current
+    const $tabBarItem = $tabBar?.children[nextTabIndex + 1] as
+      | HTMLDivElement
+      | undefined
+
+    if (!$tabBar || !$tabBarItem) {
+      return
+    }
+
+    const { clientWidth: fullWidth, scrollLeft } = $tabBar
+    const { offsetLeft: itemLeft, clientWidth: itemWidth } = $tabBarItem
+
+    const minScrollLeft = itemLeft + itemWidth + MIN_SCROLL_MARGIN - fullWidth
+    const maxScrollLeft = itemLeft - MIN_SCROLL_MARGIN
+
+    if (scrollLeft < minScrollLeft) {
+      $tabBar.scroll({
+        left: minScrollLeft,
+        behavior: 'smooth',
+      })
+    }
+    if (scrollLeft > maxScrollLeft) {
+      $tabBar.scroll({
+        left: maxScrollLeft,
+        behavior: 'smooth',
+      })
+    }
+  }
 
   const move = useCallback(
     (tab: ITab, info: { swiped: boolean }) => {
       props.onTabChange(tab.key, info)
-
-      const MIN_SCROLL_MARGIN = 64
-      const nextTabIndex = props.tabs.findIndex((t) => t === tab)
-
-      const $tabBar = tabBarRef.current
-      const $tabBarItem = $tabBar?.children[nextTabIndex + 1] as
-        | HTMLDivElement
-        | undefined
-
-      if (!$tabBar || !$tabBarItem) {
-        return
-      }
-
-      const { clientWidth: fullWidth, scrollLeft } = $tabBar
-      const { offsetLeft: itemLeft, clientWidth: itemWidth } = $tabBarItem
-
-      const minScrollLeft = itemLeft + itemWidth + MIN_SCROLL_MARGIN - fullWidth
-      const maxScrollLeft = itemLeft - MIN_SCROLL_MARGIN
-
-      if (scrollLeft < minScrollLeft) {
-        $tabBar.scroll({
-          left: minScrollLeft,
-          behavior: 'smooth',
-        })
-      }
-      if (scrollLeft > maxScrollLeft) {
-        $tabBar.scroll({
-          left: maxScrollLeft,
-          behavior: 'smooth',
-        })
-      }
+      showActiveTab(tab)
     },
     [tabBarRef, activeTabIndex, props.onTabChange]
   )

@@ -4,7 +4,7 @@ import { ScreenHelmet } from '@karrotframe/navigator'
 import { Tabs } from '@karrotframe/tabs'
 
 const PageTabs: React.FC = () => {
-  const [activeKey, setActiveKey] = useState<string>('63119')
+  const [activeKey, setActiveKey] = useState<string>('44589')
 
   return (
     <>
@@ -15,7 +15,18 @@ const PageTabs: React.FC = () => {
             key: '63119',
             buttonLabel: 'Following',
             render() {
-              return <div>Following</div>
+              return (
+                <div>
+                  Following
+                  <button
+                    onClick={() => {
+                      setActiveKey('44589')
+                    }}
+                  >
+                    Move to Beauty
+                  </button>
+                </div>
+              )
             },
           },
           {
@@ -43,7 +54,18 @@ const PageTabs: React.FC = () => {
             key: '44589',
             buttonLabel: 'Beauty',
             render() {
-              return <div>Beauty</div>
+              return (
+                <div>
+                  Beauty
+                  <button
+                    onClick={() => {
+                      setActiveKey('63119')
+                    }}
+                  >
+                    Move to Following
+                  </button>
+                </div>
+              )
             },
           },
         ]}
