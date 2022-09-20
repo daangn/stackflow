@@ -322,7 +322,7 @@ const Tabs: React.FC<ITabsProps> = (props) => {
         window.removeEventListener('resize', onResize)
       }
     }
-  }, [tabBarRef, activeTabIndex])
+  }, [tabBarRef, activeTabIndex, props.useInlineButtons])
 
   const go = useCallback((tabKey: string) => {
     const activeTab = props.tabs.find((tab) => tab.key === tabKey)
