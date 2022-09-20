@@ -506,6 +506,8 @@ test("differences - Replaced 이벤트로 인해 액티비티 상태가 enter-ac
         pushedBy: {
           name: "Replaced",
         } as any,
+        isRoot: false,
+        isTop: true,
       },
     },
   ]);
