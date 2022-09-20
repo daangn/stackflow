@@ -105,6 +105,41 @@ const Tabs: React.FC<ITabsProps> = (props) => {
     [props.activeTabKey]: true,
   })
 
+  const showActiveTab = useCallback(
+    (tabIndex: number) => {
+      const MIN_SCROLL_MARGIN = 64
+
+      const $tabBar = tabBarRef.current
+      const $tabBarItem = $tabBar?.children[tabIndex + 1] as
+        | HTMLDivElement
+        | undefined
+
+      if (!$tabBar || !$tabBarItem) {
+        return
+      }
+
+      const { clientWidth: fullWidth, scrollLeft } = $tabBar
+      const { offsetLeft: itemLeft, clientWidth: itemWidth } = $tabBarItem
+
+      const minScrollLeft = itemLeft + itemWidth + MIN_SCROLL_MARGIN - fullWidth
+      const maxScrollLeft = itemLeft - MIN_SCROLL_MARGIN
+
+      if (scrollLeft < minScrollLeft) {
+        $tabBar.scroll({
+          left: minScrollLeft,
+          behavior: 'smooth',
+        })
+      }
+      if (scrollLeft > maxScrollLeft) {
+        $tabBar.scroll({
+          left: maxScrollLeft,
+          behavior: 'smooth',
+        })
+      }
+    },
+    [tabBarRef]
+  )
+
   useEffect(() => {
     setLazyMap((prevState) => ({
       ...prevState,
@@ -117,52 +152,19 @@ const Tabs: React.FC<ITabsProps> = (props) => {
       return
     }
 
-    showActiveTab(props.tabs[activeTabIndex])
-  }, [props.useInlineButtons, activeTabIndex])
+    showActiveTab(activeTabIndex)
+  }, [props.useInlineButtons, activeTabIndex, showActiveTab])
 
   useEffect(() => {
     setIsSwipeDisabled(props.disableSwipe ?? false)
   }, [props.disableSwipe])
 
-  const showActiveTab = (tab: ITab) => {
-    const MIN_SCROLL_MARGIN = 64
-    const nextTabIndex = props.tabs.findIndex((t) => t === tab)
-
-    const $tabBar = tabBarRef.current
-    const $tabBarItem = $tabBar?.children[nextTabIndex + 1] as
-      | HTMLDivElement
-      | undefined
-
-    if (!$tabBar || !$tabBarItem) {
-      return
-    }
-
-    const { clientWidth: fullWidth, scrollLeft } = $tabBar
-    const { offsetLeft: itemLeft, clientWidth: itemWidth } = $tabBarItem
-
-    const minScrollLeft = itemLeft + itemWidth + MIN_SCROLL_MARGIN - fullWidth
-    const maxScrollLeft = itemLeft - MIN_SCROLL_MARGIN
-
-    if (scrollLeft < minScrollLeft) {
-      $tabBar.scroll({
-        left: minScrollLeft,
-        behavior: 'smooth',
-      })
-    }
-    if (scrollLeft > maxScrollLeft) {
-      $tabBar.scroll({
-        left: maxScrollLeft,
-        behavior: 'smooth',
-      })
-    }
-  }
-
   const move = useCallback(
     (tab: ITab, info: { swiped: boolean }) => {
       props.onTabChange(tab.key, info)
-      showActiveTab(tab)
+      showActiveTab(props.tabs.findIndex((t) => t === tab))
     },
-    [tabBarRef, activeTabIndex, props.onTabChange]
+    [props.onTabChange, props.tabs, showActiveTab]
   )
 
   useEffect(() => {
