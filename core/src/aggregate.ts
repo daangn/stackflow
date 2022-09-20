@@ -120,12 +120,8 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
     (activity) => activity.id,
   );
 
-  if (visibleActivities[0]) {
-    visibleActivities[0].isRoot = true;
-  }
-  if (visibleActivities[visibleActivities.length - 1]) {
-    visibleActivities[visibleActivities.length - 1].isTop = true;
-  }
+  const firstVisibleActivity = visibleActivities[0];
+  const lastVisibleActivity = visibleActivities[visibleActivities.length - 1];
 
   const globalTransitionState = activities.find(
     (activity) =>
@@ -143,8 +139,8 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
         transitionState: activity.transitionState,
         params: activity.params,
         pushedBy: activity.pushedBy,
-        isTop: activity.isTop,
-        isRoot: activity.isRoot,
+        isRoot: firstVisibleActivity?.id === activity.id,
+        isTop: lastVisibleActivity?.id === activity.id,
         ...(activity.context
           ? {
               context: activity.context,
