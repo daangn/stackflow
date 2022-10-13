@@ -2948,6 +2948,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["esbuild", "npm:0.14.51"],\
             ["react", "npm:18.2.0"],\
             ["rimraf", "npm:3.0.2"],\
+            ["ts-pattern", "npm:4.0.5"],\
             ["typescript", "patch:typescript@npm%3A4.7.4#~builtin<compat/typescript>::version=4.7.4&hash=f456af"]\
           ],\
           "packagePeers": [\
@@ -2976,6 +2977,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["esbuild", "npm:0.14.51"],\
             ["react", "npm:18.2.0"],\
             ["rimraf", "npm:3.0.2"],\
+            ["ts-pattern", "npm:4.0.5"],\
             ["typescript", "patch:typescript@npm%3A4.7.4#~builtin<compat/typescript>::version=4.7.4&hash=f456af"]\
           ],\
           "linkType": "SOFT"\
@@ -14880,6 +14882,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/trough-npm-2.1.0-20e92f46fc-a577bb561c.zip/node_modules/trough/",\
           "packageDependencies": [\
             ["trough", "npm:2.1.0"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["ts-pattern", [\
+        ["npm:4.0.5", {\
+          "packageLocation": "./.yarn/cache/ts-pattern-npm-4.0.5-7ba0b14201-b1ecf36afb.zip/node_modules/ts-pattern/",\
+          "packageDependencies": [\
+            ["ts-pattern", "npm:4.0.5"]\
           ],\
           "linkType": "HARD"\
         }]\

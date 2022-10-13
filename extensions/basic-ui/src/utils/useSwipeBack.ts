@@ -1,4 +1,5 @@
-import React, { useEffect, useRef } from "react";
+import type React from "react";
+import { useEffect } from "react";
 
 import { noop } from "./noop";
 
@@ -13,22 +14,27 @@ function set(cssText: string, el?: HTMLElement | null) {
 }
 
 export function useSwipeBack({
+  dimRef,
+  paperRef,
+  edgeRef,
+  getBeforeAppScreen,
   getBeforePaper,
   transitionDuration,
   onBack,
 }: {
+  dimRef: React.MutableRefObject<any>;
+  paperRef: React.MutableRefObject<any>;
+  edgeRef: React.MutableRefObject<any>;
+  getBeforeAppScreen: () => HTMLElement | null | undefined;
   getBeforePaper: () => HTMLElement | null | undefined;
   transitionDuration: number;
   onBack: () => void;
 }) {
-  const dimRef = useRef<any>(null);
-  const paperRef = useRef<any>(null);
-  const edgeRef = useRef<any>(null);
-
   useEffect(() => {
     const $dim = dimRef.current;
     const $paper = paperRef.current;
     const $edge = edgeRef.current;
+    const $beforeAppScreen = getBeforeAppScreen();
     const $beforePaper = getBeforePaper();
 
     if (!$dim || !$paper || !$edge) {
@@ -67,6 +73,10 @@ export function useSwipeBack({
             $beforePaper,
           );
 
+          if ($beforeAppScreen) {
+            $beforeAppScreen.style.display = "block";
+          }
+
           _rAFLock = false;
         });
       }
@@ -101,6 +111,13 @@ export function useSwipeBack({
           set("", $dim);
           set("", $paper);
           set("", $beforePaper);
+
+          if (ok && $beforeAppScreen) {
+            $beforeAppScreen.style.display = "";
+          }
+          if (!ok && $beforeAppScreen) {
+            $beforeAppScreen.style.display = "none";
+          }
         }, transitionDuration);
       });
     }
@@ -167,10 +184,4 @@ export function useSwipeBack({
       $edge.removeEventListener("touchcancel", onTouchEnd);
     };
   }, [dimRef, paperRef, edgeRef, onBack]);
-
-  return {
-    dimRef,
-    paperRef,
-    edgeRef,
-  };
 }

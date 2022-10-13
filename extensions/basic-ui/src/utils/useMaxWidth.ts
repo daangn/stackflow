@@ -1,16 +1,22 @@
-import { useEffect, useRef, useState } from "react";
+import type React from "react";
+import { useEffect, useState } from "react";
 
 import { noop } from "./noop";
 import { onResize } from "./onResize";
 
-export function useMaxWidth({ enable }: { enable: boolean }) {
-  const outerRef = useRef<any>(null);
-  const innerRef = useRef<any>(null);
-
+export function useMaxWidth({
+  outerRef,
+  innerRef,
+  enable,
+}: {
+  outerRef: React.ForwardedRef<any>;
+  innerRef: React.MutableRefObject<any>;
+  enable: boolean;
+}) {
   const [maxWidth, setMaxWidth] = useState<number | undefined>(undefined);
 
   useEffect(() => {
-    const $outer = outerRef.current;
+    const $outer = outerRef && "current" in outerRef && outerRef.current;
     const $inner = innerRef.current;
 
     if (!enable || !$outer || !$inner) {
@@ -33,8 +39,6 @@ export function useMaxWidth({ enable }: { enable: boolean }) {
   }, []);
 
   return {
-    outerRef,
-    innerRef,
     maxWidth,
   };
 }
