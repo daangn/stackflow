@@ -9,6 +9,9 @@ import { recipe } from "@vanilla-extract/recipes";
 
 import { f } from "./styles";
 
+export const CUPERTINO_APP_SCREEN_PAPER_OFFSET = "translateX(-5rem)";
+export const ANDROID_APP_SCREEN_PAPER_OFFSET = "translateY(-2rem)";
+
 export const vars = createGlobalThemeContract(
   {
     backgroundColor: null,
@@ -190,16 +193,16 @@ export const paper = recipe({
       true: {
         selectors: {
           [`${cupertino}${enterActive} &, ${rootCupertino} ${enterActive} &`]: {
-            transform: "translateX(-5rem)",
+            transform: CUPERTINO_APP_SCREEN_PAPER_OFFSET,
           },
           [`${cupertino}${enterDone} &, ${rootCupertino} ${enterDone} &`]: {
-            transform: "translateX(-5rem)",
+            transform: CUPERTINO_APP_SCREEN_PAPER_OFFSET,
           },
           [`${android}${enterActive} &, ${rootAndroid} ${enterActive} &`]: {
-            transform: "translateY(-2rem)",
+            transform: ANDROID_APP_SCREEN_PAPER_OFFSET,
           },
           [`${android}${enterDone} &, ${rootAndroid} ${enterDone} &`]: {
-            transform: "translateY(-2rem)",
+            transform: ANDROID_APP_SCREEN_PAPER_OFFSET,
           },
         },
       },

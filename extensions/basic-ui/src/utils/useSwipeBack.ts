@@ -1,4 +1,5 @@
-import React, { useEffect, useRef } from "react";
+import type React from "react";
+import { useEffect, useRef } from "react";
 
 import { noop } from "./noop";
 
@@ -13,25 +14,32 @@ function set(cssText: string, el?: HTMLElement | null) {
 }
 
 export function useSwipeBack({
-  getBeforePaper,
+  dimRef,
+  appScreenRef,
+  appScreenPaperRef,
+  edgeRef,
+  getBeforeAppScreen,
+  getBeforeAppScreenPaper,
   transitionDuration,
   onBack,
 }: {
-  getBeforePaper: () => HTMLElement | null | undefined;
+  dimRef: React.MutableRefObject<any>;
+  appScreenRef: React.MutableRefObject<any>;
+  appScreenPaperRef: React.MutableRefObject<any>;
+  edgeRef: React.MutableRefObject<any>;
+  getBeforeAppScreen: () => HTMLElement | null | undefined;
+  getBeforeAppScreenPaper: () => HTMLElement | null | undefined;
   transitionDuration: number;
   onBack: () => void;
 }) {
-  const dimRef = useRef<any>(null);
-  const paperRef = useRef<any>(null);
-  const edgeRef = useRef<any>(null);
-
   useEffect(() => {
     const $dim = dimRef.current;
-    const $paper = paperRef.current;
+    const $appScreenPaper = appScreenPaperRef.current;
     const $edge = edgeRef.current;
-    const $beforePaper = getBeforePaper();
+    const $beforeAppScreen = getBeforeAppScreen();
+    const $beforeAppScreenPaper = getBeforeAppScreenPaper();
 
-    if (!$dim || !$paper || !$edge) {
+    if (!$dim || !$appScreenPaper || !$edge) {
       return noop;
     }
 
@@ -42,7 +50,7 @@ export function useSwipeBack({
         _rAFLock = true;
 
         requestAnimationFrame(() => {
-          const p = dx / $paper.clientWidth;
+          const p = dx / $appScreenPaper.clientWidth;
 
           set(
             css`
@@ -57,15 +65,19 @@ export function useSwipeBack({
               transform: translateX(${dx}px);
               transition: transform 0s;
             `,
-            $paper,
+            $appScreenPaper,
           );
           set(
             css`
               transform: translateX(${-1 * (1 - p) * MAX_FRAME_OFFSET}px);
               transition: transform 0s;
             `,
-            $beforePaper,
+            $beforeAppScreenPaper,
           );
+
+          if ($beforeAppScreen) {
+            $beforeAppScreen.style.display = "block";
+          }
 
           _rAFLock = false;
         });
@@ -87,20 +99,24 @@ export function useSwipeBack({
             transform: translateX(${ok ? "100%" : "0"});
             transition: transform ${transitionDuration}ms;
           `,
-          $paper,
+          $appScreenPaper,
         );
         set(
           css`
             transform: translateX(${ok ? "0" : "-5rem"});
             transition: transform ${transitionDuration}ms;
           `,
-          $beforePaper,
+          $beforeAppScreenPaper,
         );
 
         setTimeout(() => {
           set("", $dim);
-          set("", $paper);
-          set("", $beforePaper);
+          set("", $appScreenPaper);
+          set("", $beforeAppScreenPaper);
+
+          if ($beforeAppScreen) {
+            $beforeAppScreen.style.display = "";
+          }
         }, transitionDuration);
       });
     }
@@ -145,7 +161,7 @@ export function useSwipeBack({
 
       const t = Date.now();
       const v = (x - x0) / (t - t0);
-      const ok = v > 1 || x / $paper.clientWidth > 0.4;
+      const ok = v > 1 || x / $appScreenPaper.clientWidth > 0.4;
 
       if (ok) {
         onBack();
@@ -166,11 +182,5 @@ export function useSwipeBack({
       $edge.removeEventListener("touchend", onTouchEnd);
       $edge.removeEventListener("touchcancel", onTouchEnd);
     };
-  }, [dimRef, paperRef, edgeRef, onBack]);
-
-  return {
-    dimRef,
-    paperRef,
-    edgeRef,
-  };
+  }, [dimRef, appScreenPaperRef, edgeRef, onBack]);
 }
