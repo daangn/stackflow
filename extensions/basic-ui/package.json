@@ -27,7 +27,8 @@
   "dependencies": {
     "@vanilla-extract/dynamic": "^2.0.2",
     "@vanilla-extract/private": "^1.0.3",
-    "@vanilla-extract/recipes": "^0.2.5"
+    "@vanilla-extract/recipes": "^0.2.5",
+    "ts-pattern": "^4.0.5"
   },
   "devDependencies": {
     "@stackflow/core": "^0.12.0",

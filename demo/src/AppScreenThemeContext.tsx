@@ -12,7 +12,7 @@ interface AppScreenThemeProviderProps {
 export const AppScreenThemeProvider: React.FC<AppScreenThemeProviderProps> = ({
   children,
 }) => (
-  <AppScreenThemeContext.Provider value="android">
+  <AppScreenThemeContext.Provider value="cupertino">
     {children}
   </AppScreenThemeContext.Provider>
 );

@@ -2152,6 +2152,7 @@ __metadata:
     esbuild: ^0.14.51
     react: ^18.1.0
     rimraf: ^3.0.2
+    ts-pattern: ^4.0.5
     typescript: ^4.7.4
   peerDependencies:
     "@stackflow/core": 0
@@ -12370,6 +12371,13 @@ __metadata:
   version: 2.1.0
   resolution: "trough@npm:2.1.0"
   checksum: a577bb561c2b401cc0e1d9e188fcfcdf63b09b151ff56a668da12197fe97cac15e3d77d5b51f426ccfd94255744a9118e9e9935afe81a3644fa1be9783c82886
+  languageName: node
+  linkType: hard
+
+"ts-pattern@npm:^4.0.5":
+  version: 4.0.5
+  resolution: "ts-pattern@npm:4.0.5"
+  checksum: b1ecf36afb567ee6adbaee6e885e51775b1a390ed528589ae3bcb1e376412ed0774b54495ffca7be2a324e75268f894d34379b84388930485cf1359b30d5bc8b
   languageName: node
   linkType: hard
 
