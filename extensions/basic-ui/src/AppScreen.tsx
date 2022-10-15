@@ -1,11 +1,11 @@
 import { useActivity, useStack } from "@stackflow/react";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
-import React, { useMemo, useRef } from "react";
+import React, { useRef } from "react";
 
 import AppBar from "./AppBar";
 import * as css from "./AppScreen.css";
 import type { PropOf } from "./utils";
-import { compactMap, useActivitiesFilter, useLazy } from "./utils";
+import { compactMap, useLazy } from "./utils";
 
 interface AppScreenProps {
   theme?: "android" | "cupertino";
@@ -20,28 +20,14 @@ const AppScreen: React.FC<AppScreenProps> = ({
   backgroundColor,
 }) => {
   const stack = useStack();
-
-  const currentActivity = useActivity();
-
-  const visibleActivities = useActivitiesFilter({
-    or: ["enter-active", "enter-done", "exit-active"],
-  });
-
-  const isRoot = visibleActivities[0]?.id === currentActivity.id;
-
-  const zIndex = useMemo(
-    () =>
-      visibleActivities.findIndex(
-        (activity) => activity.id === currentActivity.id,
-      ),
-    [visibleActivities, currentActivity],
-  );
+  const activity = useActivity();
 
   const appScreenRef = useRef<any>(null);
 
+  const isRoot = activity.zIndex === 0;
   const hasAppBar = !!appBar;
 
-  const zIndexBase = zIndex * 5;
+  const zIndexBase = activity.zIndex * 5;
   const zIndexDim = zIndexBase;
   const zIndexPaper = zIndexBase + (theme === "cupertino" && hasAppBar ? 1 : 3);
   const zIndexEdge = zIndexBase + 4;
@@ -52,7 +38,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
       ref={appScreenRef}
       className={css.appScreen({
         theme,
-        transitionState: useLazy(currentActivity.transitionState) ?? undefined,
+        transitionState: useLazy(activity.transitionState) ?? undefined,
       })}
       style={assignInlineVars(
         compactMap({
@@ -63,7 +49,8 @@ const AppScreen: React.FC<AppScreenProps> = ({
           [css.localVars.zIndexes.edge]: `${zIndexEdge}`,
           [css.localVars.zIndexes.appBar]: `${zIndexAppBar}`,
           [css.localVars.transitionDuration]:
-            stack.globalTransitionState === "loading"
+            activity.transitionState === "enter-done" ||
+            activity.transitionState === "enter-active"
               ? `${stack.transitionDuration}ms`
               : "0ms",
         }),
@@ -71,7 +58,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
     >
       <div className={css.dim} />
       <div
-        key={currentActivity.id}
+        key={activity.id}
         className={css.paper({
           hasAppBar,
         })}

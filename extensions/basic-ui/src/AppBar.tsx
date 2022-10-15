@@ -1,17 +1,11 @@
 import { useActions, useActivity } from "@stackflow/react";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
-import React, { useMemo, useRef } from "react";
+import React, { useRef } from "react";
 
 import * as css from "./AppBar.css";
 import * as appScreenCss from "./AppScreen.css";
 import { IconBack, IconClose } from "./assets";
-import {
-  compactMap,
-  last,
-  noop,
-  useActivitiesFilter,
-  useMaxWidth,
-} from "./utils";
+import { compactMap, noop, useMaxWidth } from "./utils";
 
 interface AppBarProps {
   theme?: "android" | "cupertino";
@@ -60,29 +54,9 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
     ref,
   ) => {
     const actions = useActions();
-
-    const currentActivity = useActivity();
-
-    const enteredActivities = useActivitiesFilter({
-      or: ["enter-active", "enter-done"],
-    });
-    const topEnteredActivity = useMemo(
-      () => last(enteredActivities),
-      [enteredActivities],
-    );
-
-    const isActive = useMemo(
-      () => topEnteredActivity?.id === currentActivity.id,
-      [topEnteredActivity, currentActivity],
-    );
+    const activity = useActivity();
 
     const centerRef = useRef<any>(null);
-
-    const isRoot = enteredActivities[0]?.id === currentActivity.id;
-    const isAfterRoot = enteredActivities[1]?.id === currentActivity.id;
-    const isPushedByReplace = currentActivity.pushedBy.name === "Replaced";
-
-    const isCloseButtonVisible = isRoot || (isAfterRoot && isPushedByReplace);
 
     const { maxWidth } = useMaxWidth({
       outerRef: ref,
@@ -90,7 +64,7 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
       enable: theme === "cupertino",
     });
 
-    const onBack = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const onBackClick = (e: React.MouseEvent<HTMLButtonElement>) => {
       if (backButton && "onClick" in backButton && backButton.onClick) {
         backButton.onClick(e);
       }
@@ -100,6 +74,10 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
       }
     };
 
+    const isCloseButtonVisible =
+      activity.zIndex === 0 ||
+      (activity.zIndex === 1 && activity.pushedBy.name === "Replaced");
+
     const renderBackButton = () => {
       if (isCloseButtonVisible) {
         return null;
@@ -107,7 +85,11 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
 
       if (!backButton) {
         return (
-          <button type="button" className={css.backButton} onClick={onBack}>
+          <button
+            type="button"
+            className={css.backButton}
+            onClick={onBackClick}
+          >
             <IconBack />
           </button>
         );
@@ -118,7 +100,7 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
       }
 
       return (
-        <button type="button" className={css.backButton} onClick={onBack}>
+        <button type="button" className={css.backButton} onClick={onBackClick}>
           {"renderIcon" in backButton && backButton.renderIcon ? (
             backButton.renderIcon()
           ) : (
@@ -162,7 +144,7 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
         ref={ref}
         className={css.appBar({
           border,
-          isActive,
+          isActive: activity.isActive,
         })}
         style={assignInlineVars(
           compactMap({
