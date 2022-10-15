@@ -5,7 +5,8 @@ import React, { useRef } from "react";
 import * as css from "./AppBar.css";
 import * as appScreenCss from "./AppScreen.css";
 import { IconBack, IconClose } from "./assets";
-import { compactMap, noop, useMaxWidth } from "./utils";
+import { useMaxWidth } from "./hooks";
+import { compactMap, noop } from "./utils";
 
 interface AppBarProps {
   theme?: "android" | "cupertino";

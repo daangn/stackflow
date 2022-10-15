@@ -6,12 +6,9 @@ import React, { useRef } from "react";
 
 import AppBar from "./AppBar";
 import * as css from "./AppScreen.css";
-import { useStyleEffect } from "./useStyleEffect";
+import { useLazy, useStyleEffectHide, useStyleEffectOffset } from "./hooks";
 import type { PropOf } from "./utils";
-import { compactMap, listenOnce, requestNextFrame, useLazy } from "./utils";
-
-const OFFSET_TRANSFORM_ANDROID = "translateY(-2rem)";
-const OFFSET_TRANSFORM_CUPERTINO = "translateX(-5rem)";
+import { compactMap } from "./utils";
 
 interface AppScreenProps {
   theme?: "android" | "cupertino";
@@ -31,63 +28,12 @@ const AppScreen: React.FC<AppScreenProps> = ({
   const paperRef = useRef<HTMLDivElement>(null);
   const appBarRef = useRef<HTMLDivElement>(null);
 
-  useStyleEffect({
-    styleName: "offset",
-    refs: theme === "cupertino" ? [paperRef] : [paperRef, appBarRef],
-    effect({ activityTransitionState, refs }) {
-      const transform =
-        theme === "cupertino"
-          ? OFFSET_TRANSFORM_CUPERTINO
-          : OFFSET_TRANSFORM_ANDROID;
-
-      switch (activityTransitionState) {
-        case "enter-active":
-        case "enter-done": {
-          refs.forEach((ref) => {
-            ref.current.style.transition = `transform var(--stackflow-transition-duration)`;
-            ref.current.style.transform = transform;
-          });
-          break;
-        }
-        case "exit-active":
-        case "exit-done": {
-          requestNextFrame(() => {
-            refs.forEach((ref) => {
-              ref.current.style.transform = "";
-
-              listenOnce(ref.current, "transitionend", () => {
-                ref.current.style.transition = "";
-              });
-            });
-          });
-          break;
-        }
-        default: {
-          break;
-        }
-      }
-    },
-  });
-
-  useStyleEffect({
-    styleName: "display-none",
+  useStyleEffectHide({
     refs: [appScreenRef],
-    effect({ activityTransitionState, refs }) {
-      switch (activityTransitionState) {
-        case "enter-done": {
-          refs.forEach((ref) => {
-            ref.current.style.display = "none";
-          });
-          break;
-        }
-        default: {
-          refs.forEach((ref) => {
-            ref.current.style.display = "";
-          });
-          break;
-        }
-      }
-    },
+  });
+  useStyleEffectOffset({
+    theme,
+    refs: theme === "cupertino" ? [paperRef] : [paperRef, appBarRef],
   });
 
   const isRoot = activity.zIndex === 0;
