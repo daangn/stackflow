@@ -23,7 +23,7 @@ export function useStyleEffect({
   effect?: (params: {
     activityTransitionState: ActivityTransitionState;
     refs: Array<React.RefObject<any>>;
-  }) => void;
+  }) => (() => void) | void;
 }) {
   const activity = useActivity();
 
@@ -44,7 +44,7 @@ export function useStyleEffect({
 
   useEffect(() => {
     if (!effect) {
-      return;
+      return () => {};
     }
 
     const refs = (() => {
@@ -64,9 +64,13 @@ export function useStyleEffect({
       return arr;
     })();
 
-    effect({
+    const cleanup = effect({
       activityTransitionState: activity.transitionState,
       refs,
     });
+
+    return () => {
+      cleanup?.();
+    };
   }, [activity.transitionState]);
 }

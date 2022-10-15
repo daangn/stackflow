@@ -1,12 +1,17 @@
 /* eslint-disable no-param-reassign */
 
-import { useActivity } from "@stackflow/react";
+import { useActions, useActivity } from "@stackflow/react";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
 import React, { useRef } from "react";
 
 import AppBar from "./AppBar";
 import * as css from "./AppScreen.css";
-import { useLazy, useStyleEffectHide, useStyleEffectOffset } from "./hooks";
+import {
+  useLazy,
+  useStyleEffectHide,
+  useStyleEffectOffset,
+  useStyleEffectSwipeBack,
+} from "./hooks";
 import type { PropOf } from "./utils";
 import { compactMap } from "./utils";
 
@@ -23,17 +28,32 @@ const AppScreen: React.FC<AppScreenProps> = ({
   backgroundColor,
 }) => {
   const activity = useActivity();
+  const { pop } = useActions();
 
   const appScreenRef = useRef<HTMLDivElement>(null);
+  const dimRef = useRef<HTMLDivElement>(null);
   const paperRef = useRef<HTMLDivElement>(null);
+  const edgeRef = useRef<HTMLDivElement>(null);
   const appBarRef = useRef<HTMLDivElement>(null);
 
   useStyleEffectHide({
     refs: [appScreenRef],
+    hasEffect: true,
   });
   useStyleEffectOffset({
     theme,
     refs: theme === "cupertino" ? [paperRef] : [paperRef, appBarRef],
+    hasEffect: true,
+  });
+  useStyleEffectSwipeBack({
+    theme,
+    dimRef,
+    edgeRef,
+    paperRef,
+    hasEffect: true,
+    onSwiped() {
+      pop();
+    },
   });
 
   const isRoot = activity.zIndex === 0;
@@ -68,7 +88,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
         }),
       )}
     >
-      <div className={css.dim} />
+      <div className={css.dim} ref={dimRef} />
       <div
         key={activity.id}
         className={css.paper({
@@ -79,7 +99,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
         {children}
       </div>
       {!isRoot && theme === "cupertino" && (
-        <div className={css.edge({ hasAppBar })} />
+        <div className={css.edge({ hasAppBar })} ref={edgeRef} />
       )}
       {appBar && <AppBar {...appBar} theme={theme} ref={appBarRef} />}
     </div>
