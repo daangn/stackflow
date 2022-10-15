@@ -8,7 +8,7 @@ const connections: {
     number,
     {
       refs: Array<React.RefObject<any>>;
-      split: boolean;
+      hasEffect: boolean;
     }
   >;
 } = {};
@@ -34,7 +34,7 @@ export function useStyleEffect({
 
     connections[styleName].set(activity.zIndex, {
       refs,
-      split: !!effect,
+      hasEffect: !!effect,
     });
 
     return () => {
@@ -56,7 +56,7 @@ export function useStyleEffect({
         if (connection?.refs) {
           arr = [...arr, ...connection.refs];
         }
-        if (connection?.split) {
+        if (connection?.hasEffect) {
           break;
         }
       }
