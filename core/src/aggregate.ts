@@ -49,6 +49,7 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
           },
           isTop: false,
           isRoot: false,
+          isActive: false,
         });
 
         break;
@@ -76,6 +77,7 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
           },
           isTop: false,
           isRoot: false,
+          isActive: false,
         });
 
         if (targetActivity && transitionState === "enter-done") {
@@ -110,18 +112,23 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
     }
   });
 
-  const visibleActivities = uniqBy(
-    activities.filter(
-      (activity) =>
-        activity.transitionState === "enter-active" ||
-        activity.transitionState === "enter-done" ||
-        activity.transitionState === "exit-active",
-    ),
-    (activity) => activity.id,
+  const uniqActivities = uniqBy(activities, (activity) => activity.id);
+
+  const visibleActivities = uniqActivities.filter(
+    (activity) =>
+      activity.transitionState === "enter-active" ||
+      activity.transitionState === "enter-done" ||
+      activity.transitionState === "exit-active",
+  );
+  const enteredActivities = visibleActivities.filter(
+    (activity) =>
+      activity.transitionState === "enter-active" ||
+      activity.transitionState === "enter-done",
   );
 
   const firstVisibleActivity = visibleActivities[0];
   const lastVisibleActivity = visibleActivities[visibleActivities.length - 1];
+  const lastEnteredActivity = enteredActivities[enteredActivities.length - 1];
 
   const globalTransitionState = activities.find(
     (activity) =>
@@ -132,23 +139,23 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
     : "idle";
 
   const output: AggregateOutput = {
-    activities: uniqBy(
-      activities.map((activity) => ({
+    activities: uniqActivities
+      .map((activity) => ({
         id: activity.id,
         name: activity.name,
         transitionState: activity.transitionState,
         params: activity.params,
         pushedBy: activity.pushedBy,
         isRoot: firstVisibleActivity?.id === activity.id,
+        isActive: lastEnteredActivity?.id === activity.id,
         isTop: lastVisibleActivity?.id === activity.id,
         ...(activity.context
           ? {
               context: activity.context,
             }
           : null),
-      })),
-      (activity) => activity.id,
-    ).sort((a, b) => compareBy(a, b, (activity) => activity.id)),
+      }))
+      .sort((a, b) => compareBy(a, b, (activity) => activity.id)),
     transitionDuration,
     globalTransitionState,
   };

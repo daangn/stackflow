@@ -16,6 +16,7 @@ export type Activity = {
   context?: {};
   pushedBy: PushedEvent | ReplacedEvent;
   isTop: boolean;
+  isActive: boolean;
   isRoot: boolean;
 };
 
