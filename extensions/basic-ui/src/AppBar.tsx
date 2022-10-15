@@ -76,7 +76,9 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
 
     const isCloseButtonVisible =
       activity.zIndex === 0 ||
-      (activity.zIndex === 1 && activity.pushedBy.name === "Replaced");
+      (activity.zIndex === 1 &&
+        activity.transitionState === "enter-active" &&
+        activity.pushedBy.name === "Replaced");
 
     const renderBackButton = () => {
       if (isCloseButtonVisible) {
