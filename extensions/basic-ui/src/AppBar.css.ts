@@ -58,7 +58,7 @@ export const appBar = recipe({
         }`,
       },
     },
-    isTopActive: {
+    isActive: {
       false: {
         selectors: {
           [`${android}${enterActive} &, ${rootAndroid} ${enterActive} &`]: {

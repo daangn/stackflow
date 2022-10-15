@@ -95,11 +95,6 @@ export const appScreen = recipe({
       android,
       cupertino,
     },
-    show: {
-      false: {
-        display: "none",
-      },
-    },
     transitionState: {
       "enter-active": enterActive,
       "enter-done": enterDone,

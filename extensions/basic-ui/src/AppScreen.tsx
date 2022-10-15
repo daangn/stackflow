@@ -5,13 +5,7 @@ import React, { useMemo, useRef } from "react";
 import AppBar from "./AppBar";
 import * as css from "./AppScreen.css";
 import type { PropOf } from "./utils";
-import {
-  compactMap,
-  findBefore,
-  useLazy,
-  useTopVisibleActivity,
-  useVisibleActivities,
-} from "./utils";
+import { compactMap, useActivitiesFilter, useLazy } from "./utils";
 
 interface AppScreenProps {
   theme?: "android" | "cupertino";
@@ -28,22 +22,12 @@ const AppScreen: React.FC<AppScreenProps> = ({
   const stack = useStack();
 
   const currentActivity = useActivity();
-  const visibleActivities = useVisibleActivities();
-  const topVisibleActivity = useTopVisibleActivity();
 
-  const isTopVisible = useMemo(
-    () => topVisibleActivity?.id === currentActivity.id,
-    [topVisibleActivity, currentActivity],
-  );
+  const visibleActivities = useActivitiesFilter({
+    or: ["enter-active", "enter-done", "exit-active"],
+  });
+
   const isRoot = visibleActivities[0]?.id === currentActivity.id;
-
-  const isBeforeTopVisible = useMemo(() => {
-    const beforeTopVisibleActivity = findBefore(
-      visibleActivities,
-      (activity) => activity.id === topVisibleActivity.id,
-    );
-    return beforeTopVisibleActivity?.id === currentActivity.id;
-  }, [visibleActivities, topVisibleActivity]);
 
   const zIndex = useMemo(
     () =>
@@ -68,7 +52,6 @@ const AppScreen: React.FC<AppScreenProps> = ({
       ref={appScreenRef}
       className={css.appScreen({
         theme,
-        show: isTopVisible || isBeforeTopVisible,
         transitionState: useLazy(currentActivity.transitionState) ?? undefined,
       })}
       style={assignInlineVars(

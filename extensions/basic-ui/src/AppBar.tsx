@@ -7,10 +7,10 @@ import * as appScreenCss from "./AppScreen.css";
 import { IconBack, IconClose } from "./assets";
 import {
   compactMap,
+  last,
   noop,
-  useActiveActivities,
+  useActivitiesFilter,
   useMaxWidth,
-  useTopActiveActivity,
 } from "./utils";
 
 interface AppBarProps {
@@ -62,18 +62,24 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
     const actions = useActions();
 
     const currentActivity = useActivity();
-    const activeActivities = useActiveActivities();
-    const topActiveActivity = useTopActiveActivity();
 
-    const isTopActive = useMemo(
-      () => topActiveActivity?.id === currentActivity.id,
-      [topActiveActivity, currentActivity],
+    const enteredActivities = useActivitiesFilter({
+      or: ["enter-active", "enter-done"],
+    });
+    const topEnteredActivity = useMemo(
+      () => last(enteredActivities),
+      [enteredActivities],
+    );
+
+    const isActive = useMemo(
+      () => topEnteredActivity?.id === currentActivity.id,
+      [topEnteredActivity, currentActivity],
     );
 
     const centerRef = useRef<any>(null);
 
-    const isRoot = activeActivities[0]?.id === currentActivity.id;
-    const isAfterRoot = activeActivities[1]?.id === currentActivity.id;
+    const isRoot = enteredActivities[0]?.id === currentActivity.id;
+    const isAfterRoot = enteredActivities[1]?.id === currentActivity.id;
     const isPushedByReplace = currentActivity.pushedBy.name === "Replaced";
 
     const isCloseButtonVisible = isRoot || (isAfterRoot && isPushedByReplace);
@@ -156,7 +162,7 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
         ref={ref}
         className={css.appBar({
           border,
-          isTopActive,
+          isActive,
         })}
         style={assignInlineVars(
           compactMap({
