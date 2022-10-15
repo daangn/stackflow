@@ -1,6 +1,6 @@
 import { useActivity, useStack } from "@stackflow/react";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useMemo, useRef } from "react";
 
 import AppBar from "./AppBar";
 import * as css from "./AppScreen.css";
@@ -8,14 +8,10 @@ import type { PropOf } from "./utils";
 import {
   compactMap,
   findBefore,
+  useLazy,
   useTopVisibleActivity,
-  useVariant,
   useVisibleActivities,
 } from "./utils";
-
-const appScreenRefMap = new Map<string, React.RefObject<any>>();
-const paperRefMap = new Map<string, React.RefObject<any>>();
-const appBarRefMap = new Map<string, React.RefObject<any>>();
 
 interface AppScreenProps {
   theme?: "android" | "cupertino";
@@ -49,49 +45,6 @@ const AppScreen: React.FC<AppScreenProps> = ({
     return beforeTopVisibleActivity?.id === currentActivity.id;
   }, [visibleActivities, topVisibleActivity]);
 
-  const dimRef = useRef<any>(null);
-  const paperRef = useRef<any>(null);
-  const edgeRef = useRef<any>(null);
-  const appBarRef = useRef<any>(null);
-
-  const { ref: appScreenRef, className: appScreen } = useVariant({
-    variant: currentActivity.transitionState,
-    base: css.appScreen({
-      theme,
-      show: isTopVisible || isBeforeTopVisible,
-    }),
-    variants: {
-      "enter-active": css.enterActive,
-      "enter-done": css.enterDone,
-      "exit-active": css.exitActive,
-      "exit-done": css.exitDone,
-    },
-    lazy: {
-      "enter-active": true,
-    },
-  });
-
-  const beforeActivity = useMemo(
-    () =>
-      findBefore(
-        visibleActivities,
-        (activity) => activity.id === currentActivity.id,
-      ),
-    [visibleActivities],
-  );
-
-  useEffect(() => {
-    appScreenRefMap.set(currentActivity.id, appScreenRef);
-    paperRefMap.set(currentActivity.id, paperRef);
-    appBarRefMap.set(currentActivity.id, appBarRef);
-
-    return () => {
-      appScreenRefMap.delete(currentActivity.id);
-      paperRefMap.delete(currentActivity.id);
-      appBarRefMap.delete(currentActivity.id);
-    };
-  }, [currentActivity, appScreenRef, paperRef, appBarRef]);
-
   const zIndex = useMemo(
     () =>
       visibleActivities.findIndex(
@@ -99,6 +52,8 @@ const AppScreen: React.FC<AppScreenProps> = ({
       ),
     [visibleActivities, currentActivity],
   );
+
+  const appScreenRef = useRef<any>(null);
 
   const hasAppBar = !!appBar;
 
@@ -111,7 +66,11 @@ const AppScreen: React.FC<AppScreenProps> = ({
   return (
     <div
       ref={appScreenRef}
-      className={appScreen}
+      className={css.appScreen({
+        theme,
+        show: isTopVisible || isBeforeTopVisible,
+        transitionState: useLazy(currentActivity.transitionState) ?? undefined,
+      })}
       style={assignInlineVars(
         compactMap({
           [css.vars.backgroundColor]: backgroundColor,
@@ -127,10 +86,9 @@ const AppScreen: React.FC<AppScreenProps> = ({
         }),
       )}
     >
-      <div ref={dimRef} className={css.dim} />
+      <div className={css.dim} />
       <div
         key={currentActivity.id}
-        ref={paperRef}
         className={css.paper({
           hasAppBar,
         })}
@@ -138,9 +96,9 @@ const AppScreen: React.FC<AppScreenProps> = ({
         {children}
       </div>
       {!isRoot && theme === "cupertino" && (
-        <div ref={edgeRef} className={css.edge({ hasAppBar })} />
+        <div className={css.edge({ hasAppBar })} />
       )}
-      {appBar && <AppBar {...appBar} theme={theme} ref={appBarRef} />}
+      {appBar && <AppBar {...appBar} theme={theme} />}
     </div>
   );
 };
