@@ -17,7 +17,7 @@ export type Activity = {
   pushedBy: PushedEvent | ReplacedEvent;
   isTop: boolean;
   isActive: boolean;
-  isRoot: boolean;
+  zIndex: number;
 };
 
 export type AggregateOutput = {

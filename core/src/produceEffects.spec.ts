@@ -13,9 +13,9 @@ test("differences - 알 수 없는 이유로 두 object가 다르다면, %SOMETH
             pushedBy: {
               name: "Pushed",
             } as any,
-            isRoot: true,
             isActive: true,
             isTop: true,
+            zIndex: 0,
           },
         ],
         transitionDuration: 300,
@@ -31,9 +31,9 @@ test("differences - 알 수 없는 이유로 두 object가 다르다면, %SOMETH
             pushedBy: {
               name: "Pushed",
             } as any,
-            isRoot: true,
             isActive: true,
             isTop: true,
+            zIndex: 0,
           },
         ],
         transitionDuration: 300,
@@ -65,9 +65,9 @@ test("differences - 새로운 액티비티가 추가되었다면, PUSHED 이펙�
             pushedBy: {
               name: "Pushed",
             } as any,
-            isRoot: true,
             isActive: true,
             isTop: true,
+            zIndex: 0,
           },
         ],
         transitionDuration: 300,
@@ -88,9 +88,9 @@ test("differences - 새로운 액티비티가 추가되었다면, PUSHED 이펙�
         pushedBy: {
           name: "Pushed",
         } as any,
-        isRoot: true,
         isActive: true,
         isTop: true,
+        zIndex: 0,
       },
     },
   ]);
@@ -114,9 +114,9 @@ test("differences - 여러개 액티비티가 추가되었다면, PUSHED 이펙�
             pushedBy: {
               name: "Pushed",
             } as any,
-            isRoot: true,
             isActive: false,
             isTop: false,
+            zIndex: 0,
           },
           {
             id: "2",
@@ -126,9 +126,9 @@ test("differences - 여러개 액티비티가 추가되었다면, PUSHED 이펙�
             pushedBy: {
               name: "Pushed",
             } as any,
-            isRoot: false,
             isActive: true,
             isTop: true,
+            zIndex: 1,
           },
         ],
         transitionDuration: 300,
@@ -149,9 +149,9 @@ test("differences - 여러개 액티비티가 추가되었다면, PUSHED 이펙�
         pushedBy: {
           name: "Pushed",
         } as any,
-        isRoot: true,
         isActive: false,
         isTop: false,
+        zIndex: 0,
       },
     },
     {
@@ -164,9 +164,9 @@ test("differences - 여러개 액티비티가 추가되었다면, PUSHED 이펙�
         pushedBy: {
           name: "Pushed",
         } as any,
-        isRoot: false,
         isActive: true,
         isTop: true,
+        zIndex: 1,
       },
     },
   ]);
@@ -185,9 +185,9 @@ test("differences - 액티비티 상태가 exit-active로 변한 액티비티가
             pushedBy: {
               name: "Pushed",
             } as any,
-            isRoot: true,
             isActive: false,
             isTop: false,
+            zIndex: 0,
           },
           {
             id: "2",
@@ -197,9 +197,9 @@ test("differences - 액티비티 상태가 exit-active로 변한 액티비티가
             pushedBy: {
               name: "Pushed",
             } as any,
-            isRoot: false,
             isActive: true,
             isTop: true,
+            zIndex: 1,
           },
         ],
         transitionDuration: 300,
@@ -215,9 +215,9 @@ test("differences - 액티비티 상태가 exit-active로 변한 액티비티가
             pushedBy: {
               name: "Pushed",
             } as any,
-            isRoot: true,
             isActive: true,
             isTop: false,
+            zIndex: 0,
           },
           {
             id: "2",
@@ -227,9 +227,9 @@ test("differences - 액티비티 상태가 exit-active로 변한 액티비티가
             pushedBy: {
               name: "Pushed",
             } as any,
-            isRoot: false,
             isActive: false,
             isTop: true,
+            zIndex: 1,
           },
         ],
         transitionDuration: 300,
@@ -250,9 +250,9 @@ test("differences - 액티비티 상태가 exit-active로 변한 액티비티가
         pushedBy: {
           name: "Pushed",
         } as any,
-        isRoot: false,
         isActive: false,
         isTop: true,
+        zIndex: 1,
       },
     },
   ]);
@@ -271,9 +271,9 @@ test("differences - 액티비티 상태가 exit-active로 변한 액티비티가
             pushedBy: {
               name: "Pushed",
             } as any,
-            isRoot: true,
             isActive: false,
             isTop: false,
+            zIndex: 0,
           },
           {
             id: "2",
@@ -283,9 +283,9 @@ test("differences - 액티비티 상태가 exit-active로 변한 액티비티가
             pushedBy: {
               name: "Pushed",
             } as any,
-            isRoot: false,
             isActive: true,
             isTop: true,
+            zIndex: 1,
           },
         ],
         transitionDuration: 300,
@@ -301,9 +301,9 @@ test("differences - 액티비티 상태가 exit-active로 변한 액티비티가
             pushedBy: {
               name: "Pushed",
             } as any,
-            isRoot: true,
             isActive: false,
             isTop: false,
+            zIndex: 0,
           },
           {
             id: "2",
@@ -313,9 +313,9 @@ test("differences - 액티비티 상태가 exit-active로 변한 액티비티가
             pushedBy: {
               name: "Pushed",
             } as any,
-            isRoot: false,
             isActive: false,
             isTop: true,
+            zIndex: 1,
           },
         ],
         transitionDuration: 300,
@@ -336,9 +336,9 @@ test("differences - 액티비티 상태가 exit-active로 변한 액티비티가
         pushedBy: {
           name: "Pushed",
         } as any,
-        isRoot: false,
         isActive: false,
         isTop: true,
+        zIndex: 1,
       },
     },
     {
@@ -351,9 +351,9 @@ test("differences - 액티비티 상태가 exit-active로 변한 액티비티가
         pushedBy: {
           name: "Pushed",
         } as any,
-        isRoot: true,
         isActive: false,
         isTop: false,
+        zIndex: 0,
       },
     },
   ]);
@@ -372,9 +372,9 @@ test("differences - PushedEvent로 인해 액티비티 상태가 enter-active로
             pushedBy: {
               name: "Pushed",
             } as any,
-            isRoot: true,
             isActive: true,
             isTop: true,
+            zIndex: 0,
           },
           {
             id: "2",
@@ -384,9 +384,9 @@ test("differences - PushedEvent로 인해 액티비티 상태가 enter-active로
             pushedBy: {
               name: "Pushed",
             } as any,
-            isRoot: false,
             isActive: false,
             isTop: false,
+            zIndex: -1,
           },
         ],
         transitionDuration: 300,
@@ -402,9 +402,9 @@ test("differences - PushedEvent로 인해 액티비티 상태가 enter-active로
             pushedBy: {
               name: "Pushed",
             } as any,
-            isRoot: true,
             isActive: false,
             isTop: false,
+            zIndex: 0,
           },
           {
             id: "2",
@@ -414,9 +414,9 @@ test("differences - PushedEvent로 인해 액티비티 상태가 enter-active로
             pushedBy: {
               name: "Pushed",
             } as any,
-            isRoot: false,
             isActive: true,
             isTop: true,
+            zIndex: 1,
           },
         ],
         transitionDuration: 300,
@@ -437,9 +437,9 @@ test("differences - PushedEvent로 인해 액티비티 상태가 enter-active로
         pushedBy: {
           name: "Pushed",
         } as any,
-        isRoot: false,
         isActive: true,
         isTop: true,
+        zIndex: 1,
       },
     },
   ]);
@@ -458,9 +458,9 @@ test("differences - Replaced 이벤트로 인해 액티비티 상태가 enter-ac
             pushedBy: {
               name: "Pushed",
             } as any,
-            isRoot: true,
             isActive: true,
             isTop: true,
+            zIndex: 1,
           },
           {
             id: "2",
@@ -470,9 +470,9 @@ test("differences - Replaced 이벤트로 인해 액티비티 상태가 enter-ac
             pushedBy: {
               name: "Pushed",
             } as any,
-            isRoot: false,
             isActive: false,
             isTop: false,
+            zIndex: -1,
           },
         ],
         transitionDuration: 300,
@@ -488,9 +488,9 @@ test("differences - Replaced 이벤트로 인해 액티비티 상태가 enter-ac
             pushedBy: {
               name: "Pushed",
             } as any,
-            isRoot: true,
             isActive: false,
             isTop: false,
+            zIndex: 0,
           },
           {
             id: "2",
@@ -500,9 +500,9 @@ test("differences - Replaced 이벤트로 인해 액티비티 상태가 enter-ac
             pushedBy: {
               name: "Pushed",
             } as any,
-            isRoot: false,
             isActive: false,
             isTop: false,
+            zIndex: -1,
           },
           {
             id: "3",
@@ -512,9 +512,9 @@ test("differences - Replaced 이벤트로 인해 액티비티 상태가 enter-ac
             pushedBy: {
               name: "Replaced",
             } as any,
-            isRoot: false,
             isActive: true,
             isTop: true,
+            zIndex: 1,
           },
         ],
         transitionDuration: 300,
@@ -535,9 +535,9 @@ test("differences - Replaced 이벤트로 인해 액티비티 상태가 enter-ac
         pushedBy: {
           name: "Replaced",
         } as any,
-        isRoot: false,
         isActive: true,
         isTop: true,
+        zIndex: 1,
       },
     },
   ]);
