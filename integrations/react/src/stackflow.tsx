@@ -67,6 +67,14 @@ export function stackflow<T extends BaseActivities>(
     {},
   );
 
+  if (typeof window !== "undefined") {
+    const root = window.document.documentElement;
+    root.style.setProperty(
+      "--stackflow-transition-duration",
+      `${options.transitionDuration}ms`,
+    );
+  }
+
   return {
     Stack(props) {
       const plugins = useMemo(

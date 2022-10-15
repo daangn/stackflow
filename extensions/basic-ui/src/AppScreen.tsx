@@ -1,4 +1,4 @@
-import { useActivity, useStack } from "@stackflow/react";
+import { useActivity } from "@stackflow/react";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
 import React, { useRef } from "react";
 
@@ -19,7 +19,6 @@ const AppScreen: React.FC<AppScreenProps> = ({
   children,
   backgroundColor,
 }) => {
-  const stack = useStack();
   const activity = useActivity();
 
   const appScreenRef = useRef<any>(null);
@@ -49,9 +48,9 @@ const AppScreen: React.FC<AppScreenProps> = ({
           [css.localVars.zIndexes.edge]: `${zIndexEdge}`,
           [css.localVars.zIndexes.appBar]: `${zIndexAppBar}`,
           [css.localVars.transitionDuration]:
-            activity.transitionState === "enter-done" ||
-            activity.transitionState === "enter-active"
-              ? `${stack.transitionDuration}ms`
+            activity.transitionState === "enter-active" ||
+            activity.transitionState === "exit-active"
+              ? `var(--stackflow-transition-duration)`
               : "0ms",
         }),
       )}
