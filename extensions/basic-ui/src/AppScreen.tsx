@@ -1,8 +1,6 @@
-import type { ActivityTransitionState } from "@stackflow/core";
-import { useActions, useActivity, useStack } from "@stackflow/react";
+import { useActivity, useStack } from "@stackflow/react";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
 import React, { useEffect, useMemo, useRef } from "react";
-import { match, P } from "ts-pattern";
 
 import AppBar from "./AppBar";
 import * as css from "./AppScreen.css";
@@ -10,12 +8,10 @@ import type { PropOf } from "./utils";
 import {
   compactMap,
   findBefore,
-  useTopActiveActivity,
   useTopVisibleActivity,
   useVariant,
   useVisibleActivities,
 } from "./utils";
-import { useSwipeBack } from "./utils/useSwipeBack";
 
 const appScreenRefMap = new Map<string, React.RefObject<any>>();
 const paperRefMap = new Map<string, React.RefObject<any>>();
@@ -34,17 +30,11 @@ const AppScreen: React.FC<AppScreenProps> = ({
   backgroundColor,
 }) => {
   const stack = useStack();
-  const actions = useActions();
 
   const currentActivity = useActivity();
   const visibleActivities = useVisibleActivities();
   const topVisibleActivity = useTopVisibleActivity();
-  const topActiveActivity = useTopActiveActivity();
 
-  const isTopActive = useMemo(
-    () => topActiveActivity?.id === currentActivity.id,
-    [topActiveActivity, currentActivity],
-  );
   const isTopVisible = useMemo(
     () => topVisibleActivity?.id === currentActivity.id,
     [topVisibleActivity, currentActivity],
@@ -89,68 +79,6 @@ const AppScreen: React.FC<AppScreenProps> = ({
       ),
     [visibleActivities],
   );
-
-  useSwipeBack({
-    dimRef,
-    paperRef,
-    edgeRef,
-    transitionDuration: stack.transitionDuration,
-    getBeforeAppScreen() {
-      if (!beforeActivity) {
-        return null;
-      }
-      return appScreenRefMap.get(beforeActivity.id)?.current;
-    },
-    getBeforePaper() {
-      if (!beforeActivity) {
-        return null;
-      }
-      return paperRefMap.get(beforeActivity.id)?.current;
-    },
-    onBack() {
-      actions.pop();
-    },
-  });
-
-  useEffect(() => {
-    if (!beforeActivity) {
-      return;
-    }
-
-    const beforeAppScreen = appScreenRefMap.get(beforeActivity.id)
-      ?.current as HTMLDivElement;
-    const beforePaper = paperRefMap.get(beforeActivity.id)
-      ?.current as HTMLDivElement;
-    const beforeAppBar = appBarRefMap.get(beforeActivity.id)
-      ?.current as HTMLDivElement;
-
-    match<
-      [ActivityTransitionState, string, "android" | "cupertino" | undefined]
-    >([currentActivity.transitionState, beforeAppScreen.style.display, theme])
-      .with(["enter-done", P._, P._], () => {
-        beforeAppScreen.style.display = "none";
-      })
-      .with([P.union("exit-done", "exit-active"), "none", "cupertino"], () => {
-        beforeAppScreen.style.display = "block";
-        beforePaper.style.transform = css.CUPERTINO_APP_SCREEN_PAPER_OFFSET;
-
-        setTimeout(() => {
-          beforePaper.style.transform = "";
-        }, 16);
-      })
-      .with([P.union("exit-done", "exit-active"), "none", "android"], () => {
-        beforeAppScreen.style.display = "block";
-        beforePaper.style.transform = css.ANDROID_APP_SCREEN_PAPER_OFFSET;
-        beforeAppBar.style.transform = css.ANDROID_APP_SCREEN_PAPER_OFFSET;
-
-        setTimeout(() => {
-          beforePaper.style.transform = "";
-          beforeAppBar.style.transform = "";
-        }, 16);
-      })
-      .with([P._, P._, P._], () => {})
-      .exhaustive();
-  }, [currentActivity.transitionState]);
 
   useEffect(() => {
     appScreenRefMap.set(currentActivity.id, appScreenRef);
@@ -204,7 +132,6 @@ const AppScreen: React.FC<AppScreenProps> = ({
         key={currentActivity.id}
         ref={paperRef}
         className={css.paper({
-          offset: !isTopActive,
           hasAppBar,
         })}
       >
