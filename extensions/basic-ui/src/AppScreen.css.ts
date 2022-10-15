@@ -85,7 +85,7 @@ export const background = style({
 });
 
 export const allTransitions = style({
-  transition: `transform ${localVars.transitionDuration}, opacity ${localVars.transitionDuration}`,
+  transition: localVars.transitionDuration,
 });
 
 export const appScreen = recipe({

@@ -29,7 +29,7 @@ export function useStyleEffectOffset({
             case "enter-active":
             case "enter-done": {
               refs.forEach((ref) => {
-                ref.current.style.transition = `transform var(--stackflow-transition-duration)`;
+                ref.current.style.transition = `var(--stackflow-transition-duration)`;
                 ref.current.style.transform = transform;
               });
               break;

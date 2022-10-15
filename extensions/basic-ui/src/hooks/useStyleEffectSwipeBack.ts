@@ -109,7 +109,7 @@ export function useStyleEffectSwipeBack({
                   return;
                 }
 
-                ref.current.style.transition = `transform var(--stackflow-transition-duration)`;
+                ref.current.style.transition = `var(--stackflow-transition-duration)`;
                 ref.current.style.transform = `translateX(${
                   swiped ? "0" : `-${OFFSET_PX_CUPERTINO / 16}rem`
                 })`;

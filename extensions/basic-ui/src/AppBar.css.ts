@@ -37,7 +37,7 @@ export const appBar = recipe({
         [`${android} &, ${rootAndroid} &`]: {
           opacity: 0,
           transform: "translateY(10rem)",
-          transition: `transform ${localVars.transitionDuration}, opacity ${localVars.transitionDuration}`,
+          transition: localVars.transitionDuration,
         },
         [`${android}${enterActive} &, ${rootAndroid} ${enterActive} &`]: {
           opacity: 1,
