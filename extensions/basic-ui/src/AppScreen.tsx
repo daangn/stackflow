@@ -4,6 +4,7 @@ import React, { useRef } from "react";
 
 import AppBar from "./AppBar";
 import * as css from "./AppScreen.css";
+import { useOffset } from "./useOffset";
 import type { PropOf } from "./utils";
 import { compactMap, useLazy } from "./utils";
 
@@ -14,14 +15,22 @@ interface AppScreenProps {
   children: React.ReactNode;
 }
 const AppScreen: React.FC<AppScreenProps> = ({
-  theme,
+  theme = "android",
   appBar,
   children,
   backgroundColor,
 }) => {
   const activity = useActivity();
 
-  const appScreenRef = useRef<any>(null);
+  const appScreenRef = useRef<HTMLDivElement>(null);
+  const paperRef = useRef<HTMLDivElement>(null);
+  const appBarRef = useRef<HTMLDivElement>(null);
+
+  useOffset({
+    targetRefs: theme === "cupertino" ? [paperRef] : [paperRef, appBarRef],
+    isActivityCover: true,
+    theme,
+  });
 
   const isRoot = activity.zIndex === 0;
   const hasAppBar = !!appBar;
@@ -61,13 +70,14 @@ const AppScreen: React.FC<AppScreenProps> = ({
         className={css.paper({
           hasAppBar,
         })}
+        ref={paperRef}
       >
         {children}
       </div>
       {!isRoot && theme === "cupertino" && (
         <div className={css.edge({ hasAppBar })} />
       )}
-      {appBar && <AppBar {...appBar} theme={theme} />}
+      {appBar && <AppBar {...appBar} theme={theme} ref={appBarRef} />}
     </div>
   );
 };
