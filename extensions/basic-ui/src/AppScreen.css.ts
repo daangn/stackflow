@@ -11,17 +11,17 @@ import { f } from "./styles";
 
 export const vars = createGlobalThemeContract(
   {
-    backgroundColor: null,
-    dimBackgroundColor: null,
+    backgroundColor: "background-color",
+    dimBackgroundColor: "dim-background-color",
     appBar: {
-      height: null,
-      borderColor: null,
-      borderSize: null,
-      textColor: null,
-      iconColor: null,
+      height: "app-bar-height",
+      borderColor: "app-bar-border-color",
+      borderSize: "app-bar-border-size",
+      textColor: "app-bar-text-color",
+      iconColor: "app-bar-icon-color",
     },
   },
-  (_value, path) => `stackflow-basic-ui-${path.join("-")}`,
+  (value) => `stackflow-basic-ui-${value}`,
 );
 
 export const localVars = createThemeContract({
@@ -39,13 +39,14 @@ export const localVars = createThemeContract({
   },
 });
 
+export const root = ":root";
 export const rootAndroid = ":root[data-stackflow-basic-ui-theme=android]";
 export const rootCupertino = ":root[data-stackflow-basic-ui-theme=cupertino]";
 
 export const android = style({});
 export const cupertino = style({});
 
-createGlobalTheme(`${android}, ${rootAndroid}`, vars, {
+createGlobalTheme(`${root}, ${rootAndroid}, ${android}`, vars, {
   backgroundColor: "#fff",
   dimBackgroundColor: "rgba(0, 0, 0, 0.15)",
   appBar: {
@@ -57,7 +58,7 @@ createGlobalTheme(`${android}, ${rootAndroid}`, vars, {
   },
 });
 
-createGlobalTheme(`${cupertino}, ${rootCupertino}`, vars, {
+createGlobalTheme(`${rootCupertino}, ${cupertino}`, vars, {
   backgroundColor: "#fff",
   dimBackgroundColor: "rgba(0, 0, 0, 0.15)",
   appBar: {

@@ -70,7 +70,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
       ref={appScreenRef}
       className={css.appScreen({
         theme,
-        transitionState: useLazy(activity.transitionState) ?? undefined,
+        transitionState: useLazy(activity.transitionState),
       })}
       style={assignInlineVars(
         compactMap({

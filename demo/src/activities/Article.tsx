@@ -1,11 +1,12 @@
 import type { ActivityComponentType } from "@stackflow/react";
 import { useActivityParams } from "@stackflow/react";
-import React from "react";
+import React, { useCallback } from "react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import ArticleCard from "../components/ArticleCard";
 import ArticleProfile from "../components/ArticleProfile";
 import Layout from "../components/Layout";
+import { useFlow } from "../stackflow";
 import * as css from "./Article.css";
 
 const recommenderCard = [
@@ -72,9 +73,28 @@ const Article: ActivityComponentType<ArticleParams> = () => {
     title: string;
   }>();
   const imageUrl = `https://picsum.photos/800/800/?id=${articleId}`;
+  const { push } = useFlow();
+
+  const appendRight = () => (
+    <div>
+      <button
+        type="button"
+        onClick={() => {
+          push("TestModal", {});
+        }}
+      >
+        modal
+      </button>
+      <button type="button">bs</button>
+    </div>
+  );
 
   return (
-    <Layout>
+    <Layout
+      appBar={{
+        appendRight,
+      }}
+    >
       <div className={css.container}>
         <div className={css.image}>
           <div className={css.imageInner}>

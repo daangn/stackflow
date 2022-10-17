@@ -4,10 +4,12 @@ import { stackflow } from "@stackflow/react";
 
 import Article from "./activities/Article";
 import Main from "./activities/Main";
+import TestModal from "./activities/TestModal";
 
 const activities = {
   Main,
   Article,
+  TestModal,
 };
 
 export const { Stack, useFlow } = stackflow({
