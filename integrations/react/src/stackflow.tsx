@@ -18,20 +18,20 @@ export type StackProps = {
    */
   initContext?: {};
 };
-export type ActionRefType = UseActionsOutputType<BaseActivities>;
 
 export type CoreRefType = {
   getStack: () => AggregateOutput;
   dispatchEvent: DispatchEvent;
 };
-export type StackRefType =
-  | (ActionRefType & CoreRefType & { isReady: true })
+
+export type StackRefType<T extends BaseActivities> =
+  | (UseActionsOutputType<T> & CoreRefType & { isReady: true })
   | {
       isReady: false;
     };
 
 export type StackComponentType = React.ForwardRefExoticComponent<
-  StackProps & React.RefAttributes<StackRefType>
+  StackProps & React.RefAttributes<StackRefType<BaseActivities>>
 >;
 
 export type StackflowOptions<T extends BaseActivities> = {
@@ -67,7 +67,11 @@ export type StackflowOutput<T extends BaseActivities> = {
    * Created `useFlow()` hooks
    */
   useFlow: () => UseActionsOutputType<T>;
-  createStackRef: () => React.RefObject<StackRefType>;
+
+  /**
+   * Created Ref from useFlow and Stack
+   */
+  createStackRef: () => React.RefObject<StackRefType<T>>;
 };
 
 /**
@@ -94,59 +98,62 @@ export function stackflow<T extends BaseActivities>(
   }
 
   return {
-    Stack: React.forwardRef<StackRefType, StackProps>((props, ref) => {
-      const plugins = useMemo(
-        () =>
-          (options.plugins ?? [])
-            .reduce<StackflowReactPlugin[]>(
-              (plugins, plugin) => [
-                ...plugins,
-                ...(Array.isArray(plugin) ? plugin : [plugin]),
-              ],
-              [],
-            )
-            .map((plugin) => plugin({ initContext: props.initContext })),
-        [],
-      );
+    Stack: React.forwardRef<StackRefType<BaseActivities>, StackProps>(
+      (props, ref) => {
+        const plugins = useMemo(
+          () =>
+            (options.plugins ?? [])
+              .reduce<StackflowReactPlugin[]>(
+                (plugins, plugin) => [
+                  ...plugins,
+                  ...(Array.isArray(plugin) ? plugin : [plugin]),
+                ],
+                [],
+              )
+              .map((plugin) => plugin({ initContext: props.initContext })),
+          [],
+        );
 
-      const actionRef = useRef<ActionRefType>(null);
-      const coreRef = useRef<CoreRefType>(null);
+        const actionRef = useRef<UseActionsOutputType<T>>(null);
+        const coreRef = useRef<CoreRefType>(null);
 
-      React.useImperativeHandle(
-        ref,
-        React.useCallback(() => {
-          if (actionRef?.current && coreRef?.current) {
+        React.useImperativeHandle(
+          ref,
+          React.useCallback(() => {
+            if (actionRef?.current && coreRef?.current) {
+              return {
+                ...actionRef.current,
+                ...coreRef.current,
+                isReady: true as const,
+              };
+            }
             return {
-              ...actionRef.current,
-              ...coreRef.current,
-              isReady: true as const,
+              isReady: false as const,
             };
-          }
-          return {
-            isReady: false as const,
-          };
-        }, [actionRef, coreRef]),
-      );
+          }, [actionRef, coreRef]),
+        );
 
-      return (
-        <InitContextProvider value={props.initContext ?? {}}>
-          <PluginsProvider value={plugins}>
-            <CoreProvider
-              activities={activities}
-              initialActivity={options.initialActivity}
-              transitionDuration={options.transitionDuration}
-            >
-              <MainRenderer activities={activities} />
-              <EffectManager />
-              <RefManager ref={actionRef} />
-            </CoreProvider>
-          </PluginsProvider>
-        </InitContextProvider>
-      );
-    }),
+        return (
+          <InitContextProvider value={props.initContext ?? {}}>
+            <PluginsProvider value={plugins}>
+              <CoreProvider
+                ref={coreRef}
+                activities={activities}
+                initialActivity={options.initialActivity}
+                transitionDuration={options.transitionDuration}
+              >
+                <MainRenderer activities={activities} />
+                <EffectManager />
+                <RefManager ref={actionRef} />
+              </CoreProvider>
+            </PluginsProvider>
+          </InitContextProvider>
+        );
+      },
+    ),
     useFlow: useActions,
     createStackRef() {
-      return React.createRef<StackRefType>();
+      return React.createRef();
     },
   };
 }
