@@ -3,17 +3,19 @@ import { calc } from "@vanilla-extract/css-utils";
 import { recipe } from "@vanilla-extract/recipes";
 
 import {
-  android,
   background,
-  cupertino,
   enterActive,
   enterDone,
   exitActive,
-  localVars,
-  rootAndroid,
-  rootCupertino,
   vars,
 } from "./AppScreen.css";
+import {
+  android,
+  cupertino,
+  globalVars,
+  rootAndroid,
+  rootCupertino,
+} from "./globalVars.css";
 import { f } from "./styles";
 
 export const appBar = recipe({
@@ -24,9 +26,9 @@ export const appBar = recipe({
     f.contentBox,
     background,
     {
-      height: vars.appBar.height,
+      height: globalVars.appBar.height,
       paddingTop: ["constant(safe-area-inset-top)", "env(safe-area-inset-top)"],
-      zIndex: localVars.zIndexes.appBar,
+      zIndex: vars.zIndexes.appBar,
       selectors: {
         [`${cupertino} &, ${rootCupertino} &`]: {
           position: "absolute",
@@ -37,7 +39,7 @@ export const appBar = recipe({
         [`${android} &, ${rootAndroid} &`]: {
           opacity: 0,
           transform: "translateY(10rem)",
-          transition: localVars.transitionDuration,
+          transition: vars.transitionDuration,
         },
         [`${android}${enterActive} &, ${rootAndroid} ${enterActive} &`]: {
           opacity: 1,
@@ -53,9 +55,9 @@ export const appBar = recipe({
   variants: {
     border: {
       true: {
-        boxShadow: `inset 0px ${calc(vars.appBar.borderSize).negate()} 0 ${
-          vars.appBar.borderColor
-        }`,
+        boxShadow: `inset 0px ${calc(
+          globalVars.appBar.borderSize,
+        ).negate()} 0 ${globalVars.appBar.borderColor}`,
       },
     },
     isActive: {
@@ -90,7 +92,7 @@ export const backButton = style([
   f.cursorPointer,
   f.resetButton,
   {
-    color: vars.appBar.iconColor,
+    color: globalVars.appBar.iconColor,
     transition: "opacity 300ms",
     width: "2.25rem",
     height: "2.75rem",
@@ -112,8 +114,8 @@ export const center = style([
 
 export const centerMain = recipe({
   base: {
-    width: localVars.appBar.center.mainWidth,
-    color: vars.appBar.textColor,
+    width: vars.appBar.center.mainWidth,
+    color: globalVars.appBar.textColor,
     selectors: {
       [`${android} &, ${rootAndroid} &`]: {
         width: "100%",
@@ -135,7 +137,7 @@ export const centerMain = recipe({
         fontSize: "1rem",
         left: "50%",
         transform: "translate(-50%)",
-        height: vars.appBar.height,
+        height: globalVars.appBar.height,
         top: ["constant(safe-area-inset-top)", "env(safe-area-inset-top)"],
       },
     },

@@ -4,15 +4,18 @@ import { useActions, useActivity } from "@stackflow/react";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
 import React, { useRef } from "react";
 
+import * as css from "./BottomSheet.css";
 import { useLazy, useStyleEffect } from "./hooks";
-import * as css from "./Modal.css";
 import { compactMap } from "./utils";
 
-interface ModalProps {
+interface BottomSheetProps {
   borderRadius?: string;
   children: React.ReactNode;
 }
-const Modal: React.FC<ModalProps> = ({ borderRadius = "1rem", children }) => {
+const BottomSheet: React.FC<BottomSheetProps> = ({
+  borderRadius = "1rem",
+  children,
+}) => {
   const activity = useActivity();
   const { pop } = useActions();
 
@@ -77,4 +80,4 @@ const Modal: React.FC<ModalProps> = ({ borderRadius = "1rem", children }) => {
   );
 };
 
-export default Modal;
+export default BottomSheet;

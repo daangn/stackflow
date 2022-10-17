@@ -37,6 +37,13 @@ export const flexAlignCenter = style([
   },
 ]);
 
+export const flexAlignEnd = style([
+  flex,
+  {
+    alignItems: "flex-end",
+  },
+]);
+
 export const flexJustifyCenter = style([
   flex,
   {

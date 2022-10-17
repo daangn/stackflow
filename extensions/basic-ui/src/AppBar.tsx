@@ -5,6 +5,7 @@ import React, { useRef } from "react";
 import * as css from "./AppBar.css";
 import * as appScreenCss from "./AppScreen.css";
 import { IconBack, IconClose } from "./assets";
+import { globalVars } from "./globalVars.css";
 import { useMaxWidth } from "./hooks";
 import { compactMap, noop } from "./utils";
 
@@ -151,11 +152,11 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
         })}
         style={assignInlineVars(
           compactMap({
-            [appScreenCss.vars.appBar.iconColor]: iconColor,
-            [appScreenCss.vars.appBar.textColor]: textColor,
-            [appScreenCss.vars.appBar.borderColor]: borderColor,
-            [appScreenCss.vars.appBar.height]: height,
-            [appScreenCss.localVars.appBar.center.mainWidth]: `${maxWidth}px`,
+            [globalVars.appBar.iconColor]: iconColor,
+            [globalVars.appBar.textColor]: textColor,
+            [globalVars.appBar.borderColor]: borderColor,
+            [globalVars.appBar.height]: height,
+            [appScreenCss.vars.appBar.center.mainWidth]: `${maxWidth}px`,
           }),
         )}
       >

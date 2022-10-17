@@ -6,6 +6,7 @@ import React, { useRef } from "react";
 
 import AppBar from "./AppBar";
 import * as css from "./AppScreen.css";
+import { globalVars } from "./globalVars.css";
 import {
   useLazy,
   useStyleEffectHide,
@@ -18,14 +19,12 @@ import { compactMap } from "./utils";
 interface AppScreenProps {
   theme?: "android" | "cupertino";
   appBar?: Omit<PropOf<typeof AppBar>, "theme" | "ref">;
-  backgroundColor?: string;
   children: React.ReactNode;
 }
 const AppScreen: React.FC<AppScreenProps> = ({
   theme = "android",
   appBar,
   children,
-  backgroundColor,
 }) => {
   const activity = useActivity();
   const { pop } = useActions();
@@ -74,13 +73,12 @@ const AppScreen: React.FC<AppScreenProps> = ({
       })}
       style={assignInlineVars(
         compactMap({
-          [css.vars.backgroundColor]: backgroundColor,
-          [css.vars.appBar.height]: appBar?.height,
-          [css.localVars.zIndexes.dim]: `${zIndexDim}`,
-          [css.localVars.zIndexes.paper]: `${zIndexPaper}`,
-          [css.localVars.zIndexes.edge]: `${zIndexEdge}`,
-          [css.localVars.zIndexes.appBar]: `${zIndexAppBar}`,
-          [css.localVars.transitionDuration]:
+          [globalVars.appBar.height]: appBar?.height,
+          [css.vars.zIndexes.dim]: `${zIndexDim}`,
+          [css.vars.zIndexes.paper]: `${zIndexPaper}`,
+          [css.vars.zIndexes.edge]: `${zIndexEdge}`,
+          [css.vars.zIndexes.appBar]: `${zIndexAppBar}`,
+          [css.vars.transitionDuration]:
             activity.transitionState === "enter-active" ||
             activity.transitionState === "exit-active"
               ? `var(--stackflow-transition-duration)`

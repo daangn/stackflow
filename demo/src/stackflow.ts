@@ -1,3 +1,4 @@
+import { basicUIPlugin } from "@stackflow/basic-ui";
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
 import { stackDepthChangePlugin } from "@stackflow/plugin-stack-depth-change";
 import { stackflow } from "@stackflow/react";
@@ -21,6 +22,9 @@ export const { Stack, useFlow } = stackflow({
     stackDepthChangePlugin({
       onInit: ({ depth, activities, activeActivities }) => {},
       onDepthChanged: ({ depth, activities, activeActivities }) => {},
+    }),
+    basicUIPlugin({
+      theme: "cupertino",
     }),
   ],
 });

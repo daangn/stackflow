@@ -39,8 +39,7 @@ export const container = recipe({
 export const dim = style([
   f.posAbsFull,
   f.overflowHidden,
-  f.flexAlignCenter,
-  f.flexJustifyCenter,
+  f.flexAlignEnd,
   transition,
   {
     backgroundColor: globalVars.dimBackgroundColor,
@@ -63,19 +62,16 @@ export const paper = style([
   {
     backgroundColor: globalVars.backgroundColor,
     width: "100%",
-    margin: "0 2.5rem",
-    boxShadow:
-      "0px 0.625rem 2.375rem rgba(0, 0, 0, 0.15), 0px .5625rem 2.875rem rgba(0, 0, 0, 0.12), 0px .3125rem .9375rem rgba(0, 0, 0, 0.1)",
-    borderRadius: vars.paperBorderRadius,
-    transform: "scale(1.1)",
+    borderRadius: `${vars.paperBorderRadius} ${vars.paperBorderRadius} 0 0`,
+    transform: "translateY(100%)",
     opacity: 0,
     selectors: {
       [`${enterActive} &, ${enterDone} &`]: {
-        transform: "scale(1)",
+        transform: "translateY(0)",
         opacity: 1,
       },
       [`${exitActive} &, ${exitDone} &`]: {
-        transform: "scale(1.1)",
+        transform: "translateY(100%)",
         opacity: 0,
       },
     },

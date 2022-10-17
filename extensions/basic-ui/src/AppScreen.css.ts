@@ -1,30 +1,17 @@
-import {
-  createGlobalTheme,
-  createGlobalThemeContract,
-  createThemeContract,
-  style,
-} from "@vanilla-extract/css";
+import { createThemeContract, style } from "@vanilla-extract/css";
 import { calc } from "@vanilla-extract/css-utils";
 import { recipe } from "@vanilla-extract/recipes";
 
+import {
+  android,
+  cupertino,
+  globalVars,
+  rootAndroid,
+  rootCupertino,
+} from "./globalVars.css";
 import { f } from "./styles";
 
-export const vars = createGlobalThemeContract(
-  {
-    backgroundColor: "background-color",
-    dimBackgroundColor: "dim-background-color",
-    appBar: {
-      height: "app-bar-height",
-      borderColor: "app-bar-border-color",
-      borderSize: "app-bar-border-size",
-      textColor: "app-bar-text-color",
-      iconColor: "app-bar-icon-color",
-    },
-  },
-  (value) => `stackflow-basic-ui-${value}`,
-);
-
-export const localVars = createThemeContract({
+export const vars = createThemeContract({
   transitionDuration: null,
   zIndexes: {
     dim: null,
@@ -39,35 +26,16 @@ export const localVars = createThemeContract({
   },
 });
 
-export const root = ":root";
-export const rootAndroid = ":root[data-stackflow-basic-ui-theme=android]";
-export const rootCupertino = ":root[data-stackflow-basic-ui-theme=cupertino]";
-
-export const android = style({});
-export const cupertino = style({});
-
-createGlobalTheme(`${root}, ${rootAndroid}, ${android}`, vars, {
-  backgroundColor: "#fff",
-  dimBackgroundColor: "rgba(0, 0, 0, 0.15)",
-  appBar: {
-    height: "3.5rem",
-    borderColor: "rgba(0, 0, 0, 0.07)",
-    borderSize: "1px",
-    iconColor: "#212124",
-    textColor: "#212124",
-  },
+const dimBackgroundColor = style({
+  backgroundColor: globalVars.dimBackgroundColor,
 });
 
-createGlobalTheme(`${rootCupertino}, ${cupertino}`, vars, {
-  backgroundColor: "#fff",
-  dimBackgroundColor: "rgba(0, 0, 0, 0.15)",
-  appBar: {
-    height: "2.75rem",
-    borderColor: "rgba(0, 0, 0, 0.12)",
-    borderSize: "0.5px",
-    iconColor: "#212124",
-    textColor: "#212124",
-  },
+export const background = style({
+  backgroundColor: globalVars.backgroundColor,
+});
+
+export const allTransitions = style({
+  transition: vars.transitionDuration,
 });
 
 export const enterActive = style({});
@@ -75,18 +43,6 @@ export const enterDone = style({});
 export const exitActive = style({});
 export const exitDone = style({
   transform: "translateX(100%)",
-});
-
-const dimBackgroundColor = style({
-  backgroundColor: vars.dimBackgroundColor,
-});
-
-export const background = style({
-  backgroundColor: vars.backgroundColor,
-});
-
-export const allTransitions = style({
-  transition: localVars.transitionDuration,
 });
 
 export const appScreen = recipe({
@@ -111,11 +67,11 @@ export const dim = style([
   allTransitions,
   {
     opacity: 0,
-    zIndex: localVars.zIndexes.dim,
+    zIndex: vars.zIndexes.dim,
     selectors: {
       [`${android} &, ${rootAndroid} &`]: {
         height: "10rem",
-        background: `linear-gradient(${vars.dimBackgroundColor}, rgba(0, 0, 0, 0))`,
+        background: `linear-gradient(${globalVars.dimBackgroundColor}, rgba(0, 0, 0, 0))`,
       },
       [`${enterActive} &`]: {
         opacity: 1,
@@ -144,7 +100,7 @@ export const paper = recipe({
       "::-webkit-scrollbar": {
         display: "none",
       },
-      zIndex: localVars.zIndexes.paper,
+      zIndex: vars.zIndexes.paper,
       selectors: {
         [`${cupertino} &, ${rootCupertino} &`]: {
           transform: "translateX(100%)",
@@ -176,8 +132,8 @@ export const paper = recipe({
         f.borderBox,
         {
           paddingTop: [
-            `calc(${vars.appBar.height} + constant(safe-area-inset-top))`,
-            `calc(${vars.appBar.height} + env(safe-area-inset-top))`,
+            `calc(${globalVars.appBar.height} + constant(safe-area-inset-top))`,
+            `calc(${globalVars.appBar.height} + env(safe-area-inset-top))`,
           ],
         },
       ],
@@ -193,14 +149,14 @@ export const edge = recipe({
     f.fullHeight,
     {
       width: "1.25rem",
-      zIndex: localVars.zIndexes.edge,
+      zIndex: vars.zIndexes.edge,
     },
   ],
   variants: {
     hasAppBar: {
       true: {
-        top: vars.appBar.height,
-        height: calc("100%").subtract(vars.appBar.height).toString(),
+        top: globalVars.appBar.height,
+        height: calc("100%").subtract(globalVars.appBar.height).toString(),
       },
     },
   },
