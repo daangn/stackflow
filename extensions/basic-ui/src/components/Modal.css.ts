@@ -10,7 +10,6 @@ export const vars = createThemeContract({
     dim: null,
     paper: null,
   },
-  paperBorderRadius: null,
 });
 
 const transition = style({
@@ -66,7 +65,7 @@ export const paper = style([
     margin: "0 2.5rem",
     boxShadow:
       "0px 0.625rem 2.375rem rgba(0, 0, 0, 0.15), 0px .5625rem 2.875rem rgba(0, 0, 0, 0.12), 0px .3125rem .9375rem rgba(0, 0, 0, 0.1)",
-    borderRadius: vars.paperBorderRadius,
+    borderRadius: globalVars.modal.borderRadius,
     transform: "scale(1.1)",
     opacity: 0,
     selectors: {

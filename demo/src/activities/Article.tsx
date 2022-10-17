@@ -85,7 +85,14 @@ const Article: ActivityComponentType<ArticleParams> = () => {
       >
         modal
       </button>
-      <button type="button">bs</button>
+      <button
+        type="button"
+        onClick={() => {
+          push("TestBottomSheet", {});
+        }}
+      >
+        bs
+      </button>
     </div>
   );
 

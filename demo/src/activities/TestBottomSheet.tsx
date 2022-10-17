@@ -1,14 +1,14 @@
-import { Modal } from "@stackflow/basic-ui";
+import { BottomSheet } from "@stackflow/basic-ui";
 import React from "react";
 
 import { useFlow } from "../stackflow";
-import * as css from "./TestModal.css";
+import * as css from "./TestBottomSheet.css";
 
-const TestModal: React.FC = () => {
+const TestBottomSheet: React.FC = () => {
   const { push } = useFlow();
 
   return (
-    <Modal>
+    <BottomSheet>
       <div className={css.container}>
         Testing Modal UI with Stackflow
         <button
@@ -20,8 +20,8 @@ const TestModal: React.FC = () => {
           test
         </button>
       </div>
-    </Modal>
+    </BottomSheet>
   );
 };
 
-export default TestModal;
+export default TestBottomSheet;

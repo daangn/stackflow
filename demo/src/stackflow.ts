@@ -6,12 +6,14 @@ import { stackflow } from "@stackflow/react";
 
 import Article from "./activities/Article";
 import Main from "./activities/Main";
+import TestBottomSheet from "./activities/TestBottomSheet";
 import TestModal from "./activities/TestModal";
 
 const activities = {
   Main,
   Article,
   TestModal,
+  TestBottomSheet,
 };
 
 const theme = "cupertino";
@@ -32,7 +34,7 @@ export const { Stack, useFlow } = stackflow({
       onDepthChanged: ({ depth, activities, activeActivities }) => {},
     }),
     basicUIPlugin({
-      theme: "android",
+      theme,
       appBar: {
         textColor: vars.$scale.color.gray900,
         iconColor: vars.$scale.color.gray900,
