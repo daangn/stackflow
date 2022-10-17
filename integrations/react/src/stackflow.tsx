@@ -1,4 +1,6 @@
-import React, { useMemo } from "react";
+import type { AggregateOutput, DispatchEvent } from "@stackflow/core";
+import React, { useMemo, useRef } from "react";
+import RefManager from "RefManager";
 
 import type { BaseActivities } from "./BaseActivities";
 import { CoreProvider } from "./core";
@@ -16,7 +18,21 @@ export type StackProps = {
    */
   initContext?: {};
 };
-export type StackComponentType = React.FC<StackProps>;
+export type ActionRefType = UseActionsOutputType<BaseActivities>;
+
+export type CoreRefType = {
+  getStack: () => AggregateOutput;
+  dispatchEvent: DispatchEvent;
+};
+export type StackRefType =
+  | (ActionRefType & CoreRefType & { isReady: true })
+  | {
+      isReady: false;
+    };
+
+export type StackComponentType = React.ForwardRefExoticComponent<
+  StackProps & React.RefAttributes<StackRefType>
+>;
 
 export type StackflowOptions<T extends BaseActivities> = {
   /**
@@ -51,6 +67,7 @@ export type StackflowOutput<T extends BaseActivities> = {
    * Created `useFlow()` hooks
    */
   useFlow: () => UseActionsOutputType<T>;
+  createStackRef: () => React.RefObject<StackRefType>;
 };
 
 /**
@@ -77,7 +94,7 @@ export function stackflow<T extends BaseActivities>(
   }
 
   return {
-    Stack(props) {
+    Stack: React.forwardRef<StackRefType, StackProps>((props, ref) => {
       const plugins = useMemo(
         () =>
           (options.plugins ?? [])
@@ -92,6 +109,25 @@ export function stackflow<T extends BaseActivities>(
         [],
       );
 
+      const actionRef = useRef<ActionRefType>(null);
+      const coreRef = useRef<CoreRefType>(null);
+
+      React.useImperativeHandle(
+        ref,
+        React.useCallback(() => {
+          if (actionRef?.current && coreRef?.current) {
+            return {
+              ...actionRef.current,
+              ...coreRef.current,
+              isReady: true as const,
+            };
+          }
+          return {
+            isReady: false as const,
+          };
+        }, [actionRef, coreRef]),
+      );
+
       return (
         <InitContextProvider value={props.initContext ?? {}}>
           <PluginsProvider value={plugins}>
@@ -102,11 +138,15 @@ export function stackflow<T extends BaseActivities>(
             >
               <MainRenderer activities={activities} />
               <EffectManager />
+              <RefManager ref={actionRef} />
             </CoreProvider>
           </PluginsProvider>
         </InitContextProvider>
       );
-    },
+    }),
     useFlow: useActions,
+    createStackRef() {
+      return React.createRef<StackRefType>();
+    },
   };
 }
