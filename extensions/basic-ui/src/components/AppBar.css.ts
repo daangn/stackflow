@@ -2,6 +2,14 @@ import { style } from "@vanilla-extract/css";
 import { calc } from "@vanilla-extract/css-utils";
 import { recipe } from "@vanilla-extract/recipes";
 
+import { f } from "../styles";
+import {
+  android,
+  cupertino,
+  globalVars,
+  rootAndroid,
+  rootCupertino,
+} from "../theme.css";
 import {
   background,
   enterActive,
@@ -9,14 +17,6 @@ import {
   exitActive,
   vars,
 } from "./AppScreen.css";
-import {
-  android,
-  cupertino,
-  globalVars,
-  rootAndroid,
-  rootCupertino,
-} from "./globalVars.css";
-import { f } from "./styles";
 
 export const appBar = recipe({
   base: [
@@ -33,7 +33,7 @@ export const appBar = recipe({
         [`${cupertino} &, ${rootCupertino} &`]: {
           position: "absolute",
         },
-        [`${cupertino}${exitActive} &, ${rootCupertino} ${exitActive} &`]: {
+        [`${cupertino} ${exitActive} &, ${rootCupertino} ${exitActive} &`]: {
           transform: "translateX(100%)",
         },
         [`${android} &, ${rootAndroid} &`]: {
@@ -41,11 +41,11 @@ export const appBar = recipe({
           transform: "translateY(10rem)",
           transition: vars.transitionDuration,
         },
-        [`${android}${enterActive} &, ${rootAndroid} ${enterActive} &`]: {
+        [`${android} ${enterActive} &, ${rootAndroid} ${enterActive} &`]: {
           opacity: 1,
           transform: "translateY(0)",
         },
-        [`${android}${enterDone} &, ${rootAndroid} ${enterDone} &`]: {
+        [`${android} ${enterDone} &, ${rootAndroid} ${enterDone} &`]: {
           opacity: 1,
           transform: "translateY(0)",
         },
@@ -58,18 +58,6 @@ export const appBar = recipe({
         boxShadow: `inset 0px ${calc(
           globalVars.appBar.borderSize,
         ).negate()} 0 ${globalVars.appBar.borderColor}`,
-      },
-    },
-    isActive: {
-      false: {
-        selectors: {
-          [`${android}${enterActive} &, ${rootAndroid} ${enterActive} &`]: {
-            transform: "translateY(-2rem)",
-          },
-          [`${android}${enterDone} &, ${rootAndroid} ${enterDone} &`]: {
-            transform: "translateY(-2rem)",
-          },
-        },
       },
     },
   },

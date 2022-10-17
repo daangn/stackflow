@@ -4,16 +4,22 @@ import { useActions, useActivity } from "@stackflow/react";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
 import React, { useRef } from "react";
 
+import { useLazy, useStyleEffect } from "../hooks";
+import type { GlobalVars } from "../theme.css";
+import { globalVars } from "../theme.css";
+import { compactMap } from "../utils";
 import * as css from "./BottomSheet.css";
-import { useLazy, useStyleEffect } from "./hooks";
-import { compactMap } from "./utils";
 
-interface BottomSheetProps {
-  borderRadius?: string;
-  children: React.ReactNode;
-}
+type BottomSheetProps = Partial<
+  Pick<GlobalVars, "backgroundColor" | "dimBackgroundColor">
+> &
+  Partial<GlobalVars["bottomSheet"]> & {
+    children: React.ReactNode;
+  };
 const BottomSheet: React.FC<BottomSheetProps> = ({
   borderRadius = "1rem",
+  backgroundColor,
+  dimBackgroundColor,
   children,
 }) => {
   const activity = useActivity();
@@ -60,6 +66,9 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
       ref={containerRef}
       style={assignInlineVars(
         compactMap({
+          [globalVars.bottomSheet.borderRadius]: borderRadius,
+          [globalVars.backgroundColor]: backgroundColor,
+          [globalVars.dimBackgroundColor]: dimBackgroundColor,
           [css.vars.zIndexes.dim]: `${zIndexBase}`,
           [css.vars.zIndexes.paper]: `${zIndexPaper}`,
           [css.vars.transitionDuration]:
@@ -67,7 +76,6 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
             activity.transitionState === "exit-active"
               ? `var(--stackflow-transition-duration)`
               : "0ms",
-          [css.vars.paperBorderRadius]: borderRadius,
         }),
       )}
     >

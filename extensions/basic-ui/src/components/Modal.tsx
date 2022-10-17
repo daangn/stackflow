@@ -4,15 +4,24 @@ import { useActions, useActivity } from "@stackflow/react";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
 import React, { useRef } from "react";
 
-import { useLazy, useStyleEffect } from "./hooks";
+import { useLazy, useStyleEffect } from "../hooks";
+import type { GlobalVars } from "../theme.css";
+import { globalVars } from "../theme.css";
+import { compactMap } from "../utils";
 import * as css from "./Modal.css";
-import { compactMap } from "./utils";
 
-interface ModalProps {
-  borderRadius?: string;
-  children: React.ReactNode;
-}
-const Modal: React.FC<ModalProps> = ({ borderRadius = "1rem", children }) => {
+type ModalProps = Partial<
+  Pick<GlobalVars, "backgroundColor" | "dimBackgroundColor">
+> &
+  Partial<GlobalVars["modal"]> & {
+    children: React.ReactNode;
+  };
+const Modal: React.FC<ModalProps> = ({
+  backgroundColor,
+  dimBackgroundColor,
+  borderRadius = "1rem",
+  children,
+}) => {
   const activity = useActivity();
   const { pop } = useActions();
 
@@ -57,6 +66,9 @@ const Modal: React.FC<ModalProps> = ({ borderRadius = "1rem", children }) => {
       ref={containerRef}
       style={assignInlineVars(
         compactMap({
+          [globalVars.bottomSheet.borderRadius]: borderRadius,
+          [globalVars.backgroundColor]: backgroundColor,
+          [globalVars.dimBackgroundColor]: dimBackgroundColor,
           [css.vars.zIndexes.dim]: `${zIndexBase}`,
           [css.vars.zIndexes.paper]: `${zIndexPaper}`,
           [css.vars.transitionDuration]:
@@ -64,7 +76,6 @@ const Modal: React.FC<ModalProps> = ({ borderRadius = "1rem", children }) => {
             activity.transitionState === "exit-active"
               ? `var(--stackflow-transition-duration)`
               : "0ms",
-          [css.vars.paperBorderRadius]: borderRadius,
         }),
       )}
     >

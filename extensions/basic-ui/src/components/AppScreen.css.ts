@@ -2,14 +2,14 @@ import { createThemeContract, style } from "@vanilla-extract/css";
 import { calc } from "@vanilla-extract/css-utils";
 import { recipe } from "@vanilla-extract/recipes";
 
+import { f } from "../styles";
 import {
   android,
   cupertino,
   globalVars,
   rootAndroid,
   rootCupertino,
-} from "./globalVars.css";
-import { f } from "./styles";
+} from "../theme.css";
 
 export const vars = createThemeContract({
   transitionDuration: null,
@@ -48,10 +48,6 @@ export const exitDone = style({
 export const appScreen = recipe({
   base: [f.posAbsFull, f.overflowHidden],
   variants: {
-    theme: {
-      android,
-      cupertino,
-    },
     transitionState: {
       "enter-active": enterActive,
       "enter-done": enterDone,
@@ -105,21 +101,21 @@ export const paper = recipe({
         [`${cupertino} &, ${rootCupertino} &`]: {
           transform: "translateX(100%)",
         },
-        [`${cupertino}${enterActive} &, ${rootCupertino} ${enterActive} &`]: {
+        [`${cupertino} ${enterActive} &, ${rootCupertino} ${enterActive} &`]: {
           transform: "translateX(0)",
         },
-        [`${cupertino}${enterDone} &, ${rootCupertino} ${enterDone} &`]: {
+        [`${cupertino} ${enterDone} &, ${rootCupertino} ${enterDone} &`]: {
           transform: "translateX(0)",
         },
         [`${android} &, ${rootAndroid} &`]: {
           opacity: 0,
           transform: "translateY(10rem)",
         },
-        [`${android}${enterActive} &, ${rootAndroid} ${enterActive} &`]: {
+        [`${android} ${enterActive} &, ${rootAndroid} ${enterActive} &`]: {
           opacity: 1,
           transform: "translateY(0)",
         },
-        [`${android}${enterDone} &, ${rootAndroid} ${enterDone} &`]: {
+        [`${android} ${enterDone} &, ${rootAndroid} ${enterDone} &`]: {
           opacity: 1,
           transform: "translateY(0)",
         },

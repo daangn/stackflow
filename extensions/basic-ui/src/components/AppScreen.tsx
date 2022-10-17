@@ -4,28 +4,28 @@ import { useActions, useActivity } from "@stackflow/react";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
 import React, { useRef } from "react";
 
-import AppBar from "./AppBar";
-import * as css from "./AppScreen.css";
-import { globalVars } from "./globalVars.css";
 import {
   useLazy,
   useStyleEffectHide,
   useStyleEffectOffset,
   useStyleEffectSwipeBack,
-} from "./hooks";
-import type { PropOf } from "./utils";
-import { compactMap } from "./utils";
+  useTheme,
+} from "../hooks";
+import type { GlobalVars } from "../theme.css";
+import { globalVars } from "../theme.css";
+import type { PropOf } from "../utils";
+import { compactMap } from "../utils";
+import AppBar from "./AppBar";
+import * as css from "./AppScreen.css";
 
-interface AppScreenProps {
-  theme?: "android" | "cupertino";
-  appBar?: Omit<PropOf<typeof AppBar>, "theme" | "ref">;
+type AppScreenProps = Partial<
+  Pick<GlobalVars, "backgroundColor" | "dimBackgroundColor">
+> & {
+  appBar?: Omit<PropOf<typeof AppBar>, "theme" | "ref" | "key">;
   children: React.ReactNode;
-}
-const AppScreen: React.FC<AppScreenProps> = ({
-  theme = "android",
-  appBar,
-  children,
-}) => {
+};
+const AppScreen: React.FC<AppScreenProps> = ({ appBar, children }) => {
+  const theme = useTheme();
   const activity = useActivity();
   const { pop } = useActions();
 
@@ -68,7 +68,6 @@ const AppScreen: React.FC<AppScreenProps> = ({
     <div
       ref={appScreenRef}
       className={css.appScreen({
-        theme,
         transitionState: useLazy(activity.transitionState),
       })}
       style={assignInlineVars(
@@ -99,7 +98,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
       {!isRoot && theme === "cupertino" && (
         <div className={css.edge({ hasAppBar })} ref={edgeRef} />
       )}
-      {appBar && <AppBar {...appBar} theme={theme} ref={appBarRef} />}
+      {appBar && <AppBar {...appBar} ref={appBarRef} />}
     </div>
   );
 };

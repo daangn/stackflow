@@ -2,15 +2,20 @@ import { useActions, useActivity } from "@stackflow/react";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
 import React, { useRef } from "react";
 
+import { IconBack, IconClose } from "../assets";
+import { useMaxWidth, useTheme } from "../hooks";
+import type { GlobalVars } from "../theme.css";
+import { globalVars } from "../theme.css";
+import { compactMap, noop } from "../utils";
 import * as css from "./AppBar.css";
 import * as appScreenCss from "./AppScreen.css";
-import { IconBack, IconClose } from "./assets";
-import { globalVars } from "./globalVars.css";
-import { useMaxWidth } from "./hooks";
-import { compactMap, noop } from "./utils";
 
-interface AppBarProps {
-  theme?: "android" | "cupertino";
+type AppBarProps = Partial<
+  Pick<
+    GlobalVars["appBar"],
+    "borderColor" | "borderSize" | "height" | "iconColor" | "textColor"
+  >
+> & {
   title?: React.ReactNode;
   appendLeft?: () => React.ReactNode;
   appendRight?: () => React.ReactNode;
@@ -32,15 +37,10 @@ interface AppBarProps {
       };
   closeButtonLocation?: "left" | "right";
   border?: boolean;
-  iconColor?: string;
-  textColor?: string;
-  borderColor?: string;
-  height?: string;
-}
+};
 const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
   (
     {
-      theme,
       title,
       appendLeft,
       appendRight,
@@ -51,12 +51,15 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
       iconColor,
       textColor,
       borderColor,
+      borderSize,
       height,
     },
     ref,
   ) => {
     const actions = useActions();
     const activity = useActivity();
+
+    const theme = useTheme();
 
     const centerRef = useRef<any>(null);
 
@@ -148,13 +151,13 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
         ref={ref}
         className={css.appBar({
           border,
-          isActive: activity.isActive,
         })}
         style={assignInlineVars(
           compactMap({
             [globalVars.appBar.iconColor]: iconColor,
             [globalVars.appBar.textColor]: textColor,
             [globalVars.appBar.borderColor]: borderColor,
+            [globalVars.appBar.borderSize]: borderSize,
             [globalVars.appBar.height]: height,
             [appScreenCss.vars.appBar.center.mainWidth]: `${maxWidth}px`,
           }),

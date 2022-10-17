@@ -4,3 +4,4 @@ export * from "./useStyleEffect";
 export * from "./useStyleEffectHide";
 export * from "./useStyleEffectOffset";
 export * from "./useStyleEffectSwipeBack";
+export * from "./useTheme";

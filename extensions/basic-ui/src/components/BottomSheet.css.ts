@@ -1,8 +1,8 @@
 import { createThemeContract, style } from "@vanilla-extract/css";
 import { recipe } from "@vanilla-extract/recipes";
 
-import { globalVars } from "./globalVars.css";
-import { f } from "./styles";
+import { f } from "../styles";
+import { globalVars } from "../theme.css";
 
 export const vars = createThemeContract({
   transitionDuration: null,
@@ -10,7 +10,6 @@ export const vars = createThemeContract({
     dim: null,
     paper: null,
   },
-  paperBorderRadius: null,
 });
 
 const transition = style({
@@ -62,7 +61,7 @@ export const paper = style([
   {
     backgroundColor: globalVars.backgroundColor,
     width: "100%",
-    borderRadius: `${vars.paperBorderRadius} ${vars.paperBorderRadius} 0 0`,
+    borderRadius: `${globalVars.bottomSheet.borderRadius} ${globalVars.bottomSheet.borderRadius} 0 0`,
     transform: "translateY(100%)",
     opacity: 0,
     selectors: {
