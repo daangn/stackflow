@@ -108,7 +108,7 @@ import { AppScreen } from "@stackflow/basic-ui";
 type ArticleParams = {
   title: string;
 };
-const Article: ActivityComponentType<ArticleParams> = ({ title }) => {
+const Article: ActivityComponentType<ArticleParams> = ({ params: { title } }) => {
   return (
     <AppScreen theme="cupertino" appBar={{ title: "Article" }}>
       <div>
@@ -130,7 +130,7 @@ import { AppScreen } from "@stackflow/basic-ui";
 type ArticleParams = {
   title: string;
 };
-const Article: React.FC<ArticleParams> = ({ title }) => {
+const Article: React.FC<ArticleParams> = ({ params: { title } }) => {
   return (
     <AppScreen theme="cupertino" appBar={{ title: "Article" }}>
       <div>
