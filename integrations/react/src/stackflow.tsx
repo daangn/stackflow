@@ -1,6 +1,6 @@
 import type { AggregateOutput, DispatchEvent } from "@stackflow/core";
+import ActionRefManager from "ActionRefManager";
 import React, { useMemo, useRef } from "react";
-import RefManager from "RefManager";
 
 import type { BaseActivities } from "./BaseActivities";
 import { CoreProvider } from "./core";
@@ -142,7 +142,7 @@ export function stackflow<T extends BaseActivities>(
             >
               <MainRenderer activities={activities} />
               <EffectManager />
-              <RefManager ref={actionRef} />
+              <ActionRefManager ref={actionRef} />
             </CoreProvider>
           </PluginsProvider>
         </InitContextProvider>
