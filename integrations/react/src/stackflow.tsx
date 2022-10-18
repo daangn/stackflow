@@ -69,9 +69,9 @@ export type StackflowOutput<T extends BaseActivities> = {
   useFlow: () => UseActionsOutputType<T>;
 
   /**
-   * Created Ref from useFlow and Stack
+   * Created Ref from useFlow and useActions
    */
-  createStackRef: () => React.RefObject<StackRefType<T>>;
+  createStackRef: () => React.MutableRefObject<StackRefType<T>>;
 };
 
 /**
@@ -130,7 +130,7 @@ export function stackflow<T extends BaseActivities>(
             return {
               isReady: false as const,
             };
-          }, [actionRef, coreRef]),
+          }, []),
         );
 
         return (
@@ -153,7 +153,7 @@ export function stackflow<T extends BaseActivities>(
     ),
     useFlow: useActions,
     createStackRef() {
-      return React.createRef();
+      return React.createRef<any>();
     },
   };
 }
