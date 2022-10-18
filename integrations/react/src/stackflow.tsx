@@ -24,11 +24,18 @@ export type CoreRefType = {
   dispatchEvent: DispatchEvent;
 };
 
-export type StackRefType<T extends BaseActivities> =
+export type StackRefCurrentType<T extends BaseActivities> =
   | UseActionsOutputType<T> & CoreRefType;
 
+export type StackRefType<T extends BaseActivities> = React.MutableRefObject<
+  StackRefCurrentType<T>
+> & {
+  isReady: () => boolean;
+};
+
 export type StackComponentType = React.ForwardRefExoticComponent<
-  StackProps & React.RefAttributes<StackRefType<BaseActivities> | undefined>
+  StackProps &
+    React.RefAttributes<StackRefCurrentType<BaseActivities> | undefined>
 >;
 
 export type StackflowOptions<T extends BaseActivities> = {
@@ -68,7 +75,7 @@ export type StackflowOutput<T extends BaseActivities> = {
   /**
    * Created Ref from useFlow and useActions
    */
-  createStackRef: () => React.MutableRefObject<StackRefType<T>> & {
+  createStackRef: () => React.MutableRefObject<StackRefCurrentType<T>> & {
     isReady: () => boolean;
   };
 };
@@ -98,7 +105,7 @@ export function stackflow<T extends BaseActivities>(
 
   return {
     Stack: React.forwardRef<
-      StackRefType<BaseActivities> | undefined,
+      StackRefCurrentType<BaseActivities> | undefined,
       StackProps
     >((props, ref) => {
       const plugins = useMemo(
@@ -150,14 +157,12 @@ export function stackflow<T extends BaseActivities>(
     }),
     useFlow: useActions,
     createStackRef() {
-      let current: StackRefType<BaseActivities>;
-      const ref: React.MutableRefObject<StackRefType<T>> & {
-        isReady: () => boolean;
-      } = {
+      let current: StackRefCurrentType<BaseActivities>;
+      const ref: StackRefType<BaseActivities> = {
         get current() {
           return current;
         },
-        set current(value: StackRefType<BaseActivities>) {
+        set current(value: StackRefCurrentType<BaseActivities>) {
           current = value;
         },
         isReady: () => {
