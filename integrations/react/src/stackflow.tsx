@@ -1,7 +1,7 @@
 import type { AggregateOutput, DispatchEvent } from "@stackflow/core";
-import ActionRefManager from "ActionRefManager";
 import React, { useMemo, useRef } from "react";
 
+import ActionRefManager from "./ActionRefManager";
 import type { BaseActivities } from "./BaseActivities";
 import { CoreProvider } from "./core";
 import EffectManager from "./EffectManager";

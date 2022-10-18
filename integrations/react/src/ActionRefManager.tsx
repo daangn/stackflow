@@ -1,7 +1,8 @@
-import type { BaseActivities } from "BaseActivities";
 import React from "react";
-import type { UseActionsOutputType } from "useActions";
-import { useActions } from "useActions";
+
+import type { BaseActivities } from "./BaseActivities";
+import type { UseActionsOutputType } from "./useActions";
+import { useActions } from "./useActions";
 
 const ActionRefManager = React.forwardRef<
   UseActionsOutputType<BaseActivities>,
