@@ -1,4 +1,4 @@
-export const onResize = (cb: () => void) => {
+export const listenResize = (cb: () => void) => {
   cb();
   window.addEventListener("resize", cb);
 

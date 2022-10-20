@@ -1,12 +1,7 @@
 import React from "react";
 
-import { AppScreenThemeProvider } from "./AppScreenThemeContext";
 import { Stack } from "./stackflow";
 
-const App: React.FC = () => (
-  <AppScreenThemeProvider>
-    <Stack />
-  </AppScreenThemeProvider>
-);
+const App: React.FC = () => <Stack />;
 
 export default App;

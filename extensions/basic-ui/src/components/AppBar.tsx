@@ -1,20 +1,21 @@
 import { useActions, useActivity } from "@stackflow/react";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
-import React, { useMemo, useRef } from "react";
+import React, { useRef } from "react";
 
+import { IconBack, IconClose } from "../assets";
+import { useMaxWidth, useTheme } from "../hooks";
+import type { GlobalVars } from "../theme.css";
+import { globalVars } from "../theme.css";
+import { compactMap, noop } from "../utils";
 import * as css from "./AppBar.css";
 import * as appScreenCss from "./AppScreen.css";
-import { IconBack, IconClose } from "./assets";
-import {
-  compactMap,
-  noop,
-  useActiveActivities,
-  useMaxWidth,
-  useTopActiveActivity,
-} from "./utils";
 
-interface AppBarProps {
-  theme?: "android" | "cupertino";
+type AppBarProps = Partial<
+  Pick<
+    GlobalVars["appBar"],
+    "borderColor" | "borderSize" | "height" | "iconColor" | "textColor"
+  >
+> & {
   title?: React.ReactNode;
   appendLeft?: () => React.ReactNode;
   appendRight?: () => React.ReactNode;
@@ -36,15 +37,10 @@ interface AppBarProps {
       };
   closeButtonLocation?: "left" | "right";
   border?: boolean;
-  iconColor?: string;
-  textColor?: string;
-  borderColor?: string;
-  height?: string;
-}
+};
 const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
   (
     {
-      theme,
       title,
       appendLeft,
       appendRight,
@@ -55,28 +51,17 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
       iconColor,
       textColor,
       borderColor,
+      borderSize,
       height,
     },
     ref,
   ) => {
     const actions = useActions();
+    const activity = useActivity();
 
-    const currentActivity = useActivity();
-    const activeActivities = useActiveActivities();
-    const topActiveActivity = useTopActiveActivity();
-
-    const isTopActive = useMemo(
-      () => topActiveActivity?.id === currentActivity.id,
-      [topActiveActivity, currentActivity],
-    );
+    const theme = useTheme();
 
     const centerRef = useRef<any>(null);
-
-    const isRoot = activeActivities[0]?.id === currentActivity.id;
-    const isAfterRoot = activeActivities[1]?.id === currentActivity.id;
-    const isPushedByReplace = currentActivity.pushedBy.name === "Replaced";
-
-    const isCloseButtonVisible = isRoot || (isAfterRoot && isPushedByReplace);
 
     const { maxWidth } = useMaxWidth({
       outerRef: ref,
@@ -84,7 +69,7 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
       enable: theme === "cupertino",
     });
 
-    const onBack = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const onBackClick = (e: React.MouseEvent<HTMLButtonElement>) => {
       if (backButton && "onClick" in backButton && backButton.onClick) {
         backButton.onClick(e);
       }
@@ -94,6 +79,12 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
       }
     };
 
+    const isCloseButtonVisible =
+      activity.zIndex === 0 ||
+      (activity.zIndex === 1 &&
+        activity.transitionState === "enter-active" &&
+        activity.pushedBy.name === "Replaced");
+
     const renderBackButton = () => {
       if (isCloseButtonVisible) {
         return null;
@@ -101,7 +92,11 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
 
       if (!backButton) {
         return (
-          <button type="button" className={css.backButton} onClick={onBack}>
+          <button
+            type="button"
+            className={css.backButton}
+            onClick={onBackClick}
+          >
             <IconBack />
           </button>
         );
@@ -112,7 +107,7 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
       }
 
       return (
-        <button type="button" className={css.backButton} onClick={onBack}>
+        <button type="button" className={css.backButton} onClick={onBackClick}>
           {"renderIcon" in backButton && backButton.renderIcon ? (
             backButton.renderIcon()
           ) : (
@@ -156,15 +151,15 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
         ref={ref}
         className={css.appBar({
           border,
-          isTopActive,
         })}
         style={assignInlineVars(
           compactMap({
-            [appScreenCss.vars.appBar.iconColor]: iconColor,
-            [appScreenCss.vars.appBar.textColor]: textColor,
-            [appScreenCss.vars.appBar.borderColor]: borderColor,
-            [appScreenCss.vars.appBar.height]: height,
-            [appScreenCss.localVars.appBar.center.mainWidth]: `${maxWidth}px`,
+            [globalVars.appBar.iconColor]: iconColor,
+            [globalVars.appBar.textColor]: textColor,
+            [globalVars.appBar.borderColor]: borderColor,
+            [globalVars.appBar.borderSize]: borderSize,
+            [globalVars.appBar.height]: height,
+            [appScreenCss.vars.appBar.center.mainWidth]: `${maxWidth}px`,
           }),
         )}
       >

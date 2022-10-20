@@ -1,8 +1,7 @@
 import type React from "react";
 import { useEffect, useState } from "react";
 
-import { noop } from "./noop";
-import { onResize } from "./onResize";
+import { listenResize, noop } from "../utils";
 
 export function useMaxWidth({
   outerRef,
@@ -23,7 +22,7 @@ export function useMaxWidth({
       return noop;
     }
 
-    const dispose = onResize(() => {
+    const dispose = listenResize(() => {
       const screenWidth = $outer.clientWidth;
 
       const leftWidth = $inner.offsetLeft;
