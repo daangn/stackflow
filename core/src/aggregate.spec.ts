@@ -1689,3 +1689,97 @@ test("aggregate - ReplacedEvent에 현재 존재하는 activityId가 포함된 �
     globalTransitionState: "loading",
   });
 });
+
+test("aggregate - ReplacedEvent에 현재 존재하는 activityId가 포함된 경우, 같은 액티비티 ID로 변경됩니다 2", () => {
+  const t = nowTime();
+
+  const events = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+    registeredEvent({
+      activityName: "sample",
+    }),
+    makeEvent("Pushed", {
+      activityId: "a1",
+      activityName: "sample",
+      activityParams: {
+        hello: "world",
+      },
+      eventDate: enoughPastTime(),
+    }),
+    makeEvent("Pushed", {
+      activityId: "a2",
+      activityName: "sample",
+      activityParams: {
+        hello: "world",
+      },
+      eventDate: enoughPastTime(),
+    }),
+    makeEvent("Pushed", {
+      activityId: "a3",
+      activityName: "sample",
+      activityParams: {
+        hello: "world",
+      },
+      eventDate: enoughPastTime(),
+    }),
+    makeEvent("Replaced", {
+      activityId: "a2",
+      activityName: "sample",
+      activityParams: {
+        hello: "world2",
+      },
+      eventDate: enoughPastTime(),
+    }),
+  ];
+
+  const pushedEvent1 = events[2];
+  const pushedEvent3 = events[4];
+  const replacedEvent = events[5];
+
+  const output = aggregate(events, t);
+
+  expect(output).toStrictEqual({
+    activities: [
+      {
+        id: "a1",
+        name: "sample",
+        transitionState: "enter-done",
+        params: {
+          hello: "world",
+        },
+        pushedBy: pushedEvent1,
+        isActive: false,
+        isTop: false,
+        zIndex: 0,
+      },
+      {
+        id: "a2",
+        name: "sample",
+        transitionState: "enter-done",
+        params: {
+          hello: "world2",
+        },
+        pushedBy: replacedEvent,
+        isActive: false,
+        isTop: false,
+        zIndex: 1,
+      },
+      {
+        id: "a3",
+        name: "sample",
+        transitionState: "enter-done",
+        params: {
+          hello: "world",
+        },
+        pushedBy: pushedEvent3,
+        isActive: true,
+        isTop: true,
+        zIndex: 2,
+      },
+    ],
+    transitionDuration: 300,
+    globalTransitionState: "idle",
+  });
+});

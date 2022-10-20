@@ -59,12 +59,12 @@ function pushState({
 }
 
 function replaceState({
-  state,
   url,
+  state,
   useHash,
 }: {
-  state: State;
   url: string;
+  state: State;
   useHash?: boolean;
 }) {
   if (isServer) {
@@ -236,6 +236,22 @@ export function historySyncPlugin<
                 });
               });
             }
+
+            if (targetActivity) {
+              const template = makeTemplate(
+                normalizeRoute(options.routes[targetActivity.name])[0],
+              );
+              const url = template.fill(targetActivity.params);
+
+              replaceState({
+                url,
+                state: {
+                  _TAG: STATE_TAG,
+                  activity: targetActivity,
+                },
+                useHash: options.useHash,
+              });
+            }
           }
           if (isForward) {
             pushFlag = true;
@@ -282,6 +298,10 @@ export function historySyncPlugin<
         });
       },
       onReplaced({ effect: { activity } }) {
+        if (!activity.isActive) {
+          return;
+        }
+
         const template = makeTemplate(
           normalizeRoute(options.routes[activity.name])[0],
         );
