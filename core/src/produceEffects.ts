@@ -25,8 +25,6 @@ export function produceEffects(
     const prevActivity = prevOutput.activities[i];
     const nextActivity = nextOutput.activities[i];
 
-    // const prevActivity
-
     const isPrevActivityPopped =
       prevActivity?.transitionState === "exit-done" ||
       prevActivity?.transitionState === "exit-active";
