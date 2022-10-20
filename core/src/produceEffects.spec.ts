@@ -460,7 +460,7 @@ test("differences - Replaced 이벤트로 인해 액티비티 상태가 enter-ac
             } as any,
             isActive: true,
             isTop: true,
-            zIndex: 1,
+            zIndex: 0,
           },
           {
             id: "2",
@@ -531,6 +531,92 @@ test("differences - Replaced 이벤트로 인해 액티비티 상태가 enter-ac
         id: "3",
         name: "hello",
         transitionState: "enter-active",
+        params: {},
+        pushedBy: {
+          name: "Replaced",
+        } as any,
+        isActive: true,
+        isTop: true,
+        zIndex: 1,
+      },
+    },
+  ]);
+});
+
+test("differences - Replaced 이벤트에 같은 activityId를 넘겨주어 액티비티 상태가 변한 액티비티가 있다면, REPLACED 이펙트가 추가됩니다", () => {
+  expect(
+    produceEffects(
+      {
+        activities: [
+          {
+            id: "1",
+            name: "hello",
+            transitionState: "enter-done",
+            params: {},
+            pushedBy: {
+              name: "Pushed",
+            } as any,
+            isActive: false,
+            isTop: false,
+            zIndex: 0,
+          },
+          {
+            id: "2",
+            name: "hello",
+            transitionState: "enter-done",
+            params: {},
+            pushedBy: {
+              name: "Pushed",
+            } as any,
+            isActive: true,
+            isTop: true,
+            zIndex: 1,
+          },
+        ],
+        transitionDuration: 300,
+        globalTransitionState: "idle",
+      },
+      {
+        activities: [
+          {
+            id: "1",
+            name: "hello",
+            transitionState: "enter-done",
+            params: {},
+            pushedBy: {
+              name: "Pushed",
+            } as any,
+            isActive: false,
+            isTop: false,
+            zIndex: 0,
+          },
+          {
+            id: "2",
+            name: "hello",
+            transitionState: "enter-done",
+            params: {},
+            pushedBy: {
+              name: "Replaced",
+            } as any,
+            isActive: true,
+            isTop: true,
+            zIndex: 1,
+          },
+        ],
+        transitionDuration: 300,
+        globalTransitionState: "loading",
+      },
+    ),
+  ).toEqual([
+    {
+      _TAG: "%SOMETHING_CHANGED%",
+    },
+    {
+      _TAG: "REPLACED",
+      activity: {
+        id: "2",
+        name: "hello",
+        transitionState: "enter-done",
         params: {},
         pushedBy: {
           name: "Replaced",

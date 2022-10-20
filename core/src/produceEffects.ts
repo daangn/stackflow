@@ -1,6 +1,6 @@
 import isEqual from "react-fast-compare";
 
-import type { AggregateOutput } from "./AggregateOutput";
+import type { Activity, AggregateOutput } from "./AggregateOutput";
 import type { Effect } from "./Effect";
 
 export function produceEffects(
@@ -9,7 +9,9 @@ export function produceEffects(
 ): Effect[] {
   const output: Effect[] = [];
 
-  if (!isEqual(prevOutput, nextOutput)) {
+  const somethingChanged = !isEqual(prevOutput, nextOutput);
+
+  if (somethingChanged) {
     output.push({
       _TAG: "%SOMETHING_CHANGED%",
     });
@@ -23,12 +25,7 @@ export function produceEffects(
     const prevActivity = prevOutput.activities[i];
     const nextActivity = nextOutput.activities[i];
 
-    if (!prevActivity && !!nextActivity) {
-      output.push({
-        _TAG: nextActivity.pushedBy.name === "Pushed" ? "PUSHED" : "REPLACED",
-        activity: nextActivity,
-      });
-    }
+    // const prevActivity
 
     const isPrevActivityPopped =
       prevActivity?.transitionState === "exit-done" ||
@@ -37,9 +34,37 @@ export function produceEffects(
       nextActivity?.transitionState === "enter-active" ||
       nextActivity?.transitionState === "enter-done";
 
+    if (!prevActivity && nextActivity) {
+      output.push({
+        _TAG: nextActivity.pushedBy.name === "Pushed" ? "PUSHED" : "REPLACED",
+        activity: nextActivity,
+      });
+    }
+
     if (isPrevActivityPopped && isNextActivityPushed) {
       output.push({
         _TAG: nextActivity.pushedBy.name === "Pushed" ? "PUSHED" : "REPLACED",
+        activity: nextActivity,
+      });
+    }
+    if (
+      !!prevActivity &&
+      !!nextActivity &&
+      !isEqual(
+        {
+          name: prevActivity.name,
+          params: prevActivity.params,
+          pushedBy: prevActivity.pushedBy,
+        },
+        {
+          name: nextActivity.name,
+          params: nextActivity.params,
+          pushedBy: nextActivity.pushedBy,
+        },
+      )
+    ) {
+      output.push({
+        _TAG: "REPLACED",
         activity: nextActivity,
       });
     }
