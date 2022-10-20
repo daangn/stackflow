@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/plugin-preload",
-  "version": "0.12.0",
+  "version": "0.13.0",
   "license": "MIT",
   "exports": {
     ".": {
@@ -24,12 +24,12 @@
     "dev": "yarn build:js --watch && yarn build:dts --watch"
   },
   "dependencies": {
-    "@stackflow/plugin-history-sync": "^0.12.0"
+    "@stackflow/plugin-history-sync": "^0.13.0"
   },
   "devDependencies": {
-    "@stackflow/core": "^0.12.0",
+    "@stackflow/core": "^0.13.0",
     "@stackflow/esbuild-config": "^0.12.0",
-    "@stackflow/react": "^0.12.0",
+    "@stackflow/react": "^0.13.0",
     "@types/react": "^18.0.10",
     "esbuild": "^0.14.51",
     "react": "^18.1.0",
