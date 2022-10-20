@@ -61,7 +61,7 @@ test("aggregate - 푸시하면 스택에 추가됩니다", () => {
       activityId: "a1",
       activityName: "sample",
       eventDate: enoughPastTime(),
-      params: {},
+      activityParams: {},
     }),
   ];
   const pushedEvent = events[3];
@@ -101,7 +101,7 @@ test("aggregate - PushedEvent에 activityId, activityName이 다른 경우 스�
       activityId: "a2",
       activityName: "sample2",
       eventDate: enoughPastTime(),
-      params: {},
+      activityParams: {},
     }),
   ];
 
@@ -142,13 +142,13 @@ test("aggregate - 같은 activityId로 여러번 푸시되는 경우 이전의 �
       activityId: "a1",
       activityName: "sample2",
       eventDate: enoughPastTime(),
-      params: {},
+      activityParams: {},
     }),
     makeEvent("Pushed", {
       activityId: "a1",
       activityName: "sample2",
       eventDate: enoughPastTime(),
-      params: {},
+      activityParams: {},
     }),
   ];
 
@@ -188,14 +188,14 @@ test("aggregate - 다른 activityName으로 두번 푸시하면 스택에 정상
     makeEvent("Pushed", {
       activityId: "a1",
       activityName: "sample2",
+      activityParams: {},
       eventDate: enoughPastTime(),
-      params: {},
     }),
     makeEvent("Pushed", {
       activityId: "a2",
       activityName: "home",
+      activityParams: {},
       eventDate: enoughPastTime(),
-      params: {},
     }),
   ];
 
@@ -246,14 +246,14 @@ test("aggregate - 같은 activityName으로 두번 푸시하면 정상적으로 
     makeEvent("Pushed", {
       activityId: "a1",
       activityName: "sample2",
+      activityParams: {},
       eventDate: enoughPastTime(),
-      params: {},
     }),
     makeEvent("Pushed", {
       activityId: "a2",
       activityName: "sample2",
+      activityParams: {},
       eventDate: enoughPastTime(),
-      params: {},
     }),
   ];
 
@@ -303,8 +303,8 @@ test("aggregate - 푸시한 직후에는 transition.state가 enter-active 입니
     makeEvent("Pushed", {
       activityId: "a1",
       activityName: "sample",
+      activityParams: {},
       eventDate: t,
-      params: {},
     }),
   ];
 
@@ -342,8 +342,8 @@ test("aggregate - 현재 시간과 변화된 시간의 차가 InitializedEvent�
     makeEvent("Pushed", {
       activityId: "a1",
       activityName: "sample",
+      activityParams: {},
       eventDate: t - 150,
-      params: {},
     }),
   ];
 
@@ -382,8 +382,8 @@ test("aggregate - 푸시한 이후 InitializedEvent에서 셋팅된 transitionDu
     makeEvent("Pushed", {
       activityId: "a1",
       activityName: "sample",
+      activityParams: {},
       eventDate: t - 300,
-      params: {},
     }),
   ];
 
@@ -422,14 +422,14 @@ test("aggregate - 여러번 푸시한 경우, transitionDuration 전에 푸시�
     makeEvent("Pushed", {
       activityId: "a1",
       activityName: "sample",
+      activityParams: {},
       eventDate: t - 350,
-      params: {},
     }),
     makeEvent("Pushed", {
       activityId: "a2",
       activityName: "sample",
+      activityParams: {},
       eventDate: t - 150,
-      params: {},
     }),
   ];
 
@@ -477,14 +477,14 @@ test("aggregate - Pop하면 최상단에 존재하는 Activity가 exit-done 상�
     makeEvent("Pushed", {
       activityId: "a1",
       activityName: "home",
+      activityParams: {},
       eventDate: enoughPastTime(),
-      params: {},
     }),
     makeEvent("Pushed", {
       activityId: "a2",
       activityName: "home",
+      activityParams: {},
       eventDate: enoughPastTime(),
-      params: {},
     }),
     makeEvent("Popped", {
       eventDate: enoughPastTime(),
@@ -535,20 +535,20 @@ test("aggregate - Pop을 여러번하면 차례대로 exit-done 상태가 됩니
     makeEvent("Pushed", {
       activityId: "a1",
       activityName: "home",
+      activityParams: {},
       eventDate: enoughPastTime(),
-      params: {},
     }),
     makeEvent("Pushed", {
       activityId: "a2",
       activityName: "home",
+      activityParams: {},
       eventDate: enoughPastTime(),
-      params: {},
     }),
     makeEvent("Pushed", {
       activityId: "a3",
       activityName: "home",
+      activityParams: {},
       eventDate: enoughPastTime(),
-      params: {},
     }),
   ];
 
@@ -665,14 +665,14 @@ test("aggregate - 가장 바닥에 있는 Activity는 Pop 되지 않습니다", 
     makeEvent("Pushed", {
       activityId: "a1",
       activityName: "home",
+      activityParams: {},
       eventDate: enoughPastTime(),
-      params: {},
     }),
     makeEvent("Pushed", {
       activityId: "a2",
       activityName: "home",
+      activityParams: {},
       eventDate: enoughPastTime(),
-      params: {},
     }),
   ];
 
@@ -770,14 +770,14 @@ test("aggregate - transitionDuration 이전에 Pop을 한 경우 exit-active 상
     makeEvent("Pushed", {
       activityId: "a1",
       activityName: "home",
+      activityParams: {},
       eventDate: enoughPastTime(),
-      params: {},
     }),
     makeEvent("Pushed", {
       activityId: "a2",
       activityName: "home",
+      activityParams: {},
       eventDate: enoughPastTime(),
-      params: {},
     }),
     makeEvent("Popped", {
       eventDate: t - 150,
@@ -827,14 +827,14 @@ test("aggregate - 이벤트가 중복되거나 순서가 섞여도 정상적으�
   const e3 = makeEvent("Pushed", {
     activityId: "a1",
     activityName: "home",
+    activityParams: {},
     eventDate: enoughPastTime(),
-    params: {},
   });
   const e4 = makeEvent("Pushed", {
     activityId: "a2",
     activityName: "home",
+    activityParams: {},
     eventDate: enoughPastTime(),
-    params: {},
   });
   const e5 = makeEvent("Popped", {
     eventDate: enoughPastTime(),
@@ -883,26 +883,26 @@ test("aggregate - 같은 activity.id로 푸시되는 경우, 기존에 푸시되
     makeEvent("Pushed", {
       activityId: "a1",
       activityName: "home",
+      activityParams: {},
       eventDate: enoughPastTime(),
-      params: {},
     }),
     makeEvent("Pushed", {
       activityId: "a2",
       activityName: "home",
+      activityParams: {},
       eventDate: enoughPastTime(),
-      params: {},
     }),
     makeEvent("Pushed", {
       activityId: "a3",
       activityName: "home",
+      activityParams: {},
       eventDate: enoughPastTime(),
-      params: {},
     }),
     makeEvent("Pushed", {
       activityId: "a4",
       activityName: "home",
+      activityParams: {},
       eventDate: enoughPastTime(),
-      params: {},
     }),
     makeEvent("Popped", {
       eventDate: enoughPastTime(),
@@ -916,8 +916,8 @@ test("aggregate - 같은 activity.id로 푸시되는 경우, 기존에 푸시되
     makeEvent("Pushed", {
       activityId: "a2",
       activityName: "home",
+      activityParams: {},
       eventDate: t,
-      params: {},
     }),
   ];
 
@@ -989,10 +989,10 @@ test("aggregate - PushedEvent에 params가 담겨있는 경우 액티비티에 �
     makeEvent("Pushed", {
       activityId: "a1",
       activityName: "sample",
-      eventDate: t,
-      params: {
+      activityParams: {
         hello: "world",
       },
+      eventDate: t,
     }),
   ];
 
@@ -1033,18 +1033,18 @@ test("aggregate - ReplacedEvent가 발생한 직후 최상단의 Activity를 유
     makeEvent("Pushed", {
       activityId: "a1",
       activityName: "sample",
-      eventDate: enoughPastTime(),
-      params: {
+      activityParams: {
         hello: "world",
       },
+      eventDate: enoughPastTime(),
     }),
     makeEvent("Replaced", {
       activityId: "a2",
       activityName: "sample",
-      eventDate: t,
-      params: {
+      activityParams: {
         hello: "world",
       },
+      eventDate: t,
     }),
   ];
 
@@ -1098,18 +1098,18 @@ test("aggregate - ReplacedEvent가 발생한 후 transitionDuration만큼 지난
     makeEvent("Pushed", {
       activityId: "a1",
       activityName: "sample",
-      eventDate: enoughPastTime(),
-      params: {
+      activityParams: {
         hello: "world",
       },
+      eventDate: enoughPastTime(),
     }),
     makeEvent("Replaced", {
       activityId: "a2",
       activityName: "sample",
-      eventDate: t,
-      params: {
+      activityParams: {
         hello: "world",
       },
+      eventDate: t,
     }),
   ];
 
@@ -1163,26 +1163,26 @@ test("aggregate - ReplacedEvent가 두 번 발생한 후 transitionDuration만�
     makeEvent("Pushed", {
       activityId: "a1",
       activityName: "sample",
-      eventDate: enoughPastTime(),
-      params: {
+      activityParams: {
         hello: "world",
       },
+      eventDate: enoughPastTime(),
     }),
     makeEvent("Replaced", {
       activityId: "a2",
       activityName: "sample",
-      eventDate: enoughPastTime(),
-      params: {
+      activityParams: {
         hello: "world",
       },
+      eventDate: enoughPastTime(),
     }),
     makeEvent("Replaced", {
       activityId: "a3",
       activityName: "sample",
-      eventDate: t,
-      params: {
+      activityParams: {
         hello: "world",
       },
+      eventDate: t,
     }),
   ];
 
@@ -1249,11 +1249,11 @@ test("aggregate - skipEnterActiveState가 true이면 eventDate가 transitionDura
     makeEvent("Pushed", {
       activityId: "a1",
       activityName: "sample",
-      eventDate: t - 150,
-      skipEnterActiveState: true,
-      params: {
+      activityParams: {
         hello: "world",
       },
+      eventDate: t - 150,
+      skipEnterActiveState: true,
     }),
   ];
 
@@ -1294,14 +1294,14 @@ test("aggregate - skipExitActiveState가 true이면 eventDate가 transitionDurat
     makeEvent("Pushed", {
       activityId: "a1",
       activityName: "home",
+      activityParams: {},
       eventDate: enoughPastTime(),
-      params: {},
     }),
     makeEvent("Pushed", {
       activityId: "a2",
       activityName: "home",
+      activityParams: {},
       eventDate: enoughPastTime(),
-      params: {},
     }),
     makeEvent("Popped", {
       eventDate: t - 150,
@@ -1355,19 +1355,19 @@ test("aggregate - skipExitActiveState가 true이면 ReplacedEvent가 발생한 �
     makeEvent("Pushed", {
       activityId: "a1",
       activityName: "sample",
-      eventDate: enoughPastTime(),
-      params: {
+      activityParams: {
         hello: "world",
       },
+      eventDate: enoughPastTime(),
     }),
     makeEvent("Replaced", {
       activityId: "a2",
       activityName: "sample",
       eventDate: t,
-      skipEnterActiveState: true,
-      params: {
+      activityParams: {
         hello: "world",
       },
+      skipEnterActiveState: true,
     }),
   ];
 
@@ -1421,8 +1421,8 @@ test("aggregate - PushedEvent에 activityContext가 담겨있는 경우 액티�
     makeEvent("Pushed", {
       activityId: "a1",
       activityName: "sample",
+      activityParams: {},
       eventDate: t,
-      params: {},
       activityContext: {
         hello: "world",
       },
@@ -1467,20 +1467,20 @@ test("aggregate - ReplacedEvent에 activityContext가 담겨있는 경우 액티
     makeEvent("Pushed", {
       activityId: "a1",
       activityName: "sample",
-      eventDate: t,
-      params: {},
+      activityParams: {},
       activityContext: {
         hello: "world1",
       },
+      eventDate: t,
     }),
     makeEvent("Replaced", {
       activityId: "a2",
       activityName: "sample",
-      eventDate: t,
-      params: {},
+      activityParams: {},
       activityContext: {
         hello: "world2",
       },
+      eventDate: t,
     }),
   ];
 

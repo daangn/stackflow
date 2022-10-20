@@ -9,7 +9,7 @@ export type PushedEvent = BaseDomainEvent<
   {
     activityId: string;
     activityName: string;
-    params: PushedEventParams;
+    activityParams: PushedEventParams;
     skipEnterActiveState?: boolean;
     activityContext?: {};
   }

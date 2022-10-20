@@ -45,7 +45,7 @@ export const CoreProvider: React.FC<CoreProviderProps> = ({
       ? makeEvent("Pushed", {
           activityId: makeActivityId(),
           activityName: initialActivity({ initContext }),
-          params: {},
+          activityParams: {},
           eventDate: initialEventDate,
           skipEnterActiveState: false,
         })
