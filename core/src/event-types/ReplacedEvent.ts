@@ -9,7 +9,7 @@ export type ReplacedEvent = BaseDomainEvent<
   {
     activityId: string;
     activityName: string;
-    params: ReplacedEventParams;
+    activityParams: ReplacedEventParams;
     skipEnterActiveState?: boolean;
     activityContext?: {};
   }

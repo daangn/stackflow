@@ -34,7 +34,7 @@ export function preloadPlugin<T extends { [activityName: string]: unknown }>(
         return null;
       }
 
-      const { activityName, params, activityContext } = pushedEvent;
+      const { activityName, activityParams, activityContext } = pushedEvent;
 
       const loader = options.loaders[activityName];
 
@@ -43,7 +43,7 @@ export function preloadPlugin<T extends { [activityName: string]: unknown }>(
       }
 
       const preloadRef = loader({
-        activityParams: params,
+        activityParams,
         activityContext,
         initContext,
         isInitialActivity: true,
@@ -58,7 +58,7 @@ export function preloadPlugin<T extends { [activityName: string]: unknown }>(
       };
     },
     onBeforePush({ actionParams, actions: { overrideActionParams } }) {
-      const { activityName, params, activityContext } = actionParams;
+      const { activityName, activityParams, activityContext } = actionParams;
 
       const loader = options.loaders[activityName];
 
@@ -67,7 +67,7 @@ export function preloadPlugin<T extends { [activityName: string]: unknown }>(
       }
 
       const preloadRef = loader({
-        activityParams: params,
+        activityParams,
         activityContext,
         initContext,
       });
@@ -81,7 +81,7 @@ export function preloadPlugin<T extends { [activityName: string]: unknown }>(
       });
     },
     onBeforeReplace({ actionParams, actions: { overrideActionParams } }) {
-      const { activityName, params, activityContext } = actionParams;
+      const { activityName, activityParams, activityContext } = actionParams;
 
       const loader = options.loaders[activityName];
 
@@ -90,7 +90,7 @@ export function preloadPlugin<T extends { [activityName: string]: unknown }>(
       }
 
       const preloadRef = loader({
-        activityParams: params,
+        activityParams,
         activityContext,
         initContext,
       });

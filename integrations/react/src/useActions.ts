@@ -69,14 +69,14 @@ export function useActions<
   return useMemo(
     () => ({
       pending,
-      push(activityName, params, options) {
+      push(activityName, activityParams, options) {
         const activityId = makeActivityId();
 
         startTransition(() => {
           coreActions.push({
             activityId,
             activityName,
-            params,
+            activityParams,
             skipEnterActiveState: parseActionOptions(options).skipActiveState,
           });
         });
@@ -85,14 +85,14 @@ export function useActions<
           activityId,
         };
       },
-      replace(activityName, params, options) {
+      replace(activityName, activityParams, options) {
         const activityId = makeActivityId();
 
         startTransition(() => {
           coreActions.replace({
             activityId: makeActivityId(),
             activityName,
-            params,
+            activityParams,
             skipEnterActiveState: parseActionOptions(options).skipActiveState,
           });
         });

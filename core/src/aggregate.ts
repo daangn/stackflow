@@ -41,7 +41,7 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
           id: event.activityId,
           name: event.activityName,
           transitionState,
-          params: event.params,
+          params: event.activityParams,
           context: event.activityContext,
           pushedBy: event,
           metadata: {
@@ -69,7 +69,7 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
           id: event.activityId,
           name: event.activityName,
           transitionState,
-          params: event.params,
+          params: event.activityParams,
           context: event.activityContext,
           pushedBy: event,
           metadata: {

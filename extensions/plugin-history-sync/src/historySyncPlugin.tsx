@@ -153,7 +153,7 @@ export function historySyncPlugin<
                 return makeEvent("Pushed", {
                   activityId,
                   activityName,
-                  params: {
+                  activityParams: {
                     ...activityParams,
                   },
                   eventDate: new Date().getTime() - MINUTE,
@@ -176,7 +176,7 @@ export function historySyncPlugin<
         return makeEvent("Pushed", {
           activityId: fallbackActivityId,
           activityName: fallbackActivityName,
-          params: {},
+          activityParams: {},
           eventDate: new Date().getTime() - MINUTE,
           activityContext: {
             path: fallbackActivityPath,
@@ -244,7 +244,7 @@ export function historySyncPlugin<
               push({
                 activityId: historyState.activity.pushedBy.activityId,
                 activityName: historyState.activity.pushedBy.activityName,
-                params: historyState.activity.pushedBy.params,
+                activityParams: historyState.activity.pushedBy.activityParams,
               });
             });
           }
@@ -299,7 +299,7 @@ export function historySyncPlugin<
         const template = makeTemplate(
           normalizeRoute(options.routes[actionParams.activityName])[0],
         );
-        const path = template.fill(actionParams.params);
+        const path = template.fill(actionParams.activityParams);
 
         overrideActionParams({
           ...actionParams,
@@ -313,7 +313,7 @@ export function historySyncPlugin<
         const template = makeTemplate(
           normalizeRoute(options.routes[actionParams.activityName])[0],
         );
-        const path = template.fill(actionParams.params);
+        const path = template.fill(actionParams.activityParams);
 
         overrideActionParams({
           ...actionParams,
