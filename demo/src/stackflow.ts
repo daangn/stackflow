@@ -6,14 +6,10 @@ import { stackflow } from "@stackflow/react";
 
 import Article from "./activities/Article";
 import Main from "./activities/Main";
-import TestBottomSheet from "./activities/TestBottomSheet";
-import TestModal from "./activities/TestModal";
 
 const activities = {
   Main,
   Article,
-  TestModal,
-  TestBottomSheet,
 };
 
 const theme = "cupertino";

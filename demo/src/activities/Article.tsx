@@ -1,6 +1,6 @@
 import type { ActivityComponentType } from "@stackflow/react";
 import { useActivityParams } from "@stackflow/react";
-import React, { useCallback } from "react";
+import React from "react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import ArticleCard from "../components/ArticleCard";
@@ -73,35 +73,9 @@ const Article: ActivityComponentType<ArticleParams> = () => {
     title: string;
   }>();
   const imageUrl = `https://picsum.photos/800/800/?id=${articleId}`;
-  const { push } = useFlow();
-
-  const appendRight = () => (
-    <div>
-      <button
-        type="button"
-        onClick={() => {
-          push("TestModal", {});
-        }}
-      >
-        modal
-      </button>
-      <button
-        type="button"
-        onClick={() => {
-          push("TestBottomSheet", {});
-        }}
-      >
-        bs
-      </button>
-    </div>
-  );
 
   return (
-    <Layout
-      appBar={{
-        appendRight,
-      }}
-    >
+    <Layout appBar={{}}>
       <div className={css.container}>
         <div className={css.image}>
           <div className={css.imageInner}>
