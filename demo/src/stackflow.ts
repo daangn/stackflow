@@ -1,3 +1,4 @@
+import { activityDepthChangePlugin } from "@stackflow/plugin-activity-depth-changed";
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
 import { stackflow } from "@stackflow/react";
 
@@ -13,7 +14,13 @@ export const { Stack, useFlow } = stackflow({
   transitionDuration: 350,
   activities,
   initialActivity: () => "Main",
-  plugins: [basicRendererPlugin()],
+  plugins: [
+    basicRendererPlugin(),
+    activityDepthChangePlugin({
+      onInit: ({ depth, activities, activeActivities }) => {},
+      onDepthChanged: ({ depth, activities, activeActivities }) => {},
+    }),
+  ],
 });
 
 export type TypeActivities = typeof activities;

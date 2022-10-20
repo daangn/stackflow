@@ -2211,6 +2211,7 @@ __metadata:
     "@stackflow/core": ^0.12.0
     "@stackflow/esbuild-config": ^0.12.0
     "@stackflow/link": ^0.12.0
+    "@stackflow/plugin-activity-depth-changed": ^0.12.0
     "@stackflow/plugin-history-sync": ^0.12.0
     "@stackflow/plugin-preload": ^0.12.0
     "@stackflow/plugin-renderer-basic": ^0.12.0
@@ -2311,6 +2312,27 @@ __metadata:
     prettier: ^2.6.2
     typescript: ^4.7.4
     ultra-runner: ^3.10.5
+  languageName: unknown
+  linkType: soft
+
+"@stackflow/plugin-activity-depth-changed@^0.12.0, @stackflow/plugin-activity-depth-changed@workspace:extensions/plugin-activity-depth-changed":
+  version: 0.0.0-use.local
+  resolution: "@stackflow/plugin-activity-depth-changed@workspace:extensions/plugin-activity-depth-changed"
+  dependencies:
+    "@stackflow/core": ^0.12.0
+    "@stackflow/esbuild-config": ^0.12.0
+    "@stackflow/react": ^0.12.0
+    "@types/node": ^18.6.3
+    "@types/react": ^18.0.10
+    esbuild: ^0.14.51
+    react: ^18.1.0
+    rimraf: ^3.0.2
+    typescript: ^4.7.4
+  peerDependencies:
+    "@stackflow/core": 0
+    "@stackflow/react": 0
+    "@types/react": ">=16.8.0"
+    react: ">=16.8.0"
   languageName: unknown
   linkType: soft
 
