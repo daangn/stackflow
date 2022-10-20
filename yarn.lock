@@ -2214,6 +2214,7 @@ __metadata:
     "@stackflow/plugin-history-sync": ^0.12.0
     "@stackflow/plugin-preload": ^0.12.0
     "@stackflow/plugin-renderer-basic": ^0.12.0
+    "@stackflow/plugin-stack-depth-change": ^0.12.0
     "@stackflow/react": ^0.12.0
     "@types/react": ^18.0.10
     "@types/react-dom": ^18.0.5
@@ -2374,6 +2375,21 @@ __metadata:
     "@stackflow/react": 0
     "@types/react": ">=16.8.0"
     react: ">=16.8.0"
+  languageName: unknown
+  linkType: soft
+
+"@stackflow/plugin-stack-depth-change@^0.12.0, @stackflow/plugin-stack-depth-change@workspace:extensions/plugin-stack-depth-change":
+  version: 0.0.0-use.local
+  resolution: "@stackflow/plugin-stack-depth-change@workspace:extensions/plugin-stack-depth-change"
+  dependencies:
+    "@stackflow/core": ^0.12.0
+    "@stackflow/esbuild-config": ^0.12.0
+    "@types/node": ^18.6.3
+    esbuild: ^0.14.51
+    rimraf: ^3.0.2
+    typescript: ^4.7.4
+  peerDependencies:
+    "@stackflow/core": 0
   languageName: unknown
   linkType: soft
 

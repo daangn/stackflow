@@ -1,0 +1,46 @@
+{
+  "name": "@stackflow/plugin-stack-depth-change",
+  "version": "0.12.0",
+  "license": "MIT",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "yarn build:js && yarn build:dts",
+    "build:dts": "tsc --emitDeclarationOnly",
+    "build:js": "node ./esbuild.config.js",
+    "clean": "rimraf dist",
+    "dev": "yarn build:js --watch && yarn build:dts --watch"
+  },
+  "devDependencies": {
+    "@stackflow/core": "^0.12.0",
+    "@stackflow/esbuild-config": "^0.12.0",
+    "@types/node": "^18.6.3",
+    "esbuild": "^0.14.51",
+    "rimraf": "^3.0.2",
+    "typescript": "^4.7.4"
+  },
+  "peerDependencies": {
+    "@stackflow/core": "0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "ultra": {
+    "concurrent": [
+      "dev",
+      "build"
+    ]
+  }
+}
