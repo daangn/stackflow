@@ -6,7 +6,6 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import ArticleCard from "../components/ArticleCard";
 import ArticleProfile from "../components/ArticleProfile";
 import Layout from "../components/Layout";
-import { useFlow } from "../stackflow";
 import * as css from "./Article.css";
 
 const recommenderCard = [
@@ -75,7 +74,7 @@ const Article: ActivityComponentType<ArticleParams> = () => {
   const imageUrl = `https://picsum.photos/800/800/?id=${articleId}`;
 
   return (
-    <Layout appBar={{}}>
+    <Layout>
       <div className={css.container}>
         <div className={css.image}>
           <div className={css.imageInner}>
