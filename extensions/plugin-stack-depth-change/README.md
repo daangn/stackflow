@@ -8,7 +8,7 @@ Synchronizes the stack state with the current browser's history
 
 ```typescript
 import { stackflow } from "@stackflow/react";
-import { activityDepthChangedPlugin } from "@stackflow/plugin-activity-depth-changed";
+import { stackDepthChangePlugin } from "@stackflow/plugin-stack-depth-change";
 
 const { Stack, useFlow } = stackflow({
   activities: {
@@ -16,7 +16,7 @@ const { Stack, useFlow } = stackflow({
   },
   plugins: [
     // ...
-    activityDepthChangePlugin({
+    stackDepthChangePlugin({
       /**
        * Initial loading
        * @param depth

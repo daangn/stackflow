@@ -1,5 +1,5 @@
-import { activityDepthChangePlugin } from "@stackflow/plugin-activity-depth-changed";
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
+import { stackDepthChangePlugin } from "@stackflow/plugin-stack-depth-change";
 import { stackflow } from "@stackflow/react";
 
 import Article from "./activities/Article";
@@ -16,7 +16,7 @@ export const { Stack, useFlow } = stackflow({
   initialActivity: () => "Main",
   plugins: [
     basicRendererPlugin(),
-    activityDepthChangePlugin({
+    stackDepthChangePlugin({
       onInit: ({ depth, activities, activeActivities }) => {},
       onDepthChanged: ({ depth, activities, activeActivities }) => {},
     }),

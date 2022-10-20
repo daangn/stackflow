@@ -1,15 +1,14 @@
-import type { Activity } from "@stackflow/core";
-import type { StackflowReactPlugin } from "@stackflow/react";
+import type { Activity, StackflowPlugin } from "@stackflow/core";
 
-type ActivityDepthChangePluginArgs = {
+type StackDepthChangePluginArgs = {
   depth: number;
   activities: Activity[];
   activeActivities: Activity[];
 };
 
-type ActivityDepthChangePluginOptions = {
-  onInit?: (args: ActivityDepthChangePluginArgs) => void;
-  onDepthChanged?: (args: ActivityDepthChangePluginArgs) => void;
+type StackDepthChangePluginOptions = {
+  onInit?: (args: StackDepthChangePluginArgs) => void;
+  onDepthChanged?: (args: StackDepthChangePluginArgs) => void;
 };
 
 function getActiveActivities(activities: Activity[]) {
@@ -20,11 +19,11 @@ function getActiveActivities(activities: Activity[]) {
   );
 }
 
-export function activityDepthChangePlugin(
-  options: ActivityDepthChangePluginOptions,
-): StackflowReactPlugin {
+export function stackDepthChangePlugin(
+  options: StackDepthChangePluginOptions,
+): StackflowPlugin {
   return () => ({
-    key: "plugin-activity-depth-change",
+    key: "plugin-stack-depth-change",
     onInit({ actions: { getStack } }) {
       const { activities } = getStack();
       const activeActivities = getActiveActivities(activities);

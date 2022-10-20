@@ -45,10 +45,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:extensions/link"\
       },\
       {\
-        "name": "@stackflow/plugin-activity-depth-changed",\
-        "reference": "workspace:extensions/plugin-activity-depth-changed"\
-      },\
-      {\
         "name": "@stackflow/plugin-history-sync",\
         "reference": "workspace:extensions/plugin-history-sync"\
       },\
@@ -59,6 +55,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       {\
         "name": "@stackflow/plugin-renderer-basic",\
         "reference": "workspace:extensions/plugin-renderer-basic"\
+      },\
+      {\
+        "name": "@stackflow/plugin-stack-depth-change",\
+        "reference": "workspace:extensions/plugin-stack-depth-change"\
       },\
       {\
         "name": "@stackflow/react",\
@@ -80,10 +80,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@stackflow/esbuild-config", ["workspace:packages/esbuild-config"]],\
       ["@stackflow/link", ["virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/link", "workspace:extensions/link"]],\
       ["@stackflow/monorepo", ["workspace:."]],\
-      ["@stackflow/plugin-activity-depth-changed", ["virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-activity-depth-changed", "workspace:extensions/plugin-activity-depth-changed"]],\
       ["@stackflow/plugin-history-sync", ["virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-history-sync", "workspace:extensions/plugin-history-sync"]],\
       ["@stackflow/plugin-preload", ["virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-preload", "workspace:extensions/plugin-preload"]],\
       ["@stackflow/plugin-renderer-basic", ["virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-renderer-basic", "workspace:extensions/plugin-renderer-basic"]],\
+      ["@stackflow/plugin-stack-depth-change", ["virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-stack-depth-change", "workspace:extensions/plugin-stack-depth-change"]],\
       ["@stackflow/react", ["virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:integrations/react", "workspace:integrations/react"]]\
     ],\
     "fallbackPool": [\
@@ -3062,10 +3062,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@stackflow/core", "workspace:core"],\
             ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
             ["@stackflow/link", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/link"],\
-            ["@stackflow/plugin-activity-depth-changed", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-activity-depth-changed"],\
             ["@stackflow/plugin-history-sync", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-history-sync"],\
             ["@stackflow/plugin-preload", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-preload"],\
             ["@stackflow/plugin-renderer-basic", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-renderer-basic"],\
+            ["@stackflow/plugin-stack-depth-change", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-stack-depth-change"],\
             ["@stackflow/react", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:integrations/react"],\
             ["@types/react", "npm:18.0.15"],\
             ["@types/react-dom", "npm:18.0.5"],\
@@ -3201,50 +3201,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "SOFT"\
         }]\
       ]],\
-      ["@stackflow/plugin-activity-depth-changed", [\
-        ["virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-activity-depth-changed", {\
-          "packageLocation": "./.yarn/__virtual__/@stackflow-plugin-activity-depth-changed-virtual-e47a94313f/1/extensions/plugin-activity-depth-changed/",\
-          "packageDependencies": [\
-            ["@stackflow/plugin-activity-depth-changed", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-activity-depth-changed"],\
-            ["@stackflow/core", "workspace:core"],\
-            ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
-            ["@stackflow/react", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:integrations/react"],\
-            ["@types/node", "npm:18.6.3"],\
-            ["@types/react", "npm:18.0.15"],\
-            ["@types/stackflow__core", null],\
-            ["@types/stackflow__react", null],\
-            ["esbuild", "npm:0.14.51"],\
-            ["react", "npm:18.2.0"],\
-            ["rimraf", "npm:3.0.2"],\
-            ["typescript", "patch:typescript@npm%3A4.7.4#~builtin<compat/typescript>::version=4.7.4&hash=f456af"]\
-          ],\
-          "packagePeers": [\
-            "@stackflow/core",\
-            "@stackflow/react",\
-            "@types/react",\
-            "@types/stackflow__core",\
-            "@types/stackflow__react",\
-            "react"\
-          ],\
-          "linkType": "SOFT"\
-        }],\
-        ["workspace:extensions/plugin-activity-depth-changed", {\
-          "packageLocation": "./extensions/plugin-activity-depth-changed/",\
-          "packageDependencies": [\
-            ["@stackflow/plugin-activity-depth-changed", "workspace:extensions/plugin-activity-depth-changed"],\
-            ["@stackflow/core", "workspace:core"],\
-            ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
-            ["@stackflow/react", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:integrations/react"],\
-            ["@types/node", "npm:18.6.3"],\
-            ["@types/react", "npm:18.0.15"],\
-            ["esbuild", "npm:0.14.51"],\
-            ["react", "npm:18.2.0"],\
-            ["rimraf", "npm:3.0.2"],\
-            ["typescript", "patch:typescript@npm%3A4.7.4#~builtin<compat/typescript>::version=4.7.4&hash=f456af"]\
-          ],\
-          "linkType": "SOFT"\
-        }]\
-      ]],\
       ["@stackflow/plugin-history-sync", [\
         ["virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-history-sync", {\
           "packageLocation": "./.yarn/__virtual__/@stackflow-plugin-history-sync-virtual-991015ceb8/1/extensions/plugin-history-sync/",\
@@ -3371,6 +3327,39 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/react", "npm:18.0.15"],\
             ["esbuild", "npm:0.14.51"],\
             ["react", "npm:18.2.0"],\
+            ["rimraf", "npm:3.0.2"],\
+            ["typescript", "patch:typescript@npm%3A4.7.4#~builtin<compat/typescript>::version=4.7.4&hash=f456af"]\
+          ],\
+          "linkType": "SOFT"\
+        }]\
+      ]],\
+      ["@stackflow/plugin-stack-depth-change", [\
+        ["virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-stack-depth-change", {\
+          "packageLocation": "./.yarn/__virtual__/@stackflow-plugin-stack-depth-change-virtual-05c63f7f2d/1/extensions/plugin-stack-depth-change/",\
+          "packageDependencies": [\
+            ["@stackflow/plugin-stack-depth-change", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-stack-depth-change"],\
+            ["@stackflow/core", "workspace:core"],\
+            ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
+            ["@types/node", "npm:18.6.3"],\
+            ["@types/stackflow__core", null],\
+            ["esbuild", "npm:0.14.51"],\
+            ["rimraf", "npm:3.0.2"],\
+            ["typescript", "patch:typescript@npm%3A4.7.4#~builtin<compat/typescript>::version=4.7.4&hash=f456af"]\
+          ],\
+          "packagePeers": [\
+            "@stackflow/core",\
+            "@types/stackflow__core"\
+          ],\
+          "linkType": "SOFT"\
+        }],\
+        ["workspace:extensions/plugin-stack-depth-change", {\
+          "packageLocation": "./extensions/plugin-stack-depth-change/",\
+          "packageDependencies": [\
+            ["@stackflow/plugin-stack-depth-change", "workspace:extensions/plugin-stack-depth-change"],\
+            ["@stackflow/core", "workspace:core"],\
+            ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
+            ["@types/node", "npm:18.6.3"],\
+            ["esbuild", "npm:0.14.51"],\
             ["rimraf", "npm:3.0.2"],\
             ["typescript", "patch:typescript@npm%3A4.7.4#~builtin<compat/typescript>::version=4.7.4&hash=f456af"]\
           ],\
