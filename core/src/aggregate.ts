@@ -76,12 +76,12 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
           zIndex: -1,
         };
 
-        const i = activities.findIndex(
+        const alreadyExistingActivityIndex = activities.findIndex(
           (activity) => activity.id === event.activityId,
         );
 
-        if (i > -1) {
-          activities[i] = newActivity;
+        if (alreadyExistingActivityIndex > -1) {
+          activities[alreadyExistingActivityIndex] = newActivity;
         } else {
           const topActivity = activities
             .filter((activity) => activity.metadata.poppedBy === null)
