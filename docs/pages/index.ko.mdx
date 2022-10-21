@@ -58,7 +58,7 @@ $ yarn add @stackflow/core @stackflow/react
 $ yarn add @stackflow/plugin-renderer-basic @stackflow/basic-ui
 ```
 
-그리고 다음과 같이 `stackflow()` 함수의 `plugins` 필드에 `@stackflow/plugin-renderer-basic` 플러그인을 초기화해줘요.
+그리고 다음과 같이 `stackflow()` 함수의 `plugins` 필드에 `@stackflow/plugin-renderer-basic`에 들어있는 `basicRendererPlugin()` 플러그인과 `@stackflow/basic-ui`의 `basicUIPlugin()` 플러그인을 초기화해줘요.
 
 ```typescript
 /**
@@ -66,11 +66,17 @@ $ yarn add @stackflow/plugin-renderer-basic @stackflow/basic-ui
  */
 import { stackflow } from "@stackflow/react";
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
+import { basicUIPlugin } from "@stackflow/basic-ui";
 
 export const { Stack, useFlow } = stackflow({
   transitionDuration: 350,
   activities: {},
-  plugins: [basicRendererPlugin()],
+  plugins: [
+    basicRendererPlugin(),
+    basicUIPlugin({
+      theme: "cupertino",
+    }),
+  ],
 });
 ```
 

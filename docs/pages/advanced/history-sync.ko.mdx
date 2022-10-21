@@ -30,6 +30,9 @@ const { Stack, useFlow } = stackflow({
   },
   plugins: [
     basicRendererPlugin(),
+    basicUIPlugin({
+      theme: "cupertino",
+    }),
     historySyncPlugin({
       routes: {
         MyActivity: "/my-activity",

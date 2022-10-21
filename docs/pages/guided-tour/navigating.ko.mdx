@@ -26,7 +26,7 @@ const MyActivity: ActivityComponentType = () => {
   };
 
   return (
-    <AppScreen theme="cupertino" appBar={{ title: "My Activity" }}>
+    <AppScreen appBar={{ title: "My Activity" }}>
       <div>
         My Activity
         <button onClick={onClick}>Go to article page</button>
@@ -91,7 +91,7 @@ const MyActivity: ActivityComponentType = () => {
   };
 
   return (
-    <AppScreen theme="cupertino" appBar={{ title: "My Activity" }}>
+    <AppScreen appBar={{ title: "My Activity" }}>
       <div>
         My Activity
         <button onClick={onClick}>Go to article page</button>
@@ -151,7 +151,7 @@ const Article: ActivityComponentType<ArticleParams> = ({ title }) => {
   };
 
   return (
-    <AppScreen theme="cupertino" appBar={{ title: "Article" }}>
+    <AppScreen appBar={{ title: "Article" }}>
       <div>
         <h1>{title}</h1>
         <button onClick={onClick}>back</button>

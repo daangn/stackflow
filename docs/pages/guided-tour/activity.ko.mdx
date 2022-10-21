@@ -26,7 +26,7 @@ import { AppScreen } from "@stackflow/basic-ui";
 
 const MyActivity: ActivityComponentType = () => {
   return (
-    <AppScreen theme="cupertino" appBar={{ title: "My Activity" }}>
+    <AppScreen appBar={{ title: "My Activity" }}>
       <div>My Activity</div>
     </AppScreen>
   );
@@ -57,7 +57,12 @@ import MyActivity from "./MyActivity";
 
 const { Stack, useFlow } = stackflow({
   transitionDuration: 350,
-  plugins: [basicRendererPlugin()],
+  plugins: [
+    basicRendererPlugin(),
+    basicUIPlugin({
+      theme: "cupertino",
+    }),
+  ],
   activities: {
     MyActivity,
   },
@@ -78,7 +83,12 @@ import MyActivity from "./MyActivity";
 
 const { Stack, useFlow } = stackflow({
   transitionDuration: 350,
-  plugins: [basicRendererPlugin()],
+  plugins: [
+    basicRendererPlugin(),
+    basicUIPlugin({
+      theme: "cupertino",
+    }),
+  ],
   activities: {
     MyActivity,
   },
@@ -112,7 +122,7 @@ const Article: ActivityComponentType<ArticleParams> = ({
   params: { title },
 }) => {
   return (
-    <AppScreen theme="cupertino" appBar={{ title: "Article" }}>
+    <AppScreen appBar={{ title: "Article" }}>
       <div>
         <h1>{title}</h1>
       </div>
@@ -134,7 +144,7 @@ type ArticleParams = {
 };
 const Article: React.FC<ArticleParams> = ({ params: { title } }) => {
   return (
-    <AppScreen theme="cupertino" appBar={{ title: "Article" }}>
+    <AppScreen appBar={{ title: "Article" }}>
       <div>
         <h1>{title}</h1>
       </div>

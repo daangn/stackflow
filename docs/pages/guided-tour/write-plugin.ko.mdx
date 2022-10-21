@@ -51,6 +51,9 @@ stackflow({
   // ...
   plugins: [
     basicRendererPlugin(),
+    basicUIPlugin({
+      theme: "cupertino",
+    }),
     ({ initContext }) => {
       return {
         key: "my-plugin",

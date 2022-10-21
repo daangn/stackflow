@@ -34,6 +34,9 @@ const { Stack, useFlow } = stackflow({
   activities,
   plugins: [
     basicRendererPlugin(),
+    basicUIPlugin({
+      theme: "cupertino",
+    }),
     preloadPlugin({
       loaders: {
         MyActivity({ activityName, activityParams }) {

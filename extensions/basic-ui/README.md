@@ -6,14 +6,56 @@ Render the UI within the activity using the global stack state. It provides `cup
 
 ## Usage
 
+```typescript
+/**
+ * stackflow.ts
+ */
+import { stackflow } from "@stackflow/react";
+import { basicUIPlugin } from "@stackflow/basic-ui";
+
+const { Stack, useFlow } = stackflow({
+  // ...
+  plugins: [
+    // ...
+    basicUIPlugin({
+      theme: "cupertino",
+    }),
+  ],
+});
+```
+
 ```tsx
 import { AppScreen } from "@stackflow/basic-ui";
 
 const Something: React.FC = () => {
   return (
-    <AppScreen theme="cupertino" appBar={{ title: "Home" }}>
+    <AppScreen appBar={{ title: "Home" }}>
       <div>Hello, World</div>
     </AppScreen>
+  );
+};
+```
+
+```tsx
+import { Modal } from "@stackflow/basic-ui";
+
+const Something: React.FC = () => {
+  return (
+    <Modal>
+      <div>Hello, World</div>
+    </Modal>
+  );
+};
+```
+
+```tsx
+import { BottomSheet } from "@stackflow/basic-ui";
+
+const Something: React.FC = () => {
+  return (
+    <BottomSheet>
+      <div>Hello, World</div>
+    </BottomSheet>
   );
 };
 ```
