@@ -38,15 +38,12 @@ export function produceEffects(
         _TAG: nextActivity.pushedBy.name === "Pushed" ? "PUSHED" : "REPLACED",
         activity: nextActivity,
       });
-    }
-
-    if (isPrevActivityPopped && isNextActivityPushed) {
+    } else if (isPrevActivityPopped && isNextActivityPushed) {
       output.push({
         _TAG: nextActivity.pushedBy.name === "Pushed" ? "PUSHED" : "REPLACED",
         activity: nextActivity,
       });
-    }
-    if (
+    } else if (
       !!prevActivity &&
       !!nextActivity &&
       prevActivity.id === nextActivity.id &&
@@ -61,6 +58,7 @@ export function produceEffects(
       });
     }
   }
+
   for (
     let j =
       Math.max(prevOutput.activities.length, nextOutput.activities.length) - 1;
