@@ -1,5 +1,5 @@
 import type { ActivityComponentType } from "@stackflow/react";
-import { useActivityParams } from "@stackflow/react";
+import { useActivity, useActivityParams } from "@stackflow/react";
 import React from "react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
@@ -74,7 +74,7 @@ const Article: ActivityComponentType<ArticleParams> = () => {
   const imageUrl = `https://picsum.photos/800/800/?id=${articleId}`;
 
   return (
-    <Layout>
+    <Layout appBar={{}}>
       <div className={css.container}>
         <div className={css.image}>
           <div className={css.imageInner}>

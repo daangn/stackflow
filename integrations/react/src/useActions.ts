@@ -46,6 +46,7 @@ export type UseActionsOutputType<T extends BaseActivities> = {
     params: T[K] extends ActivityComponentType<infer U> ? U : {},
     options?: {
       animate?: boolean;
+      activityId?: string;
     },
   ) => {
     activityId: string;
@@ -90,7 +91,7 @@ export function useActions<
 
         startTransition(() => {
           coreActions.replace({
-            activityId: makeActivityId(),
+            activityId: options?.activityId ?? makeActivityId(),
             activityName,
             activityParams,
             skipEnterActiveState: parseActionOptions(options).skipActiveState,

@@ -2,6 +2,7 @@ import isEqual from "react-fast-compare";
 
 import type { AggregateOutput } from "./AggregateOutput";
 import type { Effect } from "./Effect";
+import { omit } from "./utils";
 
 export function produceEffects(
   prevOutput: AggregateOutput,
@@ -9,7 +10,9 @@ export function produceEffects(
 ): Effect[] {
   const output: Effect[] = [];
 
-  if (!isEqual(prevOutput, nextOutput)) {
+  const somethingChanged = !isEqual(prevOutput, nextOutput);
+
+  if (somethingChanged) {
     output.push({
       _TAG: "%SOMETHING_CHANGED%",
     });
@@ -23,13 +26,6 @@ export function produceEffects(
     const prevActivity = prevOutput.activities[i];
     const nextActivity = nextOutput.activities[i];
 
-    if (!prevActivity && !!nextActivity) {
-      output.push({
-        _TAG: nextActivity.pushedBy.name === "Pushed" ? "PUSHED" : "REPLACED",
-        activity: nextActivity,
-      });
-    }
-
     const isPrevActivityPopped =
       prevActivity?.transitionState === "exit-done" ||
       prevActivity?.transitionState === "exit-active";
@@ -37,13 +33,32 @@ export function produceEffects(
       nextActivity?.transitionState === "enter-active" ||
       nextActivity?.transitionState === "enter-done";
 
-    if (isPrevActivityPopped && isNextActivityPushed) {
+    if (!prevActivity && nextActivity) {
       output.push({
         _TAG: nextActivity.pushedBy.name === "Pushed" ? "PUSHED" : "REPLACED",
         activity: nextActivity,
       });
+    } else if (isPrevActivityPopped && isNextActivityPushed) {
+      output.push({
+        _TAG: nextActivity.pushedBy.name === "Pushed" ? "PUSHED" : "REPLACED",
+        activity: nextActivity,
+      });
+    } else if (
+      !!prevActivity &&
+      !!nextActivity &&
+      prevActivity.id === nextActivity.id &&
+      !isEqual(
+        omit(prevActivity, ["isActive", "isTop", "transitionState", "zIndex"]),
+        omit(nextActivity, ["isActive", "isTop", "transitionState", "zIndex"]),
+      )
+    ) {
+      output.push({
+        _TAG: "REPLACED",
+        activity: nextActivity,
+      });
     }
   }
+
   for (
     let j =
       Math.max(prevOutput.activities.length, nextOutput.activities.length) - 1;

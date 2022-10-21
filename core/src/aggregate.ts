@@ -61,11 +61,7 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
             ? "enter-done"
             : "enter-active";
 
-        const targetActivity = activities
-          .filter((activity) => activity.metadata.poppedBy === null)
-          .sort((a1, a2) => a2.pushedBy.eventDate - a1.pushedBy.eventDate)[0];
-
-        activities.push({
+        const newActivity = {
           id: event.activityId,
           name: event.activityName,
           transitionState,
@@ -78,11 +74,25 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
           isTop: false,
           isActive: false,
           zIndex: -1,
-        });
+        };
 
-        if (targetActivity && transitionState === "enter-done") {
-          targetActivity.metadata.poppedBy = event;
-          targetActivity.transitionState = "exit-done";
+        const alreadyExistingActivityIndex = activities.findIndex(
+          (activity) => activity.id === event.activityId,
+        );
+
+        if (alreadyExistingActivityIndex > -1) {
+          activities[alreadyExistingActivityIndex] = newActivity;
+        } else {
+          const topActivity = activities
+            .filter((activity) => activity.metadata.poppedBy === null)
+            .sort((a1, a2) => a2.pushedBy.eventDate - a1.pushedBy.eventDate)[0];
+
+          activities.push(newActivity);
+
+          if (topActivity && transitionState === "enter-done") {
+            topActivity.metadata.poppedBy = event;
+            topActivity.transitionState = "exit-done";
+          }
         }
 
         break;
