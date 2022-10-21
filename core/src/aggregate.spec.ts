@@ -1523,7 +1523,7 @@ test("aggregate - ReplacedEvent에 activityContext가 담겨있는 경우 액티
   });
 });
 
-test("aggregate - ReplacedEvent에 현재 존재하는 activityId가 포함된 경우, 같은 액티비티 ID로 변경됩니다", () => {
+test("aggregate - ReplacedEvent에 현재 상단에 존재하는 activityId가 포함된 경우, 해당하는 액티비티가 변경됩니다", () => {
   const t = nowTime();
 
   const events = [
@@ -1596,7 +1596,7 @@ test("aggregate - ReplacedEvent에 현재 존재하는 activityId가 포함된 �
   });
 });
 
-test("aggregate - ReplacedEvent에 현재 존재하는 activityId가 포함된 경우, 같은 액티비티 ID로 변경됩니다", () => {
+test("aggregate - ReplacedEvent에 현재 중간에 존재하는 activityId가 포함된 경우, 해당 액티비티가 변경됩니다", () => {
   const t = nowTime();
 
   const events = [
@@ -1690,7 +1690,7 @@ test("aggregate - ReplacedEvent에 현재 존재하는 activityId가 포함된 �
   });
 });
 
-test("aggregate - ReplacedEvent에 현재 존재하는 activityId가 포함된 경우, 같은 액티비티 ID로 변경됩니다 2", () => {
+test("aggregate - ReplacedEvent에 현재 중간에 존재하는 activityId가 포함되고 충분한 시간이 지난 경우, 해당 액티비티가 enter-done 상태를 유지합니다", () => {
   const t = nowTime();
 
   const events = [
