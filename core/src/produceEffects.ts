@@ -1,7 +1,8 @@
 import isEqual from "react-fast-compare";
 
-import type { Activity, AggregateOutput } from "./AggregateOutput";
+import type { AggregateOutput } from "./AggregateOutput";
 import type { Effect } from "./Effect";
+import { omit } from "./utils";
 
 export function produceEffects(
   prevOutput: AggregateOutput,
@@ -48,17 +49,10 @@ export function produceEffects(
     if (
       !!prevActivity &&
       !!nextActivity &&
+      prevActivity.id === nextActivity.id &&
       !isEqual(
-        {
-          name: prevActivity.name,
-          params: prevActivity.params,
-          pushedBy: prevActivity.pushedBy,
-        },
-        {
-          name: nextActivity.name,
-          params: nextActivity.params,
-          pushedBy: nextActivity.pushedBy,
-        },
+        omit(prevActivity, ["isActive", "isTop", "transitionState", "zIndex"]),
+        omit(nextActivity, ["isActive", "isTop", "transitionState", "zIndex"]),
       )
     ) {
       output.push({
