@@ -20,10 +20,7 @@ export type StackProps = {
   initContext?: {};
 };
 
-export type StackComponentType = React.ForwardRefExoticComponent<
-  StackProps &
-    React.RefAttributes<StackRefCurrentType<BaseActivities> | undefined>
->;
+export type StackComponentType = React.FC<StackProps>;
 
 export type StackflowOptions<T extends BaseActivities> = {
   /**
