@@ -13,12 +13,13 @@ import StackRefManager from "./StackRefManager";
 import type { UseActionsOutputType } from "./useActions";
 import { useActions } from "./useActions";
 
-export type StackProps = {
+export interface StackProps
+  extends React.RefAttributes<StackRefCurrentType<BaseActivities> | undefined> {
   /**
    * Context data to pass to plugins in render time
    */
   initContext?: {};
-};
+}
 
 export type StackComponentType = React.FC<StackProps>;
 
@@ -57,7 +58,7 @@ export type StackflowOutput<T extends BaseActivities> = {
   useFlow: () => UseActionsOutputType<T>;
 
   /**
-   * Created Ref from useFlow and useActions
+   * Created Ref from Stack
    */
   createStackRef: () => React.MutableRefObject<StackRefCurrentType<T>> & {
     isReady: () => boolean;
