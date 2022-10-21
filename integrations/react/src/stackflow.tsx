@@ -1,14 +1,14 @@
-import type { AggregateOutput, DispatchEvent } from "@stackflow/core";
 import React, { useMemo, useRef } from "react";
 
-import ActionRefManager from "./ActionRefManager";
 import type { BaseActivities } from "./BaseActivities";
 import { CoreProvider } from "./core";
+import type { CoreActionsContextValue } from "./core/CoreActionsContext";
 import EffectManager from "./EffectManager";
 import { InitContextProvider } from "./init-context";
 import MainRenderer from "./MainRenderer";
 import { PluginsProvider } from "./plugins";
 import type { StackflowReactPlugin } from "./StackflowReactPlugin";
+import StackRefManager from "./StackRefManager";
 import type { UseActionsOutputType } from "./useActions";
 import { useActions } from "./useActions";
 
@@ -19,13 +19,8 @@ export type StackProps = {
   initContext?: {};
 };
 
-export type CoreRefType = {
-  getStack: () => AggregateOutput;
-  dispatchEvent: DispatchEvent;
-};
-
 export type StackRefCurrentType<T extends BaseActivities> =
-  | UseActionsOutputType<T> & CoreRefType;
+  | { actions: UseActionsOutputType<T> } & CoreActionsContextValue;
 
 export type StackRefType<T extends BaseActivities> = React.MutableRefObject<
   StackRefCurrentType<T>
@@ -122,34 +117,24 @@ export function stackflow<T extends BaseActivities>(
         [],
       );
 
-      const actionRef = useRef<UseActionsOutputType<BaseActivities>>(null);
-      const coreRef = useRef<CoreRefType>(null);
+      const stackRef = useRef<StackRefCurrentType<BaseActivities>>();
 
       React.useImperativeHandle(
         ref,
-        React.useCallback(() => {
-          if (actionRef?.current && coreRef?.current) {
-            return {
-              ...actionRef.current,
-              ...coreRef.current,
-            };
-          }
-          return undefined;
-        }, []),
+        React.useCallback(() => stackRef?.current, []),
       );
 
       return (
         <InitContextProvider value={props.initContext ?? {}}>
           <PluginsProvider value={plugins}>
             <CoreProvider
-              ref={coreRef}
               activities={activities}
               initialActivity={options.initialActivity}
               transitionDuration={options.transitionDuration}
             >
               <MainRenderer activities={activities} />
               <EffectManager />
-              <ActionRefManager ref={actionRef} />
+              <StackRefManager ref={stackRef} />
             </CoreProvider>
           </PluginsProvider>
         </InitContextProvider>

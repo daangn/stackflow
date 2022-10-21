@@ -13,7 +13,6 @@ import { makeActivityId } from "../activity";
 import type { BaseActivities } from "../BaseActivities";
 import { useInitContext } from "../init-context";
 import { usePlugins } from "../plugins";
-import type { CoreRefType } from "../stackflow";
 import { CoreActionsContext } from "./CoreActionsContext";
 import { CoreStateContext } from "./CoreStateContext";
 
