@@ -29,10 +29,10 @@
   "dependencies": {
     "@seed-design/design-token": "^1.0.0-alpha.0",
     "@seed-design/stylesheet": "^1.0.0-alpha.0",
-    "@stackflow/basic-ui": "^0.14.0",
     "@stackflow/compat-await-push": "^0.14.0",
     "@stackflow/core": "^0.14.0",
     "@stackflow/link": "^0.14.0",
+    "@stackflow/plugin-basic-ui": "^0.14.0",
     "@stackflow/plugin-history-sync": "^0.14.0",
     "@stackflow/plugin-preload": "^0.14.0",
     "@stackflow/plugin-renderer-basic": "^0.14.0",

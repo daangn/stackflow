@@ -2136,32 +2136,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@stackflow/basic-ui@^0.14.0, @stackflow/basic-ui@workspace:extensions/basic-ui":
-  version: 0.0.0-use.local
-  resolution: "@stackflow/basic-ui@workspace:extensions/basic-ui"
-  dependencies:
-    "@stackflow/core": ^0.14.0
-    "@stackflow/esbuild-config": ^0.14.0
-    "@stackflow/react": ^0.14.0
-    "@types/react": ^18.0.10
-    "@vanilla-extract/css": ^1.7.2
-    "@vanilla-extract/css-utils": ^0.1.2
-    "@vanilla-extract/dynamic": ^2.0.2
-    "@vanilla-extract/private": ^1.0.3
-    "@vanilla-extract/recipes": ^0.2.5
-    esbuild: ^0.14.51
-    react: ^18.1.0
-    rimraf: ^3.0.2
-    ts-pattern: ^4.0.5
-    typescript: ^4.7.4
-  peerDependencies:
-    "@stackflow/core": 0
-    "@stackflow/react": 0
-    "@types/react": ">=16.8.0"
-    react: ">=16.8.0"
-  languageName: unknown
-  linkType: soft
-
 "@stackflow/compat-await-push@^0.14.0, @stackflow/compat-await-push@workspace:extensions/compat-await-push":
   version: 0.0.0-use.local
   resolution: "@stackflow/compat-await-push@workspace:extensions/compat-await-push"
@@ -2206,11 +2180,11 @@ __metadata:
   dependencies:
     "@seed-design/design-token": ^1.0.0-alpha.0
     "@seed-design/stylesheet": ^1.0.0-alpha.0
-    "@stackflow/basic-ui": ^0.14.0
     "@stackflow/compat-await-push": ^0.14.0
     "@stackflow/core": ^0.14.0
     "@stackflow/esbuild-config": ^0.14.0
     "@stackflow/link": ^0.14.0
+    "@stackflow/plugin-basic-ui": ^0.14.0
     "@stackflow/plugin-history-sync": ^0.14.0
     "@stackflow/plugin-preload": ^0.14.0
     "@stackflow/plugin-renderer-basic": ^0.14.0
@@ -2241,9 +2215,9 @@ __metadata:
   dependencies:
     "@mdx-js/react": ^2.1.1
     "@seed-design/stylesheet": ^1.0.0-alpha.0
-    "@stackflow/basic-ui": ^0.14.0
     "@stackflow/core": ^0.14.0
     "@stackflow/demo": ^0.14.0
+    "@stackflow/plugin-basic-ui": ^0.14.0
     "@stackflow/plugin-history-sync": ^0.14.0
     "@stackflow/plugin-renderer-basic": ^0.14.0
     "@stackflow/react": ^0.14.0
@@ -2312,6 +2286,32 @@ __metadata:
     prettier: ^2.6.2
     typescript: ^4.7.4
     ultra-runner: ^3.10.5
+  languageName: unknown
+  linkType: soft
+
+"@stackflow/plugin-basic-ui@^0.14.0, @stackflow/plugin-basic-ui@workspace:extensions/plugin-basic-ui":
+  version: 0.0.0-use.local
+  resolution: "@stackflow/plugin-basic-ui@workspace:extensions/plugin-basic-ui"
+  dependencies:
+    "@stackflow/core": ^0.14.0
+    "@stackflow/esbuild-config": ^0.14.0
+    "@stackflow/react": ^0.14.0
+    "@types/react": ^18.0.10
+    "@vanilla-extract/css": ^1.7.2
+    "@vanilla-extract/css-utils": ^0.1.2
+    "@vanilla-extract/dynamic": ^2.0.2
+    "@vanilla-extract/private": ^1.0.3
+    "@vanilla-extract/recipes": ^0.2.5
+    esbuild: ^0.14.51
+    react: ^18.1.0
+    rimraf: ^3.0.2
+    ts-pattern: ^4.0.5
+    typescript: ^4.7.4
+  peerDependencies:
+    "@stackflow/core": 0
+    "@stackflow/react": 0
+    "@types/react": ">=16.8.0"
+    react: ">=16.8.0"
   languageName: unknown
   linkType: soft
 

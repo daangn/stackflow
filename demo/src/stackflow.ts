@@ -1,5 +1,5 @@
 import { vars } from "@seed-design/design-token";
-import { basicUIPlugin } from "@stackflow/basic-ui";
+import { basicUIPlugin } from "@stackflow/plugin-basic-ui";
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
 import { stackDepthChangePlugin } from "@stackflow/plugin-stack-depth-change";
 import { stackflow } from "@stackflow/react";

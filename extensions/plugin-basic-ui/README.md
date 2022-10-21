@@ -1,4 +1,4 @@
-# @stackflow/basic-ui
+# @stackflow/plugin-basic-ui
 
 Render the UI within the activity using the global stack state. It provides `cupertino` and `android` themes by default.
 
@@ -11,7 +11,7 @@ Render the UI within the activity using the global stack state. It provides `cup
  * stackflow.ts
  */
 import { stackflow } from "@stackflow/react";
-import { basicUIPlugin } from "@stackflow/basic-ui";
+import { basicUIPlugin } from "@stackflow/plugin-basic-ui";
 
 const { Stack, useFlow } = stackflow({
   // ...
@@ -25,7 +25,7 @@ const { Stack, useFlow } = stackflow({
 ```
 
 ```tsx
-import { AppScreen } from "@stackflow/basic-ui";
+import { AppScreen } from "@stackflow/plugin-basic-ui";
 
 const Something: React.FC = () => {
   return (
@@ -37,7 +37,7 @@ const Something: React.FC = () => {
 ```
 
 ```tsx
-import { Modal } from "@stackflow/basic-ui";
+import { Modal } from "@stackflow/plugin-basic-ui";
 
 const Something: React.FC = () => {
   return (
@@ -49,7 +49,7 @@ const Something: React.FC = () => {
 ```
 
 ```tsx
-import { BottomSheet } from "@stackflow/basic-ui";
+import { BottomSheet } from "@stackflow/plugin-basic-ui";
 
 const Something: React.FC = () => {
   return (

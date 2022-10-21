@@ -48,17 +48,17 @@ export const { Stack, useFlow } = stackflow({
 
 ## 기본 UI 확장 설치하기
 
-**Stackflow**는 기본적으로 UI(DOM과 CSS) 구현을 포함하지 않아요. 원하는 렌더링 결과를 얻기 위해서는 플러그인 추가가 필요해요. 다음 명령어로 `@stackflow/plugin-renderer-basic` 플러그인과 `@stackflow/basic-ui` 확장을 설치해요.
+**Stackflow**는 기본적으로 UI(DOM과 CSS) 구현을 포함하지 않아요. 원하는 렌더링 결과를 얻기 위해서는 플러그인 추가가 필요해요. 다음 명령어로 `@stackflow/plugin-renderer-basic` 플러그인과 `@stackflow/plugin-basic-ui` 확장을 설치해요.
 
 ```bash
 # 앞서 설치한 스택 상태 관리 패키지
 $ yarn add @stackflow/core @stackflow/react
 
 # 기본적인 UI 구현을 위한 패키지
-$ yarn add @stackflow/plugin-renderer-basic @stackflow/basic-ui
+$ yarn add @stackflow/plugin-renderer-basic @stackflow/plugin-basic-ui
 ```
 
-그리고 다음과 같이 `stackflow()` 함수의 `plugins` 필드에 `@stackflow/plugin-renderer-basic`에 들어있는 `basicRendererPlugin()` 플러그인과 `@stackflow/basic-ui`의 `basicUIPlugin()` 플러그인을 초기화해줘요.
+그리고 다음과 같이 `stackflow()` 함수의 `plugins` 필드에 `@stackflow/plugin-renderer-basic`에 들어있는 `basicRendererPlugin()` 플러그인과 `@stackflow/plugin-basic-ui`의 `basicUIPlugin()` 플러그인을 초기화해줘요.
 
 ```typescript
 /**
@@ -66,7 +66,7 @@ $ yarn add @stackflow/plugin-renderer-basic @stackflow/basic-ui
  */
 import { stackflow } from "@stackflow/react";
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
-import { basicUIPlugin } from "@stackflow/basic-ui";
+import { basicUIPlugin } from "@stackflow/plugin-basic-ui";
 
 export const { Stack, useFlow } = stackflow({
   transitionDuration: 350,
@@ -80,10 +80,10 @@ export const { Stack, useFlow } = stackflow({
 });
 ```
 
-`@stackflow/basic-ui`에서 제공하는 CSS도 내 코드 어딘가에 삽입해요.
+`@stackflow/plugin-basic-ui`에서 제공하는 CSS도 내 코드 어딘가에 삽입해요.
 
 ```typescript
-import "@stackflow/basic-ui/index.css";
+import "@stackflow/plugin-basic-ui/index.css";
 ```
 
 그리고 원하는 렌더링 위치에 다음과 같이 `<Stack />` 컴포넌트를 초기화 해줘요.

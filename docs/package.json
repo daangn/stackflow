@@ -10,9 +10,9 @@
   },
   "dependencies": {
     "@mdx-js/react": "^2.1.1",
-    "@stackflow/basic-ui": "^0.14.0",
     "@stackflow/core": "^0.14.0",
     "@stackflow/demo": "^0.14.0",
+    "@stackflow/plugin-basic-ui": "^0.14.0",
     "@stackflow/plugin-history-sync": "^0.14.0",
     "@stackflow/plugin-renderer-basic": "^0.14.0",
     "@stackflow/react": "^0.14.0",

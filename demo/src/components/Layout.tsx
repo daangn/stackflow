@@ -1,4 +1,4 @@
-import { AppScreen } from "@stackflow/basic-ui";
+import { AppScreen } from "@stackflow/plugin-basic-ui";
 import React from "react";
 
 type PropOf<T> = T extends React.ComponentType<infer U> ? U : never;

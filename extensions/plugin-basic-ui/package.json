@@ -1,5 +1,5 @@
 {
-  "name": "@stackflow/basic-ui",
+  "name": "@stackflow/plugin-basic-ui",
   "version": "0.14.0",
   "license": "MIT",
   "exports": {

@@ -22,7 +22,7 @@ import DiagramActivity from "../../components/DiagramActivity.tsx";
  * MyActivity.tsx
  */
 import { ActivityComponentType } from "@stackflow/react";
-import { AppScreen } from "@stackflow/basic-ui";
+import { AppScreen } from "@stackflow/plugin-basic-ui";
 
 const MyActivity: ActivityComponentType = () => {
   return (
@@ -41,8 +41,8 @@ export default MyActivity;
 </Callout>
 <Callout emoji="💡">
   **Stackflow**는 기본적으로 UI를 제공하지 않아요. 대신
-  `@stackflow/basic-ui`에서 기본 iOS(`cupertino`), Android(`android`) UI를
-  제공하고 있어요.
+  `@stackflow/plugin-basic-ui`에서 기본 iOS(`cupertino`), Android(`android`)
+  UI를 제공하고 있어요.
 </Callout>
 
 액티비티를 잘 선언했다면, 다음과 같이 `stackflow()` 함수의 `activities` 필드에 등록해요.
@@ -113,7 +113,7 @@ const { Stack, useFlow } = stackflow({
  * Article.tsx
  */
 import { ActivityComponentType } from "@stackflow/react";
-import { AppScreen } from "@stackflow/basic-ui";
+import { AppScreen } from "@stackflow/plugin-basic-ui";
 
 type ArticleParams = {
   title: string;
@@ -137,7 +137,7 @@ export default Article;
 
 ```tsx
 import React from "react";
-import { AppScreen } from "@stackflow/basic-ui";
+import { AppScreen } from "@stackflow/plugin-basic-ui";
 
 type ArticleParams = {
   title: string;

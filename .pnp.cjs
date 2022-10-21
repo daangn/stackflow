@@ -33,16 +33,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:docs"\
       },\
       {\
-        "name": "@stackflow/basic-ui",\
-        "reference": "workspace:extensions/basic-ui"\
-      },\
-      {\
         "name": "@stackflow/compat-await-push",\
         "reference": "workspace:extensions/compat-await-push"\
       },\
       {\
         "name": "@stackflow/link",\
         "reference": "workspace:extensions/link"\
+      },\
+      {\
+        "name": "@stackflow/plugin-basic-ui",\
+        "reference": "workspace:extensions/plugin-basic-ui"\
       },\
       {\
         "name": "@stackflow/plugin-history-sync",\
@@ -72,7 +72,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
     "enableTopLevelFallback": true,\
     "ignorePatternData": "(^(?:\\\\.yarn\\\\/sdks(?:\\\\/(?!\\\\.{1,2}(?:\\\\/|$))(?:(?:(?!(?:^|\\\\/)\\\\.{1,2}(?:\\\\/|$)).)*?)|$))$)",\
     "fallbackExclusionList": [\
-      ["@stackflow/basic-ui", ["virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/basic-ui", "workspace:extensions/basic-ui"]],\
       ["@stackflow/compat-await-push", ["virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/compat-await-push", "workspace:extensions/compat-await-push"]],\
       ["@stackflow/core", ["workspace:core"]],\
       ["@stackflow/demo", ["workspace:demo"]],\
@@ -80,6 +79,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@stackflow/esbuild-config", ["workspace:packages/esbuild-config"]],\
       ["@stackflow/link", ["virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/link", "workspace:extensions/link"]],\
       ["@stackflow/monorepo", ["workspace:."]],\
+      ["@stackflow/plugin-basic-ui", ["virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-basic-ui", "workspace:extensions/plugin-basic-ui"]],\
       ["@stackflow/plugin-history-sync", ["virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-history-sync", "workspace:extensions/plugin-history-sync"]],\
       ["@stackflow/plugin-preload", ["virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-preload", "workspace:extensions/plugin-preload"]],\
       ["@stackflow/plugin-renderer-basic", ["virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-renderer-basic", "workspace:extensions/plugin-renderer-basic"]],\
@@ -2934,60 +2934,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
-      ["@stackflow/basic-ui", [\
-        ["virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/basic-ui", {\
-          "packageLocation": "./.yarn/__virtual__/@stackflow-basic-ui-virtual-02aa09927e/1/extensions/basic-ui/",\
-          "packageDependencies": [\
-            ["@stackflow/basic-ui", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/basic-ui"],\
-            ["@stackflow/core", "workspace:core"],\
-            ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
-            ["@stackflow/react", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:integrations/react"],\
-            ["@types/react", "npm:18.0.15"],\
-            ["@types/stackflow__core", null],\
-            ["@types/stackflow__react", null],\
-            ["@vanilla-extract/css", "npm:1.7.2"],\
-            ["@vanilla-extract/css-utils", "npm:0.1.2"],\
-            ["@vanilla-extract/dynamic", "npm:2.0.2"],\
-            ["@vanilla-extract/private", "npm:1.0.3"],\
-            ["@vanilla-extract/recipes", "virtual:02aa09927e444537789a88e2326854f8ed924037369b25e987f6e88db646eb6fd2fa1d55102fe0f7d547cd9f33ba7a70166b49cbe7ee8424639d51e172239671#npm:0.2.5"],\
-            ["esbuild", "npm:0.14.51"],\
-            ["react", "npm:18.2.0"],\
-            ["rimraf", "npm:3.0.2"],\
-            ["ts-pattern", "npm:4.0.5"],\
-            ["typescript", "patch:typescript@npm%3A4.7.4#~builtin<compat/typescript>::version=4.7.4&hash=f456af"]\
-          ],\
-          "packagePeers": [\
-            "@stackflow/core",\
-            "@stackflow/react",\
-            "@types/react",\
-            "@types/stackflow__core",\
-            "@types/stackflow__react",\
-            "react"\
-          ],\
-          "linkType": "SOFT"\
-        }],\
-        ["workspace:extensions/basic-ui", {\
-          "packageLocation": "./extensions/basic-ui/",\
-          "packageDependencies": [\
-            ["@stackflow/basic-ui", "workspace:extensions/basic-ui"],\
-            ["@stackflow/core", "workspace:core"],\
-            ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
-            ["@stackflow/react", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:integrations/react"],\
-            ["@types/react", "npm:18.0.15"],\
-            ["@vanilla-extract/css", "npm:1.7.2"],\
-            ["@vanilla-extract/css-utils", "npm:0.1.2"],\
-            ["@vanilla-extract/dynamic", "npm:2.0.2"],\
-            ["@vanilla-extract/private", "npm:1.0.3"],\
-            ["@vanilla-extract/recipes", "virtual:02aa09927e444537789a88e2326854f8ed924037369b25e987f6e88db646eb6fd2fa1d55102fe0f7d547cd9f33ba7a70166b49cbe7ee8424639d51e172239671#npm:0.2.5"],\
-            ["esbuild", "npm:0.14.51"],\
-            ["react", "npm:18.2.0"],\
-            ["rimraf", "npm:3.0.2"],\
-            ["ts-pattern", "npm:4.0.5"],\
-            ["typescript", "patch:typescript@npm%3A4.7.4#~builtin<compat/typescript>::version=4.7.4&hash=f456af"]\
-          ],\
-          "linkType": "SOFT"\
-        }]\
-      ]],\
       ["@stackflow/compat-await-push", [\
         ["virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/compat-await-push", {\
           "packageLocation": "./.yarn/__virtual__/@stackflow-compat-await-push-virtual-fdeadfebbb/1/extensions/compat-await-push/",\
@@ -3057,11 +3003,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@stackflow/demo", "workspace:demo"],\
             ["@seed-design/design-token", "npm:1.0.0-alpha.5"],\
             ["@seed-design/stylesheet", "npm:1.0.0-alpha.3"],\
-            ["@stackflow/basic-ui", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/basic-ui"],\
             ["@stackflow/compat-await-push", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/compat-await-push"],\
             ["@stackflow/core", "workspace:core"],\
             ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
             ["@stackflow/link", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/link"],\
+            ["@stackflow/plugin-basic-ui", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-basic-ui"],\
             ["@stackflow/plugin-history-sync", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-history-sync"],\
             ["@stackflow/plugin-preload", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-preload"],\
             ["@stackflow/plugin-renderer-basic", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-renderer-basic"],\
@@ -3094,9 +3040,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@stackflow/docs", "workspace:docs"],\
             ["@mdx-js/react", "virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#npm:2.1.1"],\
             ["@seed-design/stylesheet", "npm:1.0.0-alpha.3"],\
-            ["@stackflow/basic-ui", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/basic-ui"],\
             ["@stackflow/core", "workspace:core"],\
             ["@stackflow/demo", "workspace:demo"],\
+            ["@stackflow/plugin-basic-ui", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-basic-ui"],\
             ["@stackflow/plugin-history-sync", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-history-sync"],\
             ["@stackflow/plugin-renderer-basic", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-renderer-basic"],\
             ["@stackflow/react", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:integrations/react"],\
@@ -3197,6 +3143,60 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["prettier", "npm:2.6.2"],\
             ["typescript", "patch:typescript@npm%3A4.7.4#~builtin<compat/typescript>::version=4.7.4&hash=f456af"],\
             ["ultra-runner", "npm:3.10.5"]\
+          ],\
+          "linkType": "SOFT"\
+        }]\
+      ]],\
+      ["@stackflow/plugin-basic-ui", [\
+        ["virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-basic-ui", {\
+          "packageLocation": "./.yarn/__virtual__/@stackflow-plugin-basic-ui-virtual-669046a185/1/extensions/plugin-basic-ui/",\
+          "packageDependencies": [\
+            ["@stackflow/plugin-basic-ui", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-basic-ui"],\
+            ["@stackflow/core", "workspace:core"],\
+            ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
+            ["@stackflow/react", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:integrations/react"],\
+            ["@types/react", "npm:18.0.15"],\
+            ["@types/stackflow__core", null],\
+            ["@types/stackflow__react", null],\
+            ["@vanilla-extract/css", "npm:1.7.2"],\
+            ["@vanilla-extract/css-utils", "npm:0.1.2"],\
+            ["@vanilla-extract/dynamic", "npm:2.0.2"],\
+            ["@vanilla-extract/private", "npm:1.0.3"],\
+            ["@vanilla-extract/recipes", "virtual:669046a185e83900af978519e5adddf8e8f1f8fed824849248ba56cf8fcd4e4208872f27e14c3c844d3b769f42be1ba6e0aa90f12df9fa6c38a55aedee211f53#npm:0.2.5"],\
+            ["esbuild", "npm:0.14.51"],\
+            ["react", "npm:18.2.0"],\
+            ["rimraf", "npm:3.0.2"],\
+            ["ts-pattern", "npm:4.0.5"],\
+            ["typescript", "patch:typescript@npm%3A4.7.4#~builtin<compat/typescript>::version=4.7.4&hash=f456af"]\
+          ],\
+          "packagePeers": [\
+            "@stackflow/core",\
+            "@stackflow/react",\
+            "@types/react",\
+            "@types/stackflow__core",\
+            "@types/stackflow__react",\
+            "react"\
+          ],\
+          "linkType": "SOFT"\
+        }],\
+        ["workspace:extensions/plugin-basic-ui", {\
+          "packageLocation": "./extensions/plugin-basic-ui/",\
+          "packageDependencies": [\
+            ["@stackflow/plugin-basic-ui", "workspace:extensions/plugin-basic-ui"],\
+            ["@stackflow/core", "workspace:core"],\
+            ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
+            ["@stackflow/react", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:integrations/react"],\
+            ["@types/react", "npm:18.0.15"],\
+            ["@vanilla-extract/css", "npm:1.7.2"],\
+            ["@vanilla-extract/css-utils", "npm:0.1.2"],\
+            ["@vanilla-extract/dynamic", "npm:2.0.2"],\
+            ["@vanilla-extract/private", "npm:1.0.3"],\
+            ["@vanilla-extract/recipes", "virtual:669046a185e83900af978519e5adddf8e8f1f8fed824849248ba56cf8fcd4e4208872f27e14c3c844d3b769f42be1ba6e0aa90f12df9fa6c38a55aedee211f53#npm:0.2.5"],\
+            ["esbuild", "npm:0.14.51"],\
+            ["react", "npm:18.2.0"],\
+            ["rimraf", "npm:3.0.2"],\
+            ["ts-pattern", "npm:4.0.5"],\
+            ["typescript", "patch:typescript@npm%3A4.7.4#~builtin<compat/typescript>::version=4.7.4&hash=f456af"]\
           ],\
           "linkType": "SOFT"\
         }]\
@@ -4308,10 +4308,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:02aa09927e444537789a88e2326854f8ed924037369b25e987f6e88db646eb6fd2fa1d55102fe0f7d547cd9f33ba7a70166b49cbe7ee8424639d51e172239671#npm:0.2.5", {\
-          "packageLocation": "./.yarn/__virtual__/@vanilla-extract-recipes-virtual-f90c8b57dc/0/cache/@vanilla-extract-recipes-npm-0.2.5-708276a047-474ab445f4.zip/node_modules/@vanilla-extract/recipes/",\
+        ["virtual:669046a185e83900af978519e5adddf8e8f1f8fed824849248ba56cf8fcd4e4208872f27e14c3c844d3b769f42be1ba6e0aa90f12df9fa6c38a55aedee211f53#npm:0.2.5", {\
+          "packageLocation": "./.yarn/__virtual__/@vanilla-extract-recipes-virtual-9d73d933c6/0/cache/@vanilla-extract-recipes-npm-0.2.5-708276a047-474ab445f4.zip/node_modules/@vanilla-extract/recipes/",\
           "packageDependencies": [\
-            ["@vanilla-extract/recipes", "virtual:02aa09927e444537789a88e2326854f8ed924037369b25e987f6e88db646eb6fd2fa1d55102fe0f7d547cd9f33ba7a70166b49cbe7ee8424639d51e172239671#npm:0.2.5"],\
+            ["@vanilla-extract/recipes", "virtual:669046a185e83900af978519e5adddf8e8f1f8fed824849248ba56cf8fcd4e4208872f27e14c3c844d3b769f42be1ba6e0aa90f12df9fa6c38a55aedee211f53#npm:0.2.5"],\
             ["@types/vanilla-extract__css", null],\
             ["@vanilla-extract/css", "npm:1.7.2"]\
           ],\
