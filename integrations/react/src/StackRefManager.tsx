@@ -2,7 +2,7 @@ import React from "react";
 
 import type { BaseActivities } from "./BaseActivities";
 import { CoreActionsContext } from "./core/CoreActionsContext";
-import type { StackRefCurrentType } from "./stackflow";
+import type { StackRefCurrentType } from "./createStackRef";
 import { useActions } from "./useActions";
 
 const StackRefManager = React.forwardRef<

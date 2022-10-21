@@ -2,7 +2,8 @@ import React, { useMemo, useRef } from "react";
 
 import type { BaseActivities } from "./BaseActivities";
 import { CoreProvider } from "./core";
-import type { CoreActionsContextValue } from "./core/CoreActionsContext";
+import type { StackRefCurrentType } from "./createStackRef";
+import { createStackRef } from "./createStackRef";
 import EffectManager from "./EffectManager";
 import { InitContextProvider } from "./init-context";
 import MainRenderer from "./MainRenderer";
@@ -17,15 +18,6 @@ export type StackProps = {
    * Context data to pass to plugins in render time
    */
   initContext?: {};
-};
-
-export type StackRefCurrentType<T extends BaseActivities> =
-  | { actions: UseActionsOutputType<T> } & CoreActionsContextValue;
-
-export type StackRefType<T extends BaseActivities> = React.MutableRefObject<
-  StackRefCurrentType<T>
-> & {
-  isReady: () => boolean;
 };
 
 export type StackComponentType = React.ForwardRefExoticComponent<
@@ -118,7 +110,6 @@ export function stackflow<T extends BaseActivities>(
       );
 
       const stackRef = useRef<StackRefCurrentType<BaseActivities>>();
-
       React.useImperativeHandle(
         ref,
         React.useCallback(() => stackRef?.current, []),
@@ -141,23 +132,6 @@ export function stackflow<T extends BaseActivities>(
       );
     }),
     useFlow: useActions,
-    createStackRef() {
-      let current: StackRefCurrentType<BaseActivities>;
-      const ref: StackRefType<BaseActivities> = {
-        get current() {
-          return current;
-        },
-        set current(value: StackRefCurrentType<BaseActivities>) {
-          current = value;
-        },
-        isReady: () => {
-          if (!current) {
-            return false;
-          }
-          return true;
-        },
-      };
-      return ref;
-    },
+    createStackRef,
   };
 }
