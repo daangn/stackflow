@@ -16,13 +16,16 @@ const StackRefManager = React.forwardRef<
     ref,
     React.useCallback(
       () => ({
-        dispatchEvent,
-        getStack,
-        actions,
+        actions: {
+          ...actions,
+          dispatchEvent,
+          getStack,
+        },
       }),
       [actions, dispatchEvent, getStack],
     ),
   );
+
   return null;
 });
 

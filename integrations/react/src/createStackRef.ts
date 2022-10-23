@@ -2,8 +2,9 @@ import type { BaseActivities } from "./BaseActivities";
 import type { CoreActionsContextValue } from "./core/CoreActionsContext";
 import type { UseActionsOutputType } from "./useActions";
 
-export type StackRefCurrentType<T extends BaseActivities> =
-  | { actions: UseActionsOutputType<T> } & CoreActionsContextValue;
+export type StackRefCurrentType<T extends BaseActivities> = {
+  actions: UseActionsOutputType<T> & CoreActionsContextValue;
+};
 
 export type StackRefType<T extends BaseActivities> = React.MutableRefObject<
   StackRefCurrentType<T>
