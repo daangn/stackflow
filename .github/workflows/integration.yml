@@ -46,8 +46,8 @@ jobs:
             demo/.ultra.cache.json
             docs/.next/
             docs/.ultra.cache.json
-            extensions/basic-ui/dist/
-            extensions/basic-ui/.ultra.cache.json
+            extensions/plugin-basic-ui/dist/
+            extensions/plugin-basic-ui/.ultra.cache.json
             extensions/plugin-history-sync/dist/
             extensions/plugin-history-sync/.ultra.cache.json
             extensions/plugin-renderer-basic/dist/
@@ -101,8 +101,8 @@ jobs:
             demo/.ultra.cache.json
             docs/.next/
             docs/.ultra.cache.json
-            extensions/basic-ui/dist/
-            extensions/basic-ui/.ultra.cache.json
+            extensions/plugin-basic-ui/dist/
+            extensions/plugin-basic-ui/.ultra.cache.json
             extensions/plugin-history-sync/dist/
             extensions/plugin-history-sync/.ultra.cache.json
             extensions/plugin-renderer-basic/dist/
