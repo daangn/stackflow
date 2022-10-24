@@ -2,19 +2,17 @@ import React, { useMemo } from "react";
 
 import type { BaseActivities } from "./BaseActivities";
 import { CoreProvider } from "./core";
-import type { StackRefCurrentType } from "./createStackRef";
-import { createStackRef } from "./createStackRef";
 import EffectManager from "./EffectManager";
 import { InitContextProvider } from "./init-context";
 import MainRenderer from "./MainRenderer";
 import { PluginsProvider } from "./plugins";
 import type { StackflowReactPlugin } from "./StackflowReactPlugin";
+import type { StackRefCurrentType } from "./StackRefManager";
 import StackRefManager from "./StackRefManager";
 import type { UseActionsOutputType } from "./useActions";
 import { useActions } from "./useActions";
 
-export interface StackProps
-  extends React.RefAttributes<StackRefCurrentType<BaseActivities>> {
+export interface StackProps {
   /**
    * Context data to pass to plugins in render time
    */
@@ -22,6 +20,9 @@ export interface StackProps
 }
 
 export type StackComponentType = React.FC<StackProps>;
+
+export type StackRefType<T extends BaseActivities> =
+  React.MutableRefObject<StackRefCurrentType<T> | null>;
 
 export type StackflowOptions<T extends BaseActivities> = {
   /**
@@ -58,11 +59,9 @@ export type StackflowOutput<T extends BaseActivities> = {
   useFlow: () => UseActionsOutputType<T>;
 
   /**
-   * Created Ref from Stack
+   * Created imperative handles
    */
-  createStackRef: () => React.MutableRefObject<StackRefCurrentType<T>> & {
-    isReady: () => boolean;
-  };
+  createStackRef: () => StackRefType<T>;
 };
 
 /**
@@ -88,43 +87,45 @@ export function stackflow<T extends BaseActivities>(
     );
   }
 
-  const Stack = React.forwardRef<StackRefCurrentType<T>, StackProps>(
-    (props, ref) => {
-      const plugins = useMemo(
-        () =>
-          (options.plugins ?? [])
-            .reduce<StackflowReactPlugin[]>(
-              (plugins, plugin) => [
-                ...plugins,
-                ...(Array.isArray(plugin) ? plugin : [plugin]),
-              ],
-              [],
-            )
-            .map((plugin) => plugin({ initContext: props.initContext })),
-        [],
-      );
+  const stackRef: StackRefType<T> = {
+    current: null,
+  };
 
-      return (
-        <InitContextProvider value={props.initContext ?? {}}>
-          <PluginsProvider value={plugins}>
-            <CoreProvider
-              activities={activities}
-              initialActivity={options.initialActivity}
-              transitionDuration={options.transitionDuration}
-            >
-              <MainRenderer activities={activities} />
-              <EffectManager />
-              <StackRefManager ref={ref} />
-            </CoreProvider>
-          </PluginsProvider>
-        </InitContextProvider>
-      );
-    },
-  );
+  const Stack: StackComponentType = (props) => {
+    const plugins = useMemo(
+      () =>
+        (options.plugins ?? [])
+          .reduce<StackflowReactPlugin[]>(
+            (plugins, plugin) => [
+              ...plugins,
+              ...(Array.isArray(plugin) ? plugin : [plugin]),
+            ],
+            [],
+          )
+          .map((plugin) => plugin({ initContext: props.initContext })),
+      [],
+    );
+
+    return (
+      <InitContextProvider value={props.initContext ?? {}}>
+        <PluginsProvider value={plugins}>
+          <CoreProvider
+            activities={activities}
+            initialActivity={options.initialActivity}
+            transitionDuration={options.transitionDuration}
+          >
+            <MainRenderer activities={activities} />
+            <EffectManager />
+            <StackRefManager ref={stackRef} />
+          </CoreProvider>
+        </PluginsProvider>
+      </InitContextProvider>
+    );
+  };
 
   return {
     Stack,
     useFlow: useActions,
-    createStackRef,
+    createStackRef: () => stackRef,
   };
 }
