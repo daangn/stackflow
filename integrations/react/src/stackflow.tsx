@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from "react";
+import React, { useMemo } from "react";
 
 import type { BaseActivities } from "./BaseActivities";
 import { CoreProvider } from "./core";
@@ -14,7 +14,7 @@ import type { UseActionsOutputType } from "./useActions";
 import { useActions } from "./useActions";
 
 export interface StackProps
-  extends React.RefAttributes<StackRefCurrentType<BaseActivities> | undefined> {
+  extends React.RefAttributes<StackRefCurrentType<BaseActivities>> {
   /**
    * Context data to pass to plugins in render time
    */
@@ -88,11 +88,8 @@ export function stackflow<T extends BaseActivities>(
     );
   }
 
-  return {
-    Stack: React.forwardRef<
-      StackRefCurrentType<BaseActivities> | undefined,
-      StackProps
-    >((props, ref) => {
+  const Stack = React.forwardRef<StackRefCurrentType<T>, StackProps>(
+    (props, ref) => {
       const plugins = useMemo(
         () =>
           (options.plugins ?? [])
@@ -107,12 +104,6 @@ export function stackflow<T extends BaseActivities>(
         [],
       );
 
-      const stackRef = useRef<StackRefCurrentType<BaseActivities>>();
-      React.useImperativeHandle(
-        ref,
-        React.useCallback(() => stackRef?.current, []),
-      );
-
       return (
         <InitContextProvider value={props.initContext ?? {}}>
           <PluginsProvider value={plugins}>
@@ -123,12 +114,16 @@ export function stackflow<T extends BaseActivities>(
             >
               <MainRenderer activities={activities} />
               <EffectManager />
-              <StackRefManager ref={stackRef} />
+              <StackRefManager ref={ref} />
             </CoreProvider>
           </PluginsProvider>
         </InitContextProvider>
       );
-    }),
+    },
+  );
+
+  return {
+    Stack,
     useFlow: useActions,
     createStackRef,
   };
