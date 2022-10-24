@@ -64,15 +64,13 @@ ReactDOM.render(<App />, ...)
 
 > To integrate **Stackflow** with a specific framework with routing capabilities, the framework requires an extension to manually call the preload API. However, Next.js does not officially support the preload API.
 
-## Authors
-
-- Tony ([@tonyfromundefined](https://github.com/tonyfromundefined)) - [Karrot](https://careers.ca.karrotmarket.com/)
-- Usher ([@irrationnelle](https://github.com/irrationnelle)) - [Karrot](https://careers.ca.karrotmarket.com/)
-- Levi ([@ginger-kang](https://github.com/ginger-kang)) - [Karrot](https://careers.ca.karrotmarket.com/)
-
-## Contribution Guide
+## Contributors
 
 To contribute new features or options to **Stackflow**, please check [Contribution Guide](./CONTRIBUTING.md)
+
+<a href = "https://github.com/daangn/stackflow/graphs/contributors">
+  <img src = "https://contrib.rocks/image?repo=daangn/stackflow"/>
+</a>
 
 ## License
 
