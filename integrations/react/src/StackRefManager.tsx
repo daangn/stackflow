@@ -15,16 +15,16 @@ const StackRefManager = React.forwardRef<
   StackRefCurrentType<BaseActivities>,
   {}
 >((_, ref) => {
-  const { push, pop, replace } = useActions();
   const { dispatchEvent, getStack } = useCoreActions();
+  const { push, pop, replace } = useActions();
 
   React.useImperativeHandle(ref, () => ({
     actions: {
+      dispatchEvent,
+      getStack,
       push,
       pop,
       replace,
-      dispatchEvent,
-      getStack,
     },
   }));
 
