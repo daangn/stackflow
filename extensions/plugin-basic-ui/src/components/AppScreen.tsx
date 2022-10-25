@@ -4,12 +4,12 @@ import { useActions, useActivity } from "@stackflow/react";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
 import React, { useRef } from "react";
 
+import { useGlobalOptions } from "../basicUIPlugin";
 import {
   useLazy,
   useStyleEffectHide,
   useStyleEffectOffset,
   useStyleEffectSwipeBack,
-  useTheme,
 } from "../hooks";
 import type { GlobalVars } from "../theme.css";
 import { globalVars } from "../theme.css";
@@ -30,7 +30,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
   appBar,
   children,
 }) => {
-  const theme = useTheme();
+  const { theme } = useGlobalOptions();
   const activity = useActivity();
   const { pop } = useActions();
 
