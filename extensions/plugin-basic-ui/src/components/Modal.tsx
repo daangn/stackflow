@@ -14,12 +14,14 @@ type ModalProps = Partial<
   Pick<GlobalVars, "backgroundColor" | "dimBackgroundColor">
 > &
   Partial<GlobalVars["modal"]> & {
+    onOutsideClick?: React.MouseEventHandler;
     children: React.ReactNode;
   };
 const Modal: React.FC<ModalProps> = ({
   backgroundColor,
   dimBackgroundColor,
   borderRadius = "1rem",
+  onOutsideClick,
   children,
 }) => {
   const activity = useActivity();
@@ -43,13 +45,19 @@ const Modal: React.FC<ModalProps> = ({
 
   const popLock = useRef(false);
 
-  const onDimClick = () => {
-    if (popLock.current) {
+  const onDimClick: React.MouseEventHandler = (e) => {
+    onOutsideClick?.(e);
+
+    if (e.defaultPrevented) {
       return;
     }
 
-    pop();
+    if (popLock.current) {
+      return;
+    }
     popLock.current = true;
+
+    pop();
   };
   const onPaperClick: React.MouseEventHandler = (e) => {
     e.stopPropagation();

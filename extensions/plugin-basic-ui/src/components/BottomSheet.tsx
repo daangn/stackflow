@@ -14,12 +14,14 @@ type BottomSheetProps = Partial<
   Pick<GlobalVars, "backgroundColor" | "dimBackgroundColor">
 > &
   Partial<GlobalVars["bottomSheet"]> & {
+    onOutsideClick?: React.MouseEventHandler;
     children: React.ReactNode;
   };
 const BottomSheet: React.FC<BottomSheetProps> = ({
   borderRadius = "1rem",
   backgroundColor,
   dimBackgroundColor,
+  onOutsideClick,
   children,
 }) => {
   const activity = useActivity();
@@ -43,13 +45,19 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
 
   const popLock = useRef(false);
 
-  const onDimClick = () => {
-    if (popLock.current) {
+  const onDimClick: React.MouseEventHandler = (e) => {
+    onOutsideClick?.(e);
+
+    if (e.defaultPrevented) {
       return;
     }
 
-    pop();
+    if (popLock.current) {
+      return;
+    }
     popLock.current = true;
+
+    pop();
   };
   const onPaperClick: React.MouseEventHandler = (e) => {
     e.stopPropagation();
