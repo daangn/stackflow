@@ -1,30 +1,32 @@
 import React from "react";
 
 import type { BaseActivities } from "./BaseActivities";
-import { CoreActionsContext } from "./core/CoreActionsContext";
-import type { StackRefCurrentType } from "./createStackRef";
+import type { CoreActionsContextValue } from "./core";
+import { useCoreActions } from "./core";
+import type { UseActionsOutputType } from "./useActions";
 import { useActions } from "./useActions";
 
+export type StackRefCurrentType<T extends BaseActivities> = {
+  actions: Pick<UseActionsOutputType<T>, "push" | "pop" | "replace"> &
+    CoreActionsContextValue;
+};
+
 const StackRefManager = React.forwardRef<
-  StackRefCurrentType<BaseActivities> | undefined,
+  StackRefCurrentType<BaseActivities>,
   {}
 >((_, ref) => {
-  const actions = useActions();
-  const { dispatchEvent, getStack } = React.useContext(CoreActionsContext);
+  const { dispatchEvent, getStack } = useCoreActions();
+  const { push, pop, replace } = useActions();
 
-  React.useImperativeHandle(
-    ref,
-    React.useCallback(
-      () => ({
-        actions: {
-          ...actions,
-          dispatchEvent,
-          getStack,
-        },
-      }),
-      [actions, dispatchEvent, getStack],
-    ),
-  );
+  React.useImperativeHandle(ref, () => ({
+    actions: {
+      dispatchEvent,
+      getStack,
+      push,
+      pop,
+      replace,
+    },
+  }));
 
   return null;
 });
