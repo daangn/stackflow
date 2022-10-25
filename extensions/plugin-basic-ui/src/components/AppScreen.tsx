@@ -24,7 +24,12 @@ type AppScreenProps = Partial<
   appBar?: Omit<PropOf<typeof AppBar>, "theme" | "ref" | "key">;
   children: React.ReactNode;
 };
-const AppScreen: React.FC<AppScreenProps> = ({ appBar, children }) => {
+const AppScreen: React.FC<AppScreenProps> = ({
+  backgroundColor,
+  dimBackgroundColor,
+  appBar,
+  children,
+}) => {
   const theme = useTheme();
   const activity = useActivity();
   const { pop } = useActions();
@@ -72,6 +77,8 @@ const AppScreen: React.FC<AppScreenProps> = ({ appBar, children }) => {
       })}
       style={assignInlineVars(
         compactMap({
+          [globalVars.backgroundColor]: backgroundColor,
+          [globalVars.dimBackgroundColor]: dimBackgroundColor,
           [globalVars.appBar.height]: appBar?.height,
           [css.vars.zIndexes.dim]: `${zIndexDim}`,
           [css.vars.zIndexes.paper]: `${zIndexPaper}`,
