@@ -3,7 +3,8 @@ import { assignInlineVars } from "@vanilla-extract/dynamic";
 import React, { useRef } from "react";
 
 import { IconBack, IconClose } from "../assets";
-import { useMaxWidth, useTheme } from "../hooks";
+import { useGlobalOptions } from "../basicUIPlugin";
+import { useMaxWidth } from "../hooks";
 import type { GlobalVars } from "../theme.css";
 import { globalVars } from "../theme.css";
 import { compactMap, noop } from "../utils";
@@ -30,7 +31,7 @@ type AppBarProps = Partial<
   closeButton?:
     | {
         renderIcon?: () => React.ReactNode;
-        onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
+        onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
       }
     | {
         render?: () => React.ReactNode;
@@ -59,7 +60,7 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
     const actions = useActions();
     const activity = useActivity();
 
-    const theme = useTheme();
+    const { theme, appBar } = useGlobalOptions();
 
     const centerRef = useRef<any>(null);
 
@@ -117,6 +118,16 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
       );
     };
 
+    const onCloseClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+      if (closeButton && "onClick" in closeButton && closeButton.onClick) {
+        closeButton.onClick(e);
+      }
+
+      if (!e.defaultPrevented) {
+        appBar?.closeButton?.onClick?.(e);
+      }
+    };
+
     const renderCloseButton = () => {
       if (!closeButton || !isCloseButtonVisible) {
         return null;
@@ -129,7 +140,7 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
         <button
           type="button"
           className={css.closeButton}
-          onClick={"onClick" in closeButton ? closeButton.onClick : noop}
+          onClick={onCloseClick}
         >
           {"renderIcon" in closeButton && closeButton.renderIcon ? (
             closeButton.renderIcon()

@@ -4,4 +4,5 @@ export * from "./listenOnce";
 export * from "./listenResize";
 export * from "./noop";
 export * from "./PropOf";
+export * from "./RecursivePartial";
 export * from "./requestNextFrame";

@@ -1,18 +1,29 @@
 import type { StackflowReactPlugin } from "@stackflow/react";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
-import React from "react";
+import React, { createContext, useContext } from "react";
 
-import { ThemeProvider } from "./hooks";
 import * as theme from "./theme.css";
+import type { RecursivePartial } from "./utils";
 import { compactMap } from "./utils";
 
-type RPartial<K> = {
-  [attr in keyof K]?: K[attr] extends object ? RPartial<K[attr]> : K[attr];
+type BasicUIPluginOptions = RecursivePartial<theme.GlobalVars> & {
+  theme: "android" | "cupertino";
+  appBar?: {
+    closeButton?: {
+      onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+    };
+  };
 };
 
-type BasicUIPluginOptions = RPartial<theme.GlobalVars> & {
-  theme: "android" | "cupertino";
-};
+const GlobalOptionsContext = createContext<BasicUIPluginOptions>({
+  theme: "android",
+});
+
+export const GlobalOptionsProvider = GlobalOptionsContext.Provider;
+
+export function useGlobalOptions() {
+  return useContext(GlobalOptionsContext);
+}
 
 export const basicUIPlugin: (
   options: BasicUIPluginOptions,
@@ -20,7 +31,7 @@ export const basicUIPlugin: (
   key: "basic-ui",
   wrapStack({ stack }) {
     return (
-      <ThemeProvider value={options.theme}>
+      <GlobalOptionsProvider value={options}>
         <div
           className={theme[options.theme]}
           style={assignInlineVars(
@@ -42,7 +53,7 @@ export const basicUIPlugin: (
         >
           {stack.render()}
         </div>
-      </ThemeProvider>
+      </GlobalOptionsProvider>
     );
   },
 });
