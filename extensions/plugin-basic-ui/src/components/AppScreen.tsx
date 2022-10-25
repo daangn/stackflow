@@ -30,7 +30,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
   appBar,
   children,
 }) => {
-  const { theme } = useGlobalOptions();
+  const globalOptions = useGlobalOptions();
   const activity = useActivity();
   const { pop } = useActions();
 
@@ -45,12 +45,13 @@ const AppScreen: React.FC<AppScreenProps> = ({
     hasEffect: true,
   });
   useStyleEffectOffset({
-    theme,
-    refs: theme === "cupertino" ? [paperRef] : [paperRef, appBarRef],
+    theme: globalOptions.theme,
+    refs:
+      globalOptions.theme === "cupertino" ? [paperRef] : [paperRef, appBarRef],
     hasEffect: true,
   });
   useStyleEffectSwipeBack({
-    theme,
+    theme: globalOptions.theme,
     dimRef,
     edgeRef,
     paperRef,
@@ -65,7 +66,8 @@ const AppScreen: React.FC<AppScreenProps> = ({
 
   const zIndexBase = activity.zIndex * 5;
   const zIndexDim = zIndexBase;
-  const zIndexPaper = zIndexBase + (theme === "cupertino" && hasAppBar ? 1 : 3);
+  const zIndexPaper =
+    zIndexBase + (globalOptions.theme === "cupertino" && hasAppBar ? 1 : 3);
   const zIndexEdge = zIndexBase + 4;
   const zIndexAppBar = zIndexBase + 7;
 
@@ -102,7 +104,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
       >
         {children}
       </div>
-      {!isRoot && theme === "cupertino" && (
+      {!isRoot && globalOptions.theme === "cupertino" && (
         <div className={css.edge({ hasAppBar })} ref={edgeRef} />
       )}
       {appBar && <AppBar {...appBar} ref={appBarRef} />}

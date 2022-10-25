@@ -60,14 +60,14 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
     const actions = useActions();
     const activity = useActivity();
 
-    const { theme, appBar } = useGlobalOptions();
+    const globalOptions = useGlobalOptions();
 
     const centerRef = useRef<any>(null);
 
     const { maxWidth } = useMaxWidth({
       outerRef: ref,
       innerRef: centerRef,
-      enable: theme === "cupertino",
+      enable: globalOptions.theme === "cupertino",
     });
 
     const onBackClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -80,14 +80,14 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
       }
     };
 
-    const isCloseButtonVisible =
+    const isRoot =
       activity.zIndex === 0 ||
       (activity.zIndex === 1 &&
         activity.transitionState === "enter-active" &&
         activity.pushedBy.name === "Replaced");
 
     const renderBackButton = () => {
-      if (isCloseButtonVisible) {
+      if (isRoot) {
         return null;
       }
 
@@ -124,15 +124,15 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
       }
 
       if (!e.defaultPrevented) {
-        appBar?.closeButton?.onClick?.(e);
+        globalOptions.appBar?.closeButton?.onClick?.(e);
       }
     };
 
     const renderCloseButton = () => {
-      if (!closeButton || !isCloseButtonVisible) {
+      if ((!closeButton && !globalOptions.appBar?.closeButton) || !isRoot) {
         return null;
       }
-      if ("render" in closeButton && closeButton.render) {
+      if (closeButton && "render" in closeButton && closeButton.render) {
         return closeButton.render();
       }
 
@@ -142,7 +142,9 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
           className={css.closeButton}
           onClick={onCloseClick}
         >
-          {"renderIcon" in closeButton && closeButton.renderIcon ? (
+          {closeButton &&
+          "renderIcon" in closeButton &&
+          closeButton.renderIcon ? (
             closeButton.renderIcon()
           ) : (
             <IconClose />
