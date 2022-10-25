@@ -31,6 +31,7 @@ export const { Stack, useFlow } = stackflow({
     }),
     basicUIPlugin({
       theme,
+      backgroundColor: vars.$semantic.color.paperDefault,
       appBar: {
         textColor: vars.$scale.color.gray900,
         iconColor: vars.$scale.color.gray900,

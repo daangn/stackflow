@@ -92,29 +92,29 @@ export function stackflow<T extends BaseActivities>(
   const stackRef: StackRefType<T> = {
     current: null,
   };
-  const stackRefNotFoundErrorMessage =
-    "<Stack /> component has not been mounted." +
-    " Make sure you include it within your React tree." +
-    " Or, make sure you call the function after it is rendered.";
+  const stackRefNotFoundErrorMessage = (funcName: string) =>
+    "`<Stack />` component has not been mounted." +
+    " Make sure you include `<Stack />` within your React tree." +
+    ` Or, make sure you call \`${funcName}()\` after it is rendered.`;
 
   const actions: StackflowOutput<T>["actions"] = {
     dispatchEvent(name, parameters) {
       if (!stackRef.current) {
-        throw new Error(stackRefNotFoundErrorMessage);
+        throw new Error(stackRefNotFoundErrorMessage("dispatchEvent"));
       }
 
-      return stackRef.current?.actions.dispatchEvent(name, parameters);
+      return stackRef.current.actions.dispatchEvent(name, parameters);
     },
     getStack() {
       if (!stackRef.current) {
-        throw new Error(stackRefNotFoundErrorMessage);
+        throw new Error(stackRefNotFoundErrorMessage("getStack"));
       }
 
       return stackRef.current.actions.getStack();
     },
     push(activityName, activityParams, options) {
       if (!stackRef.current) {
-        throw new Error(stackRefNotFoundErrorMessage);
+        throw new Error(stackRefNotFoundErrorMessage("push"));
       }
 
       return stackRef.current.actions.push(
@@ -125,14 +125,14 @@ export function stackflow<T extends BaseActivities>(
     },
     pop(options) {
       if (!stackRef.current) {
-        throw new Error(stackRefNotFoundErrorMessage);
+        throw new Error(stackRefNotFoundErrorMessage("pop"));
       }
 
       return stackRef.current.actions.pop(options);
     },
     replace(activityName, activityParams, options) {
       if (!stackRef.current) {
-        throw new Error(stackRefNotFoundErrorMessage);
+        throw new Error(stackRefNotFoundErrorMessage("replace"));
       }
 
       return stackRef.current.actions.replace(
