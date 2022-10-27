@@ -22,7 +22,7 @@ export function useStyleEffect({
   refs: Array<React.RefObject<any>>;
   effect?: (params: {
     activityTransitionState: ActivityTransitionState;
-    refs: Array<React.RefObject<any>>;
+    refs: Array<React.RefObject<HTMLElement>>;
   }) => (() => void) | void;
 }) {
   const activity = useActivity();

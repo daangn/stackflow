@@ -1,5 +1,7 @@
 /* eslint-disable no-param-reassign */
 
+import type React from "react";
+
 import { useStyleEffect } from "./useStyleEffect";
 
 export function useStyleEffectHide({
@@ -17,12 +19,20 @@ export function useStyleEffectHide({
           switch (activityTransitionState) {
             case "enter-done": {
               refs.forEach((ref) => {
+                if (!ref.current) {
+                  return;
+                }
+
                 ref.current.style.display = "none";
               });
               break;
             }
             default: {
               refs.forEach((ref) => {
+                if (!ref.current) {
+                  return;
+                }
+
                 ref.current.style.display = "";
               });
               break;
