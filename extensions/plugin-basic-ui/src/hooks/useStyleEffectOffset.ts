@@ -29,6 +29,10 @@ export function useStyleEffectOffset({
             case "enter-active":
             case "enter-done": {
               refs.forEach((ref) => {
+                if (!ref.current) {
+                  return;
+                }
+
                 ref.current.style.transition = `var(--stackflow-transition-duration)`;
                 ref.current.style.transform = transform;
               });
@@ -38,10 +42,16 @@ export function useStyleEffectOffset({
             case "exit-done": {
               requestNextFrame(() => {
                 refs.forEach((ref) => {
-                  ref.current.style.transform = "";
+                  if (!ref.current) {
+                    return;
+                  }
 
-                  listenOnce(ref.current, "transitionend", () => {
-                    ref.current.style.transition = "";
+                  const $el = ref.current;
+
+                  $el.style.transform = "";
+
+                  listenOnce($el, "transitionend", () => {
+                    $el.style.transition = "";
                   });
                 });
               });

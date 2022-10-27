@@ -75,7 +75,7 @@ export function useStyleEffectSwipeBack({
                 $paper.style.transform = `translateX(${dx}px)`;
                 $paper.style.transition = "0s";
 
-                refs.forEach((ref: React.RefObject<HTMLElement>) => {
+                refs.forEach((ref) => {
                   if (!ref.current) {
                     return;
                   }
@@ -104,7 +104,7 @@ export function useStyleEffectSwipeBack({
               $paper.style.transform = `translateX(${swiped ? "100%" : "0"})`;
               $paper.style.transition = "var(--stackflow-transition-duration)";
 
-              refs.forEach((ref: React.RefObject<HTMLElement>) => {
+              refs.forEach((ref) => {
                 if (!ref.current) {
                   return;
                 }
@@ -120,7 +120,7 @@ export function useStyleEffectSwipeBack({
                 $paper.style.overflowY = "";
                 $paper.style.transform = "";
 
-                refs.forEach((ref: React.RefObject<HTMLElement>, i) => {
+                refs.forEach((ref, i) => {
                   if (!ref.current) {
                     return;
                   }
