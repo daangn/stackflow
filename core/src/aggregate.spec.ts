@@ -1784,7 +1784,7 @@ test("aggregate - ReplacedEvent에 현재 중간에 존재하는 activityId가 �
   });
 });
 
-test("Lukas issue", () => {
+test("aggregate - ReplacedEvent가 같은 activityId로 여러번 수행되었을때도 정상 작동합니다", () => {
   const t = 1667218241499;
 
   const events = [
