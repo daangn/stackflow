@@ -120,11 +120,14 @@ export const CoreProvider: React.FC<CoreProviderProps> = ({
 
   const dispatchEvent = useCallback<DispatchEvent>(
     (name, parameters) => {
-      const newEvent = makeEvent(name, parameters);
-      const events = [...eventsRef.current, newEvent];
-      eventsRef.current = events;
+      const events = [...eventsRef.current, makeEvent(name, parameters)];
+      const t = new Date().getTime();
+      const nextState = aggregate(events, t);
 
-      setState(aggregate(events, new Date().getTime()));
+      setState(nextState);
+
+      eventsRef.current = events;
+      stateRef.current = nextState;
     },
     [eventsRef, setState],
   );

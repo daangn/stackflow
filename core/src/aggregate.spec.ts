@@ -1783,3 +1783,152 @@ test("aggregate - ReplacedEvent에 현재 중간에 존재하는 activityId가 �
     globalTransitionState: "idle",
   });
 });
+
+test("aggregate - ReplacedEvent가 같은 activityId로 여러번 수행되었을때도 정상 작동합니다", () => {
+  const t = 1667218241499;
+
+  const events = [
+    {
+      id: "97a1f31549f0",
+      name: "Initialized" as const,
+      eventDate: 1667218237525,
+      transitionDuration: 350,
+    },
+    {
+      id: "97a1f31549ee",
+      name: "ActivityRegistered" as const,
+      eventDate: 1667218237525,
+      activityName: "Main",
+    },
+    {
+      id: "97a1f31549ef",
+      name: "ActivityRegistered" as const,
+      eventDate: 1667218237525,
+      activityName: "Article",
+    },
+    {
+      id: "97a1f1f11a51",
+      name: "Pushed" as const,
+      eventDate: 1667217986388,
+      activityId: "97a1f1f11a50",
+      activityName: "Main",
+      activityParams: {},
+      activityContext: { path: "/" },
+    },
+    {
+      id: "97a1f315c945",
+      name: "Pushed" as const,
+      eventDate: 1667218238201,
+      activityId: "97a1f315c944",
+      activityName: "Article",
+      activityParams: { articleId: "02542470", title: "Master" },
+      skipEnterActiveState: false,
+      activityContext: { path: "/articles/02542470/?title=Master" },
+    },
+    {
+      id: "97a1f315f4a0",
+      name: "Replaced" as const,
+      eventDate: 1667218238312,
+      activityId: "97a1f315c944",
+      activityName: "Article",
+      activityParams: {
+        articleId: "02542470",
+        title: "Master",
+        referrer: "my",
+      },
+      skipEnterActiveState: true,
+      activityContext: { path: "/articles/02542470/?title=Master&referrer=my" },
+    },
+    {
+      id: "97a1f317fc28",
+      name: "Popped" as const,
+      eventDate: 1667218239642,
+    },
+    {
+      id: "97a1f3193f34",
+      name: "Pushed" as const,
+      eventDate: 1667218240469,
+      activityId: "97a1f315c944",
+      activityName: "Article",
+      activityParams: {
+        articleId: "02542470",
+        title: "Master",
+        referrer: "my",
+      },
+      activityContext: { path: "/articles/02542470/?title=Master&referrer=my" },
+    },
+    {
+      id: "97a1f319689d",
+      name: "Replaced" as const,
+      eventDate: 1667218240575,
+      activityId: "97a1f315c944",
+      activityName: "Article",
+      activityParams: {
+        articleId: "02542470",
+        title: "Master",
+        referrer: "my",
+      },
+      skipEnterActiveState: true,
+      activityContext: { path: "/articles/02542470/?title=Master&referrer=my" },
+    },
+    {
+      id: "97a1f31ad18c",
+      name: "Popped" as const,
+      eventDate: 1667218241499,
+    },
+  ];
+
+  const output = aggregate(events, t);
+
+  expect(output).toStrictEqual({
+    activities: [
+      {
+        id: "97a1f1f11a50",
+        name: "Main",
+        transitionState: "enter-done",
+        params: {},
+        pushedBy: {
+          id: "97a1f1f11a51",
+          name: "Pushed",
+          eventDate: 1667217986388,
+          activityId: "97a1f1f11a50",
+          activityName: "Main",
+          activityParams: {},
+          activityContext: { path: "/" },
+        },
+        isTop: false,
+        isActive: true,
+        zIndex: 0,
+        context: { path: "/" },
+      },
+      {
+        id: "97a1f315c944",
+        name: "Article",
+        transitionState: "exit-active",
+        params: { articleId: "02542470", title: "Master", referrer: "my" },
+        pushedBy: {
+          id: "97a1f319689d",
+          name: "Replaced" as const,
+          eventDate: 1667218240575,
+          activityId: "97a1f315c944",
+          activityName: "Article",
+          activityParams: {
+            articleId: "02542470",
+            title: "Master",
+            referrer: "my",
+          },
+          skipEnterActiveState: true,
+          activityContext: {
+            path: "/articles/02542470/?title=Master&referrer=my",
+          },
+        },
+        isTop: true,
+        isActive: false,
+        zIndex: 1,
+        context: { path: "/articles/02542470/?title=Master&referrer=my" },
+      },
+    ],
+    transitionDuration: 350,
+    globalTransitionState: "loading",
+  });
+});
