@@ -258,7 +258,7 @@ export function historySyncPlugin<
 
             startTransition(() => {
               push({
-                activityId: id(),
+                activityId: historyState.activity.pushedBy.activityId,
                 activityName: historyState.activity.pushedBy.activityName,
                 activityParams: historyState.activity.pushedBy.activityParams,
               });
