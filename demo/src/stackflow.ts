@@ -1,6 +1,5 @@
 import { vars } from "@seed-design/design-token";
 import { basicUIPlugin } from "@stackflow/plugin-basic-ui";
-import { historySyncPlugin } from "@stackflow/plugin-history-sync";
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
 import { stackDepthChangePlugin } from "@stackflow/plugin-stack-depth-change";
 import { stackflow } from "@stackflow/react";
@@ -38,13 +37,6 @@ export const { Stack, useFlow } = stackflow({
         iconColor: vars.$scale.color.gray900,
         borderColor,
       },
-    }),
-    historySyncPlugin({
-      routes: {
-        Main: "/",
-        Article: "/articles/:articleId",
-      },
-      fallbackActivity: () => "Main",
     }),
   ],
 });
