@@ -5,7 +5,7 @@ import type {
 } from "./AggregateOutput";
 import type { DomainEvent, PoppedEvent, ReplacedEvent } from "./event-types";
 import { filterEvents, validateEvents } from "./event-utils";
-import { compareBy, uniqBy } from "./utils";
+import { compareBy, findIndices, last, uniqBy } from "./utils";
 
 export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
   const sortedEvents = uniqBy(
@@ -76,11 +76,14 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
           zIndex: -1,
         };
 
-        const alreadyExistingActivityIndex = activities.findIndex(
-          (activity) => activity.id === event.activityId,
+        const alreadyExistingActivityIndex = last(
+          findIndices(
+            activities,
+            (activity) => activity.id === event.activityId,
+          ),
         );
 
-        if (alreadyExistingActivityIndex > -1) {
+        if (typeof alreadyExistingActivityIndex === "number") {
           activities[alreadyExistingActivityIndex] = newActivity;
         } else {
           const topActivity = activities

@@ -12,8 +12,8 @@ export function makeEvent<T extends DomainEvent["name"]>(
 ) {
   return {
     id: id(),
-    name,
     eventDate: new Date().getTime(),
     ...parameters,
+    name,
   } as Extract<DomainEvent, { name: T }>;
 }
