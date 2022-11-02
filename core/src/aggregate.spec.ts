@@ -2040,7 +2040,6 @@ test("aggregate - 현재 특정 액티비티가 애니메이션이 되고 있는
         hello: "world2",
       },
       eventDate: t - 200,
-      // skipEnterActiveState: true,
     }),
   ];
 
