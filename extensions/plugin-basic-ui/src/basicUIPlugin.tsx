@@ -7,7 +7,7 @@ import type { RecursivePartial } from "./utils";
 import { compactMap } from "./utils";
 
 type BasicUIPluginOptions = RecursivePartial<theme.GlobalVars> & {
-  theme: "android" | "cupertino";
+  theme?: "android" | "cupertino";
   appBar?: {
     closeButton?: {
       onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
@@ -33,7 +33,7 @@ export const basicUIPlugin: (
     return (
       <GlobalOptionsProvider value={options}>
         <div
-          className={theme[options.theme]}
+          className={options.theme ? theme[options.theme] : undefined}
           style={assignInlineVars(
             compactMap({
               [theme.globalVars.backgroundColor]: options.backgroundColor,

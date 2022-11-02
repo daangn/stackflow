@@ -34,8 +34,6 @@ const defaultVars = {
   dimBackgroundColor: "rgba(0, 0, 0, 0.15)",
   appBar: {
     borderColor: "rgba(0, 0, 0, 0.07)",
-    borderSize: "1px",
-    height: "3.5rem",
     iconColor: "#212124",
     textColor: "#212124",
   },
@@ -47,6 +45,14 @@ const defaultVars = {
   },
 };
 
+const androidVars = {
+  ...defaultVars,
+  appBar: {
+    ...defaultVars.appBar,
+    height: "3.5rem",
+    borderSize: "1px",
+  },
+};
 const cupertinoVars = {
   ...defaultVars,
   appBar: {
@@ -61,14 +67,14 @@ export const rootAndroid = ":root[data-stackflow-basic-ui-theme=android]";
 export const rootCupertino = ":root[data-stackflow-basic-ui-theme=cupertino]";
 
 createGlobalTheme(`${root}, ${rootAndroid}`, globalVars, {
-  ...defaultVars,
+  ...androidVars,
 });
 createGlobalTheme(rootCupertino, globalVars, {
   ...cupertinoVars,
 });
 
 export const android = createTheme(globalVars, {
-  ...defaultVars,
+  ...androidVars,
 });
 export const cupertino = createTheme(globalVars, {
   ...cupertinoVars,
