@@ -15,7 +15,9 @@ type BasicUIPluginOptions = RecursivePartial<theme.GlobalVars> & {
   };
 };
 
-const GlobalOptionsContext = createContext<BasicUIPluginOptions>({
+const GlobalOptionsContext = createContext<
+  BasicUIPluginOptions & { theme: "android" | "cupertino" }
+>({
   theme: "android",
 });
 
@@ -31,7 +33,12 @@ export const basicUIPlugin: (
   key: "basic-ui",
   wrapStack({ stack }) {
     return (
-      <GlobalOptionsProvider value={options}>
+      <GlobalOptionsProvider
+        value={{
+          ...options,
+          theme: options.theme ?? "android",
+        }}
+      >
         <div
           className={options.theme ? theme[options.theme] : undefined}
           style={assignInlineVars(
