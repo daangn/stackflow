@@ -1932,3 +1932,77 @@ test("aggregate - ReplacedEvent가 같은 activityId로 여러번 수행되었�
     globalTransitionState: "loading",
   });
 });
+
+test("aggregate - 현재 특정 액티비티가 애니메이션 되고 있는 상태라면, Replaced 이벤트가 들어와도 전환을 지속합니다", () => {
+  const t = nowTime();
+
+  const events = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+    registeredEvent({
+      activityName: "sample",
+    }),
+    makeEvent("Pushed", {
+      activityId: "a2",
+      activityName: "sample",
+      activityParams: {
+        hello: "world",
+      },
+      eventDate: enoughPastTime(),
+    }),
+    makeEvent("Pushed", {
+      activityId: "a3",
+      activityName: "sample",
+      activityParams: {
+        hello: "world",
+      },
+      eventDate: t - 150,
+    }),
+    makeEvent("Replaced", {
+      activityId: "a3",
+      activityName: "sample",
+      activityParams: {
+        hello: "world2",
+      },
+      eventDate: t - 50,
+      skipEnterActiveState: true,
+    }),
+  ];
+
+  const pushedEvent1 = events[2];
+  const replacedEvent = events[4];
+
+  const output = aggregate(events, t);
+
+  expect(output).toStrictEqual({
+    activities: [
+      {
+        id: "a2",
+        name: "sample",
+        transitionState: "enter-done",
+        params: {
+          hello: "world",
+        },
+        pushedBy: pushedEvent1,
+        isActive: false,
+        isTop: false,
+        zIndex: 0,
+      },
+      {
+        id: "a3",
+        name: "sample",
+        transitionState: "enter-active",
+        params: {
+          hello: "world2",
+        },
+        pushedBy: replacedEvent,
+        isActive: true,
+        isTop: true,
+        zIndex: 1,
+      },
+    ],
+    transitionDuration: 300,
+    globalTransitionState: "loading",
+  });
+});
