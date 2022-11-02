@@ -73,7 +73,7 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
           ) {
             return "enter-active";
           }
-          if (event.skipEnterActiveState) {
+          if (event.skipEnterActiveState || alreadyExistingActivity) {
             return "enter-done";
           }
           if (now - event.eventDate >= transitionDuration) {
