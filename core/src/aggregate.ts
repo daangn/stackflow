@@ -66,21 +66,12 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
             ? activities[alreadyExistingActivityIndex]
             : undefined;
 
-        const transitionState: ActivityTransitionState = (() => {
-          if (
-            alreadyExistingActivity &&
-            alreadyExistingActivity.transitionState === "enter-active"
-          ) {
-            return "enter-active";
-          }
-          if (event.skipEnterActiveState || alreadyExistingActivity) {
-            return "enter-done";
-          }
-          if (now - event.eventDate >= transitionDuration) {
-            return "enter-done";
-          }
-          return "enter-active";
-        })();
+        const transitionState: ActivityTransitionState = alreadyExistingActivity
+          ? alreadyExistingActivity.transitionState
+          : event.skipEnterActiveState ||
+            now - event.eventDate >= transitionDuration
+          ? "enter-done"
+          : "enter-active";
 
         const newActivity = {
           id: event.activityId,
