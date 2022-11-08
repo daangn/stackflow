@@ -55,11 +55,23 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
         break;
       }
       case "Replaced": {
-        const transitionState: ActivityTransitionState =
-          event.skipEnterActiveState ||
-          now - event.eventDate >= transitionDuration
-            ? "enter-done"
-            : "enter-active";
+        const alreadyExistingActivityIndex = last(
+          findIndices(
+            activities,
+            (activity) => activity.id === event.activityId,
+          ),
+        );
+        const alreadyExistingActivity =
+          typeof alreadyExistingActivityIndex === "number"
+            ? activities[alreadyExistingActivityIndex]
+            : undefined;
+
+        const transitionState: ActivityTransitionState = alreadyExistingActivity
+          ? alreadyExistingActivity.transitionState
+          : event.skipEnterActiveState ||
+            now - event.eventDate >= transitionDuration
+          ? "enter-done"
+          : "enter-active";
 
         const newActivity = {
           id: event.activityId,
@@ -75,13 +87,6 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
           isActive: false,
           zIndex: -1,
         };
-
-        const alreadyExistingActivityIndex = last(
-          findIndices(
-            activities,
-            (activity) => activity.id === event.activityId,
-          ),
-        );
 
         if (typeof alreadyExistingActivityIndex === "number") {
           activities[alreadyExistingActivityIndex] = newActivity;

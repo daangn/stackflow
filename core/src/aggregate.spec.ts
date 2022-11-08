@@ -1523,7 +1523,7 @@ test("aggregate - ReplacedEvent에 activityContext가 담겨있는 경우 액티
   });
 });
 
-test("aggregate - ReplacedEvent에 현재 상단에 존재하는 activityId가 포함된 경우, 해당하는 액티비티가 변경됩니다", () => {
+test("aggregate - ReplacedEvent에 현재 상단에 존재하는 activityId가 포함된 경우, 해당하는 액티비티가 전환효과 없이 변경됩니다", () => {
   const t = nowTime();
 
   const events = [
@@ -1581,7 +1581,7 @@ test("aggregate - ReplacedEvent에 현재 상단에 존재하는 activityId가 �
       {
         id: "a2",
         name: "sample",
-        transitionState: "enter-active",
+        transitionState: "enter-done",
         params: {
           hello: "world2",
         },
@@ -1592,11 +1592,11 @@ test("aggregate - ReplacedEvent에 현재 상단에 존재하는 activityId가 �
       },
     ],
     transitionDuration: 300,
-    globalTransitionState: "loading",
+    globalTransitionState: "idle",
   });
 });
 
-test("aggregate - ReplacedEvent에 현재 중간에 존재하는 activityId가 포함된 경우, 해당 액티비티가 변경됩니다", () => {
+test("aggregate - ReplacedEvent에 현재 중간에 존재하는 activityId가 포함된 경우, 해당 액티비티가 전환효과 없이 변경됩니다", () => {
   const t = nowTime();
 
   const events = [
@@ -1663,7 +1663,7 @@ test("aggregate - ReplacedEvent에 현재 중간에 존재하는 activityId가 �
       {
         id: "a2",
         name: "sample",
-        transitionState: "enter-active",
+        transitionState: "enter-done",
         params: {
           hello: "world2",
         },
@@ -1686,7 +1686,7 @@ test("aggregate - ReplacedEvent에 현재 중간에 존재하는 activityId가 �
       },
     ],
     transitionDuration: 300,
-    globalTransitionState: "loading",
+    globalTransitionState: "idle",
   });
 });
 
@@ -1930,5 +1930,152 @@ test("aggregate - ReplacedEvent가 같은 activityId로 여러번 수행되었�
     ],
     transitionDuration: 350,
     globalTransitionState: "loading",
+  });
+});
+
+test("aggregate - 현재 특정 액티비티가 애니메이션 되고 있는 상태라면, Replaced 이벤트가 들어와도 전환을 지속합니다", () => {
+  const t = nowTime();
+
+  const events = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+    registeredEvent({
+      activityName: "sample",
+    }),
+    makeEvent("Pushed", {
+      activityId: "a2",
+      activityName: "sample",
+      activityParams: {
+        hello: "world",
+      },
+      eventDate: enoughPastTime(),
+    }),
+    makeEvent("Pushed", {
+      activityId: "a3",
+      activityName: "sample",
+      activityParams: {
+        hello: "world",
+      },
+      eventDate: t - 150,
+    }),
+    makeEvent("Replaced", {
+      activityId: "a3",
+      activityName: "sample",
+      activityParams: {
+        hello: "world2",
+      },
+      eventDate: t - 50,
+      skipEnterActiveState: true,
+    }),
+  ];
+
+  const pushedEvent1 = events[2];
+  const replacedEvent = events[4];
+
+  const output = aggregate(events, t);
+
+  expect(output).toStrictEqual({
+    activities: [
+      {
+        id: "a2",
+        name: "sample",
+        transitionState: "enter-done",
+        params: {
+          hello: "world",
+        },
+        pushedBy: pushedEvent1,
+        isActive: false,
+        isTop: false,
+        zIndex: 0,
+      },
+      {
+        id: "a3",
+        name: "sample",
+        transitionState: "enter-active",
+        params: {
+          hello: "world2",
+        },
+        pushedBy: replacedEvent,
+        isActive: true,
+        isTop: true,
+        zIndex: 1,
+      },
+    ],
+    transitionDuration: 300,
+    globalTransitionState: "loading",
+  });
+});
+
+test("aggregate - 현재 특정 액티비티가 애니메이션이 되고 있는 상태에서, Replaced 이벤트가 들어왔고, 이전 애니메이션이 끝난 경우 전환이 끝납니다", () => {
+  const t = nowTime();
+
+  const events = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+    registeredEvent({
+      activityName: "sample",
+    }),
+    makeEvent("Pushed", {
+      activityId: "a2",
+      activityName: "sample",
+      activityParams: {
+        hello: "world",
+      },
+      eventDate: enoughPastTime(),
+    }),
+    makeEvent("Pushed", {
+      activityId: "a3",
+      activityName: "sample",
+      activityParams: {
+        hello: "world",
+      },
+      eventDate: t - 400,
+    }),
+    makeEvent("Replaced", {
+      activityId: "a3",
+      activityName: "sample",
+      activityParams: {
+        hello: "world2",
+      },
+      eventDate: t - 200,
+    }),
+  ];
+
+  const pushedEvent1 = events[2];
+  const replacedEvent = events[4];
+
+  const output = aggregate(events, t);
+
+  expect(output).toStrictEqual({
+    activities: [
+      {
+        id: "a2",
+        name: "sample",
+        transitionState: "enter-done",
+        params: {
+          hello: "world",
+        },
+        pushedBy: pushedEvent1,
+        isActive: false,
+        isTop: false,
+        zIndex: 0,
+      },
+      {
+        id: "a3",
+        name: "sample",
+        transitionState: "enter-done",
+        params: {
+          hello: "world2",
+        },
+        pushedBy: replacedEvent,
+        isActive: true,
+        isTop: true,
+        zIndex: 1,
+      },
+    ],
+    transitionDuration: 300,
+    globalTransitionState: "idle",
   });
 });
