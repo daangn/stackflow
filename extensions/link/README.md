@@ -43,10 +43,10 @@ export type TypeActivities = typeof activities;
 /**
  * Link.ts
  */
-import { createLink } from "@stackflow/link";
+import { createLinkComponent } from "@stackflow/link";
 import type { TypeActivities } from "./stackflow";
 
-export const { Link } = createLink<TypeActivities>();
+export const { Link } = createLinkComponent<TypeActivities>();
 ```
 
 ```tsx

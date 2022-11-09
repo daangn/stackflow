@@ -120,17 +120,17 @@ const MyActivity:  = () => {
 $ yarn add @stackflow/link
 ```
 
-`createLink()` 함수를 통해 Type-safe한 Link 컴포넌트를 만들어요.
+`createLinkComponent()` 함수를 통해 Type-safe한 Link 컴포넌트를 만들어요.
 
 ```typescript
 /**
  * Link.ts
  */
-import { createLink } from "@stackflow/link";
+import { createLinkComponent } from "@stackflow/link";
 import type { TypeActivities } from "./stackflow";
 
 // 마찬가지로 액티비티의 전체 타입을 제네릭으로 전달해, Type-safe하게 <Link /> 컴포넌트를 사용해요
-export const { Link } = createLink<TypeActivities>();
+export const { Link } = createLinkComponent<TypeActivities>();
 ```
 
 이후 다음과 같이 `activityName`과 `activityParams`를 Props로 갖는 `<Link />` 컴포넌트를 사용해요.
