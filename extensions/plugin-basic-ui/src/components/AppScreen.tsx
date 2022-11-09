@@ -71,11 +71,17 @@ const AppScreen: React.FC<AppScreenProps> = ({
   const zIndexEdge = zIndexBase + 4;
   const zIndexAppBar = zIndexBase + 7;
 
+  const { transitionState } = activity;
+  const lazyTransitionState = useLazy(transitionState);
+
   return (
     <div
       ref={appScreenRef}
       className={css.appScreen({
-        transitionState: useLazy(activity.transitionState),
+        transitionState:
+          transitionState === "enter-done" || transitionState === "exit-done"
+            ? transitionState
+            : lazyTransitionState,
       })}
       style={assignInlineVars(
         compactMap({
