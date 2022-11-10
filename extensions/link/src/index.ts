@@ -1,2 +1,2 @@
-export * from "./createLink";
+export * from "./createLinkComponent";
 export * from "./Link";
