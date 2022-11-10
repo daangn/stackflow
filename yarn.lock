@@ -2156,7 +2156,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/core@^0.15.1, @stackflow/core@workspace:core":
+"@stackflow/core@^0.15.0, @stackflow/core@^0.15.1, @stackflow/core@workspace:core":
   version: 0.0.0-use.local
   resolution: "@stackflow/core@workspace:core"
   dependencies:
@@ -2378,6 +2378,26 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@stackflow/plugin-renderer-web@workspace:extensions/plugin-renderer-web":
+  version: 0.0.0-use.local
+  resolution: "@stackflow/plugin-renderer-web@workspace:extensions/plugin-renderer-web"
+  dependencies:
+    "@stackflow/core": ^0.15.0
+    "@stackflow/esbuild-config": ^0.15.0
+    "@stackflow/react": ^0.15.0
+    "@types/react": ^18.0.10
+    esbuild: ^0.14.51
+    react: ^18.1.0
+    rimraf: ^3.0.2
+    typescript: ^4.7.4
+  peerDependencies:
+    "@stackflow/core": 0
+    "@stackflow/react": 0
+    "@types/react": ">=16.8.0"
+    react: ">=16.8.0"
+  languageName: unknown
+  linkType: soft
+
 "@stackflow/plugin-stack-depth-change@^0.15.1, @stackflow/plugin-stack-depth-change@workspace:extensions/plugin-stack-depth-change":
   version: 0.0.0-use.local
   resolution: "@stackflow/plugin-stack-depth-change@workspace:extensions/plugin-stack-depth-change"
@@ -2393,7 +2413,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/react@^0.15.1, @stackflow/react@workspace:integrations/react":
+"@stackflow/react@^0.15.0, @stackflow/react@^0.15.1, @stackflow/react@workspace:integrations/react":
   version: 0.0.0-use.local
   resolution: "@stackflow/react@workspace:integrations/react"
   dependencies:
