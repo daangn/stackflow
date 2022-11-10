@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/demo",
-  "version": "0.15.2",
+  "version": "0.15.3",
   "private": true,
   "license": "MIT",
   "exports": {
@@ -31,7 +31,7 @@
     "@seed-design/stylesheet": "^1.0.0-alpha.0",
     "@stackflow/compat-await-push": "^0.15.1",
     "@stackflow/core": "^0.15.1",
-    "@stackflow/link": "^0.15.1",
+    "@stackflow/link": "^0.15.2",
     "@stackflow/plugin-basic-ui": "^0.15.2",
     "@stackflow/plugin-history-sync": "^0.15.1",
     "@stackflow/plugin-preload": "^0.15.1",

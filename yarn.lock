@@ -2174,7 +2174,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/demo@^0.15.2, @stackflow/demo@workspace:demo":
+"@stackflow/demo@^0.15.3, @stackflow/demo@workspace:demo":
   version: 0.0.0-use.local
   resolution: "@stackflow/demo@workspace:demo"
   dependencies:
@@ -2183,7 +2183,7 @@ __metadata:
     "@stackflow/compat-await-push": ^0.15.1
     "@stackflow/core": ^0.15.1
     "@stackflow/esbuild-config": ^0.15.0
-    "@stackflow/link": ^0.15.1
+    "@stackflow/link": ^0.15.2
     "@stackflow/plugin-basic-ui": ^0.15.2
     "@stackflow/plugin-history-sync": ^0.15.1
     "@stackflow/plugin-preload": ^0.15.1
@@ -2216,7 +2216,7 @@ __metadata:
     "@mdx-js/react": ^2.1.1
     "@seed-design/stylesheet": ^1.0.0-alpha.0
     "@stackflow/core": ^0.15.1
-    "@stackflow/demo": ^0.15.2
+    "@stackflow/demo": ^0.15.3
     "@stackflow/plugin-basic-ui": ^0.15.2
     "@stackflow/plugin-history-sync": ^0.15.1
     "@stackflow/plugin-renderer-basic": ^0.15.1
@@ -2240,7 +2240,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/link@^0.15.1, @stackflow/link@workspace:extensions/link":
+"@stackflow/link@^0.15.2, @stackflow/link@workspace:extensions/link":
   version: 0.0.0-use.local
   resolution: "@stackflow/link@workspace:extensions/link"
   dependencies:
