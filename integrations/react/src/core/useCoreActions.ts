@@ -11,8 +11,6 @@ import { useInitContext } from "../init-context";
 import { usePlugins } from "../plugins";
 import { CoreActionsContext } from "./CoreActionsContext";
 
-const copy = (obj: unknown) => JSON.parse(JSON.stringify(obj));
-
 export const useCoreActions = () => {
   const plugins = usePlugins();
   const initContext = useInitContext();
@@ -82,15 +80,20 @@ export const useCoreActions = () => {
   );
 
   const triggerPreEffectHook = useCallback(
-    (preEffect: Effect["_TAG"], initialActionParams: unknown) => {
+    (preEffect: Effect["_TAG"], initialActionParams: any) => {
       let isPrevented = false;
-      let actionParams = copy(initialActionParams);
+      let actionParams = {
+        ...initialActionParams,
+      };
 
       const preventDefault = () => {
         isPrevented = true;
       };
-      const overrideActionParams = (newActionParams: unknown) => {
-        actionParams = copy(newActionParams);
+      const overrideActionParams = (newActionParams: any) => {
+        actionParams = {
+          ...actionParams,
+          ...newActionParams,
+        };
       };
 
       plugins.forEach((plugin) => {
