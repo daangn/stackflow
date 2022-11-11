@@ -1,6 +1,6 @@
-# @stackflow/plugin-history-sync
+# @stackflow/plugin-stack-depth-change
 
-Synchronizes the stack state with the current browser's history
+Monitors a depth change in the stack.
 
 - [Documentation](https://stackflow.so)
 
