@@ -7,7 +7,9 @@ import React from "react";
 import type { Loader } from "./Loader";
 import { LoadersProvider } from "./LoadersContext";
 
-type PreloadPluginOptions<T extends { [activityName: string]: unknown }> = {
+export type PreloadPluginOptions<
+  T extends { [activityName: string]: unknown },
+> = {
   loaders: {
     [key in Extract<keyof T, string>]?: T[key] extends ActivityComponentType<
       infer U
