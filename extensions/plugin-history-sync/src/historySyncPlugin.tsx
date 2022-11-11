@@ -193,7 +193,14 @@ export function historySyncPlugin<
           url: template.fill(rootActivity.params),
           state: {
             _TAG: STATE_TAG,
-            activity: rootActivity,
+            activity: {
+              ...rootActivity,
+              context: undefined,
+              pushedBy: {
+                ...rootActivity.pushedBy,
+                activityContext: undefined,
+              },
+            },
           },
           useHash: options.useHash,
         });
@@ -247,7 +254,14 @@ export function historySyncPlugin<
                 url,
                 state: {
                   _TAG: STATE_TAG,
-                  activity: targetActivity,
+                  activity: {
+                    ...targetActivity,
+                    context: undefined,
+                    pushedBy: {
+                      ...targetActivity.pushedBy,
+                      activityContext: undefined,
+                    },
+                  },
                 },
                 useHash: options.useHash,
               });
@@ -292,7 +306,14 @@ export function historySyncPlugin<
           url: template.fill(activity.params),
           state: {
             _TAG: STATE_TAG,
-            activity,
+            activity: {
+              ...activity,
+              context: undefined,
+              pushedBy: {
+                ...activity.pushedBy,
+                activityContext: undefined,
+              },
+            },
           },
           useHash: options.useHash,
         });
@@ -310,7 +331,14 @@ export function historySyncPlugin<
           url: template.fill(activity.params),
           state: {
             _TAG: STATE_TAG,
-            activity,
+            activity: {
+              ...activity,
+              context: undefined,
+              pushedBy: {
+                ...activity.pushedBy,
+                activityContext: undefined,
+              },
+            },
           },
           useHash: options.useHash,
         });
