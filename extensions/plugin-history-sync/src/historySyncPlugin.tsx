@@ -74,6 +74,20 @@ function replaceState({
   window.history.replaceState(state, "", nextUrl);
 }
 
+/**
+ * Removes activity context before serialization
+ */
+function removeActivityContext(activity: Activity): Activity {
+  return {
+    ...activity,
+    context: undefined,
+    pushedBy: {
+      ...activity.pushedBy,
+      activityContext: undefined,
+    },
+  };
+}
+
 const startTransition: React.TransitionStartFunction =
   React.startTransition ?? ((cb: () => void) => cb());
 
@@ -193,14 +207,7 @@ export function historySyncPlugin<
           url: template.fill(rootActivity.params),
           state: {
             _TAG: STATE_TAG,
-            activity: {
-              ...rootActivity,
-              context: undefined,
-              pushedBy: {
-                ...rootActivity.pushedBy,
-                activityContext: undefined,
-              },
-            },
+            activity: removeActivityContext(rootActivity),
           },
           useHash: options.useHash,
         });
@@ -254,14 +261,7 @@ export function historySyncPlugin<
                 url,
                 state: {
                   _TAG: STATE_TAG,
-                  activity: {
-                    ...targetActivity,
-                    context: undefined,
-                    pushedBy: {
-                      ...targetActivity.pushedBy,
-                      activityContext: undefined,
-                    },
-                  },
+                  activity: removeActivityContext(targetActivity),
                 },
                 useHash: options.useHash,
               });
@@ -306,14 +306,7 @@ export function historySyncPlugin<
           url: template.fill(activity.params),
           state: {
             _TAG: STATE_TAG,
-            activity: {
-              ...activity,
-              context: undefined,
-              pushedBy: {
-                ...activity.pushedBy,
-                activityContext: undefined,
-              },
-            },
+            activity: removeActivityContext(activity),
           },
           useHash: options.useHash,
         });
@@ -331,14 +324,7 @@ export function historySyncPlugin<
           url: template.fill(activity.params),
           state: {
             _TAG: STATE_TAG,
-            activity: {
-              ...activity,
-              context: undefined,
-              pushedBy: {
-                ...activity.pushedBy,
-                activityContext: undefined,
-              },
-            },
+            activity: removeActivityContext(activity),
           },
           useHash: options.useHash,
         });
