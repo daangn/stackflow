@@ -6,7 +6,7 @@ const SEED_SCALE_COLOR_SCRIPT = `
 
 export default function Document() {
   return (
-    <Html data-stackflow-basic-ui-theme="cupertino">
+    <Html data-stackflow-plugin-basic-ui-theme="cupertino">
       <Head>
         <script dangerouslySetInnerHTML={{ __html: SEED_SCALE_COLOR_SCRIPT }} />
       </Head>

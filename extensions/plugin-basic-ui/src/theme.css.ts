@@ -23,7 +23,7 @@ export const globalVars = createGlobalThemeContract(
       borderRadius: "bottom-sheet-border-radius",
     },
   },
-  (value) => `stackflow-basic-ui-${value}`,
+  (value) => `stackflow-plugin-basic-ui-${value}`,
 );
 
 type InferVars<T> = T extends MapLeafNodes<infer U, any> ? U : never;
@@ -57,8 +57,10 @@ const cupertinoVars = {
 };
 
 const root = ":root";
-export const rootAndroid = ":root[data-stackflow-basic-ui-theme=android]";
-export const rootCupertino = ":root[data-stackflow-basic-ui-theme=cupertino]";
+export const rootAndroid =
+  ":root[data-stackflow-plugin-basic-ui-theme=android]";
+export const rootCupertino =
+  ":root[data-stackflow-plugin-basic-ui-theme=cupertino]";
 
 createGlobalTheme(`${root}, ${rootAndroid}`, globalVars, {
   ...defaultVars,
