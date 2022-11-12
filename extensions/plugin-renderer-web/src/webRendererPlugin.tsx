@@ -1,7 +1,7 @@
 import type { StackflowReactPlugin } from "@stackflow/react";
 import React from "react";
 
-export function webRednererPlugin(): StackflowReactPlugin {
+export function webRendererPlugin(): StackflowReactPlugin {
   return () => ({
     key: "plugin-renderer-web",
     render({ stack }) {
