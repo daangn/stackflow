@@ -11,3 +11,9 @@ html {
 .dark .nextra-container > nav.dark\:bg-dark {
   background: rgba(17, 17, 17, 0.5) !important;
 }
+
+@media (prefers-color-scheme: dark) {
+  .nextra-container {
+    color: black;
+  }
+}
