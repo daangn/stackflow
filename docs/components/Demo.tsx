@@ -1,5 +1,5 @@
 import { Stack } from "@stackflow/demo";
-import React from "react";
+import React, { useEffect } from "react";
 import { useSimpleReveal } from "simple-reveal";
 
 const Demo: React.FC = () => {
@@ -7,6 +7,29 @@ const Demo: React.FC = () => {
     delay: 200,
     initialTransform: "scale(0.95)",
   });
+
+  useEffect(() => {
+    const el = document.documentElement;
+    el.dataset.seed = '';
+
+    const prefersLight = window.matchMedia('(prefers-color-scheme: light)');
+
+    const apply = () => {
+      el.dataset.seedScaleColor = 'light';
+      el.dataset.seedScaleLetterSpacing = 'ios';
+    }
+
+    if (prefersLight.matches) {
+      if ('addEventListener' in prefersLight) {
+        prefersLight.addEventListener('change', apply);
+      } else if ('addListener' in prefersLight) {
+        prefersLight.addListener(apply);
+      }
+    }
+
+    apply();
+  }, [])
+
   return (
     <div
       ref={ref}
