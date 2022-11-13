@@ -22,6 +22,10 @@ export interface StackProps {
 
 export type StackComponentType = React.FC<StackProps>;
 
+type StackflowPluginsEntry<T extends BaseActivities> =
+  | StackflowReactPlugin<T>
+  | StackflowPluginsEntry<T>[];
+
 export type StackRefType<T extends BaseActivities> =
   React.MutableRefObject<StackRefCurrentType<T> | null>;
 
@@ -45,7 +49,7 @@ export type StackflowOptions<T extends BaseActivities> = {
   /**
    * Inject stackflow plugins
    */
-  plugins?: Array<StackflowReactPlugin<T> | StackflowReactPlugin<T>[]>;
+  plugins?: Array<StackflowPluginsEntry<T>>;
 };
 
 export type StackflowOutput<T extends BaseActivities> = {
@@ -147,13 +151,8 @@ export function stackflow<T extends BaseActivities>(
     const plugins = useMemo(
       () =>
         (options.plugins ?? [])
-          .reduce<StackflowReactPlugin[]>(
-            (plugins, plugin) => [
-              ...plugins,
-              ...(Array.isArray(plugin) ? plugin : [plugin]),
-            ],
-            [],
-          )
+          .flat(Infinity as 0)
+          .map((p) => p as StackflowReactPlugin<T>)
           .map((plugin) => plugin({ initContext: props.initContext })),
       [],
     );
