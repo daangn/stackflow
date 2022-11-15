@@ -2079,3 +2079,289 @@ test("aggregate - 현재 특정 액티비티가 애니메이션이 되고 있는
     globalTransitionState: "idle",
   });
 });
+
+test("aggregate - NestedPushedEvent가 발생하면, 최상단 액티비티의 파라미터가 변경됩니다", () => {
+  const t = nowTime();
+
+  const events = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+    registeredEvent({
+      activityName: "sample",
+    }),
+    makeEvent("Pushed", {
+      activityId: "a1",
+      activityName: "sample",
+      activityParams: {
+        hello: "world",
+      },
+      eventDate: enoughPastTime(),
+    }),
+    makeEvent("NestedPushed", {
+      activityParams: {
+        hello: "world2",
+      },
+      eventDate: enoughPastTime(),
+    }),
+  ];
+
+  const pushedEvent = events[2];
+  const nestedPushedEvent = events[3];
+
+  const output = aggregate(events, t);
+
+  expect(output).toStrictEqual({
+    activities: [
+      {
+        id: "a1",
+        name: "sample",
+        transitionState: "enter-done",
+        params: {
+          hello: "world2",
+        },
+        pushedBy: pushedEvent,
+        nestedPushedBy: [nestedPushedEvent],
+        isActive: true,
+        isTop: true,
+        zIndex: 0,
+      },
+    ],
+    transitionDuration: 300,
+    globalTransitionState: "idle",
+  });
+});
+
+test("aggregate - NestedPushedEvent가 쌓인 상태에서, NestedPoppedEvent가 들어오면, 다시 이전 파라미터로 돌아갑니다", () => {
+  const t = nowTime();
+
+  const events = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+    registeredEvent({
+      activityName: "sample",
+    }),
+    makeEvent("Pushed", {
+      activityId: "a1",
+      activityName: "sample",
+      activityParams: {
+        hello: "world",
+      },
+      eventDate: enoughPastTime(),
+    }),
+    makeEvent("NestedPushed", {
+      activityParams: {
+        hello: "world2",
+      },
+      eventDate: enoughPastTime(),
+    }),
+    makeEvent("NestedPopped", {
+      eventDate: enoughPastTime(),
+    }),
+  ];
+
+  const pushedEvent = events[2];
+
+  const output = aggregate(events, t);
+
+  expect(output).toStrictEqual({
+    activities: [
+      {
+        id: "a1",
+        name: "sample",
+        transitionState: "enter-done",
+        params: {
+          hello: "world",
+        },
+        pushedBy: pushedEvent,
+        isActive: true,
+        isTop: true,
+        zIndex: 0,
+      },
+    ],
+    transitionDuration: 300,
+    globalTransitionState: "idle",
+  });
+});
+
+test("aggregate - NestedPushedEvent가 쌓인 상태에서, PoppedEvent가 들어오면, 쌓여진 NestedPushedEvent들을 넘어서서 액티비티가 삭제됩니다", () => {
+  const t = nowTime();
+
+  const events = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+    registeredEvent({
+      activityName: "sample",
+    }),
+    makeEvent("Pushed", {
+      activityId: "a1",
+      activityName: "sample",
+      activityParams: {
+        hello: "a",
+      },
+      eventDate: enoughPastTime(),
+    }),
+    makeEvent("Pushed", {
+      activityId: "a2",
+      activityName: "sample",
+      activityParams: {
+        hello: "b",
+      },
+      eventDate: enoughPastTime(),
+    }),
+    makeEvent("NestedPushed", {
+      activityParams: {
+        hello: "c",
+      },
+      eventDate: enoughPastTime(),
+    }),
+    makeEvent("Popped", {
+      eventDate: enoughPastTime(),
+    }),
+  ];
+
+  const pushedEvent1 = events[2];
+  const pushedEvent2 = events[3];
+
+  const output = aggregate(events, t);
+
+  expect(output).toStrictEqual({
+    activities: [
+      {
+        id: "a1",
+        name: "sample",
+        transitionState: "enter-done",
+        params: {
+          hello: "a",
+        },
+        pushedBy: pushedEvent1,
+        isActive: true,
+        isTop: true,
+        zIndex: 0,
+      },
+      {
+        id: "a2",
+        name: "sample",
+        transitionState: "exit-done",
+        params: {
+          hello: "b",
+        },
+        pushedBy: pushedEvent2,
+        isActive: false,
+        isTop: false,
+        zIndex: -1,
+      },
+    ],
+    transitionDuration: 300,
+    globalTransitionState: "idle",
+  });
+});
+
+test("aggregate - NestedReplacedEvent가 발생하면, 최상단 액티비티의 파라미터가 변경됩니다", () => {
+  const t = nowTime();
+
+  const events = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+    registeredEvent({
+      activityName: "sample",
+    }),
+    makeEvent("Pushed", {
+      activityId: "a1",
+      activityName: "sample",
+      activityParams: {
+        hello: "world",
+      },
+      eventDate: enoughPastTime(),
+    }),
+    makeEvent("NestedReplaced", {
+      activityParams: {
+        hello: "world2",
+      },
+      eventDate: enoughPastTime(),
+    }),
+  ];
+
+  const pushedEvent = events[2];
+  const nestedReplacedEvent = events[3];
+
+  const output = aggregate(events, t);
+
+  expect(output).toStrictEqual({
+    activities: [
+      {
+        id: "a1",
+        name: "sample",
+        transitionState: "enter-done",
+        params: {
+          hello: "world2",
+        },
+        pushedBy: pushedEvent,
+        nestedPushedBy: [nestedReplacedEvent],
+        isActive: true,
+        isTop: true,
+        zIndex: 0,
+      },
+    ],
+    transitionDuration: 300,
+    globalTransitionState: "idle",
+  });
+});
+
+test("aggregate - 만약 NestedPoppedEvent를 통해 제거할 수 있는 영역이 없는 경우, 아무것도 하지 않습니다", () => {
+  const t = nowTime();
+
+  const events = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+    registeredEvent({
+      activityName: "sample",
+    }),
+    makeEvent("Pushed", {
+      activityId: "a1",
+      activityName: "sample",
+      activityParams: {
+        hello: "world",
+      },
+      eventDate: enoughPastTime(),
+    }),
+    makeEvent("NestedReplaced", {
+      activityParams: {
+        hello: "world2",
+      },
+      eventDate: enoughPastTime(),
+    }),
+    makeEvent("NestedPopped", {
+      eventDate: enoughPastTime(),
+    }),
+  ];
+
+  const pushedEvent = events[2];
+  const nestedReplacedEvent = events[3];
+
+  const output = aggregate(events, t);
+
+  expect(output).toStrictEqual({
+    activities: [
+      {
+        id: "a1",
+        name: "sample",
+        transitionState: "enter-done",
+        params: {
+          hello: "world2",
+        },
+        pushedBy: pushedEvent,
+        nestedPushedBy: [nestedReplacedEvent],
+        isActive: true,
+        isTop: true,
+        zIndex: 0,
+      },
+    ],
+    transitionDuration: 300,
+    globalTransitionState: "idle",
+  });
+});

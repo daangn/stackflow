@@ -1,4 +1,9 @@
-import type { PushedEvent, ReplacedEvent } from "./event-types";
+import type {
+  NestedPushedEvent,
+  NestedReplacedEvent,
+  PushedEvent,
+  ReplacedEvent,
+} from "./event-types";
 
 export type ActivityTransitionState =
   | "enter-active"
@@ -15,6 +20,7 @@ export type Activity = {
   };
   context?: {};
   pushedBy: PushedEvent | ReplacedEvent;
+  nestedPushedBy?: (NestedPushedEvent | NestedReplacedEvent)[];
   isTop: boolean;
   isActive: boolean;
   zIndex: number;

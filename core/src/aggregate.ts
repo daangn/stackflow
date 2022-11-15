@@ -120,6 +120,76 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
         if (targetActivity) {
           targetActivity.metadata.poppedBy = event;
           targetActivity.transitionState = transitionState;
+
+          if (targetActivity.nestedPushedBy) {
+            targetActivity.params = targetActivity.pushedBy.activityParams;
+
+            const firstNestedPushedEvent = targetActivity.nestedPushedBy[0];
+
+            if (firstNestedPushedEvent.name === "NestedReplaced") {
+              targetActivity.nestedPushedBy = [firstNestedPushedEvent];
+            } else {
+              delete targetActivity.nestedPushedBy;
+            }
+          }
+        }
+
+        break;
+      }
+      case "NestedPushed": {
+        const targetActivity = activities
+          .filter((activity) => activity.metadata.poppedBy === null)
+          .sort((a1, a2) => a2.pushedBy.eventDate - a1.pushedBy.eventDate)[0];
+
+        if (targetActivity) {
+          targetActivity.params = event.activityParams;
+          targetActivity.nestedPushedBy = targetActivity.nestedPushedBy
+            ? [...targetActivity.nestedPushedBy, event]
+            : [event];
+        }
+        break;
+      }
+      case "NestedReplaced": {
+        const targetActivity = activities
+          .filter((activity) => activity.metadata.poppedBy === null)
+          .sort((a1, a2) => a2.pushedBy.eventDate - a1.pushedBy.eventDate)[0];
+
+        if (targetActivity) {
+          targetActivity.params = event.activityParams;
+
+          if (targetActivity.nestedPushedBy) {
+            targetActivity.nestedPushedBy.pop();
+
+            targetActivity.nestedPushedBy = [
+              ...targetActivity.nestedPushedBy,
+              event,
+            ];
+          } else {
+            targetActivity.nestedPushedBy = [event];
+          }
+        }
+        break;
+      }
+      case "NestedPopped": {
+        const targetActivity = activities
+          .filter((activity) => activity.metadata.poppedBy === null)
+          .sort((a1, a2) => a2.pushedBy.eventDate - a1.pushedBy.eventDate)[0];
+
+        if (targetActivity && targetActivity.nestedPushedBy) {
+          if (targetActivity.nestedPushedBy?.[0].name !== "NestedReplaced") {
+            targetActivity.nestedPushedBy.pop();
+          }
+
+          const beforeActivityParams =
+            last(targetActivity.nestedPushedBy)?.activityParams ??
+            targetActivity.pushedBy?.activityParams;
+
+          if (beforeActivityParams) {
+            targetActivity.params = beforeActivityParams;
+          }
+          if (targetActivity.nestedPushedBy.length === 0) {
+            delete targetActivity.nestedPushedBy;
+          }
         }
 
         break;
@@ -166,6 +236,11 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
         isTop: lastVisibleActivity?.id === activity.id,
         isActive: lastEnteredActivity?.id === activity.id,
         zIndex: visibleActivities.findIndex(({ id }) => id === activity.id),
+        ...(activity.nestedPushedBy
+          ? {
+              nestedPushedBy: activity.nestedPushedBy,
+            }
+          : null),
         ...(activity.context
           ? {
               context: activity.context,

@@ -33,6 +33,47 @@ export function produceEffects(
       nextActivity?.transitionState === "enter-active" ||
       nextActivity?.transitionState === "enter-done";
 
+    if (prevActivity && nextActivity) {
+      for (
+        let j = 0;
+        j <
+        Math.max(
+          (prevActivity.nestedPushedBy ?? []).length,
+          (nextActivity.nestedPushedBy ?? []).length,
+        );
+        j += 1
+      ) {
+        const prevNestedPushedBy = prevActivity.nestedPushedBy ?? [];
+        const nextNestedPushedBy = nextActivity.nestedPushedBy ?? [];
+
+        const prevNestedPushedEvent = prevNestedPushedBy[j];
+        const nextNestedPushedEvent = nextNestedPushedBy[j];
+
+        if (!prevNestedPushedEvent && nextNestedPushedEvent) {
+          output.push({
+            _TAG:
+              nextNestedPushedEvent.name === "NestedPushed"
+                ? "NESTED_PUSHED"
+                : "NESTED_REPLACED",
+            activity: nextActivity,
+          });
+        } else if (
+          prevNestedPushedEvent?.name === "NestedPushed" &&
+          nextNestedPushedEvent?.name === "NestedReplaced"
+        ) {
+          output.push({
+            _TAG: "NESTED_REPLACED",
+            activity: nextActivity,
+          });
+        } else if (prevNestedPushedEvent && !nextNestedPushedEvent) {
+          output.push({
+            _TAG: "NESTED_POPPED",
+            activity: nextActivity,
+          });
+        }
+      }
+    }
+
     if (!prevActivity && nextActivity) {
       output.push({
         _TAG: nextActivity.pushedBy.name === "Pushed" ? "PUSHED" : "REPLACED",
@@ -50,7 +91,8 @@ export function produceEffects(
       !isEqual(
         omit(prevActivity, ["isActive", "isTop", "transitionState", "zIndex"]),
         omit(nextActivity, ["isActive", "isTop", "transitionState", "zIndex"]),
-      )
+      ) &&
+      nextActivity.pushedBy.name === "Replaced"
     ) {
       output.push({
         _TAG: "REPLACED",

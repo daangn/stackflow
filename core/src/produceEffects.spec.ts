@@ -628,3 +628,300 @@ test("differences - Replaced 이벤트에 같은 activityId를 넘겨주어 액�
     },
   ]);
 });
+
+test("differences - NestedPushed가 작동해 nestedPushedBy가 늘어난 경우, NESTED_PUSHED 이펙트를 추가합니다", () => {
+  expect(
+    produceEffects(
+      {
+        activities: [
+          {
+            id: "1",
+            name: "hello",
+            transitionState: "enter-done",
+            params: {},
+            pushedBy: {
+              name: "Pushed",
+            } as any,
+            isActive: true,
+            isTop: true,
+            zIndex: 0,
+          },
+        ],
+        transitionDuration: 300,
+        globalTransitionState: "idle",
+      },
+      {
+        activities: [
+          {
+            id: "1",
+            name: "hello",
+            transitionState: "enter-done",
+            params: {},
+            pushedBy: {
+              name: "Pushed",
+            } as any,
+            nestedPushedBy: [
+              {
+                name: "NestedPushed",
+              } as any,
+              {
+                name: "NestedPushed",
+              } as any,
+            ],
+            isActive: true,
+            isTop: true,
+            zIndex: 0,
+          },
+        ],
+        transitionDuration: 300,
+        globalTransitionState: "idle",
+      },
+    ),
+  ).toEqual([
+    {
+      _TAG: "%SOMETHING_CHANGED%",
+    },
+    {
+      _TAG: "NESTED_PUSHED",
+      activity: {
+        id: "1",
+        name: "hello",
+        transitionState: "enter-done",
+        params: {},
+        pushedBy: {
+          name: "Pushed",
+        } as any,
+        nestedPushedBy: [
+          {
+            name: "NestedPushed",
+          } as any,
+          {
+            name: "NestedPushed",
+          } as any,
+        ],
+        isActive: true,
+        isTop: true,
+        zIndex: 0,
+      },
+    },
+    {
+      _TAG: "NESTED_PUSHED",
+      activity: {
+        id: "1",
+        name: "hello",
+        transitionState: "enter-done",
+        params: {},
+        pushedBy: {
+          name: "Pushed",
+        } as any,
+        nestedPushedBy: [
+          {
+            name: "NestedPushed",
+          } as any,
+          {
+            name: "NestedPushed",
+          } as any,
+        ],
+        isActive: true,
+        isTop: true,
+        zIndex: 0,
+      },
+    },
+  ]);
+});
+
+test("differences - NestedReplaced가 작동해 nestedPushedBy가 늘어난 경우, NESTED_REPLACED 이펙트를 추가합니다", () => {
+  expect(
+    produceEffects(
+      {
+        activities: [
+          {
+            id: "1",
+            name: "hello",
+            transitionState: "enter-done",
+            params: {},
+            pushedBy: {
+              name: "Pushed",
+            } as any,
+            isActive: true,
+            isTop: true,
+            zIndex: 0,
+          },
+        ],
+        transitionDuration: 300,
+        globalTransitionState: "idle",
+      },
+      {
+        activities: [
+          {
+            id: "1",
+            name: "hello",
+            transitionState: "enter-done",
+            params: {},
+            pushedBy: {
+              name: "Pushed",
+            } as any,
+            nestedPushedBy: [
+              {
+                name: "NestedReplaced",
+              } as any,
+            ],
+            isActive: true,
+            isTop: true,
+            zIndex: 0,
+          },
+        ],
+        transitionDuration: 300,
+        globalTransitionState: "idle",
+      },
+    ),
+  ).toEqual([
+    {
+      _TAG: "%SOMETHING_CHANGED%",
+    },
+    {
+      _TAG: "NESTED_REPLACED",
+      activity: {
+        id: "1",
+        name: "hello",
+        transitionState: "enter-done",
+        params: {},
+        pushedBy: {
+          name: "Pushed",
+        } as any,
+        nestedPushedBy: [
+          {
+            name: "NestedReplaced",
+          } as any,
+        ],
+        isActive: true,
+        isTop: true,
+        zIndex: 0,
+      },
+    },
+  ]);
+});
+
+test("differences - Popped가 작동해 nestedPushedBy가 모두 삭제되면, POPPED 이벤트와 함께 NESTED_POPPED 이펙트가 함께 여러번 일어납니다", () => {
+  expect(
+    produceEffects(
+      {
+        activities: [
+          {
+            id: "1",
+            name: "hello",
+            transitionState: "enter-done",
+            params: {},
+            pushedBy: {
+              name: "Pushed",
+            } as any,
+            isActive: false,
+            isTop: false,
+            zIndex: 0,
+          },
+          {
+            id: "2",
+            name: "hello",
+            transitionState: "enter-done",
+            params: {},
+            pushedBy: {
+              name: "Pushed",
+            } as any,
+            nestedPushedBy: [
+              {
+                name: "NestedPushed",
+              } as any,
+              {
+                name: "NestedPushed",
+              } as any,
+            ],
+            isActive: true,
+            isTop: true,
+            zIndex: 0,
+          },
+        ],
+        transitionDuration: 300,
+        globalTransitionState: "idle",
+      },
+      {
+        activities: [
+          {
+            id: "1",
+            name: "hello",
+            transitionState: "enter-done",
+            params: {},
+            pushedBy: {
+              name: "Pushed",
+            } as any,
+            isActive: true,
+            isTop: false,
+            zIndex: 0,
+          },
+          {
+            id: "2",
+            name: "hello",
+            transitionState: "exit-active",
+            params: {},
+            pushedBy: {
+              name: "Pushed",
+            } as any,
+            isActive: false,
+            isTop: true,
+            zIndex: 0,
+          },
+        ],
+        transitionDuration: 300,
+        globalTransitionState: "loading",
+      },
+    ),
+  ).toEqual([
+    {
+      _TAG: "%SOMETHING_CHANGED%",
+    },
+    {
+      _TAG: "NESTED_POPPED",
+      activity: {
+        id: "2",
+        name: "hello",
+        transitionState: "exit-active",
+        params: {},
+        pushedBy: {
+          name: "Pushed",
+        } as any,
+        isActive: false,
+        isTop: true,
+        zIndex: 0,
+      },
+    },
+    {
+      _TAG: "NESTED_POPPED",
+      activity: {
+        id: "2",
+        name: "hello",
+        transitionState: "exit-active",
+        params: {},
+        pushedBy: {
+          name: "Pushed",
+        } as any,
+        isActive: false,
+        isTop: true,
+        zIndex: 0,
+      },
+    },
+    {
+      _TAG: "POPPED",
+      activity: {
+        id: "2",
+        name: "hello",
+        transitionState: "exit-active",
+        params: {},
+        pushedBy: {
+          name: "Pushed",
+        } as any,
+        isActive: false,
+        isTop: true,
+        zIndex: 0,
+      },
+    },
+  ]);
+});

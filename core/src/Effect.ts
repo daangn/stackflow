@@ -15,4 +15,16 @@ export type Effect =
   | {
       _TAG: "REPLACED";
       activity: Activity;
+    }
+  | {
+      _TAG: "NESTED_PUSHED";
+      activity: Activity;
+    }
+  | {
+      _TAG: "NESTED_POPPED";
+      activity: Activity;
+    }
+  | {
+      _TAG: "NESTED_REPLACED";
+      activity: Activity;
     };
