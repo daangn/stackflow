@@ -1,7 +1,7 @@
 import { Head, Html, Main, NextScript } from "next/document";
 
-const SEED_SCALE_COLOR_SCRIPT = `(() => { var e=document.documentElement;var pd=window.matchMedia("(prefers-color-scheme: dark)"),a= () => { e.dataset.seed="";e.dataset.seedScaleColor=pd.matches?"dark":"light";};"addEventListener"in pd?pd.addEventListener("change",a):"addListener"in pd&&pd.addListener(a),a();})()`;
-const NEXTRA_THEME_SCRIPT = `(() => { var e=document.documentElement;var pd=window.matchMedia("(prefers-color-scheme: dark)"),a= () => { e.classList.remove("light");e.classList.remove("dark");pd.matches ? e.classList.add("dark") : e.classList.add("light");};"addEventListener"in pd?pd.addEventListener("change",a):"addListener"in pd&&pd.addListener(a),a();})()`;
+const SEED_SCALE_COLOR_SCRIPT = `(()=>{var e=document.documentElement,d=window.matchMedia("(prefers-color-scheme: dark)"),a=()=>{e.dataset.seed="",e.dataset.seedScaleColor=d.matches?"dark":"light"};"addEventListener"in d?d.addEventListener("change",a):"addListener"in d&&d.addListener(a),a()})();`;
+const NEXTRA_THEME_SCRIPT = `(()=>{var e=document.documentElement,d=window.matchMedia("(prefers-color-scheme: dark)"),s=()=>{e.classList.remove("light"),e.classList.remove("dark"),d.matches?e.classList.add("dark"):e.classList.add("light")};"addEventListener"in d?d.addEventListener("change",s):"addListener"in d&&d.addListener(s),s()})();`;
 
 export default function Document() {
   return (
