@@ -258,7 +258,7 @@ export function historySyncPlugin<
           }
 
           const currentActivityNestedRoute = last(
-            currentActivity?.nestedRoutes ?? [],
+            currentActivity.nestedRoutes ?? [],
           );
 
           const nextActivity = activities.find(
