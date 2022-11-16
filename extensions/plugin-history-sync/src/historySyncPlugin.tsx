@@ -110,6 +110,7 @@ export function historySyncPlugin<
 
   return ({ initContext }) => {
     let pushFlag = 0;
+    let popFlag = 0;
 
     return {
       key: "plugin-history-sync",
@@ -232,6 +233,11 @@ export function historySyncPlugin<
         });
 
         const onPopState = (e: PopStateEvent) => {
+          if (popFlag) {
+            popFlag -= 1;
+            return;
+          }
+
           const historyState = parseState(e.state);
 
           if (!historyState) {
@@ -502,13 +508,13 @@ export function historySyncPlugin<
           },
         });
       },
-      onBeforePop({ actions: { preventDefault, getStack } }) {
-        preventDefault();
-
+      onBeforePop({ actions: { getStack } }) {
         const { activities } = getStack();
         const currentActivities = activities.find(
           (activity) => activity.isActive,
         );
+
+        popFlag += 1 + (currentActivities?.nestedRoutes?.length ?? 0);
 
         do {
           if (typeof window !== "undefined") {
