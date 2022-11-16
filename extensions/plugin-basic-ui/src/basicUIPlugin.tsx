@@ -9,9 +9,14 @@ import { compactMap } from "./utils";
 type BasicUIPluginOptions = RecursivePartial<theme.GlobalVars> & {
   theme: "android" | "cupertino";
   appBar?: {
-    closeButton?: {
-      onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
-    };
+    closeButton?:
+      | {
+          renderIcon?: () => React.ReactNode;
+          onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+        }
+      | {
+          render?: () => React.ReactNode;
+        };
   };
 };
 
