@@ -308,12 +308,14 @@ export function historySyncPlugin<
           };
 
           if (isBackward()) {
-            dispatchEvent("Popped", {});
+            startTransition(() => {
+              dispatchEvent("Popped", {});
 
-            if (!nextActivity) {
-              const targetNestedRoute = last(targetActivity.nestedRoutes ?? []);
+              if (!nextActivity) {
+                const targetNestedRoute = last(
+                  targetActivity.nestedRoutes ?? [],
+                );
 
-              startTransition(() => {
                 pushFlag += 1;
                 dispatchEvent("Pushed", {
                   ...targetActivity.pushedBy,
@@ -325,8 +327,8 @@ export function historySyncPlugin<
                     ...targetNestedRoute.pushedBy,
                   });
                 }
-              });
-            }
+              }
+            });
           }
           if (isNestedBackward()) {
             startTransition(() => {
