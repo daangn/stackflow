@@ -1,5 +1,7 @@
 import type { StackflowPluginActions } from "@stackflow/core";
 import React from "react";
+import type { UseNestedActionsOutputType } from "useNestedActions";
+import { useNestedActions } from "useNestedActions";
 
 import type { BaseActivities } from "./BaseActivities";
 import { useCoreActions } from "./core";
@@ -8,7 +10,11 @@ import { useActions } from "./useActions";
 
 export type StackRefCurrentType<T extends BaseActivities> = {
   actions: Pick<StackflowPluginActions, "dispatchEvent" | "getStack"> &
-    Pick<UseActionsOutputType<T>, "push" | "pop" | "replace">;
+    Pick<UseActionsOutputType<T>, "push" | "pop" | "replace"> &
+    Pick<
+      UseNestedActionsOutputType<{}>,
+      "nestedPush" | "nestedReplace" | "nestedPop"
+    >;
 };
 
 const StackRefManager = React.forwardRef<
@@ -17,6 +23,9 @@ const StackRefManager = React.forwardRef<
 >((_, ref) => {
   const { dispatchEvent, getStack } = useCoreActions();
   const { push, pop, replace } = useActions();
+  const { nestedPush, nestedPop, nestedReplace } = useNestedActions(
+    "" as never,
+  );
 
   React.useImperativeHandle(ref, () => ({
     actions: {
@@ -25,6 +34,9 @@ const StackRefManager = React.forwardRef<
       push,
       pop,
       replace,
+      nestedPush,
+      nestedPop,
+      nestedReplace,
     },
   }));
 

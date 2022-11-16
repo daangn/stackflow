@@ -18,13 +18,6 @@ export type StackflowPlugin = () => {
   onInit?: StackflowPluginHook;
 
   /**
-   * Called before the `pop()` function of `useActions()` is called and the corresponding signal is delivered to the core
-   */
-  onBeforePop?: StackflowPluginPreEffectHook<
-    Omit<PoppedEvent, keyof BaseDomainEvent>
-  >;
-
-  /**
    * Called before the `push()` function of `useActions()` is called and the corresponding signal is delivered to the core
    */
   onBeforePush?: StackflowPluginPreEffectHook<
@@ -39,9 +32,42 @@ export type StackflowPlugin = () => {
   >;
 
   /**
+   * Called before the `pop()` function of `useActions()` is called and the corresponding signal is delivered to the core
+   */
+  onBeforePop?: StackflowPluginPreEffectHook<
+    Omit<PoppedEvent, keyof BaseDomainEvent>
+  >;
+
+  /**
+   * Called before the `nestedPush()` function of `useNestedActions()` is called and the corresponding signal is delivered to the core
+   */
+  onBeforeNestedPush?: StackflowPluginPreEffectHook<
+    Omit<PushedEvent, keyof BaseDomainEvent>
+  >;
+
+  /**
+   * Called before the `nestedReplace()` function of `useNestedAction()` is called and the corresponding signal is delivered to the core
+   */
+  onBeforeNestedReplace?: StackflowPluginPreEffectHook<
+    Omit<ReplacedEvent, keyof BaseDomainEvent>
+  >;
+
+  /**
+   * Called before the `nestedPop()` function of `useNestedActions()` is called and the corresponding signal is delivered to the core
+   */
+  onBeforeNestedPop?: StackflowPluginPreEffectHook<
+    Omit<PoppedEvent, keyof BaseDomainEvent>
+  >;
+
+  /**
    * Called when the push procedure is complete and the actual rendering is finished
    */
   onPushed?: StackflowPluginPostEffectHook<"PUSHED">;
+
+  /**
+   * Called when the replace procedure is complete and the actual rendering is finished
+   */
+  onReplaced?: StackflowPluginPostEffectHook<"REPLACED">;
 
   /**
    * Called when the pop procedure is complete and the actual rendering is finished
@@ -49,9 +75,19 @@ export type StackflowPlugin = () => {
   onPopped?: StackflowPluginPostEffectHook<"POPPED">;
 
   /**
-   * Called when the replace procedure is complete and the actual rendering is finished
+   * Called when the nestedPush procedure is complete and the actual rendering is finished
    */
-  onReplaced?: StackflowPluginPostEffectHook<"REPLACED">;
+  onNestedPushed?: StackflowPluginPostEffectHook<"PUSHED">;
+
+  /**
+   * Called when the nestedReplace procedure is complete and the actual rendering is finished
+   */
+  onNestedReplaced?: StackflowPluginPostEffectHook<"REPLACED">;
+
+  /**
+   * Called when the nestedPop procedure is complete and the actual rendering is finished
+   */
+  onNestedPopped?: StackflowPluginPostEffectHook<"POPPED">;
 
   /**
    * Called after any changes to the stack state are reflected in the actual rendering

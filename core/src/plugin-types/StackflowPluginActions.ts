@@ -1,5 +1,12 @@
 import type { AggregateOutput } from "../AggregateOutput";
-import type { PoppedEvent, PushedEvent, ReplacedEvent } from "../event-types";
+import type {
+  NestedPoppedEvent,
+  NestedPushedEvent,
+  NestedReplacedEvent,
+  PoppedEvent,
+  PushedEvent,
+  ReplacedEvent,
+} from "../event-types";
 import type { BaseDomainEvent } from "../event-types/_base";
 import type { DispatchEvent } from "../event-utils";
 
@@ -18,6 +25,23 @@ export type StackflowPluginActions = {
    * Remove top activity
    */
   pop: (params?: Omit<PoppedEvent, keyof BaseDomainEvent>) => void;
+
+  /**
+   * Change current activity's parameter with nested push behavior
+   */
+  nestedPush: (params: Omit<NestedPushedEvent, keyof BaseDomainEvent>) => void;
+
+  /**
+   * Change current activity's parameter with nested replace behavior
+   */
+  nestedReplace: (
+    params: Omit<NestedReplacedEvent, keyof BaseDomainEvent>,
+  ) => void;
+
+  /**
+   * Remove nested pushed state
+   */
+  nestedPop: (params?: Omit<NestedPoppedEvent, keyof BaseDomainEvent>) => void;
 
   /**
    * Get current stack state

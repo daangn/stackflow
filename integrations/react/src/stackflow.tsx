@@ -1,5 +1,11 @@
 import type { StackflowPluginActions } from "@stackflow/core";
+import type { ActivityComponentType } from "activity";
 import React, { useMemo } from "react";
+import type {
+  UseNestedActions,
+  UseNestedActionsOutputType,
+} from "useNestedActions";
+import { useNestedActions } from "useNestedActions";
 
 import type { BaseActivities } from "./BaseActivities";
 import { CoreProvider } from "./core";
@@ -64,10 +70,19 @@ export type StackflowOutput<T extends BaseActivities> = {
   useFlow: () => UseActionsOutputType<T>;
 
   /**
+   * Created `useNestedFlow()` hooks
+   */
+  useNestedFlow: UseNestedActions<T>;
+
+  /**
    * Created action triggers
    */
   actions: Pick<StackflowPluginActions, "dispatchEvent" | "getStack"> &
-    Pick<UseActionsOutputType<T>, "push" | "pop" | "replace">;
+    Pick<UseActionsOutputType<T>, "push" | "pop" | "replace"> &
+    Pick<
+      UseNestedActionsOutputType<{}>,
+      "nestedPush" | "nestedReplace" | "nestedPop"
+    >;
 };
 
 /**
@@ -145,6 +160,27 @@ export function stackflow<T extends BaseActivities>(
         options,
       );
     },
+    nestedPush(activityParams) {
+      if (!stackRef.current) {
+        throw new Error(stackRefNotFoundErrorMessage("nestedPush"));
+      }
+
+      return stackRef.current.actions.nestedPush(activityParams);
+    },
+    nestedReplace(activityParams) {
+      if (!stackRef.current) {
+        throw new Error(stackRefNotFoundErrorMessage("nestedReplace"));
+      }
+
+      return stackRef.current.actions.nestedReplace(activityParams);
+    },
+    nestedPop() {
+      if (!stackRef.current) {
+        throw new Error(stackRefNotFoundErrorMessage("nestedPop"));
+      }
+
+      return stackRef.current.actions.nestedPop();
+    },
   };
 
   const Stack: StackComponentType = (props) => {
@@ -177,6 +213,7 @@ export function stackflow<T extends BaseActivities>(
   return {
     Stack,
     useFlow: useActions,
+    useNestedFlow: useNestedActions,
     actions,
   };
 }
