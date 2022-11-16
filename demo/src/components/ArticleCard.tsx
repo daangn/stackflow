@@ -53,7 +53,19 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
           />
         </div>
       </div>
-      <div className={css.title}>{title}</div>
+      <div className={css.title}>
+        {title}{" "}
+        {(() => {
+          switch (i % 4) {
+            case 0:
+              return "P";
+            case 1:
+              return "NR";
+            default:
+              return "NP";
+          }
+        })()}
+      </div>
       <div className={css.price}>£{price}.00</div>
     </button>
   );

@@ -188,6 +188,7 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
 
           const beforeActivityParams =
             last(targetActivity.nestedRoutes)?.params ??
+            targetActivity.nestedReplacedBy?.activityNestedRouteParams ??
             targetActivity.pushedBy?.activityParams;
 
           if (beforeActivityParams) {

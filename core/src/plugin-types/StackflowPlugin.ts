@@ -102,9 +102,9 @@ export type StackflowPlugin = () => {
   onChanged?: StackflowPluginPostEffectHook<"%SOMETHING_CHANGED%">;
 
   /**
-   * Specifies the first `PushedEvent` (Overrides the `initialActivity` option specified in the `stackflow()` function)
+   * Specifies the first `PushedEvent`, `NestedPushedEvent` (Overrides the `initialActivity` option specified in the `stackflow()` function)
    */
-  overrideInitialPushedEvent?: (args: {
-    pushedEvent: PushedEvent | null;
-  }) => PushedEvent | null;
+  overrideInitialEvents?: (args: {
+    initialEvents: (PushedEvent | NestedPushedEvent)[];
+  }) => (PushedEvent | NestedPushedEvent)[];
 };

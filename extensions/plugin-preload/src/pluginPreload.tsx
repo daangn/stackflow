@@ -31,33 +31,39 @@ export function preloadPlugin<T extends { [activityName: string]: unknown }>(
         </LoadersProvider>
       );
     },
-    overrideInitialPushedEvent({ pushedEvent }) {
-      if (!pushedEvent) {
-        return null;
+    overrideInitialEvents({ initialEvents }) {
+      if (initialEvents.length === 0) {
+        return [];
       }
 
-      const { activityName, activityParams, activityContext } = pushedEvent;
+      return initialEvents.map((event) => {
+        if (event.name !== "Pushed") {
+          return event;
+        }
 
-      const loader = options.loaders[activityName];
+        const { activityName, activityParams, activityContext } = event;
 
-      if (!loader) {
-        return pushedEvent;
-      }
+        const loader = options.loaders[activityName];
 
-      const preloadRef = loader({
-        activityParams,
-        activityContext,
-        initContext,
-        isInitialActivity: true,
+        if (!loader) {
+          return event;
+        }
+
+        const preloadRef = loader({
+          activityParams,
+          activityContext,
+          initContext,
+          isInitialActivity: true,
+        });
+
+        return {
+          ...event,
+          activityContext: {
+            ...event.activityContext,
+            preloadRef,
+          },
+        };
       });
-
-      return {
-        ...pushedEvent,
-        activityContext: {
-          ...pushedEvent.activityContext,
-          preloadRef,
-        },
-      };
     },
     onBeforePush({ actionParams, actions: { overrideActionParams } }) {
       const { activityName, activityParams, activityContext } = actionParams;

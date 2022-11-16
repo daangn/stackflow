@@ -109,7 +109,7 @@ export function historySyncPlugin<
   type K = Extract<keyof T, string>;
 
   return ({ initContext }) => {
-    let pushFlag = false;
+    let pushFlag = 0;
 
     return {
       key: "plugin-history-sync",
@@ -120,19 +120,24 @@ export function historySyncPlugin<
           </RoutesProvider>
         );
       },
-      overrideInitialPushedEvent() {
+      overrideInitialEvents() {
         const initHistoryState = parseState(getCurrentState());
 
         if (initHistoryState) {
-          return {
-            ...initHistoryState.activity.pushedBy,
-            ...(initHistoryState.activityNestedRoute?.params
-              ? {
-                  activityParams: initHistoryState.activityNestedRoute.params,
-                }
-              : null),
-            name: "Pushed",
-          };
+          return [
+            {
+              ...initHistoryState.activity.pushedBy,
+              name: "Pushed",
+            },
+            ...(initHistoryState.activityNestedRoute
+              ? [
+                  {
+                    ...initHistoryState.activityNestedRoute.pushedBy,
+                    name: "NestedPushed" as const,
+                  },
+                ]
+              : []),
+          ];
         }
 
         function resolvePath() {
@@ -171,17 +176,19 @@ export function historySyncPlugin<
               if (matched) {
                 const activityId = id();
 
-                return makeEvent("Pushed", {
-                  activityId,
-                  activityName,
-                  activityParams: {
-                    ...activityParams,
-                  },
-                  eventDate: new Date().getTime() - MINUTE,
-                  activityContext: {
-                    path,
-                  },
-                });
+                return [
+                  makeEvent("Pushed", {
+                    activityId,
+                    activityName,
+                    activityParams: {
+                      ...activityParams,
+                    },
+                    eventDate: new Date().getTime() - MINUTE,
+                    activityContext: {
+                      path,
+                    },
+                  }),
+                ];
               }
             }
           }
@@ -194,15 +201,17 @@ export function historySyncPlugin<
         );
         const fallbackActivityPath = fallbackActivityRoutes[0];
 
-        return makeEvent("Pushed", {
-          activityId: fallbackActivityId,
-          activityName: fallbackActivityName,
-          activityParams: {},
-          eventDate: new Date().getTime() - MINUTE,
-          activityContext: {
-            path: fallbackActivityPath,
-          },
-        });
+        return [
+          makeEvent("Pushed", {
+            activityId: fallbackActivityId,
+            activityName: fallbackActivityName,
+            activityParams: {},
+            eventDate: new Date().getTime() - MINUTE,
+            activityContext: {
+              path: fallbackActivityPath,
+            },
+          }),
+        ];
       },
       onInit({ actions: { getStack, dispatchEvent, push, nestedPush } }) {
         const rootActivity = getStack().activities[0];
@@ -210,11 +219,14 @@ export function historySyncPlugin<
           normalizeRoute(options.routes[rootActivity.name])[0],
         );
 
+        (window as any).getStack = getStack;
+
         replaceState({
           url: template.fill(rootActivity.params),
           state: {
             _TAG: STATE_TAG,
             activity: removeActivityContext(rootActivity),
+            activityNestedRoute: rootActivity.nestedRoutes?.[0],
           },
           useHash: options.useHash,
         });
@@ -280,6 +292,7 @@ export function historySyncPlugin<
             if (!currentActivityNestedRoute) {
               return false;
             }
+
             if (currentActivityNestedRoute.id > targetActivityNestedRoute.id) {
               return true;
             }
@@ -318,35 +331,47 @@ export function historySyncPlugin<
             dispatchEvent("Popped", {});
 
             if (!targetActivity) {
-              pushFlag = true;
+              const nestedRoute = last(
+                historyState.activity.nestedRoutes ?? [],
+              );
 
               startTransition(() => {
-                push({
+                pushFlag += 1;
+                dispatchEvent("Pushed", {
                   ...historyState.activity.pushedBy,
                 });
-              });
-            }
 
-            if (targetActivity) {
-              const template = makeTemplate(
-                normalizeRoute(options.routes[targetActivity.name])[0],
-              );
-              const url = template.fill(targetActivity.params);
-
-              replaceState({
-                url,
-                state: {
-                  _TAG: STATE_TAG,
-                  activity: removeActivityContext(targetActivity),
-                },
-                useHash: options.useHash,
+                if (nestedRoute) {
+                  pushFlag += 1;
+                  dispatchEvent("NestedPushed", {
+                    ...nestedRoute.pushedBy,
+                  });
+                }
               });
             }
           }
-          if (isForward()) {
-            pushFlag = true;
+          if (isNestedBackward()) {
+            if (
+              targetActivityNestedRoute &&
+              !currentActivity?.nestedRoutes?.find(
+                (route) => route.id === targetActivityNestedRoute.id,
+              )
+            ) {
+              startTransition(() => {
+                pushFlag += 1;
+                dispatchEvent("NestedPushed", {
+                  ...targetActivityNestedRoute.pushedBy,
+                });
+                dispatchEvent("NestedPopped", {});
+              });
+            } else {
+              dispatchEvent("NestedPopped", {});
+            }
+          }
 
+          if (isForward()) {
             startTransition(() => {
+              pushFlag += 1;
               push({
                 activityId: historyState.activity.id,
                 activityName: historyState.activity.name,
@@ -354,29 +379,12 @@ export function historySyncPlugin<
               });
             });
           }
-          if (isNestedBackward()) {
-            dispatchEvent("NestedPopped", {});
-
-            if (
-              !targetActivityNestedRoute &&
-              historyState.activityNestedRoute
-            ) {
-              pushFlag = true;
-              const { activityNestedRoute } = historyState;
-
-              startTransition(() => {
-                nestedPush({
-                  ...activityNestedRoute.pushedBy,
-                });
-              });
-            }
-          }
           if (isNestedForward()) {
             if (historyState.activityNestedRoute) {
-              pushFlag = true;
               const { activityNestedRoute } = historyState;
 
               startTransition(() => {
+                pushFlag += 1;
                 nestedPush({
                   activityNestedRouteId: activityNestedRoute.id,
                   activityNestedRouteParams: activityNestedRoute.params,
@@ -392,7 +400,7 @@ export function historySyncPlugin<
       },
       onPushed({ effect: { activity } }) {
         if (pushFlag) {
-          pushFlag = false;
+          pushFlag -= 1;
           return;
         }
 
@@ -411,7 +419,7 @@ export function historySyncPlugin<
       },
       onNestedPushed({ effect: { activity, activityNestedRoute } }) {
         if (pushFlag) {
-          pushFlag = false;
+          pushFlag -= 1;
           return;
         }
 
@@ -494,12 +502,23 @@ export function historySyncPlugin<
           },
         });
       },
-      onBeforePop({ actions: { preventDefault } }) {
+      onBeforePop({ actions: { preventDefault, getStack } }) {
         preventDefault();
+
+        const { activities } = getStack();
+        const currentActivities = activities.find(
+          (activity) => activity.isActive,
+        );
 
         do {
           if (typeof window !== "undefined") {
-            window.history.back();
+            for (
+              let i = 0;
+              i < 1 + (currentActivities?.nestedRoutes?.length ?? 0);
+              i += 1
+            ) {
+              window.history.back();
+            }
           }
         } while (!parseState(getCurrentState()));
       },
