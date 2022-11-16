@@ -61,6 +61,7 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
     const activity = useActivity();
 
     const globalOptions = useGlobalOptions();
+    const globalCloseButton = globalOptions.appBar?.closeButton;
 
     const centerRef = useRef<any>(null);
 
@@ -123,8 +124,12 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
         closeButton.onClick(e);
       }
 
-      if (!e.defaultPrevented) {
-        globalOptions.appBar?.closeButton?.onClick?.(e);
+      if (
+        !e.defaultPrevented &&
+        globalCloseButton &&
+        "onClick" in globalCloseButton
+      ) {
+        globalCloseButton.onClick?.(e);
       }
     };
 
@@ -135,6 +140,13 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
       if (closeButton && "render" in closeButton && closeButton.render) {
         return closeButton.render();
       }
+      if (
+        globalCloseButton &&
+        "render" in globalCloseButton &&
+        globalCloseButton.render
+      ) {
+        return globalCloseButton.render();
+      }
 
       return (
         <button
@@ -142,13 +154,24 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
           className={css.closeButton}
           onClick={onCloseClick}
         >
-          {closeButton &&
-          "renderIcon" in closeButton &&
-          closeButton.renderIcon ? (
-            closeButton.renderIcon()
-          ) : (
-            <IconClose />
-          )}
+          {(() => {
+            if (
+              closeButton &&
+              "renderIcon" in closeButton &&
+              closeButton.renderIcon
+            ) {
+              return closeButton.renderIcon();
+            }
+            if (
+              globalCloseButton &&
+              "renderIcon" in globalCloseButton &&
+              globalCloseButton.renderIcon
+            ) {
+              return globalCloseButton.renderIcon();
+            }
+
+            return <IconClose />;
+          })()}
         </button>
       );
     };
