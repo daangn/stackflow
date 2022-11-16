@@ -244,89 +244,66 @@ export function historySyncPlugin<
             return;
           }
 
-          const { activities } = getStack();
+          const targetActivity = historyState.activity;
+          const targetActivityId = historyState.activity.id;
+          const targetActivityNestedRoute = historyState.activityNestedRoute;
 
+          const { activities } = getStack();
           const currentActivity = activities.find(
             (activity) => activity.isActive,
           );
-          const targetActivity = activities.find(
-            (activity) =>
-              activity.id === historyState.activity.pushedBy.activityId,
+
+          if (!currentActivity) {
+            return;
+          }
+
+          const currentActivityNestedRoute = last(
+            currentActivity?.nestedRoutes ?? [],
           );
-          const targetActivityId = historyState.activity.pushedBy.activityId;
-          const targetActivityNestedRoute = historyState.activityNestedRoute;
 
-          const isBackward = () => {
-            if (!currentActivity) {
-              return false;
-            }
-            if (currentActivity.id > targetActivityId) {
-              return true;
-            }
+          const nextActivity = activities.find(
+            (activity) => activity.id === targetActivityId,
+          );
+          const nextActivityNestedRoute = currentActivity.nestedRoutes?.find(
+            (route) => route.id === targetActivityNestedRoute?.id,
+          );
 
-            return false;
-          };
-          const isForward = () => {
-            if (!currentActivity) {
-              return false;
-            }
-            if (currentActivity.id < targetActivityId) {
-              return true;
-            }
-
-            return false;
-          };
+          const isBackward = () => currentActivity.id > targetActivityId;
+          const isForward = () => currentActivity.id < targetActivityId;
+          const isNested = () => currentActivity.id === targetActivityId;
 
           const isNestedBackward = () => {
-            if (!currentActivity) {
+            if (!isNested()) {
               return false;
             }
-            if (currentActivity.id !== targetActivityId) {
-              return false;
-            }
-            if (!currentActivity.nestedRoutes) {
-              return false;
-            }
+
             if (!targetActivityNestedRoute) {
               return true;
             }
-
-            const currentActivityNestedRoute = last(
-              currentActivity.nestedRoutes,
-            );
-
-            if (!currentActivityNestedRoute) {
-              return false;
-            }
-
-            if (currentActivityNestedRoute.id > targetActivityNestedRoute.id) {
+            if (
+              currentActivityNestedRoute &&
+              currentActivityNestedRoute.id > targetActivityNestedRoute.id
+            ) {
               return true;
             }
 
             return false;
           };
           const isNestedForward = () => {
-            if (!currentActivity) {
+            if (!isNested()) {
               return false;
             }
-            if (currentActivity.id !== targetActivityId) {
-              return false;
-            }
+
             if (!currentActivity.nestedRoutes) {
               return true;
             }
-            if (!targetActivityNestedRoute) {
-              return false;
-            }
-
-            const currentActivityNestedRoute = last(
-              currentActivity.nestedRoutes,
-            );
-
             if (!currentActivityNestedRoute) {
               return true;
             }
-            if (currentActivityNestedRoute.id < targetActivityNestedRoute.id) {
+            if (
+              targetActivityNestedRoute &&
+              currentActivityNestedRoute.id < targetActivityNestedRoute.id
+            ) {
               return true;
             }
 
@@ -336,67 +313,59 @@ export function historySyncPlugin<
           if (isBackward()) {
             dispatchEvent("Popped", {});
 
-            if (!targetActivity) {
-              const nestedRoute = last(
-                historyState.activity.nestedRoutes ?? [],
-              );
+            if (!nextActivity) {
+              const targetNestedRoute = last(targetActivity.nestedRoutes ?? []);
 
               startTransition(() => {
                 pushFlag += 1;
                 dispatchEvent("Pushed", {
-                  ...historyState.activity.pushedBy,
+                  ...targetActivity.pushedBy,
                 });
 
-                if (nestedRoute) {
+                if (targetNestedRoute) {
                   pushFlag += 1;
                   dispatchEvent("NestedPushed", {
-                    ...nestedRoute.pushedBy,
+                    ...targetNestedRoute.pushedBy,
                   });
                 }
               });
             }
           }
           if (isNestedBackward()) {
-            if (
-              targetActivityNestedRoute &&
-              !currentActivity?.nestedRoutes?.find(
-                (route) => route.id === targetActivityNestedRoute.id,
-              )
-            ) {
-              startTransition(() => {
+            startTransition(() => {
+              if (!nextActivityNestedRoute && targetActivityNestedRoute) {
                 pushFlag += 1;
                 dispatchEvent("NestedPushed", {
                   ...targetActivityNestedRoute.pushedBy,
                 });
-                dispatchEvent("NestedPopped", {});
-              });
-            } else {
+              }
+
               dispatchEvent("NestedPopped", {});
-            }
+            });
           }
 
           if (isForward()) {
             startTransition(() => {
               pushFlag += 1;
               push({
-                activityId: historyState.activity.id,
-                activityName: historyState.activity.name,
-                activityParams: historyState.activity.params,
+                activityId: targetActivity.id,
+                activityName: targetActivity.name,
+                activityParams: targetActivity.params,
               });
             });
           }
           if (isNestedForward()) {
-            if (historyState.activityNestedRoute) {
-              const { activityNestedRoute } = historyState;
-
-              startTransition(() => {
-                pushFlag += 1;
-                nestedPush({
-                  activityNestedRouteId: activityNestedRoute.id,
-                  activityNestedRouteParams: activityNestedRoute.params,
-                });
-              });
+            if (!targetActivityNestedRoute) {
+              return;
             }
+
+            startTransition(() => {
+              pushFlag += 1;
+              nestedPush({
+                activityNestedRouteId: targetActivityNestedRoute.id,
+                activityNestedRouteParams: targetActivityNestedRoute.params,
+              });
+            });
           }
         };
 
@@ -509,22 +478,21 @@ export function historySyncPlugin<
         });
       },
       onBeforePop({ actions: { getStack } }) {
+        if (typeof window === "undefined") {
+          return;
+        }
+
         const { activities } = getStack();
-        const currentActivities = activities.find(
+        const currentActivity = activities.find(
           (activity) => activity.isActive,
         );
+        const popCount = 1 + (currentActivity?.nestedRoutes?.length ?? 0);
 
-        popFlag += 1 + (currentActivities?.nestedRoutes?.length ?? 0);
+        popFlag += popCount;
 
         do {
-          if (typeof window !== "undefined") {
-            for (
-              let i = 0;
-              i < 1 + (currentActivities?.nestedRoutes?.length ?? 0);
-              i += 1
-            ) {
-              window.history.back();
-            }
+          for (let i = 0; i < popCount; i += 1) {
+            window.history.back();
           }
         } while (!parseState(getCurrentState()));
       },
