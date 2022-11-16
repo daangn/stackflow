@@ -100,8 +100,8 @@ const Article: ActivityComponentType<ArticleParams> = () => {
         <div className={css.section}>
           <div className={css.sectionTitle}>Other Items by Emila </div>
           <div className={css.recommenderGrid}>
-            {recommenderCard.map((card) => (
-              <ArticleCard key={card.articleId} {...card} />
+            {recommenderCard.map((card, i) => (
+              <ArticleCard key={card.articleId} {...card} i={i} />
             ))}
           </div>
         </div>

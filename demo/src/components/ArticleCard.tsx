@@ -8,21 +8,37 @@ interface ArticleCardProps {
   articleId: string;
   title: string;
   price: number;
+  i: number;
 }
 const ArticleCard: React.FC<ArticleCardProps> = ({
   articleId,
   title,
   price,
+  i,
 }) => {
-  const { nestedReplace } = useNestedFlow("Article");
+  const { nestedPush, nestedReplace } = useNestedFlow("Article");
+  const { push } = useFlow();
 
   const imageUrl = `https://picsum.photos/800/800/?id=${articleId}`;
 
   const onClick = () => {
-    nestedReplace({
-      articleId: String(articleId),
-      title,
-    });
+    switch (i % 4) {
+      case 0:
+        return push("Article", {
+          articleId: String(articleId),
+          title,
+        });
+      case 1:
+        return nestedReplace({
+          articleId: String(articleId),
+          title,
+        });
+      default:
+        return nestedPush({
+          articleId: String(articleId),
+          title,
+        });
+    }
   };
 
   return (

@@ -4,6 +4,7 @@ import type { ActivityNestedRoute } from "@stackflow/core/dist/AggregateOutput";
 import type { StackflowReactPlugin } from "@stackflow/react";
 import React from "react";
 
+import { last } from "./last";
 import { makeTemplate } from "./makeTemplate";
 import { normalizeRoute } from "./normalizeRoute";
 import { RoutesProvider } from "./RoutesContext";
@@ -125,6 +126,11 @@ export function historySyncPlugin<
         if (initHistoryState) {
           return {
             ...initHistoryState.activity.pushedBy,
+            ...(initHistoryState.activityNestedRoute?.params
+              ? {
+                  activityParams: initHistoryState.activityNestedRoute.params,
+                }
+              : null),
             name: "Pushed",
           };
         }
@@ -222,85 +228,91 @@ export function historySyncPlugin<
 
           const { activities } = getStack();
 
+          const currentActivity = activities.find(
+            (activity) => activity.isActive,
+          );
           const targetActivity = activities.find(
             (activity) =>
               activity.id === historyState.activity.pushedBy.activityId,
           );
+          const targetActivityId = historyState.activity.pushedBy.activityId;
+          const targetActivityNestedRoute = historyState.activityNestedRoute;
 
           const isBackward = () => {
-            if (historyState.activityNestedRoute) {
+            if (!currentActivity) {
               return false;
             }
-            if (
-              !targetActivity &&
-              historyState.activity.pushedBy.activityId < activities[0].id
-            ) {
-              return true;
-            }
-            if (
-              targetActivity?.transitionState === "enter-active" ||
-              targetActivity?.transitionState === "enter-done"
-            ) {
+            if (currentActivity.id > targetActivityId) {
               return true;
             }
 
             return false;
           };
           const isForward = () => {
-            if (
-              !targetActivity &&
-              historyState.activity.pushedBy.activityId >
-                activities[activities.length - 1].id
-            ) {
+            if (!currentActivity) {
+              return false;
+            }
+            if (currentActivity.id < targetActivityId) {
               return true;
             }
-            if (
-              targetActivity?.transitionState === "exit-active" ||
-              targetActivity?.transitionState === "exit-done"
-            ) {
-              return true;
-            }
+
             return false;
           };
 
           const isNestedBackward = () => {
-            if (!targetActivity?.nestedRoutes) {
+            if (!currentActivity) {
               return false;
             }
+            if (currentActivity.id !== targetActivityId) {
+              return false;
+            }
+            if (!currentActivity.nestedRoutes) {
+              return false;
+            }
+            if (!targetActivityNestedRoute) {
+              return true;
+            }
 
-            const targetNestedRoute = targetActivity.nestedRoutes.find(
-              (route) => route.id === historyState.activityNestedRoute?.id,
+            const currentActivityNestedRoute = last(
+              currentActivity.nestedRoutes,
             );
 
-            if (targetNestedRoute || targetActivity.nestedRoutes.length === 1) {
+            if (!currentActivityNestedRoute) {
+              return false;
+            }
+            if (currentActivityNestedRoute.id > targetActivityNestedRoute.id) {
               return true;
             }
 
             return false;
           };
           const isNestedForward = () => {
-            if (!historyState.activityNestedRoute) {
+            if (!currentActivity) {
               return false;
             }
-            if (!targetActivity?.nestedRoutes) {
+            if (currentActivity.id !== targetActivityId) {
+              return false;
+            }
+            if (!currentActivity.nestedRoutes) {
               return true;
             }
+            if (!targetActivityNestedRoute) {
+              return false;
+            }
 
-            const targetNestedRoute = targetActivity.nestedRoutes.find(
-              (route) => route.id === historyState.activityNestedRoute?.id,
+            const currentActivityNestedRoute = last(
+              currentActivity.nestedRoutes,
             );
 
-            if (!targetNestedRoute) {
+            if (!currentActivityNestedRoute) {
+              return true;
+            }
+            if (currentActivityNestedRoute.id < targetActivityNestedRoute.id) {
               return true;
             }
 
             return false;
           };
-
-          console.log("isNestedForward", isNestedForward());
-          console.log("isNestedBackward", isNestedBackward());
-          console.log("isForward", isForward());
-          console.log("isBackward", isBackward());
 
           if (isBackward()) {
             dispatchEvent("Popped", {});
@@ -330,19 +342,36 @@ export function historySyncPlugin<
                 useHash: options.useHash,
               });
             }
-          } else if (isForward()) {
+          }
+          if (isForward()) {
             pushFlag = true;
 
             startTransition(() => {
               push({
-                activityId: historyState.activity.pushedBy.activityId,
-                activityName: historyState.activity.pushedBy.activityName,
-                activityParams: historyState.activity.pushedBy.activityParams,
+                activityId: historyState.activity.id,
+                activityName: historyState.activity.name,
+                activityParams: historyState.activity.params,
               });
             });
-          } else if (isNestedBackward()) {
+          }
+          if (isNestedBackward()) {
             dispatchEvent("NestedPopped", {});
-          } else if (isNestedForward()) {
+
+            if (
+              !targetActivityNestedRoute &&
+              historyState.activityNestedRoute
+            ) {
+              pushFlag = true;
+              const { activityNestedRoute } = historyState;
+
+              startTransition(() => {
+                nestedPush({
+                  ...activityNestedRoute.pushedBy,
+                });
+              });
+            }
+          }
+          if (isNestedForward()) {
             if (historyState.activityNestedRoute) {
               pushFlag = true;
               const { activityNestedRoute } = historyState;
