@@ -294,9 +294,6 @@ export function historySyncPlugin<
               return false;
             }
 
-            if (!currentActivity.nestedRoutes) {
-              return true;
-            }
             if (!currentActivityNestedRoute) {
               return true;
             }
