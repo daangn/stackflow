@@ -227,6 +227,42 @@ export function historySyncPlugin<
               activity.id === historyState.activity.pushedBy.activityId,
           );
 
+          const isBackward = () => {
+            if (historyState.activityNestedRoute) {
+              return false;
+            }
+            if (
+              !targetActivity &&
+              historyState.activity.pushedBy.activityId < activities[0].id
+            ) {
+              return true;
+            }
+            if (
+              targetActivity?.transitionState === "enter-active" ||
+              targetActivity?.transitionState === "enter-done"
+            ) {
+              return true;
+            }
+
+            return false;
+          };
+          const isForward = () => {
+            if (
+              !targetActivity &&
+              historyState.activity.pushedBy.activityId >
+                activities[activities.length - 1].id
+            ) {
+              return true;
+            }
+            if (
+              targetActivity?.transitionState === "exit-active" ||
+              targetActivity?.transitionState === "exit-done"
+            ) {
+              return true;
+            }
+            return false;
+          };
+
           const isNestedBackward = () => {
             if (!targetActivity?.nestedRoutes) {
               return false;
@@ -261,60 +297,12 @@ export function historySyncPlugin<
             return false;
           };
 
-          const isBackward = () => {
-            if (historyState.activityNestedRoute) {
-              return false;
-            }
-            if (
-              !targetActivity &&
-              historyState.activity.pushedBy.activityId < activities[0].id
-            ) {
-              return true;
-            }
-            if (
-              targetActivity?.transitionState === "enter-active" ||
-              targetActivity?.transitionState === "enter-done"
-            ) {
-              return true;
-            }
+          console.log("isNestedForward", isNestedForward());
+          console.log("isNestedBackward", isNestedBackward());
+          console.log("isForward", isForward());
+          console.log("isBackward", isBackward());
 
-            return false;
-          };
-          const isForward = () => {
-            if (historyState.activityNestedRoute) {
-              return false;
-            }
-            if (
-              !targetActivity &&
-              historyState.activity.pushedBy.activityId >
-                activities[activities.length - 1].id
-            ) {
-              return true;
-            }
-            if (
-              targetActivity?.transitionState === "exit-active" ||
-              targetActivity?.transitionState === "exit-done"
-            ) {
-              return true;
-            }
-            return false;
-          };
-
-          if (isNestedBackward()) {
-            dispatchEvent("NestedPopped", {});
-          } else if (isNestedForward()) {
-            if (historyState.activityNestedRoute) {
-              pushFlag = true;
-              const { activityNestedRoute } = historyState;
-
-              startTransition(() => {
-                nestedPush({
-                  activityNestedRouteId: activityNestedRoute.id,
-                  activityNestedRouteParams: activityNestedRoute.params,
-                });
-              });
-            }
-          } else if (isBackward()) {
+          if (isBackward()) {
             dispatchEvent("Popped", {});
 
             if (!targetActivity) {
@@ -352,6 +340,20 @@ export function historySyncPlugin<
                 activityParams: historyState.activity.pushedBy.activityParams,
               });
             });
+          } else if (isNestedBackward()) {
+            dispatchEvent("NestedPopped", {});
+          } else if (isNestedForward()) {
+            if (historyState.activityNestedRoute) {
+              pushFlag = true;
+              const { activityNestedRoute } = historyState;
+
+              startTransition(() => {
+                nestedPush({
+                  activityNestedRouteId: activityNestedRoute.id,
+                  activityNestedRouteParams: activityNestedRoute.params,
+                });
+              });
+            }
           }
         };
 

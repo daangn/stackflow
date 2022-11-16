@@ -87,8 +87,8 @@ export function produceEffects(
         activity: nextActivity,
       });
     } else if (
-      !!prevActivity &&
-      !!nextActivity &&
+      prevActivity &&
+      nextActivity &&
       prevActivity.id === nextActivity.id &&
       !isEqual(
         omit(prevActivity, ["isActive", "isTop", "transitionState", "zIndex"]),
@@ -99,6 +99,22 @@ export function produceEffects(
       output.push({
         _TAG: "REPLACED",
         activity: nextActivity,
+      });
+    } else if (
+      prevActivity &&
+      nextActivity &&
+      nextActivity.nestedReplacedBy &&
+      (!prevActivity.nestedReplacedBy ||
+        nextActivity.nestedReplacedBy.id !== prevActivity.nestedReplacedBy?.id)
+    ) {
+      output.push({
+        _TAG: "NESTED_REPLACED",
+        activity: nextActivity,
+        activityNestedRoute: {
+          id: nextActivity.nestedReplacedBy.activityNestedRouteId,
+          params: nextActivity.nestedReplacedBy.activityNestedRouteParams,
+          pushedBy: nextActivity.nestedReplacedBy,
+        },
       });
     }
   }

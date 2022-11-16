@@ -629,7 +629,7 @@ test("differences - Replaced 이벤트에 같은 activityId를 넘겨주어 액�
   ]);
 });
 
-test("differences - NestedPushed가 작동해 nestedPushedBy가 늘어난 경우, NESTED_PUSHED 이펙트를 추가합니다", () => {
+test("differences - NestedPushed가 작동해 nestedRoutes가 늘어난 경우, NESTED_PUSHED 이펙트를 추가합니다", () => {
   expect(
     produceEffects(
       {
@@ -752,7 +752,7 @@ test("differences - NestedPushed가 작동해 nestedPushedBy가 늘어난 경우
   ]);
 });
 
-test("differences - NestedReplaced가 작동해 nestedPushedBy가 늘어난 경우, NESTED_REPLACED 이펙트를 추가합니다", () => {
+test("differences - NestedReplaced가 작동해 파라미터가 바뀐 경우, NESTED_REPLACED 이펙트를 추가합니다", () => {
   expect(
     produceEffects(
       {
@@ -761,7 +761,9 @@ test("differences - NestedReplaced가 작동해 nestedPushedBy가 늘어난 경�
             id: "1",
             name: "hello",
             transitionState: "enter-done",
-            params: {},
+            params: {
+              hello: "world",
+            },
             pushedBy: {
               name: "Pushed",
             } as any,
@@ -779,17 +781,15 @@ test("differences - NestedReplaced가 작동해 nestedPushedBy가 늘어난 경�
             id: "1",
             name: "hello",
             transitionState: "enter-done",
-            params: {},
+            params: {
+              hello: "world2",
+            },
             pushedBy: {
               name: "Pushed",
             } as any,
-            nestedRoutes: [
-              {
-                pushedBy: {
-                  name: "NestedReplaced",
-                },
-              } as any,
-            ],
+            nestedReplacedBy: {
+              name: "NestedReplaced",
+            } as any,
             isActive: true,
             isTop: true,
             zIndex: 0,
@@ -809,17 +809,15 @@ test("differences - NestedReplaced가 작동해 nestedPushedBy가 늘어난 경�
         id: "1",
         name: "hello",
         transitionState: "enter-done",
-        params: {},
+        params: {
+          hello: "world2",
+        },
         pushedBy: {
           name: "Pushed",
-        } as any,
-        nestedRoutes: [
-          {
-            pushedBy: {
-              name: "NestedReplaced",
-            },
-          } as any,
-        ],
+        },
+        nestedReplacedBy: {
+          name: "NestedReplaced",
+        },
         isActive: true,
         isTop: true,
         zIndex: 0,
@@ -828,7 +826,7 @@ test("differences - NestedReplaced가 작동해 nestedPushedBy가 늘어난 경�
         pushedBy: {
           name: "NestedReplaced",
         },
-      } as any,
+      },
     },
   ]);
 });

@@ -28,6 +28,7 @@ export type Activity = {
   };
   context?: {};
   pushedBy: PushedEvent | ReplacedEvent;
+  nestedReplacedBy?: NestedReplacedEvent;
   nestedRoutes?: ActivityNestedRoute[];
   isTop: boolean;
   isActive: boolean;

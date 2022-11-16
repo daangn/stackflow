@@ -2388,15 +2388,7 @@ test("aggregate - NestedReplacedEvent가 발생하면, 최상단 액티비티의
           hello: "world2",
         },
         pushedBy: pushedEvent,
-        nestedRoutes: [
-          {
-            id: "n1",
-            params: {
-              hello: "world2",
-            },
-            pushedBy: nestedReplacedEvent,
-          },
-        ],
+        nestedReplacedBy: nestedReplacedEvent,
         isActive: true,
         isTop: true,
         zIndex: 0,
@@ -2452,15 +2444,7 @@ test("aggregate - 만약 NestedPoppedEvent를 통해 제거할 수 있는 영역
           hello: "world2",
         },
         pushedBy: pushedEvent,
-        nestedRoutes: [
-          {
-            id: "n1",
-            params: {
-              hello: "world2",
-            },
-            pushedBy: nestedReplacedEvent,
-          },
-        ],
+        nestedReplacedBy: nestedReplacedEvent,
         isActive: true,
         isTop: true,
         zIndex: 0,

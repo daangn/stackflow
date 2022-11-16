@@ -14,13 +14,12 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
   title,
   price,
 }) => {
-  const { nestedPush } = useNestedFlow("Article");
-  // const { nestedPush } = useNestedFlow("Article");
+  const { nestedReplace } = useNestedFlow("Article");
 
   const imageUrl = `https://picsum.photos/800/800/?id=${articleId}`;
 
   const onClick = () => {
-    nestedPush({
+    nestedReplace({
       articleId: String(articleId),
       title,
     });

@@ -126,13 +126,7 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
               targetActivity.params = targetActivity.pushedBy.activityParams;
             }
 
-            const firstNestedRoute = targetActivity.nestedRoutes[0];
-
-            if (firstNestedRoute?.pushedBy.name === "NestedReplaced") {
-              targetActivity.nestedRoutes = [firstNestedRoute];
-            } else {
-              delete targetActivity.nestedRoutes;
-            }
+            delete targetActivity.nestedRoutes;
           }
         }
 
@@ -179,7 +173,7 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
               newRoute,
             ];
           } else {
-            targetActivity.nestedRoutes = [newRoute];
+            targetActivity.nestedReplacedBy = event;
           }
         }
         break;
@@ -190,11 +184,7 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
           .sort((a1, a2) => a2.pushedBy.eventDate - a1.pushedBy.eventDate)[0];
 
         if (targetActivity && targetActivity.nestedRoutes) {
-          if (
-            targetActivity.nestedRoutes?.[0].pushedBy.name !== "NestedReplaced"
-          ) {
-            targetActivity.nestedRoutes.pop();
-          }
+          targetActivity.nestedRoutes.pop();
 
           const beforeActivityParams =
             last(targetActivity.nestedRoutes)?.params ??
@@ -252,6 +242,11 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
         ...(activity.nestedRoutes
           ? {
               nestedRoutes: activity.nestedRoutes,
+            }
+          : null),
+        ...(activity.nestedReplacedBy
+          ? {
+              nestedReplacedBy: activity.nestedReplacedBy,
             }
           : null),
         ...(activity.context
