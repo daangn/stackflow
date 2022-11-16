@@ -11,6 +11,14 @@ export type ActivityTransitionState =
   | "exit-active"
   | "exit-done";
 
+export type ActivityNestedRoute = {
+  id: string;
+  params: {
+    [key: string]: string | undefined;
+  };
+  pushedBy: NestedPushedEvent | NestedReplacedEvent;
+};
+
 export type Activity = {
   id: string;
   name: string;
@@ -20,7 +28,7 @@ export type Activity = {
   };
   context?: {};
   pushedBy: PushedEvent | ReplacedEvent;
-  nestedPushedBy?: (NestedPushedEvent | NestedReplacedEvent)[];
+  nestedRoutes?: ActivityNestedRoute[];
   isTop: boolean;
   isActive: boolean;
   zIndex: number;

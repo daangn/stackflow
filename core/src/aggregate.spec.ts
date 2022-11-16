@@ -2099,7 +2099,8 @@ test("aggregate - NestedPushedEvent가 발생하면, 최상단 액티비티의 �
       eventDate: enoughPastTime(),
     }),
     makeEvent("NestedPushed", {
-      activityParams: {
+      activityNestedRouteId: "n1",
+      activityNestedRouteParams: {
         hello: "world2",
       },
       eventDate: enoughPastTime(),
@@ -2121,7 +2122,15 @@ test("aggregate - NestedPushedEvent가 발생하면, 최상단 액티비티의 �
           hello: "world2",
         },
         pushedBy: pushedEvent,
-        nestedPushedBy: [nestedPushedEvent],
+        nestedRoutes: [
+          {
+            id: "n1",
+            params: {
+              hello: "world2",
+            },
+            pushedBy: nestedPushedEvent,
+          },
+        ],
         isActive: true,
         isTop: true,
         zIndex: 0,
@@ -2151,7 +2160,8 @@ test("aggregate - NestedPushedEvent가 쌓인 상태에서, NestedPoppedEvent가
       eventDate: enoughPastTime(),
     }),
     makeEvent("NestedPushed", {
-      activityParams: {
+      activityNestedRouteId: "n1",
+      activityNestedRouteParams: {
         hello: "world2",
       },
       eventDate: enoughPastTime(),
@@ -2212,7 +2222,8 @@ test("aggregate - NestedPushedEvent가 쌓인 상태에서, PoppedEvent가 들�
       eventDate: enoughPastTime(),
     }),
     makeEvent("NestedPushed", {
-      activityParams: {
+      activityNestedRouteId: "n1",
+      activityNestedRouteParams: {
         hello: "c",
       },
       eventDate: enoughPastTime(),
@@ -2259,6 +2270,81 @@ test("aggregate - NestedPushedEvent가 쌓인 상태에서, PoppedEvent가 들�
   });
 });
 
+test("aggregate - NestedPushedEvent가 쌓인 상태에서, PoppedEvent가 들어오면, 나가고있는 동안에는 이전 파라미터를 유지합니다", () => {
+  const t = nowTime();
+
+  const events = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+    registeredEvent({
+      activityName: "sample",
+    }),
+    makeEvent("Pushed", {
+      activityId: "a1",
+      activityName: "sample",
+      activityParams: {
+        hello: "a",
+      },
+      eventDate: enoughPastTime(),
+    }),
+    makeEvent("Pushed", {
+      activityId: "a2",
+      activityName: "sample",
+      activityParams: {
+        hello: "b",
+      },
+      eventDate: enoughPastTime(),
+    }),
+    makeEvent("NestedPushed", {
+      activityNestedRouteId: "n1",
+      activityNestedRouteParams: {
+        hello: "c",
+      },
+      eventDate: enoughPastTime(),
+    }),
+    makeEvent("Popped", {
+      eventDate: t,
+    }),
+  ];
+
+  const pushedEvent1 = events[2];
+  const pushedEvent2 = events[3];
+
+  const output = aggregate(events, t);
+
+  expect(output).toStrictEqual({
+    activities: [
+      {
+        id: "a1",
+        name: "sample",
+        transitionState: "enter-done",
+        params: {
+          hello: "a",
+        },
+        pushedBy: pushedEvent1,
+        isActive: true,
+        isTop: false,
+        zIndex: 0,
+      },
+      {
+        id: "a2",
+        name: "sample",
+        transitionState: "exit-active",
+        params: {
+          hello: "c",
+        },
+        pushedBy: pushedEvent2,
+        isActive: false,
+        isTop: true,
+        zIndex: 1,
+      },
+    ],
+    transitionDuration: 300,
+    globalTransitionState: "loading",
+  });
+});
+
 test("aggregate - NestedReplacedEvent가 발생하면, 최상단 액티비티의 파라미터가 변경됩니다", () => {
   const t = nowTime();
 
@@ -2278,7 +2364,8 @@ test("aggregate - NestedReplacedEvent가 발생하면, 최상단 액티비티의
       eventDate: enoughPastTime(),
     }),
     makeEvent("NestedReplaced", {
-      activityParams: {
+      activityNestedRouteId: "n1",
+      activityNestedRouteParams: {
         hello: "world2",
       },
       eventDate: enoughPastTime(),
@@ -2300,7 +2387,15 @@ test("aggregate - NestedReplacedEvent가 발생하면, 최상단 액티비티의
           hello: "world2",
         },
         pushedBy: pushedEvent,
-        nestedPushedBy: [nestedReplacedEvent],
+        nestedRoutes: [
+          {
+            id: "n1",
+            params: {
+              hello: "world2",
+            },
+            pushedBy: nestedReplacedEvent,
+          },
+        ],
         isActive: true,
         isTop: true,
         zIndex: 0,
@@ -2330,7 +2425,8 @@ test("aggregate - 만약 NestedPoppedEvent를 통해 제거할 수 있는 영역
       eventDate: enoughPastTime(),
     }),
     makeEvent("NestedReplaced", {
-      activityParams: {
+      activityNestedRouteId: "n1",
+      activityNestedRouteParams: {
         hello: "world2",
       },
       eventDate: enoughPastTime(),
@@ -2355,7 +2451,15 @@ test("aggregate - 만약 NestedPoppedEvent를 통해 제거할 수 있는 영역
           hello: "world2",
         },
         pushedBy: pushedEvent,
-        nestedPushedBy: [nestedReplacedEvent],
+        nestedRoutes: [
+          {
+            id: "n1",
+            params: {
+              hello: "world2",
+            },
+            pushedBy: nestedReplacedEvent,
+          },
+        ],
         isActive: true,
         isTop: true,
         zIndex: 0,

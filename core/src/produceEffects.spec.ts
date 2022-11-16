@@ -660,12 +660,16 @@ test("differences - NestedPushed가 작동해 nestedPushedBy가 늘어난 경우
             pushedBy: {
               name: "Pushed",
             } as any,
-            nestedPushedBy: [
+            nestedRoutes: [
               {
-                name: "NestedPushed",
+                pushedBy: {
+                  name: "NestedPushed",
+                },
               } as any,
               {
-                name: "NestedPushed",
+                pushedBy: {
+                  name: "NestedPushed",
+                },
               } as any,
             ],
             isActive: true,
@@ -691,18 +695,27 @@ test("differences - NestedPushed가 작동해 nestedPushedBy가 늘어난 경우
         pushedBy: {
           name: "Pushed",
         } as any,
-        nestedPushedBy: [
+        nestedRoutes: [
           {
-            name: "NestedPushed",
+            pushedBy: {
+              name: "NestedPushed",
+            },
           } as any,
           {
-            name: "NestedPushed",
+            pushedBy: {
+              name: "NestedPushed",
+            },
           } as any,
         ],
         isActive: true,
         isTop: true,
         zIndex: 0,
       },
+      nestedRoute: {
+        pushedBy: {
+          name: "NestedPushed",
+        },
+      } as any,
     },
     {
       _TAG: "NESTED_PUSHED",
@@ -714,18 +727,27 @@ test("differences - NestedPushed가 작동해 nestedPushedBy가 늘어난 경우
         pushedBy: {
           name: "Pushed",
         } as any,
-        nestedPushedBy: [
+        nestedRoutes: [
           {
-            name: "NestedPushed",
+            pushedBy: {
+              name: "NestedPushed",
+            },
           } as any,
           {
-            name: "NestedPushed",
+            pushedBy: {
+              name: "NestedPushed",
+            },
           } as any,
         ],
         isActive: true,
         isTop: true,
         zIndex: 0,
       },
+      nestedRoute: {
+        pushedBy: {
+          name: "NestedPushed",
+        },
+      } as any,
     },
   ]);
 });
@@ -761,9 +783,11 @@ test("differences - NestedReplaced가 작동해 nestedPushedBy가 늘어난 경�
             pushedBy: {
               name: "Pushed",
             } as any,
-            nestedPushedBy: [
+            nestedRoutes: [
               {
-                name: "NestedReplaced",
+                pushedBy: {
+                  name: "NestedReplaced",
+                },
               } as any,
             ],
             isActive: true,
@@ -789,15 +813,22 @@ test("differences - NestedReplaced가 작동해 nestedPushedBy가 늘어난 경�
         pushedBy: {
           name: "Pushed",
         } as any,
-        nestedPushedBy: [
+        nestedRoutes: [
           {
-            name: "NestedReplaced",
+            pushedBy: {
+              name: "NestedReplaced",
+            },
           } as any,
         ],
         isActive: true,
         isTop: true,
         zIndex: 0,
       },
+      nestedRoute: {
+        pushedBy: {
+          name: "NestedReplaced",
+        },
+      } as any,
     },
   ]);
 });
@@ -827,12 +858,16 @@ test("differences - Popped가 작동해 nestedPushedBy가 모두 삭제되면, P
             pushedBy: {
               name: "Pushed",
             } as any,
-            nestedPushedBy: [
+            nestedRoutes: [
               {
-                name: "NestedPushed",
+                pushedBy: {
+                  name: "NestedPushed",
+                },
               } as any,
               {
-                name: "NestedPushed",
+                pushedBy: {
+                  name: "NestedPushed",
+                },
               } as any,
             ],
             isActive: true,

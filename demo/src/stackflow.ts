@@ -19,7 +19,7 @@ const borderColor =
     ? vars.$semantic.color.divider3
     : vars.$semantic.color.divider2;
 
-export const { Stack, useFlow } = stackflow({
+export const { Stack, useFlow, useNestedFlow } = stackflow({
   transitionDuration: 350,
   activities,
   initialActivity: () => "Main",

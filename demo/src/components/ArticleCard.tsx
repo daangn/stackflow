@@ -1,7 +1,7 @@
 import React from "react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
-import { useFlow } from "../stackflow";
+import { useFlow, useNestedFlow } from "../stackflow";
 import * as css from "./ArticleCard.css";
 
 interface ArticleCardProps {
@@ -14,12 +14,13 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
   title,
   price,
 }) => {
-  const { push } = useFlow();
+  const { nestedPush } = useNestedFlow("Article");
+  // const { nestedPush } = useNestedFlow("Article");
 
   const imageUrl = `https://picsum.photos/800/800/?id=${articleId}`;
 
   const onClick = () => {
-    push("Article", {
+    nestedPush({
       articleId: String(articleId),
       title,
     });

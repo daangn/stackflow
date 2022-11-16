@@ -1,4 +1,11 @@
-import type { PoppedEvent, PushedEvent, ReplacedEvent } from "../event-types";
+import type {
+  NestedPoppedEvent,
+  NestedPushedEvent,
+  NestedReplacedEvent,
+  PoppedEvent,
+  PushedEvent,
+  ReplacedEvent,
+} from "../event-types";
 import type { BaseDomainEvent } from "../event-types/_base";
 import type {
   StackflowPluginHook,
@@ -42,21 +49,21 @@ export type StackflowPlugin = () => {
    * Called before the `nestedPush()` function of `useNestedActions()` is called and the corresponding signal is delivered to the core
    */
   onBeforeNestedPush?: StackflowPluginPreEffectHook<
-    Omit<PushedEvent, keyof BaseDomainEvent>
+    Omit<NestedPushedEvent, keyof BaseDomainEvent>
   >;
 
   /**
    * Called before the `nestedReplace()` function of `useNestedAction()` is called and the corresponding signal is delivered to the core
    */
   onBeforeNestedReplace?: StackflowPluginPreEffectHook<
-    Omit<ReplacedEvent, keyof BaseDomainEvent>
+    Omit<NestedReplacedEvent, keyof BaseDomainEvent>
   >;
 
   /**
    * Called before the `nestedPop()` function of `useNestedActions()` is called and the corresponding signal is delivered to the core
    */
   onBeforeNestedPop?: StackflowPluginPreEffectHook<
-    Omit<PoppedEvent, keyof BaseDomainEvent>
+    Omit<NestedPoppedEvent, keyof BaseDomainEvent>
   >;
 
   /**
@@ -77,17 +84,17 @@ export type StackflowPlugin = () => {
   /**
    * Called when the nestedPush procedure is complete and the actual rendering is finished
    */
-  onNestedPushed?: StackflowPluginPostEffectHook<"PUSHED">;
+  onNestedPushed?: StackflowPluginPostEffectHook<"NESTED_PUSHED">;
 
   /**
    * Called when the nestedReplace procedure is complete and the actual rendering is finished
    */
-  onNestedReplaced?: StackflowPluginPostEffectHook<"REPLACED">;
+  onNestedReplaced?: StackflowPluginPostEffectHook<"NESTED_REPLACED">;
 
   /**
    * Called when the nestedPop procedure is complete and the actual rendering is finished
    */
-  onNestedPopped?: StackflowPluginPostEffectHook<"POPPED">;
+  onNestedPopped?: StackflowPluginPostEffectHook<"NESTED_POPPED">;
 
   /**
    * Called after any changes to the stack state are reflected in the actual rendering

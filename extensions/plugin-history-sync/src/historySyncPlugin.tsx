@@ -107,7 +107,7 @@ export function historySyncPlugin<
 
   return ({ initContext }) => {
     let pushFlag = false;
-    let onPopStateDisposer: (() => void) | null = null;
+    const onPopStateDisposer: (() => void) | null = null;
 
     return {
       key: "plugin-history-sync",
@@ -280,17 +280,9 @@ export function historySyncPlugin<
           }
         };
 
-        onPopStateDisposer?.();
-
         if (!isServer) {
           window.addEventListener("popstate", onPopState);
         }
-
-        onPopStateDisposer = () => {
-          if (!isServer) {
-            window.removeEventListener("popstate", onPopState);
-          }
-        };
       },
       onPushed({ effect: { activity } }) {
         if (pushFlag) {
@@ -311,7 +303,44 @@ export function historySyncPlugin<
           useHash: options.useHash,
         });
       },
+      onNestedPushed({ effect: { activity } }) {
+        if (pushFlag) {
+          pushFlag = false;
+          return;
+        }
+
+        const template = makeTemplate(
+          normalizeRoute(options.routes[activity.name])[0],
+        );
+
+        pushState({
+          url: template.fill(activity.params),
+          state: {
+            _TAG: STATE_TAG,
+            activity: removeActivityContext(activity),
+          },
+          useHash: options.useHash,
+        });
+      },
       onReplaced({ effect: { activity } }) {
+        if (!activity.isActive) {
+          return;
+        }
+
+        const template = makeTemplate(
+          normalizeRoute(options.routes[activity.name])[0],
+        );
+
+        replaceState({
+          url: template.fill(activity.params),
+          state: {
+            _TAG: STATE_TAG,
+            activity: removeActivityContext(activity),
+          },
+          useHash: options.useHash,
+        });
+      },
+      onNestedReplaced({ effect: { activity } }) {
         if (!activity.isActive) {
           return;
         }

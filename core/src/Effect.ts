@@ -1,4 +1,4 @@
-import type { Activity } from "./AggregateOutput";
+import type { Activity, ActivityNestedRoute } from "./AggregateOutput";
 
 export type Effect =
   | {
@@ -9,22 +9,24 @@ export type Effect =
       activity: Activity;
     }
   | {
-      _TAG: "POPPED";
+      _TAG: "REPLACED";
       activity: Activity;
     }
   | {
-      _TAG: "REPLACED";
+      _TAG: "POPPED";
       activity: Activity;
     }
   | {
       _TAG: "NESTED_PUSHED";
       activity: Activity;
-    }
-  | {
-      _TAG: "NESTED_POPPED";
-      activity: Activity;
+      nestedRoute: ActivityNestedRoute;
     }
   | {
       _TAG: "NESTED_REPLACED";
+      activity: Activity;
+      nestedRoute: ActivityNestedRoute;
+    }
+  | {
+      _TAG: "NESTED_POPPED";
       activity: Activity;
     };

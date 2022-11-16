@@ -38,34 +38,36 @@ export function produceEffects(
         let j = 0;
         j <
         Math.max(
-          (prevActivity.nestedPushedBy ?? []).length,
-          (nextActivity.nestedPushedBy ?? []).length,
+          (prevActivity.nestedRoutes ?? []).length,
+          (nextActivity.nestedRoutes ?? []).length,
         );
         j += 1
       ) {
-        const prevNestedPushedBy = prevActivity.nestedPushedBy ?? [];
-        const nextNestedPushedBy = nextActivity.nestedPushedBy ?? [];
+        const prevNestedRoutes = prevActivity.nestedRoutes ?? [];
+        const nextNestedRoutes = nextActivity.nestedRoutes ?? [];
 
-        const prevNestedPushedEvent = prevNestedPushedBy[j];
-        const nextNestedPushedEvent = nextNestedPushedBy[j];
+        const prevNestedRoute = prevNestedRoutes[j];
+        const nextNestedRoute = nextNestedRoutes[j];
 
-        if (!prevNestedPushedEvent && nextNestedPushedEvent) {
+        if (!prevNestedRoute && nextNestedRoute) {
           output.push({
             _TAG:
-              nextNestedPushedEvent.name === "NestedPushed"
+              nextNestedRoute.pushedBy.name === "NestedPushed"
                 ? "NESTED_PUSHED"
                 : "NESTED_REPLACED",
             activity: nextActivity,
+            nestedRoute: nextNestedRoute,
           });
         } else if (
-          prevNestedPushedEvent?.name === "NestedPushed" &&
-          nextNestedPushedEvent?.name === "NestedReplaced"
+          prevNestedRoute?.pushedBy.name === "NestedPushed" &&
+          nextNestedRoute?.pushedBy.name === "NestedReplaced"
         ) {
           output.push({
             _TAG: "NESTED_REPLACED",
             activity: nextActivity,
+            nestedRoute: nextNestedRoute,
           });
-        } else if (prevNestedPushedEvent && !nextNestedPushedEvent) {
+        } else if (prevNestedRoute && !nextNestedRoute) {
           output.push({
             _TAG: "NESTED_POPPED",
             activity: nextActivity,
