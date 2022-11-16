@@ -2185,6 +2185,7 @@ test("aggregate - NestedPushedEvent가 쌓인 상태에서, NestedPoppedEvent가
           hello: "world",
         },
         pushedBy: pushedEvent,
+        nestedRoutes: [],
         isActive: true,
         isTop: true,
         zIndex: 0,

@@ -128,7 +128,7 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
 
             const firstNestedRoute = targetActivity.nestedRoutes[0];
 
-            if (firstNestedRoute.pushedBy.name === "NestedReplaced") {
+            if (firstNestedRoute?.pushedBy.name === "NestedReplaced") {
               targetActivity.nestedRoutes = [firstNestedRoute];
             } else {
               delete targetActivity.nestedRoutes;
@@ -202,9 +202,6 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
 
           if (beforeActivityParams) {
             targetActivity.params = beforeActivityParams;
-          }
-          if (targetActivity.nestedRoutes.length === 0) {
-            delete targetActivity.nestedRoutes;
           }
         }
 

@@ -28,12 +28,30 @@ const EffectManager: React.FC = () => {
           plugins.forEach((plugin) => plugin.onPushed?.({ actions, effect }));
           break;
         }
+        case "REPLACED": {
+          plugins.forEach((plugin) => plugin.onReplaced?.({ actions, effect }));
+          break;
+        }
         case "POPPED": {
           plugins.forEach((plugin) => plugin.onPopped?.({ actions, effect }));
           break;
         }
-        case "REPLACED": {
-          plugins.forEach((plugin) => plugin.onReplaced?.({ actions, effect }));
+        case "NESTED_PUSHED": {
+          plugins.forEach((plugin) =>
+            plugin.onNestedPushed?.({ actions, effect }),
+          );
+          break;
+        }
+        case "NESTED_REPLACED": {
+          plugins.forEach((plugin) =>
+            plugin.onNestedReplaced?.({ actions, effect }),
+          );
+          break;
+        }
+        case "NESTED_POPPED": {
+          plugins.forEach((plugin) =>
+            plugin.onNestedPopped?.({ actions, effect }),
+          );
           break;
         }
         case "%SOMETHING_CHANGED%": {

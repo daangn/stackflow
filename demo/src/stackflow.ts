@@ -1,5 +1,6 @@
 import { vars } from "@seed-design/design-token";
 import { basicUIPlugin } from "@stackflow/plugin-basic-ui";
+import { historySyncPlugin } from "@stackflow/plugin-history-sync";
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
 import { stackDepthChangePlugin } from "@stackflow/plugin-stack-depth-change";
 import { stackflow } from "@stackflow/react";
@@ -25,6 +26,13 @@ export const { Stack, useFlow, useNestedFlow } = stackflow({
   initialActivity: () => "Main",
   plugins: [
     basicRendererPlugin(),
+    historySyncPlugin({
+      routes: {
+        Main: "/main",
+        Article: "/articles/:articleId",
+      },
+      fallbackActivity: () => "Main",
+    }),
     stackDepthChangePlugin({
       onInit: ({ depth, activities, activeActivities }) => {},
       onDepthChanged: ({ depth, activities, activeActivities }) => {},

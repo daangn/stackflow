@@ -228,10 +228,7 @@ export function historySyncPlugin<
           );
 
           const isNestedBackward = () => {
-            if (
-              !historyState.activityNestedRoute ||
-              !targetActivity?.nestedRoutes
-            ) {
+            if (!targetActivity?.nestedRoutes) {
               return false;
             }
 
@@ -239,18 +236,18 @@ export function historySyncPlugin<
               (route) => route.id === historyState.activityNestedRoute?.id,
             );
 
-            if (targetNestedRoute) {
+            if (targetNestedRoute || targetActivity.nestedRoutes.length === 1) {
               return true;
             }
 
             return false;
           };
           const isNestedForward = () => {
-            if (
-              !historyState.activityNestedRoute ||
-              !targetActivity?.nestedRoutes
-            ) {
+            if (!historyState.activityNestedRoute) {
               return false;
+            }
+            if (!targetActivity?.nestedRoutes) {
+              return true;
             }
 
             const targetNestedRoute = targetActivity.nestedRoutes.find(
@@ -265,6 +262,9 @@ export function historySyncPlugin<
           };
 
           const isBackward = () => {
+            if (historyState.activityNestedRoute) {
+              return false;
+            }
             if (
               !targetActivity &&
               historyState.activity.pushedBy.activityId < activities[0].id
@@ -281,6 +281,9 @@ export function historySyncPlugin<
             return false;
           };
           const isForward = () => {
+            if (historyState.activityNestedRoute) {
+              return false;
+            }
             if (
               !targetActivity &&
               historyState.activity.pushedBy.activityId >
