@@ -1,11 +1,5 @@
 import type { StackflowPluginActions } from "@stackflow/core";
-import type { ActivityComponentType } from "activity";
 import React, { useMemo } from "react";
-import type {
-  UseNestedActions,
-  UseNestedActionsOutputType,
-} from "useNestedActions";
-import { useNestedActions } from "useNestedActions";
 
 import type { BaseActivities } from "./BaseActivities";
 import { CoreProvider } from "./core";
@@ -18,6 +12,11 @@ import type { StackRefCurrentType } from "./StackRefManager";
 import StackRefManager from "./StackRefManager";
 import type { UseActionsOutputType } from "./useActions";
 import { useActions } from "./useActions";
+import type {
+  UseNestedActions,
+  UseNestedActionsOutputType,
+} from "./useNestedActions";
+import { useNestedActions } from "./useNestedActions";
 
 export interface StackProps {
   /**

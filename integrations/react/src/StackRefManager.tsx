@@ -1,12 +1,12 @@
 import type { StackflowPluginActions } from "@stackflow/core";
 import React from "react";
-import type { UseNestedActionsOutputType } from "useNestedActions";
-import { useNestedActions } from "useNestedActions";
 
 import type { BaseActivities } from "./BaseActivities";
 import { useCoreActions } from "./core";
 import type { UseActionsOutputType } from "./useActions";
 import { useActions } from "./useActions";
+import type { UseNestedActionsOutputType } from "./useNestedActions";
+import { useNestedActions } from "./useNestedActions";
 
 export type StackRefCurrentType<T extends BaseActivities> = {
   actions: Pick<StackflowPluginActions, "dispatchEvent" | "getStack"> &
