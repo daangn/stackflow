@@ -1,5 +1,6 @@
 import type { Activity } from "@stackflow/core";
 import { id, makeEvent } from "@stackflow/core";
+import type { ActivityNestedRoute } from "@stackflow/core/dist/AggregateOutput";
 import type { StackflowReactPlugin } from "@stackflow/react";
 import React from "react";
 
@@ -25,6 +26,7 @@ function getCurrentState() {
 interface State {
   _TAG: string;
   activity: Activity;
+  activityNestedRoute?: ActivityNestedRoute;
 }
 function parseState(state: unknown): State | null {
   const _state: any = state;
@@ -107,7 +109,6 @@ export function historySyncPlugin<
 
   return ({ initContext }) => {
     let pushFlag = false;
-    const onPopStateDisposer: (() => void) | null = null;
 
     return {
       key: "plugin-history-sync",
@@ -197,7 +198,7 @@ export function historySyncPlugin<
           },
         });
       },
-      onInit({ actions: { getStack, dispatchEvent, push } }) {
+      onInit({ actions: { getStack, dispatchEvent, push, nestedPush } }) {
         const rootActivity = getStack().activities[0];
         const template = makeTemplate(
           normalizeRoute(options.routes[rootActivity.name])[0],
@@ -226,19 +227,91 @@ export function historySyncPlugin<
               activity.id === historyState.activity.pushedBy.activityId,
           );
 
-          const isBackward =
-            (!targetActivity &&
-              historyState.activity.pushedBy.activityId < activities[0].id) ||
-            targetActivity?.transitionState === "enter-active" ||
-            targetActivity?.transitionState === "enter-done";
-          const isForward =
-            (!targetActivity &&
-              historyState.activity.pushedBy.activityId >
-                activities[activities.length - 1].id) ||
-            targetActivity?.transitionState === "exit-active" ||
-            targetActivity?.transitionState === "exit-done";
+          const isNestedBackward = () => {
+            if (
+              !historyState.activityNestedRoute ||
+              !targetActivity?.nestedRoutes
+            ) {
+              return false;
+            }
 
-          if (isBackward) {
+            const targetNestedRoute = targetActivity.nestedRoutes.find(
+              (route) => route.id === historyState.activityNestedRoute?.id,
+            );
+
+            if (targetNestedRoute) {
+              return true;
+            }
+
+            return false;
+          };
+          const isNestedForward = () => {
+            if (
+              !historyState.activityNestedRoute ||
+              !targetActivity?.nestedRoutes
+            ) {
+              return false;
+            }
+
+            const targetNestedRoute = targetActivity.nestedRoutes.find(
+              (route) => route.id === historyState.activityNestedRoute?.id,
+            );
+
+            if (!targetNestedRoute) {
+              return true;
+            }
+
+            return false;
+          };
+
+          const isBackward = () => {
+            if (
+              !targetActivity &&
+              historyState.activity.pushedBy.activityId < activities[0].id
+            ) {
+              return true;
+            }
+            if (
+              targetActivity?.transitionState === "enter-active" ||
+              targetActivity?.transitionState === "enter-done"
+            ) {
+              return true;
+            }
+
+            return false;
+          };
+          const isForward = () => {
+            if (
+              !targetActivity &&
+              historyState.activity.pushedBy.activityId >
+                activities[activities.length - 1].id
+            ) {
+              return true;
+            }
+            if (
+              targetActivity?.transitionState === "exit-active" ||
+              targetActivity?.transitionState === "exit-done"
+            ) {
+              return true;
+            }
+            return false;
+          };
+
+          if (isNestedBackward()) {
+            dispatchEvent("NestedPopped", {});
+          } else if (isNestedForward()) {
+            if (historyState.activityNestedRoute) {
+              pushFlag = true;
+              const { activityNestedRoute } = historyState;
+
+              startTransition(() => {
+                nestedPush({
+                  activityNestedRouteId: activityNestedRoute.id,
+                  activityNestedRouteParams: activityNestedRoute.params,
+                });
+              });
+            }
+          } else if (isBackward()) {
             dispatchEvent("Popped", {});
 
             if (!targetActivity) {
@@ -266,8 +339,7 @@ export function historySyncPlugin<
                 useHash: options.useHash,
               });
             }
-          }
-          if (isForward) {
+          } else if (isForward()) {
             pushFlag = true;
 
             startTransition(() => {
@@ -303,7 +375,7 @@ export function historySyncPlugin<
           useHash: options.useHash,
         });
       },
-      onNestedPushed({ effect: { activity } }) {
+      onNestedPushed({ effect: { activity, activityNestedRoute } }) {
         if (pushFlag) {
           pushFlag = false;
           return;
@@ -318,6 +390,7 @@ export function historySyncPlugin<
           state: {
             _TAG: STATE_TAG,
             activity: removeActivityContext(activity),
+            activityNestedRoute,
           },
           useHash: options.useHash,
         });
@@ -340,7 +413,7 @@ export function historySyncPlugin<
           useHash: options.useHash,
         });
       },
-      onNestedReplaced({ effect: { activity } }) {
+      onNestedReplaced({ effect: { activity, activityNestedRoute } }) {
         if (!activity.isActive) {
           return;
         }
@@ -354,6 +427,7 @@ export function historySyncPlugin<
           state: {
             _TAG: STATE_TAG,
             activity: removeActivityContext(activity),
+            activityNestedRoute,
           },
           useHash: options.useHash,
         });

@@ -19,12 +19,12 @@ export type Effect =
   | {
       _TAG: "NESTED_PUSHED";
       activity: Activity;
-      nestedRoute: ActivityNestedRoute;
+      activityNestedRoute: ActivityNestedRoute;
     }
   | {
       _TAG: "NESTED_REPLACED";
       activity: Activity;
-      nestedRoute: ActivityNestedRoute;
+      activityNestedRoute: ActivityNestedRoute;
     }
   | {
       _TAG: "NESTED_POPPED";

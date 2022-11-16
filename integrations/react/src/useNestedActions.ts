@@ -1,23 +1,9 @@
 import React, { useMemo } from "react";
 
 import type { ActivityComponentType } from "./activity";
-import { makeActivityId } from "./activity";
+import { makeActivityNestedRouteId } from "./activity";
 import type { BaseActivities } from "./BaseActivities";
 import { useCoreActions } from "./core";
-
-function parseActionOptions(options?: { animate?: boolean }) {
-  if (!options) {
-    return { skipActiveState: false };
-  }
-
-  const isNullableAnimateOption =
-    options.animate === undefined || options.animate == null;
-  if (isNullableAnimateOption) {
-    return { skipActiveState: false };
-  }
-
-  return { skipActiveState: !options.animate };
-}
 
 export type UseNestedActionsOutputType<P> = {
   pending: boolean;
@@ -25,9 +11,6 @@ export type UseNestedActionsOutputType<P> = {
   nestedReplace: (params: P, options?: {}) => void;
   nestedPop: (options?: {}) => void;
 };
-
-const useTransition: () => [boolean, React.TransitionStartFunction] =
-  React.useTransition ?? (() => [false, (cb: () => void) => cb()]);
 
 export type UseNestedActions<T extends BaseActivities = {}> = <
   K extends Extract<keyof T, string>,
@@ -37,6 +20,9 @@ export type UseNestedActions<T extends BaseActivities = {}> = <
   T[K] extends ActivityComponentType<infer U> ? U : {}
 >;
 
+const useTransition: () => [boolean, React.TransitionStartFunction] =
+  React.useTransition ?? (() => [false, (cb: () => void) => cb()]);
+
 export const useNestedActions: UseNestedActions = () => {
   const coreActions = useCoreActions();
   const [pending, startTransition] = useTransition();
@@ -45,16 +31,22 @@ export const useNestedActions: UseNestedActions = () => {
     () => ({
       pending,
       nestedPush(activityParams) {
+        const activityNestedRouteId = makeActivityNestedRouteId();
+
         startTransition(() => {
           coreActions.nestedPush({
-            activityParams,
+            activityNestedRouteId,
+            activityNestedRouteParams: activityParams,
           });
         });
       },
       nestedReplace(activityParams) {
+        const activityNestedRouteId = makeActivityNestedRouteId();
+
         startTransition(() => {
           coreActions.nestedReplace({
-            activityParams,
+            activityNestedRouteId,
+            activityNestedRouteParams: activityParams,
           });
         });
       },

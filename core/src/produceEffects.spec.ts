@@ -711,7 +711,7 @@ test("differences - NestedPushed가 작동해 nestedPushedBy가 늘어난 경우
         isTop: true,
         zIndex: 0,
       },
-      nestedRoute: {
+      activityNestedRoute: {
         pushedBy: {
           name: "NestedPushed",
         },
@@ -743,7 +743,7 @@ test("differences - NestedPushed가 작동해 nestedPushedBy가 늘어난 경우
         isTop: true,
         zIndex: 0,
       },
-      nestedRoute: {
+      activityNestedRoute: {
         pushedBy: {
           name: "NestedPushed",
         },
@@ -824,7 +824,7 @@ test("differences - NestedReplaced가 작동해 nestedPushedBy가 늘어난 경�
         isTop: true,
         zIndex: 0,
       },
-      nestedRoute: {
+      activityNestedRoute: {
         pushedBy: {
           name: "NestedReplaced",
         },

@@ -56,7 +56,7 @@ export function produceEffects(
                 ? "NESTED_PUSHED"
                 : "NESTED_REPLACED",
             activity: nextActivity,
-            nestedRoute: nextNestedRoute,
+            activityNestedRoute: nextNestedRoute,
           });
         } else if (
           prevNestedRoute?.pushedBy.name === "NestedPushed" &&
@@ -65,7 +65,7 @@ export function produceEffects(
           output.push({
             _TAG: "NESTED_REPLACED",
             activity: nextActivity,
-            nestedRoute: nextNestedRoute,
+            activityNestedRoute: nextNestedRoute,
           });
         } else if (prevNestedRoute && !nextNestedRoute) {
           output.push({
