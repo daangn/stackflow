@@ -15,6 +15,7 @@ export const globalVars = createGlobalThemeContract(
       height: "app-bar-height",
       iconColor: "app-bar-icon-color",
       textColor: "app-bar-text-color",
+      backgroundColor: "app-bar-background-color",
     },
     bottomSheet: {
       borderRadius: "bottom-sheet-border-radius",
@@ -38,6 +39,7 @@ const defaultVars = {
     height: "3.5rem",
     iconColor: "#212124",
     textColor: "#212124",
+    backgroundColor: "#fff",
   },
   bottomSheet: {
     borderRadius: "1rem",

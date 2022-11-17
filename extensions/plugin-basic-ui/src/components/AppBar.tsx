@@ -14,7 +14,12 @@ import * as appScreenCss from "./AppScreen.css";
 type AppBarProps = Partial<
   Pick<
     GlobalVars["appBar"],
-    "borderColor" | "borderSize" | "height" | "iconColor" | "textColor"
+    | "borderColor"
+    | "borderSize"
+    | "height"
+    | "iconColor"
+    | "textColor"
+    | "backgroundColor"
   >
 > & {
   title?: React.ReactNode;
@@ -54,6 +59,7 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
       borderColor,
       borderSize,
       height,
+      backgroundColor,
     },
     ref,
   ) => {
@@ -195,6 +201,8 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
             [globalVars.appBar.borderColor]: borderColor,
             [globalVars.appBar.borderSize]: borderSize,
             [globalVars.appBar.height]: height,
+            [globalVars.appBar.backgroundColor]:
+              backgroundColor || globalVars.backgroundColor,
             [appScreenCss.vars.appBar.center.mainWidth]: `${maxWidth}px`,
           }),
         )}
