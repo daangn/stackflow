@@ -228,7 +228,7 @@ export function historySyncPlugin<
           state: {
             _TAG: STATE_TAG,
             activity: removeActivityContext(rootActivity),
-            step: rootActivity.steps[0],
+            step: last(rootActivity.steps),
           },
           useHash: options.useHash,
         });

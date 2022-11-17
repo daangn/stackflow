@@ -33,7 +33,7 @@ export function produceEffects(
       nextActivity?.transitionState === "enter-active" ||
       nextActivity?.transitionState === "enter-done";
 
-    if (prevActivity && nextActivity) {
+    if (prevActivity && nextActivity && prevActivity.id === nextActivity.id) {
       for (
         let j = 0;
         j <
@@ -57,7 +57,10 @@ export function produceEffects(
             _TAG: "STEP_POPPED",
             activity: nextActivity,
           });
-        } else if (prevStep.id !== nextStep.id) {
+        } else if (
+          prevActivity.steps.length === nextActivity.steps.length &&
+          prevStep.id !== nextStep.id
+        ) {
           output.push({
             _TAG: "STEP_REPLACED",
             activity: nextActivity,
