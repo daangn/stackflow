@@ -1,5 +1,5 @@
 import type { ActivityComponentType } from "@stackflow/react";
-import { useActivity, useActivityParams } from "@stackflow/react";
+import { useActivityParams } from "@stackflow/react";
 import React from "react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
@@ -101,7 +101,7 @@ const Article: ActivityComponentType<ArticleParams> = () => {
           <div className={css.sectionTitle}>Other Items by Emila </div>
           <div className={css.recommenderGrid}>
             {recommenderCard.map((card, i) => (
-              <ArticleCard key={card.articleId} {...card} i={i} />
+              <ArticleCard key={card.articleId} {...card} />
             ))}
           </div>
         </div>
