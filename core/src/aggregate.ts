@@ -136,7 +136,8 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
           targetActivity.transitionState = transitionState;
 
           if (transitionState === "exit-done") {
-            targetActivity.params = targetActivity.pushedBy.activityParams;
+            targetActivity.params = targetActivity.steps[0].params;
+            targetActivity.steps = [targetActivity.steps[0]];
           }
         }
 
@@ -185,7 +186,7 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
           .filter((activity) => activity.metadata.poppedBy === null)
           .sort((a1, a2) => a2.pushedBy.eventDate - a1.pushedBy.eventDate)[0];
 
-        if (targetActivity) {
+        if (targetActivity && targetActivity.steps.length > 1) {
           targetActivity.steps.pop();
 
           const beforeActivityParams = last(targetActivity.steps)?.params;
