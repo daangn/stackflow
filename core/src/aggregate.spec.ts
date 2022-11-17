@@ -1,6 +1,11 @@
 import { aggregate } from "./aggregate";
 import type { Activity } from "./AggregateOutput";
-import type { PushedEvent, ReplacedEvent } from "./event-types";
+import type {
+  PushedEvent,
+  ReplacedEvent,
+  StepPushedEvent,
+  StepReplacedEvent,
+} from "./event-types";
 import { makeEvent } from "./event-utils";
 
 const SECOND = 1000;
@@ -2409,6 +2414,9 @@ test("aggregate - ReplacedEvent가 같은 activityId로 여러번 수행되었�
 test("aggregate - 현재 특정 액티비티가 애니메이션 되고 있는 상태라면, Replaced 이벤트가 들어와도 전환을 지속합니다", () => {
   const t = nowTime();
 
+  let pushedEvent1: PushedEvent;
+  let replacedEvent: ReplacedEvent;
+
   const events = [
     initializedEvent({
       transitionDuration: 300,
@@ -2416,14 +2424,14 @@ test("aggregate - 현재 특정 액티비티가 애니메이션 되고 있는 �
     registeredEvent({
       activityName: "sample",
     }),
-    makeEvent("Pushed", {
+    (pushedEvent1 = makeEvent("Pushed", {
       activityId: "a2",
       activityName: "sample",
       activityParams: {
         hello: "world",
       },
       eventDate: enoughPastTime(),
-    }),
+    })),
     makeEvent("Pushed", {
       activityId: "a3",
       activityName: "sample",
@@ -2432,7 +2440,7 @@ test("aggregate - 현재 특정 액티비티가 애니메이션 되고 있는 �
       },
       eventDate: t - 150,
     }),
-    makeEvent("Replaced", {
+    (replacedEvent = makeEvent("Replaced", {
       activityId: "a3",
       activityName: "sample",
       activityParams: {
@@ -2440,40 +2448,55 @@ test("aggregate - 현재 특정 액티비티가 애니메이션 되고 있는 �
       },
       eventDate: t - 50,
       skipEnterActiveState: true,
-    }),
+    })),
   ];
-
-  const pushedEvent1 = events[2];
-  const replacedEvent = events[4];
 
   const output = aggregate(events, t);
 
   expect(output).toStrictEqual({
     activities: [
-      {
+      activity({
         id: "a2",
         name: "sample",
         transitionState: "enter-done",
         params: {
           hello: "world",
         },
+        steps: [
+          {
+            id: "a2",
+            params: {
+              hello: "world",
+            },
+            pushedBy: pushedEvent1,
+          },
+        ],
         pushedBy: pushedEvent1,
         isActive: false,
         isTop: false,
         zIndex: 0,
-      },
-      {
+      }),
+      activity({
         id: "a3",
         name: "sample",
         transitionState: "enter-active",
         params: {
           hello: "world2",
         },
+        steps: [
+          {
+            id: "a3",
+            params: {
+              hello: "world2",
+            },
+            pushedBy: replacedEvent,
+          },
+        ],
         pushedBy: replacedEvent,
         isActive: true,
         isTop: true,
         zIndex: 1,
-      },
+      }),
     ],
     transitionDuration: 300,
     globalTransitionState: "loading",
@@ -2483,6 +2506,9 @@ test("aggregate - 현재 특정 액티비티가 애니메이션 되고 있는 �
 test("aggregate - 현재 특정 액티비티가 애니메이션이 되고 있는 상태에서, Replaced 이벤트가 들어왔고, 이전 애니메이션이 끝난 경우 전환이 끝납니다", () => {
   const t = nowTime();
 
+  let pushedEvent1: PushedEvent;
+  let replacedEvent: ReplacedEvent;
+
   const events = [
     initializedEvent({
       transitionDuration: 300,
@@ -2490,14 +2516,14 @@ test("aggregate - 현재 특정 액티비티가 애니메이션이 되고 있는
     registeredEvent({
       activityName: "sample",
     }),
-    makeEvent("Pushed", {
+    (pushedEvent1 = makeEvent("Pushed", {
       activityId: "a2",
       activityName: "sample",
       activityParams: {
         hello: "world",
       },
       eventDate: enoughPastTime(),
-    }),
+    })),
     makeEvent("Pushed", {
       activityId: "a3",
       activityName: "sample",
@@ -2506,55 +2532,73 @@ test("aggregate - 현재 특정 액티비티가 애니메이션이 되고 있는
       },
       eventDate: t - 400,
     }),
-    makeEvent("Replaced", {
+    (replacedEvent = makeEvent("Replaced", {
       activityId: "a3",
       activityName: "sample",
       activityParams: {
         hello: "world2",
       },
       eventDate: t - 200,
-    }),
+    })),
   ];
-
-  const pushedEvent1 = events[2];
-  const replacedEvent = events[4];
 
   const output = aggregate(events, t);
 
   expect(output).toStrictEqual({
     activities: [
-      {
+      activity({
         id: "a2",
         name: "sample",
         transitionState: "enter-done",
         params: {
           hello: "world",
         },
+        steps: [
+          {
+            id: "a2",
+            params: {
+              hello: "world",
+            },
+            pushedBy: pushedEvent1,
+          },
+        ],
         pushedBy: pushedEvent1,
         isActive: false,
         isTop: false,
         zIndex: 0,
-      },
-      {
+      }),
+      activity({
         id: "a3",
         name: "sample",
         transitionState: "enter-done",
         params: {
           hello: "world2",
         },
+        steps: [
+          {
+            id: "a3",
+            params: {
+              hello: "world2",
+            },
+            pushedBy: replacedEvent,
+          },
+        ],
         pushedBy: replacedEvent,
         isActive: true,
         isTop: true,
         zIndex: 1,
-      },
+      }),
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
   });
 });
 
-test("aggregate - NestedPushedEvent가 발생하면, 최상단 액티비티의 파라미터가 변경됩니다", () => {
+test("aggregate - StepPushedEvent가 발생하면, 최상단 액티비티의 파라미터가 변경됩니다", () => {
   const t = nowTime();
+
+  let pushedEvent: PushedEvent;
+  let stepPushedEvent: StepPushedEvent;
 
   const events = [
     initializedEvent({
@@ -2563,31 +2607,28 @@ test("aggregate - NestedPushedEvent가 발생하면, 최상단 액티비티의 �
     registeredEvent({
       activityName: "sample",
     }),
-    makeEvent("Pushed", {
+    (pushedEvent = makeEvent("Pushed", {
       activityId: "a1",
       activityName: "sample",
       activityParams: {
         hello: "world",
       },
       eventDate: enoughPastTime(),
-    }),
-    makeEvent("NestedPushed", {
-      activityNestedRouteId: "n1",
-      activityNestedRouteParams: {
+    })),
+    (stepPushedEvent = makeEvent("StepPushed", {
+      stepId: "s1",
+      stepParams: {
         hello: "world2",
       },
       eventDate: enoughPastTime(),
-    }),
+    })),
   ];
-
-  const pushedEvent = events[2];
-  const nestedPushedEvent = events[3];
 
   const output = aggregate(events, t);
 
   expect(output).toStrictEqual({
     activities: [
-      {
+      activity({
         id: "a1",
         name: "sample",
         transitionState: "enter-done",
@@ -2595,27 +2636,36 @@ test("aggregate - NestedPushedEvent가 발생하면, 최상단 액티비티의 �
           hello: "world2",
         },
         pushedBy: pushedEvent,
-        nestedRoutes: [
+        steps: [
           {
-            id: "n1",
+            id: "a1",
+            params: {
+              hello: "world",
+            },
+            pushedBy: pushedEvent,
+          },
+          {
+            id: "s1",
             params: {
               hello: "world2",
             },
-            pushedBy: nestedPushedEvent,
+            pushedBy: stepPushedEvent,
           },
         ],
         isActive: true,
         isTop: true,
         zIndex: 0,
-      },
+      }),
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
   });
 });
 
-test("aggregate - NestedPushedEvent가 쌓인 상태에서, NestedPoppedEvent가 들어오면, 다시 이전 파라미터로 돌아갑니다", () => {
+test("aggregate - StepPushedEvent가 쌓인 상태에서, NestedPoppedEvent가 들어오면, 다시 이전 파라미터로 돌아갑니다", () => {
   const t = nowTime();
+
+  let pushedEvent: PushedEvent;
 
   const events = [
     initializedEvent({
@@ -2624,33 +2674,31 @@ test("aggregate - NestedPushedEvent가 쌓인 상태에서, NestedPoppedEvent가
     registeredEvent({
       activityName: "sample",
     }),
-    makeEvent("Pushed", {
+    (pushedEvent = makeEvent("Pushed", {
       activityId: "a1",
       activityName: "sample",
       activityParams: {
         hello: "world",
       },
       eventDate: enoughPastTime(),
-    }),
-    makeEvent("NestedPushed", {
-      activityNestedRouteId: "n1",
-      activityNestedRouteParams: {
+    })),
+    makeEvent("StepPushed", {
+      stepId: "s1",
+      stepParams: {
         hello: "world2",
       },
       eventDate: enoughPastTime(),
     }),
-    makeEvent("NestedPopped", {
+    makeEvent("StepPopped", {
       eventDate: enoughPastTime(),
     }),
   ];
-
-  const pushedEvent = events[2];
 
   const output = aggregate(events, t);
 
   expect(output).toStrictEqual({
     activities: [
-      {
+      activity({
         id: "a1",
         name: "sample",
         transitionState: "enter-done",
@@ -2658,19 +2706,30 @@ test("aggregate - NestedPushedEvent가 쌓인 상태에서, NestedPoppedEvent가
           hello: "world",
         },
         pushedBy: pushedEvent,
-        nestedRoutes: [],
+        steps: [
+          {
+            id: "a1",
+            params: {
+              hello: "world",
+            },
+            pushedBy: pushedEvent,
+          },
+        ],
         isActive: true,
         isTop: true,
         zIndex: 0,
-      },
+      }),
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
   });
 });
 
-test("aggregate - NestedPushedEvent가 쌓인 상태에서, PoppedEvent가 들어오면, 쌓여진 NestedPushedEvent들을 넘어서서 액티비티가 삭제됩니다", () => {
+test("aggregate - StepPushedEvent가 쌓인 상태에서, PoppedEvent가 들어오면, 쌓여진 StepPushedEvent들을 넘어서서 액티비티가 삭제됩니다", () => {
   const t = nowTime();
+
+  let pushedEvent1: PushedEvent;
+  let pushedEvent2: PushedEvent;
 
   const events = [
     initializedEvent({
@@ -2679,25 +2738,25 @@ test("aggregate - NestedPushedEvent가 쌓인 상태에서, PoppedEvent가 들�
     registeredEvent({
       activityName: "sample",
     }),
-    makeEvent("Pushed", {
+    (pushedEvent1 = makeEvent("Pushed", {
       activityId: "a1",
       activityName: "sample",
       activityParams: {
         hello: "a",
       },
       eventDate: enoughPastTime(),
-    }),
-    makeEvent("Pushed", {
+    })),
+    (pushedEvent2 = makeEvent("Pushed", {
       activityId: "a2",
       activityName: "sample",
       activityParams: {
         hello: "b",
       },
       eventDate: enoughPastTime(),
-    }),
-    makeEvent("NestedPushed", {
-      activityNestedRouteId: "n1",
-      activityNestedRouteParams: {
+    })),
+    makeEvent("StepPushed", {
+      stepId: "s1",
+      stepParams: {
         hello: "c",
       },
       eventDate: enoughPastTime(),
@@ -2707,45 +2766,64 @@ test("aggregate - NestedPushedEvent가 쌓인 상태에서, PoppedEvent가 들�
     }),
   ];
 
-  const pushedEvent1 = events[2];
-  const pushedEvent2 = events[3];
-
   const output = aggregate(events, t);
 
   expect(output).toStrictEqual({
     activities: [
-      {
+      activity({
         id: "a1",
         name: "sample",
         transitionState: "enter-done",
         params: {
           hello: "a",
         },
+        steps: [
+          {
+            id: "a1",
+            params: {
+              hello: "a",
+            },
+            pushedBy: pushedEvent1,
+          },
+        ],
         pushedBy: pushedEvent1,
         isActive: true,
         isTop: true,
         zIndex: 0,
-      },
-      {
+      }),
+      activity({
         id: "a2",
         name: "sample",
         transitionState: "exit-done",
         params: {
           hello: "b",
         },
+        steps: [
+          {
+            id: "a2",
+            params: {
+              hello: "b",
+            },
+            pushedBy: pushedEvent2,
+          },
+        ],
         pushedBy: pushedEvent2,
         isActive: false,
         isTop: false,
         zIndex: -1,
-      },
+      }),
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
   });
 });
 
-test("aggregate - NestedPushedEvent가 쌓인 상태에서, PoppedEvent가 들어오면, 나가고있는 동안에는 이전 파라미터를 유지합니다", () => {
+test("aggregate - StepPushedEvent가 쌓인 상태에서, PoppedEvent가 들어오면, 나가고있는 동안에는 이전 파라미터를 유지합니다", () => {
   const t = nowTime();
+
+  let pushedEvent1: PushedEvent;
+  let pushedEvent2: PushedEvent;
+  let stepPushedEvent: StepPushedEvent;
 
   const events = [
     initializedEvent({
@@ -2754,73 +2832,98 @@ test("aggregate - NestedPushedEvent가 쌓인 상태에서, PoppedEvent가 들�
     registeredEvent({
       activityName: "sample",
     }),
-    makeEvent("Pushed", {
+    (pushedEvent1 = makeEvent("Pushed", {
       activityId: "a1",
       activityName: "sample",
       activityParams: {
         hello: "a",
       },
       eventDate: enoughPastTime(),
-    }),
-    makeEvent("Pushed", {
+    })),
+    (pushedEvent2 = makeEvent("Pushed", {
       activityId: "a2",
       activityName: "sample",
       activityParams: {
         hello: "b",
       },
       eventDate: enoughPastTime(),
-    }),
-    makeEvent("NestedPushed", {
-      activityNestedRouteId: "n1",
-      activityNestedRouteParams: {
+    })),
+    (stepPushedEvent = makeEvent("StepPushed", {
+      stepId: "s1",
+      stepParams: {
         hello: "c",
       },
       eventDate: enoughPastTime(),
-    }),
+    })),
     makeEvent("Popped", {
       eventDate: t,
     }),
   ];
 
-  const pushedEvent1 = events[2];
-  const pushedEvent2 = events[3];
-
   const output = aggregate(events, t);
 
   expect(output).toStrictEqual({
     activities: [
-      {
+      activity({
         id: "a1",
         name: "sample",
         transitionState: "enter-done",
         params: {
           hello: "a",
         },
+        steps: [
+          {
+            id: "a1",
+            params: {
+              hello: "a",
+            },
+            pushedBy: pushedEvent1,
+          },
+        ],
         pushedBy: pushedEvent1,
         isActive: true,
         isTop: false,
         zIndex: 0,
-      },
-      {
+      }),
+      activity({
         id: "a2",
         name: "sample",
         transitionState: "exit-active",
         params: {
           hello: "c",
         },
+        steps: [
+          {
+            id: "a2",
+            params: {
+              hello: "b",
+            },
+            pushedBy: pushedEvent2,
+          },
+          {
+            id: "s1",
+            params: {
+              hello: "c",
+            },
+            pushedBy: stepPushedEvent,
+          },
+        ],
         pushedBy: pushedEvent2,
         isActive: false,
         isTop: true,
         zIndex: 1,
-      },
+      }),
     ],
     transitionDuration: 300,
     globalTransitionState: "loading",
   });
 });
 
-test("aggregate - NestedReplacedEvent가 발생하면, 최상단 액티비티의 파라미터가 변경됩니다", () => {
+test("aggregate - StepReplacedEvent가 발생하면, 최상단 액티비티의 파라미터가 변경됩니다", () => {
   const t = nowTime();
+
+  let pushedEvent: PushedEvent;
+  let stepReplacedEvent: StepReplacedEvent;
 
   const events = [
     initializedEvent({
@@ -2829,31 +2932,28 @@ test("aggregate - NestedReplacedEvent가 발생하면, 최상단 액티비티의
     registeredEvent({
       activityName: "sample",
     }),
-    makeEvent("Pushed", {
+    (pushedEvent = makeEvent("Pushed", {
       activityId: "a1",
       activityName: "sample",
       activityParams: {
         hello: "world",
       },
       eventDate: enoughPastTime(),
-    }),
-    makeEvent("NestedReplaced", {
-      activityNestedRouteId: "n1",
-      activityNestedRouteParams: {
+    })),
+    (stepReplacedEvent = makeEvent("StepReplaced", {
+      stepId: "s1",
+      stepParams: {
         hello: "world2",
       },
       eventDate: enoughPastTime(),
-    }),
+    })),
   ];
-
-  const pushedEvent = events[2];
-  const nestedReplacedEvent = events[3];
 
   const output = aggregate(events, t);
 
   expect(output).toStrictEqual({
     activities: [
-      {
+      activity({
         id: "a1",
         name: "sample",
         transitionState: "enter-done",
@@ -2861,11 +2961,19 @@ test("aggregate - NestedReplacedEvent가 발생하면, 최상단 액티비티의
           hello: "world2",
         },
         pushedBy: pushedEvent,
-        nestedReplacedBy: nestedReplacedEvent,
+        steps: [
+          {
+            id: "s1",
+            params: {
+              hello: "world2",
+            },
+            pushedBy: stepReplacedEvent,
+          },
+        ],
         isActive: true,
         isTop: true,
         zIndex: 0,
-      },
+      }),
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
@@ -2875,6 +2983,9 @@ test("aggregate - NestedReplacedEvent가 발생하면, 최상단 액티비티의
 test("aggregate - 만약 NestedPoppedEvent를 통해 제거할 수 있는 영역이 없는 경우, 아무것도 하지 않습니다", () => {
   const t = nowTime();
 
+  let pushedEvent: PushedEvent;
+  let stepReplacedEvent: StepReplacedEvent;
+
   const events = [
     initializedEvent({
       transitionDuration: 300,
@@ -2882,34 +2993,31 @@ test("aggregate - 만약 NestedPoppedEvent를 통해 제거할 수 있는 영역
     registeredEvent({
       activityName: "sample",
     }),
-    makeEvent("Pushed", {
+    (pushedEvent = makeEvent("Pushed", {
       activityId: "a1",
       activityName: "sample",
       activityParams: {
         hello: "world",
       },
       eventDate: enoughPastTime(),
-    }),
-    makeEvent("NestedReplaced", {
-      activityNestedRouteId: "n1",
-      activityNestedRouteParams: {
+    })),
+    (stepReplacedEvent = makeEvent("StepReplaced", {
+      stepId: "s1",
+      stepParams: {
         hello: "world2",
       },
       eventDate: enoughPastTime(),
-    }),
-    makeEvent("NestedPopped", {
+    })),
+    makeEvent("StepPopped", {
       eventDate: enoughPastTime(),
     }),
   ];
-
-  const pushedEvent = events[2];
-  const nestedReplacedEvent = events[3];
 
   const output = aggregate(events, t);
 
   expect(output).toStrictEqual({
     activities: [
-      {
+      activity({
         id: "a1",
         name: "sample",
         transitionState: "enter-done",
@@ -2917,11 +3025,19 @@ test("aggregate - 만약 NestedPoppedEvent를 통해 제거할 수 있는 영역
           hello: "world2",
         },
         pushedBy: pushedEvent,
-        nestedReplacedBy: nestedReplacedEvent,
+        steps: [
+          {
+            id: "s1",
+            params: {
+              hello: "world2",
+            },
+            pushedBy: stepReplacedEvent,
+          },
+        ],
         isActive: true,
         isTop: true,
         zIndex: 0,
-      },
+      }),
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
