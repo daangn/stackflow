@@ -12,6 +12,11 @@ import type { StackRefCurrentType } from "./StackRefManager";
 import StackRefManager from "./StackRefManager";
 import type { UseActionsOutputType } from "./useActions";
 import { useActions } from "./useActions";
+import type {
+  UseStepActions,
+  UseStepActionsOutputType,
+} from "./useStepActions";
+import { useStepActions } from "./useStepActions";
 
 export interface StackProps {
   /**
@@ -64,10 +69,16 @@ export type StackflowOutput<T extends BaseActivities> = {
   useFlow: () => UseActionsOutputType<T>;
 
   /**
+   * Created `useStepFlow()` hooks
+   */
+  useStepFlow: UseStepActions<T>;
+
+  /**
    * Created action triggers
    */
   actions: Pick<StackflowPluginActions, "dispatchEvent" | "getStack"> &
-    Pick<UseActionsOutputType<T>, "push" | "pop" | "replace">;
+    Pick<UseActionsOutputType<T>, "push" | "pop" | "replace"> &
+    Pick<UseStepActionsOutputType<{}>, "stepPush" | "stepReplace" | "stepPop">;
 };
 
 /**
@@ -145,6 +156,27 @@ export function stackflow<T extends BaseActivities>(
         options,
       );
     },
+    stepPush(params) {
+      if (!stackRef.current) {
+        throw new Error(stackRefNotFoundErrorMessage("stepPush"));
+      }
+
+      return stackRef.current.actions.stepPush(params);
+    },
+    stepReplace(params) {
+      if (!stackRef.current) {
+        throw new Error(stackRefNotFoundErrorMessage("stepReplace"));
+      }
+
+      return stackRef.current.actions.stepReplace(params);
+    },
+    stepPop() {
+      if (!stackRef.current) {
+        throw new Error(stackRefNotFoundErrorMessage("stepPop"));
+      }
+
+      return stackRef.current.actions.stepPop();
+    },
   };
 
   const Stack: StackComponentType = (props) => {
@@ -177,6 +209,7 @@ export function stackflow<T extends BaseActivities>(
   return {
     Stack,
     useFlow: useActions,
+    useStepFlow: useStepActions,
     actions,
   };
 }

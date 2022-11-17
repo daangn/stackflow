@@ -1,5 +1,6 @@
 import type { DispatchEvent, DomainEvent } from "@stackflow/core";
 import { aggregate, makeEvent } from "@stackflow/core";
+import type { StepPushedEvent } from "@stackflow/core/dist/event-types";
 import React, {
   useCallback,
   useEffect,
@@ -41,39 +42,43 @@ export const CoreProvider: React.FC<CoreProviderProps> = ({
   const initialEvents = useMemo(() => {
     const initialEventDate = new Date().getTime() - transitionDuration;
 
-    const initialPushedEventByOption = initialActivity
-      ? makeEvent("Pushed", {
-          activityId: makeActivityId(),
-          activityName: initialActivity({ initContext }),
-          activityParams: {},
-          eventDate: initialEventDate,
-          skipEnterActiveState: false,
-        })
-      : null;
+    const initialEventsByOption = initialActivity
+      ? [
+          makeEvent("Pushed", {
+            activityId: makeActivityId(),
+            activityName: initialActivity({ initContext }),
+            activityParams: {},
+            eventDate: initialEventDate,
+            skipEnterActiveState: false,
+          }),
+        ]
+      : [];
 
-    const initialPushedEventAfterPlugin = plugins.reduce<PushedEvent | null>(
-      (pushedEvent, plugin) =>
-        plugin.overrideInitialPushedEvent?.({ pushedEvent }) ?? pushedEvent,
-      initialPushedEventByOption,
+    const initialEventsAfterPlugins = plugins.reduce<
+      (PushedEvent | StepPushedEvent)[]
+    >(
+      (initialEvents, plugin) =>
+        plugin.overrideInitialEvents?.({ initialEvents }) ?? initialEvents,
+      initialEventsByOption,
     );
 
     const isInitialActivityIgnored =
-      !!initialPushedEventAfterPlugin &&
-      !!initialPushedEventByOption &&
-      initialPushedEventAfterPlugin.id !== initialPushedEventByOption.id;
+      !!initialEventsAfterPlugins &&
+      !!initialEventsByOption &&
+      initialEventsAfterPlugins !== initialEventsByOption;
 
     if (isInitialActivityIgnored) {
       // eslint-disable-next-line no-console
       console.warn(
         `Stackflow - ` +
           ` Some plugin overrides an "initialActivity" option.` +
-          ` The "initialActivity" option you set to "${initialPushedEventByOption.activityName}" in the "stackflow" is ignored.`,
+          ` The "initialActivity" option you set to "${initialEventsByOption[0].activityName}" in the "stackflow" is ignored.`,
       );
     }
 
-    const initialPushedEvent = initialPushedEventAfterPlugin;
+    const initialEvents = initialEventsAfterPlugins;
 
-    if (!initialPushedEvent) {
+    if (initialEvents.length === 0) {
       // eslint-disable-next-line no-console
       console.warn(
         `Stackflow - ` +
@@ -100,9 +105,9 @@ export const CoreProvider: React.FC<CoreProviderProps> = ({
       ...activityRegisteredEvents,
     ];
 
-    if (initialPushedEvent) {
-      events.push(initialPushedEvent);
-    }
+    initialEvents.forEach((event) => {
+      events.push(event);
+    });
 
     return events;
   }, []);

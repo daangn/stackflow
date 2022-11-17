@@ -28,12 +28,30 @@ const EffectManager: React.FC = () => {
           plugins.forEach((plugin) => plugin.onPushed?.({ actions, effect }));
           break;
         }
+        case "REPLACED": {
+          plugins.forEach((plugin) => plugin.onReplaced?.({ actions, effect }));
+          break;
+        }
         case "POPPED": {
           plugins.forEach((plugin) => plugin.onPopped?.({ actions, effect }));
           break;
         }
-        case "REPLACED": {
-          plugins.forEach((plugin) => plugin.onReplaced?.({ actions, effect }));
+        case "STEP_PUSHED": {
+          plugins.forEach((plugin) =>
+            plugin.onStepPushed?.({ actions, effect }),
+          );
+          break;
+        }
+        case "STEP_REPLACED": {
+          plugins.forEach((plugin) =>
+            plugin.onStepReplaced?.({ actions, effect }),
+          );
+          break;
+        }
+        case "STEP_POPPED": {
+          plugins.forEach((plugin) =>
+            plugin.onStepPopped?.({ actions, effect }),
+          );
           break;
         }
         case "%SOMETHING_CHANGED%": {

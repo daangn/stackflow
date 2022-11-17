@@ -33,6 +33,43 @@ export function produceEffects(
       nextActivity?.transitionState === "enter-active" ||
       nextActivity?.transitionState === "enter-done";
 
+    if (prevActivity && nextActivity && prevActivity.id === nextActivity.id) {
+      for (
+        let j = 0;
+        j <
+        Math.max(
+          (prevActivity.steps ?? []).length,
+          (nextActivity.steps ?? []).length,
+        );
+        j += 1
+      ) {
+        const prevStep = prevActivity.steps[j];
+        const nextStep = nextActivity.steps[j];
+
+        if (!prevStep && nextStep) {
+          output.push({
+            _TAG: "STEP_PUSHED",
+            activity: nextActivity,
+            step: nextStep,
+          });
+        } else if (prevStep && !nextStep) {
+          output.push({
+            _TAG: "STEP_POPPED",
+            activity: nextActivity,
+          });
+        } else if (
+          prevActivity.steps.length === nextActivity.steps.length &&
+          prevStep.id !== nextStep.id
+        ) {
+          output.push({
+            _TAG: "STEP_REPLACED",
+            activity: nextActivity,
+            step: nextStep,
+          });
+        }
+      }
+    }
+
     if (!prevActivity && nextActivity) {
       output.push({
         _TAG: nextActivity.pushedBy.name === "Pushed" ? "PUSHED" : "REPLACED",
@@ -44,13 +81,14 @@ export function produceEffects(
         activity: nextActivity,
       });
     } else if (
-      !!prevActivity &&
-      !!nextActivity &&
+      prevActivity &&
+      nextActivity &&
       prevActivity.id === nextActivity.id &&
       !isEqual(
         omit(prevActivity, ["isActive", "isTop", "transitionState", "zIndex"]),
         omit(nextActivity, ["isActive", "isTop", "transitionState", "zIndex"]),
-      )
+      ) &&
+      nextActivity.pushedBy.name === "Replaced"
     ) {
       output.push({
         _TAG: "REPLACED",

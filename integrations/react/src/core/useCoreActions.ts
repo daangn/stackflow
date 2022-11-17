@@ -3,6 +3,9 @@ import type {
   PoppedEvent,
   PushedEvent,
   ReplacedEvent,
+  StepPoppedEvent,
+  StepPushedEvent,
+  StepReplacedEvent,
 } from "@stackflow/core/dist/event-types";
 import type { BaseDomainEvent } from "@stackflow/core/dist/event-types/_base";
 import React, { useCallback, useMemo } from "react";
@@ -68,6 +71,57 @@ export const useCoreActions = () => {
     [dispatchEvent],
   );
 
+  const stepPush = useCallback(
+    (params: Omit<StepPushedEvent, keyof BaseDomainEvent>) => {
+      // eslint-disable-next-line no-use-before-define
+      const { isPrevented, params: eventParams } = triggerPreEffectHook(
+        "STEP_PUSHED",
+        params,
+      );
+
+      if (!isPrevented) {
+        dispatchEvent("StepPushed", {
+          ...eventParams,
+        });
+      }
+    },
+    [dispatchEvent],
+  );
+
+  const stepReplace = useCallback(
+    (params: Omit<StepReplacedEvent, keyof BaseDomainEvent>) => {
+      // eslint-disable-next-line no-use-before-define
+      const { isPrevented, params: eventParams } = triggerPreEffectHook(
+        "STEP_REPLACED",
+        params,
+      );
+
+      if (!isPrevented) {
+        dispatchEvent("StepReplaced", {
+          ...eventParams,
+        });
+      }
+    },
+    [dispatchEvent],
+  );
+
+  const stepPop = useCallback(
+    (params?: Omit<StepPoppedEvent, keyof BaseDomainEvent>) => {
+      const initialParams = params ?? {};
+
+      // eslint-disable-next-line no-use-before-define
+      const { isPrevented, params: eventParams } = triggerPreEffectHook(
+        "STEP_POPPED",
+        initialParams,
+      );
+
+      if (!isPrevented) {
+        dispatchEvent("StepPopped", { ...eventParams });
+      }
+    },
+    [dispatchEvent],
+  );
+
   const coreActions = useMemo(
     () => ({
       dispatchEvent,
@@ -75,8 +129,20 @@ export const useCoreActions = () => {
       push,
       replace,
       pop,
+      stepPush,
+      stepReplace,
+      stepPop,
     }),
-    [dispatchEvent, getStack, push, replace, pop],
+    [
+      dispatchEvent,
+      getStack,
+      push,
+      replace,
+      pop,
+      stepPush,
+      stepReplace,
+      stepPop,
+    ],
   );
 
   const triggerPreEffectHook = useCallback(
@@ -120,6 +186,36 @@ export const useCoreActions = () => {
             break;
           case "POPPED":
             plugin.onBeforePop?.({
+              actionParams,
+              actions: {
+                ...coreActions,
+                preventDefault,
+                overrideActionParams,
+              },
+            });
+            break;
+          case "STEP_PUSHED":
+            plugin.onBeforeStepPush?.({
+              actionParams,
+              actions: {
+                ...coreActions,
+                preventDefault,
+                overrideActionParams,
+              },
+            });
+            break;
+          case "STEP_REPLACED":
+            plugin.onBeforeStepReplace?.({
+              actionParams,
+              actions: {
+                ...coreActions,
+                preventDefault,
+                overrideActionParams,
+              },
+            });
+            break;
+          case "STEP_POPPED":
+            plugin.onBeforeStepPop?.({
               actionParams,
               actions: {
                 ...coreActions,

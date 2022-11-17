@@ -3,10 +3,16 @@ import type { InitializedEvent } from "./InitializedEvent";
 import type { PoppedEvent } from "./PoppedEvent";
 import type { PushedEvent } from "./PushedEvent";
 import type { ReplacedEvent } from "./ReplacedEvent";
+import type { StepPoppedEvent } from "./StepPoppedEvent";
+import type { StepPushedEvent } from "./StepPushedEvent";
+import type { StepReplacedEvent } from "./StepReplacedEvent";
 
 export type DomainEvent =
   | ActivityRegisteredEvent
   | InitializedEvent
+  | StepPoppedEvent
+  | StepPushedEvent
+  | StepReplacedEvent
   | PoppedEvent
   | PushedEvent
   | ReplacedEvent;
@@ -16,3 +22,6 @@ export * from "./InitializedEvent";
 export * from "./PoppedEvent";
 export * from "./PushedEvent";
 export * from "./ReplacedEvent";
+export * from "./StepPoppedEvent";
+export * from "./StepPushedEvent";
+export * from "./StepReplacedEvent";

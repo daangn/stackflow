@@ -6,3 +6,4 @@ export * from "./stack/useStack";
 export * from "./stackflow";
 export * from "./StackflowReactPlugin";
 export * from "./useActions";
+export * from "./useStepActions";

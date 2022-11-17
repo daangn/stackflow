@@ -5,10 +5,13 @@ import type { BaseActivities } from "./BaseActivities";
 import { useCoreActions } from "./core";
 import type { UseActionsOutputType } from "./useActions";
 import { useActions } from "./useActions";
+import type { UseStepActionsOutputType } from "./useStepActions";
+import { useStepActions } from "./useStepActions";
 
 export type StackRefCurrentType<T extends BaseActivities> = {
   actions: Pick<StackflowPluginActions, "dispatchEvent" | "getStack"> &
-    Pick<UseActionsOutputType<T>, "push" | "pop" | "replace">;
+    Pick<UseActionsOutputType<T>, "push" | "pop" | "replace"> &
+    Pick<UseStepActionsOutputType<{}>, "stepPush" | "stepReplace" | "stepPop">;
 };
 
 const StackRefManager = React.forwardRef<
@@ -17,6 +20,7 @@ const StackRefManager = React.forwardRef<
 >((_, ref) => {
   const { dispatchEvent, getStack } = useCoreActions();
   const { push, pop, replace } = useActions();
+  const { stepPush, stepPop, stepReplace } = useStepActions("" as never);
 
   React.useImperativeHandle(ref, () => ({
     actions: {
@@ -25,6 +29,9 @@ const StackRefManager = React.forwardRef<
       push,
       pop,
       replace,
+      stepPush,
+      stepPop,
+      stepReplace,
     },
   }));
 

@@ -1,8 +1,10 @@
 import type { Activity } from "@stackflow/core";
 import { id, makeEvent } from "@stackflow/core";
+import type { ActivityStep } from "@stackflow/core/dist/AggregateOutput";
 import type { StackflowReactPlugin } from "@stackflow/react";
 import React from "react";
 
+import { last } from "./last";
 import { makeTemplate } from "./makeTemplate";
 import { normalizeRoute } from "./normalizeRoute";
 import { RoutesProvider } from "./RoutesContext";
@@ -25,6 +27,7 @@ function getCurrentState() {
 interface State {
   _TAG: string;
   activity: Activity;
+  step?: ActivityStep;
 }
 function parseState(state: unknown): State | null {
   const _state: any = state;
@@ -106,8 +109,8 @@ export function historySyncPlugin<
   type K = Extract<keyof T, string>;
 
   return ({ initContext }) => {
-    let pushFlag = false;
-    let onPopStateDisposer: (() => void) | null = null;
+    let pushFlag = 0;
+    let popFlag = 0;
 
     return {
       key: "plugin-history-sync",
@@ -118,14 +121,25 @@ export function historySyncPlugin<
           </RoutesProvider>
         );
       },
-      overrideInitialPushedEvent() {
+      overrideInitialEvents() {
         const initHistoryState = parseState(getCurrentState());
 
         if (initHistoryState) {
-          return {
-            ...initHistoryState.activity.pushedBy,
-            name: "Pushed",
-          };
+          return [
+            {
+              ...initHistoryState.activity.pushedBy,
+              name: "Pushed",
+            },
+            ...(initHistoryState.step?.pushedBy.name === "StepPushed" ||
+            initHistoryState.step?.pushedBy.name === "StepReplaced"
+              ? [
+                  {
+                    ...initHistoryState.step.pushedBy,
+                    name: "StepPushed" as const,
+                  },
+                ]
+              : []),
+          ];
         }
 
         function resolvePath() {
@@ -164,17 +178,19 @@ export function historySyncPlugin<
               if (matched) {
                 const activityId = id();
 
-                return makeEvent("Pushed", {
-                  activityId,
-                  activityName,
-                  activityParams: {
-                    ...activityParams,
-                  },
-                  eventDate: new Date().getTime() - MINUTE,
-                  activityContext: {
-                    path,
-                  },
-                });
+                return [
+                  makeEvent("Pushed", {
+                    activityId,
+                    activityName,
+                    activityParams: {
+                      ...activityParams,
+                    },
+                    eventDate: new Date().getTime() - MINUTE,
+                    activityContext: {
+                      path,
+                    },
+                  }),
+                ];
               }
             }
           }
@@ -187,114 +203,175 @@ export function historySyncPlugin<
         );
         const fallbackActivityPath = fallbackActivityRoutes[0];
 
-        return makeEvent("Pushed", {
-          activityId: fallbackActivityId,
-          activityName: fallbackActivityName,
-          activityParams: {},
-          eventDate: new Date().getTime() - MINUTE,
-          activityContext: {
-            path: fallbackActivityPath,
-          },
-        });
+        return [
+          makeEvent("Pushed", {
+            activityId: fallbackActivityId,
+            activityName: fallbackActivityName,
+            activityParams: {},
+            eventDate: new Date().getTime() - MINUTE,
+            activityContext: {
+              path: fallbackActivityPath,
+            },
+          }),
+        ];
       },
-      onInit({ actions: { getStack, dispatchEvent, push } }) {
+      onInit({ actions: { getStack, dispatchEvent, push, stepPush } }) {
         const rootActivity = getStack().activities[0];
         const template = makeTemplate(
           normalizeRoute(options.routes[rootActivity.name])[0],
         );
+
+        (window as any).getStack = getStack;
 
         replaceState({
           url: template.fill(rootActivity.params),
           state: {
             _TAG: STATE_TAG,
             activity: removeActivityContext(rootActivity),
+            step: last(rootActivity.steps),
           },
           useHash: options.useHash,
         });
 
         const onPopState = (e: PopStateEvent) => {
+          if (popFlag) {
+            popFlag -= 1;
+            return;
+          }
+
           const historyState = parseState(e.state);
 
           if (!historyState) {
             return;
           }
 
-          const { activities } = getStack();
+          const targetActivity = historyState.activity;
+          const targetActivityId = historyState.activity.id;
+          const targetStep = historyState.step;
 
-          const targetActivity = activities.find(
-            (activity) =>
-              activity.id === historyState.activity.pushedBy.activityId,
+          const { activities } = getStack();
+          const currentActivity = activities.find(
+            (activity) => activity.isActive,
           );
 
-          const isBackward =
-            (!targetActivity &&
-              historyState.activity.pushedBy.activityId < activities[0].id) ||
-            targetActivity?.transitionState === "enter-active" ||
-            targetActivity?.transitionState === "enter-done";
-          const isForward =
-            (!targetActivity &&
-              historyState.activity.pushedBy.activityId >
-                activities[activities.length - 1].id) ||
-            targetActivity?.transitionState === "exit-active" ||
-            targetActivity?.transitionState === "exit-done";
-
-          if (isBackward) {
-            dispatchEvent("Popped", {});
-
-            if (!targetActivity) {
-              pushFlag = true;
-
-              startTransition(() => {
-                push({
-                  ...historyState.activity.pushedBy,
-                });
-              });
-            }
-
-            if (targetActivity) {
-              const template = makeTemplate(
-                normalizeRoute(options.routes[targetActivity.name])[0],
-              );
-              const url = template.fill(targetActivity.params);
-
-              replaceState({
-                url,
-                state: {
-                  _TAG: STATE_TAG,
-                  activity: removeActivityContext(targetActivity),
-                },
-                useHash: options.useHash,
-              });
-            }
+          if (!currentActivity) {
+            return;
           }
-          if (isForward) {
-            pushFlag = true;
+
+          const currentStep = last(currentActivity.steps);
+
+          const nextActivity = activities.find(
+            (activity) => activity.id === targetActivityId,
+          );
+          const nextStep = currentActivity.steps.find(
+            (step) => step.id === targetStep?.id,
+          );
+
+          const isBackward = () => currentActivity.id > targetActivityId;
+          const isForward = () => currentActivity.id < targetActivityId;
+          const isStep = () => currentActivity.id === targetActivityId;
+
+          const isStepBackward = () => {
+            if (!isStep()) {
+              return false;
+            }
+
+            if (!targetStep) {
+              return true;
+            }
+            if (currentStep && currentStep.id > targetStep.id) {
+              return true;
+            }
+
+            return false;
+          };
+          const isStepForward = () => {
+            if (!isStep()) {
+              return false;
+            }
+
+            if (!currentStep) {
+              return true;
+            }
+            if (targetStep && currentStep.id < targetStep.id) {
+              return true;
+            }
+
+            return false;
+          };
+
+          if (isBackward()) {
+            startTransition(() => {
+              dispatchEvent("Popped", {});
+
+              if (!nextActivity) {
+                pushFlag += 1;
+                dispatchEvent("Pushed", {
+                  ...targetActivity.pushedBy,
+                });
+
+                if (
+                  targetStep?.pushedBy.name === "StepPushed" ||
+                  targetStep?.pushedBy.name === "StepReplaced"
+                ) {
+                  pushFlag += 1;
+                  dispatchEvent("StepPushed", {
+                    ...targetStep.pushedBy,
+                  });
+                }
+              }
+            });
+          }
+          if (isStepBackward()) {
+            startTransition(() => {
+              if (
+                !nextStep &&
+                targetStep &&
+                (targetStep?.pushedBy.name === "StepPushed" ||
+                  targetStep?.pushedBy.name === "StepReplaced")
+              ) {
+                pushFlag += 1;
+                dispatchEvent("StepPushed", {
+                  ...targetStep.pushedBy,
+                });
+              }
+
+              dispatchEvent("StepPopped", {});
+            });
+          }
+
+          if (isForward()) {
+            startTransition(() => {
+              pushFlag += 1;
+              push({
+                activityId: targetActivity.id,
+                activityName: targetActivity.name,
+                activityParams: targetActivity.params,
+              });
+            });
+          }
+          if (isStepForward()) {
+            if (!targetStep) {
+              return;
+            }
 
             startTransition(() => {
-              push({
-                activityId: historyState.activity.pushedBy.activityId,
-                activityName: historyState.activity.pushedBy.activityName,
-                activityParams: historyState.activity.pushedBy.activityParams,
+              pushFlag += 1;
+              stepPush({
+                stepId: targetStep.id,
+                stepParams: targetStep.params,
               });
             });
           }
         };
 
-        onPopStateDisposer?.();
-
         if (!isServer) {
           window.addEventListener("popstate", onPopState);
         }
-
-        onPopStateDisposer = () => {
-          if (!isServer) {
-            window.removeEventListener("popstate", onPopState);
-          }
-        };
       },
       onPushed({ effect: { activity } }) {
         if (pushFlag) {
-          pushFlag = false;
+          pushFlag -= 1;
           return;
         }
 
@@ -307,6 +384,26 @@ export function historySyncPlugin<
           state: {
             _TAG: STATE_TAG,
             activity: removeActivityContext(activity),
+          },
+          useHash: options.useHash,
+        });
+      },
+      onStepPushed({ effect: { activity, step } }) {
+        if (pushFlag) {
+          pushFlag -= 1;
+          return;
+        }
+
+        const template = makeTemplate(
+          normalizeRoute(options.routes[activity.name])[0],
+        );
+
+        pushState({
+          url: template.fill(activity.params),
+          state: {
+            _TAG: STATE_TAG,
+            activity: removeActivityContext(activity),
+            step,
           },
           useHash: options.useHash,
         });
@@ -325,6 +422,25 @@ export function historySyncPlugin<
           state: {
             _TAG: STATE_TAG,
             activity: removeActivityContext(activity),
+          },
+          useHash: options.useHash,
+        });
+      },
+      onStepReplaced({ effect: { activity, step } }) {
+        if (!activity.isActive) {
+          return;
+        }
+
+        const template = makeTemplate(
+          normalizeRoute(options.routes[activity.name])[0],
+        );
+
+        replaceState({
+          url: template.fill(activity.params),
+          state: {
+            _TAG: STATE_TAG,
+            activity: removeActivityContext(activity),
+            step,
           },
           useHash: options.useHash,
         });
@@ -357,11 +473,21 @@ export function historySyncPlugin<
           },
         });
       },
-      onBeforePop({ actions: { preventDefault } }) {
-        preventDefault();
+      onBeforePop({ actions: { getStack } }) {
+        if (typeof window === "undefined") {
+          return;
+        }
+
+        const { activities } = getStack();
+        const currentActivity = activities.find(
+          (activity) => activity.isActive,
+        );
+        const popCount = currentActivity?.steps.length ?? 0;
+
+        popFlag += popCount;
 
         do {
-          if (typeof window !== "undefined") {
+          for (let i = 0; i < popCount; i += 1) {
             window.history.back();
           }
         } while (!parseState(getCurrentState()));

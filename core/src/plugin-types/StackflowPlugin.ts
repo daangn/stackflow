@@ -1,4 +1,11 @@
-import type { PoppedEvent, PushedEvent, ReplacedEvent } from "../event-types";
+import type {
+  PoppedEvent,
+  PushedEvent,
+  ReplacedEvent,
+  StepPoppedEvent,
+  StepPushedEvent,
+  StepReplacedEvent,
+} from "../event-types";
 import type { BaseDomainEvent } from "../event-types/_base";
 import type {
   StackflowPluginHook,
@@ -18,13 +25,6 @@ export type StackflowPlugin = () => {
   onInit?: StackflowPluginHook;
 
   /**
-   * Called before the `pop()` function of `useActions()` is called and the corresponding signal is delivered to the core
-   */
-  onBeforePop?: StackflowPluginPreEffectHook<
-    Omit<PoppedEvent, keyof BaseDomainEvent>
-  >;
-
-  /**
    * Called before the `push()` function of `useActions()` is called and the corresponding signal is delivered to the core
    */
   onBeforePush?: StackflowPluginPreEffectHook<
@@ -39,19 +39,62 @@ export type StackflowPlugin = () => {
   >;
 
   /**
-   * Called when the push procedure is complete and the actual rendering is finished
+   * Called before the `pop()` function of `useActions()` is called and the corresponding signal is delivered to the core
+   */
+  onBeforePop?: StackflowPluginPreEffectHook<
+    Omit<PoppedEvent, keyof BaseDomainEvent>
+  >;
+
+  /**
+   * Called before the `stepPush()` function of `useStepActions()` is called and the corresponding signal is delivered to the core
+   */
+  onBeforeStepPush?: StackflowPluginPreEffectHook<
+    Omit<StepPushedEvent, keyof BaseDomainEvent>
+  >;
+
+  /**
+   * Called before the `stepReplace()` function of `useStepAction()` is called and the corresponding signal is delivered to the core
+   */
+  onBeforeStepReplace?: StackflowPluginPreEffectHook<
+    Omit<StepReplacedEvent, keyof BaseDomainEvent>
+  >;
+
+  /**
+   * Called before the `stepPop()` function of `useStepActions()` is called and the corresponding signal is delivered to the core
+   */
+  onBeforeStepPop?: StackflowPluginPreEffectHook<
+    Omit<StepPoppedEvent, keyof BaseDomainEvent>
+  >;
+
+  /**
+   * Called when the `push` procedure is complete and the actual rendering is finished
    */
   onPushed?: StackflowPluginPostEffectHook<"PUSHED">;
 
   /**
-   * Called when the pop procedure is complete and the actual rendering is finished
+   * Called when the `replace` procedure is complete and the actual rendering is finished
+   */
+  onReplaced?: StackflowPluginPostEffectHook<"REPLACED">;
+
+  /**
+   * Called when the `pop` procedure is complete and the actual rendering is finished
    */
   onPopped?: StackflowPluginPostEffectHook<"POPPED">;
 
   /**
-   * Called when the replace procedure is complete and the actual rendering is finished
+   * Called when the `stepPush` procedure is complete and the actual rendering is finished
    */
-  onReplaced?: StackflowPluginPostEffectHook<"REPLACED">;
+  onStepPushed?: StackflowPluginPostEffectHook<"STEP_PUSHED">;
+
+  /**
+   * Called when the `stepReplace` procedure is complete and the actual rendering is finished
+   */
+  onStepReplaced?: StackflowPluginPostEffectHook<"STEP_REPLACED">;
+
+  /**
+   * Called when the `stepPop` procedure is complete and the actual rendering is finished
+   */
+  onStepPopped?: StackflowPluginPostEffectHook<"STEP_POPPED">;
 
   /**
    * Called after any changes to the stack state are reflected in the actual rendering
@@ -59,9 +102,9 @@ export type StackflowPlugin = () => {
   onChanged?: StackflowPluginPostEffectHook<"%SOMETHING_CHANGED%">;
 
   /**
-   * Specifies the first `PushedEvent` (Overrides the `initialActivity` option specified in the `stackflow()` function)
+   * Specifies the first `PushedEvent`, `StepPushedEvent` (Overrides the `initialActivity` option specified in the `stackflow()` function)
    */
-  overrideInitialPushedEvent?: (args: {
-    pushedEvent: PushedEvent | null;
-  }) => PushedEvent | null;
+  overrideInitialEvents?: (args: {
+    initialEvents: (PushedEvent | StepPushedEvent)[];
+  }) => (PushedEvent | StepPushedEvent)[];
 };

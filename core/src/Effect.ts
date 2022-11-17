@@ -1,4 +1,4 @@
-import type { Activity } from "./AggregateOutput";
+import type { Activity, ActivityStep } from "./AggregateOutput";
 
 export type Effect =
   | {
@@ -9,10 +9,24 @@ export type Effect =
       activity: Activity;
     }
   | {
+      _TAG: "REPLACED";
+      activity: Activity;
+    }
+  | {
       _TAG: "POPPED";
       activity: Activity;
     }
   | {
-      _TAG: "REPLACED";
+      _TAG: "STEP_PUSHED";
+      activity: Activity;
+      step: ActivityStep;
+    }
+  | {
+      _TAG: "STEP_REPLACED";
+      activity: Activity;
+      step: ActivityStep;
+    }
+  | {
+      _TAG: "STEP_POPPED";
       activity: Activity;
     };
