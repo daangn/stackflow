@@ -2662,7 +2662,7 @@ test("aggregate - StepPushedEvent가 발생하면, 최상단 액티비티의 파
   });
 });
 
-test("aggregate - StepPushedEvent가 쌓인 상태에서, NestedPoppedEvent가 들어오면, 다시 이전 파라미터로 돌아갑니다", () => {
+test("aggregate - StepPushedEvent가 쌓인 상태에서, StepPoppedEvent가 들어오면, 다시 이전 파라미터로 돌아갑니다", () => {
   const t = nowTime();
 
   let pushedEvent: PushedEvent;
@@ -2980,7 +2980,7 @@ test("aggregate - StepReplacedEvent가 발생하면, 최상단 액티비티의 �
   });
 });
 
-test("aggregate - 만약 NestedPoppedEvent를 통해 제거할 수 있는 영역이 없는 경우, 아무것도 하지 않습니다", () => {
+test("aggregate - 만약 StepPoppedEvent를 통해 제거할 수 있는 영역이 없는 경우, 아무것도 하지 않습니다", () => {
   const t = nowTime();
 
   let pushedEvent: PushedEvent;
