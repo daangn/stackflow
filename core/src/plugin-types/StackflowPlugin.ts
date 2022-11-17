@@ -84,17 +84,17 @@ export type StackflowPlugin = () => {
   /**
    * Called when the `stepPush` procedure is complete and the actual rendering is finished
    */
-  onStepPushed?: StackflowPluginPostEffectHook<"NESTED_PUSHED">;
+  onStepPushed?: StackflowPluginPostEffectHook<"STEP_PUSHED">;
 
   /**
    * Called when the `stepReplace` procedure is complete and the actual rendering is finished
    */
-  onStepReplaced?: StackflowPluginPostEffectHook<"NESTED_REPLACED">;
+  onStepReplaced?: StackflowPluginPostEffectHook<"STEP_REPLACED">;
 
   /**
    * Called when the `stepPop` procedure is complete and the actual rendering is finished
    */
-  onStepPopped?: StackflowPluginPostEffectHook<"NESTED_POPPED">;
+  onStepPopped?: StackflowPluginPostEffectHook<"STEP_POPPED">;
 
   /**
    * Called after any changes to the stack state are reflected in the actual rendering
