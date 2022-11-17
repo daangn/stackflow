@@ -1,11 +1,11 @@
 import type { Effect } from "@stackflow/core";
 import type {
-  NestedPoppedEvent,
-  NestedPushedEvent,
-  NestedReplacedEvent,
   PoppedEvent,
   PushedEvent,
   ReplacedEvent,
+  StepPoppedEvent,
+  StepPushedEvent,
+  StepReplacedEvent,
 } from "@stackflow/core/dist/event-types";
 import type { BaseDomainEvent } from "@stackflow/core/dist/event-types/_base";
 import React, { useCallback, useMemo } from "react";
@@ -71,16 +71,16 @@ export const useCoreActions = () => {
     [dispatchEvent],
   );
 
-  const nestedPush = useCallback(
-    (params: Omit<NestedPushedEvent, keyof BaseDomainEvent>) => {
+  const stepPush = useCallback(
+    (params: Omit<StepPushedEvent, keyof BaseDomainEvent>) => {
       // eslint-disable-next-line no-use-before-define
       const { isPrevented, params: eventParams } = triggerPreEffectHook(
-        "NESTED_PUSHED",
+        "STEP_PUSHED",
         params,
       );
 
       if (!isPrevented) {
-        dispatchEvent("NestedPushed", {
+        dispatchEvent("StepPushed", {
           ...eventParams,
         });
       }
@@ -88,16 +88,16 @@ export const useCoreActions = () => {
     [dispatchEvent],
   );
 
-  const nestedReplace = useCallback(
-    (params: Omit<NestedReplacedEvent, keyof BaseDomainEvent>) => {
+  const stepReplace = useCallback(
+    (params: Omit<StepReplacedEvent, keyof BaseDomainEvent>) => {
       // eslint-disable-next-line no-use-before-define
       const { isPrevented, params: eventParams } = triggerPreEffectHook(
-        "NESTED_REPLACED",
+        "STEP_REPLACED",
         params,
       );
 
       if (!isPrevented) {
-        dispatchEvent("NestedReplaced", {
+        dispatchEvent("StepReplaced", {
           ...eventParams,
         });
       }
@@ -105,18 +105,18 @@ export const useCoreActions = () => {
     [dispatchEvent],
   );
 
-  const nestedPop = useCallback(
-    (params?: Omit<NestedPoppedEvent, keyof BaseDomainEvent>) => {
+  const stepPop = useCallback(
+    (params?: Omit<StepPoppedEvent, keyof BaseDomainEvent>) => {
       const initialParams = params ?? {};
 
       // eslint-disable-next-line no-use-before-define
       const { isPrevented, params: eventParams } = triggerPreEffectHook(
-        "NESTED_POPPED",
+        "STEP_POPPED",
         initialParams,
       );
 
       if (!isPrevented) {
-        dispatchEvent("NestedPopped", { ...eventParams });
+        dispatchEvent("StepPopped", { ...eventParams });
       }
     },
     [dispatchEvent],
@@ -129,9 +129,9 @@ export const useCoreActions = () => {
       push,
       replace,
       pop,
-      nestedPush,
-      nestedReplace,
-      nestedPop,
+      stepPush,
+      stepReplace,
+      stepPop,
     }),
     [
       dispatchEvent,
@@ -139,9 +139,9 @@ export const useCoreActions = () => {
       push,
       replace,
       pop,
-      nestedPush,
-      nestedReplace,
-      nestedPop,
+      stepPush,
+      stepReplace,
+      stepPop,
     ],
   );
 
@@ -194,8 +194,8 @@ export const useCoreActions = () => {
               },
             });
             break;
-          case "NESTED_PUSHED":
-            plugin.onBeforeNestedPush?.({
+          case "STEP_PUSHED":
+            plugin.onBeforeStepPush?.({
               actionParams,
               actions: {
                 ...coreActions,
@@ -204,8 +204,8 @@ export const useCoreActions = () => {
               },
             });
             break;
-          case "NESTED_REPLACED":
-            plugin.onBeforeNestedReplace?.({
+          case "STEP_REPLACED":
+            plugin.onBeforeStepReplace?.({
               actionParams,
               actions: {
                 ...coreActions,
@@ -214,8 +214,8 @@ export const useCoreActions = () => {
               },
             });
             break;
-          case "NESTED_POPPED":
-            plugin.onBeforeNestedPop?.({
+          case "STEP_POPPED":
+            plugin.onBeforeStepPop?.({
               actionParams,
               actions: {
                 ...coreActions,

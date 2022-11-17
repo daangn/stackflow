@@ -1,7 +1,7 @@
 import React from "react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
-import { useFlow, useNestedFlow } from "../stackflow";
+import { useFlow, useStepFlow } from "../stackflow";
 import * as css from "./ArticleCard.css";
 
 interface ArticleCardProps {
@@ -16,7 +16,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
   price,
   i,
 }) => {
-  const { nestedPush, nestedReplace } = useNestedFlow("Article");
+  const { stepPush, stepReplace } = useStepFlow("Article");
   const { push } = useFlow();
 
   const imageUrl = `https://picsum.photos/800/800/?id=${articleId}`;
@@ -29,12 +29,12 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
           title,
         });
       case 1:
-        return nestedReplace({
+        return stepReplace({
           articleId: String(articleId),
           title,
         });
       default:
-        return nestedPush({
+        return stepPush({
           articleId: String(articleId),
           title,
         });

@@ -1,6 +1,6 @@
 import type { Activity } from "@stackflow/core";
 import { id, makeEvent } from "@stackflow/core";
-import type { ActivityNestedRoute } from "@stackflow/core/dist/AggregateOutput";
+import type { ActivityStep } from "@stackflow/core/dist/AggregateOutput";
 import type { StackflowReactPlugin } from "@stackflow/react";
 import React from "react";
 
@@ -27,7 +27,7 @@ function getCurrentState() {
 interface State {
   _TAG: string;
   activity: Activity;
-  activityNestedRoute?: ActivityNestedRoute;
+  step?: ActivityStep;
 }
 function parseState(state: unknown): State | null {
   const _state: any = state;
@@ -130,11 +130,12 @@ export function historySyncPlugin<
               ...initHistoryState.activity.pushedBy,
               name: "Pushed",
             },
-            ...(initHistoryState.activityNestedRoute
+            ...(initHistoryState.step?.pushedBy.name === "StepPushed" ||
+            initHistoryState.step?.pushedBy.name === "StepReplaced"
               ? [
                   {
-                    ...initHistoryState.activityNestedRoute.pushedBy,
-                    name: "NestedPushed" as const,
+                    ...initHistoryState.step.pushedBy,
+                    name: "StepPushed" as const,
                   },
                 ]
               : []),
@@ -214,7 +215,7 @@ export function historySyncPlugin<
           }),
         ];
       },
-      onInit({ actions: { getStack, dispatchEvent, push, nestedPush } }) {
+      onInit({ actions: { getStack, dispatchEvent, push, stepPush } }) {
         const rootActivity = getStack().activities[0];
         const template = makeTemplate(
           normalizeRoute(options.routes[rootActivity.name])[0],
@@ -227,7 +228,7 @@ export function historySyncPlugin<
           state: {
             _TAG: STATE_TAG,
             activity: removeActivityContext(rootActivity),
-            activityNestedRoute: rootActivity.nestedRoutes?.[0],
+            step: rootActivity.steps[0],
           },
           useHash: options.useHash,
         });
@@ -246,7 +247,7 @@ export function historySyncPlugin<
 
           const targetActivity = historyState.activity;
           const targetActivityId = historyState.activity.id;
-          const targetActivityNestedRoute = historyState.activityNestedRoute;
+          const targetStep = historyState.step;
 
           const { activities } = getStack();
           const currentActivity = activities.find(
@@ -257,50 +258,42 @@ export function historySyncPlugin<
             return;
           }
 
-          const currentActivityNestedRoute = last(
-            currentActivity.nestedRoutes ?? [],
-          );
+          const currentStep = last(currentActivity.steps);
 
           const nextActivity = activities.find(
             (activity) => activity.id === targetActivityId,
           );
-          const nextActivityNestedRoute = currentActivity.nestedRoutes?.find(
-            (route) => route.id === targetActivityNestedRoute?.id,
+          const nextStep = currentActivity.steps.find(
+            (step) => step.id === targetStep?.id,
           );
 
           const isBackward = () => currentActivity.id > targetActivityId;
           const isForward = () => currentActivity.id < targetActivityId;
-          const isNested = () => currentActivity.id === targetActivityId;
+          const isStep = () => currentActivity.id === targetActivityId;
 
-          const isNestedBackward = () => {
-            if (!isNested()) {
+          const isStepBackward = () => {
+            if (!isStep()) {
               return false;
             }
 
-            if (!targetActivityNestedRoute) {
+            if (!targetStep) {
               return true;
             }
-            if (
-              currentActivityNestedRoute &&
-              currentActivityNestedRoute.id > targetActivityNestedRoute.id
-            ) {
+            if (currentStep && currentStep.id > targetStep.id) {
               return true;
             }
 
             return false;
           };
-          const isNestedForward = () => {
-            if (!isNested()) {
+          const isStepForward = () => {
+            if (!isStep()) {
               return false;
             }
 
-            if (!currentActivityNestedRoute) {
+            if (!currentStep) {
               return true;
             }
-            if (
-              targetActivityNestedRoute &&
-              currentActivityNestedRoute.id < targetActivityNestedRoute.id
-            ) {
+            if (targetStep && currentStep.id < targetStep.id) {
               return true;
             }
 
@@ -312,34 +305,38 @@ export function historySyncPlugin<
               dispatchEvent("Popped", {});
 
               if (!nextActivity) {
-                const targetNestedRoute = last(
-                  targetActivity.nestedRoutes ?? [],
-                );
-
                 pushFlag += 1;
                 dispatchEvent("Pushed", {
                   ...targetActivity.pushedBy,
                 });
 
-                if (targetNestedRoute) {
+                if (
+                  targetStep?.pushedBy.name === "StepPushed" ||
+                  targetStep?.pushedBy.name === "StepReplaced"
+                ) {
                   pushFlag += 1;
-                  dispatchEvent("NestedPushed", {
-                    ...targetNestedRoute.pushedBy,
+                  dispatchEvent("StepPushed", {
+                    ...targetStep.pushedBy,
                   });
                 }
               }
             });
           }
-          if (isNestedBackward()) {
+          if (isStepBackward()) {
             startTransition(() => {
-              if (!nextActivityNestedRoute && targetActivityNestedRoute) {
+              if (
+                !nextStep &&
+                targetStep &&
+                (targetStep?.pushedBy.name === "StepPushed" ||
+                  targetStep?.pushedBy.name === "StepReplaced")
+              ) {
                 pushFlag += 1;
-                dispatchEvent("NestedPushed", {
-                  ...targetActivityNestedRoute.pushedBy,
+                dispatchEvent("StepPushed", {
+                  ...targetStep.pushedBy,
                 });
               }
 
-              dispatchEvent("NestedPopped", {});
+              dispatchEvent("StepPopped", {});
             });
           }
 
@@ -353,16 +350,16 @@ export function historySyncPlugin<
               });
             });
           }
-          if (isNestedForward()) {
-            if (!targetActivityNestedRoute) {
+          if (isStepForward()) {
+            if (!targetStep) {
               return;
             }
 
             startTransition(() => {
               pushFlag += 1;
-              nestedPush({
-                activityNestedRouteId: targetActivityNestedRoute.id,
-                activityNestedRouteParams: targetActivityNestedRoute.params,
+              stepPush({
+                stepId: targetStep.id,
+                stepParams: targetStep.params,
               });
             });
           }
@@ -391,7 +388,7 @@ export function historySyncPlugin<
           useHash: options.useHash,
         });
       },
-      onNestedPushed({ effect: { activity, activityNestedRoute } }) {
+      onStepPushed({ effect: { activity, step } }) {
         if (pushFlag) {
           pushFlag -= 1;
           return;
@@ -406,7 +403,7 @@ export function historySyncPlugin<
           state: {
             _TAG: STATE_TAG,
             activity: removeActivityContext(activity),
-            activityNestedRoute,
+            step,
           },
           useHash: options.useHash,
         });
@@ -429,7 +426,7 @@ export function historySyncPlugin<
           useHash: options.useHash,
         });
       },
-      onNestedReplaced({ effect: { activity, activityNestedRoute } }) {
+      onStepReplaced({ effect: { activity, step } }) {
         if (!activity.isActive) {
           return;
         }
@@ -443,7 +440,7 @@ export function historySyncPlugin<
           state: {
             _TAG: STATE_TAG,
             activity: removeActivityContext(activity),
-            activityNestedRoute,
+            step,
           },
           useHash: options.useHash,
         });
@@ -485,7 +482,7 @@ export function historySyncPlugin<
         const currentActivity = activities.find(
           (activity) => activity.isActive,
         );
-        const popCount = 1 + (currentActivity?.nestedRoutes?.length ?? 0);
+        const popCount = currentActivity?.steps.length ?? 0;
 
         popFlag += popCount;
 
