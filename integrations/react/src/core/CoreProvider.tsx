@@ -1,6 +1,6 @@
 import type { DispatchEvent, DomainEvent } from "@stackflow/core";
 import { aggregate, makeEvent } from "@stackflow/core";
-import type { NestedPushedEvent } from "@stackflow/core/dist/event-types";
+import type { StepPushedEvent } from "@stackflow/core/dist/event-types";
 import React, {
   useCallback,
   useEffect,
@@ -55,7 +55,7 @@ export const CoreProvider: React.FC<CoreProviderProps> = ({
       : [];
 
     const initialEventsAfterPlugins = plugins.reduce<
-      (PushedEvent | NestedPushedEvent)[]
+      (PushedEvent | StepPushedEvent)[]
     >(
       (initialEvents, plugin) =>
         plugin.overrideInitialEvents?.({ initialEvents }) ?? initialEvents,

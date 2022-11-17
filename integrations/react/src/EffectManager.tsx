@@ -36,21 +36,21 @@ const EffectManager: React.FC = () => {
           plugins.forEach((plugin) => plugin.onPopped?.({ actions, effect }));
           break;
         }
-        case "NESTED_PUSHED": {
+        case "STEP_PUSHED": {
           plugins.forEach((plugin) =>
-            plugin.onNestedPushed?.({ actions, effect }),
+            plugin.onStepPushed?.({ actions, effect }),
           );
           break;
         }
-        case "NESTED_REPLACED": {
+        case "STEP_REPLACED": {
           plugins.forEach((plugin) =>
-            plugin.onNestedReplaced?.({ actions, effect }),
+            plugin.onStepReplaced?.({ actions, effect }),
           );
           break;
         }
-        case "NESTED_POPPED": {
+        case "STEP_POPPED": {
           plugins.forEach((plugin) =>
-            plugin.onNestedPopped?.({ actions, effect }),
+            plugin.onStepPopped?.({ actions, effect }),
           );
           break;
         }

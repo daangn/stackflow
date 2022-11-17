@@ -13,10 +13,10 @@ import StackRefManager from "./StackRefManager";
 import type { UseActionsOutputType } from "./useActions";
 import { useActions } from "./useActions";
 import type {
-  UseNestedActions,
-  UseNestedActionsOutputType,
-} from "./useNestedActions";
-import { useNestedActions } from "./useNestedActions";
+  UseStepActions,
+  UseStepActionsOutputType,
+} from "./useStepActions";
+import { useStepActions } from "./useStepActions";
 
 export interface StackProps {
   /**
@@ -69,19 +69,16 @@ export type StackflowOutput<T extends BaseActivities> = {
   useFlow: () => UseActionsOutputType<T>;
 
   /**
-   * Created `useNestedFlow()` hooks
+   * Created `useStepFlow()` hooks
    */
-  useNestedFlow: UseNestedActions<T>;
+  useStepFlow: UseStepActions<T>;
 
   /**
    * Created action triggers
    */
   actions: Pick<StackflowPluginActions, "dispatchEvent" | "getStack"> &
     Pick<UseActionsOutputType<T>, "push" | "pop" | "replace"> &
-    Pick<
-      UseNestedActionsOutputType<{}>,
-      "nestedPush" | "nestedReplace" | "nestedPop"
-    >;
+    Pick<UseStepActionsOutputType<{}>, "stepPush" | "stepReplace" | "stepPop">;
 };
 
 /**
@@ -159,26 +156,26 @@ export function stackflow<T extends BaseActivities>(
         options,
       );
     },
-    nestedPush(activityParams) {
+    stepPush(params) {
       if (!stackRef.current) {
-        throw new Error(stackRefNotFoundErrorMessage("nestedPush"));
+        throw new Error(stackRefNotFoundErrorMessage("stepPush"));
       }
 
-      return stackRef.current.actions.nestedPush(activityParams);
+      return stackRef.current.actions.stepPush(params);
     },
-    nestedReplace(activityParams) {
+    stepReplace(params) {
       if (!stackRef.current) {
-        throw new Error(stackRefNotFoundErrorMessage("nestedReplace"));
+        throw new Error(stackRefNotFoundErrorMessage("stepReplace"));
       }
 
-      return stackRef.current.actions.nestedReplace(activityParams);
+      return stackRef.current.actions.stepReplace(params);
     },
-    nestedPop() {
+    stepPop() {
       if (!stackRef.current) {
-        throw new Error(stackRefNotFoundErrorMessage("nestedPop"));
+        throw new Error(stackRefNotFoundErrorMessage("stepPop"));
       }
 
-      return stackRef.current.actions.nestedPop();
+      return stackRef.current.actions.stepPop();
     },
   };
 
@@ -212,7 +209,7 @@ export function stackflow<T extends BaseActivities>(
   return {
     Stack,
     useFlow: useActions,
-    useNestedFlow: useNestedActions,
+    useStepFlow: useStepActions,
     actions,
   };
 }

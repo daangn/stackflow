@@ -43,6 +43,13 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
           transitionState,
           params: event.activityParams,
           context: event.activityContext,
+          steps: [
+            {
+              id: event.activityId,
+              params: event.activityParams,
+              pushedBy: event,
+            },
+          ],
           pushedBy: event,
           metadata: {
             poppedBy: null,
@@ -79,6 +86,13 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
           transitionState,
           params: event.activityParams,
           context: event.activityContext,
+          steps: [
+            {
+              id: event.activityId,
+              params: event.activityParams,
+              pushedBy: event,
+            },
+          ],
           pushedBy: event,
           metadata: {
             poppedBy: null,
@@ -121,75 +135,61 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
           targetActivity.metadata.poppedBy = event;
           targetActivity.transitionState = transitionState;
 
-          if (targetActivity.nestedRoutes) {
-            if (transitionState === "exit-done") {
-              targetActivity.params = targetActivity.pushedBy.activityParams;
-            }
-
-            delete targetActivity.nestedRoutes;
+          if (transitionState === "exit-done") {
+            targetActivity.params = targetActivity.steps[0].params;
+            targetActivity.steps = [targetActivity.steps[0]];
           }
         }
 
         break;
       }
-      case "NestedPushed": {
+      case "StepPushed": {
         const targetActivity = activities
           .filter((activity) => activity.metadata.poppedBy === null)
           .sort((a1, a2) => a2.pushedBy.eventDate - a1.pushedBy.eventDate)[0];
 
         if (targetActivity) {
           const newRoute = {
-            id: event.activityNestedRouteId,
-            params: event.activityNestedRouteParams,
+            id: event.stepId,
+            params: event.stepParams,
             pushedBy: event,
           };
 
-          targetActivity.params = event.activityNestedRouteParams;
-          targetActivity.nestedRoutes = targetActivity.nestedRoutes
-            ? [...targetActivity.nestedRoutes, newRoute]
+          targetActivity.params = event.stepParams;
+          targetActivity.steps = targetActivity.steps
+            ? [...targetActivity.steps, newRoute]
             : [newRoute];
         }
         break;
       }
-      case "NestedReplaced": {
+      case "StepReplaced": {
         const targetActivity = activities
           .filter((activity) => activity.metadata.poppedBy === null)
           .sort((a1, a2) => a2.pushedBy.eventDate - a1.pushedBy.eventDate)[0];
 
         if (targetActivity) {
-          targetActivity.params = event.activityNestedRouteParams;
+          targetActivity.params = event.stepParams;
 
           const newRoute = {
-            id: event.activityNestedRouteId,
-            params: event.activityNestedRouteParams,
+            id: event.stepId,
+            params: event.stepParams,
             pushedBy: event,
           };
 
-          if (targetActivity.nestedRoutes) {
-            targetActivity.nestedRoutes.pop();
-
-            targetActivity.nestedRoutes = [
-              ...targetActivity.nestedRoutes,
-              newRoute,
-            ];
-          } else {
-            targetActivity.nestedReplacedBy = event;
-          }
+          targetActivity.steps.pop();
+          targetActivity.steps = [...targetActivity.steps, newRoute];
         }
         break;
       }
-      case "NestedPopped": {
+      case "StepPopped": {
         const targetActivity = activities
           .filter((activity) => activity.metadata.poppedBy === null)
           .sort((a1, a2) => a2.pushedBy.eventDate - a1.pushedBy.eventDate)[0];
 
-        if (targetActivity && targetActivity.nestedRoutes) {
-          targetActivity.nestedRoutes.pop();
+        if (targetActivity && targetActivity.steps.length > 1) {
+          targetActivity.steps.pop();
 
-          const beforeActivityParams =
-            last(targetActivity.nestedRoutes)?.params ??
-            targetActivity.nestedReplacedBy?.activityNestedRouteParams ??
-            targetActivity.pushedBy?.activityParams;
+          const beforeActivityParams = last(targetActivity.steps)?.params;
 
           if (beforeActivityParams) {
             targetActivity.params = beforeActivityParams;
@@ -236,20 +236,11 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
         name: activity.name,
         transitionState: activity.transitionState,
         params: activity.params,
+        steps: activity.steps,
         pushedBy: activity.pushedBy,
         isTop: lastVisibleActivity?.id === activity.id,
         isActive: lastEnteredActivity?.id === activity.id,
         zIndex: visibleActivities.findIndex(({ id }) => id === activity.id),
-        ...(activity.nestedRoutes
-          ? {
-              nestedRoutes: activity.nestedRoutes,
-            }
-          : null),
-        ...(activity.nestedReplacedBy
-          ? {
-              nestedReplacedBy: activity.nestedReplacedBy,
-            }
-          : null),
         ...(activity.context
           ? {
               context: activity.context,

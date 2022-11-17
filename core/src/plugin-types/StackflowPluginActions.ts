@@ -1,11 +1,11 @@
 import type { AggregateOutput } from "../AggregateOutput";
 import type {
-  NestedPoppedEvent,
-  NestedPushedEvent,
-  NestedReplacedEvent,
   PoppedEvent,
   PushedEvent,
   ReplacedEvent,
+  StepPoppedEvent,
+  StepPushedEvent,
+  StepReplacedEvent,
 } from "../event-types";
 import type { BaseDomainEvent } from "../event-types/_base";
 import type { DispatchEvent } from "../event-utils";
@@ -27,21 +27,19 @@ export type StackflowPluginActions = {
   pop: (params?: Omit<PoppedEvent, keyof BaseDomainEvent>) => void;
 
   /**
-   * Change current activity's parameter with nested push behavior
+   * Push new step in current activity
    */
-  nestedPush: (params: Omit<NestedPushedEvent, keyof BaseDomainEvent>) => void;
+  stepPush: (params: Omit<StepPushedEvent, keyof BaseDomainEvent>) => void;
 
   /**
-   * Change current activity's parameter with nested replace behavior
+   * Replace current step in current activity
    */
-  nestedReplace: (
-    params: Omit<NestedReplacedEvent, keyof BaseDomainEvent>,
-  ) => void;
+  stepReplace: (params: Omit<StepReplacedEvent, keyof BaseDomainEvent>) => void;
 
   /**
-   * Remove nested pushed state
+   * Remove current step
    */
-  nestedPop: (params?: Omit<NestedPoppedEvent, keyof BaseDomainEvent>) => void;
+  stepPop: (params?: Omit<StepPoppedEvent, keyof BaseDomainEvent>) => void;
 
   /**
    * Get current stack state

@@ -33,44 +33,38 @@ export function produceEffects(
       nextActivity?.transitionState === "enter-active" ||
       nextActivity?.transitionState === "enter-done";
 
-    if (prevActivity && nextActivity) {
+    if (prevActivity && nextActivity && prevActivity.id === nextActivity.id) {
       for (
         let j = 0;
         j <
         Math.max(
-          (prevActivity.nestedRoutes ?? []).length,
-          (nextActivity.nestedRoutes ?? []).length,
+          (prevActivity.steps ?? []).length,
+          (nextActivity.steps ?? []).length,
         );
         j += 1
       ) {
-        const prevNestedRoutes = prevActivity.nestedRoutes ?? [];
-        const nextNestedRoutes = nextActivity.nestedRoutes ?? [];
+        const prevStep = prevActivity.steps[j];
+        const nextStep = nextActivity.steps[j];
 
-        const prevNestedRoute = prevNestedRoutes[j];
-        const nextNestedRoute = nextNestedRoutes[j];
-
-        if (!prevNestedRoute && nextNestedRoute) {
+        if (!prevStep && nextStep) {
           output.push({
-            _TAG:
-              nextNestedRoute.pushedBy.name === "NestedPushed"
-                ? "NESTED_PUSHED"
-                : "NESTED_REPLACED",
+            _TAG: "STEP_PUSHED",
             activity: nextActivity,
-            activityNestedRoute: nextNestedRoute,
+            step: nextStep,
+          });
+        } else if (prevStep && !nextStep) {
+          output.push({
+            _TAG: "STEP_POPPED",
+            activity: nextActivity,
           });
         } else if (
-          prevNestedRoute?.pushedBy.name === "NestedPushed" &&
-          nextNestedRoute?.pushedBy.name === "NestedReplaced"
+          prevActivity.steps.length === nextActivity.steps.length &&
+          prevStep.id !== nextStep.id
         ) {
           output.push({
-            _TAG: "NESTED_REPLACED",
+            _TAG: "STEP_REPLACED",
             activity: nextActivity,
-            activityNestedRoute: nextNestedRoute,
-          });
-        } else if (prevNestedRoute && !nextNestedRoute) {
-          output.push({
-            _TAG: "NESTED_POPPED",
-            activity: nextActivity,
+            step: nextStep,
           });
         }
       }
@@ -99,22 +93,6 @@ export function produceEffects(
       output.push({
         _TAG: "REPLACED",
         activity: nextActivity,
-      });
-    } else if (
-      prevActivity &&
-      nextActivity &&
-      nextActivity.nestedReplacedBy &&
-      (!prevActivity.nestedReplacedBy ||
-        nextActivity.nestedReplacedBy.id !== prevActivity.nestedReplacedBy?.id)
-    ) {
-      output.push({
-        _TAG: "NESTED_REPLACED",
-        activity: nextActivity,
-        activityNestedRoute: {
-          id: nextActivity.nestedReplacedBy.activityNestedRouteId,
-          params: nextActivity.nestedReplacedBy.activityNestedRouteParams,
-          pushedBy: nextActivity.nestedReplacedBy,
-        },
       });
     }
   }

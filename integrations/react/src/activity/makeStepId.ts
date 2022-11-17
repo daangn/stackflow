@@ -1,5 +1,5 @@
 import { id } from "@stackflow/core";
 
-export function makeActivityNestedRouteId() {
+export function makeStepId() {
   return id();
 }
