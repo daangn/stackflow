@@ -26,6 +26,7 @@ export const appBar = recipe({
     f.contentBox,
     background,
     {
+      backgroundColor: globalVars.appBar.backgroundColor,
       height: globalVars.appBar.height,
       paddingTop: ["constant(safe-area-inset-top)", "env(safe-area-inset-top)"],
       zIndex: vars.zIndexes.appBar,
