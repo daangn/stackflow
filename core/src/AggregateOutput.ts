@@ -1,8 +1,8 @@
 import type {
-  NestedPushedEvent,
-  NestedReplacedEvent,
   PushedEvent,
   ReplacedEvent,
+  StepPushedEvent,
+  StepReplacedEvent,
 } from "./event-types";
 
 export type ActivityTransitionState =
@@ -11,12 +11,12 @@ export type ActivityTransitionState =
   | "exit-active"
   | "exit-done";
 
-export type ActivityNestedRoute = {
+export type ActivityStep = {
   id: string;
   params: {
     [key: string]: string | undefined;
   };
-  pushedBy: NestedPushedEvent | NestedReplacedEvent;
+  pushedBy: PushedEvent | ReplacedEvent | StepPushedEvent | StepReplacedEvent;
 };
 
 export type Activity = {
@@ -28,8 +28,7 @@ export type Activity = {
   };
   context?: {};
   pushedBy: PushedEvent | ReplacedEvent;
-  nestedReplacedBy?: NestedReplacedEvent;
-  nestedRoutes?: ActivityNestedRoute[];
+  steps: ActivityStep[];
   isTop: boolean;
   isActive: boolean;
   zIndex: number;
