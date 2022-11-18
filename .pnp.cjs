@@ -3621,6 +3621,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["eslint-plugin-react-hooks", "virtual:5d222998b86cceed4c8d843e557f0e3b94c8ccb1e8952571a8d45c8a6806e6624abcd819a5fa16c66371a9250ca177cd0fc04f42e577bbbc49771098023bb79e#npm:4.6.0"],\
             ["eslint-plugin-simple-import-sort", "virtual:5d222998b86cceed4c8d843e557f0e3b94c8ccb1e8952571a8d45c8a6806e6624abcd819a5fa16c66371a9250ca177cd0fc04f42e577bbbc49771098023bb79e#npm:7.0.0"],\
             ["parse-prop-types", "virtual:eeae00ab9cdb4d807ead707d69a05cf69e4e15f4e94e6427b60f23763785847dffc9899221c63493fb7012f64c6d1ead2deba588072b0b1635942f995a9b7033#npm:0.3.0"],\
+            ["prop-types", "npm:15.8.1"],\
             ["react", "npm:18.2.0"],\
             ["react-fast-compare", "npm:3.2.0"],\
             ["rimraf", "npm:3.0.2"],\
@@ -3655,6 +3656,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["eslint-plugin-react-hooks", "virtual:5d222998b86cceed4c8d843e557f0e3b94c8ccb1e8952571a8d45c8a6806e6624abcd819a5fa16c66371a9250ca177cd0fc04f42e577bbbc49771098023bb79e#npm:4.6.0"],\
             ["eslint-plugin-simple-import-sort", "virtual:5d222998b86cceed4c8d843e557f0e3b94c8ccb1e8952571a8d45c8a6806e6624abcd819a5fa16c66371a9250ca177cd0fc04f42e577bbbc49771098023bb79e#npm:7.0.0"],\
             ["parse-prop-types", "virtual:eeae00ab9cdb4d807ead707d69a05cf69e4e15f4e94e6427b60f23763785847dffc9899221c63493fb7012f64c6d1ead2deba588072b0b1635942f995a9b7033#npm:0.3.0"],\
+            ["prop-types", "npm:15.8.1"],\
             ["react", "npm:18.2.0"],\
             ["react-fast-compare", "npm:3.2.0"],\
             ["rimraf", "npm:3.0.2"],\
@@ -13122,7 +13124,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["parse-prop-types", "virtual:eeae00ab9cdb4d807ead707d69a05cf69e4e15f4e94e6427b60f23763785847dffc9899221c63493fb7012f64c6d1ead2deba588072b0b1635942f995a9b7033#npm:0.3.0"],\
             ["@types/prop-types", null],\
-            ["prop-types", null]\
+            ["prop-types", "npm:15.8.1"]\
           ],\
           "packagePeers": [\
             "@types/prop-types",\
