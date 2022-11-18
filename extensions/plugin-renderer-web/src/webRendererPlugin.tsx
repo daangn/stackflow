@@ -9,9 +9,7 @@ export function webRendererPlugin(): StackflowReactPlugin {
         <>
           {stack
             .render()
-            .activities.filter(
-              (activity) => activity.isActive,
-            )
+            .activities.filter((activity) => activity.isActive)
             .map((activity) => (
               <React.Fragment key={activity.key}>
                 {activity.render()}
