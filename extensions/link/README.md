@@ -19,12 +19,10 @@ import { stackflow } from "@stackflow/react";
 import { historySyncPlugin } from "@stackflow/plugin-history-sync";
 import { preloadPlugin } from "@stackflow/plugin-preload";
 
-const activities = {
-  // ...
-};
-
-const { Stack, useFlow } = stackflow({
-  activities,
+const { Stack, useFlow, activities } = stackflow({
+  activities: {
+    // ...
+  },
   plugins: [
     historySyncPlugin({
       //...

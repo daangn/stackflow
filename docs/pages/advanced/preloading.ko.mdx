@@ -24,14 +24,12 @@ import { preloadPlugin } from "@stackflow/plugin-preload";
 import MyActivity from "./MyActivity";
 import Article from "./Article";
 
-const activities = {
-  MyActivity,
-  Article,
-};
-
-const { Stack, useFlow } = stackflow({
+const { Stack, useFlow, activities } = stackflow({
   transitionDuration: 350,
-  activities,
+  activities: {
+    MyActivity,
+    Article,
+  },
   plugins: [
     basicRendererPlugin(),
     basicUIPlugin({
