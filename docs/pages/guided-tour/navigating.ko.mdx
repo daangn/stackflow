@@ -212,7 +212,7 @@ type ArticleParams = {
 };
 const Article: ActivityComponentType<ArticleParams> = ({ params }) => {
   // 타입 안정성을 위해 현재 액티비티의 이름을 넣어줘요
-  const { pushStep, replaceStep, popStep } = useStepFlow("Article");
+  const { pushStep } = useStepFlow("Article");
 
   const onNextClick = () => {
     // `pushStep()`을 호출하면 params.title이 변경돼요.
@@ -220,16 +220,12 @@ const Article: ActivityComponentType<ArticleParams> = ({ params }) => {
       title: "Next Title",
     });
   };
-  const onPrevClick = () => {
-    popStep();
-  };
 
   return (
     <AppScreen appBar={{ title: "Article" }}>
       <div>
         <h1>{params.title}</h1>
         <button onClick={onNextClick}>next</button>
-        <button onClick={onPrevClick}>prev</button>
       </div>
     </AppScreen>
   );
@@ -240,9 +236,87 @@ export default MyActivity;
 
 ## 스텝 교체하기
 
+`useStepFlow()`의 `replaceStep()` 함수를 활용하면 현재 스텝을 교체할 수 있어요.
+
+```tsx
+/**
+ * Article.tsx
+ */
+import { ActivityComponentType } from "@stackflow/react";
+import { AppScreen } from "@stackflow/plugin-basic-ui";
+import { useStepFlow } from "./stackflow";
+
+type ArticleParams = {
+  title: string;
+};
+const Article: ActivityComponentType<ArticleParams> = ({ params }) => {
+  // 타입 안정성을 위해 현재 액티비티의 이름을 넣어줘요
+  const { replaceStep } = useStepFlow("Article");
+
+  const onChangeClick = () => {
+    // `replaceStep()`을 호출하면 params.title이 변경돼요
+    replaceStep({
+      title: "Next Title",
+    });
+  };
+
+  return (
+    <AppScreen appBar={{ title: "Article" }}>
+      <div>
+        <h1>{params.title}</h1>
+        <button onClick={onChangeClick}>change</button>
+      </div>
+    </AppScreen>
+  );
+};
+
+export default MyActivity;
+```
+
+## 스텝 삭제하기
+
+`useStepFlow()`의 `popStep()` 함수를 활용하면 현재 스텝을 삭제할 수 있어요.
+
+```tsx
+/**
+ * Article.tsx
+ */
+import { ActivityComponentType } from "@stackflow/react";
+import { AppScreen } from "@stackflow/plugin-basic-ui";
+import { useStepFlow } from "./stackflow";
+
+type ArticleParams = {
+  title: string;
+};
+const Article: ActivityComponentType<ArticleParams> = ({ params }) => {
+  // 타입 안정성을 위해 현재 액티비티의 이름을 넣어줘요
+  const { popStep } = useStepFlow("Article");
+
+  const onPrevClick = () => {
+    // `popStep()`을 호출하면 이전 params.title로 돌아가요
+    popStep();
+  };
+
+  return (
+    <AppScreen appBar={{ title: "Article" }}>
+      <div>
+        <h1>{params.title}</h1>
+        <button onClick={onPrevClick}>prev</button>
+      </div>
+    </AppScreen>
+  );
+};
+
+export default MyActivity;
+```
+
 <Callout emoji="💡">
-  스텝이 푸시된 상태에서 `useFlow().pop()`을 활용하면 액티비티 내부에 쌓여져있는
-  모든 스텝들이 한번에 없어져요.
+  만약 삭제할 스텝이 없는 상태라면, 아무것도 일어나지 않아요.
+</Callout>
+
+<Callout emoji="💡">
+  여러개의 스텝이 푸시된 상태에서 `useFlow().pop()`을 활용하면 액티비티 내부에
+  쌓여져있는 모든 스텝들이 한번에 없어져요.
 </Callout>
 
 ---
