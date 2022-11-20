@@ -50,6 +50,7 @@ test("aggregate - InitializedEvent만 존재하는 경우, 빈 스택을 내려�
 
   expect(output).toStrictEqual({
     activities: [],
+    registeredActivities: [],
     transitionDuration: 300,
     globalTransitionState: "idle",
   });
@@ -98,6 +99,14 @@ test("aggregate - 푸시하면 스택에 추가됩니다", () => {
         zIndex: 0,
       }),
     ],
+    registeredActivities: [
+      {
+        name: "home",
+      },
+      {
+        name: "sample",
+      },
+    ],
     transitionDuration: 300,
     globalTransitionState: "idle",
   });
@@ -145,6 +154,14 @@ test("aggregate - PushedEvent에 activityId, activityName이 다른 경우 스�
         isTop: true,
         zIndex: 0,
       }),
+    ],
+    registeredActivities: [
+      {
+        name: "home",
+      },
+      {
+        name: "sample2",
+      },
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
@@ -199,6 +216,14 @@ test("aggregate - 같은 activityId로 여러번 푸시되는 경우 이전의 �
         isTop: true,
         zIndex: 0,
       }),
+    ],
+    registeredActivities: [
+      {
+        name: "home",
+      },
+      {
+        name: "sample2",
+      },
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
@@ -272,6 +297,14 @@ test("aggregate - 다른 activityName으로 두번 푸시하면 스택에 정상
         zIndex: 1,
       }),
     ],
+    registeredActivities: [
+      {
+        name: "home",
+      },
+      {
+        name: "sample2",
+      },
+    ],
     transitionDuration: 300,
     globalTransitionState: "idle",
   });
@@ -344,6 +377,14 @@ test("aggregate - 같은 activityName으로 두번 푸시하면 정상적으로 
         zIndex: 1,
       }),
     ],
+    registeredActivities: [
+      {
+        name: "home",
+      },
+      {
+        name: "sample2",
+      },
+    ],
     transitionDuration: 300,
     globalTransitionState: "idle",
   });
@@ -390,6 +431,11 @@ test("aggregate - 푸시한 직후에는 transition.state가 enter-active 입니
         isTop: true,
         zIndex: 0,
       }),
+    ],
+    registeredActivities: [
+      {
+        name: "sample",
+      },
     ],
     transitionDuration: 300,
     globalTransitionState: "loading",
@@ -438,6 +484,11 @@ test("aggregate - 현재 시간과 변화된 시간의 차가 InitializedEvent�
         zIndex: 0,
       }),
     ],
+    registeredActivities: [
+      {
+        name: "sample",
+      },
+    ],
     transitionDuration: 300,
     globalTransitionState: "loading",
   });
@@ -484,6 +535,11 @@ test("aggregate - 푸시한 이후 InitializedEvent에서 셋팅된 transitionDu
         isTop: true,
         zIndex: 0,
       }),
+    ],
+    registeredActivities: [
+      {
+        name: "sample",
+      },
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
@@ -556,6 +612,11 @@ test("aggregate - 여러번 푸시한 경우, transitionDuration 전에 푸시�
         zIndex: 1,
       }),
     ],
+    registeredActivities: [
+      {
+        name: "sample",
+      },
+    ],
     transitionDuration: 300,
     globalTransitionState: "loading",
   });
@@ -627,6 +688,11 @@ test("aggregate - Pop하면 최상단에 존재하는 Activity가 exit-done 상�
         isTop: false,
         zIndex: -1,
       }),
+    ],
+    registeredActivities: [
+      {
+        name: "home",
+      },
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
@@ -729,6 +795,11 @@ test("aggregate - Pop을 여러번하면 차례대로 exit-done 상태가 됩니
         zIndex: -1,
       }),
     ],
+    registeredActivities: [
+      {
+        name: "home",
+      },
+    ],
     transitionDuration: 300,
     globalTransitionState: "idle",
   });
@@ -799,6 +870,11 @@ test("aggregate - Pop을 여러번하면 차례대로 exit-done 상태가 됩니
         isTop: false,
         zIndex: -1,
       }),
+    ],
+    registeredActivities: [
+      {
+        name: "home",
+      },
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
@@ -877,6 +953,11 @@ test("aggregate - 가장 바닥에 있는 Activity는 Pop 되지 않습니다", 
         zIndex: -1,
       }),
     ],
+    registeredActivities: [
+      {
+        name: "home",
+      },
+    ],
     transitionDuration: 300,
     globalTransitionState: "idle",
   });
@@ -930,6 +1011,11 @@ test("aggregate - 가장 바닥에 있는 Activity는 Pop 되지 않습니다", 
         isTop: false,
         zIndex: -1,
       }),
+    ],
+    registeredActivities: [
+      {
+        name: "home",
+      },
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
@@ -1005,6 +1091,11 @@ test("aggregate - transitionDuration 이전에 Pop을 한 경우 exit-active 상
         zIndex: 1,
       }),
     ],
+    registeredActivities: [
+      {
+        name: "home",
+      },
+    ],
     transitionDuration: 300,
     globalTransitionState: "loading",
   });
@@ -1071,6 +1162,11 @@ test("aggregate - 이벤트가 중복되거나 순서가 섞여도 정상적으�
         isTop: false,
         zIndex: -1,
       }),
+    ],
+    registeredActivities: [
+      {
+        name: "home",
+      },
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
@@ -1206,6 +1302,11 @@ test("aggregate - 같은 activity.id로 푸시되는 경우, 기존에 푸시되
         zIndex: -1,
       }),
     ],
+    registeredActivities: [
+      {
+        name: "home",
+      },
+    ],
     transitionDuration: 300,
     globalTransitionState: "loading",
   });
@@ -1258,6 +1359,11 @@ test("aggregate - PushedEvent에 params가 담겨있는 경우 액티비티에 �
         isTop: true,
         zIndex: 0,
       }),
+    ],
+    registeredActivities: [
+      {
+        name: "sample",
+      },
     ],
     transitionDuration: 300,
     globalTransitionState: "loading",
@@ -1342,6 +1448,11 @@ test("aggregate - ReplacedEvent가 발생한 직후 최상단의 Activity를 유
         zIndex: 1,
       }),
     ],
+    registeredActivities: [
+      {
+        name: "sample",
+      },
+    ],
     transitionDuration: 300,
     globalTransitionState: "loading",
   });
@@ -1424,6 +1535,11 @@ test("aggregate - ReplacedEvent가 발생한 후 transitionDuration만큼 지난
         isTop: true,
         zIndex: 0,
       }),
+    ],
+    registeredActivities: [
+      {
+        name: "sample",
+      },
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
@@ -1538,6 +1654,11 @@ test("aggregate - ReplacedEvent가 두 번 발생한 후 transitionDuration만�
         zIndex: 0,
       }),
     ],
+    registeredActivities: [
+      {
+        name: "sample",
+      },
+    ],
     transitionDuration: 300,
     globalTransitionState: "idle",
   });
@@ -1591,6 +1712,11 @@ test("aggregate - skipEnterActiveState가 true이면 eventDate가 transitionDura
         isTop: true,
         zIndex: 0,
       }),
+    ],
+    registeredActivities: [
+      {
+        name: "sample",
+      },
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
@@ -1665,6 +1791,11 @@ test("aggregate - skipExitActiveState가 true이면 eventDate가 transitionDurat
         isActive: false,
         isTop: false,
         zIndex: -1,
+      },
+    ],
+    registeredActivities: [
+      {
+        name: "home",
       },
     ],
     transitionDuration: 300,
@@ -1751,6 +1882,11 @@ test("aggregate - skipExitActiveState가 true이면 ReplacedEvent가 발생한 �
         zIndex: 0,
       }),
     ],
+    registeredActivities: [
+      {
+        name: "sample",
+      },
+    ],
     transitionDuration: 300,
     globalTransitionState: "idle",
   });
@@ -1803,6 +1939,11 @@ test("aggregate - PushedEvent에 activityContext가 담겨있는 경우 액티�
         isTop: true,
         zIndex: 0,
       }),
+    ],
+    registeredActivities: [
+      {
+        name: "sample",
+      },
     ],
     transitionDuration: 300,
     globalTransitionState: "loading",
@@ -1886,6 +2027,11 @@ test("aggregate - ReplacedEvent에 activityContext가 담겨있는 경우 액티
         isTop: true,
         zIndex: 1,
       }),
+    ],
+    registeredActivities: [
+      {
+        name: "sample",
+      },
     ],
     transitionDuration: 300,
     globalTransitionState: "loading",
@@ -1977,6 +2123,11 @@ test("aggregate - ReplacedEvent에 현재 상단에 존재하는 activityId가 �
         isTop: true,
         zIndex: 1,
       }),
+    ],
+    registeredActivities: [
+      {
+        name: "sample",
+      },
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
@@ -2099,6 +2250,11 @@ test("aggregate - ReplacedEvent에 현재 중간에 존재하는 activityId가 �
         zIndex: 2,
       }),
     ],
+    registeredActivities: [
+      {
+        name: "sample",
+      },
+    ],
     transitionDuration: 300,
     globalTransitionState: "idle",
   });
@@ -2219,6 +2375,11 @@ test("aggregate - ReplacedEvent에 현재 중간에 존재하는 activityId가 �
         isTop: true,
         zIndex: 2,
       }),
+    ],
+    registeredActivities: [
+      {
+        name: "sample",
+      },
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
@@ -2406,6 +2567,14 @@ test("aggregate - ReplacedEvent가 같은 activityId로 여러번 수행되었�
         context: { path: "/articles/02542470/?title=Master&referrer=my" },
       },
     ],
+    registeredActivities: [
+      {
+        name: "Main",
+      },
+      {
+        name: "Article",
+      },
+    ],
     transitionDuration: 350,
     globalTransitionState: "loading",
   });
@@ -2498,6 +2667,11 @@ test("aggregate - 현재 특정 액티비티가 애니메이션 되고 있는 �
         zIndex: 1,
       }),
     ],
+    registeredActivities: [
+      {
+        name: "sample",
+      },
+    ],
     transitionDuration: 300,
     globalTransitionState: "loading",
   });
@@ -2589,6 +2763,11 @@ test("aggregate - 현재 특정 액티비티가 애니메이션이 되고 있는
         zIndex: 1,
       }),
     ],
+    registeredActivities: [
+      {
+        name: "sample",
+      },
+    ],
     transitionDuration: 300,
     globalTransitionState: "idle",
   });
@@ -2657,6 +2836,11 @@ test("aggregate - StepPushedEvent가 발생하면, 최상단 액티비티의 파
         zIndex: 0,
       }),
     ],
+    registeredActivities: [
+      {
+        name: "sample",
+      },
+    ],
     transitionDuration: 300,
     globalTransitionState: "idle",
   });
@@ -2719,6 +2903,11 @@ test("aggregate - StepPushedEvent가 쌓인 상태에서, StepPoppedEvent가 들
         isTop: true,
         zIndex: 0,
       }),
+    ],
+    registeredActivities: [
+      {
+        name: "sample",
+      },
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
@@ -2812,6 +3001,11 @@ test("aggregate - StepPushedEvent가 쌓인 상태에서, PoppedEvent가 들어�
         isTop: false,
         zIndex: -1,
       }),
+    ],
+    registeredActivities: [
+      {
+        name: "sample",
+      },
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
@@ -2914,6 +3108,11 @@ test("aggregate - StepPushedEvent가 쌓인 상태에서, PoppedEvent가 들어�
         zIndex: 1,
       }),
     ],
+    registeredActivities: [
+      {
+        name: "sample",
+      },
+    ],
     transitionDuration: 300,
     globalTransitionState: "loading",
   });
@@ -2974,6 +3173,11 @@ test("aggregate - StepReplacedEvent가 발생하면, 최상단 액티비티의 �
         isTop: true,
         zIndex: 0,
       }),
+    ],
+    registeredActivities: [
+      {
+        name: "sample",
+      },
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
@@ -3038,6 +3242,11 @@ test("aggregate - 만약 StepPoppedEvent를 통해 제거할 수 있는 영역�
         isTop: true,
         zIndex: 0,
       }),
+    ],
+    registeredActivities: [
+      {
+        name: "sample",
+      },
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
