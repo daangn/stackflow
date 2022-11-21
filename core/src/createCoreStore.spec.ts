@@ -200,3 +200,10 @@ test("createCoreStore - subscribe에 등록하면, 스택 상태 변경이 있�
   expect(listener2).toHaveBeenCalledTimes(0);
   expect(listener3).toHaveBeenCalledTimes(2);
 });
+
+// overrideActionParams
+// replace
+// pop
+// stepPush
+// stepReplace
+// stepPop
