@@ -106,6 +106,6 @@ export type StackflowPlugin = () => {
    */
   overrideInitialEvents?: (args: {
     initialEvents: (PushedEvent | StepPushedEvent)[];
-    initContext: any;
+    initialContext: any;
   }) => (PushedEvent | StepPushedEvent)[];
 };

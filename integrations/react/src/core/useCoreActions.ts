@@ -1,5 +1,5 @@
 import React from "react";
 
-import { CoreActionsContext } from "./CoreActionsContext";
+import { CoreActionsContext } from "./CoreProvider";
 
 export const useCoreActions = () => React.useContext(CoreActionsContext);

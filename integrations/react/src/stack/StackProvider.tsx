@@ -1,8 +1,9 @@
 import type { AggregateOutput } from "@stackflow/core";
-import React from "react";
+import React, { createContext } from "react";
 
 import { useMemoDeep } from "../utils";
-import { StackContext } from "./StackContext";
+
+export const StackContext = createContext<AggregateOutput>(null as any);
 
 interface StackProviderProps {
   children: React.ReactNode;

@@ -60,10 +60,10 @@ const { Stack, useFlow } = stackflow({
 
 <Callout emoji="⚡️">
   서버사이드 렌더링 환경에서는 `window.location` 값이 없으므로 초기 액티비티를 결정할 수 없어요.
-  초기 액티비티를 결정하려면 다음과 같이 Stack의 `initContext`에 `req.path` 필드에 path 값을 넣어주세요.
+  초기 액티비티를 결정하려면 다음과 같이 Stack의 `initialContext`에 `req.path` 필드에 path 값을 넣어주세요.
 
 ```tsx
-<Stack initContext={{ req: { path: "/..." } }} />
+<Stack initialContext={{ req: { path: "/..." } }} />
 ```
 
 </Callout>

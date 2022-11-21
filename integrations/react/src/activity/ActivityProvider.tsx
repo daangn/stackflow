@@ -1,8 +1,9 @@
 import type { Activity } from "@stackflow/core";
-import React from "react";
+import React, { createContext } from "react";
 
 import { useMemoDeep } from "../utils";
-import { ActivityContext } from "./ActivityContext";
+
+export const ActivityContext = createContext<Activity>(null as any);
 
 interface ActivityProviderProps {
   children: React.ReactNode;

@@ -1,5 +1,6 @@
 /* eslint-disable no-use-before-define */
 
+import type { BaseDomainEvent } from "event-types/_base";
 import isEqual from "react-fast-compare";
 
 import { aggregate } from "./aggregate";
@@ -21,13 +22,16 @@ export type CreateCoreStoreOptions = {
 };
 
 export type CreateCoreStoreOutput = {
-  coreActions: StackflowActions;
+  actions: StackflowActions;
+  initialize: () => void;
   subscribe: (listener: () => void) => () => void;
 };
 
 export function createCoreStore(
   options: CreateCoreStoreOptions,
 ): CreateCoreStoreOutput {
+  let initialized = false;
+
   const events = [...options.initialEvents];
   const stack = {
     value: aggregate(events, new Date().getTime()),
@@ -42,7 +46,7 @@ export function createCoreStore(
     },
   });
 
-  const plugins: ReturnType<StackflowPlugin>[] = [
+  const pluginInstances: ReturnType<StackflowPlugin>[] = [
     defaultPlugin(),
     ...options.plugins.map((plugin) => plugin()),
   ];
@@ -52,25 +56,18 @@ export function createCoreStore(
 
     stack.value = nextStackValue;
 
-    triggerPostEffectHooks(effects, plugins);
+    triggerPostEffectHooks(effects, pluginInstances);
   };
 
   const dispatchEvent: StackflowActions["dispatchEvent"] = (name, params) => {
-    const { isPrevented, nextEvent } = triggerPreEffectHooks(
-      makeEvent(name, params),
-      plugins,
-    );
-
-    if (isPrevented) {
-      return;
-    }
+    const newEvent = makeEvent(name, params);
 
     const nextStackValue = aggregate(
-      [...events, nextEvent],
+      [...events, newEvent],
       new Date().getTime(),
     );
 
-    events.push(nextEvent);
+    events.push(newEvent);
     setStackValue(nextStackValue);
 
     const interval = setInterval(() => {
@@ -86,14 +83,35 @@ export function createCoreStore(
     }, INTERVAL_MS);
   };
 
-  function triggerPreEffectHooks(
-    event: DomainEvent,
+  function triggerPreEffectHooks<T extends DomainEvent>(
+    event: T,
     plugins: ReturnType<StackflowPlugin>[],
-  ) {
+  ): {
+    isPrevented: boolean;
+    overridenParams: Omit<T, keyof BaseDomainEvent>;
+  } {
     let isPrevented = false;
-    let nextEvent: DomainEvent = {
+    let nextEvent: T = {
       ...event,
     };
+
+    function toParams(event: T): Omit<T, keyof BaseDomainEvent> {
+      const params: Partial<BaseDomainEvent> & Omit<T, keyof BaseDomainEvent> =
+        { ...event };
+
+      delete params.id;
+      delete params.eventDate;
+      delete params.name;
+
+      return params;
+    }
+
+    if (!initialized) {
+      return {
+        isPrevented,
+        overridenParams: toParams(nextEvent),
+      };
+    }
 
     const preventDefault = () => {
       isPrevented = true;
@@ -113,7 +131,7 @@ export function createCoreStore(
               ...nextEvent,
             },
             actions: {
-              ...coreActions,
+              ...actions,
               preventDefault,
               overrideActionParams,
             },
@@ -126,7 +144,7 @@ export function createCoreStore(
               ...nextEvent,
             },
             actions: {
-              ...coreActions,
+              ...actions,
               preventDefault,
               overrideActionParams,
             },
@@ -139,7 +157,7 @@ export function createCoreStore(
               ...nextEvent,
             },
             actions: {
-              ...coreActions,
+              ...actions,
               preventDefault,
               overrideActionParams,
             },
@@ -152,7 +170,7 @@ export function createCoreStore(
               ...nextEvent,
             },
             actions: {
-              ...coreActions,
+              ...actions,
               preventDefault,
               overrideActionParams,
             },
@@ -165,7 +183,7 @@ export function createCoreStore(
               ...nextEvent,
             },
             actions: {
-              ...coreActions,
+              ...actions,
               preventDefault,
               overrideActionParams,
             },
@@ -178,7 +196,7 @@ export function createCoreStore(
               ...nextEvent,
             },
             actions: {
-              ...coreActions,
+              ...actions,
               preventDefault,
               overrideActionParams,
             },
@@ -192,7 +210,7 @@ export function createCoreStore(
 
     return {
       isPrevented,
-      nextEvent,
+      overridenParams: toParams(nextEvent),
     };
   }
 
@@ -200,42 +218,46 @@ export function createCoreStore(
     effects: Effect[],
     plugins: ReturnType<StackflowPlugin>[],
   ) {
+    if (!initialized) {
+      return;
+    }
+
     effects.forEach((effect) => {
       plugins.forEach((plugin) => {
         switch (effect._TAG) {
           case "PUSHED":
             return plugin.onPushed?.({
-              actions: coreActions,
+              actions,
               effect,
             });
           case "REPLACED":
             return plugin.onReplaced?.({
-              actions: coreActions,
+              actions,
               effect,
             });
           case "POPPED":
             return plugin.onPopped?.({
-              actions: coreActions,
+              actions,
               effect,
             });
           case "STEP_PUSHED":
             return plugin.onStepPushed?.({
-              actions: coreActions,
+              actions,
               effect,
             });
           case "STEP_REPLACED":
             return plugin.onStepReplaced?.({
-              actions: coreActions,
+              actions,
               effect,
             });
           case "STEP_POPPED":
             return plugin.onStepPopped?.({
-              actions: coreActions,
+              actions,
               effect,
             });
           case "%SOMETHING_CHANGED%":
             return plugin.onChanged?.({
-              actions: coreActions,
+              actions,
               effect,
             });
           default:
@@ -245,33 +267,96 @@ export function createCoreStore(
     });
   }
 
-  const coreActions: StackflowActions = {
+  const actions: StackflowActions = {
     getStack() {
       return stack.value;
     },
     dispatchEvent,
     push(params) {
-      dispatchEvent("Pushed", params);
+      const { isPrevented, overridenParams } = triggerPreEffectHooks(
+        makeEvent("Pushed", params),
+        pluginInstances,
+      );
+
+      if (isPrevented) {
+        return;
+      }
+
+      dispatchEvent("Pushed", overridenParams);
     },
     replace(params) {
-      dispatchEvent("Replaced", params);
+      const { isPrevented, overridenParams } = triggerPreEffectHooks(
+        makeEvent("Replaced", params),
+        pluginInstances,
+      );
+
+      if (isPrevented) {
+        return;
+      }
+
+      dispatchEvent("Replaced", overridenParams);
     },
     pop(params) {
-      dispatchEvent("Popped", params ?? {});
+      const { isPrevented, overridenParams } = triggerPreEffectHooks(
+        makeEvent("Popped", params ?? {}),
+        pluginInstances,
+      );
+
+      if (isPrevented) {
+        return;
+      }
+
+      dispatchEvent("Popped", overridenParams);
     },
     stepPush(params) {
-      dispatchEvent("StepPushed", params);
+      const { isPrevented, overridenParams } = triggerPreEffectHooks(
+        makeEvent("StepPushed", params ?? {}),
+        pluginInstances,
+      );
+
+      if (isPrevented) {
+        return;
+      }
+
+      dispatchEvent("StepPushed", overridenParams);
     },
     stepReplace(params) {
-      dispatchEvent("StepReplaced", params);
+      const { isPrevented, overridenParams } = triggerPreEffectHooks(
+        makeEvent("StepReplaced", params ?? {}),
+        pluginInstances,
+      );
+
+      if (isPrevented) {
+        return;
+      }
+
+      dispatchEvent("StepReplaced", overridenParams);
     },
     stepPop(params) {
-      dispatchEvent("StepPopped", params ?? {});
+      const { isPrevented, overridenParams } = triggerPreEffectHooks(
+        makeEvent("StepPopped", params ?? {}),
+        pluginInstances,
+      );
+
+      if (isPrevented) {
+        return;
+      }
+
+      dispatchEvent("StepPopped", overridenParams);
     },
   };
 
   return {
-    coreActions,
+    actions,
+    initialize() {
+      initialized = true;
+
+      pluginInstances.forEach((pluginInstance) => {
+        pluginInstance.onInit?.({
+          actions,
+        });
+      });
+    },
     subscribe(listener) {
       storeListeners.push(listener);
 

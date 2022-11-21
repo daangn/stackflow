@@ -1,8 +1,10 @@
-import type { CreateCoreStoreOutput } from "@stackflow/core";
-import React, { useSyncExternalStore } from "react";
+import type { AggregateOutput, CreateCoreStoreOutput } from "@stackflow/core";
+import React, { createContext, useSyncExternalStore } from "react";
 
-import { CoreActionsContext } from "./CoreActionsContext";
-import { CoreStateContext } from "./CoreStateContext";
+export const CoreActionsContext = createContext<
+  CreateCoreStoreOutput["actions"]
+>(null as any);
+export const CoreStateContext = createContext<AggregateOutput>(null as any);
 
 export interface CoreProviderProps {
   coreStore: CreateCoreStoreOutput;
@@ -14,13 +16,13 @@ export const CoreProvider: React.FC<CoreProviderProps> = ({
 }) => {
   const state = useSyncExternalStore(
     coreStore.subscribe,
-    coreStore.coreActions.getStack,
-    coreStore.coreActions.getStack,
+    coreStore.actions.getStack,
+    coreStore.actions.getStack,
   );
 
   return (
     <CoreStateContext.Provider value={state}>
-      <CoreActionsContext.Provider value={coreStore.coreActions}>
+      <CoreActionsContext.Provider value={coreStore.actions}>
         {children}
       </CoreActionsContext.Provider>
     </CoreStateContext.Provider>

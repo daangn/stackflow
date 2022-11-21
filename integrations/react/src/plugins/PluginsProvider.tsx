@@ -1,7 +1,9 @@
-import React from "react";
+import React, { createContext } from "react";
 
-import type { PluginsContextValue } from "./PluginsContext";
-import { PluginsContext } from "./PluginsContext";
+import type { StackflowReactPlugin } from "../StackflowReactPlugin";
+
+export type PluginsContextValue = Array<ReturnType<StackflowReactPlugin>>;
+export const PluginsContext = createContext<PluginsContextValue>(null as any);
 
 interface PluginsProviderProps {
   children: React.ReactNode;

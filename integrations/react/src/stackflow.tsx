@@ -21,7 +21,7 @@ import type {
 import { useStepActions } from "./useStepActions";
 
 export type StackComponentType = React.FC<{
-  initContext: any;
+  initialContext: any;
 }>;
 
 type StackflowPluginsEntry<T extends BaseActivities> =
@@ -129,7 +129,6 @@ export function stackflow<T extends BaseActivities>(
     initialEvents: [initializedEvent, ...activityRegisteredEvents],
     plugins,
   });
-  const { coreActions } = coreStore;
 
   const activities = Object.entries(options.activities).reduce(
     (acc, [key, Activity]) => {
@@ -162,15 +161,15 @@ export function stackflow<T extends BaseActivities>(
 
   const actions: StackflowOutput<T>["actions"] = {
     dispatchEvent(name, parameters) {
-      return coreActions.dispatchEvent(name, parameters);
+      return coreStore.actions.dispatchEvent(name, parameters);
     },
     getStack() {
-      return coreActions.getStack();
+      return coreStore.actions.getStack();
     },
     push(activityName, activityParams, options) {
       const activityId = makeActivityId();
 
-      coreActions.push({
+      coreStore.actions.push({
         activityId,
         activityName,
         activityParams,
@@ -184,7 +183,7 @@ export function stackflow<T extends BaseActivities>(
     replace(activityName, activityParams, options) {
       const activityId = options?.activityId ?? makeActivityId();
 
-      coreActions.replace({
+      coreStore.actions.replace({
         activityId: options?.activityId ?? makeActivityId(),
         activityName,
         activityParams,
@@ -196,14 +195,14 @@ export function stackflow<T extends BaseActivities>(
       };
     },
     pop(options) {
-      return coreActions.pop({
+      return coreStore.actions.pop({
         skipExitActiveState: parseActionOptions(options).skipActiveState,
       });
     },
     stepPush(params) {
       const stepId = makeStepId();
 
-      return coreActions.stepPush({
+      return coreStore.actions.stepPush({
         stepId,
         stepParams: params,
       });
@@ -211,13 +210,13 @@ export function stackflow<T extends BaseActivities>(
     stepReplace(params) {
       const stepId = makeStepId();
 
-      return coreActions.stepReplace({
+      return coreStore.actions.stepReplace({
         stepId,
         stepParams: params,
       });
     },
     stepPop() {
-      return coreActions.stepPop({});
+      return coreStore.actions.stepPop({});
     },
   };
 
@@ -244,7 +243,7 @@ export function stackflow<T extends BaseActivities>(
           (initialEvents, pluginInstance) =>
             pluginInstance.overrideInitialEvents?.({
               initialEvents,
-              initContext: props.initContext,
+              initialContext: props.initialContext,
             }) ?? initialEvents,
           initialPushedEventsByOption,
         ),
@@ -253,7 +252,7 @@ export function stackflow<T extends BaseActivities>(
 
     useMemo(() => {
       initialPushedEvents.forEach((event) => {
-        coreStore.coreActions.dispatchEvent(event.name, event);
+        coreStore.actions.dispatchEvent(event.name, event);
       });
     }, []);
 
@@ -282,6 +281,10 @@ export function stackflow<T extends BaseActivities>(
             " add a plugin that sets the initial activity. (e.g. `@stackflow/plugin-history-sync`)",
         );
       }
+    }, []);
+
+    useEffect(() => {
+      coreStore.initialize();
     }, []);
 
     return (
