@@ -4,7 +4,7 @@ import type {
   PushedEvent,
   StepPushedEvent,
 } from "@stackflow/core/dist/event-types";
-import React from "react";
+import React, { useEffect, useMemo } from "react";
 
 import { makeActivityId, makeStepId } from "./activity";
 import type { BaseActivities } from "./BaseActivities";
@@ -20,7 +20,9 @@ import type {
 } from "./useStepActions";
 import { useStepActions } from "./useStepActions";
 
-export type StackComponentType = React.FC;
+export type StackComponentType = React.FC<{
+  initContext: any;
+}>;
 
 type StackflowPluginsEntry<T extends BaseActivities> =
   | StackflowReactPlugin<T>
@@ -123,58 +125,8 @@ export function stackflow<T extends BaseActivities>(
       }),
   );
 
-  const initialPushedEventsByOption = options.initialActivity
-    ? [
-        makeEvent("Pushed", {
-          activityId: makeActivityId(),
-          activityName: options.initialActivity(),
-          activityParams: {},
-          eventDate: initialEventDate,
-          skipEnterActiveState: false,
-        }),
-      ]
-    : [];
-
-  const initialPushedEvents = pluginInstances.reduce<
-    (PushedEvent | StepPushedEvent)[]
-  >(
-    (initialEvents, pluginInstance) =>
-      pluginInstance.overrideInitialEvents?.({ initialEvents }) ??
-      initialEvents,
-    initialPushedEventsByOption,
-  );
-
-  const isInitialActivityIgnored =
-    !!initialPushedEvents &&
-    !!initialPushedEventsByOption &&
-    initialPushedEvents !== initialPushedEventsByOption;
-
-  if (isInitialActivityIgnored) {
-    // eslint-disable-next-line no-console
-    console.warn(
-      `Stackflow - ` +
-        ` Some plugin overrides an "initialActivity" option.` +
-        ` The "initialActivity" option you set to "${initialPushedEventsByOption[0].activityName}" in the "stackflow" is ignored.`,
-    );
-  }
-
-  if (initialPushedEvents.length === 0) {
-    // eslint-disable-next-line no-console
-    console.warn(
-      `Stackflow - ` +
-        ` There is no initial activity.` +
-        " If you want to set the initial activity," +
-        " add the `initialActivity` option of the `stackflow()` function or" +
-        " add a plugin that sets the initial activity. (e.g. `@stackflow/plugin-history-sync`)",
-    );
-  }
-
   const coreStore = createCoreStore({
-    initialEvents: [
-      initializedEvent,
-      ...activityRegisteredEvents,
-      ...initialPushedEvents,
-    ],
+    initialEvents: [initializedEvent, ...activityRegisteredEvents],
     plugins,
   });
   const { coreActions } = coreStore;
@@ -269,13 +221,77 @@ export function stackflow<T extends BaseActivities>(
     },
   };
 
-  const Stack: StackComponentType = () => (
-    <PluginsProvider value={pluginInstances}>
-      <CoreProvider coreStore={coreStore}>
-        <MainRenderer activities={activities} />
-      </CoreProvider>
-    </PluginsProvider>
-  );
+  const Stack: StackComponentType = (props) => {
+    const initialPushedEventsByOption = useMemo(
+      () =>
+        options.initialActivity
+          ? [
+              makeEvent("Pushed", {
+                activityId: makeActivityId(),
+                activityName: options.initialActivity(),
+                activityParams: {},
+                eventDate: initialEventDate,
+                skipEnterActiveState: false,
+              }),
+            ]
+          : [],
+      [],
+    );
+
+    const initialPushedEvents = useMemo(
+      () =>
+        pluginInstances.reduce<(PushedEvent | StepPushedEvent)[]>(
+          (initialEvents, pluginInstance) =>
+            pluginInstance.overrideInitialEvents?.({
+              initialEvents,
+              initContext: props.initContext,
+            }) ?? initialEvents,
+          initialPushedEventsByOption,
+        ),
+      [],
+    );
+
+    useMemo(() => {
+      initialPushedEvents.forEach((event) => {
+        coreStore.coreActions.dispatchEvent(event.name, event);
+      });
+    }, []);
+
+    const isInitialActivityIgnored =
+      !!initialPushedEvents &&
+      !!initialPushedEventsByOption &&
+      initialPushedEvents !== initialPushedEventsByOption;
+
+    useEffect(() => {
+      if (isInitialActivityIgnored) {
+        // eslint-disable-next-line no-console
+        console.warn(
+          `Stackflow - ` +
+            ` Some plugin overrides an "initialActivity" option.` +
+            ` The "initialActivity" option you set to "${initialPushedEventsByOption[0].activityName}" in the "stackflow" is ignored.`,
+        );
+      }
+
+      if (initialPushedEvents.length === 0) {
+        // eslint-disable-next-line no-console
+        console.warn(
+          `Stackflow - ` +
+            ` There is no initial activity.` +
+            " If you want to set the initial activity," +
+            " add the `initialActivity` option of the `stackflow()` function or" +
+            " add a plugin that sets the initial activity. (e.g. `@stackflow/plugin-history-sync`)",
+        );
+      }
+    }, [isInitialActivityIgnored, initialPushedEvents]);
+
+    return (
+      <PluginsProvider value={pluginInstances}>
+        <CoreProvider coreStore={coreStore}>
+          <MainRenderer activities={activities} />
+        </CoreProvider>
+      </PluginsProvider>
+    );
+  };
 
   return {
     Stack,
