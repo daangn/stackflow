@@ -56,20 +56,21 @@ export function createCoreStore(
   };
 
   const dispatchEvent: StackflowActions["dispatchEvent"] = (name, params) => {
-    const newEvent = makeEvent(name, params);
-
-    const { isPrevented } = triggerPreEffectHooks(newEvent, plugins);
+    const { isPrevented, nextEvent } = triggerPreEffectHooks(
+      makeEvent(name, params),
+      plugins,
+    );
 
     if (isPrevented) {
       return;
     }
 
     const nextStackValue = aggregate(
-      [...events, newEvent],
+      [...events, nextEvent],
       new Date().getTime(),
     );
 
-    events.push(newEvent);
+    events.push(nextEvent);
     setStackValue(nextStackValue);
 
     const interval = setInterval(() => {
@@ -90,7 +91,7 @@ export function createCoreStore(
     plugins: ReturnType<StackflowPlugin>[],
   ) {
     let isPrevented = false;
-    let __event: DomainEvent = {
+    let nextEvent: DomainEvent = {
       ...event,
     };
 
@@ -98,18 +99,18 @@ export function createCoreStore(
       isPrevented = true;
     };
     const overrideActionParams = (nextActionParams: any) => {
-      __event = {
-        ...__event,
+      nextEvent = {
+        ...nextEvent,
         ...nextActionParams,
       };
     };
 
     plugins.forEach((plugin) => {
-      switch (__event.name) {
+      switch (nextEvent.name) {
         case "Pushed": {
           plugin.onBeforePush?.({
             actionParams: {
-              ...__event,
+              ...nextEvent,
             },
             actions: {
               ...coreActions,
@@ -122,7 +123,7 @@ export function createCoreStore(
         case "Replaced": {
           plugin.onBeforeReplace?.({
             actionParams: {
-              ...__event,
+              ...nextEvent,
             },
             actions: {
               ...coreActions,
@@ -135,7 +136,7 @@ export function createCoreStore(
         case "Popped": {
           plugin.onBeforePop?.({
             actionParams: {
-              ...__event,
+              ...nextEvent,
             },
             actions: {
               ...coreActions,
@@ -148,7 +149,7 @@ export function createCoreStore(
         case "StepPushed": {
           plugin.onBeforeStepPush?.({
             actionParams: {
-              ...__event,
+              ...nextEvent,
             },
             actions: {
               ...coreActions,
@@ -161,7 +162,7 @@ export function createCoreStore(
         case "StepReplaced": {
           plugin.onBeforeStepReplace?.({
             actionParams: {
-              ...__event,
+              ...nextEvent,
             },
             actions: {
               ...coreActions,
@@ -174,7 +175,7 @@ export function createCoreStore(
         case "StepPopped": {
           plugin.onBeforeStepPop?.({
             actionParams: {
-              ...__event,
+              ...nextEvent,
             },
             actions: {
               ...coreActions,
@@ -191,6 +192,7 @@ export function createCoreStore(
 
     return {
       isPrevented,
+      nextEvent,
     };
   }
 

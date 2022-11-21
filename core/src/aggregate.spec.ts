@@ -1,6 +1,9 @@
+import type { BaseDomainEvent } from "event-types/_base";
+
 import { aggregate } from "./aggregate";
 import type { Activity } from "./AggregateOutput";
 import type {
+  ActivityRegisteredEvent,
   PushedEvent,
   ReplacedEvent,
   StepPushedEvent,
@@ -30,9 +33,13 @@ const initializedEvent = ({
     eventDate: enoughPastTime(),
   });
 
-const registeredEvent = ({ activityName }: { activityName: string }) =>
+const registeredEvent = ({
+  activityName,
+  activityParamsSchema,
+}: Omit<ActivityRegisteredEvent, keyof BaseDomainEvent>) =>
   makeEvent("ActivityRegistered", {
     activityName,
+    activityParamsSchema,
     eventDate: enoughPastTime(),
   });
 
@@ -3246,6 +3253,50 @@ test("aggregate - 만약 StepPoppedEvent를 통해 제거할 수 있는 영역�
     registeredActivities: [
       {
         name: "sample",
+      },
+    ],
+    transitionDuration: 300,
+    globalTransitionState: "idle",
+  });
+});
+
+test("aggregate - RegisteredActivityEvent에 paramsSchema가 있다면 registeredActivities에 표현됩니다", () => {
+  const t = nowTime();
+
+  const events = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+    registeredEvent({
+      activityName: "sample",
+      activityParamsSchema: {
+        type: "object",
+        properties: {
+          hello: {
+            type: "string",
+          },
+        },
+        required: ["hello"],
+      },
+    }),
+  ];
+
+  const output = aggregate(events, t);
+
+  expect(output).toStrictEqual({
+    activities: [],
+    registeredActivities: [
+      {
+        name: "sample",
+        paramsSchema: {
+          type: "object",
+          properties: {
+            hello: {
+              type: "string",
+            },
+          },
+          required: ["hello"],
+        },
       },
     ],
     transitionDuration: 300,

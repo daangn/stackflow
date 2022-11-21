@@ -201,9 +201,55 @@ test("createCoreStore - subscribe에 등록하면, 스택 상태 변경이 있�
   expect(listener3).toHaveBeenCalledTimes(2);
 });
 
-// overrideActionParams
-// replace
-// pop
-// stepPush
-// stepReplace
-// stepPop
+test("createCoreStore - onBeforePush 훅에서 overrideActionParams로 기존 actionParams를 덮어쓸 수 있습니다", () => {
+  const onBeforePush: ReturnType<StackflowPlugin>["onBeforePush"] = jest.fn(
+    ({ actions, actionParams }) => {
+      actions.overrideActionParams({
+        ...actionParams,
+        activityParams: {
+          ...actionParams.activityParams,
+          hello: "2",
+        },
+      });
+    },
+  );
+
+  const { coreActions } = createCoreStore({
+    initialEvents: [
+      makeEvent("Initialized", {
+        transitionDuration: 350,
+        eventDate: enoughPastTime(),
+      }),
+      makeEvent("ActivityRegistered", {
+        activityName: "hello",
+        eventDate: enoughPastTime(),
+      }),
+      makeEvent("Pushed", {
+        activityId: "a1",
+        activityName: "hello",
+        activityParams: {},
+        eventDate: enoughPastTime(),
+      }),
+    ],
+    plugins: [
+      () => ({
+        key: "test",
+        onBeforePush,
+      }),
+    ],
+  });
+
+  coreActions.push({
+    activityId: "a2",
+    activityName: "hello",
+    activityParams: {
+      hello: "1",
+    },
+  });
+
+  const stack = coreActions.getStack();
+
+  expect(onBeforePush).toHaveBeenCalledTimes(1);
+  expect(last(stack.activities)?.id).toEqual("a2");
+  expect(last(stack.activities)?.params?.hello).toEqual("2");
+});
