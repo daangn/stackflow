@@ -122,19 +122,19 @@ export function historySyncPlugin<
         );
       },
       overrideInitialEvents({ initialContext }) {
-        const initHistoryState = parseState(getCurrentState());
+        const initialHistoryState = parseState(getCurrentState());
 
-        if (initHistoryState) {
+        if (initialHistoryState) {
           return [
             {
-              ...initHistoryState.activity.pushedBy,
+              ...initialHistoryState.activity.pushedBy,
               name: "Pushed",
             },
-            ...(initHistoryState.step?.pushedBy.name === "StepPushed" ||
-            initHistoryState.step?.pushedBy.name === "StepReplaced"
+            ...(initialHistoryState.step?.pushedBy.name === "StepPushed" ||
+            initialHistoryState.step?.pushedBy.name === "StepReplaced"
               ? [
                   {
-                    ...initHistoryState.step.pushedBy,
+                    ...initialHistoryState.step.pushedBy,
                     name: "StepPushed" as const,
                   },
                 ]
