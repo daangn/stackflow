@@ -257,8 +257,8 @@ export function stackflow<T extends BaseActivities>(
     }, []);
 
     const isInitialActivityIgnored =
-      !!initialPushedEvents &&
-      !!initialPushedEventsByOption &&
+      initialPushedEvents.length > 0 &&
+      initialPushedEventsByOption.length > 0 &&
       initialPushedEvents !== initialPushedEventsByOption;
 
     useEffect(() => {
