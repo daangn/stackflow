@@ -282,7 +282,7 @@ export function stackflow<T extends BaseActivities>(
             " add a plugin that sets the initial activity. (e.g. `@stackflow/plugin-history-sync`)",
         );
       }
-    }, [isInitialActivityIgnored, initialPushedEvents]);
+    }, []);
 
     return (
       <PluginsProvider value={pluginInstances}>
