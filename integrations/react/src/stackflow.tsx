@@ -4,12 +4,11 @@ import type {
   PushedEvent,
   StepPushedEvent,
 } from "@stackflow/core/dist/event-types";
-import React, { useMemo } from "react";
+import React from "react";
 
 import { makeActivityId, makeStepId } from "./activity";
 import type { BaseActivities } from "./BaseActivities";
 import { CoreProvider } from "./core";
-import EffectManager from "./EffectManager";
 import MainRenderer from "./MainRenderer";
 import { PluginsProvider } from "./plugins";
 import type { StackflowReactPlugin } from "./StackflowReactPlugin";
@@ -274,7 +273,6 @@ export function stackflow<T extends BaseActivities>(
     <PluginsProvider value={pluginInstances}>
       <CoreProvider coreStore={coreStore}>
         <MainRenderer activities={activities} />
-        <EffectManager />
       </CoreProvider>
     </PluginsProvider>
   );

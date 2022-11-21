@@ -13,13 +13,13 @@ const MainRenderer: React.FC<MainRendererProps> = ({ activities }) => {
   const coreState = useCoreState();
   const plugins = usePlugins();
 
-  const renderPlugins = plugins.filter(
+  const renderingPlugins = plugins.filter(
     (plugin): plugin is WithRequired<typeof plugin, "render"> =>
       !!plugin.render,
   );
 
   useEffect(() => {
-    if (renderPlugins.length === 0) {
+    if (renderingPlugins.length === 0) {
       // eslint-disable-next-line no-console
       console.warn(
         `Stackflow -` +
@@ -28,14 +28,14 @@ const MainRenderer: React.FC<MainRendererProps> = ({ activities }) => {
           ` or add another rendering plugin.`,
       );
     }
-  }, [renderPlugins]);
+  }, [renderingPlugins]);
 
   let output = (
     <>
-      {renderPlugins.map((plugin) => (
+      {renderingPlugins.map((plugin) => (
         <PluginRenderer
-          activities={activities}
           key={plugin.key}
+          activities={activities}
           plugin={plugin}
         />
       ))}
