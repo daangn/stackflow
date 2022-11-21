@@ -1,12 +1,12 @@
 /* eslint-disable no-use-before-define */
 
-import type { BaseDomainEvent } from "event-types/_base";
 import isEqual from "react-fast-compare";
 
 import { aggregate } from "./aggregate";
 import type { AggregateOutput } from "./AggregateOutput";
 import type { Effect } from "./Effect";
 import type { DomainEvent } from "./event-types";
+import type { BaseDomainEvent } from "./event-types/_base";
 import { makeEvent } from "./event-utils";
 import type { StackflowActions, StackflowPlugin } from "./interfaces";
 import { produceEffects } from "./produceEffects";

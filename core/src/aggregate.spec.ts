@@ -1,5 +1,3 @@
-import type { BaseDomainEvent } from "event-types/_base";
-
 import { aggregate } from "./aggregate";
 import type { Activity } from "./AggregateOutput";
 import type {
@@ -9,6 +7,7 @@ import type {
   StepPushedEvent,
   StepReplacedEvent,
 } from "./event-types";
+import type { BaseDomainEvent } from "./event-types/_base";
 import { makeEvent } from "./event-utils";
 
 const SECOND = 1000;

@@ -17,7 +17,7 @@ test("createCoreStore - beforePush 훅이 정상적으로 동작합니다", () =
   const onBeforePush = jest.fn();
   const otherHook = jest.fn();
 
-  const { actions } = createCoreStore({
+  const { actions, initialize } = createCoreStore({
     initialEvents: [
       makeEvent("Initialized", {
         transitionDuration: 350,
@@ -44,6 +44,8 @@ test("createCoreStore - beforePush 훅이 정상적으로 동작합니다", () =
     ],
   });
 
+  initialize();
+
   actions.push({
     activityId: "a2",
     activityName: "hello",
@@ -58,7 +60,7 @@ test("createCoreStore - Pushed 훅이 정상적으로 작동합니다", () => {
   const onPushed = jest.fn();
   const otherHook = jest.fn();
 
-  const { actions } = createCoreStore({
+  const { actions, initialize } = createCoreStore({
     initialEvents: [
       makeEvent("Initialized", {
         transitionDuration: 350,
@@ -84,6 +86,8 @@ test("createCoreStore - Pushed 훅이 정상적으로 작동합니다", () => {
       }),
     ],
   });
+
+  initialize();
 
   actions.push({
     activityId: "a2",
@@ -107,7 +111,7 @@ test("createCoreStore - onBeforePush 훅에서 preventDefault가 호출되면, �
   const onPushed = jest.fn();
   const otherHook = jest.fn();
 
-  const { actions } = createCoreStore({
+  const { actions, initialize } = createCoreStore({
     initialEvents: [
       makeEvent("Initialized", {
         transitionDuration: 350,
@@ -137,6 +141,8 @@ test("createCoreStore - onBeforePush 훅에서 preventDefault가 호출되면, �
     ],
   });
 
+  initialize();
+
   actions.push({
     activityId: "a2",
     activityName: "hello",
@@ -156,7 +162,7 @@ test("createCoreStore - subscribe에 등록하면, 스택 상태 변경이 있�
   const listener2 = jest.fn();
   const listener3 = jest.fn();
 
-  const { actions, subscribe } = createCoreStore({
+  const { actions, initialize, subscribe } = createCoreStore({
     initialEvents: [
       makeEvent("Initialized", {
         transitionDuration: 150,
@@ -181,6 +187,8 @@ test("createCoreStore - subscribe에 등록하면, 스택 상태 변경이 있�
   subscribe(listener3);
 
   dispose();
+
+  initialize();
 
   actions.push({
     activityId: "a2",
@@ -214,7 +222,7 @@ test("createCoreStore - onBeforePush 훅에서 overrideActionParams로 기존 ac
     },
   );
 
-  const { actions } = createCoreStore({
+  const { actions, initialize } = createCoreStore({
     initialEvents: [
       makeEvent("Initialized", {
         transitionDuration: 350,
@@ -238,6 +246,8 @@ test("createCoreStore - onBeforePush 훅에서 overrideActionParams로 기존 ac
       }),
     ],
   });
+
+  initialize();
 
   actions.push({
     activityId: "a2",
