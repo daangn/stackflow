@@ -1,9 +1,9 @@
 /* eslint-disable no-use-before-define */
 
-import type { AggregateOutput } from "AggregateOutput";
 import isEqual from "react-fast-compare";
 
 import { aggregate } from "./aggregate";
+import type { AggregateOutput } from "./AggregateOutput";
 import type { Effect } from "./Effect";
 import type { DomainEvent } from "./event-types";
 import { makeEvent } from "./event-utils";
