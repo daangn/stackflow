@@ -4,13 +4,9 @@ import type {
   PushedEvent,
   StepPushedEvent,
 } from "@stackflow/core/dist/event-types";
-import {
-  makeActivityId,
-  makeStepId,
-  parseActivityComponentPropTypes,
-} from "activity";
 import React, { useMemo } from "react";
 
+import { makeActivityId, makeStepId } from "./activity";
 import type { BaseActivities } from "./BaseActivities";
 import { CoreProvider } from "./core";
 import EffectManager from "./EffectManager";
@@ -116,20 +112,11 @@ export function stackflow<T extends BaseActivities>(
   });
 
   const activityRegisteredEvents = Object.entries(options.activities).map(
-    ([activityName, ActivityComponent]) => {
-      const activityParamsSchema =
-        parseActivityComponentPropTypes(ActivityComponent);
-
-      return makeEvent("ActivityRegistered", {
+    ([activityName, ActivityComponent]) =>
+      makeEvent("ActivityRegistered", {
         activityName,
         eventDate: initialEventDate,
-        ...(activityParamsSchema
-          ? {
-              activityParamsSchema,
-            }
-          : null),
-      });
-    },
+      }),
   );
 
   const initialPushedEventsByOption = options.initialActivity

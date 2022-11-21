@@ -15,6 +15,7 @@ export const CoreProvider: React.FC<CoreProviderProps> = ({
   const state = useSyncExternalStore(
     coreStore.subscribe,
     coreStore.coreActions.getStack,
+    coreStore.coreActions.getStack,
   );
 
   return (
