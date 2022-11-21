@@ -31,7 +31,7 @@ export function preloadPlugin<T extends { [activityName: string]: unknown }>(
         </LoadersProvider>
       );
     },
-    overrideInitialEvents({ initialEvents }) {
+    overrideInitialEvents({ initialEvents, initialContext }) {
       if (initialEvents.length === 0) {
         return [];
       }
@@ -53,6 +53,7 @@ export function preloadPlugin<T extends { [activityName: string]: unknown }>(
           activityParams,
           activityContext,
           isInitialActivity: true,
+          initialContext,
         });
 
         return {

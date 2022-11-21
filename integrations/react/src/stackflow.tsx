@@ -21,7 +21,7 @@ import type {
 import { useStepActions } from "./useStepActions";
 
 export type StackComponentType = React.FC<{
-  initialContext: any;
+  initialContext?: any;
 }>;
 
 type StackflowPluginsEntry<T extends BaseActivities> =
@@ -243,7 +243,7 @@ export function stackflow<T extends BaseActivities>(
           (initialEvents, pluginInstance) =>
             pluginInstance.overrideInitialEvents?.({
               initialEvents,
-              initialContext: props.initialContext,
+              initialContext: props.initialContext ?? {},
             }) ?? initialEvents,
           initialPushedEventsByOption,
         ),

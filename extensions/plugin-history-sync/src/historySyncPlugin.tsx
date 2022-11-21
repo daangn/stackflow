@@ -98,7 +98,7 @@ type HistorySyncPluginOptions<K extends string> = {
   routes: {
     [key in K]: string | string[];
   };
-  fallbackActivity: () => K;
+  fallbackActivity: (args: { initialContext: any }) => K;
   useHash?: boolean;
 };
 export function historySyncPlugin<
@@ -121,7 +121,7 @@ export function historySyncPlugin<
           </RoutesProvider>
         );
       },
-      overrideInitialEvents() {
+      overrideInitialEvents({ initialContext }) {
         const initHistoryState = parseState(getCurrentState());
 
         if (initHistoryState) {
@@ -143,6 +143,13 @@ export function historySyncPlugin<
         }
 
         function resolvePath() {
+          if (
+            initialContext?.req?.path &&
+            typeof initialContext.req.path === "string"
+          ) {
+            return initialContext.req.path as string;
+          }
+
           if (isServer) {
             return null;
           }
@@ -191,7 +198,9 @@ export function historySyncPlugin<
         }
 
         const fallbackActivityId = id();
-        const fallbackActivityName = options.fallbackActivity();
+        const fallbackActivityName = options.fallbackActivity({
+          initialContext,
+        });
         const fallbackActivityRoutes = normalizeRoute(
           options.routes[fallbackActivityName],
         );
