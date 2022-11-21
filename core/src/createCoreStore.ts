@@ -273,8 +273,12 @@ export function createCoreStore(
     subscribe(listener) {
       storeListeners.push(listener);
 
-      return () => {
-        storeListeners.splice(storeListeners.findIndex(listener), 1);
+      return function dispose() {
+        const listenerIndex = storeListeners.findIndex((l) => l === listener);
+
+        if (listenerIndex > -1) {
+          storeListeners.splice(listenerIndex, 1);
+        }
       };
     },
   };
