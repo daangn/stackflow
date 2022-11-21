@@ -1,19 +1,17 @@
 import type { Effect } from "../Effect";
-import type { StackflowPluginActions } from "./StackflowPluginActions";
+import type { StackflowActions } from "./StackflowActions";
 
-export type StackflowPluginHook = (args: {
-  actions: StackflowPluginActions;
-}) => void;
+export type StackflowPluginHook = (args: { actions: StackflowActions }) => void;
 
 export type StackflowPluginPreEffectHook<T> = (args: {
   actionParams: T;
-  actions: StackflowPluginActions & {
+  actions: StackflowActions & {
     preventDefault: () => void;
     overrideActionParams: (params: T) => void;
   };
 }) => void;
 
 export type StackflowPluginPostEffectHook<T extends Effect["_TAG"]> = (args: {
-  actions: StackflowPluginActions;
+  actions: StackflowActions;
   effect: Extract<Effect, { _TAG: T }>;
 }) => void;

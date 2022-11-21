@@ -3063,6 +3063,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react-dom", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#npm:18.2.0"],\
             ["react-lazy-load-image-component", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#npm:1.5.4"],\
             ["rimraf", "npm:3.0.2"],\
+            ["tsm", "npm:2.2.2"],\
             ["typescript", "patch:typescript@npm%3A4.7.4#~builtin<compat/typescript>::version=4.7.4&hash=701156"],\
             ["vite", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#npm:2.9.9"]\
           ],\
@@ -15449,6 +15450,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/tslib-npm-2.4.0-9cb6dc5030-8c4aa6a3c5.zip/node_modules/tslib/",\
           "packageDependencies": [\
             ["tslib", "npm:2.4.0"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["tsm", [\
+        ["npm:2.2.2", {\
+          "packageLocation": "./.yarn/cache/tsm-npm-2.2.2-711504415d-5908f7e516.zip/node_modules/tsm/",\
+          "packageDependencies": [\
+            ["tsm", "npm:2.2.2"],\
+            ["esbuild", "npm:0.14.51"]\
           ],\
           "linkType": "HARD"\
         }]\
