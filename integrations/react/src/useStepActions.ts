@@ -37,27 +37,21 @@ export const useStepActions: UseStepActions = () => {
       stepPush(params) {
         const stepId = makeStepId();
 
-        startTransition(() => {
-          coreActions.stepPush({
-            stepId,
-            stepParams: params,
-          });
+        coreActions.stepPush({
+          stepId,
+          stepParams: params,
         });
       },
       stepReplace(params) {
         const stepId = makeStepId();
 
-        startTransition(() => {
-          coreActions.stepReplace({
-            stepId,
-            stepParams: params,
-          });
+        coreActions.stepReplace({
+          stepId,
+          stepParams: params,
         });
       },
       stepPop() {
-        startTransition(() => {
-          coreActions.stepPop({});
-        });
+        coreActions.stepPop({});
       },
     }),
     [

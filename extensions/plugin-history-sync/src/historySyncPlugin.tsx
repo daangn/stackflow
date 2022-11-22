@@ -304,53 +304,47 @@ export function historySyncPlugin<
           };
 
           if (isBackward()) {
-            startTransition(() => {
-              dispatchEvent("Popped", {});
+            dispatchEvent("Popped", {});
 
-              if (!nextActivity) {
-                pushFlag += 1;
-                dispatchEvent("Pushed", {
-                  ...targetActivity.pushedBy,
-                });
+            if (!nextActivity) {
+              pushFlag += 1;
+              dispatchEvent("Pushed", {
+                ...targetActivity.pushedBy,
+              });
 
-                if (
-                  targetStep?.pushedBy.name === "StepPushed" ||
-                  targetStep?.pushedBy.name === "StepReplaced"
-                ) {
-                  pushFlag += 1;
-                  dispatchEvent("StepPushed", {
-                    ...targetStep.pushedBy,
-                  });
-                }
-              }
-            });
-          }
-          if (isStepBackward()) {
-            startTransition(() => {
               if (
-                !nextStep &&
-                targetStep &&
-                (targetStep?.pushedBy.name === "StepPushed" ||
-                  targetStep?.pushedBy.name === "StepReplaced")
+                targetStep?.pushedBy.name === "StepPushed" ||
+                targetStep?.pushedBy.name === "StepReplaced"
               ) {
                 pushFlag += 1;
                 dispatchEvent("StepPushed", {
                   ...targetStep.pushedBy,
                 });
               }
+            }
+          }
+          if (isStepBackward()) {
+            if (
+              !nextStep &&
+              targetStep &&
+              (targetStep?.pushedBy.name === "StepPushed" ||
+                targetStep?.pushedBy.name === "StepReplaced")
+            ) {
+              pushFlag += 1;
+              dispatchEvent("StepPushed", {
+                ...targetStep.pushedBy,
+              });
+            }
 
-              dispatchEvent("StepPopped", {});
-            });
+            dispatchEvent("StepPopped", {});
           }
 
           if (isForward()) {
-            startTransition(() => {
-              pushFlag += 1;
-              push({
-                activityId: targetActivity.id,
-                activityName: targetActivity.name,
-                activityParams: targetActivity.params,
-              });
+            pushFlag += 1;
+            push({
+              activityId: targetActivity.id,
+              activityName: targetActivity.name,
+              activityParams: targetActivity.params,
             });
           }
           if (isStepForward()) {
@@ -358,12 +352,10 @@ export function historySyncPlugin<
               return;
             }
 
-            startTransition(() => {
-              pushFlag += 1;
-              stepPush({
-                stepId: targetStep.id,
-                stepParams: targetStep.params,
-              });
+            pushFlag += 1;
+            stepPush({
+              stepId: targetStep.id,
+              stepParams: targetStep.params,
             });
           }
         };

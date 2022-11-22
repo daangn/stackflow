@@ -81,13 +81,11 @@ export function useActions<
       push(activityName, activityParams, options) {
         const activityId = makeActivityId();
 
-        startTransition(() => {
-          coreActions.push({
-            activityId,
-            activityName,
-            activityParams,
-            skipEnterActiveState: parseActionOptions(options).skipActiveState,
-          });
+        coreActions.push({
+          activityId,
+          activityName,
+          activityParams,
+          skipEnterActiveState: parseActionOptions(options).skipActiveState,
         });
 
         return {
@@ -97,13 +95,11 @@ export function useActions<
       replace(activityName, activityParams, options) {
         const activityId = makeActivityId();
 
-        startTransition(() => {
-          coreActions.replace({
-            activityId: options?.activityId ?? makeActivityId(),
-            activityName,
-            activityParams,
-            skipEnterActiveState: parseActionOptions(options).skipActiveState,
-          });
+        coreActions.replace({
+          activityId: options?.activityId ?? makeActivityId(),
+          activityName,
+          activityParams,
+          skipEnterActiveState: parseActionOptions(options).skipActiveState,
         });
 
         return {
@@ -111,10 +107,8 @@ export function useActions<
         };
       },
       pop(options) {
-        startTransition(() => {
-          coreActions.pop({
-            skipExitActiveState: parseActionOptions(options).skipActiveState,
-          });
+        coreActions.pop({
+          skipExitActiveState: parseActionOptions(options).skipActiveState,
         });
       },
     }),
