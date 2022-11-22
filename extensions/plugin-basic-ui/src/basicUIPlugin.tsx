@@ -38,9 +38,6 @@ export const basicUIPlugin: (
     return (
       <GlobalOptionsProvider value={options}>
         <div
-          className={
-            typeof window !== "undefined" ? theme[options.theme] : undefined
-          }
           style={assignInlineVars(
             compactMap({
               [theme.globalVars.backgroundColor]: options.backgroundColor,
