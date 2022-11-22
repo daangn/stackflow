@@ -30,7 +30,11 @@ export type UseActionsOutputType<T extends BaseActivities> = {
    */
   push: <K extends Extract<keyof T, string>>(
     activityName: K,
-    params: T[K] extends ActivityComponentType<infer U> ? U : {},
+    params: T[K] extends
+      | ActivityComponentType<infer U>
+      | { component: ActivityComponentType<infer U> }
+      ? U
+      : {},
     options?: {
       animate?: boolean;
     },
@@ -43,7 +47,11 @@ export type UseActionsOutputType<T extends BaseActivities> = {
    */
   replace: <K extends Extract<keyof T, string>>(
     activityName: K,
-    params: T[K] extends ActivityComponentType<infer U> ? U : {},
+    params: T[K] extends
+      | ActivityComponentType<infer U>
+      | { component: ActivityComponentType<infer U> }
+      ? U
+      : {},
     options?: {
       animate?: boolean;
       activityId?: string;

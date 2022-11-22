@@ -18,7 +18,21 @@ export const { Stack, activities, useFlow } = stackflow({
   transitionDuration: 350,
   activities: {
     Main,
-    Article,
+    Article: {
+      component: Article,
+      paramsSchema: {
+        type: "object" as const,
+        properties: {
+          articleId: {
+            type: "string" as const,
+          },
+          title: {
+            type: "string" as const,
+          },
+        },
+        required: ["articleId", "title"],
+      },
+    },
   },
   initialActivity: () => "Main",
   plugins: [

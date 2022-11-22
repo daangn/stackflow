@@ -112,10 +112,15 @@ export function stackflow<T extends BaseActivities>(
   });
 
   const activityRegisteredEvents = Object.entries(options.activities).map(
-    ([activityName, ActivityComponent]) =>
+    ([activityName, Activity]) =>
       makeEvent("ActivityRegistered", {
         activityName,
         eventDate: initialEventDate,
+        ...("component" in Activity
+          ? {
+              activityParamsSchema: Activity.paramsSchema,
+            }
+          : null),
       }),
   );
 
@@ -175,11 +180,23 @@ export function stackflow<T extends BaseActivities>(
   });
   const { coreActions } = coreStore;
 
-  const memoizedActivities = Object.entries(options.activities).reduce(
-    (acc, [key, Component]) => ({
-      ...acc,
-      [key]: React.memo(Component),
-    }),
+  const activities = Object.entries(options.activities).reduce(
+    (acc, [key, Activity]) => {
+      if ("component" in Activity) {
+        return {
+          ...acc,
+          [key]: {
+            paramsSchema: Activity.paramsSchema,
+            component: Activity.component,
+          },
+        };
+      }
+
+      return {
+        ...acc,
+        [key]: React.memo(Activity),
+      };
+    },
     {},
   );
 
@@ -256,7 +273,7 @@ export function stackflow<T extends BaseActivities>(
   const Stack: StackComponentType = () => (
     <PluginsProvider value={pluginInstances}>
       <CoreProvider coreStore={coreStore}>
-        <MainRenderer memoizedActivities={memoizedActivities} />
+        <MainRenderer activities={activities} />
         <EffectManager />
       </CoreProvider>
     </PluginsProvider>

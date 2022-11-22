@@ -17,7 +17,11 @@ export type UseStepActions<T extends BaseActivities = {}> = <
 >(
   activityName: K,
 ) => UseStepActionsOutputType<
-  T[K] extends ActivityComponentType<infer U> ? U : {}
+  T[K] extends
+    | ActivityComponentType<infer U>
+    | { component: ActivityComponentType<infer U> }
+    ? U
+    : {}
 >;
 
 const useTransition: () => [boolean, React.TransitionStartFunction] =
