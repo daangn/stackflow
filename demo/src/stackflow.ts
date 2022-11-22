@@ -7,11 +7,6 @@ import { stackflow } from "@stackflow/react";
 import Article from "./activities/Article";
 import Main from "./activities/Main";
 
-const activities = {
-  Main,
-  Article,
-};
-
 const theme = "cupertino";
 
 const borderColor =
@@ -19,9 +14,12 @@ const borderColor =
     ? vars.$semantic.color.divider3
     : vars.$semantic.color.divider2;
 
-export const { Stack, useFlow } = stackflow({
+export const { Stack, activities, useFlow } = stackflow({
   transitionDuration: 350,
-  activities,
+  activities: {
+    Main,
+    Article,
+  },
   initialActivity: () => "Main",
   plugins: [
     basicRendererPlugin(),

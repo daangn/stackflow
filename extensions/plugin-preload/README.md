@@ -16,14 +16,12 @@ import { MyHome } from "./MyHome";
 import { MyArticle } from "./MyArticle";
 import { NotFoundPage } from "./NotFoundPage";
 
-const activities = {
-  MyHome,
-  MyArticle,
-  NotFoundPage,
-};
-
-const { Stack, useFlow } = stackflow({
-  activities,
+const { Stack, useFlow, activities } = stackflow({
+  activities: {
+    MyHome,
+    MyArticle,
+    NotFoundPage,
+  },
   plugins: [
     // ...
     preloadPlugin({

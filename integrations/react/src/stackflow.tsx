@@ -79,6 +79,11 @@ export type StackflowOutput<T extends BaseActivities> = {
   actions: Pick<StackflowPluginActions, "dispatchEvent" | "getStack"> &
     Pick<UseActionsOutputType<T>, "push" | "pop" | "replace"> &
     Pick<UseStepActionsOutputType<{}>, "stepPush" | "stepReplace" | "stepPop">;
+
+  /**
+   * Return activities
+   */
+  activities: T;
 };
 
 /**
@@ -87,7 +92,7 @@ export type StackflowOutput<T extends BaseActivities> = {
 export function stackflow<T extends BaseActivities>(
   options: StackflowOptions<T>,
 ): StackflowOutput<T> {
-  const activities = Object.entries(options.activities).reduce(
+  const memoizedActivities = Object.entries(options.activities).reduce(
     (acc, [key, Component]) => ({
       ...acc,
       [key]: React.memo(Component),
@@ -193,11 +198,11 @@ export function stackflow<T extends BaseActivities>(
       <InitContextProvider value={props.initContext ?? {}}>
         <PluginsProvider value={plugins}>
           <CoreProvider
-            activities={activities}
+            activities={memoizedActivities}
             initialActivity={options.initialActivity}
             transitionDuration={options.transitionDuration}
           >
-            <MainRenderer activities={activities} />
+            <MainRenderer activities={memoizedActivities} />
             <EffectManager />
             <StackRefManager ref={stackRef} />
           </CoreProvider>
@@ -211,5 +216,6 @@ export function stackflow<T extends BaseActivities>(
     useFlow: useActions,
     useStepFlow: useStepActions,
     actions,
+    activities: options.activities,
   };
 }

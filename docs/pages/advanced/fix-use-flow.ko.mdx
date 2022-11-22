@@ -11,12 +11,10 @@ import Callout from "nextra-theme-docs/callout";
  */
 import { stackflow } from "@stackflow/react";
 
-const activities = {
-  // ...
-};
-
-export const { Stack } = stackflow({
-  activities,
+export const { Stack, activities } = stackflow({
+  activities: {
+    // ...
+  },
   // ...
 });
 
