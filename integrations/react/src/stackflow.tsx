@@ -1,10 +1,11 @@
 import type { StackflowActions } from "@stackflow/core";
-import { createCoreStore, makeEvent } from "@stackflow/core";
+import { aggregate, createCoreStore, makeEvent } from "@stackflow/core";
 import type {
+  DomainEvent,
   PushedEvent,
   StepPushedEvent,
 } from "@stackflow/core/dist/event-types";
-import React, { useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 
 import { makeActivityId, makeStepId } from "./activity";
 import type { BaseActivities } from "./BaseActivities";
@@ -125,30 +126,38 @@ export function stackflow<T extends BaseActivities>(
     {} as T,
   );
 
-  const initialEventDate = new Date().getTime() - options.transitionDuration;
+  const initialEventDate = () =>
+    new Date().getTime() - options.transitionDuration;
 
-  const initializedEvent = makeEvent("Initialized", {
-    transitionDuration: options.transitionDuration,
-    eventDate: initialEventDate,
-  });
+  const initialEvents = (): DomainEvent[] => {
+    const initializedEvent = makeEvent("Initialized", {
+      transitionDuration: options.transitionDuration,
+      eventDate: initialEventDate(),
+    });
 
-  const activityRegisteredEvents = Object.entries(activities).map(
-    ([activityName, Activity]) =>
-      makeEvent("ActivityRegistered", {
-        activityName,
-        eventDate: initialEventDate,
-        ...("component" in Activity
-          ? {
-              activityParamsSchema: Activity.paramsSchema,
-            }
-          : null),
-      }),
-  );
+    const activityRegisteredEvents = Object.entries(activities).map(
+      ([activityName, Activity]) =>
+        makeEvent("ActivityRegistered", {
+          activityName,
+          eventDate: initialEventDate(),
+          ...("component" in Activity
+            ? {
+                activityParamsSchema: Activity.paramsSchema,
+              }
+            : null),
+        }),
+    );
 
-  const coreStore = createCoreStore({
-    initialEvents: [initializedEvent, ...activityRegisteredEvents],
-    plugins,
-  });
+    return [initializedEvent, ...activityRegisteredEvents];
+  };
+
+  const initialStack = aggregate(initialEvents(), new Date().getTime());
+
+  const coreStoreRef: {
+    value: ReturnType<typeof createCoreStore> | null;
+  } = {
+    value: null,
+  };
 
   if (typeof window !== "undefined") {
     const html = window.document.documentElement;
@@ -161,15 +170,15 @@ export function stackflow<T extends BaseActivities>(
 
   const actions: StackflowOutput<T>["actions"] = {
     dispatchEvent(name, parameters) {
-      return coreStore.actions.dispatchEvent(name, parameters);
+      return coreStoreRef.value?.actions.dispatchEvent(name, parameters);
     },
     getStack() {
-      return coreStore.actions.getStack();
+      return coreStoreRef.value?.actions.getStack() ?? initialStack;
     },
     push(activityName, activityParams, options) {
       const activityId = makeActivityId();
 
-      coreStore.actions.push({
+      coreStoreRef.value?.actions.push({
         activityId,
         activityName,
         activityParams,
@@ -183,7 +192,7 @@ export function stackflow<T extends BaseActivities>(
     replace(activityName, activityParams, options) {
       const activityId = options?.activityId ?? makeActivityId();
 
-      coreStore.actions.replace({
+      coreStoreRef.value?.actions.replace({
         activityId: options?.activityId ?? makeActivityId(),
         activityName,
         activityParams,
@@ -195,14 +204,14 @@ export function stackflow<T extends BaseActivities>(
       };
     },
     pop(options) {
-      return coreStore.actions.pop({
+      return coreStoreRef.value?.actions.pop({
         skipExitActiveState: parseActionOptions(options).skipActiveState,
       });
     },
     stepPush(params) {
       const stepId = makeStepId();
 
-      return coreStore.actions.stepPush({
+      return coreStoreRef.value?.actions.stepPush({
         stepId,
         stepParams: params,
       });
@@ -210,84 +219,74 @@ export function stackflow<T extends BaseActivities>(
     stepReplace(params) {
       const stepId = makeStepId();
 
-      return coreStore.actions.stepReplace({
+      return coreStoreRef.value?.actions.stepReplace({
         stepId,
         stepParams: params,
       });
     },
     stepPop() {
-      return coreStore.actions.stepPop({});
+      return coreStoreRef.value?.actions.stepPop({});
     },
   };
 
-  let started = false;
-
-  function start({ initialContext }: { initialContext: any }) {
-    if (started) {
-      return;
-    }
-    started = true;
-
-    const initialPushedEventsByOption = options.initialActivity
-      ? [
-          makeEvent("Pushed", {
-            activityId: makeActivityId(),
-            activityName: options.initialActivity(),
-            activityParams: {},
-            eventDate: initialEventDate,
-            skipEnterActiveState: false,
-          }),
-        ]
-      : [];
-
-    const initialPushedEvents = pluginInstances.reduce<
-      (PushedEvent | StepPushedEvent)[]
-    >(
-      (initialEvents, pluginInstance) =>
-        pluginInstance.overrideInitialEvents?.({
-          initialEvents,
-          initialContext: initialContext ?? {},
-        }) ?? initialEvents,
-      initialPushedEventsByOption,
-    );
-
-    const isInitialActivityIgnored =
-      initialPushedEvents.length > 0 &&
-      initialPushedEventsByOption.length > 0 &&
-      initialPushedEvents !== initialPushedEventsByOption;
-
-    if (isInitialActivityIgnored) {
-      // eslint-disable-next-line no-console
-      console.warn(
-        `Stackflow - ` +
-          ` Some plugin overrides an "initialActivity" option.` +
-          ` The "initialActivity" option you set to "${initialPushedEventsByOption[0].activityName}" in the "stackflow" is ignored.`,
-      );
-    }
-
-    if (initialPushedEvents.length === 0) {
-      // eslint-disable-next-line no-console
-      console.warn(
-        `Stackflow - ` +
-          ` There is no initial activity.` +
-          " If you want to set the initial activity," +
-          " add the `initialActivity` option of the `stackflow()` function or" +
-          " add a plugin that sets the initial activity. (e.g. `@stackflow/plugin-history-sync`)",
-      );
-    }
-
-    coreStore.setInitialEvents([
-      initializedEvent,
-      ...activityRegisteredEvents,
-      ...initialPushedEvents,
-    ]);
-
-    coreStore.start();
-  }
-
   const Stack: StackComponentType = (props) => {
-    useMemo(() => {
-      start({ initialContext: props.initialContext });
+    const coreStore = useMemo(() => {
+      const initialPushedEventsByOption = options.initialActivity
+        ? [
+            makeEvent("Pushed", {
+              activityId: makeActivityId(),
+              activityName: options.initialActivity(),
+              activityParams: {},
+              eventDate: initialEventDate(),
+              skipEnterActiveState: false,
+            }),
+          ]
+        : [];
+
+      const initialPushedEvents = pluginInstances.reduce<
+        (PushedEvent | StepPushedEvent)[]
+      >(
+        (initialEvents, pluginInstance) =>
+          pluginInstance.overrideInitialEvents?.({
+            initialEvents,
+            initialContext: props.initialContext ?? {},
+          }) ?? initialEvents,
+        initialPushedEventsByOption,
+      );
+
+      const isInitialActivityIgnored =
+        initialPushedEvents.length > 0 &&
+        initialPushedEventsByOption.length > 0 &&
+        initialPushedEvents !== initialPushedEventsByOption;
+
+      if (isInitialActivityIgnored) {
+        // eslint-disable-next-line no-console
+        console.warn(
+          `Stackflow - ` +
+            ` Some plugin overrides an "initialActivity" option.` +
+            ` The "initialActivity" option you set to "${initialPushedEventsByOption[0].activityName}" in the "stackflow" is ignored.`,
+        );
+      }
+
+      if (initialPushedEvents.length === 0) {
+        // eslint-disable-next-line no-console
+        console.warn(
+          `Stackflow - ` +
+            ` There is no initial activity.` +
+            " If you want to set the initial activity," +
+            " add the `initialActivity` option of the `stackflow()` function or" +
+            " add a plugin that sets the initial activity. (e.g. `@stackflow/plugin-history-sync`)",
+        );
+      }
+
+      const store = createCoreStore({
+        initialEvents: [...initialEvents(), ...initialPushedEvents],
+        plugins,
+      });
+
+      coreStoreRef.value = store;
+
+      return store;
     }, []);
 
     return (

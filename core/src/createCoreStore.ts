@@ -23,16 +23,12 @@ export type CreateCoreStoreOptions = {
 
 export type CreateCoreStoreOutput = {
   actions: StackflowActions;
-  setInitialEvents: (initialEvents: DomainEvent[]) => void;
-  start: () => void;
   subscribe: (listener: () => void) => () => void;
 };
 
 export function createCoreStore(
   options: CreateCoreStoreOptions,
 ): CreateCoreStoreOutput {
-  let started = false;
-
   const events: {
     value: DomainEvent[];
   } = {
@@ -55,11 +51,6 @@ export function createCoreStore(
     defaultPlugin(),
     ...options.plugins.map((plugin) => plugin()),
   ];
-
-  const setInitialEvents = (initialEvents: DomainEvent[]) => {
-    events.value = initialEvents;
-    stack.value = aggregate(events.value, new Date().getTime());
-  };
 
   const setStackValue = (nextStackValue: AggregateOutput) => {
     const effects = produceEffects(stack.value, nextStackValue);
@@ -109,18 +100,11 @@ export function createCoreStore(
       const params: Partial<BaseDomainEvent> & Omit<T, keyof BaseDomainEvent> =
         { ...event };
 
-      delete params.id;
-      delete params.eventDate;
+      // delete params.id;
+      // delete params.eventDate;
       delete params.name;
 
       return params;
-    }
-
-    if (!started) {
-      return {
-        isPrevented,
-        overridenParams: toParams(nextEvent),
-      };
     }
 
     const preventDefault = () => {
@@ -228,10 +212,6 @@ export function createCoreStore(
     effects: Effect[],
     plugins: ReturnType<StackflowPlugin>[],
   ) {
-    if (!started) {
-      return;
-    }
-
     effects.forEach((effect) => {
       plugins.forEach((plugin) => {
         switch (effect._TAG) {
@@ -356,18 +336,14 @@ export function createCoreStore(
     },
   };
 
+  pluginInstances.forEach((pluginInstance) => {
+    pluginInstance.onInit?.({
+      actions,
+    });
+  });
+
   return {
     actions,
-    setInitialEvents,
-    start() {
-      started = true;
-
-      pluginInstances.forEach((pluginInstance) => {
-        pluginInstance.onInit?.({
-          actions,
-        });
-      });
-    },
     subscribe(listener) {
       storeListeners.push(listener);
 
