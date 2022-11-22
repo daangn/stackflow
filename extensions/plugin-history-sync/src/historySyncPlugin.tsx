@@ -308,7 +308,7 @@ export function historySyncPlugin<
 
             if (!nextActivity) {
               pushFlag += 1;
-              dispatchEvent("Pushed", {
+              push({
                 ...targetActivity.pushedBy,
               });
 
@@ -317,7 +317,7 @@ export function historySyncPlugin<
                 targetStep?.pushedBy.name === "StepReplaced"
               ) {
                 pushFlag += 1;
-                dispatchEvent("StepPushed", {
+                stepPush({
                   ...targetStep.pushedBy,
                 });
               }
@@ -331,7 +331,7 @@ export function historySyncPlugin<
                 targetStep?.pushedBy.name === "StepReplaced")
             ) {
               pushFlag += 1;
-              dispatchEvent("StepPushed", {
+              stepPush({
                 ...targetStep.pushedBy,
               });
             }
