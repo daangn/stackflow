@@ -17,7 +17,7 @@ export const CoreProvider: React.FC<CoreProviderProps> = ({
   coreStore,
   children,
 }) => {
-  const [state, setState] = useState(coreStore.actions.getStack());
+  const [state, setState] = useState(() => coreStore.actions.getStack());
 
   useEffect(
     () =>
