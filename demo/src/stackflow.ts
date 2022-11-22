@@ -2,9 +2,7 @@ import { vars } from "@seed-design/design-token";
 import { basicUIPlugin } from "@stackflow/plugin-basic-ui";
 import { historySyncPlugin } from "@stackflow/plugin-history-sync";
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
-import { stackDepthChangePlugin } from "@stackflow/plugin-stack-depth-change";
 import { stackflow } from "@stackflow/react";
-import React from "react";
 
 import Article from "./activities/Article";
 import Main from "./activities/Main";
@@ -19,9 +17,9 @@ const borderColor =
 export const { Stack, activities, useFlow } = stackflow({
   transitionDuration: 350,
   activities: {
-    Main: React.lazy(() => import("./activities/Main")),
+    Main,
     Article: {
-      component: React.lazy(() => import("./activities/Article")),
+      component: Article,
       paramsSchema: {
         type: "object" as const,
         properties: {
