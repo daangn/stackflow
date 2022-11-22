@@ -3,9 +3,11 @@ import React, { Suspense } from "react";
 import { Stack } from "./stackflow";
 
 const App: React.FC = () => (
-  <Suspense>
-    <Stack />
-  </Suspense>
+  <React.StrictMode>
+    <Suspense>
+      <Stack />
+    </Suspense>
+  </React.StrictMode>
 );
 
 export default App;

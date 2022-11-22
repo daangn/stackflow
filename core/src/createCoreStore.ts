@@ -62,6 +62,10 @@ export function createCoreStore(
   const dispatchEvent: StackflowActions["dispatchEvent"] = (name, params) => {
     const newEvent = makeEvent(name, params);
 
+    if (events.findIndex((e) => e.id === newEvent.id) > -1) {
+      return;
+    }
+
     const nextStackValue = aggregate(
       [...events, newEvent],
       new Date().getTime(),
