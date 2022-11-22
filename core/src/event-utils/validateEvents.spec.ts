@@ -12,12 +12,6 @@ const registeredEvent = ({ activityName }: { activityName: string }) =>
     activityName,
   });
 
-test("validateEvents - 만약에 events 파라미터가 비어있는 경우 throw 합니다", () => {
-  expect(() => {
-    validateEvents([]);
-  }).toThrow();
-});
-
 test("validateEvents - InitializedEvent가 중복된 경우 throw 합니다", () => {
   expect(() => {
     validateEvents([

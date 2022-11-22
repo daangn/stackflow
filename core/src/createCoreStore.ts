@@ -23,18 +23,23 @@ export type CreateCoreStoreOptions = {
 
 export type CreateCoreStoreOutput = {
   actions: StackflowActions;
-  initialize: () => void;
+  setInitialEvents: (initialEvents: DomainEvent[]) => void;
+  start: () => void;
   subscribe: (listener: () => void) => () => void;
 };
 
 export function createCoreStore(
   options: CreateCoreStoreOptions,
 ): CreateCoreStoreOutput {
-  let initialized = false;
+  let started = false;
 
-  const events = [...options.initialEvents];
+  const events: {
+    value: DomainEvent[];
+  } = {
+    value: [...options.initialEvents],
+  };
   const stack = {
-    value: aggregate(events, new Date().getTime()),
+    value: aggregate(events.value, new Date().getTime()),
   };
 
   const storeListeners: Array<() => void> = [];
@@ -51,6 +56,11 @@ export function createCoreStore(
     ...options.plugins.map((plugin) => plugin()),
   ];
 
+  const setInitialEvents = (initialEvents: DomainEvent[]) => {
+    events.value = initialEvents;
+    stack.value = aggregate(events.value, new Date().getTime());
+  };
+
   const setStackValue = (nextStackValue: AggregateOutput) => {
     const effects = produceEffects(stack.value, nextStackValue);
 
@@ -62,20 +72,16 @@ export function createCoreStore(
   const dispatchEvent: StackflowActions["dispatchEvent"] = (name, params) => {
     const newEvent = makeEvent(name, params);
 
-    if (events.findIndex((e) => e.id === newEvent.id) > -1) {
-      return;
-    }
-
     const nextStackValue = aggregate(
-      [...events, newEvent],
+      [...events.value, newEvent],
       new Date().getTime(),
     );
 
-    events.push(newEvent);
+    events.value.push(newEvent);
     setStackValue(nextStackValue);
 
     const interval = setInterval(() => {
-      const nextStackValue = aggregate(events, new Date().getTime());
+      const nextStackValue = aggregate(events.value, new Date().getTime());
 
       if (!isEqual(stack.value, nextStackValue)) {
         setStackValue(nextStackValue);
@@ -110,7 +116,7 @@ export function createCoreStore(
       return params;
     }
 
-    if (!initialized) {
+    if (!started) {
       return {
         isPrevented,
         overridenParams: toParams(nextEvent),
@@ -222,7 +228,7 @@ export function createCoreStore(
     effects: Effect[],
     plugins: ReturnType<StackflowPlugin>[],
   ) {
-    if (!initialized) {
+    if (!started) {
       return;
     }
 
@@ -352,8 +358,9 @@ export function createCoreStore(
 
   return {
     actions,
-    initialize() {
-      initialized = true;
+    setInitialEvents,
+    start() {
+      started = true;
 
       pluginInstances.forEach((pluginInstance) => {
         pluginInstance.onInit?.({

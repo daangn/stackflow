@@ -17,20 +17,10 @@ test("createCoreStore - beforePush 훅이 정상적으로 동작합니다", () =
   const onBeforePush = jest.fn();
   const otherHook = jest.fn();
 
-  const { actions, initialize } = createCoreStore({
+  const { actions, setInitialEvents, start } = createCoreStore({
     initialEvents: [
       makeEvent("Initialized", {
         transitionDuration: 350,
-        eventDate: enoughPastTime(),
-      }),
-      makeEvent("ActivityRegistered", {
-        activityName: "hello",
-        eventDate: enoughPastTime(),
-      }),
-      makeEvent("Pushed", {
-        activityId: "a1",
-        activityName: "hello",
-        activityParams: {},
         eventDate: enoughPastTime(),
       }),
     ],
@@ -44,7 +34,24 @@ test("createCoreStore - beforePush 훅이 정상적으로 동작합니다", () =
     ],
   });
 
-  initialize();
+  setInitialEvents([
+    makeEvent("Initialized", {
+      transitionDuration: 350,
+      eventDate: enoughPastTime(),
+    }),
+    makeEvent("ActivityRegistered", {
+      activityName: "hello",
+      eventDate: enoughPastTime(),
+    }),
+    makeEvent("Pushed", {
+      activityId: "a1",
+      activityName: "hello",
+      activityParams: {},
+      eventDate: enoughPastTime(),
+    }),
+  ]);
+
+  start();
 
   actions.push({
     activityId: "a2",
@@ -60,20 +67,10 @@ test("createCoreStore - Pushed 훅이 정상적으로 작동합니다", () => {
   const onPushed = jest.fn();
   const otherHook = jest.fn();
 
-  const { actions, initialize } = createCoreStore({
+  const { actions, setInitialEvents, start } = createCoreStore({
     initialEvents: [
       makeEvent("Initialized", {
         transitionDuration: 350,
-        eventDate: enoughPastTime(),
-      }),
-      makeEvent("ActivityRegistered", {
-        activityName: "hello",
-        eventDate: enoughPastTime(),
-      }),
-      makeEvent("Pushed", {
-        activityId: "a1",
-        activityName: "hello",
-        activityParams: {},
         eventDate: enoughPastTime(),
       }),
     ],
@@ -87,7 +84,24 @@ test("createCoreStore - Pushed 훅이 정상적으로 작동합니다", () => {
     ],
   });
 
-  initialize();
+  setInitialEvents([
+    makeEvent("Initialized", {
+      transitionDuration: 350,
+      eventDate: enoughPastTime(),
+    }),
+    makeEvent("ActivityRegistered", {
+      activityName: "hello",
+      eventDate: enoughPastTime(),
+    }),
+    makeEvent("Pushed", {
+      activityId: "a1",
+      activityName: "hello",
+      activityParams: {},
+      eventDate: enoughPastTime(),
+    }),
+  ]);
+
+  start();
 
   actions.push({
     activityId: "a2",
@@ -111,20 +125,10 @@ test("createCoreStore - onBeforePush 훅에서 preventDefault가 호출되면, �
   const onPushed = jest.fn();
   const otherHook = jest.fn();
 
-  const { actions, initialize } = createCoreStore({
+  const { actions, setInitialEvents, start } = createCoreStore({
     initialEvents: [
       makeEvent("Initialized", {
         transitionDuration: 350,
-        eventDate: enoughPastTime(),
-      }),
-      makeEvent("ActivityRegistered", {
-        activityName: "hello",
-        eventDate: enoughPastTime(),
-      }),
-      makeEvent("Pushed", {
-        activityId: "a1",
-        activityName: "hello",
-        activityParams: {},
         eventDate: enoughPastTime(),
       }),
     ],
@@ -141,7 +145,24 @@ test("createCoreStore - onBeforePush 훅에서 preventDefault가 호출되면, �
     ],
   });
 
-  initialize();
+  setInitialEvents([
+    makeEvent("Initialized", {
+      transitionDuration: 350,
+      eventDate: enoughPastTime(),
+    }),
+    makeEvent("ActivityRegistered", {
+      activityName: "hello",
+      eventDate: enoughPastTime(),
+    }),
+    makeEvent("Pushed", {
+      activityId: "a1",
+      activityName: "hello",
+      activityParams: {},
+      eventDate: enoughPastTime(),
+    }),
+  ]);
+
+  start();
 
   actions.push({
     activityId: "a2",
@@ -162,25 +183,32 @@ test("createCoreStore - subscribe에 등록하면, 스택 상태 변경이 있�
   const listener2 = jest.fn();
   const listener3 = jest.fn();
 
-  const { actions, initialize, subscribe } = createCoreStore({
+  const { actions, setInitialEvents, start, subscribe } = createCoreStore({
     initialEvents: [
       makeEvent("Initialized", {
-        transitionDuration: 150,
-        eventDate: enoughPastTime(),
-      }),
-      makeEvent("ActivityRegistered", {
-        activityName: "hello",
-        eventDate: enoughPastTime(),
-      }),
-      makeEvent("Pushed", {
-        activityId: "a1",
-        activityName: "hello",
-        activityParams: {},
+        transitionDuration: 350,
         eventDate: enoughPastTime(),
       }),
     ],
     plugins: [],
   });
+
+  setInitialEvents([
+    makeEvent("Initialized", {
+      transitionDuration: 150,
+      eventDate: enoughPastTime(),
+    }),
+    makeEvent("ActivityRegistered", {
+      activityName: "hello",
+      eventDate: enoughPastTime(),
+    }),
+    makeEvent("Pushed", {
+      activityId: "a1",
+      activityName: "hello",
+      activityParams: {},
+      eventDate: enoughPastTime(),
+    }),
+  ]);
 
   subscribe(listener1);
   const dispose = subscribe(listener2);
@@ -188,7 +216,7 @@ test("createCoreStore - subscribe에 등록하면, 스택 상태 변경이 있�
 
   dispose();
 
-  initialize();
+  start();
 
   actions.push({
     activityId: "a2",
@@ -222,20 +250,10 @@ test("createCoreStore - onBeforePush 훅에서 overrideActionParams로 기존 ac
     },
   );
 
-  const { actions, initialize } = createCoreStore({
+  const { actions, setInitialEvents, start } = createCoreStore({
     initialEvents: [
       makeEvent("Initialized", {
         transitionDuration: 350,
-        eventDate: enoughPastTime(),
-      }),
-      makeEvent("ActivityRegistered", {
-        activityName: "hello",
-        eventDate: enoughPastTime(),
-      }),
-      makeEvent("Pushed", {
-        activityId: "a1",
-        activityName: "hello",
-        activityParams: {},
         eventDate: enoughPastTime(),
       }),
     ],
@@ -247,7 +265,24 @@ test("createCoreStore - onBeforePush 훅에서 overrideActionParams로 기존 ac
     ],
   });
 
-  initialize();
+  setInitialEvents([
+    makeEvent("Initialized", {
+      transitionDuration: 350,
+      eventDate: enoughPastTime(),
+    }),
+    makeEvent("ActivityRegistered", {
+      activityName: "hello",
+      eventDate: enoughPastTime(),
+    }),
+    makeEvent("Pushed", {
+      activityId: "a1",
+      activityName: "hello",
+      activityParams: {},
+      eventDate: enoughPastTime(),
+    }),
+  ]);
+
+  start();
 
   actions.push({
     activityId: "a2",

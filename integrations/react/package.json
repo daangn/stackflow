@@ -24,13 +24,15 @@
     "dev": "yarn build:js --watch && yarn build:dts --watch"
   },
   "dependencies": {
-    "react-fast-compare": "^3.2.0"
+    "react-fast-compare": "^3.2.0",
+    "use-sync-external-store": "^1.2.0"
   },
   "devDependencies": {
     "@stackflow/core": "^0.16.0",
     "@stackflow/esbuild-config": "^0.16.0",
     "@stackflow/eslint-config": "^0.16.0",
     "@types/react": "^18.0.9",
+    "@types/use-sync-external-store": "^0.0.3",
     "@typescript-eslint/eslint-plugin": "^5.32.0",
     "@typescript-eslint/parser": "^5.20.0",
     "esbuild": "^0.14.51",

@@ -1,13 +1,14 @@
 import type { AggregateOutput, CreateCoreStoreOutput } from "@stackflow/core";
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext } from "react";
+import { useSyncExternalStore } from "use-sync-external-store/shim";
 
 export const CoreActionsContext = createContext<
   CreateCoreStoreOutput["actions"]
 >(null as any);
 export const CoreStateContext = createContext<AggregateOutput>(null as any);
 
-const startTransition: React.TransitionStartFunction =
-  React.startTransition ?? ((cb: () => void) => cb());
+const useDeferredValue: typeof React.useDeferredValue =
+  React.useDeferredValue ?? ((value) => value);
 
 export interface CoreProviderProps {
   coreStore: CreateCoreStoreOutput;
@@ -17,20 +18,16 @@ export const CoreProvider: React.FC<CoreProviderProps> = ({
   coreStore,
   children,
 }) => {
-  const [state, setState] = useState(() => coreStore.actions.getStack());
-
-  useEffect(
-    () =>
-      coreStore.subscribe(() => {
-        startTransition(() => {
-          setState(coreStore.actions.getStack());
-        });
-      }),
-    [],
+  const stack = useSyncExternalStore(
+    coreStore.subscribe,
+    coreStore.actions.getStack,
+    coreStore.actions.getStack,
   );
 
+  const deferredStack = useDeferredValue(stack);
+
   return (
-    <CoreStateContext.Provider value={state}>
+    <CoreStateContext.Provider value={deferredStack}>
       <CoreActionsContext.Provider value={coreStore.actions}>
         {children}
       </CoreActionsContext.Provider>

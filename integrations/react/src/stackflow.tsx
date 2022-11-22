@@ -251,9 +251,11 @@ export function stackflow<T extends BaseActivities>(
     );
 
     useMemo(() => {
-      initialPushedEvents.forEach((event) => {
-        coreStore.actions.dispatchEvent(event.name, event);
-      });
+      coreStore.setInitialEvents([
+        initializedEvent,
+        ...activityRegisteredEvents,
+        ...initialPushedEvents,
+      ]);
     }, []);
 
     const isInitialActivityIgnored =
@@ -284,7 +286,7 @@ export function stackflow<T extends BaseActivities>(
     }, []);
 
     useEffect(() => {
-      coreStore.initialize();
+      coreStore.start();
     }, []);
 
     return (
