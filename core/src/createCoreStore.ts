@@ -10,6 +10,7 @@ import type { BaseDomainEvent } from "./event-types/_base";
 import { makeEvent } from "./event-utils";
 import type { StackflowActions, StackflowPlugin } from "./interfaces";
 import { produceEffects } from "./produceEffects";
+import { once } from "./utils";
 
 const SECOND = 1000;
 
@@ -23,6 +24,7 @@ export type CreateCoreStoreOptions = {
 
 export type CreateCoreStoreOutput = {
   actions: StackflowActions;
+  init: () => void;
   subscribe: (listener: () => void) => () => void;
 };
 
@@ -336,14 +338,15 @@ export function createCoreStore(
     },
   };
 
-  pluginInstances.forEach((pluginInstance) => {
-    pluginInstance.onInit?.({
-      actions,
-    });
-  });
-
   return {
     actions,
+    init: once(() => {
+      pluginInstances.forEach((pluginInstance) => {
+        pluginInstance.onInit?.({
+          actions,
+        });
+      });
+    }),
     subscribe(listener) {
       storeListeners.push(listener);
 

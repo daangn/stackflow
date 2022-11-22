@@ -5,7 +5,7 @@ import type {
   PushedEvent,
   StepPushedEvent,
 } from "@stackflow/core/dist/event-types";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 
 import { makeActivityId, makeStepId } from "./activity";
 import type { BaseActivities } from "./BaseActivities";
@@ -288,6 +288,10 @@ export function stackflow<T extends BaseActivities>(
 
       return store;
     }, []);
+
+    useEffect(() => {
+      coreStore.init();
+    }, [coreStore]);
 
     return (
       <PluginsProvider value={pluginInstances}>
