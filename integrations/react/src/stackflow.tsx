@@ -105,31 +105,6 @@ export function stackflow<T extends BaseActivities>(
     .map((p) => p as StackflowReactPlugin<T>);
   const pluginInstances = plugins.map((plugin) => plugin());
 
-  const initialEventDate = new Date().getTime() - options.transitionDuration;
-
-  const initializedEvent = makeEvent("Initialized", {
-    transitionDuration: options.transitionDuration,
-    eventDate: initialEventDate,
-  });
-
-  const activityRegisteredEvents = Object.entries(options.activities).map(
-    ([activityName, Activity]) =>
-      makeEvent("ActivityRegistered", {
-        activityName,
-        eventDate: initialEventDate,
-        ...("component" in Activity
-          ? {
-              activityParamsSchema: Activity.paramsSchema,
-            }
-          : null),
-      }),
-  );
-
-  const coreStore = createCoreStore({
-    initialEvents: [initializedEvent, ...activityRegisteredEvents],
-    plugins,
-  });
-
   const activities = Object.entries(options.activities).reduce(
     (acc, [key, Activity]) => {
       if ("component" in Activity) {
@@ -147,8 +122,33 @@ export function stackflow<T extends BaseActivities>(
         [key]: React.memo(Activity),
       };
     },
-    {},
+    {} as T,
   );
+
+  const initialEventDate = new Date().getTime() - options.transitionDuration;
+
+  const initializedEvent = makeEvent("Initialized", {
+    transitionDuration: options.transitionDuration,
+    eventDate: initialEventDate,
+  });
+
+  const activityRegisteredEvents = Object.entries(activities).map(
+    ([activityName, Activity]) =>
+      makeEvent("ActivityRegistered", {
+        activityName,
+        eventDate: initialEventDate,
+        ...("component" in Activity
+          ? {
+              activityParamsSchema: Activity.paramsSchema,
+            }
+          : null),
+      }),
+  );
+
+  const coreStore = createCoreStore({
+    initialEvents: [initializedEvent, ...activityRegisteredEvents],
+    plugins,
+  });
 
   if (typeof window !== "undefined") {
     const html = window.document.documentElement;
@@ -220,73 +220,74 @@ export function stackflow<T extends BaseActivities>(
     },
   };
 
-  const Stack: StackComponentType = (props) => {
-    const initialPushedEventsByOption = useMemo(
-      () =>
-        options.initialActivity
-          ? [
-              makeEvent("Pushed", {
-                activityId: makeActivityId(),
-                activityName: options.initialActivity(),
-                activityParams: {},
-                eventDate: initialEventDate,
-                skipEnterActiveState: false,
-              }),
-            ]
-          : [],
-      [],
-    );
+  let started = false;
 
-    const initialPushedEvents = useMemo(
-      () =>
-        pluginInstances.reduce<(PushedEvent | StepPushedEvent)[]>(
-          (initialEvents, pluginInstance) =>
-            pluginInstance.overrideInitialEvents?.({
-              initialEvents,
-              initialContext: props.initialContext ?? {},
-            }) ?? initialEvents,
-          initialPushedEventsByOption,
-        ),
-      [],
-    );
+  function start({ initialContext }: { initialContext: any }) {
+    if (started) {
+      return;
+    }
+    started = true;
 
-    useMemo(() => {
-      coreStore.setInitialEvents([
-        initializedEvent,
-        ...activityRegisteredEvents,
-        ...initialPushedEvents,
-      ]);
-    }, []);
+    const initialPushedEventsByOption = options.initialActivity
+      ? [
+          makeEvent("Pushed", {
+            activityId: makeActivityId(),
+            activityName: options.initialActivity(),
+            activityParams: {},
+            eventDate: initialEventDate,
+            skipEnterActiveState: false,
+          }),
+        ]
+      : [];
+
+    const initialPushedEvents = pluginInstances.reduce<
+      (PushedEvent | StepPushedEvent)[]
+    >(
+      (initialEvents, pluginInstance) =>
+        pluginInstance.overrideInitialEvents?.({
+          initialEvents,
+          initialContext: initialContext ?? {},
+        }) ?? initialEvents,
+      initialPushedEventsByOption,
+    );
 
     const isInitialActivityIgnored =
       initialPushedEvents.length > 0 &&
       initialPushedEventsByOption.length > 0 &&
       initialPushedEvents !== initialPushedEventsByOption;
 
-    useEffect(() => {
-      if (isInitialActivityIgnored) {
-        // eslint-disable-next-line no-console
-        console.warn(
-          `Stackflow - ` +
-            ` Some plugin overrides an "initialActivity" option.` +
-            ` The "initialActivity" option you set to "${initialPushedEventsByOption[0].activityName}" in the "stackflow" is ignored.`,
-        );
-      }
+    if (isInitialActivityIgnored) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        `Stackflow - ` +
+          ` Some plugin overrides an "initialActivity" option.` +
+          ` The "initialActivity" option you set to "${initialPushedEventsByOption[0].activityName}" in the "stackflow" is ignored.`,
+      );
+    }
 
-      if (initialPushedEvents.length === 0) {
-        // eslint-disable-next-line no-console
-        console.warn(
-          `Stackflow - ` +
-            ` There is no initial activity.` +
-            " If you want to set the initial activity," +
-            " add the `initialActivity` option of the `stackflow()` function or" +
-            " add a plugin that sets the initial activity. (e.g. `@stackflow/plugin-history-sync`)",
-        );
-      }
-    }, []);
+    if (initialPushedEvents.length === 0) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        `Stackflow - ` +
+          ` There is no initial activity.` +
+          " If you want to set the initial activity," +
+          " add the `initialActivity` option of the `stackflow()` function or" +
+          " add a plugin that sets the initial activity. (e.g. `@stackflow/plugin-history-sync`)",
+      );
+    }
 
-    useEffect(() => {
-      coreStore.start();
+    coreStore.setInitialEvents([
+      initializedEvent,
+      ...activityRegisteredEvents,
+      ...initialPushedEvents,
+    ]);
+
+    coreStore.start();
+  }
+
+  const Stack: StackComponentType = (props) => {
+    useMemo(() => {
+      start({ initialContext: props.initialContext });
     }, []);
 
     return (
@@ -303,6 +304,6 @@ export function stackflow<T extends BaseActivities>(
     useFlow: useActions,
     useStepFlow: useStepActions,
     actions,
-    activities: options.activities,
+    activities,
   };
 }
