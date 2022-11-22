@@ -2209,6 +2209,7 @@ __metadata:
     "@stackflow/plugin-renderer-basic": ^0.16.0
     "@stackflow/plugin-stack-depth-change": ^0.16.0
     "@stackflow/react": ^0.16.0
+    "@types/prop-types": ^15.7.5
     "@types/react": ^18.0.10
     "@types/react-dom": ^18.0.5
     "@types/react-lazy-load-image-component": ^1.5.2
@@ -2229,6 +2230,7 @@ __metadata:
     eslint-plugin-simple-import-sort: ^7.0.0
     lorem-ipsum: ^2.0.8
     normalize.css: ^8.0.1
+    prop-types: ^15.8.1
     random-picture: ^4.0.6
     react: ^18.1.0
     react-dom: ^18.1.0
@@ -2568,6 +2570,7 @@ __metadata:
     eslint-plugin-react: ^7.29.4
     eslint-plugin-react-hooks: ^4.4.0
     eslint-plugin-simple-import-sort: ^7.0.0
+    parse-prop-types: ^0.3.0
     react: ^18.1.0
     react-fast-compare: ^3.2.0
     rimraf: ^3.0.2
@@ -2992,7 +2995,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/prop-types@npm:*":
+"@types/prop-types@npm:*, @types/prop-types@npm:^15.7.5":
   version: 15.7.5
   resolution: "@types/prop-types@npm:15.7.5"
   checksum: 5b43b8b15415e1f298243165f1d44390403bb2bd42e662bca3b5b5633fdd39c938e91b7fce3a9483699db0f7a715d08cef220c121f723a634972fdf596aec980
@@ -10572,6 +10575,15 @@ __metadata:
     qs: ^6.9.4
     query-string: ^6.13.8
   checksum: d1704c0027489b64838c608c3f075fe3599c18a7413fa92e7074a0157e5bcc1a4ef73e7ae9bd9dbf5fad1809137437310cc69a57e5f5130ea17226165f3e942a
+  languageName: node
+  linkType: hard
+
+"parse-prop-types@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "parse-prop-types@npm:0.3.0"
+  peerDependencies:
+    prop-types: ^15.0.0
+  checksum: 771b4800f989cc6c40c30db7cd60bfd529b10c453a1f6fe9448dbd163a048084093c3409eed4fd18bfcf0451eae0db4bd2c05c0fb75df3574177095076ad3387
   languageName: node
   linkType: hard
 

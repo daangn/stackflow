@@ -52,6 +52,7 @@
     "eslint-plugin-simple-import-sort": "^7.0.0",
     "lorem-ipsum": "^2.0.8",
     "normalize.css": "^8.0.1",
+    "prop-types": "^15.8.1",
     "random-picture": "^4.0.6",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
@@ -60,6 +61,7 @@
   },
   "devDependencies": {
     "@stackflow/esbuild-config": "^0.16.0",
+    "@types/prop-types": "^15.7.5",
     "@types/react": "^18.0.10",
     "@types/react-dom": "^18.0.5",
     "@types/react-lazy-load-image-component": "^1.5.2",

@@ -9,11 +9,11 @@ import type { StackflowReactPlugin } from "./StackflowReactPlugin";
 import type { WithRequired } from "./utils";
 
 interface PluginRendererProps {
-  activities: BaseActivities;
+  memoizedActivities: BaseActivities;
   plugin: WithRequired<ReturnType<StackflowReactPlugin>, "render">;
 }
 const PluginRenderer: React.FC<PluginRendererProps> = ({
-  activities,
+  memoizedActivities,
   plugin,
 }) => {
   const coreState = useCoreState();
@@ -33,9 +33,12 @@ const PluginRenderer: React.FC<PluginRendererProps> = ({
             ...activity,
             key: activity.id,
             render(overrideActivity) {
-              const ActivityComponent = activities[activity.name];
+              const MemoizedActivityComponent =
+                memoizedActivities[activity.name];
 
-              let output = <ActivityComponent params={activity.params} />;
+              let output = (
+                <MemoizedActivityComponent params={activity.params} />
+              );
 
               plugins.forEach((p) => {
                 output =

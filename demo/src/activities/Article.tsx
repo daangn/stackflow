@@ -1,5 +1,6 @@
 import type { ActivityComponentType } from "@stackflow/react";
 import { useActivityParams } from "@stackflow/react";
+import PropTypes from "prop-types";
 import React from "react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
@@ -62,7 +63,7 @@ const recommenderCard = [
 ];
 
 export interface ArticleParams {
-  articleId: string;
+  articleId: "world";
   title: string;
 }
 
@@ -108,6 +109,13 @@ const Article: ActivityComponentType<ArticleParams> = () => {
       </div>
     </Layout>
   );
+};
+
+Article.propTypes = {
+  params: PropTypes.shape({
+    articleId: PropTypes.oneOf(["world"] as const).isRequired,
+    title: PropTypes.string.isRequired,
+  }).isRequired,
 };
 
 export default Article;

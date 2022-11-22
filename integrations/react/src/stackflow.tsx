@@ -1,4 +1,5 @@
 import type { StackflowPluginActions } from "@stackflow/core";
+import parsePropTypes from "parse-prop-types";
 import React, { useMemo } from "react";
 
 import type { BaseActivities } from "./BaseActivities";

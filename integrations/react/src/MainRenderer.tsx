@@ -7,9 +7,9 @@ import { usePlugins } from "./plugins";
 import type { WithRequired } from "./utils";
 
 interface MainRendererProps {
-  activities: BaseActivities;
+  memoizedActivities: BaseActivities;
 }
-const MainRenderer: React.FC<MainRendererProps> = ({ activities }) => {
+const MainRenderer: React.FC<MainRendererProps> = ({ memoizedActivities }) => {
   const coreState = useCoreState();
   const plugins = usePlugins();
 
@@ -34,7 +34,7 @@ const MainRenderer: React.FC<MainRendererProps> = ({ activities }) => {
     <>
       {renderPlugins.map((plugin) => (
         <PluginRenderer
-          activities={activities}
+          memoizedActivities={memoizedActivities}
           key={plugin.key}
           plugin={plugin}
         />

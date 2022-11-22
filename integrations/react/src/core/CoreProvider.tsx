@@ -1,6 +1,9 @@
 import type { DispatchEvent, DomainEvent } from "@stackflow/core";
 import { aggregate, makeEvent } from "@stackflow/core";
-import type { StepPushedEvent } from "@stackflow/core/dist/event-types";
+import type {
+  PushedEvent,
+  StepPushedEvent,
+} from "@stackflow/core/dist/event-types";
 import React, {
   useCallback,
   useEffect,
@@ -10,14 +13,16 @@ import React, {
 } from "react";
 import isEqual from "react-fast-compare";
 
-import { makeActivityId } from "../activity";
+import {
+  ActivityComponentType,
+  makeActivityId,
+  parseActivityComponentPropTypes,
+} from "../activity";
 import type { BaseActivities } from "../BaseActivities";
 import { useInitContext } from "../init-context";
 import { usePlugins } from "../plugins";
 import { CoreActionsContext } from "./CoreActionsContext";
 import { CoreStateContext } from "./CoreStateContext";
-
-type PushedEvent = Extract<DomainEvent, { name: "Pushed" }>;
 
 const SECOND = 1000;
 
@@ -89,12 +94,21 @@ export const CoreProvider: React.FC<CoreProviderProps> = ({
       );
     }
 
-    const activityRegisteredEvents = Object.keys(activities).map(
-      (activityName) =>
-        makeEvent("ActivityRegistered", {
+    const activityRegisteredEvents = Object.entries(activities).map(
+      ([activityName, ActivityComponent]) => {
+        const activityParamsSchema =
+          parseActivityComponentPropTypes(ActivityComponent);
+
+        return makeEvent("ActivityRegistered", {
           activityName,
           eventDate: initialEventDate,
-        }),
+          ...(activityParamsSchema
+            ? {
+                activityParamsSchema,
+              }
+            : null),
+        });
+      },
     );
 
     const events: DomainEvent[] = [

@@ -3036,6 +3036,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@stackflow/plugin-renderer-basic", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-renderer-basic"],\
             ["@stackflow/plugin-stack-depth-change", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-stack-depth-change"],\
             ["@stackflow/react", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:integrations/react"],\
+            ["@types/prop-types", "npm:15.7.5"],\
             ["@types/react", "npm:18.0.15"],\
             ["@types/react-dom", "npm:18.0.5"],\
             ["@types/react-lazy-load-image-component", "npm:1.5.2"],\
@@ -3056,6 +3057,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["eslint-plugin-simple-import-sort", "virtual:5d222998b86cceed4c8d843e557f0e3b94c8ccb1e8952571a8d45c8a6806e6624abcd819a5fa16c66371a9250ca177cd0fc04f42e577bbbc49771098023bb79e#npm:7.0.0"],\
             ["lorem-ipsum", "npm:2.0.8"],\
             ["normalize.css", "npm:8.0.1"],\
+            ["prop-types", "npm:15.8.1"],\
             ["random-picture", "npm:4.0.6"],\
             ["react", "npm:18.2.0"],\
             ["react-dom", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#npm:18.2.0"],\
@@ -3618,6 +3620,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["eslint-plugin-react", "virtual:5d222998b86cceed4c8d843e557f0e3b94c8ccb1e8952571a8d45c8a6806e6624abcd819a5fa16c66371a9250ca177cd0fc04f42e577bbbc49771098023bb79e#npm:7.30.0"],\
             ["eslint-plugin-react-hooks", "virtual:5d222998b86cceed4c8d843e557f0e3b94c8ccb1e8952571a8d45c8a6806e6624abcd819a5fa16c66371a9250ca177cd0fc04f42e577bbbc49771098023bb79e#npm:4.6.0"],\
             ["eslint-plugin-simple-import-sort", "virtual:5d222998b86cceed4c8d843e557f0e3b94c8ccb1e8952571a8d45c8a6806e6624abcd819a5fa16c66371a9250ca177cd0fc04f42e577bbbc49771098023bb79e#npm:7.0.0"],\
+            ["parse-prop-types", "virtual:eeae00ab9cdb4d807ead707d69a05cf69e4e15f4e94e6427b60f23763785847dffc9899221c63493fb7012f64c6d1ead2deba588072b0b1635942f995a9b7033#npm:0.3.0"],\
             ["react", "npm:18.2.0"],\
             ["react-fast-compare", "npm:3.2.0"],\
             ["rimraf", "npm:3.0.2"],\
@@ -3651,6 +3654,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["eslint-plugin-react", "virtual:5d222998b86cceed4c8d843e557f0e3b94c8ccb1e8952571a8d45c8a6806e6624abcd819a5fa16c66371a9250ca177cd0fc04f42e577bbbc49771098023bb79e#npm:7.30.0"],\
             ["eslint-plugin-react-hooks", "virtual:5d222998b86cceed4c8d843e557f0e3b94c8ccb1e8952571a8d45c8a6806e6624abcd819a5fa16c66371a9250ca177cd0fc04f42e577bbbc49771098023bb79e#npm:4.6.0"],\
             ["eslint-plugin-simple-import-sort", "virtual:5d222998b86cceed4c8d843e557f0e3b94c8ccb1e8952571a8d45c8a6806e6624abcd819a5fa16c66371a9250ca177cd0fc04f42e577bbbc49771098023bb79e#npm:7.0.0"],\
+            ["parse-prop-types", "virtual:eeae00ab9cdb4d807ead707d69a05cf69e4e15f4e94e6427b60f23763785847dffc9899221c63493fb7012f64c6d1ead2deba588072b0b1635942f995a9b7033#npm:0.3.0"],\
             ["react", "npm:18.2.0"],\
             ["react-fast-compare", "npm:3.2.0"],\
             ["rimraf", "npm:3.0.2"],\
@@ -13101,6 +13105,28 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["protocols", "npm:1.4.8"],\
             ["qs", "npm:6.10.3"],\
             ["query-string", "npm:6.14.1"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["parse-prop-types", [\
+        ["npm:0.3.0", {\
+          "packageLocation": "./.yarn/cache/parse-prop-types-npm-0.3.0-70cff89ca1-771b4800f9.zip/node_modules/parse-prop-types/",\
+          "packageDependencies": [\
+            ["parse-prop-types", "npm:0.3.0"]\
+          ],\
+          "linkType": "SOFT"\
+        }],\
+        ["virtual:eeae00ab9cdb4d807ead707d69a05cf69e4e15f4e94e6427b60f23763785847dffc9899221c63493fb7012f64c6d1ead2deba588072b0b1635942f995a9b7033#npm:0.3.0", {\
+          "packageLocation": "./.yarn/__virtual__/parse-prop-types-virtual-7ac85fc320/0/cache/parse-prop-types-npm-0.3.0-70cff89ca1-771b4800f9.zip/node_modules/parse-prop-types/",\
+          "packageDependencies": [\
+            ["parse-prop-types", "virtual:eeae00ab9cdb4d807ead707d69a05cf69e4e15f4e94e6427b60f23763785847dffc9899221c63493fb7012f64c6d1ead2deba588072b0b1635942f995a9b7033#npm:0.3.0"],\
+            ["@types/prop-types", null],\
+            ["prop-types", null]\
+          ],\
+          "packagePeers": [\
+            "@types/prop-types",\
+            "prop-types"\
           ],\
           "linkType": "HARD"\
         }]\
