@@ -5,7 +5,7 @@ import type {
 } from "@stackflow/core";
 import type React from "react";
 
-export type StackflowReactPlugin<T = never> = (args: { initContext: any }) => {
+export type StackflowReactPlugin<T = never> = () => {
   /**
    * Determine how to render by using the stack state
    */

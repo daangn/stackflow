@@ -4,7 +4,6 @@ import {
   useRoutes,
 } from "@stackflow/plugin-history-sync";
 import type { ActivityComponentType } from "@stackflow/react";
-import { useInitContext } from "@stackflow/react";
 import { useMemo } from "react";
 
 import { useLoaders } from "./LoadersContext";
@@ -24,8 +23,6 @@ export function usePreloader<T extends { [activityName: string]: unknown }>(): {
 } {
   const loaders = useLoaders();
   const routes = useRoutes();
-
-  const initContext = useInitContext();
 
   return useMemo(
     () => ({
@@ -48,10 +45,9 @@ export function usePreloader<T extends { [activityName: string]: unknown }>(): {
             ...(path ? { path } : null),
             ...options?.activityContext,
           },
-          initContext,
         });
       },
     }),
-    [loaders, initContext],
+    [loaders],
   );
 }

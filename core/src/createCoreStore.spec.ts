@@ -7,7 +7,7 @@ test("createCoreStore - beforePush 훅이 정상적으로 동작합니다", () =
   const onBeforePush = jest.fn();
   const otherHook = jest.fn();
 
-  const { actions } = createCoreStore({
+  const { coreActions } = createCoreStore({
     initialEvents: [
       makeEvent("Initialized", {
         transitionDuration: 350,
@@ -31,7 +31,7 @@ test("createCoreStore - beforePush 훅이 정상적으로 동작합니다", () =
     ],
   });
 
-  actions.push({
+  coreActions.push({
     activityId: "a2",
     activityName: "hello",
     activityParams: {},
@@ -45,7 +45,7 @@ test("createCoreStore - Pushed 훅이 정상적으로 작동합니다", () => {
   const onPushed = jest.fn();
   const otherHook = jest.fn();
 
-  const { actions } = createCoreStore({
+  const { coreActions } = createCoreStore({
     initialEvents: [
       makeEvent("Initialized", {
         transitionDuration: 350,
@@ -69,13 +69,13 @@ test("createCoreStore - Pushed 훅이 정상적으로 작동합니다", () => {
     ],
   });
 
-  actions.push({
+  coreActions.push({
     activityId: "a2",
     activityName: "hello",
     activityParams: {},
   });
 
-  const stack = actions.getStack();
+  const stack = coreActions.getStack();
 
   expect(last(stack.activities)?.id).toEqual("a2");
   expect(onPushed).toHaveBeenCalledTimes(1);
@@ -91,7 +91,7 @@ test("createCoreStore - onBeforePush 훅에서 preventDefault가 호출되면, �
   const onPushed = jest.fn();
   const otherHook = jest.fn();
 
-  const { actions } = createCoreStore({
+  const { coreActions } = createCoreStore({
     initialEvents: [
       makeEvent("Initialized", {
         transitionDuration: 350,
@@ -118,13 +118,13 @@ test("createCoreStore - onBeforePush 훅에서 preventDefault가 호출되면, �
     ],
   });
 
-  actions.push({
+  coreActions.push({
     activityId: "a2",
     activityName: "hello",
     activityParams: {},
   });
 
-  const stack = actions.getStack();
+  const stack = coreActions.getStack();
 
   expect(last(stack.activities)?.id).toEqual("a1");
   expect(onBeforePush).toHaveBeenCalledTimes(1);

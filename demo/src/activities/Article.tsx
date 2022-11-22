@@ -1,5 +1,5 @@
 import type { ActivityComponentType } from "@stackflow/react";
-import { useActivityParams } from "@stackflow/react";
+import { useActivity, useActivityParams } from "@stackflow/react";
 import PropTypes from "prop-types";
 import React from "react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
@@ -63,11 +63,12 @@ const recommenderCard = [
 ];
 
 export interface ArticleParams {
-  articleId: "world";
+  articleId: string;
   title: string;
 }
 
 const Article: ActivityComponentType<ArticleParams> = () => {
+  const activity = useActivity();
   const { articleId, title } = useActivityParams<{
     articleId: string;
     title: string;

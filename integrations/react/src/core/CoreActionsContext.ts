@@ -1,10 +1,6 @@
-import type { AggregateOutput, DispatchEvent } from "@stackflow/core";
+import type { CreateCoreStoreOutput } from "@stackflow/core";
 import { createContext } from "react";
 
-export interface CoreActionsContextValue {
-  getStack: () => AggregateOutput;
-  dispatchEvent: DispatchEvent;
-}
-export const CoreActionsContext = createContext<CoreActionsContextValue>(
-  null as any,
-);
+export const CoreActionsContext = createContext<
+  CreateCoreStoreOutput["coreActions"]
+>(null as any);

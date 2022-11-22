@@ -1,5 +1,8 @@
 /* eslint-disable no-use-before-define */
 
+import type { AggregateOutput } from "AggregateOutput";
+import isEqual from "react-fast-compare";
+
 import { aggregate } from "./aggregate";
 import type { Effect } from "./Effect";
 import type { DomainEvent } from "./event-types";
@@ -7,18 +10,50 @@ import { makeEvent } from "./event-utils";
 import type { StackflowActions, StackflowPlugin } from "./interfaces";
 import { produceEffects } from "./produceEffects";
 
-export function createCoreStore(options: {
+const SECOND = 1000;
+
+// 60FPS
+const INTERVAL_MS = SECOND / 60;
+
+export type CreateCoreStoreOptions = {
   initialEvents: DomainEvent[];
   plugins: StackflowPlugin[];
-}): {
-  actions: StackflowActions;
-} {
+};
+
+export type CreateCoreStoreOutput = {
+  coreActions: StackflowActions;
+  subscribe: (listener: () => void) => () => void;
+};
+
+export function createCoreStore(
+  options: CreateCoreStoreOptions,
+): CreateCoreStoreOutput {
   const events = [...options.initialEvents];
   const stack = {
     value: aggregate(events, new Date().getTime()),
   };
 
-  const plugins = options.plugins.map((plugin) => plugin());
+  const storeListeners: Array<() => void> = [];
+
+  const defaultPlugin: StackflowPlugin = () => ({
+    key: "@stackflow/core",
+    onChanged() {
+      storeListeners.forEach((listener) => listener());
+    },
+  });
+
+  const plugins: ReturnType<StackflowPlugin>[] = [
+    defaultPlugin(),
+    ...options.plugins.map((plugin) => plugin()),
+  ];
+
+  const setStackValue = (nextStackValue: AggregateOutput) => {
+    const effects = produceEffects(stack.value, nextStackValue);
+
+    stack.value = nextStackValue;
+
+    triggerPostEffectHooks(effects, plugins);
+  };
 
   const dispatchEvent: StackflowActions["dispatchEvent"] = (name, params) => {
     const newEvent = makeEvent(name, params);
@@ -33,12 +68,21 @@ export function createCoreStore(options: {
       [...events, newEvent],
       new Date().getTime(),
     );
-    const effects = produceEffects(stack.value, nextStackValue);
 
     events.push(newEvent);
-    stack.value = nextStackValue;
+    setStackValue(nextStackValue);
 
-    triggerPostEffectHooks(effects, plugins);
+    const interval = setInterval(() => {
+      const nextStackValue = aggregate(events, new Date().getTime());
+
+      if (!isEqual(stack.value, nextStackValue)) {
+        setStackValue(nextStackValue);
+      }
+
+      if (nextStackValue.globalTransitionState === "idle") {
+        clearInterval(interval);
+      }
+    }, INTERVAL_MS);
   };
 
   function triggerPreEffectHooks(
@@ -68,7 +112,7 @@ export function createCoreStore(options: {
               ...__event,
             },
             actions: {
-              ...actions,
+              ...coreActions,
               preventDefault,
               overrideActionParams,
             },
@@ -81,7 +125,7 @@ export function createCoreStore(options: {
               ...__event,
             },
             actions: {
-              ...actions,
+              ...coreActions,
               preventDefault,
               overrideActionParams,
             },
@@ -94,7 +138,7 @@ export function createCoreStore(options: {
               ...__event,
             },
             actions: {
-              ...actions,
+              ...coreActions,
               preventDefault,
               overrideActionParams,
             },
@@ -107,7 +151,7 @@ export function createCoreStore(options: {
               ...__event,
             },
             actions: {
-              ...actions,
+              ...coreActions,
               preventDefault,
               overrideActionParams,
             },
@@ -120,7 +164,7 @@ export function createCoreStore(options: {
               ...__event,
             },
             actions: {
-              ...actions,
+              ...coreActions,
               preventDefault,
               overrideActionParams,
             },
@@ -133,7 +177,7 @@ export function createCoreStore(options: {
               ...__event,
             },
             actions: {
-              ...actions,
+              ...coreActions,
               preventDefault,
               overrideActionParams,
             },
@@ -159,37 +203,37 @@ export function createCoreStore(options: {
         switch (effect._TAG) {
           case "PUSHED":
             return plugin.onPushed?.({
-              actions,
+              actions: coreActions,
               effect,
             });
           case "REPLACED":
             return plugin.onReplaced?.({
-              actions,
+              actions: coreActions,
               effect,
             });
           case "POPPED":
             return plugin.onPopped?.({
-              actions,
+              actions: coreActions,
               effect,
             });
           case "STEP_PUSHED":
             return plugin.onStepPushed?.({
-              actions,
+              actions: coreActions,
               effect,
             });
           case "STEP_REPLACED":
             return plugin.onStepReplaced?.({
-              actions,
+              actions: coreActions,
               effect,
             });
           case "STEP_POPPED":
             return plugin.onStepPopped?.({
-              actions,
+              actions: coreActions,
               effect,
             });
           case "%SOMETHING_CHANGED%":
             return plugin.onChanged?.({
-              actions,
+              actions: coreActions,
               effect,
             });
           default:
@@ -199,7 +243,7 @@ export function createCoreStore(options: {
     });
   }
 
-  const actions: StackflowActions = {
+  const coreActions: StackflowActions = {
     getStack() {
       return stack.value;
     },
@@ -225,6 +269,13 @@ export function createCoreStore(options: {
   };
 
   return {
-    actions,
+    coreActions,
+    subscribe(listener) {
+      storeListeners.push(listener);
+
+      return () => {
+        storeListeners.splice(storeListeners.findIndex(listener), 1);
+      };
+    },
   };
 }

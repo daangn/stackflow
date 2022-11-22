@@ -98,7 +98,7 @@ type HistorySyncPluginOptions<K extends string> = {
   routes: {
     [key in K]: string | string[];
   };
-  fallbackActivity: (args: { initContext: any }) => K;
+  fallbackActivity: () => K;
   useHash?: boolean;
 };
 export function historySyncPlugin<
@@ -108,7 +108,7 @@ export function historySyncPlugin<
 ): StackflowReactPlugin<T> {
   type K = Extract<keyof T, string>;
 
-  return ({ initContext }) => {
+  return () => {
     let pushFlag = 0;
     let popFlag = 0;
 
@@ -143,12 +143,6 @@ export function historySyncPlugin<
         }
 
         function resolvePath() {
-          if (
-            initContext?.req?.path &&
-            typeof initContext.req.path === "string"
-          ) {
-            return initContext.req.path as string;
-          }
           if (isServer) {
             return null;
           }
@@ -197,7 +191,7 @@ export function historySyncPlugin<
         }
 
         const fallbackActivityId = id();
-        const fallbackActivityName = options.fallbackActivity({ initContext });
+        const fallbackActivityName = options.fallbackActivity();
         const fallbackActivityRoutes = normalizeRoute(
           options.routes[fallbackActivityName],
         );

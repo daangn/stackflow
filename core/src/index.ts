@@ -4,7 +4,7 @@ export {
   ActivityTransitionState,
   AggregateOutput,
 } from "./AggregateOutput";
-export { createCoreStore } from "./createCoreStore";
+export * from "./createCoreStore";
 export { Effect } from "./Effect";
 export { DomainEvent } from "./event-types";
 export { DispatchEvent, makeEvent } from "./event-utils";

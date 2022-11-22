@@ -1,4 +1,4 @@
-import type { StackflowPluginActions } from "@stackflow/core";
+import type { StackflowActions } from "@stackflow/core";
 import React from "react";
 
 import type { BaseActivities } from "./BaseActivities";
@@ -9,7 +9,7 @@ import type { UseStepActionsOutputType } from "./useStepActions";
 import { useStepActions } from "./useStepActions";
 
 export type StackRefCurrentType<T extends BaseActivities> = {
-  actions: Pick<StackflowPluginActions, "dispatchEvent" | "getStack"> &
+  actions: Pick<StackflowActions, "dispatchEvent" | "getStack"> &
     Pick<UseActionsOutputType<T>, "push" | "pop" | "replace"> &
     Pick<UseStepActionsOutputType<{}>, "stepPush" | "stepReplace" | "stepPop">;
 };
