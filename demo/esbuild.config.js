@@ -11,7 +11,7 @@ const external = Object.keys({
 Promise.all([
   build({
     ...config({
-      entryPoints: ["./src/stackflow.ts"],
+      entryPoints: ["./src/stackflow-docs.ts"],
       vanillaExtractExternal: ["@seed-design"],
     }),
     format: "cjs",
@@ -21,7 +21,7 @@ Promise.all([
   }),
   build({
     ...config({
-      entryPoints: ["./src/stackflow.ts"],
+      entryPoints: ["./src/stackflow-docs.ts"],
       vanillaExtractExternal: ["@seed-design"],
     }),
     format: "esm",
