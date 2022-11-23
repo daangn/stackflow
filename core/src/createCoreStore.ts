@@ -91,7 +91,7 @@ export function createCoreStore(
     plugins: ReturnType<StackflowPlugin>[],
   ): {
     isPrevented: boolean;
-    overridenParams: Omit<T, keyof BaseDomainEvent>;
+    overriddenParams: Omit<T, keyof BaseDomainEvent>;
   } {
     let isPrevented = false;
     let nextEvent: T = {
@@ -206,7 +206,7 @@ export function createCoreStore(
 
     return {
       isPrevented,
-      overridenParams: toParams(nextEvent),
+      overriddenParams: toParams(nextEvent),
     };
   }
 
@@ -265,7 +265,7 @@ export function createCoreStore(
     },
     dispatchEvent,
     push(params) {
-      const { isPrevented, overridenParams } = triggerPreEffectHooks(
+      const { isPrevented, overriddenParams } = triggerPreEffectHooks(
         makeEvent("Pushed", params),
         pluginInstances,
       );
@@ -274,10 +274,10 @@ export function createCoreStore(
         return;
       }
 
-      dispatchEvent("Pushed", overridenParams);
+      dispatchEvent("Pushed", overriddenParams);
     },
     replace(params) {
-      const { isPrevented, overridenParams } = triggerPreEffectHooks(
+      const { isPrevented, overriddenParams } = triggerPreEffectHooks(
         makeEvent("Replaced", params),
         pluginInstances,
       );
@@ -286,10 +286,10 @@ export function createCoreStore(
         return;
       }
 
-      dispatchEvent("Replaced", overridenParams);
+      dispatchEvent("Replaced", overriddenParams);
     },
     pop(params) {
-      const { isPrevented, overridenParams } = triggerPreEffectHooks(
+      const { isPrevented, overriddenParams } = triggerPreEffectHooks(
         makeEvent("Popped", params ?? {}),
         pluginInstances,
       );
@@ -298,10 +298,10 @@ export function createCoreStore(
         return;
       }
 
-      dispatchEvent("Popped", overridenParams);
+      dispatchEvent("Popped", overriddenParams);
     },
     stepPush(params) {
-      const { isPrevented, overridenParams } = triggerPreEffectHooks(
+      const { isPrevented, overriddenParams } = triggerPreEffectHooks(
         makeEvent("StepPushed", params ?? {}),
         pluginInstances,
       );
@@ -310,10 +310,10 @@ export function createCoreStore(
         return;
       }
 
-      dispatchEvent("StepPushed", overridenParams);
+      dispatchEvent("StepPushed", overriddenParams);
     },
     stepReplace(params) {
-      const { isPrevented, overridenParams } = triggerPreEffectHooks(
+      const { isPrevented, overriddenParams } = triggerPreEffectHooks(
         makeEvent("StepReplaced", params ?? {}),
         pluginInstances,
       );
@@ -322,10 +322,10 @@ export function createCoreStore(
         return;
       }
 
-      dispatchEvent("StepReplaced", overridenParams);
+      dispatchEvent("StepReplaced", overriddenParams);
     },
     stepPop(params) {
-      const { isPrevented, overridenParams } = triggerPreEffectHooks(
+      const { isPrevented, overriddenParams } = triggerPreEffectHooks(
         makeEvent("StepPopped", params ?? {}),
         pluginInstances,
       );
@@ -334,7 +334,7 @@ export function createCoreStore(
         return;
       }
 
-      dispatchEvent("StepPopped", overridenParams);
+      dispatchEvent("StepPopped", overriddenParams);
     },
   };
 
