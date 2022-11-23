@@ -253,3 +253,31 @@ test("createCoreStore - onBeforePush 훅에서 overrideActionParams로 기존 ac
   expect(last(stack.activities)?.id).toEqual("a2");
   expect(last(stack.activities)?.params?.hello).toEqual("2");
 });
+
+test("createCoreStore - subscribe에 등록한 이후에 아무 Event가 없는 경우 리스너가 호출되지 않습니다", async () => {
+  const listener1 = jest.fn();
+
+  const { actions, subscribe } = createCoreStore({
+    initialEvents: [
+      makeEvent("Initialized", {
+        transitionDuration: 150,
+        eventDate: enoughPastTime(),
+      }),
+      makeEvent("ActivityRegistered", {
+        activityName: "hello",
+        eventDate: enoughPastTime(),
+      }),
+      makeEvent("Pushed", {
+        activityId: "a1",
+        activityName: "hello",
+        activityParams: {},
+        eventDate: enoughPastTime(),
+      }),
+    ],
+    plugins: [],
+  });
+
+  subscribe(listener1);
+
+  expect(listener1).toHaveBeenCalledTimes(0);
+});
