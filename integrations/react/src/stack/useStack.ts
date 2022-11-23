@@ -1,6 +1,6 @@
 import { useContext } from "react";
 
-import { StackContext } from "./StackContext";
+import { StackContext } from "./StackProvider";
 
 /**
  * Get overall stack state

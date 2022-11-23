@@ -1,6 +1,6 @@
 import { useContext } from "react";
 
-import { ActivityContext } from "./ActivityContext";
+import { ActivityContext } from "./ActivityProvider";
 
 /**
  * Get current activity state

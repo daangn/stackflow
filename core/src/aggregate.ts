@@ -16,6 +16,7 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
   validateEvents(sortedEvents);
 
   const initEvent = filterEvents(sortedEvents, "Initialized")[0];
+  const activityRegisteredEvents = filterEvents(events, "ActivityRegistered");
   const { transitionDuration } = initEvent;
 
   type ActivityMetadata = {
@@ -248,6 +249,14 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
           : null),
       }))
       .sort((a, b) => compareBy(a, b, (activity) => activity.id)),
+    registeredActivities: activityRegisteredEvents.map((event) => ({
+      name: event.activityName,
+      ...(event.activityParamsSchema
+        ? {
+            paramsSchema: event.activityParamsSchema,
+          }
+        : null),
+    })),
     transitionDuration,
     globalTransitionState,
   };

@@ -33,9 +33,15 @@ const PluginRenderer: React.FC<PluginRendererProps> = ({
             ...activity,
             key: activity.id,
             render(overrideActivity) {
-              const ActivityComponent = activities[activity.name];
+              const Activity = activities[activity.name];
+              let output: React.ReactNode;
 
-              let output = <ActivityComponent params={activity.params} />;
+              if ("component" in Activity) {
+                const { component: ActivityComponent } = Activity;
+                output = <ActivityComponent params={activity.params} />;
+              } else {
+                output = <Activity params={activity.params} />;
+              }
 
               plugins.forEach((p) => {
                 output =

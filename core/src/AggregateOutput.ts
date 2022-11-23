@@ -34,8 +34,14 @@ export type Activity = {
   zIndex: number;
 };
 
+export type RegisteredActivity = {
+  name: string;
+  paramsSchema?: {};
+};
+
 export type AggregateOutput = {
   activities: Activity[];
+  registeredActivities: RegisteredActivity[];
   transitionDuration: number;
   globalTransitionState: "idle" | "loading";
 };

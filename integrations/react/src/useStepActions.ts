@@ -17,7 +17,11 @@ export type UseStepActions<T extends BaseActivities = {}> = <
 >(
   activityName: K,
 ) => UseStepActionsOutputType<
-  T[K] extends ActivityComponentType<infer U> ? U : {}
+  T[K] extends
+    | ActivityComponentType<infer U>
+    | { component: ActivityComponentType<infer U> }
+    ? U
+    : {}
 >;
 
 const useTransition: () => [boolean, React.TransitionStartFunction] =
@@ -33,27 +37,21 @@ export const useStepActions: UseStepActions = () => {
       stepPush(params) {
         const stepId = makeStepId();
 
-        startTransition(() => {
-          coreActions.stepPush({
-            stepId,
-            stepParams: params,
-          });
+        coreActions.stepPush({
+          stepId,
+          stepParams: params,
         });
       },
       stepReplace(params) {
         const stepId = makeStepId();
 
-        startTransition(() => {
-          coreActions.stepReplace({
-            stepId,
-            stepParams: params,
-          });
+        coreActions.stepReplace({
+          stepId,
+          stepParams: params,
         });
       },
       stepPop() {
-        startTransition(() => {
-          coreActions.stepPop({});
-        });
+        coreActions.stepPop({});
       },
     }),
     [

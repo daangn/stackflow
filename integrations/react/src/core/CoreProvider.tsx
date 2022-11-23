@@ -1,173 +1,32 @@
-import type { DispatchEvent, DomainEvent } from "@stackflow/core";
-import { aggregate, makeEvent } from "@stackflow/core";
-import type { StepPushedEvent } from "@stackflow/core/dist/event-types";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import isEqual from "react-fast-compare";
+import type { AggregateOutput, CreateCoreStoreOutput } from "@stackflow/core";
+import React, { createContext } from "react";
 
-import { makeActivityId } from "../activity";
-import type { BaseActivities } from "../BaseActivities";
-import { useInitContext } from "../init-context";
-import { usePlugins } from "../plugins";
-import { CoreActionsContext } from "./CoreActionsContext";
-import { CoreStateContext } from "./CoreStateContext";
+import { useDeferredValue, useSyncExternalStore } from "../shims";
 
-type PushedEvent = Extract<DomainEvent, { name: "Pushed" }>;
-
-const SECOND = 1000;
-
-// 60FPS
-const INTERVAL_MS = SECOND / 60;
+export const CoreActionsContext = createContext<
+  CreateCoreStoreOutput["actions"]
+>(null as any);
+export const CoreStateContext = createContext<AggregateOutput>(null as any);
 
 export interface CoreProviderProps {
-  activities: BaseActivities;
-  transitionDuration: number;
-  initialActivity?: (args: { initContext: any }) => string;
+  coreStore: CreateCoreStoreOutput;
   children: React.ReactNode;
 }
 export const CoreProvider: React.FC<CoreProviderProps> = ({
-  transitionDuration,
-  initialActivity,
-  activities,
+  coreStore,
   children,
 }) => {
-  const plugins = usePlugins();
-  const initContext = useInitContext();
-
-  const initialEvents = useMemo(() => {
-    const initialEventDate = new Date().getTime() - transitionDuration;
-
-    const initialEventsByOption = initialActivity
-      ? [
-          makeEvent("Pushed", {
-            activityId: makeActivityId(),
-            activityName: initialActivity({ initContext }),
-            activityParams: {},
-            eventDate: initialEventDate,
-            skipEnterActiveState: false,
-          }),
-        ]
-      : [];
-
-    const initialEventsAfterPlugins = plugins.reduce<
-      (PushedEvent | StepPushedEvent)[]
-    >(
-      (initialEvents, plugin) =>
-        plugin.overrideInitialEvents?.({ initialEvents }) ?? initialEvents,
-      initialEventsByOption,
-    );
-
-    const isInitialActivityIgnored =
-      !!initialEventsAfterPlugins &&
-      !!initialEventsByOption &&
-      initialEventsAfterPlugins !== initialEventsByOption;
-
-    if (isInitialActivityIgnored) {
-      // eslint-disable-next-line no-console
-      console.warn(
-        `Stackflow - ` +
-          ` Some plugin overrides an "initialActivity" option.` +
-          ` The "initialActivity" option you set to "${initialEventsByOption[0].activityName}" in the "stackflow" is ignored.`,
-      );
-    }
-
-    const initialEvents = initialEventsAfterPlugins;
-
-    if (initialEvents.length === 0) {
-      // eslint-disable-next-line no-console
-      console.warn(
-        `Stackflow - ` +
-          ` There is no initial activity.` +
-          " If you want to set the initial activity," +
-          " add the `initialActivity` option of the `stackflow()` function or" +
-          " add a plugin that sets the initial activity. (e.g. `@stackflow/plugin-history-sync`)",
-      );
-    }
-
-    const activityRegisteredEvents = Object.keys(activities).map(
-      (activityName) =>
-        makeEvent("ActivityRegistered", {
-          activityName,
-          eventDate: initialEventDate,
-        }),
-    );
-
-    const events: DomainEvent[] = [
-      makeEvent("Initialized", {
-        transitionDuration,
-        eventDate: initialEventDate,
-      }),
-      ...activityRegisteredEvents,
-    ];
-
-    initialEvents.forEach((event) => {
-      events.push(event);
-    });
-
-    return events;
-  }, []);
-
-  const initialState = useMemo(
-    () => aggregate(initialEvents, new Date().getTime()),
-    [],
+  const stack = useSyncExternalStore(
+    coreStore.subscribe,
+    coreStore.actions.getStack,
+    coreStore.actions.getStack,
   );
 
-  const [state, setState] = useState(() => initialState);
-
-  const eventsRef = useRef(initialEvents);
-  const stateRef = useRef(initialState);
-  const getStack = useCallback(() => stateRef.current, [stateRef]);
-
-  const dispatchEvent = useCallback<DispatchEvent>(
-    (name, parameters) => {
-      const events = [...eventsRef.current, makeEvent(name, parameters)];
-      const t = new Date().getTime();
-      const nextState = aggregate(events, t);
-
-      setState(nextState);
-
-      eventsRef.current = events;
-      stateRef.current = nextState;
-    },
-    [eventsRef, setState],
-  );
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const events = eventsRef.current;
-      const nextState = aggregate(events, new Date().getTime());
-
-      if (!isEqual(state, nextState)) {
-        setState(nextState);
-        stateRef.current = nextState;
-      }
-
-      if (nextState.globalTransitionState === "idle") {
-        clearInterval(interval);
-      }
-    }, INTERVAL_MS);
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, [eventsRef, state, setState]);
+  const deferredStack = useDeferredValue(stack);
 
   return (
-    <CoreStateContext.Provider value={state}>
-      <CoreActionsContext.Provider
-        value={useMemo(
-          () => ({
-            getStack,
-            dispatchEvent,
-          }),
-          [getStack, dispatchEvent],
-        )}
-      >
+    <CoreStateContext.Provider value={deferredStack}>
+      <CoreActionsContext.Provider value={coreStore.actions}>
         {children}
       </CoreActionsContext.Provider>
     </CoreStateContext.Provider>

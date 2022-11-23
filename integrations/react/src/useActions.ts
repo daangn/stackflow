@@ -30,7 +30,11 @@ export type UseActionsOutputType<T extends BaseActivities> = {
    */
   push: <K extends Extract<keyof T, string>>(
     activityName: K,
-    params: T[K] extends ActivityComponentType<infer U> ? U : {},
+    params: T[K] extends
+      | ActivityComponentType<infer U>
+      | { component: ActivityComponentType<infer U> }
+      ? U
+      : {},
     options?: {
       animate?: boolean;
     },
@@ -43,7 +47,11 @@ export type UseActionsOutputType<T extends BaseActivities> = {
    */
   replace: <K extends Extract<keyof T, string>>(
     activityName: K,
-    params: T[K] extends ActivityComponentType<infer U> ? U : {},
+    params: T[K] extends
+      | ActivityComponentType<infer U>
+      | { component: ActivityComponentType<infer U> }
+      ? U
+      : {},
     options?: {
       animate?: boolean;
       activityId?: string;
@@ -73,13 +81,11 @@ export function useActions<
       push(activityName, activityParams, options) {
         const activityId = makeActivityId();
 
-        startTransition(() => {
-          coreActions.push({
-            activityId,
-            activityName,
-            activityParams,
-            skipEnterActiveState: parseActionOptions(options).skipActiveState,
-          });
+        coreActions.push({
+          activityId,
+          activityName,
+          activityParams,
+          skipEnterActiveState: parseActionOptions(options).skipActiveState,
         });
 
         return {
@@ -89,13 +95,11 @@ export function useActions<
       replace(activityName, activityParams, options) {
         const activityId = makeActivityId();
 
-        startTransition(() => {
-          coreActions.replace({
-            activityId: options?.activityId ?? makeActivityId(),
-            activityName,
-            activityParams,
-            skipEnterActiveState: parseActionOptions(options).skipActiveState,
-          });
+        coreActions.replace({
+          activityId: options?.activityId ?? makeActivityId(),
+          activityName,
+          activityParams,
+          skipEnterActiveState: parseActionOptions(options).skipActiveState,
         });
 
         return {
@@ -103,10 +107,8 @@ export function useActions<
         };
       },
       pop(options) {
-        startTransition(() => {
-          coreActions.pop({
-            skipExitActiveState: parseActionOptions(options).skipActiveState,
-          });
+        coreActions.pop({
+          skipExitActiveState: parseActionOptions(options).skipActiveState,
         });
       },
     }),

@@ -98,7 +98,7 @@ type HistorySyncPluginOptions<K extends string> = {
   routes: {
     [key in K]: string | string[];
   };
-  fallbackActivity: (args: { initContext: any }) => K;
+  fallbackActivity: (args: { initialContext: any }) => K;
   useHash?: boolean;
 };
 export function historySyncPlugin<
@@ -108,7 +108,7 @@ export function historySyncPlugin<
 ): StackflowReactPlugin<T> {
   type K = Extract<keyof T, string>;
 
-  return ({ initContext }) => {
+  return () => {
     let pushFlag = 0;
     let popFlag = 0;
 
@@ -121,20 +121,20 @@ export function historySyncPlugin<
           </RoutesProvider>
         );
       },
-      overrideInitialEvents() {
-        const initHistoryState = parseState(getCurrentState());
+      overrideInitialEvents({ initialContext }) {
+        const initialHistoryState = parseState(getCurrentState());
 
-        if (initHistoryState) {
+        if (initialHistoryState) {
           return [
             {
-              ...initHistoryState.activity.pushedBy,
+              ...initialHistoryState.activity.pushedBy,
               name: "Pushed",
             },
-            ...(initHistoryState.step?.pushedBy.name === "StepPushed" ||
-            initHistoryState.step?.pushedBy.name === "StepReplaced"
+            ...(initialHistoryState.step?.pushedBy.name === "StepPushed" ||
+            initialHistoryState.step?.pushedBy.name === "StepReplaced"
               ? [
                   {
-                    ...initHistoryState.step.pushedBy,
+                    ...initialHistoryState.step.pushedBy,
                     name: "StepPushed" as const,
                   },
                 ]
@@ -144,11 +144,12 @@ export function historySyncPlugin<
 
         function resolvePath() {
           if (
-            initContext?.req?.path &&
-            typeof initContext.req.path === "string"
+            initialContext?.req?.path &&
+            typeof initialContext.req.path === "string"
           ) {
-            return initContext.req.path as string;
+            return initialContext.req.path as string;
           }
+
           if (isServer) {
             return null;
           }
@@ -197,7 +198,9 @@ export function historySyncPlugin<
         }
 
         const fallbackActivityId = id();
-        const fallbackActivityName = options.fallbackActivity({ initContext });
+        const fallbackActivityName = options.fallbackActivity({
+          initialContext,
+        });
         const fallbackActivityRoutes = normalizeRoute(
           options.routes[fallbackActivityName],
         );
@@ -301,53 +304,47 @@ export function historySyncPlugin<
           };
 
           if (isBackward()) {
-            startTransition(() => {
-              dispatchEvent("Popped", {});
+            dispatchEvent("Popped", {});
 
-              if (!nextActivity) {
-                pushFlag += 1;
-                dispatchEvent("Pushed", {
-                  ...targetActivity.pushedBy,
-                });
+            if (!nextActivity) {
+              pushFlag += 1;
+              push({
+                ...targetActivity.pushedBy,
+              });
 
-                if (
-                  targetStep?.pushedBy.name === "StepPushed" ||
-                  targetStep?.pushedBy.name === "StepReplaced"
-                ) {
-                  pushFlag += 1;
-                  dispatchEvent("StepPushed", {
-                    ...targetStep.pushedBy,
-                  });
-                }
-              }
-            });
-          }
-          if (isStepBackward()) {
-            startTransition(() => {
               if (
-                !nextStep &&
-                targetStep &&
-                (targetStep?.pushedBy.name === "StepPushed" ||
-                  targetStep?.pushedBy.name === "StepReplaced")
+                targetStep?.pushedBy.name === "StepPushed" ||
+                targetStep?.pushedBy.name === "StepReplaced"
               ) {
                 pushFlag += 1;
-                dispatchEvent("StepPushed", {
+                stepPush({
                   ...targetStep.pushedBy,
                 });
               }
+            }
+          }
+          if (isStepBackward()) {
+            if (
+              !nextStep &&
+              targetStep &&
+              (targetStep?.pushedBy.name === "StepPushed" ||
+                targetStep?.pushedBy.name === "StepReplaced")
+            ) {
+              pushFlag += 1;
+              stepPush({
+                ...targetStep.pushedBy,
+              });
+            }
 
-              dispatchEvent("StepPopped", {});
-            });
+            dispatchEvent("StepPopped", {});
           }
 
           if (isForward()) {
-            startTransition(() => {
-              pushFlag += 1;
-              push({
-                activityId: targetActivity.id,
-                activityName: targetActivity.name,
-                activityParams: targetActivity.params,
-              });
+            pushFlag += 1;
+            push({
+              activityId: targetActivity.id,
+              activityName: targetActivity.name,
+              activityParams: targetActivity.params,
             });
           }
           if (isStepForward()) {
@@ -355,12 +352,10 @@ export function historySyncPlugin<
               return;
             }
 
-            startTransition(() => {
-              pushFlag += 1;
-              stepPush({
-                stepId: targetStep.id,
-                stepParams: targetStep.params,
-              });
+            pushFlag += 1;
+            stepPush({
+              stepId: targetStep.id,
+              stepParams: targetStep.params,
             });
           }
         };

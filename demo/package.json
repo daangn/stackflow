@@ -5,14 +5,14 @@
   "license": "MIT",
   "exports": {
     ".": {
-      "require": "./dist/stackflow.js",
-      "import": "./dist/stackflow.mjs"
+      "require": "./dist/stackflow-docs.js",
+      "import": "./dist/stackflow-docs.mjs"
     },
-    "./stackflow.css": "./dist/stackflow.css"
+    "./style.css": "./dist/stackflow-docs.css"
   },
-  "main": "./dist/stackflow.js",
-  "module": "./dist/stackflow.mjs",
-  "types": "./dist/stackflow.d.ts",
+  "main": "./dist/stackflow-docs.js",
+  "module": "./dist/stackflow-docs.mjs",
+  "types": "./dist/stackflow-docs.d.ts",
   "files": [
     "dist",
     "src"

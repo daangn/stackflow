@@ -22,7 +22,7 @@ export type PreloadPluginOptions<
 export function preloadPlugin<T extends { [activityName: string]: unknown }>(
   options: PreloadPluginOptions<T>,
 ): StackflowReactPlugin<T> {
-  return ({ initContext }) => ({
+  return () => ({
     key: "plugin-preload",
     wrapStack({ stack }) {
       return (
@@ -31,7 +31,7 @@ export function preloadPlugin<T extends { [activityName: string]: unknown }>(
         </LoadersProvider>
       );
     },
-    overrideInitialEvents({ initialEvents }) {
+    overrideInitialEvents({ initialEvents, initialContext }) {
       if (initialEvents.length === 0) {
         return [];
       }
@@ -52,8 +52,8 @@ export function preloadPlugin<T extends { [activityName: string]: unknown }>(
         const preloadRef = loader({
           activityParams,
           activityContext,
-          initContext,
           isInitialActivity: true,
+          initialContext,
         });
 
         return {
@@ -77,7 +77,6 @@ export function preloadPlugin<T extends { [activityName: string]: unknown }>(
       const preloadRef = loader({
         activityParams,
         activityContext,
-        initContext,
       });
 
       overrideActionParams({
@@ -100,7 +99,6 @@ export function preloadPlugin<T extends { [activityName: string]: unknown }>(
       const preloadRef = loader({
         activityParams,
         activityContext,
-        initContext,
       });
 
       overrideActionParams({

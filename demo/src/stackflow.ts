@@ -1,40 +1,49 @@
 import { vars } from "@seed-design/design-token";
 import { basicUIPlugin } from "@stackflow/plugin-basic-ui";
+import { historySyncPlugin } from "@stackflow/plugin-history-sync";
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
-import { stackDepthChangePlugin } from "@stackflow/plugin-stack-depth-change";
 import { stackflow } from "@stackflow/react";
 
 import Article from "./activities/Article";
 import Main from "./activities/Main";
 
-const theme = "cupertino";
-
-const borderColor =
-  theme === "cupertino"
-    ? vars.$semantic.color.divider3
-    : vars.$semantic.color.divider2;
-
-export const { Stack, activities, useFlow } = stackflow({
+export const { Stack, activities } = stackflow({
   transitionDuration: 350,
   activities: {
     Main,
-    Article,
+    Article: {
+      component: Article,
+      paramsSchema: {
+        type: "object",
+        properties: {
+          articleId: {
+            type: "string",
+          },
+          title: {
+            type: "string",
+          },
+        },
+        required: ["articleId", "title"],
+      },
+    },
   },
-  initialActivity: () => "Main",
   plugins: [
     basicRendererPlugin(),
-    stackDepthChangePlugin({
-      onInit: ({ depth, activities, activeActivities }) => {},
-      onDepthChanged: ({ depth, activities, activeActivities }) => {},
-    }),
     basicUIPlugin({
-      theme,
+      theme: "cupertino",
       backgroundColor: vars.$semantic.color.paperDefault,
       appBar: {
         textColor: vars.$scale.color.gray900,
         iconColor: vars.$scale.color.gray900,
-        borderColor,
+        borderColor: vars.$semantic.color.divider3,
       },
+    }),
+    historySyncPlugin({
+      routes: {
+        Main: "/",
+        Article: "/articles/:articleId",
+      },
+      fallbackActivity: () => "Main",
     }),
   ],
 });

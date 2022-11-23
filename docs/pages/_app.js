@@ -1,5 +1,5 @@
 import "nextra-theme-docs/style.css";
-import "@stackflow/demo/stackflow.css";
+import "@stackflow/demo/style.css";
 import "@stackflow/plugin-basic-ui/index.css";
 import "@seed-design/stylesheet/global.css";
 import "react-lazy-load-image-component/src/effects/opacity.css";

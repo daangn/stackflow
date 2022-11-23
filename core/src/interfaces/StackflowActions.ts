@@ -10,7 +10,7 @@ import type {
 import type { BaseDomainEvent } from "../event-types/_base";
 import type { DispatchEvent } from "../event-utils";
 
-export type StackflowPluginActions = {
+export type StackflowActions = {
   /**
    * Push new activity
    */
