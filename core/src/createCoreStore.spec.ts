@@ -202,17 +202,18 @@ test("createCoreStore - subscribe에 등록하면, 스택 상태 변경이 있�
 });
 
 test("createCoreStore - onBeforePush 훅에서 overrideActionParams로 기존 actionParams를 덮어쓸 수 있습니다", () => {
-  const onBeforePush: ReturnType<StackflowPlugin>["onBeforePush"] = jest.fn(
-    ({ actions, actionParams }) => {
-      actions.overrideActionParams({
-        ...actionParams,
-        activityParams: {
-          ...actionParams.activityParams,
-          hello: "2",
-        },
-      });
-    },
-  );
+  const onBeforePush: ReturnType<StackflowPlugin>["onBeforePush"] = ({
+    actions,
+    actionParams,
+  }) => {
+    actions.overrideActionParams({
+      ...actionParams,
+      activityParams: {
+        ...actionParams.activityParams,
+        hello: "2",
+      },
+    });
+  };
 
   const { actions } = createCoreStore({
     initialEvents: [
@@ -249,7 +250,6 @@ test("createCoreStore - onBeforePush 훅에서 overrideActionParams로 기존 ac
 
   const stack = actions.getStack();
 
-  expect(onBeforePush).toHaveBeenCalledTimes(1);
   expect(last(stack.activities)?.id).toEqual("a2");
   expect(last(stack.activities)?.params?.hello).toEqual("2");
 });
