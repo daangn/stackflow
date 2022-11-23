@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/plugin-stack-depth-change",
-  "version": "0.16.0",
+  "version": "0.17.0",
   "license": "MIT",
   "exports": {
     ".": {
@@ -24,9 +24,9 @@
     "dev": "yarn build:js --watch && yarn build:dts --watch"
   },
   "devDependencies": {
-    "@stackflow/core": "^0.16.0",
-    "@stackflow/esbuild-config": "^0.16.0",
-    "@stackflow/eslint-config": "^0.16.0",
+    "@stackflow/core": "^0.17.0",
+    "@stackflow/esbuild-config": "^0.17.0",
+    "@stackflow/eslint-config": "^0.17.0",
     "@types/node": "^18.6.3",
     "@typescript-eslint/eslint-plugin": "^5.32.0",
     "@typescript-eslint/parser": "^5.20.0",
