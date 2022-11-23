@@ -2234,7 +2234,6 @@ __metadata:
     react-dom: ^18.1.0
     react-lazy-load-image-component: ^1.5.4
     rimraf: ^3.0.2
-    tsm: ^2.2.2
     typescript: ^4.7.4
     vite: ^2.9.9
   languageName: unknown
@@ -12595,17 +12594,6 @@ __metadata:
   version: 2.4.0
   resolution: "tslib@npm:2.4.0"
   checksum: 8c4aa6a3c5a754bf76aefc38026134180c053b7bd2f81338cb5e5ebf96fefa0f417bff221592bf801077f5bf990562f6264fecbc42cd3309b33872cb6fc3b113
-  languageName: node
-  linkType: hard
-
-"tsm@npm:^2.2.2":
-  version: 2.2.2
-  resolution: "tsm@npm:2.2.2"
-  dependencies:
-    esbuild: ^0.14.0
-  bin:
-    tsm: bin.js
-  checksum: 5908f7e5167c0552b180e04f950430a5f890d95b9ac4b7f2016cbe566df2515f4b7c4f3519fa6f6edc2bf47f4b8fe38b301407d613f8b3c491b51339c098573b
   languageName: node
   linkType: hard
 
