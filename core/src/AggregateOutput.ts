@@ -31,6 +31,7 @@ export type Activity = {
   steps: ActivityStep[];
   isTop: boolean;
   isActive: boolean;
+  isRoot: boolean;
   zIndex: number;
 };
 
