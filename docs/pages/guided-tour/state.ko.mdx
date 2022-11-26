@@ -101,12 +101,15 @@ export default MyActivity;
 
 액티비티 상태에는 다음과 같은 필드들이 존재해요.
 
-| 필드 이름                  | 설명                       | 타입                                                     |
-| -------------------------- | -------------------------- | -------------------------------------------------------- |
-| `activity.id`              | 액티비티 ID                | String                                                   |
-| `activity.name`            | 등록된 액티비티 이름       | String                                                   |
-| `activity.transitionState` | 액티비티의 전환 상태       | `enter-active`, `enter-done`, `exit-active`, `exit-done` |
-| `activity.params`          | 액티비티에 전달된 파라미터 | Object                                                   |
+| 필드 이름                  | 설명                                            | 타입                                                     |
+| -------------------------- | ----------------------------------------------- | -------------------------------------------------------- |
+| `activity.id`              | 액티비티 ID                                     | String                                                   |
+| `activity.name`            | 등록된 액티비티 이름                            | String                                                   |
+| `activity.transitionState` | 액티비티의 전환 상태                            | `enter-active`, `enter-done`, `exit-active`, `exit-done` |
+| `activity.params`          | 액티비티에 전달된 파라미터                      | Object                                                   |
+| `activity.isActive` .      | 액티비티의 활성 여부 (exit-active 일때 `false`) | Boolean                                                  |
+| `activity.isTop` .         | 최상단 액티비티 여부 (exit-active 일때 `true`)  | Boolean                                                  |
+| `activity.isRoot` .        | 최하단 액티비티 여부                            | Boolean                                                  |
 
 ---
 
