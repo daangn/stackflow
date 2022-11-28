@@ -87,14 +87,8 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
       }
     };
 
-    const isRoot =
-      activity.zIndex === 0 ||
-      (activity.zIndex === 1 &&
-        activity.transitionState === "enter-active" &&
-        activity.pushedBy.name === "Replaced");
-
     const renderBackButton = () => {
-      if (isRoot) {
+      if (activity.isRoot) {
         return null;
       }
 
@@ -140,7 +134,10 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
     };
 
     const renderCloseButton = () => {
-      if ((!closeButton && !globalOptions.appBar?.closeButton) || !isRoot) {
+      if (
+        (!closeButton && !globalOptions.appBar?.closeButton) ||
+        !activity.isRoot
+      ) {
         return null;
       }
       if (closeButton && "render" in closeButton && closeButton.render) {
