@@ -468,6 +468,21 @@ export function historySyncPlugin<
           },
         });
       },
+      onBeforeStepPop({ actions: { getStack } }) {
+        if (typeof window === "undefined") {
+          return;
+        }
+
+        const { activities } = getStack();
+        const currentActivity = activities.find(
+          (activity) => activity.isActive,
+        );
+
+        if ((currentActivity?.steps.length ?? 0) > 1) {
+          popFlag += 1;
+          window.history.back();
+        }
+      },
       onBeforePop({ actions: { getStack } }) {
         if (typeof window === "undefined") {
           return;
