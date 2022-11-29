@@ -1,12 +1,13 @@
 import type { StackflowActions } from "@stackflow/core";
 import { aggregate, createCoreStore, makeEvent } from "@stackflow/core";
 import type {
-  DomainEvent,
+  ActivityRegisteredEvent,
   PushedEvent,
   StepPushedEvent,
 } from "@stackflow/core/dist/event-types";
 import React, { useEffect, useMemo } from "react";
 
+import type { ActivityComponentType } from "./activity";
 import { makeActivityId, makeStepId } from "./activity";
 import type { BaseActivities } from "./BaseActivities";
 import { CoreProvider } from "./core";
@@ -93,6 +94,20 @@ export type StackflowOutput<T extends BaseActivities> = {
    * Return activities
    */
   activities: T;
+
+  /**
+   * Add activity
+   */
+  addActivity: (options: {
+    name: string;
+    component: ActivityComponentType<any>;
+    paramsSchema?: ActivityRegisteredEvent["activityParamsSchema"];
+  }) => void;
+
+  /**
+   * Add plugin
+   */
+  addPlugin: (plugin: StackflowPluginsEntry<T>) => void;
 };
 
 /**
@@ -106,6 +121,9 @@ export function stackflow<T extends BaseActivities>(
     .map((p) => p as StackflowReactPlugin<T>);
   const pluginInstances = plugins.map((plugin) => plugin());
 
+  const initialEventDate = () =>
+    new Date().getTime() - options.transitionDuration;
+
   const activities = Object.entries(options.activities).reduce(
     (acc, [key, Activity]) => {
       if ("component" in Activity) {
@@ -113,7 +131,7 @@ export function stackflow<T extends BaseActivities>(
           ...acc,
           [key]: {
             paramsSchema: Activity.paramsSchema,
-            component: Activity.component,
+            component: React.memo(Activity.component),
           },
         };
       }
@@ -126,32 +144,29 @@ export function stackflow<T extends BaseActivities>(
     {} as T,
   );
 
-  const initialEventDate = () =>
-    new Date().getTime() - options.transitionDuration;
+  const initializedEvent = makeEvent("Initialized", {
+    transitionDuration: options.transitionDuration,
+    eventDate: initialEventDate(),
+  });
 
-  const initialEvents = (): DomainEvent[] => {
-    const initializedEvent = makeEvent("Initialized", {
-      transitionDuration: options.transitionDuration,
-      eventDate: initialEventDate(),
-    });
+  const initialActivityRegisteredEvents = Object.entries(activities).map(
+    ([activityName, Activity]) =>
+      makeEvent("ActivityRegistered", {
+        activityName,
+        eventDate: initialEventDate(),
+        ...("component" in Activity
+          ? {
+              activityParamsSchema: Activity.paramsSchema,
+            }
+          : null),
+      }),
+  );
 
-    const activityRegisteredEvents = Object.entries(activities).map(
-      ([activityName, Activity]) =>
-        makeEvent("ActivityRegistered", {
-          activityName,
-          eventDate: initialEventDate(),
-          ...("component" in Activity
-            ? {
-                activityParamsSchema: Activity.paramsSchema,
-              }
-            : null),
-        }),
-    );
+  const initialEvents = [initializedEvent, ...initialActivityRegisteredEvents];
 
-    return [initializedEvent, ...activityRegisteredEvents];
+  const initialStackRef = {
+    value: aggregate(initialEvents, new Date().getTime()),
   };
-
-  const initialStack = aggregate(initialEvents(), new Date().getTime());
 
   const coreStoreRef: {
     value: ReturnType<typeof createCoreStore> | null;
@@ -168,12 +183,66 @@ export function stackflow<T extends BaseActivities>(
     );
   }
 
+  const addActivity: StackflowOutput<T>["addActivity"] = (activity) => {
+    if (coreStoreRef.value) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        `Stackflow - ` +
+          " `addActivity()` API cannot be called after a `<Stack />` component has been rendered",
+      );
+
+      return;
+    }
+
+    initialEvents.push(
+      makeEvent("ActivityRegistered", {
+        activityName: activity.name,
+        activityParamsSchema: activity.paramsSchema,
+        eventDate: initialEventDate(),
+      }),
+    );
+
+    initialStackRef.value = aggregate(initialEvents, new Date().getTime());
+
+    if (activity.component) {
+      (activities as any)[activity.name] = React.memo(activity.component);
+    } else {
+      (activities as any)[activity.name] = {
+        component: React.memo(activity.component),
+        paramsSchema: activity.paramsSchema,
+      };
+    }
+  };
+
+  const addPlugin: StackflowOutput<T>["addPlugin"] = (plugin) => {
+    if (coreStoreRef.value) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        `Stackflow - ` +
+          " `addPlugin()` API cannot be called after a `<Stack />` component has been rendered",
+      );
+
+      return;
+    }
+
+    const ps = [plugin]
+      .flat(Infinity as 0)
+      .map((p) => p as StackflowReactPlugin<T>);
+
+    ps.forEach((p) => {
+      plugins.push(p);
+    });
+    ps.forEach((p) => {
+      pluginInstances.push(p());
+    });
+  };
+
   const actions: StackflowOutput<T>["actions"] = {
     dispatchEvent(name, parameters) {
       return coreStoreRef.value?.actions.dispatchEvent(name, parameters);
     },
     getStack() {
-      return coreStoreRef.value?.actions.getStack() ?? initialStack;
+      return coreStoreRef.value?.actions.getStack() ?? initialStackRef.value;
     },
     push(activityName, activityParams, options) {
       const activityId = makeActivityId();
@@ -280,7 +349,7 @@ export function stackflow<T extends BaseActivities>(
       }
 
       const store = createCoreStore({
-        initialEvents: [...initialEvents(), ...initialPushedEvents],
+        initialEvents: [...initialEvents, ...initialPushedEvents],
         plugins,
       });
 
@@ -308,5 +377,7 @@ export function stackflow<T extends BaseActivities>(
     useStepFlow: useStepActions,
     actions,
     activities,
+    addActivity,
+    addPlugin,
   };
 }
