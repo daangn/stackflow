@@ -2192,7 +2192,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/demo@^0.17.0, @stackflow/demo@workspace:demo":
+"@stackflow/demo@^0.17.1, @stackflow/demo@workspace:demo":
   version: 0.0.0-use.local
   resolution: "@stackflow/demo@workspace:demo"
   dependencies:
@@ -2202,10 +2202,10 @@ __metadata:
     "@stackflow/core": ^0.17.0
     "@stackflow/esbuild-config": ^0.17.0
     "@stackflow/eslint-config": ^0.17.0
-    "@stackflow/link": ^0.17.0
+    "@stackflow/link": ^0.17.1
     "@stackflow/plugin-basic-ui": ^0.17.0
-    "@stackflow/plugin-history-sync": ^0.17.0
-    "@stackflow/plugin-preload": ^0.17.0
+    "@stackflow/plugin-history-sync": ^0.17.1
+    "@stackflow/plugin-preload": ^0.17.1
     "@stackflow/plugin-renderer-basic": ^0.17.0
     "@stackflow/plugin-stack-depth-change": ^0.17.0
     "@stackflow/react": ^0.17.0
@@ -2246,10 +2246,10 @@ __metadata:
     "@mdx-js/react": ^2.1.1
     "@seed-design/stylesheet": ^1.0.0-alpha.0
     "@stackflow/core": ^0.17.0
-    "@stackflow/demo": ^0.17.0
+    "@stackflow/demo": ^0.17.1
     "@stackflow/eslint-config": ^0.17.0
     "@stackflow/plugin-basic-ui": ^0.17.0
-    "@stackflow/plugin-history-sync": ^0.17.0
+    "@stackflow/plugin-history-sync": ^0.17.1
     "@stackflow/plugin-renderer-basic": ^0.17.0
     "@stackflow/react": ^0.17.0
     "@types/react": ^18.0.15
@@ -2301,15 +2301,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/link@^0.17.0, @stackflow/link@workspace:extensions/link":
+"@stackflow/link@^0.17.1, @stackflow/link@workspace:extensions/link":
   version: 0.0.0-use.local
   resolution: "@stackflow/link@workspace:extensions/link"
   dependencies:
     "@stackflow/core": ^0.17.0
     "@stackflow/esbuild-config": ^0.17.0
     "@stackflow/eslint-config": ^0.17.0
-    "@stackflow/plugin-history-sync": ^0.17.0
-    "@stackflow/plugin-preload": ^0.17.0
+    "@stackflow/plugin-history-sync": ^0.17.1
+    "@stackflow/plugin-preload": ^0.17.1
     "@stackflow/react": ^0.17.0
     "@types/react": ^18.0.10
     "@typescript-eslint/eslint-plugin": ^5.32.0
@@ -2390,7 +2390,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/plugin-history-sync@^0.17.0, @stackflow/plugin-history-sync@workspace:extensions/plugin-history-sync":
+"@stackflow/plugin-history-sync@^0.17.1, @stackflow/plugin-history-sync@workspace:extensions/plugin-history-sync":
   version: 0.0.0-use.local
   resolution: "@stackflow/plugin-history-sync@workspace:extensions/plugin-history-sync"
   dependencies:
@@ -2424,14 +2424,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/plugin-preload@^0.17.0, @stackflow/plugin-preload@workspace:extensions/plugin-preload":
+"@stackflow/plugin-preload@^0.17.1, @stackflow/plugin-preload@workspace:extensions/plugin-preload":
   version: 0.0.0-use.local
   resolution: "@stackflow/plugin-preload@workspace:extensions/plugin-preload"
   dependencies:
     "@stackflow/core": ^0.17.0
     "@stackflow/esbuild-config": ^0.17.0
     "@stackflow/eslint-config": ^0.17.0
-    "@stackflow/plugin-history-sync": ^0.17.0
+    "@stackflow/plugin-history-sync": ^0.17.1
     "@stackflow/react": ^0.17.0
     "@types/react": ^18.0.10
     "@typescript-eslint/eslint-plugin": ^5.32.0

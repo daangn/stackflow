@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/plugin-preload",
-  "version": "0.17.0",
+  "version": "0.17.1",
   "license": "MIT",
   "exports": {
     ".": {
@@ -24,7 +24,7 @@
     "dev": "yarn build:js --watch && yarn build:dts --watch"
   },
   "dependencies": {
-    "@stackflow/plugin-history-sync": "^0.17.0"
+    "@stackflow/plugin-history-sync": "^0.17.1"
   },
   "devDependencies": {
     "@stackflow/core": "^0.17.0",
