@@ -57,6 +57,7 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
           },
           isTop: false,
           isActive: false,
+          isRoot: false,
           zIndex: -1,
         });
 
@@ -100,6 +101,7 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
           },
           isTop: false,
           isActive: false,
+          isRoot: false,
           zIndex: -1,
         };
 
@@ -232,22 +234,33 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
 
   const output: AggregateOutput = {
     activities: uniqActivities
-      .map((activity) => ({
-        id: activity.id,
-        name: activity.name,
-        transitionState: activity.transitionState,
-        params: activity.params,
-        steps: activity.steps,
-        pushedBy: activity.pushedBy,
-        isTop: lastVisibleActivity?.id === activity.id,
-        isActive: lastEnteredActivity?.id === activity.id,
-        zIndex: visibleActivities.findIndex(({ id }) => id === activity.id),
-        ...(activity.context
-          ? {
-              context: activity.context,
-            }
-          : null),
-      }))
+      .map((activity) => {
+        const zIndex = visibleActivities.findIndex(
+          ({ id }) => id === activity.id,
+        );
+
+        return {
+          id: activity.id,
+          name: activity.name,
+          transitionState: activity.transitionState,
+          params: activity.params,
+          steps: activity.steps,
+          pushedBy: activity.pushedBy,
+          isTop: lastVisibleActivity?.id === activity.id,
+          isActive: lastEnteredActivity?.id === activity.id,
+          isRoot:
+            zIndex === 0 ||
+            (zIndex === 1 &&
+              activity.transitionState === "enter-active" &&
+              activity.pushedBy.name === "Replaced"),
+          zIndex,
+          ...(activity.context
+            ? {
+                context: activity.context,
+              }
+            : null),
+        };
+      })
       .sort((a, b) => compareBy(a, b, (activity) => activity.id)),
     registeredActivities: activityRegisteredEvents.map((event) => ({
       name: event.activityName,

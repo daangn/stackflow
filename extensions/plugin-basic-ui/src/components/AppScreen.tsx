@@ -61,7 +61,6 @@ const AppScreen: React.FC<AppScreenProps> = ({
     },
   });
 
-  const isRoot = activity.zIndex === 0;
   const hasAppBar = !!appBar;
 
   const zIndexBase = activity.zIndex * 5;
@@ -110,7 +109,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
       >
         {children}
       </div>
-      {!isRoot && globalOptions.theme === "cupertino" && (
+      {!activity.isRoot && globalOptions.theme === "cupertino" && (
         <div className={css.edge({ hasAppBar })} ref={edgeRef} />
       )}
       {appBar && <AppBar {...appBar} ref={appBarRef} />}
