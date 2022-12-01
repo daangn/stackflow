@@ -75,6 +75,17 @@ const AppScreen: React.FC<AppScreenProps> = ({
   const { transitionState } = activity;
   const lazyTransitionState = useLazy(transitionState);
 
+  const onAppBarTopClick: React.MouseEventHandler = (e) => {
+    appBar?.onTopClick?.(e);
+
+    if (!e.defaultPrevented) {
+      paperRef.current?.scroll({
+        top: 0,
+        behavior: "smooth",
+      });
+    }
+  };
+
   return (
     <div
       ref={appScreenRef}
@@ -116,7 +127,9 @@ const AppScreen: React.FC<AppScreenProps> = ({
         !preventSwipeBack && (
           <div className={css.edge({ hasAppBar })} ref={edgeRef} />
         )}
-      {appBar && <AppBar {...appBar} ref={appBarRef} />}
+      {appBar && (
+        <AppBar {...appBar} ref={appBarRef} onTopClick={onAppBarTopClick} />
+      )}
     </div>
   );
 };

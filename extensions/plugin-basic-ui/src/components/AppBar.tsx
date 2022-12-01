@@ -43,6 +43,7 @@ type AppBarProps = Partial<
       };
   closeButtonLocation?: "left" | "right";
   border?: boolean;
+  onTopClick?: (e: React.MouseEvent) => void;
 };
 const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
   (
@@ -60,6 +61,7 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
       borderSize,
       height,
       backgroundColor,
+      onTopClick,
     },
     ref,
   ) => {
@@ -220,6 +222,12 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
             ) : (
               title
             )}
+            <button
+              className={css.centerMainEdge}
+              type="button"
+              aria-hidden="true"
+              onClick={onTopClick}
+            />
           </div>
         </div>
         <div className={css.right}>
