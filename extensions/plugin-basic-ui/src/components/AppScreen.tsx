@@ -22,12 +22,14 @@ type AppScreenProps = Partial<
   Pick<GlobalVars, "backgroundColor" | "dimBackgroundColor">
 > & {
   appBar?: Omit<PropOf<typeof AppBar>, "theme" | "ref" | "key">;
+  preventSwipeBack?: boolean;
   children: React.ReactNode;
 };
 const AppScreen: React.FC<AppScreenProps> = ({
   backgroundColor,
   dimBackgroundColor,
   appBar,
+  preventSwipeBack,
   children,
 }) => {
   const globalOptions = useGlobalOptions();
@@ -109,9 +111,11 @@ const AppScreen: React.FC<AppScreenProps> = ({
       >
         {children}
       </div>
-      {!activity.isRoot && globalOptions.theme === "cupertino" && (
-        <div className={css.edge({ hasAppBar })} ref={edgeRef} />
-      )}
+      {!activity.isRoot &&
+        globalOptions.theme === "cupertino" &&
+        !preventSwipeBack && (
+          <div className={css.edge({ hasAppBar })} ref={edgeRef} />
+        )}
       {appBar && <AppBar {...appBar} ref={appBarRef} />}
     </div>
   );
