@@ -1,8 +1,4 @@
-import type {
-  Activity,
-  AggregateOutput,
-  StackflowPlugin,
-} from "@stackflow/core";
+import type { Activity, Stack, StackflowPlugin } from "@stackflow/core";
 import type React from "react";
 
 export type StackflowReactPlugin<T = never> = () => {
@@ -10,8 +6,8 @@ export type StackflowReactPlugin<T = never> = () => {
    * Determine how to render by using the stack state
    */
   render?: (args: {
-    stack: AggregateOutput & {
-      render: (overrideStack?: Partial<AggregateOutput>) => {
+    stack: Stack & {
+      render: (overrideStack?: Partial<Stack>) => {
         activities: Array<
           Activity & {
             key: string;
@@ -26,7 +22,7 @@ export type StackflowReactPlugin<T = never> = () => {
    * Wrap `<Stack />` component with your `Provider` or custom elements
    */
   wrapStack?: (args: {
-    stack: AggregateOutput & {
+    stack: Stack & {
       render: () => React.ReactNode;
     };
   }) => React.ReactElement<any, any> | null;

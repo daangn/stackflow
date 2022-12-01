@@ -1,7 +1,7 @@
 import React from "react";
 
+import type { ActivityComponentType } from "./activity";
 import { ActivityProvider } from "./activity";
-import type { BaseActivities } from "./BaseActivities";
 import { useCoreState } from "./core";
 import { usePlugins } from "./plugins";
 import { StackProvider } from "./stack";
@@ -9,11 +9,13 @@ import type { StackflowReactPlugin } from "./StackflowReactPlugin";
 import type { WithRequired } from "./utils";
 
 interface PluginRendererProps {
-  activities: BaseActivities;
+  activityComponentMap: {
+    [key: string]: ActivityComponentType;
+  };
   plugin: WithRequired<ReturnType<StackflowReactPlugin>, "render">;
 }
 const PluginRenderer: React.FC<PluginRendererProps> = ({
-  activities,
+  activityComponentMap,
   plugin,
 }) => {
   const coreState = useCoreState();
@@ -33,15 +35,11 @@ const PluginRenderer: React.FC<PluginRendererProps> = ({
             ...activity,
             key: activity.id,
             render(overrideActivity) {
-              const Activity = activities[activity.name];
-              let output: React.ReactNode;
+              const Activity = activityComponentMap[activity.name];
 
-              if ("component" in Activity) {
-                const { component: ActivityComponent } = Activity;
-                output = <ActivityComponent params={activity.params} />;
-              } else {
-                output = <Activity params={activity.params} />;
-              }
+              let output: React.ReactNode = (
+                <Activity params={activity.params} />
+              );
 
               plugins.forEach((p) => {
                 output =

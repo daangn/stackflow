@@ -3,13 +3,13 @@
 import isEqual from "react-fast-compare";
 
 import { aggregate } from "./aggregate";
-import type { AggregateOutput } from "./AggregateOutput";
 import type { Effect } from "./Effect";
 import type { DomainEvent } from "./event-types";
 import type { BaseDomainEvent } from "./event-types/_base";
 import { makeEvent } from "./event-utils";
 import type { StackflowActions, StackflowPlugin } from "./interfaces";
 import { produceEffects } from "./produceEffects";
+import type { Stack } from "./Stack";
 import { once } from "./utils";
 
 const SECOND = 1000;
@@ -25,6 +25,7 @@ export type CreateCoreStoreOptions = {
 export type CreateCoreStoreOutput = {
   actions: StackflowActions;
   init: () => void;
+  pullEvents: () => DomainEvent[];
   subscribe: (listener: () => void) => () => void;
 };
 
@@ -54,7 +55,7 @@ export function createCoreStore(
     ...options.plugins.map((plugin) => plugin()),
   ];
 
-  const setStackValue = (nextStackValue: AggregateOutput) => {
+  const setStackValue = (nextStackValue: Stack) => {
     const effects = produceEffects(stack.value, nextStackValue);
 
     stack.value = nextStackValue;
@@ -347,6 +348,7 @@ export function createCoreStore(
         });
       });
     }),
+    pullEvents: () => events.value,
     subscribe(listener) {
       storeListeners.push(listener);
 

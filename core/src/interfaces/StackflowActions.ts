@@ -1,4 +1,3 @@
-import type { AggregateOutput } from "../AggregateOutput";
 import type {
   PoppedEvent,
   PushedEvent,
@@ -9,8 +8,19 @@ import type {
 } from "../event-types";
 import type { BaseDomainEvent } from "../event-types/_base";
 import type { DispatchEvent } from "../event-utils";
+import type { Stack } from "../Stack";
 
 export type StackflowActions = {
+  /**
+   * Get current stack state
+   */
+  getStack: () => Stack;
+
+  /**
+   * Dispatch new event to the core without pre-effect hooks
+   */
+  dispatchEvent: DispatchEvent;
+
   /**
    * Push new activity
    */
@@ -40,14 +50,4 @@ export type StackflowActions = {
    * Remove current step
    */
   stepPop: (params?: Omit<StepPoppedEvent, keyof BaseDomainEvent>) => void;
-
-  /**
-   * Get current stack state
-   */
-  getStack: () => AggregateOutput;
-
-  /**
-   * Dispatch new event to the core without pre-effect hooks
-   */
-  dispatchEvent: DispatchEvent;
 };

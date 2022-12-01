@@ -40,7 +40,7 @@ export type RegisteredActivity = {
   paramsSchema?: {};
 };
 
-export type AggregateOutput = {
+export type Stack = {
   activities: Activity[];
   registeredActivities: RegisteredActivity[];
   transitionDuration: number;

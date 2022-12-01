@@ -1,13 +1,9 @@
-import type {
-  Activity,
-  ActivityTransitionState,
-  AggregateOutput,
-} from "./AggregateOutput";
 import type { DomainEvent, PoppedEvent, ReplacedEvent } from "./event-types";
 import { filterEvents, validateEvents } from "./event-utils";
+import type { Activity, ActivityTransitionState, Stack } from "./Stack";
 import { compareBy, findIndices, last, uniqBy } from "./utils";
 
-export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
+export function aggregate(events: DomainEvent[], now: number): Stack {
   const sortedEvents = uniqBy(
     [...events].sort((a, b) => compareBy(a, b, (e) => e.id)),
     (e) => e.id,
@@ -232,7 +228,7 @@ export function aggregate(events: DomainEvent[], now: number): AggregateOutput {
     ? "loading"
     : "idle";
 
-  const output: AggregateOutput = {
+  const output: Stack = {
     activities: uniqActivities
       .map((activity) => {
         const zIndex = visibleActivities.findIndex(

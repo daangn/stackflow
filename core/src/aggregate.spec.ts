@@ -1,5 +1,4 @@
 import { aggregate } from "./aggregate";
-import type { Activity } from "./AggregateOutput";
 import type {
   ActivityRegisteredEvent,
   PushedEvent,
@@ -9,6 +8,7 @@ import type {
 } from "./event-types";
 import type { BaseDomainEvent } from "./event-types/_base";
 import { makeEvent } from "./event-utils";
+import type { Activity } from "./Stack";
 
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;

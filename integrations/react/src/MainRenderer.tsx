@@ -1,3 +1,4 @@
+import type { ActivityComponentType } from "activity";
 import React, { useEffect } from "react";
 
 import type { BaseActivities } from "./BaseActivities";
@@ -7,9 +8,13 @@ import { usePlugins } from "./plugins";
 import type { WithRequired } from "./utils";
 
 interface MainRendererProps {
-  activities: BaseActivities;
+  activityComponentMap: {
+    [key: string]: ActivityComponentType;
+  };
 }
-const MainRenderer: React.FC<MainRendererProps> = ({ activities }) => {
+const MainRenderer: React.FC<MainRendererProps> = ({
+  activityComponentMap,
+}) => {
   const coreState = useCoreState();
   const plugins = usePlugins();
 
@@ -35,7 +40,7 @@ const MainRenderer: React.FC<MainRendererProps> = ({ activities }) => {
       {renderingPlugins.map((plugin) => (
         <PluginRenderer
           key={plugin.key}
-          activities={activities}
+          activityComponentMap={activityComponentMap}
           plugin={plugin}
         />
       ))}

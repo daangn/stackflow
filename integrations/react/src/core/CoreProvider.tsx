@@ -1,4 +1,4 @@
-import type { AggregateOutput, CreateCoreStoreOutput } from "@stackflow/core";
+import type { Stack, CreateCoreStoreOutput } from "@stackflow/core";
 import React, { createContext } from "react";
 
 import { useDeferredValue, useSyncExternalStore } from "../shims";
@@ -6,7 +6,7 @@ import { useDeferredValue, useSyncExternalStore } from "../shims";
 export const CoreActionsContext = createContext<
   CreateCoreStoreOutput["actions"]
 >(null as any);
-export const CoreStateContext = createContext<AggregateOutput>(null as any);
+export const CoreStateContext = createContext<Stack>(null as any);
 
 export interface CoreProviderProps {
   coreStore: CreateCoreStoreOutput;
