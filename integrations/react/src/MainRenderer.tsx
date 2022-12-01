@@ -1,7 +1,6 @@
-import type { ActivityComponentType } from "activity";
 import React, { useEffect } from "react";
 
-import type { BaseActivities } from "./BaseActivities";
+import type { ActivityComponentType } from "./activity";
 import { useCoreState } from "./core";
 import PluginRenderer from "./PluginRenderer";
 import { usePlugins } from "./plugins";
