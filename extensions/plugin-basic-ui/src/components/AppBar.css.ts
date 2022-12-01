@@ -144,6 +144,26 @@ export const centerMain = recipe({
   },
 });
 
+export const centerMainEdge = style([
+  f.resetButton,
+  f.posAbs,
+  f.top0,
+  f.cursorPointer,
+  {
+    left: "50%",
+    height: "1.25rem",
+    transform: "translate(-50%)",
+    maxWidth: "5rem",
+    display: "none",
+    width: vars.appBar.center.mainWidth,
+    selectors: {
+      [`${cupertino} &, ${rootCupertino} &`]: {
+        display: "block",
+      },
+    },
+  },
+]);
+
 export const centerText = style([
   f.overflowHidden,
   f.whiteSpaceNowrap,
