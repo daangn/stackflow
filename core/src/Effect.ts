@@ -1,4 +1,4 @@
-import type { Activity, ActivityStep } from "./AggregateOutput";
+import type { Activity, ActivityStep } from "./Stack";
 
 export type Effect =
   | {

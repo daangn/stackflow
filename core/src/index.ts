@@ -1,13 +1,15 @@
 export { aggregate } from "./aggregate";
-export {
-  Activity,
-  ActivityTransitionState,
-  AggregateOutput,
-} from "./AggregateOutput";
 export * from "./createCoreStore";
 export { Effect } from "./Effect";
-export { DomainEvent } from "./event-types";
+export * from "./event-types";
 export { DispatchEvent, makeEvent } from "./event-utils";
 export * from "./interfaces";
 export { produceEffects } from "./produceEffects";
+export {
+  Activity,
+  ActivityStep,
+  ActivityTransitionState,
+  RegisteredActivity,
+  Stack,
+} from "./Stack";
 export { id } from "./utils";

@@ -49,18 +49,29 @@ jobs:
             demo/.ultra.cache.json
             docs/.next/
             docs/.ultra.cache.json
+            extensions/compat-await-push/dist/
+            extensions/compat-await-push/.ultra.cache.json
+            extensions/link/dist/
+            extensions/link/.ultra.cache.json
             extensions/plugin-basic-ui/dist/
             extensions/plugin-basic-ui/.ultra.cache.json
             extensions/plugin-history-sync/dist/
             extensions/plugin-history-sync/.ultra.cache.json
+            extensions/plugin-preload/dist/
+            extensions/plugin-preload/.ultra.cache.json
             extensions/plugin-renderer-basic/dist/
             extensions/plugin-renderer-basic/.ultra.cache.json
+            extensions/plugin-renderer-web/dist/
+            extensions/plugin-renderer-web/.ultra.cache.json
+            extensions/plugin-stack-depth-change/dist/
+            extensions/plugin-stack-depth-change/.ultra.cache.json
             integrations/react/dist/
             integrations/react/.ultra.cache.json
             packages/esbuild-config/.ultra.cache.json
-          key: ultra-cache-main-v1
+            packages/eslint-config/.ultra.cache.json
+          key: ultra-cache-main-v2
           restore-keys: |
-            ultra-cache-main-v1
+            ultra-cache-main-v2
 
       - name: Build the entire monorepo
         run: |
@@ -77,13 +88,24 @@ jobs:
             demo/.ultra.cache.json
             docs/.next/
             docs/.ultra.cache.json
+            extensions/compat-await-push/dist/
+            extensions/compat-await-push/.ultra.cache.json
+            extensions/link/dist/
+            extensions/link/.ultra.cache.json
             extensions/plugin-basic-ui/dist/
             extensions/plugin-basic-ui/.ultra.cache.json
             extensions/plugin-history-sync/dist/
             extensions/plugin-history-sync/.ultra.cache.json
+            extensions/plugin-preload/dist/
+            extensions/plugin-preload/.ultra.cache.json
             extensions/plugin-renderer-basic/dist/
             extensions/plugin-renderer-basic/.ultra.cache.json
+            extensions/plugin-renderer-web/dist/
+            extensions/plugin-renderer-web/.ultra.cache.json
+            extensions/plugin-stack-depth-change/dist/
+            extensions/plugin-stack-depth-change/.ultra.cache.json
             integrations/react/dist/
             integrations/react/.ultra.cache.json
             packages/esbuild-config/.ultra.cache.json
-          key: ultra-cache-main-v1
+            packages/eslint-config/.ultra.cache.json
+          key: ultra-cache-main-v2

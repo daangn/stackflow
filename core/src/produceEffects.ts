@@ -1,13 +1,10 @@
 import isEqual from "react-fast-compare";
 
-import type { AggregateOutput } from "./AggregateOutput";
 import type { Effect } from "./Effect";
+import type { Stack } from "./Stack";
 import { omit } from "./utils";
 
-export function produceEffects(
-  prevOutput: AggregateOutput,
-  nextOutput: AggregateOutput,
-): Effect[] {
+export function produceEffects(prevOutput: Stack, nextOutput: Stack): Effect[] {
   const output: Effect[] = [];
 
   const somethingChanged = !isEqual(prevOutput, nextOutput);

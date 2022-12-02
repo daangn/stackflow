@@ -1,4 +1,4 @@
-import type { ActivityRegisteredEvent } from "@stackflow/core/dist/event-types";
+import type { ActivityRegisteredEvent } from "@stackflow/core";
 
 import type { ActivityComponentType } from "./activity";
 

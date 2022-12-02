@@ -1,12 +1,13 @@
-import type { StackflowActions } from "@stackflow/core";
-import { aggregate, createCoreStore, makeEvent } from "@stackflow/core";
 import type {
-  DomainEvent,
+  ActivityRegisteredEvent,
   PushedEvent,
+  StackflowActions,
   StepPushedEvent,
-} from "@stackflow/core/dist/event-types";
+} from "@stackflow/core";
+import { createCoreStore, makeEvent } from "@stackflow/core";
 import React, { useEffect, useMemo } from "react";
 
+import type { ActivityComponentType } from "./activity";
 import { makeActivityId, makeStepId } from "./activity";
 import type { BaseActivities } from "./BaseActivities";
 import { CoreProvider } from "./core";
@@ -20,14 +21,7 @@ import type {
   UseStepActionsOutputType,
 } from "./useStepActions";
 import { useStepActions } from "./useStepActions";
-
-export type StackComponentType = React.FC<{
-  initialContext?: any;
-}>;
-
-type StackflowPluginsEntry<T extends BaseActivities> =
-  | StackflowReactPlugin<T>
-  | StackflowPluginsEntry<T>[];
+import { createRef } from "./utils";
 
 function parseActionOptions(options?: { animate?: boolean }) {
   if (!options) {
@@ -42,6 +36,14 @@ function parseActionOptions(options?: { animate?: boolean }) {
 
   return { skipActiveState: !options.animate };
 }
+
+export type StackComponentType = React.FC<{
+  initialContext?: any;
+}>;
+
+type StackflowPluginsEntry<T extends BaseActivities> =
+  | StackflowReactPlugin<T>
+  | StackflowPluginsEntry<T>[];
 
 export type StackflowOptions<T extends BaseActivities> = {
   /**
@@ -68,6 +70,11 @@ export type StackflowOptions<T extends BaseActivities> = {
 
 export type StackflowOutput<T extends BaseActivities> = {
   /**
+   * Return activities
+   */
+  activities: T;
+
+  /**
    * Created `<Stack />` component
    */
   Stack: StackComponentType;
@@ -83,16 +90,25 @@ export type StackflowOutput<T extends BaseActivities> = {
   useStepFlow: UseStepActions<T>;
 
   /**
+   * Add activity imperatively
+   */
+  addActivity: (options: {
+    name: string;
+    component: ActivityComponentType<any>;
+    paramsSchema?: ActivityRegisteredEvent["activityParamsSchema"];
+  }) => void;
+
+  /**
+   * Add plugin imperatively
+   */
+  addPlugin: (plugin: StackflowPluginsEntry<T>) => void;
+
+  /**
    * Created action triggers
    */
   actions: Pick<StackflowActions, "dispatchEvent" | "getStack"> &
     Pick<UseActionsOutputType<T>, "push" | "pop" | "replace"> &
     Pick<UseStepActionsOutputType<{}>, "stepPush" | "stepReplace" | "stepPop">;
-
-  /**
-   * Return activities
-   */
-  activities: T;
 };
 
 /**
@@ -101,133 +117,60 @@ export type StackflowOutput<T extends BaseActivities> = {
 export function stackflow<T extends BaseActivities>(
   options: StackflowOptions<T>,
 ): StackflowOutput<T> {
-  const plugins = (options.plugins ?? [])
-    .flat(Infinity as 0)
-    .map((p) => p as StackflowReactPlugin<T>);
-  const pluginInstances = plugins.map((plugin) => plugin());
-
-  const activities = Object.entries(options.activities).reduce(
-    (acc, [key, Activity]) => {
-      if ("component" in Activity) {
-        return {
-          ...acc,
-          [key]: {
-            paramsSchema: Activity.paramsSchema,
-            component: Activity.component,
-          },
-        };
-      }
-
-      return {
-        ...acc,
-        [key]: React.memo(Activity),
-      };
-    },
-    {} as T,
-  );
-
-  const initialEventDate = () =>
-    new Date().getTime() - options.transitionDuration;
-
-  const initialEvents = (): DomainEvent[] => {
-    const initializedEvent = makeEvent("Initialized", {
-      transitionDuration: options.transitionDuration,
-      eventDate: initialEventDate(),
-    });
-
-    const activityRegisteredEvents = Object.entries(activities).map(
-      ([activityName, Activity]) =>
-        makeEvent("ActivityRegistered", {
-          activityName,
-          eventDate: initialEventDate(),
-          ...("component" in Activity
-            ? {
-                activityParamsSchema: Activity.paramsSchema,
-              }
-            : null),
-        }),
-    );
-
-    return [initializedEvent, ...activityRegisteredEvents];
-  };
-
-  const initialStack = aggregate(initialEvents(), new Date().getTime());
-
-  const coreStoreRef: {
-    value: ReturnType<typeof createCoreStore> | null;
-  } = {
-    value: null,
-  };
-
   if (typeof window !== "undefined") {
     const html = window.document.documentElement;
 
+    // <html style="--stackflow-transition-duration:350ms;">
     html.style.setProperty(
       "--stackflow-transition-duration",
       `${options.transitionDuration}ms`,
     );
   }
 
-  const actions: StackflowOutput<T>["actions"] = {
-    dispatchEvent(name, parameters) {
-      return coreStoreRef.value?.actions.dispatchEvent(name, parameters);
-    },
-    getStack() {
-      return coreStoreRef.value?.actions.getStack() ?? initialStack;
-    },
-    push(activityName, activityParams, options) {
-      const activityId = makeActivityId();
+  const plugins = (options.plugins ?? [])
+    .flat(Infinity as 0)
+    .map((p) => p as StackflowReactPlugin<T>);
+  const pluginInstances = plugins.map((plugin) => plugin());
 
-      coreStoreRef.value?.actions.push({
-        activityId,
-        activityName,
-        activityParams,
-        skipEnterActiveState: parseActionOptions(options).skipActiveState,
-      });
+  const activityComponentMap = Object.entries(options.activities).reduce(
+    (acc, [key, Activity]) => ({
+      ...acc,
+      [key]:
+        "component" in Activity
+          ? React.memo(Activity.component)
+          : React.memo(Activity),
+    }),
+    {} as {
+      [key: string]: ActivityComponentType;
+    },
+  );
 
-      return {
-        activityId,
-      };
-    },
-    replace(activityName, activityParams, options) {
-      const activityId = options?.activityId ?? makeActivityId();
+  const enoughPastTime = () =>
+    new Date().getTime() - options.transitionDuration * 2;
 
-      coreStoreRef.value?.actions.replace({
-        activityId: options?.activityId ?? makeActivityId(),
-        activityName,
-        activityParams,
-        skipEnterActiveState: parseActionOptions(options).skipActiveState,
-      });
+  const staticCoreStore = createCoreStore({
+    initialEvents: [
+      makeEvent("Initialized", {
+        transitionDuration: options.transitionDuration,
+        eventDate: enoughPastTime(),
+      }),
+      ...Object.entries(options.activities).map(([activityName, Activity]) =>
+        makeEvent("ActivityRegistered", {
+          activityName,
+          eventDate: enoughPastTime(),
+          ...("component" in Activity
+            ? {
+                activityParamsSchema: Activity.paramsSchema,
+              }
+            : null),
+        }),
+      ),
+    ],
+    plugins: [],
+  });
 
-      return {
-        activityId,
-      };
-    },
-    pop(options) {
-      return coreStoreRef.value?.actions.pop({
-        skipExitActiveState: parseActionOptions(options).skipActiveState,
-      });
-    },
-    stepPush(params) {
-      const stepId = makeStepId();
-
-      return coreStoreRef.value?.actions.stepPush({
-        stepId,
-        stepParams: params,
-      });
-    },
-    stepReplace(params) {
-      const stepId = makeStepId();
-
-      return coreStoreRef.value?.actions.stepReplace({
-        stepId,
-        stepParams: params,
-      });
-    },
-    stepPop() {
-      return coreStoreRef.value?.actions.stepPop({});
-    },
-  };
+  const [getCoreStore, setCoreStore] =
+    createRef<ReturnType<typeof createCoreStore>>();
 
   const Stack: StackComponentType = (props) => {
     const coreStore = useMemo(() => {
@@ -237,7 +180,7 @@ export function stackflow<T extends BaseActivities>(
               activityId: makeActivityId(),
               activityName: options.initialActivity(),
               activityParams: {},
-              eventDate: initialEventDate(),
+              eventDate: enoughPastTime(),
               skipEnterActiveState: false,
             }),
           ]
@@ -262,7 +205,7 @@ export function stackflow<T extends BaseActivities>(
       if (isInitialActivityIgnored) {
         // eslint-disable-next-line no-console
         console.warn(
-          `Stackflow - ` +
+          `Stackflow -` +
             ` Some plugin overrides an "initialActivity" option.` +
             ` The "initialActivity" option you set to "${initialPushedEventsByOption[0].activityName}" in the "stackflow" is ignored.`,
         );
@@ -271,7 +214,7 @@ export function stackflow<T extends BaseActivities>(
       if (initialPushedEvents.length === 0) {
         // eslint-disable-next-line no-console
         console.warn(
-          `Stackflow - ` +
+          `Stackflow -` +
             ` There is no initial activity.` +
             " If you want to set the initial activity," +
             " add the `initialActivity` option of the `stackflow()` function or" +
@@ -280,11 +223,14 @@ export function stackflow<T extends BaseActivities>(
       }
 
       const store = createCoreStore({
-        initialEvents: [...initialEvents(), ...initialPushedEvents],
+        initialEvents: [
+          ...staticCoreStore.pullEvents(),
+          ...initialPushedEvents,
+        ],
         plugins,
       });
 
-      coreStoreRef.value = store;
+      setCoreStore(store);
 
       return store;
     }, []);
@@ -296,17 +242,117 @@ export function stackflow<T extends BaseActivities>(
     return (
       <PluginsProvider value={pluginInstances}>
         <CoreProvider coreStore={coreStore}>
-          <MainRenderer activities={activities} />
+          <MainRenderer activityComponentMap={activityComponentMap} />
         </CoreProvider>
       </PluginsProvider>
     );
   };
 
   return {
+    activities: options.activities,
     Stack,
     useFlow: useActions,
     useStepFlow: useStepActions,
-    actions,
-    activities,
+    addActivity(activity) {
+      if (getCoreStore()) {
+        // eslint-disable-next-line no-console
+        console.warn(
+          `Stackflow -` +
+            " `addActivity()` API cannot be called after a `<Stack />` component has been rendered",
+        );
+
+        return;
+      }
+
+      activityComponentMap[activity.name] = React.memo(activity.component);
+
+      staticCoreStore.actions.dispatchEvent("ActivityRegistered", {
+        activityName: activity.name,
+        activityParamsSchema: activity.paramsSchema,
+        eventDate: enoughPastTime(),
+      });
+    },
+    addPlugin(plugin) {
+      if (getCoreStore()) {
+        // eslint-disable-next-line no-console
+        console.warn(
+          `Stackflow -` +
+            " `addPlugin()` API cannot be called after a `<Stack />` component has been rendered",
+        );
+
+        return;
+      }
+
+      [plugin]
+        .flat(Infinity as 0)
+        .map((p) => p as StackflowReactPlugin<T>)
+        .forEach((p) => {
+          plugins.push(p);
+          pluginInstances.push(p());
+        });
+    },
+    actions: {
+      getStack() {
+        return (
+          getCoreStore()?.actions.getStack() ??
+          staticCoreStore.actions.getStack()
+        );
+      },
+      dispatchEvent(name, parameters) {
+        return getCoreStore()?.actions.dispatchEvent(name, parameters);
+      },
+      push(activityName, activityParams, options) {
+        const activityId = makeActivityId();
+
+        getCoreStore()?.actions.push({
+          activityId,
+          activityName,
+          activityParams,
+          skipEnterActiveState: parseActionOptions(options).skipActiveState,
+        });
+
+        return {
+          activityId,
+        };
+      },
+      replace(activityName, activityParams, options) {
+        const activityId = options?.activityId ?? makeActivityId();
+
+        getCoreStore()?.actions.replace({
+          activityId: options?.activityId ?? makeActivityId(),
+          activityName,
+          activityParams,
+          skipEnterActiveState: parseActionOptions(options).skipActiveState,
+        });
+
+        return {
+          activityId,
+        };
+      },
+      pop(options) {
+        return getCoreStore()?.actions.pop({
+          skipExitActiveState: parseActionOptions(options).skipActiveState,
+        });
+      },
+      stepPush(params) {
+        const stepId = makeStepId();
+
+        return getCoreStore()?.actions.stepPush({
+          stepId,
+          stepParams: params,
+        });
+      },
+      stepReplace(params) {
+        const stepId = makeStepId();
+
+        return getCoreStore()?.actions.stepReplace({
+          stepId,
+          stepParams: params,
+        });
+      },
+      stepPop() {
+        return getCoreStore()?.actions.stepPop({});
+      },
+    },
   };
 }

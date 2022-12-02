@@ -1,6 +1,5 @@
-import type { Activity } from "@stackflow/core";
+import type { Activity, ActivityStep } from "@stackflow/core";
 import { id, makeEvent } from "@stackflow/core";
-import type { ActivityStep } from "@stackflow/core/dist/AggregateOutput";
 import type { StackflowReactPlugin } from "@stackflow/react";
 import React from "react";
 
