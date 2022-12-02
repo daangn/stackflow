@@ -1,10 +1,11 @@
 import type {
   ActivityRegisteredEvent,
+  CoreStore,
   PushedEvent,
   StackflowActions,
   StepPushedEvent,
 } from "@stackflow/core";
-import { createCoreStore, makeEvent } from "@stackflow/core";
+import { makeCoreStore, makeEvent } from "@stackflow/core";
 import React, { useEffect, useMemo } from "react";
 
 import type { ActivityComponentType } from "./activity";
@@ -21,7 +22,7 @@ import type {
   UseStepActionsOutputType,
 } from "./useStepActions";
 import { useStepActions } from "./useStepActions";
-import { createRef } from "./utils";
+import { makeRef } from "./utils";
 
 function parseActionOptions(options?: { animate?: boolean }) {
   if (!options) {
@@ -148,7 +149,7 @@ export function stackflow<T extends BaseActivities>(
   const enoughPastTime = () =>
     new Date().getTime() - options.transitionDuration * 2;
 
-  const staticCoreStore = createCoreStore({
+  const staticCoreStore = makeCoreStore({
     initialEvents: [
       makeEvent("Initialized", {
         transitionDuration: options.transitionDuration,
@@ -169,8 +170,7 @@ export function stackflow<T extends BaseActivities>(
     plugins: [],
   });
 
-  const [getCoreStore, setCoreStore] =
-    createRef<ReturnType<typeof createCoreStore>>();
+  const [getCoreStore, setCoreStore] = makeRef<CoreStore>();
 
   const Stack: StackComponentType = (props) => {
     const coreStore = useMemo(() => {
@@ -222,7 +222,7 @@ export function stackflow<T extends BaseActivities>(
         );
       }
 
-      const store = createCoreStore({
+      const store = makeCoreStore({
         initialEvents: [
           ...staticCoreStore.pullEvents(),
           ...initialPushedEvents,

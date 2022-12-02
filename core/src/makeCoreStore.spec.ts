@@ -1,6 +1,6 @@
-import { createCoreStore } from "./createCoreStore";
 import { makeEvent } from "./event-utils";
 import type { StackflowPlugin } from "./interfaces";
+import { makeCoreStore } from "./makeCoreStore";
 import { last } from "./utils";
 
 const SECOND = 1000;
@@ -13,11 +13,11 @@ const enoughPastTime = () => {
   return new Date(Date.now() - MINUTE).getTime() + dt;
 };
 
-test("createCoreStore - beforePush 훅이 정상적으로 동작합니다", () => {
+test("makeCoreStore - beforePush 훅이 정상적으로 동작합니다", () => {
   const onBeforePush = jest.fn();
   const otherHook = jest.fn();
 
-  const { actions } = createCoreStore({
+  const { actions } = makeCoreStore({
     initialEvents: [
       makeEvent("Initialized", {
         transitionDuration: 350,
@@ -54,11 +54,11 @@ test("createCoreStore - beforePush 훅이 정상적으로 동작합니다", () =
   expect(otherHook).toHaveBeenCalledTimes(0);
 });
 
-test("createCoreStore - Pushed 훅이 정상적으로 작동합니다", () => {
+test("makeCoreStore - Pushed 훅이 정상적으로 작동합니다", () => {
   const onPushed = jest.fn();
   const otherHook = jest.fn();
 
-  const { actions } = createCoreStore({
+  const { actions } = makeCoreStore({
     initialEvents: [
       makeEvent("Initialized", {
         transitionDuration: 350,
@@ -98,7 +98,7 @@ test("createCoreStore - Pushed 훅이 정상적으로 작동합니다", () => {
   expect(otherHook).toHaveBeenCalledTimes(0);
 });
 
-test("createCoreStore - onBeforePush 훅에서 preventDefault가 호출되면, 기본 동작을 멈춥니다", () => {
+test("makeCoreStore - onBeforePush 훅에서 preventDefault가 호출되면, 기본 동작을 멈춥니다", () => {
   const onBeforePush: ReturnType<StackflowPlugin>["onBeforePush"] = jest.fn(
     ({ actions }) => {
       actions.preventDefault();
@@ -107,7 +107,7 @@ test("createCoreStore - onBeforePush 훅에서 preventDefault가 호출되면, �
   const onPushed = jest.fn();
   const otherHook = jest.fn();
 
-  const { actions } = createCoreStore({
+  const { actions } = makeCoreStore({
     initialEvents: [
       makeEvent("Initialized", {
         transitionDuration: 350,
@@ -151,12 +151,12 @@ test("createCoreStore - onBeforePush 훅에서 preventDefault가 호출되면, �
   expect(otherHook).toHaveBeenCalledTimes(0);
 });
 
-test("createCoreStore - subscribe에 등록하면, 스택 상태 변경이 있을때 호출됩니다", async () => {
+test("makeCoreStore - subscribe에 등록하면, 스택 상태 변경이 있을때 호출됩니다", async () => {
   const listener1 = jest.fn();
   const listener2 = jest.fn();
   const listener3 = jest.fn();
 
-  const { actions, subscribe } = createCoreStore({
+  const { actions, subscribe } = makeCoreStore({
     initialEvents: [
       makeEvent("Initialized", {
         transitionDuration: 150,
@@ -201,7 +201,7 @@ test("createCoreStore - subscribe에 등록하면, 스택 상태 변경이 있�
   expect(listener3).toHaveBeenCalledTimes(2);
 });
 
-test("createCoreStore - onBeforePush 훅에서 overrideActionParams로 기존 actionParams를 덮어쓸 수 있습니다", () => {
+test("makeCoreStore - onBeforePush 훅에서 overrideActionParams로 기존 actionParams를 덮어쓸 수 있습니다", () => {
   const onBeforePush: ReturnType<StackflowPlugin>["onBeforePush"] = ({
     actions,
     actionParams,
@@ -215,7 +215,7 @@ test("createCoreStore - onBeforePush 훅에서 overrideActionParams로 기존 ac
     });
   };
 
-  const { actions } = createCoreStore({
+  const { actions } = makeCoreStore({
     initialEvents: [
       makeEvent("Initialized", {
         transitionDuration: 350,
@@ -254,10 +254,10 @@ test("createCoreStore - onBeforePush 훅에서 overrideActionParams로 기존 ac
   expect(last(stack.activities)?.params?.hello).toEqual("2");
 });
 
-test("createCoreStore - subscribe에 등록한 이후에 아무 Event가 없는 경우 리스너가 호출되지 않습니다", async () => {
+test("makeCoreStore - subscribe에 등록한 이후에 아무 Event가 없는 경우 리스너가 호출되지 않습니다", async () => {
   const listener1 = jest.fn();
 
-  const { actions, subscribe } = createCoreStore({
+  const { actions, subscribe } = makeCoreStore({
     initialEvents: [
       makeEvent("Initialized", {
         transitionDuration: 150,
