@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/plugin-basic-ui",
-  "version": "0.18.1",
+  "version": "0.19.0",
   "license": "MIT",
   "exports": {
     ".": {
@@ -31,10 +31,10 @@
     "ts-pattern": "^4.0.5"
   },
   "devDependencies": {
-    "@stackflow/core": "^0.18.0",
-    "@stackflow/esbuild-config": "^0.18.0",
-    "@stackflow/eslint-config": "^0.18.0",
-    "@stackflow/react": "^0.18.0",
+    "@stackflow/core": "^0.19.0",
+    "@stackflow/esbuild-config": "^0.19.0",
+    "@stackflow/eslint-config": "^0.19.0",
+    "@stackflow/react": "^0.19.0",
     "@types/react": "^18.0.10",
     "@typescript-eslint/eslint-plugin": "^5.32.0",
     "@typescript-eslint/parser": "^5.20.0",
