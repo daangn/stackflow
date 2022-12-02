@@ -205,7 +205,7 @@ export function stackflow<T extends BaseActivities>(
       if (isInitialActivityIgnored) {
         // eslint-disable-next-line no-console
         console.warn(
-          `Stackflow - ` +
+          `Stackflow -` +
             ` Some plugin overrides an "initialActivity" option.` +
             ` The "initialActivity" option you set to "${initialPushedEventsByOption[0].activityName}" in the "stackflow" is ignored.`,
         );
@@ -214,7 +214,7 @@ export function stackflow<T extends BaseActivities>(
       if (initialPushedEvents.length === 0) {
         // eslint-disable-next-line no-console
         console.warn(
-          `Stackflow - ` +
+          `Stackflow -` +
             ` There is no initial activity.` +
             " If you want to set the initial activity," +
             " add the `initialActivity` option of the `stackflow()` function or" +
@@ -257,7 +257,7 @@ export function stackflow<T extends BaseActivities>(
       if (getCoreStore()) {
         // eslint-disable-next-line no-console
         console.warn(
-          `Stackflow - ` +
+          `Stackflow -` +
             " `addActivity()` API cannot be called after a `<Stack />` component has been rendered",
         );
 
@@ -276,7 +276,7 @@ export function stackflow<T extends BaseActivities>(
       if (getCoreStore()) {
         // eslint-disable-next-line no-console
         console.warn(
-          `Stackflow - ` +
+          `Stackflow -` +
             " `addPlugin()` API cannot be called after a `<Stack />` component has been rendered",
         );
 
