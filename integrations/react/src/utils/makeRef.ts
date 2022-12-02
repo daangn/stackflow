@@ -1,4 +1,4 @@
-export function createRef<T>(): [() => T | null, (value: T) => void] {
+export function makeRef<T>(): [() => T | null, (value: T) => void] {
   const ref: {
     value: T | null;
   } = {

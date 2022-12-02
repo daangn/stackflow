@@ -17,21 +17,19 @@ const SECOND = 1000;
 // 60FPS
 const INTERVAL_MS = SECOND / 60;
 
-export type CreateCoreStoreOptions = {
+export type MakeCoreStoreOptions = {
   initialEvents: DomainEvent[];
   plugins: StackflowPlugin[];
 };
 
-export type CreateCoreStoreOutput = {
+export type CoreStore = {
   actions: StackflowActions;
   init: () => void;
   pullEvents: () => DomainEvent[];
   subscribe: (listener: () => void) => () => void;
 };
 
-export function createCoreStore(
-  options: CreateCoreStoreOptions,
-): CreateCoreStoreOutput {
+export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
   const events: {
     value: DomainEvent[];
   } = {

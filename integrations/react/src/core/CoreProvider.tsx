@@ -1,15 +1,15 @@
-import type { Stack, CreateCoreStoreOutput } from "@stackflow/core";
+import type { CoreStore, Stack } from "@stackflow/core";
 import React, { createContext } from "react";
 
 import { useDeferredValue, useSyncExternalStore } from "../shims";
 
-export const CoreActionsContext = createContext<
-  CreateCoreStoreOutput["actions"]
->(null as any);
+export const CoreActionsContext = createContext<CoreStore["actions"]>(
+  null as any,
+);
 export const CoreStateContext = createContext<Stack>(null as any);
 
 export interface CoreProviderProps {
-  coreStore: CreateCoreStoreOutput;
+  coreStore: CoreStore;
   children: React.ReactNode;
 }
 export const CoreProvider: React.FC<CoreProviderProps> = ({
