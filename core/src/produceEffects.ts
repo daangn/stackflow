@@ -100,20 +100,20 @@ export function produceEffects(prevOutput: Stack, nextOutput: Stack): Effect[] {
     j >= 0;
     j -= 1
   ) {
-    const prevActivity = prevOutput.activities[j];
-    const nextActivity = nextOutput.activities[j];
-
     const isPrevActivityPushed =
-      prevActivity?.transitionState === "enter-done" ||
-      prevActivity?.transitionState === "enter-active";
+      prevOutput.activities[j]?.transitionState === "enter-done" ||
+      prevOutput.activities[j]?.transitionState === "enter-active";
     const isNextActivityPopped =
-      nextActivity?.transitionState === "exit-active" ||
-      nextActivity?.transitionState === "exit-done";
+      nextOutput.activities[j]?.transitionState === "exit-active" ||
+      nextOutput.activities[j]?.transitionState === "exit-done";
+    const isReplacedEvent =
+      nextOutput.activities[j + 1]?.pushedBy.name === "Replaced" &&
+      nextOutput.activities[j + 1]?.transitionState === "enter-done";
 
-    if (isPrevActivityPushed && isNextActivityPopped) {
+    if (isPrevActivityPushed && isNextActivityPopped && !isReplacedEvent) {
       output.push({
         _TAG: "POPPED",
-        activity: nextActivity,
+        activity: nextOutput.activities[j],
       });
     }
   }
