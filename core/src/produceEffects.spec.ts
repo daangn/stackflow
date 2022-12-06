@@ -1,6 +1,6 @@
 import { produceEffects } from "./produceEffects";
 
-test("differences - 알 수 없는 이유로 두 object가 다르다면, %SOMETHING_CHANGED%를 결과로 포함합니다", () => {
+test("productEffects - 알 수 없는 이유로 두 object가 다르다면, %SOMETHING_CHANGED%를 결과로 포함합니다", () => {
   expect(
     produceEffects(
       {
@@ -71,7 +71,7 @@ test("differences - 알 수 없는 이유로 두 object가 다르다면, %SOMETH
   ]);
 });
 
-test("differences - 새로운 액티비티가 추가되었다면, PUSHED 이펙트를 결과로 포함합니다", () => {
+test("productEffects - 새로운 액티비티가 추가되었다면, PUSHED 이펙트를 결과로 포함합니다", () => {
   expect(
     produceEffects(
       {
@@ -142,7 +142,7 @@ test("differences - 새로운 액티비티가 추가되었다면, PUSHED 이펙�
   ]);
 });
 
-test("differences - 여러개 액티비티가 추가되었다면, PUSHED 이펙트가 순서대로 추가됩니다", () => {
+test("productEffects - 여러개 액티비티가 추가되었다면, PUSHED 이펙트가 순서대로 추가됩니다", () => {
   expect(
     produceEffects(
       {
@@ -260,7 +260,7 @@ test("differences - 여러개 액티비티가 추가되었다면, PUSHED 이펙�
   ]);
 });
 
-test("differences - 액티비티 상태가 exit-active로 변한 액티비티가 있다면, POPPED 이펙트가 추가됩니다", () => {
+test("productEffects - 액티비티 상태가 exit-active로 변한 액티비티가 있다면, POPPED 이펙트가 추가됩니다", () => {
   expect(
     produceEffects(
       {
@@ -398,7 +398,7 @@ test("differences - 액티비티 상태가 exit-active로 변한 액티비티가
   ]);
 });
 
-test("differences - 액티비티 상태가 exit-active로 변한 액티비티가 여러개 있다면, POPPED 이펙트가 액티비티가 쌓인 zOrder와 반대로 추가됩니다", () => {
+test("productEffects - 액티비티 상태가 exit-active로 변한 액티비티가 여러개 있다면, POPPED 이펙트가 액티비티가 쌓인 zOrder와 반대로 추가됩니다", () => {
   expect(
     produceEffects(
       {
@@ -561,7 +561,7 @@ test("differences - 액티비티 상태가 exit-active로 변한 액티비티가
   ]);
 });
 
-test("differences - PushedEvent로 인해 액티비티 상태가 enter-active로 변한 액티비티가 있다면, PUSHED 이펙트가 추가됩니다", () => {
+test("productEffects - PushedEvent로 인해 액티비티 상태가 enter-active로 변한 액티비티가 있다면, PUSHED 이펙트가 추가됩니다", () => {
   expect(
     produceEffects(
       {
@@ -699,7 +699,7 @@ test("differences - PushedEvent로 인해 액티비티 상태가 enter-active로
   ]);
 });
 
-test("differences - Replaced 이벤트로 인해 액티비티 상태가 enter-active로 변한 액티비티가 있다면, REPLACED 이펙트가 추가됩니다", () => {
+test("productEffects - Replaced 이벤트로 인해 액티비티 상태가 enter-active로 변한 액티비티가 있다면, REPLACED 이펙트가 추가됩니다", () => {
   expect(
     produceEffects(
       {
@@ -859,7 +859,7 @@ test("differences - Replaced 이벤트로 인해 액티비티 상태가 enter-ac
   ]);
 });
 
-test("differences - Replaced 이벤트로 인해 아래 액티비티 상태가 exit-done으로 변한 액티비티가 있다면, 아무 이펙트도 호출하지 않습니다", () => {
+test("productEffects - Replaced 이벤트로 인해 아래 액티비티 상태가 exit-done으로 변한 액티비티가 있다면, 아무 이펙트도 호출하지 않습니다", () => {
   expect(
     produceEffects(
       {
@@ -970,7 +970,9 @@ test("differences - Replaced 이벤트로 인해 아래 액티비티 상태가 e
       _TAG: "%SOMETHING_CHANGED%",
     },
   ]);
+});
 
+test("productEffects - 아래 액티비티가 Replaced를 통해 Push된 상태에서 Replaced 이벤트로 인해 아래 액티비티 상태가 exit-done으로 변한 경우, 아무 이펙트도 호출하지 않습니다", () => {
   expect(
     produceEffects(
       {
@@ -1083,7 +1085,7 @@ test("differences - Replaced 이벤트로 인해 아래 액티비티 상태가 e
   ]);
 });
 
-test("differences - Replaced 이벤트에 같은 activityId를 넘겨주어 액티비티 상태가 변한 액티비티가 있다면, REPLACED 이펙트가 추가됩니다", () => {
+test("productEffects - Replaced 이벤트에 같은 activityId를 넘겨주어 액티비티 상태가 변한 액티비티가 있다면, REPLACED 이펙트가 추가됩니다", () => {
   expect(
     produceEffects(
       {
@@ -1221,7 +1223,7 @@ test("differences - Replaced 이벤트에 같은 activityId를 넘겨주어 액�
   ]);
 });
 
-test("differences - StepPushed가 작동해 steps가 늘어난 경우, STEP_PUSHED 이펙트를 추가합니다", () => {
+test("productEffects - StepPushed가 작동해 steps가 늘어난 경우, STEP_PUSHED 이펙트를 추가합니다", () => {
   expect(
     produceEffects(
       {
@@ -1396,7 +1398,7 @@ test("differences - StepPushed가 작동해 steps가 늘어난 경우, STEP_PUSH
   ]);
 });
 
-test("differences - StepReplaced가 작동해 파라미터가 바뀐 경우, STEP_REPLACED 이펙트를 추가합니다", () => {
+test("productEffects - StepReplaced가 작동해 파라미터가 바뀐 경우, STEP_REPLACED 이펙트를 추가합니다", () => {
   expect(
     produceEffects(
       {
@@ -1511,7 +1513,7 @@ test("differences - StepReplaced가 작동해 파라미터가 바뀐 경우, STE
   ]);
 });
 
-test("differences - Popped가 작동해 steps가 모두 삭제되면, POPPED 이벤트와 함께 STEP_POPPED 이펙트가 함께 여러번 일어납니다", () => {
+test("productEffects - Popped가 작동해 steps가 모두 삭제되면, POPPED 이벤트와 함께 STEP_POPPED 이펙트가 함께 여러번 일어납니다", () => {
   expect(
     produceEffects(
       {
