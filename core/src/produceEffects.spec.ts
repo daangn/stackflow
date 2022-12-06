@@ -970,6 +970,117 @@ test("differences - Replaced 이벤트로 인해 아래 액티비티 상태가 e
       _TAG: "%SOMETHING_CHANGED%",
     },
   ]);
+
+  expect(
+    produceEffects(
+      {
+        activities: [
+          {
+            id: "1",
+            name: "hello",
+            transitionState: "enter-done",
+            params: {},
+            steps: [
+              {
+                id: "1",
+                params: {},
+                pushedBy: {
+                  name: "Replaced",
+                } as any,
+              },
+            ],
+            pushedBy: {
+              name: "Replaced",
+            } as any,
+            isActive: false,
+            isTop: false,
+            isRoot: true,
+            zIndex: 0,
+          },
+          {
+            id: "2",
+            name: "hello",
+            transitionState: "enter-active",
+            params: {},
+            steps: [
+              {
+                id: "2",
+                params: {},
+                pushedBy: {
+                  name: "Replaced",
+                } as any,
+              },
+            ],
+            pushedBy: {
+              name: "Replaced",
+            } as any,
+            isActive: true,
+            isTop: true,
+            isRoot: true,
+            zIndex: 1,
+          },
+        ],
+        registeredActivities: [{ name: "hello" }],
+        transitionDuration: 300,
+        globalTransitionState: "loading",
+      },
+      {
+        activities: [
+          {
+            id: "1",
+            name: "hello",
+            transitionState: "exit-done",
+            params: {},
+            steps: [
+              {
+                id: "1",
+                params: {},
+                pushedBy: {
+                  name: "Replaced",
+                } as any,
+              },
+            ],
+            pushedBy: {
+              name: "Replaced",
+            } as any,
+            isActive: false,
+            isTop: false,
+            isRoot: false,
+            zIndex: -1,
+          },
+          {
+            id: "2",
+            name: "hello",
+            transitionState: "enter-done",
+            params: {},
+            steps: [
+              {
+                id: "2",
+                params: {},
+                pushedBy: {
+                  name: "Replaced",
+                } as any,
+              },
+            ],
+            pushedBy: {
+              name: "Replaced",
+            } as any,
+            isActive: true,
+            isTop: true,
+            isRoot: true,
+            zIndex: 0,
+          },
+        ],
+        registeredActivities: [{ name: "hello" }],
+        transitionDuration: 300,
+        globalTransitionState: "idle",
+      },
+    ),
+  ).toEqual([
+    {
+      _TAG: "%SOMETHING_CHANGED%",
+    },
+  ]);
 });
 
 test("differences - Replaced 이벤트에 같은 activityId를 넘겨주어 액티비티 상태가 변한 액티비티가 있다면, REPLACED 이펙트가 추가됩니다", () => {
