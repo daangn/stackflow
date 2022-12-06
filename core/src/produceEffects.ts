@@ -82,8 +82,20 @@ export function produceEffects(prevOutput: Stack, nextOutput: Stack): Effect[] {
       nextActivity &&
       prevActivity.id === nextActivity.id &&
       !isEqual(
-        omit(prevActivity, ["isActive", "isTop", "transitionState", "zIndex"]),
-        omit(nextActivity, ["isActive", "isTop", "transitionState", "zIndex"]),
+        omit(prevActivity, [
+          "isActive",
+          "isTop",
+          "isRoot",
+          "transitionState",
+          "zIndex",
+        ]),
+        omit(nextActivity, [
+          "isActive",
+          "isTop",
+          "isRoot",
+          "transitionState",
+          "zIndex",
+        ]),
       ) &&
       nextActivity.pushedBy.name === "Replaced"
     ) {
