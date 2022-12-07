@@ -2,6 +2,7 @@
   "name": "@stackflow/plugin-google-analytics-4",
   "version": "0.0.0",
   "license": "MIT",
+  "author": "Aaron K <aaron@daangn.com>",
   "exports": {
     ".": {
       "require": "./dist/index.js",
