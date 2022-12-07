@@ -26,19 +26,23 @@ export type GoogleAnalyticsPluginOptions = {
 
 export function googleAnalyticsPlugin<
   T extends { [activityName: string]: unknown },
->(options: GoogleAnalyticsPluginOptions): StackflowReactPlugin<T> {
+>({
+  trackingId,
+  userInfo,
+  useTitle = false,
+}: GoogleAnalyticsPluginOptions): StackflowReactPlugin<T> {
   return () => ({
     key: "@daangn/stackflow-google-analytics-plugin",
     onInit() {
-      ReactGA4.initialize(options.trackingId, {
+      ReactGA4.initialize(trackingId, {
         gaOptions: {
           send_page_view: false,
         },
       });
 
       ReactGA4.set({
-        user_id: options.userInfo?.userId,
-        user_properties: options.userInfo?.userProperties,
+        user_id: userInfo?.userId,
+        user_properties: userInfo?.userProperties,
       });
     },
     onPushed({ actions }) {
@@ -51,7 +55,7 @@ export function googleAnalyticsPlugin<
         hitType: "pageview",
         path: window.location.pathname,
         location: window.location.pathname,
-        title: options.useTitle ? window.location.pathname : activityName,
+        title: useTitle ? window.location.pathname : activityName,
         page_referrer: document.referrer,
       });
     },
@@ -65,7 +69,7 @@ export function googleAnalyticsPlugin<
         hitType: "pageview",
         path: window.location.pathname,
         location: window.location.pathname,
-        title: options.useTitle ? window.location.pathname : activityName,
+        title: useTitle ? window.location.pathname : activityName,
         page_referrer: document.referrer,
       });
     },
@@ -79,14 +83,16 @@ export function googleAnalyticsPlugin<
         hitType: "pageview",
         path: window.location.pathname,
         location: window.location.pathname,
-        title: options.useTitle ? window.location.pathname : activityName,
+        title: useTitle ? window.location.pathname : activityName,
         page_referrer: document.referrer,
       });
     },
     wrapStack({ stack }) {
       return (
-        // eslint-disable-next-line react/jsx-no-constructed-context-values
-        <GoogleAnalyticsContext.Provider value={{ sendEvent: ReactGA4.event }}>
+        <GoogleAnalyticsContext.Provider
+          // eslint-disable-next-line react/jsx-no-constructed-context-values
+          value={{ sendEvent: ReactGA4.event, setConfig: ReactGA4.set }}
+        >
           {stack.render()}
         </GoogleAnalyticsContext.Provider>
       );
