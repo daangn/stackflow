@@ -2165,7 +2165,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/core@^0.19.1, @stackflow/core@workspace:core":
+"@stackflow/core@^0.19.0, @stackflow/core@^0.19.1, @stackflow/core@workspace:core":
   version: 0.0.0-use.local
   resolution: "@stackflow/core@workspace:core"
   dependencies:
@@ -2390,6 +2390,39 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@stackflow/plugin-google-analytics-4@workspace:extensions/plugin-google-analytics-4":
+  version: 0.0.0-use.local
+  resolution: "@stackflow/plugin-google-analytics-4@workspace:extensions/plugin-google-analytics-4"
+  dependencies:
+    "@stackflow/core": ^0.19.0
+    "@stackflow/esbuild-config": ^0.19.0
+    "@stackflow/eslint-config": ^0.19.0
+    "@stackflow/react": ^0.19.0
+    "@types/react": ^18.0.10
+    "@typescript-eslint/eslint-plugin": ^5.32.0
+    "@typescript-eslint/parser": ^5.20.0
+    esbuild: ^0.14.51
+    eslint: ^8.13.0
+    eslint-config-airbnb: ^19.0.4
+    eslint-config-prettier: ^8.5.0
+    eslint-plugin-import: ^2.26.0
+    eslint-plugin-json-format: ^2.0.1
+    eslint-plugin-jsx-a11y: ^6.5.1
+    eslint-plugin-react: ^7.29.4
+    eslint-plugin-react-hooks: ^4.4.0
+    eslint-plugin-simple-import-sort: ^7.0.0
+    react: ^18.1.0
+    react-ga4: ^1.4.1
+    rimraf: ^3.0.2
+    typescript: ^4.7.4
+  peerDependencies:
+    "@stackflow/core": 0
+    "@stackflow/react": 0
+    "@types/react": ">=16.8.0"
+    react: ">=16.8.0"
+  languageName: unknown
+  linkType: soft
+
 "@stackflow/plugin-history-sync@^0.19.1, @stackflow/plugin-history-sync@workspace:extensions/plugin-history-sync":
   version: 0.0.0-use.local
   resolution: "@stackflow/plugin-history-sync@workspace:extensions/plugin-history-sync"
@@ -2548,7 +2581,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/react@^0.19.1, @stackflow/react@workspace:integrations/react":
+"@stackflow/react@^0.19.0, @stackflow/react@^0.19.1, @stackflow/react@workspace:integrations/react":
   version: 0.0.0-use.local
   resolution: "@stackflow/react@workspace:integrations/react"
   dependencies:
@@ -11050,6 +11083,13 @@ __metadata:
   version: 3.2.0
   resolution: "react-fast-compare@npm:3.2.0"
   checksum: 8ef272c825ae329f61633ce4ce7f15aa5b84e5214d88bc0823880236e03e985a13195befa2c7a4eda7db3b017dc7985729152d88445823f652403cf36c2b86aa
+  languageName: node
+  linkType: hard
+
+"react-ga4@npm:^1.4.1":
+  version: 1.4.1
+  resolution: "react-ga4@npm:1.4.1"
+  checksum: 4c33ecb47dfc26c241a6af8e2b08b29b6c059f40e456e93d1c2b65c995edce18f32d9777295774ec992d968d7c5efdd105eb62398972d85ff2e2b6dad8646a26
   languageName: node
   linkType: hard
 
