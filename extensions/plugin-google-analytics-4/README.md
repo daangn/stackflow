@@ -25,7 +25,7 @@ const { Stack, useFlow } = stackflow({
       trackingId: "G-XXXXXXXXXX", // Required. Your Google Analytics 4 Tracking ID
       userInfo: {
         // optional
-        user_id: "test123", // Your own user distinguishable id. (https://bit.ly/3VGu04K)
+        userId: "test123", // Your own user distinguishable id. (https://bit.ly/3VGu04K)
         userProperties: {
           // ...
           // You can add additional event parameters. This value will collected as a user properties of "Custom Dimension" in GA.
