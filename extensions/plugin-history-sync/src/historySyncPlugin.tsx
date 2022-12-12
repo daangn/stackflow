@@ -87,6 +87,13 @@ function removeActivityContext(activity: Activity): Activity {
       ...activity.pushedBy,
       activityContext: undefined,
     },
+    steps: activity.steps.map((step) => ({
+      ...step,
+      pushedBy: {
+        ...step.pushedBy,
+        activityContext: undefined,
+      },
+    })),
   };
 }
 
