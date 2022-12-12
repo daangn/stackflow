@@ -76,6 +76,21 @@ function replaceState({
   window.history.replaceState(state, "", nextUrl);
 }
 
+function removeActivityContextFromStep(step: ActivityStep): ActivityStep {
+  return {
+    ...step,
+    pushedBy:
+      "activityContext" in step.pushedBy
+        ? {
+            ...step.pushedBy,
+            activityContext: undefined,
+          }
+        : {
+            ...step.pushedBy,
+          },
+  };
+}
+
 /**
  * Removes activity context before serialization
  */
@@ -87,13 +102,7 @@ function removeActivityContext(activity: Activity): Activity {
       ...activity.pushedBy,
       activityContext: undefined,
     },
-    steps: activity.steps.map((step) => ({
-      ...step,
-      pushedBy: {
-        ...step.pushedBy,
-        activityContext: undefined,
-      },
-    })),
+    steps: activity.steps.map(removeActivityContextFromStep),
   };
 }
 
@@ -232,12 +241,16 @@ export function historySyncPlugin<
 
         (window as any).getStack = getStack;
 
+        const lastStep = last(rootActivity.steps);
+
         replaceState({
           url: template.fill(rootActivity.params),
           state: {
             _TAG: STATE_TAG,
             activity: removeActivityContext(rootActivity),
-            step: last(rootActivity.steps),
+            step: lastStep
+              ? removeActivityContextFromStep(lastStep)
+              : undefined,
           },
           useHash: options.useHash,
         });
@@ -404,7 +417,7 @@ export function historySyncPlugin<
           state: {
             _TAG: STATE_TAG,
             activity: removeActivityContext(activity),
-            step,
+            step: removeActivityContextFromStep(step),
           },
           useHash: options.useHash,
         });
@@ -441,7 +454,7 @@ export function historySyncPlugin<
           state: {
             _TAG: STATE_TAG,
             activity: removeActivityContext(activity),
-            step,
+            step: removeActivityContextFromStep(step),
           },
           useHash: options.useHash,
         });
