@@ -16,6 +16,7 @@ export const globalVars = createGlobalThemeContract(
       iconColor: "app-bar-icon-color",
       textColor: "app-bar-text-color",
       backgroundColor: "app-bar-background-color",
+      showTransitionDuration: "app-bar-show-transition-duration",
     },
     bottomSheet: {
       borderRadius: "bottom-sheet-border-radius",
@@ -40,6 +41,7 @@ const defaultVars = {
     iconColor: "#212124",
     textColor: "#212124",
     backgroundColor: "#fff",
+    showTransitionDuration: "275ms",
   },
   bottomSheet: {
     borderRadius: "1rem",

@@ -5,9 +5,12 @@ type PropOf<T> = T extends React.ComponentType<infer U> ? U : never;
 
 interface LayoutProps {
   appBar?: PropOf<typeof AppScreen>["appBar"];
+  showAppBar?: boolean;
   children: React.ReactNode;
 }
-const Layout: React.FC<LayoutProps> = ({ appBar, children }) => (
-  <AppScreen appBar={appBar}>{children}</AppScreen>
+const Layout: React.FC<LayoutProps> = ({ appBar, showAppBar, children }) => (
+  <AppScreen appBar={appBar} showAppBar={showAppBar}>
+    {children}
+  </AppScreen>
 );
 export default Layout;
