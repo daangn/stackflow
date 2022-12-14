@@ -1,113 +1,22 @@
-import type { Activity, ActivityStep } from "@stackflow/core";
 import { id, makeEvent } from "@stackflow/core";
 import type { StackflowReactPlugin } from "@stackflow/react";
 import React from "react";
 
+import {
+  getCurrentState,
+  parseState,
+  pushState,
+  replaceState,
+} from "./historyState";
 import { last } from "./last";
 import { makeTemplate } from "./makeTemplate";
 import { normalizeRoute } from "./normalizeRoute";
 import { RoutesProvider } from "./RoutesContext";
 
-const STATE_TAG = `${process.env.PACKAGE_NAME}@${process.env.PACKAGE_VERSION}`;
-
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
 
 const isServer = typeof window === "undefined";
-
-function getCurrentState() {
-  if (isServer) {
-    return null;
-  }
-
-  return window.history.state;
-}
-
-interface State {
-  _TAG: string;
-  activity: Activity;
-  step?: ActivityStep;
-}
-function parseState(state: unknown): State | null {
-  const _state: any = state;
-
-  if (
-    typeof _state === "object" &&
-    _state !== null &&
-    "_TAG" in _state &&
-    typeof _state._TAG === "string" &&
-    _state._TAG === STATE_TAG
-  ) {
-    return state as State;
-  }
-
-  return null;
-}
-
-function pushState({
-  state,
-  url,
-  useHash,
-}: {
-  state: State;
-  url: string;
-  useHash?: boolean;
-}) {
-  if (isServer) {
-    return;
-  }
-  const nextUrl = useHash ? `${window.location.pathname}#${url}` : url;
-  window.history.pushState(state, "", nextUrl);
-}
-
-function replaceState({
-  url,
-  state,
-  useHash,
-}: {
-  url: string;
-  state: State;
-  useHash?: boolean;
-}) {
-  if (isServer) {
-    return;
-  }
-  const nextUrl = useHash ? `${window.location.pathname}#${url}` : url;
-  window.history.replaceState(state, "", nextUrl);
-}
-
-function removeActivityContextFromStep(step: ActivityStep): ActivityStep {
-  return {
-    ...step,
-    pushedBy:
-      "activityContext" in step.pushedBy
-        ? {
-            ...step.pushedBy,
-            activityContext: undefined,
-          }
-        : {
-            ...step.pushedBy,
-          },
-  };
-}
-
-/**
- * Removes activity context before serialization
- */
-function removeActivityContext(activity: Activity): Activity {
-  return {
-    ...activity,
-    context: undefined,
-    pushedBy: {
-      ...activity.pushedBy,
-      activityContext: undefined,
-    },
-    steps: activity.steps.map(removeActivityContextFromStep),
-  };
-}
-
-const startTransition: React.TransitionStartFunction =
-  React.startTransition ?? ((cb: () => void) => cb());
 
 type HistorySyncPluginOptions<K extends string> = {
   routes: {
@@ -246,11 +155,8 @@ export function historySyncPlugin<
         replaceState({
           url: template.fill(rootActivity.params),
           state: {
-            _TAG: STATE_TAG,
-            activity: removeActivityContext(rootActivity),
-            step: lastStep
-              ? removeActivityContextFromStep(lastStep)
-              : undefined,
+            activity: rootActivity,
+            step: lastStep,
           },
           useHash: options.useHash,
         });
@@ -396,8 +302,7 @@ export function historySyncPlugin<
         pushState({
           url: template.fill(activity.params),
           state: {
-            _TAG: STATE_TAG,
-            activity: removeActivityContext(activity),
+            activity,
           },
           useHash: options.useHash,
         });
@@ -415,9 +320,8 @@ export function historySyncPlugin<
         pushState({
           url: template.fill(activity.params),
           state: {
-            _TAG: STATE_TAG,
-            activity: removeActivityContext(activity),
-            step: removeActivityContextFromStep(step),
+            activity,
+            step,
           },
           useHash: options.useHash,
         });
@@ -434,8 +338,7 @@ export function historySyncPlugin<
         replaceState({
           url: template.fill(activity.params),
           state: {
-            _TAG: STATE_TAG,
-            activity: removeActivityContext(activity),
+            activity,
           },
           useHash: options.useHash,
         });
@@ -452,9 +355,8 @@ export function historySyncPlugin<
         replaceState({
           url: template.fill(activity.params),
           state: {
-            _TAG: STATE_TAG,
-            activity: removeActivityContext(activity),
-            step: removeActivityContextFromStep(step),
+            activity,
+            step,
           },
           useHash: options.useHash,
         });
