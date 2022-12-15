@@ -197,7 +197,7 @@ pop({
 
 ## 새 스텝 쌓기
 
-`stackflow.ts`에서 생성할 수 있는 `useStepFlow()` 훅을 사용해요. 해당 훅 내에 `pushStep()` 함수를 통해 다음과 같이 새 스텝을 쌓을 수 있어요.
+`stackflow.ts`에서 생성할 수 있는 `useStepFlow()` 훅을 사용해요. 해당 훅 내에 `stepPush()` 함수를 통해 다음과 같이 새 스텝을 쌓을 수 있어요.
 
 ```tsx
 /**
@@ -212,11 +212,11 @@ type ArticleParams = {
 };
 const Article: ActivityComponentType<ArticleParams> = ({ params }) => {
   // 타입 안정성을 위해 현재 액티비티의 이름을 넣어줘요
-  const { pushStep } = useStepFlow("Article");
+  const { stepPush } = useStepFlow("Article");
 
   const onNextClick = () => {
-    // `pushStep()`을 호출하면 params.title이 변경돼요.
-    pushStep({
+    // `stepPush()`을 호출하면 params.title이 변경돼요.
+    stepPush({
       title: "Next Title",
     });
   };
@@ -236,7 +236,7 @@ export default Article;
 
 ## 스텝 교체하기
 
-`useStepFlow()`의 `replaceStep()` 함수를 활용하면 현재 스텝을 교체할 수 있어요.
+`useStepFlow()`의 `stepReplace()` 함수를 활용하면 현재 스텝을 교체할 수 있어요.
 
 ```tsx
 /**
@@ -251,11 +251,11 @@ type ArticleParams = {
 };
 const Article: ActivityComponentType<ArticleParams> = ({ params }) => {
   // 타입 안정성을 위해 현재 액티비티의 이름을 넣어줘요
-  const { replaceStep } = useStepFlow("Article");
+  const { stepReplace } = useStepFlow("Article");
 
   const onChangeClick = () => {
-    // `replaceStep()`을 호출하면 params.title이 변경돼요
-    replaceStep({
+    // `stepReplace()`을 호출하면 params.title이 변경돼요
+    stepReplace({
       title: "Next Title",
     });
   };
@@ -275,7 +275,7 @@ export default Article;
 
 ## 스텝 삭제하기
 
-`useStepFlow()`의 `popStep()` 함수를 활용하면 현재 스텝을 삭제할 수 있어요.
+`useStepFlow()`의 `stepPop()` 함수를 활용하면 현재 스텝을 삭제할 수 있어요.
 
 ```tsx
 /**
@@ -290,11 +290,11 @@ type ArticleParams = {
 };
 const Article: ActivityComponentType<ArticleParams> = ({ params }) => {
   // 타입 안정성을 위해 현재 액티비티의 이름을 넣어줘요
-  const { popStep } = useStepFlow("Article");
+  const { stepPop } = useStepFlow("Article");
 
   const onPrevClick = () => {
-    // `popStep()`을 호출하면 이전 params.title로 돌아가요
-    popStep();
+    // `stepPop()`을 호출하면 이전 params.title로 돌아가요
+    stepPop();
   };
 
   return (
