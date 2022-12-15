@@ -8,6 +8,9 @@ interface State {
   activity: Activity;
   step?: ActivityStep;
 }
+interface SerializedState extends State {
+  _TAG: typeof STATE_TAG;
+}
 
 export function getCurrentState(): unknown {
   if (isServer) {
@@ -34,26 +37,33 @@ export function parseState(state: unknown): State | null {
 }
 
 function serializeStep(step: ActivityStep): ActivityStep {
-  const _step = { ...step };
-
-  if ("activityContext" in _step.pushedBy) {
-    delete _step.pushedBy.activityContext;
-  }
-
-  return _step;
+  return {
+    ...step,
+    pushedBy:
+      "activityContext" in step.pushedBy
+        ? {
+            ...step.pushedBy,
+            activityContext: undefined,
+          }
+        : {
+            ...step.pushedBy,
+          },
+  };
 }
 
 function serializeActivity(activity: Activity): Activity {
-  const _activity = { ...activity };
-
-  delete _activity.context;
-  delete _activity.pushedBy.activityContext;
-  _activity.steps = _activity.steps.map(serializeStep);
-
-  return _activity;
+  return {
+    ...activity,
+    context: undefined,
+    pushedBy: {
+      ...activity.pushedBy,
+      activityContext: undefined,
+    },
+    steps: activity.steps.map(serializeStep),
+  };
 }
 
-function serializeState(state: State): State & { _TAG: string } {
+function serializeState(state: State): SerializedState {
   return {
     _TAG: STATE_TAG,
     activity: serializeActivity(state.activity),
