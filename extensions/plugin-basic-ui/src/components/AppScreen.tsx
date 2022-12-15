@@ -22,6 +22,8 @@ type AppScreenProps = Partial<
   Pick<GlobalVars, "backgroundColor" | "dimBackgroundColor">
 > & {
   appBar?: Omit<PropOf<typeof AppBar>, "theme" | "ref" | "key">;
+  showAppBar?: boolean;
+  showAppBarTransitionDuration?: string;
   preventSwipeBack?: boolean;
   children: React.ReactNode;
 };
@@ -29,6 +31,8 @@ const AppScreen: React.FC<AppScreenProps> = ({
   backgroundColor,
   dimBackgroundColor,
   appBar,
+  showAppBar = !!appBar,
+  showAppBarTransitionDuration,
   preventSwipeBack,
   children,
 }) => {
@@ -63,7 +67,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
     },
   });
 
-  const hasAppBar = !!appBar;
+  const hasAppBar = !!appBar && showAppBar;
 
   const zIndexBase = activity.zIndex * 5;
   const zIndexDim = zIndexBase;
@@ -99,7 +103,9 @@ const AppScreen: React.FC<AppScreenProps> = ({
         compactMap({
           [globalVars.backgroundColor]: backgroundColor,
           [globalVars.dimBackgroundColor]: dimBackgroundColor,
-          [globalVars.appBar.height]: appBar?.height,
+          [globalVars.appBar.height]: showAppBar ? appBar?.height : "0",
+          [globalVars.appBar.showTransitionDuration]:
+            showAppBarTransitionDuration,
           [css.vars.zIndexes.dim]: `${zIndexDim}`,
           [css.vars.zIndexes.paper]: `${zIndexPaper}`,
           [css.vars.zIndexes.edge]: `${zIndexEdge}`,

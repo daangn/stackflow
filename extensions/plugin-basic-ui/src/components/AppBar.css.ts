@@ -28,6 +28,8 @@ export const appBar = recipe({
     {
       backgroundColor: globalVars.appBar.backgroundColor,
       height: globalVars.appBar.height,
+      overflow: "hidden",
+      transition: `height ${globalVars.appBar.showTransitionDuration}`,
       paddingTop: ["constant(safe-area-inset-top)", "env(safe-area-inset-top)"],
       zIndex: vars.zIndexes.appBar,
       selectors: {
@@ -40,7 +42,7 @@ export const appBar = recipe({
         [`${android} &, ${rootAndroid} &`]: {
           opacity: 0,
           transform: "translateY(10rem)",
-          transition: vars.transitionDuration,
+          transition: `transform ${vars.transitionDuration}, opacity ${vars.transitionDuration}, height ${globalVars.appBar.showTransitionDuration}`,
         },
         [`${android} ${enterActive} &, ${rootAndroid} ${enterActive} &`]: {
           opacity: 1,
@@ -105,6 +107,7 @@ export const centerMain = recipe({
   base: {
     width: vars.appBar.center.mainWidth,
     color: globalVars.appBar.textColor,
+    transition: `height ${globalVars.appBar.showTransitionDuration}`,
     selectors: {
       [`${android} &, ${rootAndroid} &`]: {
         width: "100%",

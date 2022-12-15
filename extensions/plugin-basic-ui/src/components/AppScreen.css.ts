@@ -35,7 +35,7 @@ export const background = style({
 });
 
 export const allTransitions = style({
-  transition: vars.transitionDuration,
+  transition: `transform ${vars.transitionDuration}, opacity ${vars.transitionDuration}`,
 });
 
 export const enterActive = style({});
@@ -127,6 +127,7 @@ export const paper = recipe({
       true: [
         f.borderBox,
         {
+          transition: `transform ${vars.transitionDuration}, opacity ${vars.transitionDuration}, height ${globalVars.appBar.showTransitionDuration}`,
           paddingTop: [
             `calc(${globalVars.appBar.height} + constant(safe-area-inset-top))`,
             `calc(${globalVars.appBar.height} + env(safe-area-inset-top))`,

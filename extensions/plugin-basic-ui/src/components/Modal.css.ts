@@ -12,7 +12,7 @@ export const vars = createThemeContract({
   },
 });
 
-const transition = style({
+const allTransitions = style({
   transition: vars.transitionDuration,
 });
 
@@ -40,7 +40,7 @@ export const dim = style([
   f.overflowHidden,
   f.flexAlignCenter,
   f.flexJustifyCenter,
-  transition,
+  allTransitions,
   {
     backgroundColor: globalVars.dimBackgroundColor,
     zIndex: vars.zIndexes.dim,
@@ -58,7 +58,7 @@ export const dim = style([
 
 export const paper = style([
   f.overflowHidden,
-  transition,
+  allTransitions,
   {
     backgroundColor: globalVars.backgroundColor,
     width: "100%",
