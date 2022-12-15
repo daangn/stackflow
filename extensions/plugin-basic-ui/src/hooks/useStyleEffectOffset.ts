@@ -26,17 +26,19 @@ export function useStyleEffectOffset({
               : `translateY(-${OFFSET_PX_ANDROID / 16}rem)`;
 
           const cleanup = () => {
-            refs.forEach((ref) => {
-              if (!ref.current) {
-                return;
-              }
+            requestNextFrame(() => {
+              refs.forEach((ref) => {
+                if (!ref.current) {
+                  return;
+                }
 
-              const $el = ref.current;
+                const $el = ref.current;
 
-              $el.style.transform = "";
+                $el.style.transform = "";
 
-              listenOnce($el, "transitionend", () => {
-                $el.style.transition = "";
+                listenOnce($el, "transitionend", () => {
+                  $el.style.transition = "";
+                });
               });
             });
           };
@@ -53,9 +55,15 @@ export function useStyleEffectOffset({
                 ref.current.style.transform = transform;
               });
 
-              return () => {
-                cleanup();
-              };
+              switch (activityTransitionState) {
+                case "enter-done":
+                  return () => {
+                    cleanup();
+                  };
+                case "enter-active":
+                default:
+                  return () => {};
+              }
             }
             case "exit-active":
             case "exit-done": {
