@@ -1,7 +1,8 @@
 import type { ActivityTransitionState } from "@stackflow/core";
-import { useActivity } from "@stackflow/react";
 import type React from "react";
 import { useEffect } from "react";
+
+import { useNullableActivity } from "./useNullableActivity";
 
 const connections: {
   [styleName: string]: Map<
@@ -25,9 +26,12 @@ export function useStyleEffect({
     refs: Array<React.RefObject<HTMLElement>>;
   }) => (() => void) | void;
 }) {
-  const activity = useActivity();
+  const activity = useNullableActivity();
 
   useEffect(() => {
+    if (!activity) {
+      return () => {};
+    }
     if (!connections[styleName]) {
       connections[styleName] = new Map();
     }
@@ -40,9 +44,12 @@ export function useStyleEffect({
     return () => {
       connections[styleName].delete(activity.zIndex);
     };
-  }, [activity.id, refs, effect]);
+  }, [activity?.id, refs, effect]);
 
   useEffect(() => {
+    if (!activity) {
+      return () => {};
+    }
     if (!effect) {
       return () => {};
     }
@@ -72,5 +79,5 @@ export function useStyleEffect({
     return () => {
       cleanup?.();
     };
-  }, [activity.transitionState]);
+  }, [activity?.transitionState]);
 }

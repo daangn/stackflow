@@ -1,12 +1,13 @@
 /* eslint-disable no-param-reassign */
 
-import { useActions, useActivity } from "@stackflow/react";
+import { useActions } from "@stackflow/react";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
 import React, { useRef } from "react";
 
 import { useGlobalOptions } from "../basicUIPlugin";
 import {
   useLazy,
+  useNullableActivity,
   useStyleEffectHide,
   useStyleEffectOffset,
   useStyleEffectSwipeBack,
@@ -33,7 +34,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
   children,
 }) => {
   const globalOptions = useGlobalOptions();
-  const activity = useActivity();
+  const activity = useNullableActivity();
   const { pop } = useActions();
 
   const appScreenRef = useRef<HTMLDivElement>(null);
@@ -65,14 +66,14 @@ const AppScreen: React.FC<AppScreenProps> = ({
 
   const hasAppBar = !!appBar;
 
-  const zIndexBase = activity.zIndex * 5;
+  const zIndexBase = (activity?.zIndex ?? 0) * 5;
   const zIndexDim = zIndexBase;
   const zIndexPaper =
     zIndexBase + (globalOptions.theme === "cupertino" && hasAppBar ? 1 : 3);
   const zIndexEdge = zIndexBase + 4;
   const zIndexAppBar = zIndexBase + 7;
 
-  const { transitionState } = activity;
+  const transitionState = activity?.transitionState ?? "enter-done";
   const lazyTransitionState = useLazy(transitionState);
 
   const onAppBarTopClick: React.MouseEventHandler = (e) => {
@@ -105,8 +106,8 @@ const AppScreen: React.FC<AppScreenProps> = ({
           [css.vars.zIndexes.edge]: `${zIndexEdge}`,
           [css.vars.zIndexes.appBar]: `${zIndexAppBar}`,
           [css.vars.transitionDuration]:
-            activity.transitionState === "enter-active" ||
-            activity.transitionState === "exit-active"
+            transitionState === "enter-active" ||
+            transitionState === "exit-active"
               ? `var(--stackflow-transition-duration)`
               : "0ms",
         }),
@@ -114,7 +115,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
     >
       <div className={css.dim} ref={dimRef} />
       <div
-        key={activity.id}
+        key={activity?.id}
         className={css.paper({
           hasAppBar,
         })}
@@ -122,7 +123,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
       >
         {children}
       </div>
-      {!activity.isRoot &&
+      {!activity?.isRoot &&
         globalOptions.theme === "cupertino" &&
         !preventSwipeBack && (
           <div className={css.edge({ hasAppBar })} ref={edgeRef} />

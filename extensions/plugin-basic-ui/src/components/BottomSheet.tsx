@@ -1,10 +1,10 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */
 
-import { useActions, useActivity } from "@stackflow/react";
+import { useActions } from "@stackflow/react";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
 import React, { useRef } from "react";
 
-import { useLazy, useStyleEffect } from "../hooks";
+import { useLazy, useNullableActivity, useStyleEffect } from "../hooks";
 import type { GlobalVars } from "../theme.css";
 import { globalVars } from "../theme.css";
 import { compactMap } from "../utils";
@@ -24,7 +24,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
   onOutsideClick,
   children,
 }) => {
-  const activity = useActivity();
+  const activity = useNullableActivity();
   const { pop } = useActions();
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -63,13 +63,14 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
     e.stopPropagation();
   };
 
-  const zIndexBase = activity.zIndex * 5 + 3;
-  const zIndexPaper = activity.zIndex * 5 + 4;
+  const zIndexBase = (activity?.zIndex ?? 0) * 5 + 3;
+  const zIndexPaper = (activity?.zIndex ?? 0) * 5 + 4;
+  const transitionState = activity?.transitionState ?? "enter-done";
 
   return (
     <div
       className={css.container({
-        transitionState: useLazy(activity.transitionState),
+        transitionState: useLazy(transitionState),
       })}
       ref={containerRef}
       style={assignInlineVars(
@@ -80,8 +81,8 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
           [css.vars.zIndexes.dim]: `${zIndexBase}`,
           [css.vars.zIndexes.paper]: `${zIndexPaper}`,
           [css.vars.transitionDuration]:
-            activity.transitionState === "enter-active" ||
-            activity.transitionState === "exit-active"
+            transitionState === "enter-active" ||
+            transitionState === "exit-active"
               ? `var(--stackflow-transition-duration)`
               : "0ms",
         }),
