@@ -25,6 +25,24 @@ export function useStyleEffectOffset({
               ? `translateX(-${OFFSET_PX_CUPERTINO / 16}rem)`
               : `translateY(-${OFFSET_PX_ANDROID / 16}rem)`;
 
+          const cleanup = () => {
+            requestNextFrame(() => {
+              refs.forEach((ref) => {
+                if (!ref.current) {
+                  return;
+                }
+
+                const $el = ref.current;
+
+                $el.style.transform = "";
+
+                listenOnce($el, "transitionend", () => {
+                  $el.style.transition = "";
+                });
+              });
+            });
+          };
+
           switch (activityTransitionState) {
             case "enter-active":
             case "enter-done": {
@@ -36,29 +54,27 @@ export function useStyleEffectOffset({
                 ref.current.style.transition = `var(--stackflow-transition-duration)`;
                 ref.current.style.transform = transform;
               });
-              break;
+
+              switch (activityTransitionState) {
+                case "enter-done":
+                  return () => {
+                    cleanup();
+                  };
+                case "enter-active":
+                default:
+                  return () => {};
+              }
             }
             case "exit-active":
             case "exit-done": {
               requestNextFrame(() => {
-                refs.forEach((ref) => {
-                  if (!ref.current) {
-                    return;
-                  }
-
-                  const $el = ref.current;
-
-                  $el.style.transform = "";
-
-                  listenOnce($el, "transitionend", () => {
-                    $el.style.transition = "";
-                  });
-                });
+                cleanup();
               });
-              break;
+
+              return () => {};
             }
             default: {
-              break;
+              return () => {};
             }
           }
         }

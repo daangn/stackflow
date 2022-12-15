@@ -16,26 +16,36 @@ export function useStyleEffectHide({
     refs,
     effect: hasEffect
       ? ({ activityTransitionState, refs }) => {
+          const cleanup = () => {
+            refs.forEach((ref) => {
+              if (!ref.current) {
+                return;
+              }
+              const $ref = ref.current;
+
+              $ref.style.display = "";
+            });
+          };
+
           switch (activityTransitionState) {
             case "enter-done": {
               refs.forEach((ref) => {
                 if (!ref.current) {
                   return;
                 }
+                const $ref = ref.current;
 
-                ref.current.style.display = "none";
+                $ref.style.display = "none";
               });
-              break;
+
+              return () => {
+                cleanup();
+              };
             }
             default: {
-              refs.forEach((ref) => {
-                if (!ref.current) {
-                  return;
-                }
+              cleanup();
 
-                ref.current.style.display = "";
-              });
-              break;
+              return () => {};
             }
           }
         }
