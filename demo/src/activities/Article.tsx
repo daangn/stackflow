@@ -1,6 +1,6 @@
 import type { ActivityComponentType } from "@stackflow/react";
 import { useActivityParams } from "@stackflow/react";
-import React, { useState } from "react";
+import React from "react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import ArticleCard from "../components/ArticleCard";
@@ -72,13 +72,9 @@ const Article: ActivityComponentType<ArticleParams> = () => {
     title: string;
   }>();
   const imageUrl = `https://picsum.photos/800/800/?id=${articleId}`;
-  const [showAppBar, setShowAppBar] = useState(true);
 
   return (
-    <Layout
-      appBar={{ title: "타이틀", appendRight: () => <div>hello</div> }}
-      showAppBar={showAppBar}
-    >
+    <Layout appBar={{}}>
       <div className={css.container}>
         <div className={css.image}>
           <div className={css.imageInner}>
@@ -91,14 +87,6 @@ const Article: ActivityComponentType<ArticleParams> = () => {
           </div>
         </div>
         <ArticleProfile />
-        <button
-          type="button"
-          onClick={() => {
-            setShowAppBar((t) => !t);
-          }}
-        >
-          앱바
-        </button>
         <div className={css.content}>
           <div className={css.title}>{title}</div>
           <div className={css.subtitle}>Baby & Kids ∙ 3 days ago</div>
