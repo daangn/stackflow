@@ -117,6 +117,10 @@ export function useStyleEffectSwipeBack({
                   })`;
                 });
 
+                const _cachedRefs = [...cachedRefs];
+
+                resolve();
+
                 listenOnce($paper, "transitionend", () => {
                   $dim.style.opacity = "";
                   $paper.style.overflowY = "";
@@ -127,7 +131,7 @@ export function useStyleEffectSwipeBack({
                       return;
                     }
 
-                    const cachedRef = cachedRefs[i];
+                    const _cachedRef = _cachedRefs[i];
 
                     if (swiped) {
                       ref.current.style.transition = "";
@@ -136,21 +140,20 @@ export function useStyleEffectSwipeBack({
                       if (ref.current.parentElement) {
                         ref.current.parentElement.style.display = "";
                       }
-                    } else if (cachedRef) {
-                      ref.current.style.transition = cachedRef.style.transition;
-                      ref.current.style.transform = cachedRef.style.transform;
+                    } else if (_cachedRef) {
+                      ref.current.style.transition =
+                        _cachedRef.style.transition;
+                      ref.current.style.transform = _cachedRef.style.transform;
 
                       if (
                         ref.current.parentElement &&
-                        cachedRef.parentElement
+                        _cachedRef.parentElement
                       ) {
                         ref.current.parentElement.style.display =
-                          cachedRef.parentElement.style.display;
+                          _cachedRef.parentElement.style.display;
                       }
                     }
                   });
-
-                  resolve();
                 });
               });
             });
