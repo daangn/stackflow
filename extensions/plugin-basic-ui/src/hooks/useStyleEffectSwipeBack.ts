@@ -95,54 +95,62 @@ export function useStyleEffectSwipeBack({
             }
           }
 
-          function resetPaper({ swiped }: { swiped: boolean }) {
-            requestAnimationFrame(() => {
-              $dim.style.opacity = `${swiped ? 0 : 1}`;
-              $dim.style.transition = "var(--stackflow-transition-duration)";
+          function resetPaper({ swiped }: { swiped: boolean }): Promise<void> {
+            return new Promise((resolve) => {
+              requestAnimationFrame(() => {
+                $dim.style.opacity = `${swiped ? 0 : 1}`;
+                $dim.style.transition = "var(--stackflow-transition-duration)";
 
-              $paper.style.overflowY = "hidden";
-              $paper.style.transform = `translateX(${swiped ? "100%" : "0"})`;
-              $paper.style.transition = "var(--stackflow-transition-duration)";
+                $paper.style.overflowY = "hidden";
+                $paper.style.transform = `translateX(${swiped ? "100%" : "0"})`;
+                $paper.style.transition =
+                  "var(--stackflow-transition-duration)";
 
-              refs.forEach((ref) => {
-                if (!ref.current) {
-                  return;
-                }
-
-                ref.current.style.transition = `var(--stackflow-transition-duration)`;
-                ref.current.style.transform = `translateX(${
-                  swiped ? "0" : `-${OFFSET_PX_CUPERTINO / 16}rem`
-                })`;
-              });
-
-              listenOnce($paper, "transitionend", () => {
-                $dim.style.opacity = "";
-                $paper.style.overflowY = "";
-                $paper.style.transform = "";
-
-                refs.forEach((ref, i) => {
+                refs.forEach((ref) => {
                   if (!ref.current) {
                     return;
                   }
 
-                  const cachedRef = cachedRefs[i];
+                  ref.current.style.transition = `var(--stackflow-transition-duration)`;
+                  ref.current.style.transform = `translateX(${
+                    swiped ? "0" : `-${OFFSET_PX_CUPERTINO / 16}rem`
+                  })`;
+                });
 
-                  if (swiped) {
-                    ref.current.style.transition = "";
-                    ref.current.style.transform = "";
+                listenOnce($paper, "transitionend", () => {
+                  $dim.style.opacity = "";
+                  $paper.style.overflowY = "";
+                  $paper.style.transform = "";
 
-                    if (ref.current.parentElement) {
-                      ref.current.parentElement.style.display = "";
+                  refs.forEach((ref, i) => {
+                    if (!ref.current) {
+                      return;
                     }
-                  } else if (cachedRef) {
-                    ref.current.style.transition = cachedRef.style.transition;
-                    ref.current.style.transform = cachedRef.style.transform;
 
-                    if (ref.current.parentElement && cachedRef.parentElement) {
-                      ref.current.parentElement.style.display =
-                        cachedRef.parentElement.style.display;
+                    const cachedRef = cachedRefs[i];
+
+                    if (swiped) {
+                      ref.current.style.transition = "";
+                      ref.current.style.transform = "";
+
+                      if (ref.current.parentElement) {
+                        ref.current.parentElement.style.display = "";
+                      }
+                    } else if (cachedRef) {
+                      ref.current.style.transition = cachedRef.style.transition;
+                      ref.current.style.transform = cachedRef.style.transform;
+
+                      if (
+                        ref.current.parentElement &&
+                        cachedRef.parentElement
+                      ) {
+                        ref.current.parentElement.style.display =
+                          cachedRef.parentElement.style.display;
+                      }
                     }
-                  }
+                  });
+
+                  resolve();
                 });
               });
             });
@@ -207,8 +215,9 @@ export function useStyleEffectSwipeBack({
               onSwiped?.();
             }
 
-            resetState();
-            resetPaper({ swiped });
+            Promise.resolve()
+              .then(() => resetPaper({ swiped }))
+              .then(() => resetState());
           };
 
           $edge.addEventListener("touchstart", onTouchStart, { passive: true });

@@ -67,7 +67,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
     },
   });
 
-  const hasAppBar = !!appBar;
+  const hasAppBar = !!appBar && showAppBar;
 
   const zIndexBase = activity.zIndex * 5;
   const zIndexDim = zIndexBase;
