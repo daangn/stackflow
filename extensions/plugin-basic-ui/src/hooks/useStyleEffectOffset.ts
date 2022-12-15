@@ -36,7 +36,22 @@ export function useStyleEffectOffset({
                 ref.current.style.transition = `var(--stackflow-transition-duration)`;
                 ref.current.style.transform = transform;
               });
-              break;
+
+              return () => {
+                refs.forEach((ref) => {
+                  if (!ref.current) {
+                    return;
+                  }
+
+                  const $el = ref.current;
+
+                  $el.style.transform = "";
+
+                  listenOnce($el, "transitionend", () => {
+                    $el.style.transition = "";
+                  });
+                });
+              };
             }
             case "exit-active":
             case "exit-done": {
@@ -55,10 +70,11 @@ export function useStyleEffectOffset({
                   });
                 });
               });
-              break;
+
+              return () => {};
             }
             default: {
-              break;
+              return () => {};
             }
           }
         }

@@ -22,10 +22,21 @@ export function useStyleEffectHide({
                 if (!ref.current) {
                   return;
                 }
+                const $ref = ref.current;
 
-                ref.current.style.display = "none";
+                $ref.style.display = "none";
               });
-              break;
+
+              return () => {
+                refs.forEach((ref) => {
+                  if (!ref.current) {
+                    return;
+                  }
+                  const $ref = ref.current;
+
+                  $ref.style.display = "";
+                });
+              };
             }
             default: {
               refs.forEach((ref) => {
@@ -35,7 +46,8 @@ export function useStyleEffectHide({
 
                 ref.current.style.display = "";
               });
-              break;
+
+              return () => {};
             }
           }
         }

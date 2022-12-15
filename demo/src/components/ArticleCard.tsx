@@ -14,15 +14,19 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
   title,
   price,
 }) => {
-  const { push } = useFlow();
+  const { push, pop } = useFlow();
 
   const imageUrl = `https://picsum.photos/800/800/?id=${articleId}`;
 
   const onClick = () => {
-    push("Article", {
-      articleId: String(articleId),
-      title,
+    pop({
+      animate: false,
     });
+
+    // push("Article", {
+    //   articleId: String(articleId),
+    //   title,
+    // });
   };
 
   return (
