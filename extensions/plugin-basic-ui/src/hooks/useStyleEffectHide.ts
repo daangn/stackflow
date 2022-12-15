@@ -16,6 +16,17 @@ export function useStyleEffectHide({
     refs,
     effect: hasEffect
       ? ({ activityTransitionState, refs }) => {
+          const cleanup = () => {
+            refs.forEach((ref) => {
+              if (!ref.current) {
+                return;
+              }
+              const $ref = ref.current;
+
+              $ref.style.display = "";
+            });
+          };
+
           switch (activityTransitionState) {
             case "enter-done": {
               refs.forEach((ref) => {
@@ -28,24 +39,11 @@ export function useStyleEffectHide({
               });
 
               return () => {
-                refs.forEach((ref) => {
-                  if (!ref.current) {
-                    return;
-                  }
-                  const $ref = ref.current;
-
-                  $ref.style.display = "";
-                });
+                cleanup();
               };
             }
             default: {
-              refs.forEach((ref) => {
-                if (!ref.current) {
-                  return;
-                }
-
-                ref.current.style.display = "";
-              });
+              cleanup();
 
               return () => {};
             }
