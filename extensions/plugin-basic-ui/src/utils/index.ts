@@ -1,3 +1,4 @@
+export * from "./compact";
 export * from "./compactMap";
 export * from "./last";
 export * from "./listenOnce";
