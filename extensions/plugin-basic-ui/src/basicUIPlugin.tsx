@@ -4,10 +4,11 @@ import React, { createContext, useContext } from "react";
 
 import * as theme from "./theme.css";
 import type { RecursivePartial } from "./utils";
-import { compactMap } from "./utils";
+import { compact, compactMap } from "./utils";
 
 type BasicUIPluginOptions = RecursivePartial<theme.GlobalVars> & {
   theme: "android" | "cupertino";
+  rootClassName?: string;
   appBar?: {
     closeButton?:
       | {
@@ -39,7 +40,9 @@ export const basicUIPlugin: (
       <GlobalOptionsProvider value={options}>
         <div
           className={
-            typeof window !== "undefined" ? theme[options.theme] : undefined
+            typeof window !== "undefined"
+              ? compact([theme[options.theme], options.rootClassName]).join(" ")
+              : options.rootClassName
           }
           style={assignInlineVars(
             compactMap({
