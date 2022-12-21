@@ -230,14 +230,14 @@ export function stackflow<T extends BaseActivities>(
         plugins,
       });
 
+      if (typeof window !== "undefined") {
+        store.init();
+      }
+
       setCoreStore(store);
 
       return store;
     }, []);
-
-    useEffect(() => {
-      coreStore.init();
-    }, [coreStore]);
 
     return (
       <PluginsProvider value={pluginInstances}>
