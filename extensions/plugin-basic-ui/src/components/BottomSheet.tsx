@@ -97,4 +97,6 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
   );
 };
 
+BottomSheet.displayName = "BottomSheet";
+
 export default BottomSheet;

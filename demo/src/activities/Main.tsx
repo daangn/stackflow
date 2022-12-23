@@ -122,4 +122,6 @@ const Main: ActivityComponentType = () => {
   );
 };
 
+Main.displayName = "Main";
+
 export default Main;

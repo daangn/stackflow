@@ -16,6 +16,8 @@ export const RoutesProvider: React.FC<RoutesProviderProps> = (props) => (
   </RoutesContext.Provider>
 );
 
+RoutesProvider.displayName = "RoutesProvider";
+
 export function useRoutes() {
   return useContext(RoutesContext);
 }

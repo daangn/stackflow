@@ -239,4 +239,6 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
   },
 );
 
+AppBar.displayName = "AppBar";
+
 export default AppBar;

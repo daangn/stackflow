@@ -6,7 +6,7 @@ import type {
   StepPushedEvent,
 } from "@stackflow/core";
 import { makeCoreStore, makeEvent } from "@stackflow/core";
-import React, { useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 
 import type { ActivityComponentType } from "./activity";
 import { makeActivityId, makeStepId } from "./activity";
@@ -247,6 +247,8 @@ export function stackflow<T extends BaseActivities>(
       </PluginsProvider>
     );
   };
+
+  Stack.displayName = "Stack";
 
   return {
     activities: options.activities,

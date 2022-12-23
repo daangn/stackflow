@@ -141,4 +141,6 @@ const AppScreen: React.FC<AppScreenProps> = ({
   );
 };
 
+AppScreen.displayName = "AppScreen";
+
 export default AppScreen;

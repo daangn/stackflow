@@ -97,4 +97,6 @@ const Modal: React.FC<ModalProps> = ({
   );
 };
 
+Modal.displayName = "Modal";
+
 export default Modal;

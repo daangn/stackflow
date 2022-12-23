@@ -72,4 +72,6 @@ const PluginRenderer: React.FC<PluginRendererProps> = ({
   });
 };
 
+PluginRenderer.displayName = "PluginRenderer";
+
 export default PluginRenderer;

@@ -17,3 +17,5 @@ export const StackProvider: React.FC<StackProviderProps> = ({
     {children}
   </StackContext.Provider>
 );
+
+StackProvider.displayName = "StackProvider";

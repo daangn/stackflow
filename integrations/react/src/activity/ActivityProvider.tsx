@@ -17,3 +17,5 @@ export const ActivityProvider: React.FC<ActivityProviderProps> = ({
     {children}
   </ActivityContext.Provider>
 );
+
+ActivityProvider.displayName = "ActivityProvider";
