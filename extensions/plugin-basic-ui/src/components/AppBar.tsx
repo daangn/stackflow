@@ -17,6 +17,7 @@ type AppBarProps = Partial<
     | "borderColor"
     | "borderSize"
     | "height"
+    | "heightTransitionDuration"
     | "iconColor"
     | "textColor"
     | "backgroundColor"
@@ -90,7 +91,10 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
     };
 
     const renderBackButton = () => {
-      if (activity?.isRoot) {
+      if (!activity) {
+        return null;
+      }
+      if (activity.isRoot) {
         return null;
       }
 
@@ -136,10 +140,9 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
     };
 
     const renderCloseButton = () => {
-      if (
-        (!closeButton && !globalOptions.appBar?.closeButton) ||
-        !activity?.isRoot
-      ) {
+      const isRoot = !activity || activity.isRoot;
+
+      if ((!closeButton && !globalOptions.appBar?.closeButton) || !isRoot) {
         return null;
       }
       if (closeButton && "render" in closeButton && closeButton.render) {
@@ -206,33 +209,36 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
           }),
         )}
       >
-        <div className={css.left}>
-          {closeButtonLocation === "left" && renderCloseButton()}
-          {renderBackButton()}
-          {appendLeft?.()}
-        </div>
-        <div ref={centerRef} className={css.center}>
-          <div
-            className={css.centerMain({
-              hasLeft,
-            })}
-          >
-            {typeof title === "string" ? (
-              <div className={css.centerText}>{title}</div>
-            ) : (
-              title
-            )}
-            <button
-              className={css.centerMainEdge}
-              type="button"
-              aria-hidden="true"
-              onClick={onTopClick}
-            />
+        <div className={css.safeArea} />
+        <div className={css.container}>
+          <div className={css.left}>
+            {closeButtonLocation === "left" && renderCloseButton()}
+            {renderBackButton()}
+            {appendLeft?.()}
           </div>
-        </div>
-        <div className={css.right}>
-          {appendRight?.()}
-          {closeButtonLocation === "right" && renderCloseButton()}
+          <div ref={centerRef} className={css.center}>
+            <div
+              className={css.centerMain({
+                hasLeft,
+              })}
+            >
+              {typeof title === "string" ? (
+                <div className={css.centerText}>{title}</div>
+              ) : (
+                title
+              )}
+              <button
+                className={css.centerMainEdge}
+                type="button"
+                aria-hidden="true"
+                onClick={onTopClick}
+              />
+            </div>
+          </div>
+          <div className={css.right}>
+            {appendRight?.()}
+            {closeButtonLocation === "right" && renderCloseButton()}
+          </div>
         </div>
       </div>
     );

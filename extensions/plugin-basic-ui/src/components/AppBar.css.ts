@@ -1,5 +1,4 @@
 import { style } from "@vanilla-extract/css";
-import { calc } from "@vanilla-extract/css-utils";
 import { recipe } from "@vanilla-extract/recipes";
 
 import { f } from "../styles";
@@ -18,19 +17,19 @@ import {
   vars,
 } from "./AppScreen.css";
 
+const minHeight = style({
+  minHeight: globalVars.appBar.minHeight,
+});
+
 export const appBar = recipe({
   base: [
     f.posAbs,
-    f.flexAlignCenter,
     f.fullWidth,
     f.contentBox,
+    f.overflowHidden,
     background,
     {
       backgroundColor: globalVars.appBar.backgroundColor,
-      height: globalVars.appBar.height,
-      overflow: "hidden",
-      transition: `height ${globalVars.appBar.showTransitionDuration}`,
-      paddingTop: ["constant(safe-area-inset-top)", "env(safe-area-inset-top)"],
       zIndex: vars.zIndexes.appBar,
       selectors: {
         [`${cupertino} &, ${rootCupertino} &`]: {
@@ -42,7 +41,7 @@ export const appBar = recipe({
         [`${android} &, ${rootAndroid} &`]: {
           opacity: 0,
           transform: "translateY(10rem)",
-          transition: `transform ${vars.transitionDuration}, opacity ${vars.transitionDuration}, height ${globalVars.appBar.showTransitionDuration}`,
+          transition: `transform ${vars.transitionDuration}, opacity ${vars.transitionDuration}`,
         },
         [`${android} ${enterActive} &, ${rootAndroid} ${enterActive} &`]: {
           opacity: 1,
@@ -58,17 +57,29 @@ export const appBar = recipe({
   variants: {
     border: {
       true: {
-        boxShadow: `inset 0px ${calc(
-          globalVars.appBar.borderSize,
-        ).negate()} 0 ${globalVars.appBar.borderColor}`,
+        boxShadow: `inset 0px calc(-1 * ${globalVars.appBar.borderSize}) 0 ${globalVars.appBar.borderColor}`,
       },
     },
   },
 });
 
+export const safeArea = style({
+  height: ["constant(safe-area-inset-top)", "env(safe-area-inset-top)"],
+});
+
+export const container = style([
+  f.flexAlignEnd,
+  f.overflowHidden,
+  {
+    height: globalVars.appBar.height,
+    transition: `height ${globalVars.appBar.heightTransitionDuration}`,
+  },
+]);
+
 export const left = style([
   f.flexAlignCenter,
   f.fullHeight,
+  minHeight,
   {
     padding: "0 0.5rem",
     ":empty": {
@@ -96,18 +107,13 @@ export const backButton = style([
 
 export const closeButton = style([backButton]);
 
-export const center = style([
-  f.flexAlignCenter,
-  {
-    flex: 1,
-  },
-]);
+export const center = style([f.flexAlignCenter, f.flex1, minHeight]);
 
 export const centerMain = recipe({
   base: {
     width: vars.appBar.center.mainWidth,
     color: globalVars.appBar.textColor,
-    transition: `height ${globalVars.appBar.showTransitionDuration}`,
+    transition: `height ${globalVars.appBar.heightTransitionDuration}`,
     selectors: {
       [`${android} &, ${rootAndroid} &`]: {
         width: "100%",
@@ -182,6 +188,7 @@ export const right = style([
   f.flexAlignCenter,
   f.fullHeight,
   f.posRel,
+  minHeight,
   {
     padding: "0 0.5rem",
     marginLeft: "auto",

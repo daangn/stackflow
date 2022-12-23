@@ -30,6 +30,10 @@ export const flex = style({
   display: "flex",
 });
 
+export const flex1 = style({
+  flex: 1,
+});
+
 export const flexAlignCenter = style([
   flex,
   {

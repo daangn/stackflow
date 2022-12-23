@@ -29,7 +29,7 @@ const useTransition: () => [boolean, React.TransitionStartFunction] =
 
 export const useStepActions: UseStepActions = () => {
   const coreActions = useCoreActions();
-  const [pending, startTransition] = useTransition();
+  const [pending] = useTransition();
 
   return useMemo(
     () => ({
@@ -37,7 +37,7 @@ export const useStepActions: UseStepActions = () => {
       stepPush(params) {
         const stepId = makeStepId();
 
-        coreActions.stepPush({
+        coreActions?.stepPush({
           stepId,
           stepParams: params,
         });
@@ -45,21 +45,20 @@ export const useStepActions: UseStepActions = () => {
       stepReplace(params) {
         const stepId = makeStepId();
 
-        coreActions.stepReplace({
+        coreActions?.stepReplace({
           stepId,
           stepParams: params,
         });
       },
       stepPop() {
-        coreActions.stepPop({});
+        coreActions?.stepPop({});
       },
     }),
     [
-      coreActions.stepPush,
-      coreActions.stepReplace,
-      coreActions.stepPop,
+      coreActions?.stepPush,
+      coreActions?.stepReplace,
+      coreActions?.stepPop,
       pending,
-      startTransition,
     ],
   );
 };

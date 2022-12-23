@@ -13,10 +13,11 @@ export const globalVars = createGlobalThemeContract(
       borderColor: "app-bar-border-color",
       borderSize: "app-bar-border-size",
       height: "app-bar-height",
+      heightTransitionDuration: "app-bar-height-transition-duration",
+      minHeight: "app-bar-min-height",
       iconColor: "app-bar-icon-color",
       textColor: "app-bar-text-color",
       backgroundColor: "app-bar-background-color",
-      showTransitionDuration: "app-bar-show-transition-duration",
     },
     bottomSheet: {
       borderRadius: "bottom-sheet-border-radius",
@@ -38,10 +39,11 @@ const defaultVars = {
     borderColor: "rgba(0, 0, 0, 0.07)",
     borderSize: "1px",
     height: "3.5rem",
+    heightTransitionDuration: "275ms",
+    minHeight: "3.5rem",
     iconColor: "#212124",
     textColor: "#212124",
     backgroundColor: "#fff",
-    showTransitionDuration: "275ms",
   },
   bottomSheet: {
     borderRadius: "1rem",
@@ -56,6 +58,7 @@ const cupertinoVars = {
   appBar: {
     ...defaultVars.appBar,
     height: "2.75rem",
+    minHeight: "2.75rem",
     borderSize: "0.5px",
   },
 };
