@@ -32,3 +32,5 @@ export const CoreProvider: React.FC<CoreProviderProps> = ({
     </CoreStateContext.Provider>
   );
 };
+
+CoreProvider.displayName = "CoreProvider";

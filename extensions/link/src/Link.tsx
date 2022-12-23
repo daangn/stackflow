@@ -136,3 +136,5 @@ export const Link: TypeLink = React.forwardRef(
     );
   },
 );
+
+(Link as any).displayName = "Link";

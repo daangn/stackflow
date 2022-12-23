@@ -61,4 +61,6 @@ const MainRenderer: React.FC<MainRendererProps> = ({
   return output;
 };
 
+MainRenderer.displayName = "MainRenderer";
+
 export default MainRenderer;

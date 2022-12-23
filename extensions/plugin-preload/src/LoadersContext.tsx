@@ -18,6 +18,8 @@ export const LoadersProvider: React.FC<LoadersProviderProps> = (props) => (
   </LoadersContext.Provider>
 );
 
+LoadersProvider.displayName = "LoadersProvider";
+
 export function useLoaders() {
   return useContext(LoadersContext);
 }

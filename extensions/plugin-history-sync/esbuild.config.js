@@ -18,7 +18,6 @@ Promise.all([
       "process.env.PACKAGE_VERSION": `"${pkg.version}"`,
     },
     watch,
-    minify: !watch,
   }),
   build({
     ...config({}),
@@ -32,6 +31,5 @@ Promise.all([
       "process.env.PACKAGE_VERSION": `"${pkg.version}"`,
     },
     watch,
-    minify: !watch,
   }),
 ]).catch(() => process.exit(1));

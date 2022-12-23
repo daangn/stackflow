@@ -110,4 +110,6 @@ const Article: ActivityComponentType<ArticleParams> = () => {
   );
 };
 
+Article.displayName = "Article";
+
 export default Article;

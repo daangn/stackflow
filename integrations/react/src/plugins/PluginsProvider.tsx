@@ -15,3 +15,5 @@ export const PluginsProvider: React.FC<PluginsProviderProps> = ({
 }) => (
   <PluginsContext.Provider value={value}>{children}</PluginsContext.Provider>
 );
+
+PluginsProvider.displayName = "PluginsProvider";

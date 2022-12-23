@@ -10,4 +10,7 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ appBar, children }) => (
   <AppScreen appBar={appBar}>{children}</AppScreen>
 );
+
+Layout.displayName = "Layout";
+
 export default Layout;

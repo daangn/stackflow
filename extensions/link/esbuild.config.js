@@ -14,7 +14,6 @@ Promise.all([
     format: "cjs",
     external,
     watch,
-    minify: !watch,
   }),
   build({
     ...config({}),
@@ -24,6 +23,5 @@ Promise.all([
     },
     external,
     watch,
-    minify: !watch,
   }),
 ]).catch(() => process.exit(1));
