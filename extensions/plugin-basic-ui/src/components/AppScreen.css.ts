@@ -1,5 +1,4 @@
 import { createThemeContract, style } from "@vanilla-extract/css";
-import { calc } from "@vanilla-extract/css-utils";
 import { recipe } from "@vanilla-extract/recipes";
 
 import { f } from "../styles";
@@ -127,7 +126,7 @@ export const paper = recipe({
       true: [
         f.borderBox,
         {
-          transition: `transform ${vars.transitionDuration}, opacity ${vars.transitionDuration}, height ${globalVars.appBar.showTransitionDuration}`,
+          transition: `transform ${vars.transitionDuration}, opacity ${vars.transitionDuration}, padding-top ${globalVars.appBar.heightTransitionDuration}`,
           paddingTop: [
             `calc(${globalVars.appBar.height} + constant(safe-area-inset-top))`,
             `calc(${globalVars.appBar.height} + env(safe-area-inset-top))`,
@@ -153,7 +152,7 @@ export const edge = recipe({
     hasAppBar: {
       true: {
         top: globalVars.appBar.height,
-        height: calc("100%").subtract(globalVars.appBar.height).toString(),
+        height: `calc(100% - ${globalVars.appBar.height})`,
       },
     },
   },

@@ -73,7 +73,7 @@ export function useActions<
   T extends BaseActivities,
 >(): UseActionsOutputType<T> {
   const coreActions = useCoreActions();
-  const [pending, startTransition] = useTransition();
+  const [pending] = useTransition();
 
   return useMemo(
     () => ({
@@ -81,7 +81,7 @@ export function useActions<
       push(activityName, activityParams, options) {
         const activityId = makeActivityId();
 
-        coreActions.push({
+        coreActions?.push({
           activityId,
           activityName,
           activityParams,
@@ -95,7 +95,7 @@ export function useActions<
       replace(activityName, activityParams, options) {
         const activityId = makeActivityId();
 
-        coreActions.replace({
+        coreActions?.replace({
           activityId: options?.activityId ?? makeActivityId(),
           activityName,
           activityParams,
@@ -107,17 +107,11 @@ export function useActions<
         };
       },
       pop(options) {
-        coreActions.pop({
+        coreActions?.pop({
           skipExitActiveState: parseActionOptions(options).skipActiveState,
         });
       },
     }),
-    [
-      coreActions.push,
-      coreActions.replace,
-      coreActions.pop,
-      pending,
-      startTransition,
-    ],
+    [coreActions?.push, coreActions?.replace, coreActions?.pop, pending],
   );
 }
