@@ -69,6 +69,7 @@ export const safeArea = style({
 
 export const container = style([
   f.flexAlignEnd,
+  f.overflowHidden,
   {
     height: globalVars.appBar.height,
     transition: `height ${globalVars.appBar.heightTransitionDuration}`,
