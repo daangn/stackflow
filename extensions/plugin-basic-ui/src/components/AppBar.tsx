@@ -1,10 +1,10 @@
-import { useActions, useActivity } from "@stackflow/react";
+import { useActions } from "@stackflow/react";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
 import React, { useRef } from "react";
 
 import { IconBack, IconClose } from "../assets";
 import { useGlobalOptions } from "../basicUIPlugin";
-import { useMaxWidth } from "../hooks";
+import { useMaxWidth, useNullableActivity } from "../hooks";
 import type { GlobalVars } from "../theme.css";
 import { globalVars } from "../theme.css";
 import { compactMap, noop } from "../utils";
@@ -66,7 +66,7 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
     ref,
   ) => {
     const actions = useActions();
-    const activity = useActivity();
+    const activity = useNullableActivity();
 
     const globalOptions = useGlobalOptions();
     const globalCloseButton = globalOptions.appBar?.closeButton;
@@ -90,7 +90,7 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
     };
 
     const renderBackButton = () => {
-      if (activity.isRoot) {
+      if (activity?.isRoot) {
         return null;
       }
 
@@ -138,7 +138,7 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
     const renderCloseButton = () => {
       if (
         (!closeButton && !globalOptions.appBar?.closeButton) ||
-        !activity.isRoot
+        !activity?.isRoot
       ) {
         return null;
       }
