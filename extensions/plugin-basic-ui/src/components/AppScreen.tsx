@@ -2,7 +2,7 @@
 
 import { useActions } from "@stackflow/react";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
-import React, { useRef } from "react";
+import React, { createContext, useContext, useMemo, useRef } from "react";
 
 import { useGlobalOptions } from "../basicUIPlugin";
 import {
@@ -19,11 +19,19 @@ import { compactMap } from "../utils";
 import AppBar from "./AppBar";
 import * as css from "./AppScreen.css";
 
-type AppScreenProps = Partial<
+export type AppScreenContext = {
+  scroll: (args: { top: number }) => void;
+};
+const Context = createContext<AppScreenContext>(null as any);
+
+export function useAppScreen() {
+  return useContext(Context);
+}
+
+export type AppScreenProps = Partial<
   Pick<GlobalVars, "backgroundColor" | "dimBackgroundColor">
 > & {
   appBar?: Omit<PropOf<typeof AppBar>, "theme" | "ref" | "key">;
-
   preventSwipeBack?: boolean;
   children: React.ReactNode;
 };
@@ -89,52 +97,66 @@ const AppScreen: React.FC<AppScreenProps> = ({
   };
 
   return (
-    <div
-      ref={appScreenRef}
-      className={css.appScreen({
-        transitionState:
-          transitionState === "enter-done" || transitionState === "exit-done"
-            ? transitionState
-            : lazyTransitionState,
-      })}
-      style={assignInlineVars(
-        compactMap({
-          [globalVars.backgroundColor]: backgroundColor,
-          [globalVars.dimBackgroundColor]: dimBackgroundColor,
-          [globalVars.appBar.height]: appBar?.height,
-          [globalVars.appBar.heightTransitionDuration]:
-            appBar?.heightTransitionDuration,
-          [css.vars.zIndexes.dim]: `${zIndexDim}`,
-          [css.vars.zIndexes.paper]: `${zIndexPaper}`,
-          [css.vars.zIndexes.edge]: `${zIndexEdge}`,
-          [css.vars.zIndexes.appBar]: `${zIndexAppBar}`,
-          [css.vars.transitionDuration]:
-            transitionState === "enter-active" ||
-            transitionState === "exit-active"
-              ? `var(--stackflow-transition-duration)`
-              : "0ms",
+    <Context.Provider
+      value={useMemo(
+        () => ({
+          scroll({ top }) {
+            paperRef?.current?.scroll({
+              top,
+              behavior: "smooth",
+            });
+          },
         }),
+        [paperRef],
       )}
     >
-      <div className={css.dim} ref={dimRef} />
       <div
-        key={activity?.id}
-        className={css.paper({
-          hasAppBar,
+        ref={appScreenRef}
+        className={css.appScreen({
+          transitionState:
+            transitionState === "enter-done" || transitionState === "exit-done"
+              ? transitionState
+              : lazyTransitionState,
         })}
-        ref={paperRef}
-      >
-        {children}
-      </div>
-      {!activity?.isRoot &&
-        globalOptions.theme === "cupertino" &&
-        !preventSwipeBack && (
-          <div className={css.edge({ hasAppBar })} ref={edgeRef} />
+        style={assignInlineVars(
+          compactMap({
+            [globalVars.backgroundColor]: backgroundColor,
+            [globalVars.dimBackgroundColor]: dimBackgroundColor,
+            [globalVars.appBar.height]: appBar?.height,
+            [globalVars.appBar.heightTransitionDuration]:
+              appBar?.heightTransitionDuration,
+            [css.vars.zIndexes.dim]: `${zIndexDim}`,
+            [css.vars.zIndexes.paper]: `${zIndexPaper}`,
+            [css.vars.zIndexes.edge]: `${zIndexEdge}`,
+            [css.vars.zIndexes.appBar]: `${zIndexAppBar}`,
+            [css.vars.transitionDuration]:
+              transitionState === "enter-active" ||
+              transitionState === "exit-active"
+                ? `var(--stackflow-transition-duration)`
+                : "0ms",
+          }),
         )}
-      {appBar && (
-        <AppBar {...appBar} ref={appBarRef} onTopClick={onAppBarTopClick} />
-      )}
-    </div>
+      >
+        <div className={css.dim} ref={dimRef} />
+        <div
+          key={activity?.id}
+          className={css.paper({
+            hasAppBar,
+          })}
+          ref={paperRef}
+        >
+          {children}
+        </div>
+        {!activity?.isRoot &&
+          globalOptions.theme === "cupertino" &&
+          !preventSwipeBack && (
+            <div className={css.edge({ hasAppBar })} ref={edgeRef} />
+          )}
+        {appBar && (
+          <AppBar {...appBar} ref={appBarRef} onTopClick={onAppBarTopClick} />
+        )}
+      </div>
+    </Context.Provider>
   );
 };
 
