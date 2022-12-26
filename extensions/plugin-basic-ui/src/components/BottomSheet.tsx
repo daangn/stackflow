@@ -10,7 +10,7 @@ import { globalVars } from "../theme.css";
 import { compactMap } from "../utils";
 import * as css from "./BottomSheet.css";
 
-type BottomSheetProps = Partial<
+export type BottomSheetProps = Partial<
   Pick<GlobalVars, "backgroundColor" | "dimBackgroundColor">
 > &
   Partial<GlobalVars["bottomSheet"]> & {

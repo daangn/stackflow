@@ -10,7 +10,7 @@ import { globalVars } from "../theme.css";
 import { compactMap } from "../utils";
 import * as css from "./Modal.css";
 
-type ModalProps = Partial<
+export type ModalProps = Partial<
   Pick<GlobalVars, "backgroundColor" | "dimBackgroundColor">
 > &
   Partial<GlobalVars["modal"]> & {
