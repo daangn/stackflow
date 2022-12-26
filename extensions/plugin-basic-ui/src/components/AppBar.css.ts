@@ -21,7 +21,7 @@ const minHeight = style({
   minHeight: globalVars.appBar.minHeight,
 });
 
-export const appBar = recipe({
+export const container = recipe({
   base: [
     f.posAbs,
     f.fullWidth,
@@ -67,7 +67,7 @@ export const safeArea = style({
   height: ["constant(safe-area-inset-top)", "env(safe-area-inset-top)"],
 });
 
-export const container = style([
+export const bar = style([
   f.flexAlignEnd,
   f.overflowHidden,
   {

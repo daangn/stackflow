@@ -55,7 +55,7 @@ export const dim = style([
   },
 ]);
 
-export const paper = style([
+export const main = style([
   f.overflowHidden,
   allTransitions,
   {

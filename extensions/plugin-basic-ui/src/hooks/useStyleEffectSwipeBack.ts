@@ -8,33 +8,33 @@ export function useStyleEffectSwipeBack({
   theme,
   dimRef,
   edgeRef,
-  paperRef,
+  mainRef,
   hasEffect,
   onSwiped,
 }: {
   theme: "android" | "cupertino";
   dimRef: React.RefObject<HTMLDivElement>;
   edgeRef: React.RefObject<HTMLDivElement>;
-  paperRef: React.RefObject<HTMLDivElement>;
+  mainRef: React.RefObject<HTMLDivElement>;
   hasEffect?: boolean;
   onSwiped?: () => void;
 }) {
   useStyleEffect({
     styleName: "swipe-back",
-    refs: [paperRef],
+    refs: [mainRef],
     effect: hasEffect
       ? ({ refs }) => {
           if (theme !== "cupertino") {
             return () => {};
           }
 
-          if (!dimRef.current || !edgeRef.current || !paperRef.current) {
+          if (!dimRef.current || !edgeRef.current || !mainRef.current) {
             return () => {};
           }
 
           const $dim = dimRef.current;
           const $edge = edgeRef.current;
-          const $paper = paperRef.current;
+          const $paper = mainRef.current;
 
           let x0: number | null = null;
           let t0: number | null = null;

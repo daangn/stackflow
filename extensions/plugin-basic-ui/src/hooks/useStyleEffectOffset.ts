@@ -11,7 +11,7 @@ export function useStyleEffectOffset({
   theme,
   hasEffect,
 }: {
-  refs: Array<React.RefObject<any>>;
+  refs: Array<React.RefObject<any> | React.MutableRefObject<any>>;
   theme: "android" | "cupertino";
   hasEffect?: boolean;
 }) {

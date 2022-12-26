@@ -44,7 +44,7 @@ export const exitDone = style({
   transform: "translateX(100%)",
 });
 
-export const appScreen = recipe({
+export const container = recipe({
   base: [f.posAbsFull, f.overflowHidden],
   variants: {
     transitionState: {
@@ -84,7 +84,7 @@ export const dim = style([
   },
 ]);
 
-export const paper = recipe({
+export const main = recipe({
   base: [
     f.posAbsFull,
     background,

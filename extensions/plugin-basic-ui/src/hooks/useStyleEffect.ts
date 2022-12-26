@@ -20,7 +20,7 @@ export function useStyleEffect({
   effect,
 }: {
   styleName: string;
-  refs: Array<React.RefObject<any>>;
+  refs: Array<React.RefObject<any> | React.MutableRefObject<any>>;
   effect?: (params: {
     activityTransitionState: ActivityTransitionState;
     refs: Array<React.RefObject<HTMLElement>>;

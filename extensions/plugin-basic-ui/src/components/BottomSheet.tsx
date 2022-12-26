@@ -89,7 +89,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
       )}
     >
       <div className={css.dim} ref={paperRef} onClick={onDimClick}>
-        <div className={css.paper} onClick={onPaperClick}>
+        <div className={css.main} onClick={onPaperClick}>
           {children}
         </div>
       </div>

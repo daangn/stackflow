@@ -193,7 +193,7 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
     return (
       <div
         ref={ref}
-        className={css.appBar({
+        className={css.container({
           border,
         })}
         style={assignInlineVars(
@@ -210,7 +210,7 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
         )}
       >
         <div className={css.safeArea} />
-        <div className={css.container}>
+        <div className={css.bar}>
           <div className={css.left}>
             {closeButtonLocation === "left" && renderCloseButton()}
             {renderBackButton()}
