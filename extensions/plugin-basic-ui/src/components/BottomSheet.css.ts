@@ -20,7 +20,7 @@ export const enterActive = style({});
 export const enterDone = style({});
 export const exitActive = style({});
 export const exitDone = style({
-  transform: "translateX(100%)",
+  transform: "translate3d(100%, 0, 0)",
 });
 
 export const container = recipe({
@@ -62,15 +62,16 @@ export const paper = style([
     backgroundColor: globalVars.backgroundColor,
     width: "100%",
     borderRadius: `${globalVars.bottomSheet.borderRadius} ${globalVars.bottomSheet.borderRadius} 0 0`,
-    transform: "translateY(100%)",
+    willChange: "transform, opacity",
+    transform: "translate3d(0, 100%, 0)",
     opacity: 0,
     selectors: {
       [`${enterActive} &, ${enterDone} &`]: {
-        transform: "translateY(0)",
+        transform: "translate3d(0, 0, 0)",
         opacity: 1,
       },
       [`${exitActive} &, ${exitDone} &`]: {
-        transform: "translateY(100%)",
+        transform: "translate3d(0, 100%, 0)",
         opacity: 0,
       },
     },

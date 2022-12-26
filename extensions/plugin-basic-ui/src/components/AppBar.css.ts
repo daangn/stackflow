@@ -31,25 +31,26 @@ export const appBar = recipe({
     {
       backgroundColor: globalVars.appBar.backgroundColor,
       zIndex: vars.zIndexes.appBar,
+      willChange: "transform, opacity",
       selectors: {
         [`${cupertino} &, ${rootCupertino} &`]: {
           position: "absolute",
         },
         [`${cupertino} ${exitActive} &, ${rootCupertino} ${exitActive} &`]: {
-          transform: "translateX(100%)",
+          transform: "translate3d(100%, 0, 0)",
         },
         [`${android} &, ${rootAndroid} &`]: {
           opacity: 0,
-          transform: "translateY(10rem)",
+          transform: "translate3d(0, 10rem, 0)",
           transition: `transform ${vars.transitionDuration}, opacity ${vars.transitionDuration}`,
         },
         [`${android} ${enterActive} &, ${rootAndroid} ${enterActive} &`]: {
           opacity: 1,
-          transform: "translateY(0)",
+          transform: "translate3d(0, 0, 0)",
         },
         [`${android} ${enterDone} &, ${rootAndroid} ${enterDone} &`]: {
           opacity: 1,
-          transform: "translateY(0)",
+          transform: "translate3d(0, 0, 0)",
         },
       },
     },

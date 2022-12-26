@@ -41,7 +41,7 @@ export const enterActive = style({});
 export const enterDone = style({});
 export const exitActive = style({});
 export const exitDone = style({
-  transform: "translateX(100%)",
+  transform: "translate3d(100%, 0, 0)",
 });
 
 export const appScreen = recipe({
@@ -63,6 +63,7 @@ export const dim = style([
   {
     opacity: 0,
     zIndex: vars.zIndexes.dim,
+    willChange: "opacity",
     selectors: {
       [`${android} &, ${rootAndroid} &`]: {
         height: "10rem",
@@ -96,27 +97,28 @@ export const paper = recipe({
         display: "none",
       },
       zIndex: vars.zIndexes.paper,
+      willChange: "transform",
       selectors: {
         [`${cupertino} &, ${rootCupertino} &`]: {
-          transform: "translateX(100%)",
+          transform: "translate3d(100%, 0, 0)",
         },
         [`${cupertino} ${enterActive} &, ${rootCupertino} ${enterActive} &`]: {
-          transform: "translateX(0)",
+          transform: "translate3d(0, 0, 0)",
         },
         [`${cupertino} ${enterDone} &, ${rootCupertino} ${enterDone} &`]: {
-          transform: "translateX(0)",
+          transform: "translate3d(0, 0, 0)",
         },
         [`${android} &, ${rootAndroid} &`]: {
           opacity: 0,
-          transform: "translateY(10rem)",
+          transform: "translate3d(0, 10rem, 0)",
         },
         [`${android} ${enterActive} &, ${rootAndroid} ${enterActive} &`]: {
           opacity: 1,
-          transform: "translateY(0)",
+          transform: "translate3d(0, 0, 0)",
         },
         [`${android} ${enterDone} &, ${rootAndroid} ${enterDone} &`]: {
           opacity: 1,
-          transform: "translateY(0)",
+          transform: "translate3d(0, 0, 0)",
         },
       },
     },
