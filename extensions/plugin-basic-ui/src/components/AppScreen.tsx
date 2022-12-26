@@ -34,7 +34,7 @@ const AppScreen = React.forwardRef<HTMLDivElement, AppScreenProps>(
     const activity = useNullableActivity();
     const { pop } = useActions();
 
-    const rootRef = useRef<HTMLDivElement>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
     const dimRef = useRef<HTMLDivElement>(null);
     const edgeRef = useRef<HTMLDivElement>(null);
     const appBarRef = useRef<HTMLDivElement>(null);
@@ -42,7 +42,7 @@ const AppScreen = React.forwardRef<HTMLDivElement, AppScreenProps>(
     const mainRef = useForwardedRef(ref);
 
     useStyleEffectHide({
-      refs: [rootRef],
+      refs: [containerRef],
       hasEffect: true,
     });
     useStyleEffectOffset({
@@ -87,7 +87,7 @@ const AppScreen = React.forwardRef<HTMLDivElement, AppScreenProps>(
 
     return (
       <div
-        ref={rootRef}
+        ref={containerRef}
         className={css.container({
           transitionState:
             transitionState === "enter-done" || transitionState === "exit-done"
