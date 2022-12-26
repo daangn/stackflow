@@ -66,7 +66,7 @@ const AppScreen = React.forwardRef<HTMLDivElement, AppScreenProps>(
 
     const zIndexBase = (activity?.zIndex ?? 0) * 5;
     const zIndexDim = zIndexBase;
-    const zIndexPaper =
+    const zIndexMain =
       zIndexBase + (globalOptions.theme === "cupertino" && hasAppBar ? 1 : 3);
     const zIndexEdge = zIndexBase + 4;
     const zIndexAppBar = zIndexBase + 7;
@@ -102,7 +102,7 @@ const AppScreen = React.forwardRef<HTMLDivElement, AppScreenProps>(
             [globalVars.appBar.heightTransitionDuration]:
               props.appBar?.heightTransitionDuration,
             [css.vars.zIndexes.dim]: `${zIndexDim}`,
-            [css.vars.zIndexes.main]: `${zIndexPaper}`,
+            [css.vars.zIndexes.main]: `${zIndexMain}`,
             [css.vars.zIndexes.edge]: `${zIndexEdge}`,
             [css.vars.zIndexes.appBar]: `${zIndexAppBar}`,
             [css.vars.transitionDuration]:

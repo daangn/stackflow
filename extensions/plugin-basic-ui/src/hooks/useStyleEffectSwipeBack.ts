@@ -61,7 +61,7 @@ export function useStyleEffectSwipeBack({
 
           let _rAFLock = false;
 
-          function movePaper(dx: number) {
+          function moveMain(dx: number) {
             if (!_rAFLock) {
               _rAFLock = true;
 
@@ -95,7 +95,7 @@ export function useStyleEffectSwipeBack({
             }
           }
 
-          function resetPaper({ swiped }: { swiped: boolean }): Promise<void> {
+          function resetMain({ swiped }: { swiped: boolean }): Promise<void> {
             return new Promise((resolve) => {
               requestAnimationFrame(() => {
                 $dim.style.opacity = `${swiped ? 0 : 1}`;
@@ -200,7 +200,7 @@ export function useStyleEffectSwipeBack({
 
             x = e.touches[0].clientX;
 
-            movePaper(x - x0);
+            moveMain(x - x0);
           };
 
           const onTouchEnd = () => {
@@ -218,7 +218,7 @@ export function useStyleEffectSwipeBack({
             }
 
             Promise.resolve()
-              .then(() => resetPaper({ swiped }))
+              .then(() => resetMain({ swiped }))
               .then(() => resetState());
           };
 

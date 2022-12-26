@@ -64,7 +64,7 @@ const Modal: React.FC<ModalProps> = ({
   };
 
   const zIndexBase = (activity?.zIndex ?? 0) * 5 + 3;
-  const zIndexPaper = (activity?.zIndex ?? 0) * 5 + 4;
+  const zIndexMain = (activity?.zIndex ?? 0) * 5 + 4;
   const transitionState = activity?.transitionState ?? "enter-done";
 
   return (
@@ -79,7 +79,7 @@ const Modal: React.FC<ModalProps> = ({
           [globalVars.backgroundColor]: backgroundColor,
           [globalVars.dimBackgroundColor]: dimBackgroundColor,
           [css.vars.zIndexes.dim]: `${zIndexBase}`,
-          [css.vars.zIndexes.main]: `${zIndexPaper}`,
+          [css.vars.zIndexes.main]: `${zIndexMain}`,
           [css.vars.transitionDuration]:
             transitionState === "enter-active" ||
             transitionState === "exit-active"
