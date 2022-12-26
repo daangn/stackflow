@@ -28,7 +28,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
   const { pop } = useActions();
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const paperRef = useRef<HTMLDivElement>(null);
+  const mainRef = useRef<HTMLDivElement>(null);
 
   useStyleEffect({
     styleName: "hide",
@@ -36,11 +36,11 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
   });
   useStyleEffect({
     styleName: "offset",
-    refs: [paperRef],
+    refs: [mainRef],
   });
   useStyleEffect({
     styleName: "swipe-back",
-    refs: [paperRef],
+    refs: [mainRef],
   });
 
   const popLock = useRef(false);
@@ -88,8 +88,8 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
         }),
       )}
     >
-      <div className={css.dim} ref={paperRef} onClick={onDimClick}>
-        <div className={css.main} onClick={onPaperClick}>
+      <div className={css.dim} onClick={onDimClick}>
+        <div className={css.main} ref={mainRef} onClick={onPaperClick}>
           {children}
         </div>
       </div>
