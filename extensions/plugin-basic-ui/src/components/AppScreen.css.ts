@@ -14,7 +14,7 @@ export const vars = createThemeContract({
   transitionDuration: null,
   zIndexes: {
     dim: null,
-    paper: null,
+    main: null,
     edge: null,
     appBar: null,
   },
@@ -95,7 +95,7 @@ export const main = recipe({
       "::-webkit-scrollbar": {
         display: "none",
       },
-      zIndex: vars.zIndexes.paper,
+      zIndex: vars.zIndexes.main,
       selectors: {
         [`${cupertino} &, ${rootCupertino} &`]: {
           transform: "translateX(100%)",

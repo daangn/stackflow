@@ -34,7 +34,7 @@ export function useStyleEffectSwipeBack({
 
           const $dim = dimRef.current;
           const $edge = edgeRef.current;
-          const $paper = mainRef.current;
+          const $main = mainRef.current;
 
           let x0: number | null = null;
           let t0: number | null = null;
@@ -66,14 +66,14 @@ export function useStyleEffectSwipeBack({
               _rAFLock = true;
 
               requestAnimationFrame(() => {
-                const p = dx / $paper.clientWidth;
+                const p = dx / $main.clientWidth;
 
                 $dim.style.opacity = `${1 - p}`;
                 $dim.style.transition = "0s";
 
-                $paper.style.overflowY = "hidden";
-                $paper.style.transform = `translateX(${dx}px)`;
-                $paper.style.transition = "0s";
+                $main.style.overflowY = "hidden";
+                $main.style.transform = `translateX(${dx}px)`;
+                $main.style.transition = "0s";
 
                 refs.forEach((ref) => {
                   if (!ref.current) {
@@ -101,10 +101,9 @@ export function useStyleEffectSwipeBack({
                 $dim.style.opacity = `${swiped ? 0 : 1}`;
                 $dim.style.transition = "var(--stackflow-transition-duration)";
 
-                $paper.style.overflowY = "hidden";
-                $paper.style.transform = `translateX(${swiped ? "100%" : "0"})`;
-                $paper.style.transition =
-                  "var(--stackflow-transition-duration)";
+                $main.style.overflowY = "hidden";
+                $main.style.transform = `translateX(${swiped ? "100%" : "0"})`;
+                $main.style.transition = "var(--stackflow-transition-duration)";
 
                 refs.forEach((ref) => {
                   if (!ref.current) {
@@ -121,10 +120,10 @@ export function useStyleEffectSwipeBack({
 
                 resolve();
 
-                listenOnce($paper, "transitionend", () => {
+                listenOnce($main, "transitionend", () => {
                   $dim.style.opacity = "";
-                  $paper.style.overflowY = "";
-                  $paper.style.transform = "";
+                  $main.style.overflowY = "";
+                  $main.style.transform = "";
 
                   refs.forEach((ref, i) => {
                     if (!ref.current) {
@@ -212,7 +211,7 @@ export function useStyleEffectSwipeBack({
 
             const t = Date.now();
             const v = (x - x0) / (t - t0);
-            const swiped = v > 1 || x / $paper.clientWidth > 0.4;
+            const swiped = v > 1 || x / $main.clientWidth > 0.4;
 
             if (swiped) {
               onSwiped?.();

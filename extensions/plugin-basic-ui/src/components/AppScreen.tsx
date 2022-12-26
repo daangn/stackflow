@@ -102,7 +102,7 @@ const AppScreen = React.forwardRef<HTMLDivElement, AppScreenProps>(
             [globalVars.appBar.heightTransitionDuration]:
               props.appBar?.heightTransitionDuration,
             [css.vars.zIndexes.dim]: `${zIndexDim}`,
-            [css.vars.zIndexes.paper]: `${zIndexPaper}`,
+            [css.vars.zIndexes.main]: `${zIndexPaper}`,
             [css.vars.zIndexes.edge]: `${zIndexEdge}`,
             [css.vars.zIndexes.appBar]: `${zIndexAppBar}`,
             [css.vars.transitionDuration]:

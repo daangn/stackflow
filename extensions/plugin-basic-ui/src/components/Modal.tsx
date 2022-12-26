@@ -59,7 +59,7 @@ const Modal: React.FC<ModalProps> = ({
 
     pop();
   };
-  const onPaperClick: React.MouseEventHandler = (e) => {
+  const onMainClick: React.MouseEventHandler = (e) => {
     e.stopPropagation();
   };
 
@@ -79,7 +79,7 @@ const Modal: React.FC<ModalProps> = ({
           [globalVars.backgroundColor]: backgroundColor,
           [globalVars.dimBackgroundColor]: dimBackgroundColor,
           [css.vars.zIndexes.dim]: `${zIndexBase}`,
-          [css.vars.zIndexes.paper]: `${zIndexPaper}`,
+          [css.vars.zIndexes.main]: `${zIndexPaper}`,
           [css.vars.transitionDuration]:
             transitionState === "enter-active" ||
             transitionState === "exit-active"
@@ -89,7 +89,7 @@ const Modal: React.FC<ModalProps> = ({
       )}
     >
       <div className={css.dim} onClick={onDimClick}>
-        <div className={css.main} ref={mainRef} onClick={onPaperClick}>
+        <div className={css.main} ref={mainRef} onClick={onMainClick}>
           {children}
         </div>
       </div>

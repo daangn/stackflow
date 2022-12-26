@@ -8,7 +8,7 @@ export const vars = createThemeContract({
   transitionDuration: null,
   zIndexes: {
     dim: null,
-    paper: null,
+    main: null,
   },
 });
 
