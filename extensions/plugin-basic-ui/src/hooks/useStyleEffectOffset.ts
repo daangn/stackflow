@@ -22,8 +22,8 @@ export function useStyleEffectOffset({
       ? ({ activityTransitionState, refs }) => {
           const transform =
             theme === "cupertino"
-              ? `translateX(-${OFFSET_PX_CUPERTINO / 16}rem)`
-              : `translateY(-${OFFSET_PX_ANDROID / 16}rem)`;
+              ? `translate3d(-${OFFSET_PX_CUPERTINO / 16}rem, 0, 0)`
+              : `translate3d(0, -${OFFSET_PX_ANDROID / 16}rem, 0)`;
 
           const cleanup = () => {
             requestNextFrame(() => {

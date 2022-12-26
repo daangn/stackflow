@@ -20,7 +20,7 @@ export const enterActive = style({});
 export const enterDone = style({});
 export const exitActive = style({});
 export const exitDone = style({
-  transform: "translateX(100%)",
+  transform: "translate3d(100%, 0, 0)",
 });
 
 export const container = recipe({
@@ -66,6 +66,7 @@ export const paper = style([
     boxShadow:
       "0px 0.625rem 2.375rem rgba(0, 0, 0, 0.15), 0px .5625rem 2.875rem rgba(0, 0, 0, 0.12), 0px .3125rem .9375rem rgba(0, 0, 0, 0.1)",
     borderRadius: globalVars.modal.borderRadius,
+    willChange: "transform, opacity",
     transform: "scale(1.1)",
     opacity: 0,
     selectors: {

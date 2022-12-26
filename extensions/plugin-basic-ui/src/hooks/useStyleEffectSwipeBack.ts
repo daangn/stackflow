@@ -72,7 +72,7 @@ export function useStyleEffectSwipeBack({
                 $dim.style.transition = "0s";
 
                 $paper.style.overflowY = "hidden";
-                $paper.style.transform = `translateX(${dx}px)`;
+                $paper.style.transform = `translate3d(${dx}px, 0, 0)`;
                 $paper.style.transition = "0s";
 
                 refs.forEach((ref) => {
@@ -80,9 +80,9 @@ export function useStyleEffectSwipeBack({
                     return;
                   }
 
-                  ref.current.style.transform = `translateX(${
+                  ref.current.style.transform = `translate3d(${
                     -1 * (1 - p) * OFFSET_PX_CUPERTINO
-                  }px)`;
+                  }px, 0, 0)`;
                   ref.current.style.transition = "0s";
 
                   if (ref.current.parentElement?.style.display === "none") {
@@ -112,9 +112,9 @@ export function useStyleEffectSwipeBack({
                   }
 
                   ref.current.style.transition = `var(--stackflow-transition-duration)`;
-                  ref.current.style.transform = `translateX(${
+                  ref.current.style.transform = `translate3d(${
                     swiped ? "0" : `-${OFFSET_PX_CUPERTINO / 16}rem`
-                  })`;
+                  }, 0, 0)`;
                 });
 
                 const _cachedRefs = [...cachedRefs];
