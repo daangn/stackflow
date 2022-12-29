@@ -6,8 +6,12 @@
 
 </a>
 
+<a href="https://stackflow.so/" target="_blank">
+
 ![logo](./logo-light.svg#gh-light-mode-only)
 ![logo](./logo-dark.svg#gh-dark-mode-only)
+
+</a>
 
 ![](https://img.shields.io/npm/v/@stackflow/core) ![](https://img.shields.io/npm/l/@stackflow/core) ![](https://img.shields.io/npm/dt/@stackflow/core) ![](https://img.shields.io/github/contributors/daangn/stackflow) ![](https://img.shields.io/github/last-commit/daangn/stackflow)
 
