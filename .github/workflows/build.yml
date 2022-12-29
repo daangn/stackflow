@@ -39,7 +39,7 @@ jobs:
           yarn install --immutable
         shell: bash
 
-      - uses: martijnhols/actions-cache/restore@v3
+      - uses: actions/cache/restore@v3
         with:
           path: |
             core/dist/
@@ -77,7 +77,7 @@ jobs:
         run: |
           yarn build
 
-      - uses: martijnhols/actions-cache/save@v3
+      - uses: actions/cache/save@v3
         if: github.event_name == 'push'
         with:
           path: |
