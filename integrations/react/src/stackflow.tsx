@@ -172,7 +172,7 @@ export function stackflow<T extends BaseActivities>(
 
   const [getCoreStore, setCoreStore] = makeRef<CoreStore>();
 
-  const Stack: StackComponentType = (props) => {
+  const Stack: StackComponentType = React.memo((props) => {
     const coreStore = useMemo(() => {
       const initialPushedEventsByOption = options.initialActivity
         ? [
@@ -246,7 +246,7 @@ export function stackflow<T extends BaseActivities>(
         </CoreProvider>
       </PluginsProvider>
     );
-  };
+  });
 
   Stack.displayName = "Stack";
 
