@@ -24,6 +24,8 @@ import type {
 import { useStepActions } from "./useStepActions";
 import { makeRef } from "./utils";
 
+const isBrowser = typeof window !== "undefined";
+
 function parseActionOptions(options?: { animate?: boolean }) {
   if (!options) {
     return { skipActiveState: false };
@@ -174,6 +176,14 @@ export function stackflow<T extends BaseActivities>(
 
   const Stack: StackComponentType = React.memo((props) => {
     const coreStore = useMemo(() => {
+      const prevCoreStore = getCoreStore();
+
+      // In a browser environment,
+      // memoize `coreStore` so that only one `coreStore` exists throughout the entire app.
+      if (isBrowser && prevCoreStore) {
+        return prevCoreStore;
+      }
+
       const initialPushedEventsByOption = options.initialActivity
         ? [
             makeEvent("Pushed", {
@@ -230,11 +240,10 @@ export function stackflow<T extends BaseActivities>(
         plugins,
       });
 
-      if (typeof window !== "undefined") {
+      if (isBrowser) {
         store.init();
+        setCoreStore(store);
       }
-
-      setCoreStore(store);
 
       return store;
     }, []);
