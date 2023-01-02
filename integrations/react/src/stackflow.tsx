@@ -240,9 +240,9 @@ export function stackflow<T extends BaseActivities>(
 
       if (!isServer) {
         store.init();
-        setCoreStore(store);
       }
 
+      setCoreStore(store);
       return store;
     }, []);
 
