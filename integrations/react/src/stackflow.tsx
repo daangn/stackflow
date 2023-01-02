@@ -24,7 +24,7 @@ import type {
 import { useStepActions } from "./useStepActions";
 import { makeRef } from "./utils";
 
-const isServer = typeof window === "undefined";
+const isBrowser = typeof window !== "undefined";
 
 function parseActionOptions(options?: { animate?: boolean }) {
   if (!options) {
@@ -178,9 +178,9 @@ export function stackflow<T extends BaseActivities>(
     const coreStore = useMemo(() => {
       const prevCoreStore = getCoreStore();
 
-      // In a server environment,
-      // `coreStore` should be created every time Stack is rendered.
-      if (!isServer && prevCoreStore) {
+      // In a browser environment,
+      // memoize `coreStore` so that only one `coreStore` exists throughout the entire app.
+      if (isBrowser && prevCoreStore) {
         return prevCoreStore;
       }
 
@@ -240,7 +240,7 @@ export function stackflow<T extends BaseActivities>(
         plugins,
       });
 
-      if (!isServer) {
+      if (isBrowser) {
         store.init();
         setCoreStore(store);
       }
