@@ -24,6 +24,8 @@ import type {
 import { useStepActions } from "./useStepActions";
 import { makeRef } from "./utils";
 
+const isServer = typeof window === "undefined";
+
 function parseActionOptions(options?: { animate?: boolean }) {
   if (!options) {
     return { skipActiveState: false };
@@ -174,6 +176,12 @@ export function stackflow<T extends BaseActivities>(
 
   const Stack: StackComponentType = React.memo((props) => {
     const coreStore = useMemo(() => {
+      const prevCoreStore = getCoreStore();
+
+      if (!isServer && prevCoreStore) {
+        return prevCoreStore;
+      }
+
       const initialPushedEventsByOption = options.initialActivity
         ? [
             makeEvent("Pushed", {
@@ -230,11 +238,10 @@ export function stackflow<T extends BaseActivities>(
         plugins,
       });
 
-      if (typeof window !== "undefined") {
+      if (!isServer) {
         store.init();
+        setCoreStore(store);
       }
-
-      setCoreStore(store);
 
       return store;
     }, []);
