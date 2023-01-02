@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/plugin-google-analytics-4",
-  "version": "0.20.0",
+  "version": "0.20.1",
   "license": "MIT",
   "author": "Aaron K <aaron@daangn.com>",
   "exports": {
@@ -31,7 +31,7 @@
     "@stackflow/core": "^0.20.0",
     "@stackflow/esbuild-config": "^0.20.0",
     "@stackflow/eslint-config": "^0.20.0",
-    "@stackflow/react": "^0.20.0",
+    "@stackflow/react": "^0.20.1",
     "@types/react": "^18.0.10",
     "@typescript-eslint/eslint-plugin": "^5.32.0",
     "@typescript-eslint/parser": "^5.20.0",
