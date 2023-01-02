@@ -36,7 +36,7 @@ jobs:
           yarn install --immutable
         shell: bash
 
-      - uses: martijnhols/actions-cache/restore@v3
+      - uses: actions/cache/restore@v3
         with:
           path: |
             core/dist/
@@ -102,7 +102,7 @@ jobs:
           yarn install --immutable
         shell: bash
 
-      - uses: martijnhols/actions-cache/restore@v3
+      - uses: actions/cache/restore@v3
         with:
           path: |
             core/dist/
