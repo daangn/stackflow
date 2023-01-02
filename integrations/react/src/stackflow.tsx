@@ -178,6 +178,8 @@ export function stackflow<T extends BaseActivities>(
     const coreStore = useMemo(() => {
       const prevCoreStore = getCoreStore();
 
+      // In a server environment,
+      // `coreStore` should be created every time Stack is rendered.
       if (!isServer && prevCoreStore) {
         return prevCoreStore;
       }
@@ -240,9 +242,9 @@ export function stackflow<T extends BaseActivities>(
 
       if (!isServer) {
         store.init();
+        setCoreStore(store);
       }
 
-      setCoreStore(store);
       return store;
     }, []);
 
