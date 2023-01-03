@@ -36,6 +36,7 @@
     "@stackflow/plugin-basic-ui": "^0.20.2",
     "@stackflow/plugin-history-sync": "^0.20.1",
     "@stackflow/plugin-preload": "^0.20.1",
+    "@stackflow/plugin-redirect": "^0.19.0",
     "@stackflow/plugin-renderer-basic": "^0.20.1",
     "@stackflow/plugin-stack-depth-change": "^0.20.0",
     "@stackflow/react": "^0.20.1",

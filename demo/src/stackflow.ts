@@ -1,6 +1,7 @@
 import { vars } from "@seed-design/design-token";
 import { basicUIPlugin } from "@stackflow/plugin-basic-ui";
 import { historySyncPlugin } from "@stackflow/plugin-history-sync";
+import { redirectPlugin } from "@stackflow/plugin-redirect";
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
 import { stackflow } from "@stackflow/react";
 
@@ -36,6 +37,11 @@ export const { Stack, activities } = stackflow({
         textColor: vars.$scale.color.gray900,
         iconColor: vars.$scale.color.gray900,
         borderColor: vars.$semantic.color.divider3,
+      },
+    }),
+    redirectPlugin({
+      redirects: {
+        Article: ["Main"],
       },
     }),
     historySyncPlugin({
