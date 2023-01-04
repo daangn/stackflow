@@ -75,8 +75,6 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
     const globalCloseButton = globalOptions.appBar?.closeButton;
     const globalBackButton = globalOptions.appBar?.backButton;
 
-    console.log(globalBackButton);
-
     const centerRef = useRef<any>(null);
 
     const { maxWidth } = useMaxWidth({
