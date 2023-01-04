@@ -10,9 +10,18 @@ type BasicUIPluginOptions = RecursivePartial<theme.GlobalVars> & {
   theme: "android" | "cupertino";
   rootClassName?: string;
   appBar?: {
+    backButton?:
+      | {
+          renderIcon?: () => React.ReactNode;
+          ariaLabel?: string;
+        }
+      | {
+          render?: () => React.ReactNode;
+        };
     closeButton?:
       | {
           renderIcon?: () => React.ReactNode;
+          ariaLabel?: string;
           onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
         }
       | {
