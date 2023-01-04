@@ -36,6 +36,12 @@ export const { Stack, activities } = stackflow({
         textColor: vars.$scale.color.gray900,
         iconColor: vars.$scale.color.gray900,
         borderColor: vars.$semantic.color.divider3,
+        backButton: {
+          ariaLabel: "뒤로 가기",
+        },
+        closeButton: {
+          ariaLabel: "닫기",
+        },
       },
     }),
     historySyncPlugin({

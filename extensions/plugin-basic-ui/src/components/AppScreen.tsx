@@ -138,6 +138,9 @@ const AppScreen: React.FC<AppScreenProps> = ({
         )}
       >
         <div className={css.dim} ref={dimRef} />
+        {appBar && (
+          <AppBar {...appBar} ref={appBarRef} onTopClick={onAppBarTopClick} />
+        )}
         <div
           key={activity?.id}
           className={css.paper({
@@ -152,9 +155,6 @@ const AppScreen: React.FC<AppScreenProps> = ({
           !preventSwipeBack && (
             <div className={css.edge({ hasAppBar })} ref={edgeRef} />
           )}
-        {appBar && (
-          <AppBar {...appBar} ref={appBarRef} onTopClick={onAppBarTopClick} />
-        )}
       </div>
     </Context.Provider>
   );

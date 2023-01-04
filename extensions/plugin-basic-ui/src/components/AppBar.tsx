@@ -29,6 +29,7 @@ type AppBarProps = Partial<
   backButton?:
     | {
         renderIcon?: () => React.ReactNode;
+        ariaLabel?: string;
         onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
       }
     | {
@@ -37,6 +38,7 @@ type AppBarProps = Partial<
   closeButton?:
     | {
         renderIcon?: () => React.ReactNode;
+        ariaLabel?: string;
         onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
       }
     | {
@@ -71,6 +73,7 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
 
     const globalOptions = useGlobalOptions();
     const globalCloseButton = globalOptions.appBar?.closeButton;
+    const globalBackButton = globalOptions.appBar?.backButton;
 
     const centerRef = useRef<any>(null);
 
@@ -98,7 +101,7 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
         return null;
       }
 
-      if (!backButton) {
+      if (!backButton && !globalBackButton) {
         return (
           <button
             type="button"
@@ -110,17 +113,48 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
         );
       }
 
-      if ("render" in backButton && backButton.render) {
+      if (backButton && "render" in backButton && backButton.render) {
         return backButton.render?.();
+      }
+      if (
+        globalBackButton &&
+        "render" in globalBackButton &&
+        globalBackButton.render
+      ) {
+        return globalBackButton.render?.();
       }
 
       return (
-        <button type="button" className={css.backButton} onClick={onBackClick}>
-          {"renderIcon" in backButton && backButton.renderIcon ? (
-            backButton.renderIcon()
-          ) : (
-            <IconBack />
-          )}
+        <button
+          type="button"
+          className={css.backButton}
+          aria-label={
+            backButton && "ariaLabel" in backButton
+              ? backButton.ariaLabel
+              : globalBackButton && "ariaLabel" in globalBackButton
+              ? globalBackButton.ariaLabel
+              : undefined
+          }
+          onClick={onBackClick}
+        >
+          {(() => {
+            if (
+              backButton &&
+              "renderIcon" in backButton &&
+              backButton.renderIcon
+            ) {
+              return backButton.renderIcon();
+            }
+            if (
+              globalBackButton &&
+              "renderIcon" in globalBackButton &&
+              globalBackButton.renderIcon
+            ) {
+              return globalBackButton.renderIcon();
+            }
+
+            return <IconBack />;
+          })()}
         </button>
       );
     };
@@ -160,6 +194,13 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
         <button
           type="button"
           className={css.closeButton}
+          aria-label={
+            closeButton && "ariaLabel" in closeButton
+              ? closeButton.ariaLabel
+              : globalCloseButton && "ariaLabel" in globalCloseButton
+              ? globalCloseButton.ariaLabel
+              : undefined
+          }
           onClick={onCloseClick}
         >
           {(() => {
