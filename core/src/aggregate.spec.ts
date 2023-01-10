@@ -3372,3 +3372,107 @@ test("aggregate - RegisteredActivityEvent에 paramsSchema가 있다면 registere
     globalTransitionState: "idle",
   });
 });
+
+test("aggregate - animated ReplacedEvent -> skipped ReplacedEvent 이후 첫 Activity는 exit-done이 됨", () => {
+  const t = nowTime();
+
+  let pushedEvent: PushedEvent;
+  let replacedEvent1: ReplacedEvent;
+  let replacedEvent2: ReplacedEvent;
+
+  const events = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+    registeredEvent({
+      activityName: "sample",
+    }),
+    (pushedEvent = makeEvent("Pushed", {
+      activityId: "A",
+      activityName: "sample",
+      activityParams: {},
+      eventDate: enoughPastTime(),
+    })),
+    (replacedEvent1 = makeEvent("Replaced", {
+      activityId: "B",
+      activityName: "sample",
+      activityParams: {},
+      eventDate: t,
+    })),
+    (replacedEvent2 = makeEvent("Replaced", {
+      activityId: "C",
+      activityName: "sample",
+      activityParams: {},
+      eventDate: t,
+      skipEnterActiveState: true,
+    })),
+  ];
+
+  const output = aggregate(events, t);
+
+  expect(output).toStrictEqual({
+    activities: [
+      activity({
+        id: "A",
+        name: "sample",
+        transitionState: "exit-done",
+        params: {},
+        steps: [
+          {
+            id: "A",
+            params: {},
+            pushedBy: pushedEvent,
+          },
+        ],
+        pushedBy: pushedEvent,
+        isActive: false,
+        isTop: false,
+        isRoot: true,
+        zIndex: -1,
+      }),
+      activity({
+        id: "B",
+        name: "sample",
+        transitionState: "exit-done",
+        params: {},
+        steps: [
+          {
+            id: "B",
+            params: {},
+            pushedBy: replacedEvent1,
+          },
+        ],
+        pushedBy: replacedEvent1,
+        isActive: false,
+        isTop: false,
+        isRoot: false,
+        zIndex: -1,
+      }),
+      activity({
+        id: "C",
+        name: "sample",
+        transitionState: "enter-done",
+        params: {},
+        steps: [
+          {
+            id: "C",
+            params: {},
+            pushedBy: replacedEvent2,
+          },
+        ],
+        pushedBy: replacedEvent2,
+        isActive: true,
+        isTop: true,
+        isRoot: false,
+        zIndex: 0,
+      }),
+    ],
+    registeredActivities: [
+      {
+        name: "sample",
+      },
+    ],
+    transitionDuration: 300,
+    globalTransitionState: "idle",
+  });
+});
