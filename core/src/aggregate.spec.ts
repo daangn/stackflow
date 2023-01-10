@@ -3403,7 +3403,7 @@ test("aggregate - animated ReplacedEvent -> skipped ReplacedEvent 이후 첫 Act
       activityId: "C",
       activityName: "sample",
       activityParams: {},
-      eventDate: t,
+      eventDate: t + 50,
       skipEnterActiveState: true,
     })),
   ];
