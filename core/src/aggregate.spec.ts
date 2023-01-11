@@ -3427,7 +3427,7 @@ test("aggregate - animated ReplacedEvent -> skipped ReplacedEvent 이후 첫 Act
         pushedBy: pushedEvent,
         isActive: false,
         isTop: false,
-        isRoot: true,
+        isRoot: false,
         zIndex: -1,
       }),
       activity({
@@ -3463,7 +3463,7 @@ test("aggregate - animated ReplacedEvent -> skipped ReplacedEvent 이후 첫 Act
         pushedBy: replacedEvent2,
         isActive: true,
         isTop: true,
-        isRoot: false,
+        isRoot: true,
         zIndex: 0,
       }),
     ],
