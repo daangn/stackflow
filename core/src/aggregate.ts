@@ -104,15 +104,19 @@ export function aggregate(events: DomainEvent[], now: number): Stack {
         if (typeof alreadyExistingActivityIndex === "number") {
           activities[alreadyExistingActivityIndex] = newActivity;
         } else {
-          const topActivity = activities
-            .filter((activity) => activity.metadata.poppedBy === null)
-            .sort((a1, a2) => a2.pushedBy.eventDate - a1.pushedBy.eventDate)[0];
+          const recentActivities = activities.sort(
+            (a1, a2) => a2.pushedBy.eventDate - a1.pushedBy.eventDate,
+          );
 
           activities.push(newActivity);
 
-          if (topActivity && transitionState === "enter-done") {
-            topActivity.metadata.poppedBy = event;
-            topActivity.transitionState = "exit-done";
+          if (recentActivities.length > 0 && transitionState === "enter-done") {
+            for (let i = 0; i < recentActivities.length; i += 1) {
+              recentActivities[i].metadata.poppedBy = event;
+              recentActivities[i].transitionState = "exit-done";
+
+              if (recentActivities[i].pushedBy.name === "Pushed") break;
+            }
           }
         }
 
