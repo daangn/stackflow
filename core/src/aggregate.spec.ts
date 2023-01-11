@@ -3373,7 +3373,7 @@ test("aggregate - RegisteredActivityEvent에 paramsSchema가 있다면 registere
   });
 });
 
-test("aggregate - animated ReplacedEvent -> skipped ReplacedEvent 이후 첫 Activity는 exit-done이 됨", () => {
+test("aggregate - After Push > Replace > Replace (skipped), first pushed activity should be exit-done", () => {
   const t = nowTime();
 
   let pushedEvent: PushedEvent;
