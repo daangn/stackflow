@@ -1,4 +1,9 @@
-import type { DomainEvent, PoppedEvent, ReplacedEvent } from "./event-types";
+import type {
+  DomainEvent,
+  PoppedEvent,
+  PushedEvent,
+  ReplacedEvent,
+} from "./event-types";
 import { filterEvents, validateEvents } from "./event-utils";
 import type { Activity, ActivityTransitionState, Stack } from "./Stack";
 import { compareBy, findIndices, last, uniqBy } from "./utils";
@@ -25,6 +30,32 @@ export function aggregate(events: DomainEvent[], now: number): Stack {
     }
   > = [];
 
+  const createActivityFromEvent = (
+    event: PushedEvent | ReplacedEvent,
+    transitionState: ActivityTransitionState,
+  ) => ({
+    id: event.activityId,
+    name: event.activityName,
+    transitionState,
+    params: event.activityParams,
+    context: event.activityContext,
+    steps: [
+      {
+        id: event.activityId,
+        params: event.activityParams,
+        pushedBy: event,
+      },
+    ],
+    pushedBy: event,
+    metadata: {
+      poppedBy: null,
+    },
+    isTop: false,
+    isActive: false,
+    isRoot: false,
+    zIndex: -1,
+  });
+
   sortedEvents.forEach((event) => {
     switch (event.name) {
       case "Pushed": {
@@ -34,28 +65,7 @@ export function aggregate(events: DomainEvent[], now: number): Stack {
             ? "enter-done"
             : "enter-active";
 
-        activities.push({
-          id: event.activityId,
-          name: event.activityName,
-          transitionState,
-          params: event.activityParams,
-          context: event.activityContext,
-          steps: [
-            {
-              id: event.activityId,
-              params: event.activityParams,
-              pushedBy: event,
-            },
-          ],
-          pushedBy: event,
-          metadata: {
-            poppedBy: null,
-          },
-          isTop: false,
-          isActive: false,
-          isRoot: false,
-          zIndex: -1,
-        });
+        activities.push(createActivityFromEvent(event, transitionState));
 
         break;
       }
@@ -66,59 +76,41 @@ export function aggregate(events: DomainEvent[], now: number): Stack {
             (activity) => activity.id === event.activityId,
           ),
         );
-        const alreadyExistingActivity =
-          typeof alreadyExistingActivityIndex === "number"
-            ? activities[alreadyExistingActivityIndex]
-            : undefined;
-
-        const transitionState: ActivityTransitionState = alreadyExistingActivity
-          ? alreadyExistingActivity.transitionState
-          : event.skipEnterActiveState ||
-            now - event.eventDate >= transitionDuration
-          ? "enter-done"
-          : "enter-active";
-
-        const newActivity = {
-          id: event.activityId,
-          name: event.activityName,
-          transitionState,
-          params: event.activityParams,
-          context: event.activityContext,
-          steps: [
-            {
-              id: event.activityId,
-              params: event.activityParams,
-              pushedBy: event,
-            },
-          ],
-          pushedBy: event,
-          metadata: {
-            poppedBy: null,
-          },
-          isTop: false,
-          isActive: false,
-          isRoot: false,
-          zIndex: -1,
-        };
 
         if (typeof alreadyExistingActivityIndex === "number") {
-          activities[alreadyExistingActivityIndex] = newActivity;
-        } else {
-          const recentActivities = activities.sort(
-            (a1, a2) => a2.pushedBy.eventDate - a1.pushedBy.eventDate,
+          const alreadyExistingActivity =
+            activities[alreadyExistingActivityIndex];
+
+          const { transitionState } = alreadyExistingActivity;
+
+          activities[alreadyExistingActivityIndex] = createActivityFromEvent(
+            event,
+            transitionState,
           );
 
-          activities.push(newActivity);
+          break;
+        }
 
-          if (recentActivities.length > 0 && transitionState === "enter-done") {
-            for (let i = 0; i < recentActivities.length; i += 1) {
-              recentActivities[i].metadata.poppedBy = event;
-              recentActivities[i].transitionState = "exit-done";
+        const isTransitionDone = now - event.eventDate >= transitionDuration;
+        const transitionState: ActivityTransitionState =
+          event.skipEnterActiveState || isTransitionDone
+            ? "enter-done"
+            : "enter-active";
 
-              if (recentActivities[i].pushedBy.name === "Pushed") break;
-            }
+        const recentActivities = activities.sort(
+          (a1, a2) => a2.pushedBy.eventDate - a1.pushedBy.eventDate,
+        );
+
+        if (transitionState === "enter-done") {
+          for (let i = 0; i < recentActivities.length; i += 1) {
+            recentActivities[i].metadata.poppedBy = event;
+            recentActivities[i].transitionState = "exit-done";
+
+            if (recentActivities[i].pushedBy.name === "Pushed") break;
           }
         }
+
+        activities.push(createActivityFromEvent(event, transitionState));
 
         break;
       }
