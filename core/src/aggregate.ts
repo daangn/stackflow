@@ -1,10 +1,5 @@
 import { createActivityFromEvent } from "./activity-utils/createActivityFromEvent";
-import type {
-  DomainEvent,
-  PoppedEvent,
-  PushedEvent,
-  ReplacedEvent,
-} from "./event-types";
+import type { DomainEvent, PoppedEvent, ReplacedEvent } from "./event-types";
 import { filterEvents, validateEvents } from "./event-utils";
 import type { Activity, ActivityTransitionState, Stack } from "./Stack";
 import { compareBy, findIndices, last, uniqBy } from "./utils";
