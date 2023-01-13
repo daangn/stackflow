@@ -18,6 +18,7 @@ export function useStyleEffect({
   styleName,
   refs,
   effect,
+  effectDeps,
 }: {
   styleName: string;
   refs: Array<React.RefObject<any>>;
@@ -25,6 +26,7 @@ export function useStyleEffect({
     activityTransitionState: ActivityTransitionState;
     refs: Array<React.RefObject<HTMLElement>>;
   }) => (() => void) | void;
+  effectDeps?: any[];
 }) {
   const activity = useNullableActivity();
 
@@ -79,5 +81,5 @@ export function useStyleEffect({
     return () => {
       cleanup?.();
     };
-  }, [activity?.transitionState]);
+  }, [activity?.transitionState, ...(effectDeps ?? [])]);
 }
