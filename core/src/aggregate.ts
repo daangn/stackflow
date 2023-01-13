@@ -1,5 +1,4 @@
-import { createActivityFromEvent } from "activity-utils/createActivityFromEvent";
-
+import { createActivityFromEvent } from "./activity-utils/createActivityFromEvent";
 import type {
   DomainEvent,
   PoppedEvent,
