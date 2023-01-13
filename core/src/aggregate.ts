@@ -4,6 +4,14 @@ import { filterEvents, validateEvents } from "./event-utils";
 import type { Activity, ActivityTransitionState, Stack } from "./Stack";
 import { compareBy, findIndices, last, uniqBy } from "./utils";
 
+type ActivityMetadata = {
+  poppedBy: PoppedEvent | ReplacedEvent | null;
+};
+
+type ActivityWithMetadata = Activity & {
+  metadata: ActivityMetadata;
+};
+
 export function aggregate(events: DomainEvent[], now: number): Stack {
   const sortedEvents = uniqBy(
     [...events].sort((a, b) => compareBy(a, b, (e) => e.id)),
@@ -16,15 +24,7 @@ export function aggregate(events: DomainEvent[], now: number): Stack {
   const activityRegisteredEvents = filterEvents(events, "ActivityRegistered");
   const { transitionDuration } = initEvent;
 
-  type ActivityMetadata = {
-    poppedBy: PoppedEvent | ReplacedEvent | null;
-  };
-
-  const activities: Array<
-    Activity & {
-      metadata: ActivityMetadata;
-    }
-  > = [];
+  const activities: ActivityWithMetadata[] = [];
 
   sortedEvents.forEach((event) => {
     switch (event.name) {
