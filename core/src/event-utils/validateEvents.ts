@@ -7,20 +7,20 @@ export function validateEvents(events: DomainEvent[]) {
   }
 
   const initEvents = filterEvents(events, "Initialized");
-  const activityRegisteredEvents = filterEvents(events, "ActivityRegistered");
-  const pushedEvents = filterEvents(events, "Pushed");
 
   if (initEvents.length > 1) {
     throw new Error("InitializedEvent can only exist once");
   }
 
-  const registeredActivityNames = activityRegisteredEvents.map(
-    (e) => e.activityName,
+  const activityRegisteredEvents = filterEvents(events, "ActivityRegistered");
+
+  const registeredActivityNames = new Set(
+    activityRegisteredEvents.map((e) => e.activityName),
   );
 
-  pushedEvents.forEach((e) => {
-    if (!registeredActivityNames.includes(e.activityName)) {
-      throw new Error("the corresponding activity does not exist");
-    }
-  });
+  const pushedEvents = filterEvents(events, "Pushed");
+
+  if (pushedEvents.some((e) => !registeredActivityNames.has(e.activityName))) {
+    throw new Error("the corresponding activity does not exist");
+  }
 }
