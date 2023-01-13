@@ -86,7 +86,7 @@ export function aggregate(events: DomainEvent[], now: number): Stack {
       }
       case "Popped": {
         const targetActivity = activities
-          .filter((_, i) => i > 0)
+          .slice(1)
           .filter((activity) => activity.metadata.poppedBy === null)
           .sort((a1, a2) => a2.pushedBy.eventDate - a1.pushedBy.eventDate)[0];
 
