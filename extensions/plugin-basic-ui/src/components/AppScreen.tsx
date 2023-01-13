@@ -68,6 +68,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
     edgeRef,
     paperRef,
     hasEffect: true,
+    preventSwipeBack,
     onSwiped() {
       pop();
     },
