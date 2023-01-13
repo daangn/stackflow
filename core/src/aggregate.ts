@@ -1,3 +1,5 @@
+import { createActivityFromEvent } from "activity-utils/createActivityFromEvent";
+
 import type {
   DomainEvent,
   PoppedEvent,
@@ -29,32 +31,6 @@ export function aggregate(events: DomainEvent[], now: number): Stack {
       metadata: ActivityMetadata;
     }
   > = [];
-
-  const createActivityFromEvent = (
-    event: PushedEvent | ReplacedEvent,
-    transitionState: ActivityTransitionState,
-  ) => ({
-    id: event.activityId,
-    name: event.activityName,
-    transitionState,
-    params: event.activityParams,
-    context: event.activityContext,
-    steps: [
-      {
-        id: event.activityId,
-        params: event.activityParams,
-        pushedBy: event,
-      },
-    ],
-    pushedBy: event,
-    metadata: {
-      poppedBy: null,
-    },
-    isTop: false,
-    isActive: false,
-    isRoot: false,
-    zIndex: -1,
-  });
 
   sortedEvents.forEach((event) => {
     switch (event.name) {
