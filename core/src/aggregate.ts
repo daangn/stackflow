@@ -27,9 +27,10 @@ export function aggregate(events: DomainEvent[], now: number): Stack {
   const activities: ActivityWithMetadata[] = [];
 
   sortedEvents.forEach((event) => {
+    const isTransitionDone = now - event.eventDate >= transitionDuration;
+
     switch (event.name) {
       case "Pushed": {
-        const isTransitionDone = now - event.eventDate >= transitionDuration;
         const transitionState: ActivityTransitionState =
           event.skipEnterActiveState || isTransitionDone
             ? "enter-done"
@@ -61,7 +62,6 @@ export function aggregate(events: DomainEvent[], now: number): Stack {
           break;
         }
 
-        const isTransitionDone = now - event.eventDate >= transitionDuration;
         const transitionState: ActivityTransitionState =
           event.skipEnterActiveState || isTransitionDone
             ? "enter-done"
@@ -90,7 +90,6 @@ export function aggregate(events: DomainEvent[], now: number): Stack {
           .filter((activity) => activity.metadata.poppedBy === null)
           .sort((a1, a2) => a2.pushedBy.eventDate - a1.pushedBy.eventDate)[0];
 
-        const isTransitionDone = now - event.eventDate >= transitionDuration;
         const transitionState: ActivityTransitionState =
           event.skipExitActiveState || isTransitionDone
             ? "exit-done"
