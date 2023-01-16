@@ -47,7 +47,7 @@ export function aggregate(events: DomainEvent[], now: number): Stack {
           ),
         );
 
-        if (typeof alreadyExistingActivityIndex === "number") {
+        if (alreadyExistingActivityIndex !== undefined) {
           const alreadyExistingActivity =
             activities[alreadyExistingActivityIndex];
 
