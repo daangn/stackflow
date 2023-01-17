@@ -68,6 +68,7 @@ export const paper = style([
     selectors: {
       [`${enterActive} &, ${enterDone} &`]: {
         transform: "translate3d(0, 0, 0)",
+        transition: "transform 300ms cubic-bezier(0.4, 0, 0.2, 1)",
         opacity: 1,
       },
       [`${exitActive} &, ${exitDone} &`]: {
