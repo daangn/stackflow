@@ -39,14 +39,14 @@ export function parseState(state: unknown): State | null {
 function serializeStep(step: ActivityStep): ActivityStep {
   return {
     ...step,
-    pushedBy:
-      "activityContext" in step.pushedBy
+    enteredBy:
+      "activityContext" in step.enteredBy
         ? {
-            ...step.pushedBy,
+            ...step.enteredBy,
             activityContext: undefined,
           }
         : {
-            ...step.pushedBy,
+            ...step.enteredBy,
           },
   };
 }
@@ -55,8 +55,8 @@ function serializeActivity(activity: Activity): Activity {
   return {
     ...activity,
     context: undefined,
-    pushedBy: {
-      ...activity.pushedBy,
+    enteredBy: {
+      ...activity.enteredBy,
       activityContext: undefined,
     },
     steps: activity.steps.map(serializeStep),

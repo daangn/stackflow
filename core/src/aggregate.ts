@@ -68,7 +68,7 @@ export function aggregate(events: DomainEvent[], now: number): Stack {
             : "enter-active";
 
         const recentActivities = activities.sort(
-          (a1, a2) => a2.pushedBy.eventDate - a1.pushedBy.eventDate,
+          (a1, a2) => a2.enteredBy.eventDate - a1.enteredBy.eventDate,
         );
 
         if (transitionState === "enter-done") {
@@ -76,7 +76,7 @@ export function aggregate(events: DomainEvent[], now: number): Stack {
             recentActivities[i].metadata.poppedBy = event;
             recentActivities[i].transitionState = "exit-done";
 
-            if (recentActivities[i].pushedBy.name === "Pushed") break;
+            if (recentActivities[i].enteredBy.name === "Pushed") break;
           }
         }
 
@@ -88,7 +88,7 @@ export function aggregate(events: DomainEvent[], now: number): Stack {
         const targetActivity = activities
           .slice(1)
           .filter((activity) => activity.metadata.poppedBy === null)
-          .sort((a1, a2) => a2.pushedBy.eventDate - a1.pushedBy.eventDate)[0];
+          .sort((a1, a2) => a2.enteredBy.eventDate - a1.enteredBy.eventDate)[0];
 
         const transitionState: ActivityTransitionState =
           event.skipExitActiveState || isTransitionDone
@@ -110,13 +110,13 @@ export function aggregate(events: DomainEvent[], now: number): Stack {
       case "StepPushed": {
         const targetActivity = activities
           .filter((activity) => activity.metadata.poppedBy === null)
-          .sort((a1, a2) => a2.pushedBy.eventDate - a1.pushedBy.eventDate)[0];
+          .sort((a1, a2) => a2.enteredBy.eventDate - a1.enteredBy.eventDate)[0];
 
         if (targetActivity) {
           const newRoute = {
             id: event.stepId,
             params: event.stepParams,
-            pushedBy: event,
+            enteredBy: event,
           };
 
           targetActivity.params = event.stepParams;
@@ -129,7 +129,7 @@ export function aggregate(events: DomainEvent[], now: number): Stack {
       case "StepReplaced": {
         const targetActivity = activities
           .filter((activity) => activity.metadata.poppedBy === null)
-          .sort((a1, a2) => a2.pushedBy.eventDate - a1.pushedBy.eventDate)[0];
+          .sort((a1, a2) => a2.enteredBy.eventDate - a1.enteredBy.eventDate)[0];
 
         if (targetActivity) {
           targetActivity.params = event.stepParams;
@@ -137,7 +137,7 @@ export function aggregate(events: DomainEvent[], now: number): Stack {
           const newRoute = {
             id: event.stepId,
             params: event.stepParams,
-            pushedBy: event,
+            enteredBy: event,
           };
 
           targetActivity.steps.pop();
@@ -148,7 +148,7 @@ export function aggregate(events: DomainEvent[], now: number): Stack {
       case "StepPopped": {
         const targetActivity = activities
           .filter((activity) => activity.metadata.poppedBy === null)
-          .sort((a1, a2) => a2.pushedBy.eventDate - a1.pushedBy.eventDate)[0];
+          .sort((a1, a2) => a2.enteredBy.eventDate - a1.enteredBy.eventDate)[0];
 
         if (targetActivity && targetActivity.steps.length > 1) {
           targetActivity.steps.pop();
@@ -206,14 +206,14 @@ export function aggregate(events: DomainEvent[], now: number): Stack {
           transitionState: activity.transitionState,
           params: activity.params,
           steps: activity.steps,
-          pushedBy: activity.pushedBy,
+          enteredBy: activity.enteredBy,
           isTop: lastVisibleActivity?.id === activity.id,
           isActive: lastEnteredActivity?.id === activity.id,
           isRoot:
             zIndex === 0 ||
             (zIndex === 1 &&
               activity.transitionState === "enter-active" &&
-              activity.pushedBy.name === "Replaced"),
+              activity.enteredBy.name === "Replaced"),
           zIndex,
           ...(activity.context
             ? {

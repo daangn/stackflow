@@ -14,10 +14,10 @@ export const createActivityFromEvent = (
     {
       id: event.activityId,
       params: event.activityParams,
-      pushedBy: event,
+      enteredBy: event,
     },
   ],
-  pushedBy: event,
+  enteredBy: event,
   metadata: {
     poppedBy: null,
   },

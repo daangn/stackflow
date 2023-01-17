@@ -15,7 +15,7 @@ export type ActivityStep = {
   params: {
     [key: string]: string | undefined;
   };
-  pushedBy: PushedEvent | ReplacedEvent | StepPushedEvent | StepReplacedEvent;
+  enteredBy: PushedEvent | ReplacedEvent | StepPushedEvent | StepReplacedEvent;
 };
 
 export type Activity = {
@@ -26,7 +26,7 @@ export type Activity = {
     [key: string]: string | undefined;
   };
   context?: {};
-  pushedBy: PushedEvent | ReplacedEvent;
+  enteredBy: PushedEvent | ReplacedEvent;
   steps: ActivityStep[];
   isTop: boolean;
   isActive: boolean;
