@@ -1,10 +1,10 @@
 import type { PushedEvent, ReplacedEvent } from "../event-types";
-import type { ActivityTransitionState } from "../Stack";
+import type { Activity, ActivityTransitionState } from "../Stack";
 
 export const createActivityFromEvent = (
   event: PushedEvent | ReplacedEvent,
   transitionState: ActivityTransitionState,
-) => ({
+): Activity => ({
   id: event.activityId,
   name: event.activityName,
   transitionState,
@@ -18,9 +18,6 @@ export const createActivityFromEvent = (
     },
   ],
   enteredBy: event,
-  metadata: {
-    poppedBy: null,
-  },
   isTop: false,
   isActive: false,
   isRoot: false,

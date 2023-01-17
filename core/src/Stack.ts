@@ -1,6 +1,8 @@
 import type {
+  PoppedEvent,
   PushedEvent,
   ReplacedEvent,
+  StepPoppedEvent,
   StepPushedEvent,
   StepReplacedEvent,
 } from "./event-types";
@@ -16,6 +18,7 @@ export type ActivityStep = {
     [key: string]: string | undefined;
   };
   enteredBy: PushedEvent | ReplacedEvent | StepPushedEvent | StepReplacedEvent;
+  exitedBy?: ReplacedEvent | PoppedEvent | StepReplacedEvent | StepPoppedEvent;
 };
 
 export type Activity = {
@@ -27,6 +30,7 @@ export type Activity = {
   };
   context?: {};
   enteredBy: PushedEvent | ReplacedEvent;
+  exitedBy?: ReplacedEvent | PoppedEvent;
   steps: ActivityStep[];
   isTop: boolean;
   isActive: boolean;

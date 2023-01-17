@@ -1,16 +1,8 @@
 import { createActivityFromEvent } from "./activity-utils/createActivityFromEvent";
-import type { DomainEvent, PoppedEvent, ReplacedEvent } from "./event-types";
+import type { DomainEvent } from "./event-types";
 import { filterEvents, validateEvents } from "./event-utils";
 import type { Activity, ActivityTransitionState, Stack } from "./Stack";
 import { compareBy, findIndices, last, uniqBy } from "./utils";
-
-type ActivityMetadata = {
-  poppedBy: PoppedEvent | ReplacedEvent | null;
-};
-
-type ActivityWithMetadata = Activity & {
-  metadata: ActivityMetadata;
-};
 
 export function aggregate(events: DomainEvent[], now: number): Stack {
   const sortedEvents = uniqBy(
@@ -24,7 +16,7 @@ export function aggregate(events: DomainEvent[], now: number): Stack {
   const activityRegisteredEvents = filterEvents(events, "ActivityRegistered");
   const { transitionDuration } = initEvent;
 
-  const activities: ActivityWithMetadata[] = [];
+  const activities: Activity[] = [];
 
   sortedEvents.forEach((event) => {
     const isTransitionDone = now - event.eventDate >= transitionDuration;
@@ -73,7 +65,7 @@ export function aggregate(events: DomainEvent[], now: number): Stack {
 
         if (transitionState === "enter-done") {
           for (let i = 0; i < recentActivities.length; i += 1) {
-            recentActivities[i].metadata.poppedBy = event;
+            recentActivities[i].exitedBy = event;
             recentActivities[i].transitionState = "exit-done";
 
             if (recentActivities[i].enteredBy.name === "Pushed") break;
@@ -87,7 +79,7 @@ export function aggregate(events: DomainEvent[], now: number): Stack {
       case "Popped": {
         const targetActivity = activities
           .slice(1)
-          .filter((activity) => activity.metadata.poppedBy === null)
+          .filter((activity) => activity.exitedBy === null)
           .sort((a1, a2) => a2.enteredBy.eventDate - a1.enteredBy.eventDate)[0];
 
         const transitionState: ActivityTransitionState =
@@ -96,7 +88,7 @@ export function aggregate(events: DomainEvent[], now: number): Stack {
             : "exit-active";
 
         if (targetActivity) {
-          targetActivity.metadata.poppedBy = event;
+          targetActivity.exitedBy = event;
           targetActivity.transitionState = transitionState;
 
           if (transitionState === "exit-done") {
@@ -109,7 +101,7 @@ export function aggregate(events: DomainEvent[], now: number): Stack {
       }
       case "StepPushed": {
         const targetActivity = activities
-          .filter((activity) => activity.metadata.poppedBy === null)
+          .filter((activity) => activity.exitedBy === null)
           .sort((a1, a2) => a2.enteredBy.eventDate - a1.enteredBy.eventDate)[0];
 
         if (targetActivity) {
@@ -128,7 +120,7 @@ export function aggregate(events: DomainEvent[], now: number): Stack {
       }
       case "StepReplaced": {
         const targetActivity = activities
-          .filter((activity) => activity.metadata.poppedBy === null)
+          .filter((activity) => activity.exitedBy === null)
           .sort((a1, a2) => a2.enteredBy.eventDate - a1.enteredBy.eventDate)[0];
 
         if (targetActivity) {
@@ -147,7 +139,7 @@ export function aggregate(events: DomainEvent[], now: number): Stack {
       }
       case "StepPopped": {
         const targetActivity = activities
-          .filter((activity) => activity.metadata.poppedBy === null)
+          .filter((activity) => activity.exitedBy === null)
           .sort((a1, a2) => a2.enteredBy.eventDate - a1.enteredBy.eventDate)[0];
 
         if (targetActivity && targetActivity.steps.length > 1) {
