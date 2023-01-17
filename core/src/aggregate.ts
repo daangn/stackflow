@@ -79,7 +79,7 @@ export function aggregate(events: DomainEvent[], now: number): Stack {
       case "Popped": {
         const targetActivity = activities
           .slice(1)
-          .filter((activity) => activity.exitedBy === null)
+          .filter((activity) => !activity.exitedBy)
           .sort((a1, a2) => a2.enteredBy.eventDate - a1.enteredBy.eventDate)[0];
 
         const transitionState: ActivityTransitionState =
@@ -101,7 +101,7 @@ export function aggregate(events: DomainEvent[], now: number): Stack {
       }
       case "StepPushed": {
         const targetActivity = activities
-          .filter((activity) => activity.exitedBy === null)
+          .filter((activity) => !activity.exitedBy)
           .sort((a1, a2) => a2.enteredBy.eventDate - a1.enteredBy.eventDate)[0];
 
         if (targetActivity) {
@@ -120,7 +120,7 @@ export function aggregate(events: DomainEvent[], now: number): Stack {
       }
       case "StepReplaced": {
         const targetActivity = activities
-          .filter((activity) => activity.exitedBy === null)
+          .filter((activity) => !activity.exitedBy)
           .sort((a1, a2) => a2.enteredBy.eventDate - a1.enteredBy.eventDate)[0];
 
         if (targetActivity) {
@@ -139,7 +139,7 @@ export function aggregate(events: DomainEvent[], now: number): Stack {
       }
       case "StepPopped": {
         const targetActivity = activities
-          .filter((activity) => activity.exitedBy === null)
+          .filter((activity) => !activity.exitedBy)
           .sort((a1, a2) => a2.enteredBy.eventDate - a1.enteredBy.eventDate)[0];
 
         if (targetActivity && targetActivity.steps.length > 1) {
