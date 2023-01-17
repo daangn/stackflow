@@ -5,11 +5,10 @@ import type {
   StepReplacedEvent,
 } from "./event-types";
 
+export type ActivityTransition = "enter" | "exit";
+export type ActivityTransitionProgress = "active" | "done";
 export type ActivityTransitionState =
-  | "enter-active"
-  | "enter-done"
-  | "exit-active"
-  | "exit-done";
+  `${ActivityTransition}-${ActivityTransitionProgress}`;
 
 export type ActivityStep = {
   id: string;
