@@ -33,22 +33,33 @@ export const appBar = recipe({
       zIndex: vars.zIndexes.appBar,
       willChange: "transform, opacity",
       selectors: {
-        [`${cupertino} &, ${rootCupertino} &`]: {
+        [`
+          ${cupertino} &,
+          ${rootCupertino} &
+        `]: {
           position: "absolute",
         },
-        [`${cupertino} ${exitActive} &, ${rootCupertino} ${exitActive} &`]: {
+        [`
+          ${cupertino} ${exitActive} &,
+          ${rootCupertino} ${exitActive} &
+        `]: {
           transform: "translate3d(100%, 0, 0)",
+          transition: "0s",
         },
-        [`${android} &, ${rootAndroid} &`]: {
+        [`
+          ${android} &,
+          ${rootAndroid} &
+        `]: {
           opacity: 0,
           transform: "translate3d(0, 10rem, 0)",
           transition: `transform ${vars.transitionDuration}, opacity ${vars.transitionDuration}`,
         },
-        [`${android} ${enterActive} &, ${rootAndroid} ${enterActive} &`]: {
-          opacity: 1,
-          transform: "translate3d(0, 0, 0)",
-        },
-        [`${android} ${enterDone} &, ${rootAndroid} ${enterDone} &`]: {
+        [`
+          ${android} ${enterActive} &,
+          ${rootAndroid} ${enterActive} &,
+          ${android} ${enterDone} &,
+          ${rootAndroid} ${enterDone} &
+        `]: {
           opacity: 1,
           transform: "translate3d(0, 0, 0)",
         },
@@ -59,6 +70,34 @@ export const appBar = recipe({
     border: {
       true: {
         boxShadow: `inset 0px calc(-1 * ${globalVars.appBar.borderSize}) 0 ${globalVars.appBar.borderColor}`,
+      },
+    },
+    presentTop: {
+      true: {
+        selectors: {
+          [`
+            ${cupertino} &,
+            ${rootCupertino} &
+          `]: {
+            transform: "translate3d(0, 100vh, 0)",
+            transition: `transform ${vars.transitionDuration}, opacity ${vars.transitionDuration}`,
+          },
+          [`
+            ${cupertino} ${enterActive} &,
+            ${rootCupertino} ${enterActive} &,
+            ${cupertino} ${enterDone} &,
+            ${rootCupertino} ${enterDone} &
+          `]: {
+            transform: "translate3d(0, 0, 0)",
+          },
+          [`
+            ${cupertino} ${exitActive} &,
+            ${rootCupertino} ${exitActive} &
+          `]: {
+            transform: "translate3d(0, 100vh, 0)",
+            transition: `transform ${vars.transitionDuration}, opacity ${vars.transitionDuration}`,
+          },
+        },
       },
     },
   },
@@ -116,7 +155,10 @@ export const centerMain = recipe({
     color: globalVars.appBar.textColor,
     transition: `height ${globalVars.appBar.heightTransitionDuration}`,
     selectors: {
-      [`${android} &, ${rootAndroid} &`]: {
+      [`
+        ${android} &,
+        ${rootAndroid} &
+      `]: {
         width: "100%",
         justifyContent: "flex-start",
         paddingLeft: "1rem",
@@ -125,7 +167,10 @@ export const centerMain = recipe({
         fontWeight: "bold",
         boxSizing: "border-box",
       },
-      [`${cupertino} &, ${rootCupertino} &`]: {
+      [`
+        ${cupertino} &,
+        ${rootCupertino} &
+      `]: {
         position: "absolute",
         display: "flex",
         alignItems: "center",
@@ -145,7 +190,10 @@ export const centerMain = recipe({
     hasLeft: {
       true: {
         selectors: {
-          [`${android} &, ${rootAndroid} &`]: {
+          [`
+            ${android} &,
+            ${rootAndroid} &
+          `]: {
             paddingLeft: "0.375rem",
           },
         },
@@ -167,7 +215,10 @@ export const centerMainEdge = style([
     display: "none",
     width: vars.appBar.center.mainWidth,
     selectors: {
-      [`${cupertino} &, ${rootCupertino} &`]: {
+      [`
+        ${cupertino} &,
+        ${rootCupertino} &
+      `]: {
         display: "block",
       },
     },
@@ -197,7 +248,10 @@ export const right = style([
       display: "none",
     },
     selectors: {
-      [`${android} &, ${rootAndroid} &`]: {
+      [`
+        ${android} &,
+        ${rootAndroid} &
+      `]: {
         padding: "0 0.5rem 0 0",
       },
     },

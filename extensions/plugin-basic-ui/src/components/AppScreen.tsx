@@ -44,6 +44,8 @@ const AppScreen: React.FC<AppScreenProps> = ({
 }) => {
   const globalOptions = useGlobalOptions();
   const activity = useNullableActivity();
+  const presentTop = activity?.params?.present === "top";
+
   const { pop } = useActions();
 
   const appScreenRef = useRef<HTMLDivElement>(null);
@@ -51,6 +53,8 @@ const AppScreen: React.FC<AppScreenProps> = ({
   const paperRef = useRef<HTMLDivElement>(null);
   const edgeRef = useRef<HTMLDivElement>(null);
   const appBarRef = useRef<HTMLDivElement>(null);
+
+  const swipeBackPrevented = preventSwipeBack || presentTop;
 
   useStyleEffectHide({
     refs: [appScreenRef],
@@ -60,7 +64,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
     theme: globalOptions.theme,
     refs:
       globalOptions.theme === "cupertino" ? [paperRef] : [paperRef, appBarRef],
-    hasEffect: true,
+    hasEffect: !presentTop,
   });
   useStyleEffectSwipeBack({
     theme: globalOptions.theme,
@@ -68,7 +72,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
     edgeRef,
     paperRef,
     hasEffect: true,
-    preventSwipeBack,
+    prevented: swipeBackPrevented,
     onSwiped() {
       pop();
     },
@@ -146,6 +150,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
           key={activity?.id}
           className={css.paper({
             hasAppBar,
+            presentTop,
           })}
           ref={paperRef}
         >
@@ -153,7 +158,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
         </div>
         {!activity?.isRoot &&
           globalOptions.theme === "cupertino" &&
-          !preventSwipeBack && (
+          !swipeBackPrevented && (
             <div className={css.edge({ hasAppBar })} ref={edgeRef} />
           )}
       </div>

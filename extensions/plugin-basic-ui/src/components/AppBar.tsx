@@ -70,6 +70,7 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
   ) => {
     const actions = useActions();
     const activity = useNullableActivity();
+    const presentTop = activity?.params?.present === "top";
 
     const globalOptions = useGlobalOptions();
     const globalCloseButton = globalOptions.appBar?.closeButton;
@@ -151,6 +152,10 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
               globalBackButton.renderIcon
             ) {
               return globalBackButton.renderIcon();
+            }
+
+            if (presentTop) {
+              return <IconClose />;
             }
 
             return <IconBack />;
@@ -236,6 +241,7 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
         ref={ref}
         className={css.appBar({
           border,
+          presentTop,
         })}
         style={assignInlineVars(
           compactMap({
