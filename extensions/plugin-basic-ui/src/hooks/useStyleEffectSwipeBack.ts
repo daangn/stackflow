@@ -10,7 +10,7 @@ export function useStyleEffectSwipeBack({
   edgeRef,
   paperRef,
   hasEffect,
-  preventSwipeBack,
+  prevented,
   onSwiped,
 }: {
   theme: "android" | "cupertino";
@@ -18,7 +18,7 @@ export function useStyleEffectSwipeBack({
   edgeRef: React.RefObject<HTMLDivElement>;
   paperRef: React.RefObject<HTMLDivElement>;
   hasEffect?: boolean;
-  preventSwipeBack?: boolean;
+  prevented?: boolean;
   onSwiped?: () => void;
 }) {
   useStyleEffect({
@@ -238,6 +238,6 @@ export function useStyleEffectSwipeBack({
           };
         }
       : undefined,
-    effectDeps: [preventSwipeBack],
+    effectDeps: [prevented],
   });
 }

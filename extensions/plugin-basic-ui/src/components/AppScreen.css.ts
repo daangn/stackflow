@@ -65,20 +65,23 @@ export const dim = style([
     zIndex: vars.zIndexes.dim,
     willChange: "opacity",
     selectors: {
-      [`${android} &, ${rootAndroid} &`]: {
+      [`
+        ${android} &,
+        ${rootAndroid} &
+      `]: {
         height: "10rem",
         background: `linear-gradient(${globalVars.dimBackgroundColor}, rgba(0, 0, 0, 0))`,
       },
-      [`${enterActive} &`]: {
+      [`
+        ${enterActive} &,
+        ${enterDone} &
+      `]: {
         opacity: 1,
       },
-      [`${enterDone} &`]: {
-        opacity: 1,
-      },
-      [`${exitActive} &`]: {
-        opacity: 0,
-      },
-      [`${exitDone} &`]: {
+      [`
+        ${exitActive} &,
+        ${exitDone} &
+      `]: {
         opacity: 0,
       },
     },
@@ -99,24 +102,33 @@ export const paper = recipe({
       zIndex: vars.zIndexes.paper,
       willChange: "transform",
       selectors: {
-        [`${cupertino} &, ${rootCupertino} &`]: {
+        [`
+          ${cupertino} &,
+          ${rootCupertino} &
+        `]: {
           transform: "translate3d(100%, 0, 0)",
         },
-        [`${cupertino} ${enterActive} &, ${rootCupertino} ${enterActive} &`]: {
+        [`
+          ${cupertino} ${enterActive} &,
+          ${rootCupertino} ${enterActive} &,
+          ${cupertino} ${enterDone} &,
+          ${rootCupertino} ${enterDone} &
+        `]: {
           transform: "translate3d(0, 0, 0)",
         },
-        [`${cupertino} ${enterDone} &, ${rootCupertino} ${enterDone} &`]: {
-          transform: "translate3d(0, 0, 0)",
-        },
-        [`${android} &, ${rootAndroid} &`]: {
+        [`
+          ${android} &,
+          ${rootAndroid} &
+        `]: {
           opacity: 0,
           transform: "translate3d(0, 10rem, 0)",
         },
-        [`${android} ${enterActive} &, ${rootAndroid} ${enterActive} &`]: {
-          opacity: 1,
-          transform: "translate3d(0, 0, 0)",
-        },
-        [`${android} ${enterDone} &, ${rootAndroid} ${enterDone} &`]: {
+        [`
+          ${android} ${enterActive} &,
+          ${rootAndroid} ${enterActive} &,
+          ${android} ${enterDone} &,
+          ${rootAndroid} ${enterDone} &
+        `]: {
           opacity: 1,
           transform: "translate3d(0, 0, 0)",
         },
@@ -135,6 +147,18 @@ export const paper = recipe({
           ],
         },
       ],
+    },
+    presentTop: {
+      true: {
+        selectors: {
+          [`
+            ${cupertino} &,
+            ${rootCupertino} &
+          `]: {
+            transform: "translate3d(0, 100%, 0)",
+          },
+        },
+      },
     },
   },
 });
