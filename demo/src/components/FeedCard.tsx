@@ -26,7 +26,6 @@ const FeedCard: React.FC<FeedCardProps> = ({
     push("Article", {
       articleId: String(articleId),
       title,
-      present: "top",
     });
   };
 

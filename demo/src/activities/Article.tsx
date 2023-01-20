@@ -64,7 +64,6 @@ const recommenderCard = [
 export interface ArticleParams {
   articleId: string;
   title: string;
-  present?: "top";
 }
 
 const Article: ActivityComponentType<ArticleParams> = () => {
