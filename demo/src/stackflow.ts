@@ -39,6 +39,9 @@ export const { Stack, activities } = stackflow({
         backButton: {
           ariaLabel: "뒤로 가기",
         },
+        closeButton: {
+          ariaLabel: "닫기",
+        },
       },
     }),
     historySyncPlugin({

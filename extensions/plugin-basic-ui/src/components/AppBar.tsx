@@ -184,7 +184,20 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
     const renderCloseButton = () => {
       const isRoot = !activity || activity.isRoot;
 
-      if ((!closeButton && !globalOptions.appBar?.closeButton) || !isRoot) {
+      const showCloseButton = (closeButton: AppBarProps["closeButton"]) =>
+        (closeButton && "render" in closeButton && closeButton.render) ||
+        (closeButton &&
+          "renderIcon" in closeButton &&
+          closeButton.renderIcon) ||
+        (closeButton && "onClick" in closeButton && closeButton.onClick);
+
+      if (
+        !(
+          showCloseButton(closeButton) ||
+          showCloseButton(globalOptions.appBar?.closeButton)
+        ) ||
+        !isRoot
+      ) {
         return null;
       }
       if (closeButton && "render" in closeButton && closeButton.render) {
