@@ -44,8 +44,7 @@ export default function findTargetActivityIndexes(
       break;
     }
     case "StepPushed":
-    case "StepReplaced":
-    case "StepPopped": {
+    case "StepReplaced": {
       const latestActivity = activities
         .filter((activity) => !activity.exitedBy)
         .sort((a1, a2) => a2.enteredBy.eventDate - a1.enteredBy.eventDate)[0];
@@ -53,6 +52,17 @@ export default function findTargetActivityIndexes(
       if (latestActivity) {
         targetActivities.push(activities.indexOf(latestActivity));
       }
+      break;
+    }
+    case "StepPopped": {
+      const latestActivity = activities
+        .filter((activity) => !activity.exitedBy)
+        .sort((a1, a2) => a2.enteredBy.eventDate - a1.enteredBy.eventDate)[0];
+
+      if (latestActivity && latestActivity.steps.length > 1) {
+        targetActivities.push(activities.indexOf(latestActivity));
+      }
+
       break;
     }
     default:
