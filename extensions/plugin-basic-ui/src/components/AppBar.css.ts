@@ -72,7 +72,7 @@ export const appBar = recipe({
         boxShadow: `inset 0px calc(-1 * ${globalVars.appBar.borderSize}) 0 ${globalVars.appBar.borderColor}`,
       },
     },
-    presentTop: {
+    presentModalFullScreen: {
       true: {
         selectors: {
           [`

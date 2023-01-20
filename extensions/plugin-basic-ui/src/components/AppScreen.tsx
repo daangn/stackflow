@@ -33,7 +33,7 @@ export type AppScreenProps = Partial<
 > & {
   appBar?: Omit<PropOf<typeof AppBar>, "theme" | "ref" | "key">;
   preventSwipeBack?: boolean;
-  present?: "top";
+  modalPresentationStyle?: "fullScreen";
   children: React.ReactNode;
 };
 const AppScreen: React.FC<AppScreenProps> = ({
@@ -41,7 +41,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
   dimBackgroundColor,
   appBar,
   preventSwipeBack,
-  present,
+  modalPresentationStyle,
   children,
 }) => {
   const globalOptions = useGlobalOptions();
@@ -55,8 +55,8 @@ const AppScreen: React.FC<AppScreenProps> = ({
   const edgeRef = useRef<HTMLDivElement>(null);
   const appBarRef = useRef<HTMLDivElement>(null);
 
-  const presentTop = present === "top";
-  const swipeBackPrevented = preventSwipeBack || presentTop;
+  const presentModalFullScreen = modalPresentationStyle === "fullScreen";
+  const swipeBackPrevented = preventSwipeBack || presentModalFullScreen;
 
   useStyleEffectHide({
     refs: [appScreenRef],
@@ -66,7 +66,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
     theme: globalOptions.theme,
     refs:
       globalOptions.theme === "cupertino" ? [paperRef] : [paperRef, appBarRef],
-    hasEffect: !presentTop,
+    hasEffect: !presentModalFullScreen,
   });
   useStyleEffectSwipeBack({
     theme: globalOptions.theme,
@@ -149,7 +149,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
           <AppBar
             {...appBar}
             ref={appBarRef}
-            present={present}
+            modalPresentationStyle={modalPresentationStyle}
             onTopClick={onAppBarTopClick}
           />
         )}
@@ -157,7 +157,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
           key={activity?.id}
           className={css.paper({
             hasAppBar,
-            presentTop,
+            presentModalFullScreen,
           })}
           ref={paperRef}
         >

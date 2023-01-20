@@ -148,7 +148,7 @@ export const paper = recipe({
         },
       ],
     },
-    presentTop: {
+    presentModalFullScreen: {
       true: {
         selectors: {
           [`

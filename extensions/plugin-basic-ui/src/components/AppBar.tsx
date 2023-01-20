@@ -46,7 +46,7 @@ type AppBarProps = Partial<
       };
   closeButtonLocation?: "left" | "right";
   border?: boolean;
-  present?: "top";
+  modalPresentationStyle?: "fullScreen";
   onTopClick?: (e: React.MouseEvent) => void;
 };
 const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
@@ -59,7 +59,7 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
       closeButton,
       closeButtonLocation = "left",
       border = true,
-      present,
+      modalPresentationStyle,
       iconColor,
       textColor,
       borderColor,
@@ -85,7 +85,7 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
       enable: globalOptions.theme === "cupertino",
     });
 
-    const presentTop = present === "top";
+    const presentModalFullScreen = modalPresentationStyle === "fullScreen";
 
     const onBackClick = (e: React.MouseEvent<HTMLButtonElement>) => {
       if (backButton && "onClick" in backButton && backButton.onClick) {
@@ -157,7 +157,7 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
               return globalBackButton.renderIcon();
             }
 
-            if (presentTop) {
+            if (presentModalFullScreen) {
               return <IconClose />;
             }
 
@@ -244,7 +244,7 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
         ref={ref}
         className={css.appBar({
           border,
-          presentTop,
+          presentModalFullScreen,
         })}
         style={assignInlineVars(
           compactMap({
