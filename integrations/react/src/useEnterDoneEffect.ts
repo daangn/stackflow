@@ -2,7 +2,9 @@ import { useEffect } from "react";
 
 import { useActivity } from "./activity/useActivity";
 
-const useEnterDoneEffect = (
+const noop = () => {};
+
+export const useEnterDoneEffect = (
   effect: React.EffectCallback,
   deps: React.DependencyList = [],
 ) => {
@@ -12,7 +14,7 @@ const useEnterDoneEffect = (
     if (isTop && transitionState === "enter-done") {
       return effect();
     }
+
+    return noop;
   }, [isTop, transitionState, ...deps]);
 };
-
-export default useEnterDoneEffect;
