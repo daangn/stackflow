@@ -1,5 +1,6 @@
 import type { DomainEvent } from "../event-types";
 import type { Activity } from "../Stack";
+import { findIndices, last } from "../utils";
 
 export default function findTargetActivityIndexes(
   activities: Activity[],
@@ -9,6 +10,14 @@ export default function findTargetActivityIndexes(
 
   switch (event.name) {
     case "Replaced": {
+      const alreadyExistingActivityIndex = last(
+        findIndices(activities, (activity) => activity.id === event.activityId),
+      );
+
+      if (alreadyExistingActivityIndex !== undefined) {
+        break;
+      }
+
       const cloned = activities.slice();
       cloned.sort((a1, a2) => a2.enteredBy.eventDate - a1.enteredBy.eventDate);
       for (let i = 0; i < cloned.length; i += 1) {
