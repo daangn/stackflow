@@ -33,6 +33,7 @@ export type AppScreenProps = Partial<
 > & {
   appBar?: Omit<PropOf<typeof AppBar>, "theme" | "ref" | "key">;
   preventSwipeBack?: boolean;
+  present?: "top";
   children: React.ReactNode;
 };
 const AppScreen: React.FC<AppScreenProps> = ({
@@ -40,11 +41,11 @@ const AppScreen: React.FC<AppScreenProps> = ({
   dimBackgroundColor,
   appBar,
   preventSwipeBack,
+  present,
   children,
 }) => {
   const globalOptions = useGlobalOptions();
   const activity = useNullableActivity();
-  const presentTop = activity?.params?.present === "top";
 
   const { pop } = useActions();
 
@@ -54,6 +55,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
   const edgeRef = useRef<HTMLDivElement>(null);
   const appBarRef = useRef<HTMLDivElement>(null);
 
+  const presentTop = present === "top";
   const swipeBackPrevented = preventSwipeBack || presentTop;
 
   useStyleEffectHide({
@@ -144,7 +146,12 @@ const AppScreen: React.FC<AppScreenProps> = ({
       >
         <div className={css.dim} ref={dimRef} />
         {appBar && (
-          <AppBar {...appBar} ref={appBarRef} onTopClick={onAppBarTopClick} />
+          <AppBar
+            {...appBar}
+            ref={appBarRef}
+            present={present}
+            onTopClick={onAppBarTopClick}
+          />
         )}
         <div
           key={activity?.id}

@@ -7,7 +7,7 @@ import { useGlobalOptions } from "../basicUIPlugin";
 import { useMaxWidth, useNullableActivity } from "../hooks";
 import type { GlobalVars } from "../theme.css";
 import { globalVars } from "../theme.css";
-import { compactMap, noop } from "../utils";
+import { compactMap } from "../utils";
 import * as css from "./AppBar.css";
 import * as appScreenCss from "./AppScreen.css";
 
@@ -46,6 +46,7 @@ type AppBarProps = Partial<
       };
   closeButtonLocation?: "left" | "right";
   border?: boolean;
+  present?: "top";
   onTopClick?: (e: React.MouseEvent) => void;
 };
 const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
@@ -58,6 +59,7 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
       closeButton,
       closeButtonLocation = "left",
       border = true,
+      present,
       iconColor,
       textColor,
       borderColor,
@@ -70,7 +72,6 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
   ) => {
     const actions = useActions();
     const activity = useNullableActivity();
-    const presentTop = activity?.params?.present === "top";
 
     const globalOptions = useGlobalOptions();
     const globalCloseButton = globalOptions.appBar?.closeButton;
@@ -83,6 +84,8 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
       innerRef: centerRef,
       enable: globalOptions.theme === "cupertino",
     });
+
+    const presentTop = present === "top";
 
     const onBackClick = (e: React.MouseEvent<HTMLButtonElement>) => {
       if (backButton && "onClick" in backButton && backButton.onClick) {
