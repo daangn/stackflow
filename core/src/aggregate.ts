@@ -1,8 +1,10 @@
-import { createActivityFromEvent } from "./activity-utils/createActivityFromEvent";
+import findTargetActivityIndexes from "./activity-utils/findTargetActivityIndexes";
+import { makeActivitiesReducers } from "./activity-utils/makeActivitiesReducers";
+import { makeActivityReducers } from "./activity-utils/makeActivityReducers";
 import type { DomainEvent } from "./event-types";
 import { filterEvents, validateEvents } from "./event-utils";
-import type { Activity, ActivityTransitionState, Stack } from "./Stack";
-import { compareBy, findIndices, last, uniqBy } from "./utils";
+import type { Activity, Stack } from "./Stack";
+import { compareBy, uniqBy } from "./utils";
 
 export function aggregate(events: DomainEvent[], now: number): Stack {
   const sortedEvents = uniqBy(
@@ -16,149 +18,31 @@ export function aggregate(events: DomainEvent[], now: number): Stack {
   const activityRegisteredEvents = filterEvents(events, "ActivityRegistered");
   const { transitionDuration } = initEvent;
 
-  const activities: Activity[] = [];
+  const activities = events.reduce(
+    (activities: Activity[], event: DomainEvent) => {
+      const isTransitionDone = now - event.eventDate >= transitionDuration;
 
-  sortedEvents.forEach((event) => {
-    const isTransitionDone = now - event.eventDate >= transitionDuration;
+      const targets = findTargetActivityIndexes(activities, event);
 
-    switch (event.name) {
-      case "Pushed": {
-        const transitionState: ActivityTransitionState =
-          event.skipEnterActiveState || isTransitionDone
-            ? "enter-done"
-            : "enter-active";
+      const activityReducer =
+        makeActivityReducers(isTransitionDone)[event.name];
 
-        activities.push(createActivityFromEvent(event, transitionState));
+      const activitiesReducer =
+        makeActivitiesReducers(isTransitionDone)[event.name];
 
-        break;
-      }
-      case "Replaced": {
-        const alreadyExistingActivityIndex = last(
-          findIndices(
-            activities,
-            (activity) => activity.id === event.activityId,
-          ),
+      const newActivities = activitiesReducer(activities, event);
+
+      targets.forEach((targetIdx) => {
+        newActivities[targetIdx] = activityReducer(
+          newActivities[targetIdx],
+          event,
         );
+      });
 
-        if (alreadyExistingActivityIndex !== undefined) {
-          const alreadyExistingActivity =
-            activities[alreadyExistingActivityIndex];
-
-          const { transitionState } = alreadyExistingActivity;
-
-          activities[alreadyExistingActivityIndex] = createActivityFromEvent(
-            event,
-            transitionState,
-          );
-
-          break;
-        }
-
-        const transitionState: ActivityTransitionState =
-          event.skipEnterActiveState || isTransitionDone
-            ? "enter-done"
-            : "enter-active";
-
-        const recentActivities = activities.sort(
-          (a1, a2) => a2.enteredBy.eventDate - a1.enteredBy.eventDate,
-        );
-
-        if (transitionState === "enter-done") {
-          for (let i = 0; i < recentActivities.length; i += 1) {
-            recentActivities[i].exitedBy = event;
-            recentActivities[i].transitionState = "exit-done";
-
-            if (recentActivities[i].enteredBy.name === "Pushed") break;
-          }
-        }
-
-        activities.push(createActivityFromEvent(event, transitionState));
-
-        break;
-      }
-      case "Popped": {
-        const targetActivity = activities
-          .slice(1)
-          .filter((activity) => !activity.exitedBy)
-          .sort((a1, a2) => a2.enteredBy.eventDate - a1.enteredBy.eventDate)[0];
-
-        const transitionState: ActivityTransitionState =
-          event.skipExitActiveState || isTransitionDone
-            ? "exit-done"
-            : "exit-active";
-
-        if (targetActivity) {
-          targetActivity.exitedBy = event;
-          targetActivity.transitionState = transitionState;
-
-          if (transitionState === "exit-done") {
-            targetActivity.params = targetActivity.steps[0].params;
-            targetActivity.steps = [targetActivity.steps[0]];
-          }
-        }
-
-        break;
-      }
-      case "StepPushed": {
-        const targetActivity = activities
-          .filter((activity) => !activity.exitedBy)
-          .sort((a1, a2) => a2.enteredBy.eventDate - a1.enteredBy.eventDate)[0];
-
-        if (targetActivity) {
-          const newRoute = {
-            id: event.stepId,
-            params: event.stepParams,
-            enteredBy: event,
-          };
-
-          targetActivity.params = event.stepParams;
-          targetActivity.steps = targetActivity.steps
-            ? [...targetActivity.steps, newRoute]
-            : [newRoute];
-        }
-        break;
-      }
-      case "StepReplaced": {
-        const targetActivity = activities
-          .filter((activity) => !activity.exitedBy)
-          .sort((a1, a2) => a2.enteredBy.eventDate - a1.enteredBy.eventDate)[0];
-
-        if (targetActivity) {
-          targetActivity.params = event.stepParams;
-
-          const newRoute = {
-            id: event.stepId,
-            params: event.stepParams,
-            enteredBy: event,
-          };
-
-          targetActivity.steps.pop();
-          targetActivity.steps = [...targetActivity.steps, newRoute];
-        }
-        break;
-      }
-      case "StepPopped": {
-        const targetActivity = activities
-          .filter((activity) => !activity.exitedBy)
-          .sort((a1, a2) => a2.enteredBy.eventDate - a1.enteredBy.eventDate)[0];
-
-        if (targetActivity && targetActivity.steps.length > 1) {
-          targetActivity.steps.pop();
-
-          const beforeActivityParams = last(targetActivity.steps)?.params;
-
-          if (beforeActivityParams) {
-            targetActivity.params = beforeActivityParams;
-          }
-        }
-
-        break;
-      }
-      default: {
-        break;
-      }
-    }
-  });
+      return newActivities;
+    },
+    [],
+  );
 
   const uniqActivities = uniqBy(activities, (activity) => activity.id);
 
