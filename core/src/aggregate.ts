@@ -22,7 +22,11 @@ export function aggregate(events: DomainEvent[], now: number): Stack {
     (activities: Activity[], event: DomainEvent) => {
       const isTransitionDone = now - event.eventDate >= transitionDuration;
 
-      const targets = findTargetActivityIndexes(activities, event);
+      const targets = findTargetActivityIndexes(
+        activities,
+        event,
+        isTransitionDone,
+      );
 
       const activityReducer =
         makeActivityReducers(isTransitionDone)[event.name];

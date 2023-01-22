@@ -1,10 +1,11 @@
 import type { DomainEvent } from "../event-types";
-import type { Activity } from "../Stack";
+import type { Activity, ActivityTransitionState } from "../Stack";
 import { findIndices, last } from "../utils";
 
 export default function findTargetActivityIndexes(
   activities: Activity[],
   event: DomainEvent,
+  isTransitionDone: boolean,
 ): number[] {
   const targetActivities: number[] = [];
 
@@ -22,12 +23,19 @@ export default function findTargetActivityIndexes(
         .slice()
         .sort((a1, a2) => a2.enteredBy.eventDate - a1.enteredBy.eventDate);
 
-      for (const activity of sorted) {
-        // push original index
-        targetActivities.push(activities.indexOf(activity));
+      const transitionState: ActivityTransitionState =
+        event.skipEnterActiveState || isTransitionDone
+          ? "enter-done"
+          : "enter-active";
 
-        if (activity.enteredBy.name === "Pushed") {
-          break;
+      if (transitionState === "enter-done") {
+        for (const activity of sorted) {
+          // push original index
+          targetActivities.push(activities.indexOf(activity));
+
+          if (activity.enteredBy.name === "Pushed") {
+            break;
+          }
         }
       }
       break;
