@@ -18,7 +18,7 @@ export function aggregate(events: DomainEvent[], now: number): Stack {
   const activityRegisteredEvents = filterEvents(events, "ActivityRegistered");
   const { transitionDuration } = initEvent;
 
-  const activities = events.reduce(
+  const activities = sortedEvents.reduce(
     (activities: Activity[], event: DomainEvent) => {
       const isTransitionDone = now - event.eventDate >= transitionDuration;
 
