@@ -4,6 +4,7 @@ import type { ActivityComponentType } from "./activity";
 import { makeActivityId } from "./activity";
 import type { BaseActivities } from "./BaseActivities";
 import { useCoreActions } from "./core";
+import { useTransition } from "./shims";
 
 function parseActionOptions(options?: { animate?: boolean }) {
   if (!options) {
@@ -65,9 +66,6 @@ export type UseActionsOutputType<T extends BaseActivities> = {
    */
   pop: (options?: { animate?: boolean }) => void;
 };
-
-const useTransition: () => [boolean, React.TransitionStartFunction] =
-  React.useTransition ?? (() => [false, (cb: () => void) => cb()]);
 
 export function useActions<
   T extends BaseActivities,
