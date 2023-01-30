@@ -30,6 +30,10 @@ export default function findTargetActivityIndexes(
 
       if (transitionState === "enter-done") {
         for (const activity of sorted) {
+          if (activity.exitedBy) {
+            break;
+          }
+
           // push original index
           targetActivities.push(activities.indexOf(activity));
 
