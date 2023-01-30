@@ -1,8 +1,7 @@
 import type { Activity, ActivityStep } from "@stackflow/core";
+import { isServer } from "@stackflow/react";
 
 const STATE_TAG = `${process.env.PACKAGE_NAME}@${process.env.PACKAGE_VERSION}`;
-
-const isServer = typeof window === "undefined";
 
 interface State {
   activity: Activity;
@@ -13,7 +12,7 @@ interface SerializedState extends State {
 }
 
 export function getCurrentState(): unknown {
-  if (isServer) {
+  if (isServer()) {
     return null;
   }
 
@@ -80,7 +79,7 @@ export function pushState({
   url: string;
   useHash?: boolean;
 }) {
-  if (isServer) {
+  if (isServer()) {
     return;
   }
   const nextUrl = useHash ? `${window.location.pathname}#${url}` : url;
@@ -96,7 +95,7 @@ export function replaceState({
   state: State;
   useHash?: boolean;
 }) {
-  if (isServer) {
+  if (isServer()) {
     return;
   }
   const nextUrl = useHash ? `${window.location.pathname}#${url}` : url;

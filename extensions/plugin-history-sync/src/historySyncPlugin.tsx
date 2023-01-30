@@ -1,5 +1,6 @@
 import { id, makeEvent } from "@stackflow/core";
 import type { StackflowReactPlugin } from "@stackflow/react";
+import { isServer } from "@stackflow/react";
 import React from "react";
 
 import {
@@ -15,8 +16,6 @@ import { RoutesProvider } from "./RoutesContext";
 
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
-
-const isServer = typeof window === "undefined";
 
 type HistorySyncPluginOptions<K extends string> = {
   routes: {
@@ -74,7 +73,7 @@ export function historySyncPlugin<
             return initialContext.req.path as string;
           }
 
-          if (isServer) {
+          if (isServer()) {
             return null;
           }
 
@@ -285,7 +284,7 @@ export function historySyncPlugin<
           }
         };
 
-        if (!isServer) {
+        if (!isServer()) {
           window.addEventListener("popstate", onPopState);
         }
       },
@@ -390,7 +389,7 @@ export function historySyncPlugin<
         });
       },
       onBeforeStepPop({ actions: { getStack } }) {
-        if (typeof window === "undefined") {
+        if (isServer()) {
           return;
         }
 
@@ -405,7 +404,7 @@ export function historySyncPlugin<
         }
       },
       onBeforePop({ actions: { getStack } }) {
-        if (typeof window === "undefined") {
+        if (isServer()) {
           return;
         }
 
