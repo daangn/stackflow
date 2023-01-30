@@ -1,4 +1,5 @@
 import type { StackflowReactPlugin } from "@stackflow/react";
+import { isBrowser } from "@stackflow/react";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
 import React, { createContext, useContext } from "react";
 
@@ -49,7 +50,7 @@ export const basicUIPlugin: (
       <GlobalOptionsProvider value={options}>
         <div
           className={
-            typeof window !== "undefined"
+            isBrowser()
               ? compact([theme[options.theme], options.rootClassName]).join(" ")
               : options.rootClassName
           }
