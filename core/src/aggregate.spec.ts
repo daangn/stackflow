@@ -1,6 +1,7 @@
 import { aggregate } from "./aggregate";
 import type {
   ActivityRegisteredEvent,
+  PoppedEvent,
   PushedEvent,
   ReplacedEvent,
   StepPushedEvent,
@@ -644,6 +645,8 @@ test("aggregate - Pop하면 최상단에 존재하는 Activity가 exit-done 상�
   let pushedEvent1;
   let pushedEvent2;
 
+  let poppedEvent;
+
   const events = [
     initializedEvent({
       transitionDuration: 300,
@@ -663,9 +666,9 @@ test("aggregate - Pop하면 최상단에 존재하는 Activity가 exit-done 상�
       activityParams: {},
       eventDate: enoughPastTime(),
     })),
-    makeEvent("Popped", {
+    (poppedEvent = makeEvent("Popped", {
       eventDate: enoughPastTime(),
-    }),
+    })),
   ];
 
   const output = aggregate(events, nowTime());
@@ -703,6 +706,7 @@ test("aggregate - Pop하면 최상단에 존재하는 Activity가 exit-done 상�
           },
         ],
         enteredBy: pushedEvent2,
+        exitedBy: poppedEvent,
         isActive: false,
         isTop: false,
         isRoot: false,
@@ -723,6 +727,10 @@ test("aggregate - Pop을 여러번하면 차례대로 exit-done 상태가 됩니
   let pushedEvent1: PushedEvent;
   let pushedEvent2: PushedEvent;
   let pushedEvent3: PushedEvent;
+
+  let poppedEvent1: PoppedEvent;
+  let poppedEvent2: PoppedEvent;
+  let poppedEvent3: PoppedEvent;
 
   const initEvents = [
     initializedEvent({
@@ -754,9 +762,9 @@ test("aggregate - Pop을 여러번하면 차례대로 exit-done 상태가 됩니
   const o1 = aggregate(
     [
       ...initEvents,
-      makeEvent("Popped", {
+      (poppedEvent1 = makeEvent("Popped", {
         eventDate: enoughPastTime(),
-      }),
+      })),
     ],
     nowTime(),
   );
@@ -812,6 +820,7 @@ test("aggregate - Pop을 여러번하면 차례대로 exit-done 상태가 됩니
           },
         ],
         enteredBy: pushedEvent3,
+        exitedBy: poppedEvent1,
         isActive: false,
         isTop: false,
         isRoot: false,
@@ -830,12 +839,12 @@ test("aggregate - Pop을 여러번하면 차례대로 exit-done 상태가 됩니
   const o2 = aggregate(
     [
       ...initEvents,
-      makeEvent("Popped", {
+      (poppedEvent2 = makeEvent("Popped", {
         eventDate: enoughPastTime(),
-      }),
-      makeEvent("Popped", {
+      })),
+      (poppedEvent3 = makeEvent("Popped", {
         eventDate: enoughPastTime(),
-      }),
+      })),
     ],
     nowTime(),
   );
@@ -873,6 +882,7 @@ test("aggregate - Pop을 여러번하면 차례대로 exit-done 상태가 됩니
           },
         ],
         enteredBy: pushedEvent2,
+        exitedBy: poppedEvent3,
         isActive: false,
         isTop: false,
         isRoot: false,
@@ -891,6 +901,7 @@ test("aggregate - Pop을 여러번하면 차례대로 exit-done 상태가 됩니
           },
         ],
         enteredBy: pushedEvent3,
+        exitedBy: poppedEvent2,
         isActive: false,
         isTop: false,
         isRoot: false,
@@ -910,6 +921,9 @@ test("aggregate - Pop을 여러번하면 차례대로 exit-done 상태가 됩니
 test("aggregate - 가장 바닥에 있는 Activity는 Pop 되지 않습니다", () => {
   let pushedEvent1: PushedEvent;
   let pushedEvent2: PushedEvent;
+
+  let poppedEvent1: PoppedEvent;
+  let poppedEvent2: PoppedEvent;
 
   const initEvents = [
     initializedEvent({
@@ -935,9 +949,9 @@ test("aggregate - 가장 바닥에 있는 Activity는 Pop 되지 않습니다", 
   const output1 = aggregate(
     [
       ...initEvents,
-      makeEvent("Popped", {
+      (poppedEvent1 = makeEvent("Popped", {
         eventDate: enoughPastTime(),
-      }),
+      })),
     ],
     nowTime(),
   );
@@ -975,6 +989,7 @@ test("aggregate - 가장 바닥에 있는 Activity는 Pop 되지 않습니다", 
           },
         ],
         enteredBy: pushedEvent2,
+        exitedBy: poppedEvent1,
         isActive: false,
         isTop: false,
         isRoot: false,
@@ -993,9 +1008,9 @@ test("aggregate - 가장 바닥에 있는 Activity는 Pop 되지 않습니다", 
   const output2 = aggregate(
     [
       ...initEvents,
-      makeEvent("Popped", {
+      (poppedEvent2 = makeEvent("Popped", {
         eventDate: enoughPastTime(),
-      }),
+      })),
       makeEvent("Popped", {
         eventDate: enoughPastTime(),
       }),
@@ -1036,6 +1051,7 @@ test("aggregate - 가장 바닥에 있는 Activity는 Pop 되지 않습니다", 
           },
         ],
         enteredBy: pushedEvent2,
+        exitedBy: poppedEvent2,
         isActive: false,
         isTop: false,
         isRoot: false,
@@ -1058,6 +1074,8 @@ test("aggregate - transitionDuration 이전에 Pop을 한 경우 exit-active 상
   let pushedEvent1: PushedEvent;
   let pushedEvent2: PushedEvent;
 
+  let poppedEvent: PoppedEvent;
+
   const events = [
     initializedEvent({
       transitionDuration: 300,
@@ -1077,9 +1095,9 @@ test("aggregate - transitionDuration 이전에 Pop을 한 경우 exit-active 상
       activityParams: {},
       eventDate: enoughPastTime(),
     })),
-    makeEvent("Popped", {
+    (poppedEvent = makeEvent("Popped", {
       eventDate: t - 150,
-    }),
+    })),
   ];
 
   const output = aggregate(events, t);
@@ -1117,6 +1135,7 @@ test("aggregate - transitionDuration 이전에 Pop을 한 경우 exit-active 상
           },
         ],
         enteredBy: pushedEvent2,
+        exitedBy: poppedEvent,
         isActive: false,
         isTop: true,
         isRoot: false,
@@ -1191,6 +1210,7 @@ test("aggregate - 이벤트가 중복되거나 순서가 섞여도 정상적으�
           },
         ],
         enteredBy: e4,
+        exitedBy: e5,
         isActive: false,
         isTop: false,
         isRoot: false,
@@ -1214,6 +1234,9 @@ test("aggregate - 같은 activity.id로 푸시되는 경우, 기존에 푸시되
   let pushedEvent3: PushedEvent;
   let pushedEvent4: PushedEvent;
   let pushedEvent5: PushedEvent;
+
+  let poppedEvent1: PoppedEvent;
+  let poppedEvent2: PoppedEvent;
 
   const events = [
     initializedEvent({
@@ -1246,12 +1269,12 @@ test("aggregate - 같은 activity.id로 푸시되는 경우, 기존에 푸시되
       activityParams: {},
       eventDate: enoughPastTime(),
     })),
-    makeEvent("Popped", {
+    (poppedEvent1 = makeEvent("Popped", {
       eventDate: enoughPastTime(),
-    }),
-    makeEvent("Popped", {
+    })),
+    (poppedEvent2 = makeEvent("Popped", {
       eventDate: enoughPastTime(),
-    }),
+    })),
     makeEvent("Popped", {
       eventDate: enoughPastTime(),
     }),
@@ -1316,6 +1339,7 @@ test("aggregate - 같은 activity.id로 푸시되는 경우, 기존에 푸시되
           },
         ],
         enteredBy: pushedEvent3,
+        exitedBy: poppedEvent2,
         isActive: false,
         isTop: false,
         isRoot: false,
@@ -1334,6 +1358,7 @@ test("aggregate - 같은 activity.id로 푸시되는 경우, 기존에 푸시되
           },
         ],
         enteredBy: pushedEvent4,
+        exitedBy: poppedEvent1,
         isActive: false,
         isTop: false,
         isRoot: false,
@@ -1551,6 +1576,7 @@ test("aggregate - ReplacedEvent가 발생한 후 transitionDuration만큼 지난
           },
         ],
         enteredBy: pushedEvent,
+        exitedBy: replacedEvent,
         isActive: false,
         isTop: false,
         isRoot: false,
@@ -1650,6 +1676,7 @@ test("aggregate - ReplacedEvent가 두 번 발생한 후 transitionDuration만�
           },
         ],
         enteredBy: pushedEvent,
+        exitedBy: replacedEvent1,
         isActive: false,
         isTop: false,
         isRoot: false,
@@ -1672,6 +1699,7 @@ test("aggregate - ReplacedEvent가 두 번 발생한 후 transitionDuration만�
           },
         ],
         enteredBy: replacedEvent1,
+        exitedBy: replacedEvent2,
         isActive: false,
         isTop: false,
         isRoot: false,
@@ -1775,6 +1803,7 @@ test("aggregate - skipExitActiveState가 true이면 eventDate가 transitionDurat
 
   let pushedEvent1: PushedEvent;
   let pushedEvent2: PushedEvent;
+  let poppedEvent: PoppedEvent;
 
   const events = [
     initializedEvent({
@@ -1795,10 +1824,10 @@ test("aggregate - skipExitActiveState가 true이면 eventDate가 transitionDurat
       activityParams: {},
       eventDate: enoughPastTime(),
     })),
-    makeEvent("Popped", {
+    (poppedEvent = makeEvent("Popped", {
       eventDate: t - 150,
       skipExitActiveState: true,
-    }),
+    })),
   ];
 
   const output = aggregate(events, t);
@@ -1836,6 +1865,7 @@ test("aggregate - skipExitActiveState가 true이면 eventDate가 transitionDurat
           },
         ],
         enteredBy: pushedEvent2,
+        exitedBy: poppedEvent,
         isActive: false,
         isTop: false,
         isRoot: false,
@@ -1905,6 +1935,7 @@ test("aggregate - skipExitActiveState가 true이면 ReplacedEvent가 발생한 �
           },
         ],
         enteredBy: pushedEvent,
+        exitedBy: replacedEvent,
         isActive: false,
         isTop: false,
         isRoot: false,
@@ -2451,6 +2482,8 @@ test("aggregate - ReplacedEvent에 현재 중간에 존재하는 activityId가 �
 test("aggregate - ReplacedEvent가 같은 activityId로 여러번 수행되었을때도 정상 작동합니다", () => {
   const t = 1667218241499;
 
+  let poppedEvent: PoppedEvent;
+
   const events = [
     {
       id: "97a1f31549f0",
@@ -2535,11 +2568,11 @@ test("aggregate - ReplacedEvent가 같은 activityId로 여러번 수행되었�
       skipEnterActiveState: true,
       activityContext: { path: "/articles/02542470/?title=Master&referrer=my" },
     },
-    {
+    (poppedEvent = {
       id: "97a1f31ad18c",
       name: "Popped" as const,
       eventDate: 1667218241499,
-    },
+    }),
   ];
 
   const output = aggregate(events, t);
@@ -2624,6 +2657,7 @@ test("aggregate - ReplacedEvent가 같은 activityId로 여러번 수행되었�
             path: "/articles/02542470/?title=Master&referrer=my",
           },
         },
+        exitedBy: poppedEvent,
         isTop: true,
         isActive: false,
         isRoot: false,
@@ -2989,6 +3023,7 @@ test("aggregate - StepPushedEvent가 쌓인 상태에서, PoppedEvent가 들어�
 
   let pushedEvent1: PushedEvent;
   let pushedEvent2: PushedEvent;
+  let poppedEvent: PoppedEvent;
 
   const events = [
     initializedEvent({
@@ -3020,9 +3055,9 @@ test("aggregate - StepPushedEvent가 쌓인 상태에서, PoppedEvent가 들어�
       },
       eventDate: enoughPastTime(),
     }),
-    makeEvent("Popped", {
+    (poppedEvent = makeEvent("Popped", {
       eventDate: enoughPastTime(),
-    }),
+    })),
   ];
 
   const output = aggregate(events, t);
@@ -3068,6 +3103,7 @@ test("aggregate - StepPushedEvent가 쌓인 상태에서, PoppedEvent가 들어�
           },
         ],
         enteredBy: pushedEvent2,
+        exitedBy: poppedEvent,
         isActive: false,
         isTop: false,
         isRoot: false,
@@ -3090,6 +3126,7 @@ test("aggregate - StepPushedEvent가 쌓인 상태에서, PoppedEvent가 들어�
   let pushedEvent1: PushedEvent;
   let pushedEvent2: PushedEvent;
   let stepPushedEvent: StepPushedEvent;
+  let poppedEvent: PoppedEvent;
 
   const events = [
     initializedEvent({
@@ -3121,9 +3158,9 @@ test("aggregate - StepPushedEvent가 쌓인 상태에서, PoppedEvent가 들어�
       },
       eventDate: enoughPastTime(),
     })),
-    makeEvent("Popped", {
+    (poppedEvent = makeEvent("Popped", {
       eventDate: t,
-    }),
+    })),
   ];
 
   const output = aggregate(events, t);
@@ -3176,6 +3213,7 @@ test("aggregate - StepPushedEvent가 쌓인 상태에서, PoppedEvent가 들어�
           },
         ],
         enteredBy: pushedEvent2,
+        exitedBy: poppedEvent,
         isActive: false,
         isTop: true,
         isRoot: false,
@@ -3425,6 +3463,7 @@ test("aggregate - After Push > Replace > Replace (skipped), first pushed activit
           },
         ],
         enteredBy: pushedEvent,
+        exitedBy: replacedEvent2,
         isActive: false,
         isTop: false,
         isRoot: false,
@@ -3443,6 +3482,7 @@ test("aggregate - After Push > Replace > Replace (skipped), first pushed activit
           },
         ],
         enteredBy: replacedEvent1,
+        exitedBy: replacedEvent2,
         isActive: false,
         isTop: false,
         isRoot: false,
@@ -3553,6 +3593,7 @@ test("aggregate - After Push > Push > Replace > Replace, first pushed activity s
           },
         ],
         enteredBy: pushedEvent2,
+        exitedBy: replacedEvent1,
         isActive: false,
         isTop: false,
         isRoot: false,
@@ -3571,6 +3612,7 @@ test("aggregate - After Push > Push > Replace > Replace, first pushed activity s
           },
         ],
         enteredBy: replacedEvent1,
+        exitedBy: replacedEvent2,
         isActive: false,
         isTop: false,
         isRoot: false,
