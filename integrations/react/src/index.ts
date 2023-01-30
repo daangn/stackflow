@@ -7,4 +7,5 @@ export * from "./StackflowReactPlugin";
 export * from "./useActions";
 export * from "./useActiveEffect";
 export * from "./useEnterDoneEffect";
+export * from "./useStep";
 export * from "./useStepActions";
