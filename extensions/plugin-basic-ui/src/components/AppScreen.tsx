@@ -87,7 +87,8 @@ const AppScreen: React.FC<AppScreenProps> = ({
   const zIndexPaper =
     zIndexBase + (globalOptions.theme === "cupertino" && hasAppBar ? 1 : 3);
   const zIndexEdge = zIndexBase + 4;
-  const zIndexAppBar = zIndexBase + 7;
+  const zIndexAppBar =
+    globalOptions.theme === "cupertino" ? zIndexBase + 7 : zIndexBase + 4;
 
   const transitionState = activity?.transitionState ?? "enter-done";
   const lazyTransitionState = useLazy(transitionState);
