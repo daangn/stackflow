@@ -4,6 +4,7 @@ import type { ActivityComponentType } from "./activity";
 import { makeStepId } from "./activity";
 import type { BaseActivities } from "./BaseActivities";
 import { useCoreActions } from "./core";
+import { useTransition } from "./shims";
 
 export type UseStepActionsOutputType<P> = {
   pending: boolean;
@@ -23,9 +24,6 @@ export type UseStepActions<T extends BaseActivities = {}> = <
     ? U
     : {}
 >;
-
-const useTransition: () => [boolean, React.TransitionStartFunction] =
-  React.useTransition ?? (() => [false, (cb: () => void) => cb()]);
 
 export const useStepActions: UseStepActions = () => {
   const coreActions = useCoreActions();
