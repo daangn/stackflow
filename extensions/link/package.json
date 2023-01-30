@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/link",
-  "version": "0.21.2",
+  "version": "0.21.3",
   "license": "MIT",
   "exports": {
     ".": {
@@ -27,9 +27,9 @@
     "@stackflow/core": "^0.21.1",
     "@stackflow/esbuild-config": "^0.20.0",
     "@stackflow/eslint-config": "^0.20.0",
-    "@stackflow/plugin-history-sync": "^0.21.2",
-    "@stackflow/plugin-preload": "^0.21.2",
-    "@stackflow/react": "^0.21.2",
+    "@stackflow/plugin-history-sync": "^0.21.3",
+    "@stackflow/plugin-preload": "^0.21.3",
+    "@stackflow/react": "^0.21.3",
     "@types/react": "^18.0.10",
     "@typescript-eslint/eslint-plugin": "^5.32.0",
     "@typescript-eslint/parser": "^5.20.0",
