@@ -87,7 +87,11 @@ export function aggregate(events: DomainEvent[], now: number): Stack {
           params: activity.params,
           steps: activity.steps,
           enteredBy: activity.enteredBy,
-          exitedBy: activity.exitedBy,
+          ...(activity.exitedBy
+            ? {
+                exitedBy: activity.exitedBy,
+              }
+            : null),
           isTop: lastVisibleActivity?.id === activity.id,
           isActive: lastEnteredActivity?.id === activity.id,
           isRoot:
