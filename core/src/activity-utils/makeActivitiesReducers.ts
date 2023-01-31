@@ -18,7 +18,10 @@ import findNewActivityIndex from "./findNewActivityIndex";
  */
 export const makeActivitiesReducers: (
   isTransitionDone: boolean,
-) => Record<DomainEvent["name"], any> = (isTransitionDone: boolean) => ({
+) => Record<
+  DomainEvent["name"],
+  (activities: Activity[], event: any) => Activity[]
+> = (isTransitionDone: boolean) => ({
   /**
    * noop
    */
