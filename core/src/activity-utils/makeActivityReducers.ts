@@ -12,26 +12,44 @@ import type {
 import type { Activity, ActivityTransitionState } from "../Stack";
 import { last } from "../utils";
 
-// TODO: If transitionDuration is in event, only 'now' param is required
+/**
+ * Create activity reducers for each event type (Activity + Event => Activity)
+ */
 export const makeActivityReducers: (
+  // TODO: If transitionDuration is in event, only 'now' param is required
   isTransitionDone: boolean,
 ) => Record<
   DomainEvent["name"],
   (activity: Activity, event: any) => Activity
 > = (isTransitionDone: boolean) =>
   ({
+    /**
+     * noop
+     */
     Initialized: (activity: Activity, event: InitializedEvent): Activity =>
       activity,
+    /**
+     * noop
+     */
     ActivityRegistered: (
       activity: Activity,
       event: ActivityRegisteredEvent,
     ): Activity => activity,
+    /**
+     * noop
+     */
     Pushed: (activity: Activity, event: PushedEvent): Activity => activity,
+    /**
+     * Change transition state to exit-done
+     */
     Replaced: (activity: Activity, event: ReplacedEvent): Activity => ({
       ...activity,
       exitedBy: event,
       transitionState: "exit-done",
     }),
+    /**
+     * Change transition state to exit-done or exit-active depending on skipExitActiveState
+     */
     Popped: (activity: Activity, event: PoppedEvent): Activity => {
       const transitionState: ActivityTransitionState =
         event.skipExitActiveState || isTransitionDone
@@ -52,6 +70,10 @@ export const makeActivityReducers: (
             : activity.steps,
       };
     },
+    /**
+     * Replace step params
+     * Push new step
+     */
     StepPushed: (activity: Activity, event: StepPushedEvent): Activity => {
       const newRoute = {
         id: event.stepId,
@@ -65,6 +87,10 @@ export const makeActivityReducers: (
         steps: [...activity.steps, newRoute],
       };
     },
+    /**
+     * Replace step params
+     * Replace the last step
+     */
     StepReplaced: (activity: Activity, event: StepReplacedEvent): Activity => {
       const newRoute = {
         id: event.stepId,
@@ -81,6 +107,10 @@ export const makeActivityReducers: (
         ],
       };
     },
+    /**
+     * Pop the last step
+     * If there are params in the previous step, set them as the new params
+     */
     StepPopped: (activity: Activity, event: StepPoppedEvent): Activity => {
       activity.steps.pop();
 

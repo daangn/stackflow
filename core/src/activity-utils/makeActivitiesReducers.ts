@@ -13,15 +13,27 @@ import type { Activity, ActivityTransitionState } from "../Stack";
 import { createActivityFromEvent } from "./createActivityFromEvent";
 import findNewActivityIndex from "./findNewActivityIndex";
 
+/**
+ * Create activity list reducers for each event type (Activity[] + Event => Activity[])
+ */
 export const makeActivitiesReducers: (
   isTransitionDone: boolean,
 ) => Record<DomainEvent["name"], any> = (isTransitionDone: boolean) => ({
+  /**
+   * noop
+   */
   Initialized: (activities: Activity[], event: InitializedEvent): Activity[] =>
     activities,
+  /**
+   * noop
+   */
   ActivityRegistered: (
     activities: Activity[],
     event: ActivityRegisteredEvent,
   ): Activity[] => activities,
+  /**
+   * Push new activity to activities
+   */
   Pushed: (activities: Activity[], event: PushedEvent): Activity[] => {
     const transitionState: ActivityTransitionState =
       event.skipEnterActiveState || isTransitionDone
@@ -34,6 +46,9 @@ export const makeActivitiesReducers: (
       ...activities.slice(reservedIndex + 1),
     ];
   },
+  /**
+   * Replace activity at reservedIndex with new activity
+   */
   Replaced: (activities: Activity[], event: ReplacedEvent): Activity[] => {
     const reservedIndex = findNewActivityIndex(event, activities);
 
@@ -50,14 +65,26 @@ export const makeActivitiesReducers: (
       ...activities.slice(reservedIndex + 1),
     ];
   },
+  /**
+   * noop
+   */
   Popped: (activities: Activity[], event: PoppedEvent): Activity[] =>
     activities,
+  /**
+   * noop
+   */
   StepPushed: (activities: Activity[], event: StepPushedEvent): Activity[] =>
     activities,
+  /**
+   * noop
+   */
   StepReplaced: (
     activities: Activity[],
     event: StepReplacedEvent,
   ): Activity[] => activities,
+  /**
+   * noop
+   */
   StepPopped: (activities: Activity[], event: StepPoppedEvent): Activity[] =>
     activities,
 });
