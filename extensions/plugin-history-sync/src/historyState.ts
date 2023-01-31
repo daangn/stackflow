@@ -1,5 +1,6 @@
 import type { Activity, ActivityStep } from "@stackflow/core";
-import { isServer } from "@stackflow/react";
+
+import { isServer } from "./utils";
 
 const STATE_TAG = `${process.env.PACKAGE_NAME}@${process.env.PACKAGE_VERSION}`;
 

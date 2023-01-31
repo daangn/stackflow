@@ -1,6 +1,5 @@
 import { id, makeEvent } from "@stackflow/core";
 import type { StackflowReactPlugin } from "@stackflow/react";
-import { isServer } from "@stackflow/react";
 import React from "react";
 
 import {
@@ -13,6 +12,7 @@ import { last } from "./last";
 import { makeTemplate } from "./makeTemplate";
 import { normalizeRoute } from "./normalizeRoute";
 import { RoutesProvider } from "./RoutesContext";
+import { isServer } from "./utils";
 
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
