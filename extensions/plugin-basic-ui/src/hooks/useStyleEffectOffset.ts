@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 
-import { listenOnce, requestNextFrame } from "../utils";
+import { listenOnce, noop, requestNextFrame } from "../utils";
 import { useStyleEffect } from "./useStyleEffect";
 
 export const OFFSET_PX_ANDROID = 32;
@@ -62,7 +62,7 @@ export function useStyleEffectOffset({
                   };
                 case "enter-active":
                 default:
-                  return () => {};
+                  return noop;
               }
             }
             case "exit-active":
@@ -71,10 +71,10 @@ export function useStyleEffectOffset({
                 cleanup();
               });
 
-              return () => {};
+              return noop;
             }
             default: {
-              return () => {};
+              return noop;
             }
           }
         }
