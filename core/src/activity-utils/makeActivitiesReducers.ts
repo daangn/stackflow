@@ -31,7 +31,7 @@ export const makeActivitiesReducers: (
     return [
       ...activities.slice(0, reservedIndex),
       createActivityFromEvent(event, transitionState),
-      ...activities.slice(reservedIndex),
+      ...activities.slice(reservedIndex + 1),
     ];
   },
   Replaced: (activities: Activity[], event: ReplacedEvent): Activity[] => {
