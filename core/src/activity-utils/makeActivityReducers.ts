@@ -15,7 +15,10 @@ import { last } from "../utils";
 // TODO: If transitionDuration is in event, only 'now' param is required
 export const makeActivityReducers: (
   isTransitionDone: boolean,
-) => Record<DomainEvent["name"], any> = (isTransitionDone: boolean) =>
+) => Record<
+  DomainEvent["name"],
+  (activity: Activity, event: any) => Activity
+> = (isTransitionDone: boolean) =>
   ({
     Initialized: (activity: Activity, event: InitializedEvent): Activity =>
       activity,
