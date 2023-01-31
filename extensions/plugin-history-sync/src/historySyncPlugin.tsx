@@ -51,14 +51,14 @@ export function historySyncPlugin<
         if (initialHistoryState) {
           return [
             {
-              ...initialHistoryState.activity.pushedBy,
+              ...initialHistoryState.activity.enteredBy,
               name: "Pushed",
             },
-            ...(initialHistoryState.step?.pushedBy.name === "StepPushed" ||
-            initialHistoryState.step?.pushedBy.name === "StepReplaced"
+            ...(initialHistoryState.step?.enteredBy.name === "StepPushed" ||
+            initialHistoryState.step?.enteredBy.name === "StepReplaced"
               ? [
                   {
-                    ...initialHistoryState.step.pushedBy,
+                    ...initialHistoryState.step.enteredBy,
                     name: "StepPushed" as const,
                   },
                 ]
@@ -234,16 +234,16 @@ export function historySyncPlugin<
             if (!nextActivity) {
               pushFlag += 1;
               push({
-                ...targetActivity.pushedBy,
+                ...targetActivity.enteredBy,
               });
 
               if (
-                targetStep?.pushedBy.name === "StepPushed" ||
-                targetStep?.pushedBy.name === "StepReplaced"
+                targetStep?.enteredBy.name === "StepPushed" ||
+                targetStep?.enteredBy.name === "StepReplaced"
               ) {
                 pushFlag += 1;
                 stepPush({
-                  ...targetStep.pushedBy,
+                  ...targetStep.enteredBy,
                 });
               }
             }
@@ -252,12 +252,12 @@ export function historySyncPlugin<
             if (
               !nextStep &&
               targetStep &&
-              (targetStep?.pushedBy.name === "StepPushed" ||
-                targetStep?.pushedBy.name === "StepReplaced")
+              (targetStep?.enteredBy.name === "StepPushed" ||
+                targetStep?.enteredBy.name === "StepReplaced")
             ) {
               pushFlag += 1;
               stepPush({
-                ...targetStep.pushedBy,
+                ...targetStep.enteredBy,
               });
             }
 

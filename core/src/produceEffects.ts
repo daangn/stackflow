@@ -69,12 +69,12 @@ export function produceEffects(prevOutput: Stack, nextOutput: Stack): Effect[] {
 
     if (!prevActivity && nextActivity) {
       output.push({
-        _TAG: nextActivity.pushedBy.name === "Pushed" ? "PUSHED" : "REPLACED",
+        _TAG: nextActivity.enteredBy.name === "Pushed" ? "PUSHED" : "REPLACED",
         activity: nextActivity,
       });
     } else if (isPrevActivityPopped && isNextActivityPushed) {
       output.push({
-        _TAG: nextActivity.pushedBy.name === "Pushed" ? "PUSHED" : "REPLACED",
+        _TAG: nextActivity.enteredBy.name === "Pushed" ? "PUSHED" : "REPLACED",
         activity: nextActivity,
       });
     } else if (
@@ -97,7 +97,7 @@ export function produceEffects(prevOutput: Stack, nextOutput: Stack): Effect[] {
           "zIndex",
         ]),
       ) &&
-      nextActivity.pushedBy.name === "Replaced"
+      nextActivity.enteredBy.name === "Replaced"
     ) {
       output.push({
         _TAG: "REPLACED",
@@ -119,7 +119,7 @@ export function produceEffects(prevOutput: Stack, nextOutput: Stack): Effect[] {
       nextOutput.activities[j]?.transitionState === "exit-active" ||
       nextOutput.activities[j]?.transitionState === "exit-done";
     const isReplacedEvent =
-      nextOutput.activities[j + 1]?.pushedBy.name === "Replaced" &&
+      nextOutput.activities[j + 1]?.enteredBy.name === "Replaced" &&
       nextOutput.activities[j + 1]?.transitionState === "enter-done";
 
     if (isPrevActivityPushed && isNextActivityPopped && !isReplacedEvent) {

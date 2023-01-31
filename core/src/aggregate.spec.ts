@@ -1,6 +1,7 @@
 import { aggregate } from "./aggregate";
 import type {
   ActivityRegisteredEvent,
+  PoppedEvent,
   PushedEvent,
   ReplacedEvent,
   StepPushedEvent,
@@ -96,10 +97,10 @@ test("aggregate - 푸시하면 스택에 추가됩니다", () => {
           {
             id: "a1",
             params: {},
-            pushedBy: pushedEvent,
+            enteredBy: pushedEvent,
           },
         ],
-        pushedBy: pushedEvent,
+        enteredBy: pushedEvent,
         isActive: true,
         isTop: true,
         isRoot: true,
@@ -153,10 +154,10 @@ test("aggregate - PushedEvent에 activityId, activityName이 다른 경우 스�
           {
             id: "a2",
             params: {},
-            pushedBy: pushedEvent,
+            enteredBy: pushedEvent,
           },
         ],
-        pushedBy: pushedEvent,
+        enteredBy: pushedEvent,
         isActive: true,
         isTop: true,
         isRoot: true,
@@ -216,10 +217,10 @@ test("aggregate - 같은 activityId로 여러번 푸시되는 경우 이전의 �
           {
             id: "a1",
             params: {},
-            pushedBy: pushedEvent2,
+            enteredBy: pushedEvent2,
           },
         ],
-        pushedBy: pushedEvent2,
+        enteredBy: pushedEvent2,
         isActive: true,
         isTop: true,
         isRoot: true,
@@ -280,10 +281,10 @@ test("aggregate - 다른 activityName으로 두번 푸시하면 스택에 정상
           {
             id: "a1",
             params: {},
-            pushedBy: pushedEvent1,
+            enteredBy: pushedEvent1,
           },
         ],
-        pushedBy: pushedEvent1,
+        enteredBy: pushedEvent1,
         isActive: false,
         isTop: false,
         isRoot: true,
@@ -298,10 +299,10 @@ test("aggregate - 다른 activityName으로 두번 푸시하면 스택에 정상
           {
             id: "a2",
             params: {},
-            pushedBy: pushedEvent2,
+            enteredBy: pushedEvent2,
           },
         ],
-        pushedBy: pushedEvent2,
+        enteredBy: pushedEvent2,
         isActive: true,
         isTop: true,
         isRoot: false,
@@ -362,10 +363,10 @@ test("aggregate - 같은 activityName으로 두번 푸시하면 정상적으로 
           {
             id: "a1",
             params: {},
-            pushedBy: pushedEvent1,
+            enteredBy: pushedEvent1,
           },
         ],
-        pushedBy: pushedEvent1,
+        enteredBy: pushedEvent1,
         isActive: false,
         isTop: false,
         isRoot: true,
@@ -380,10 +381,10 @@ test("aggregate - 같은 activityName으로 두번 푸시하면 정상적으로 
           {
             id: "a2",
             params: {},
-            pushedBy: pushedEvent2,
+            enteredBy: pushedEvent2,
           },
         ],
-        pushedBy: pushedEvent2,
+        enteredBy: pushedEvent2,
         isActive: true,
         isTop: true,
         isRoot: false,
@@ -436,10 +437,10 @@ test("aggregate - 푸시한 직후에는 transition.state가 enter-active 입니
           {
             id: "a1",
             params: {},
-            pushedBy: pushedEvent,
+            enteredBy: pushedEvent,
           },
         ],
-        pushedBy: pushedEvent,
+        enteredBy: pushedEvent,
         isActive: true,
         isTop: true,
         isRoot: true,
@@ -489,10 +490,10 @@ test("aggregate - 현재 시간과 변화된 시간의 차가 InitializedEvent�
           {
             id: "a1",
             params: {},
-            pushedBy: pushedEvent,
+            enteredBy: pushedEvent,
           },
         ],
-        pushedBy: pushedEvent,
+        enteredBy: pushedEvent,
         isActive: true,
         isTop: true,
         isRoot: true,
@@ -542,10 +543,10 @@ test("aggregate - 푸시한 이후 InitializedEvent에서 셋팅된 transitionDu
           {
             id: "a1",
             params: {},
-            pushedBy: pushedEvent,
+            enteredBy: pushedEvent,
           },
         ],
-        pushedBy: pushedEvent,
+        enteredBy: pushedEvent,
         isActive: true,
         isTop: true,
         isRoot: true,
@@ -602,10 +603,10 @@ test("aggregate - 여러번 푸시한 경우, transitionDuration 전에 푸시�
           {
             id: "a1",
             params: {},
-            pushedBy: pushedEvent1,
+            enteredBy: pushedEvent1,
           },
         ],
-        pushedBy: pushedEvent1,
+        enteredBy: pushedEvent1,
         isActive: false,
         isTop: false,
         isRoot: true,
@@ -620,10 +621,10 @@ test("aggregate - 여러번 푸시한 경우, transitionDuration 전에 푸시�
           {
             id: "a2",
             params: {},
-            pushedBy: pushedEvent2,
+            enteredBy: pushedEvent2,
           },
         ],
-        pushedBy: pushedEvent2,
+        enteredBy: pushedEvent2,
         isActive: true,
         isTop: true,
         isRoot: false,
@@ -644,6 +645,8 @@ test("aggregate - Pop하면 최상단에 존재하는 Activity가 exit-done 상�
   let pushedEvent1;
   let pushedEvent2;
 
+  let poppedEvent;
+
   const events = [
     initializedEvent({
       transitionDuration: 300,
@@ -663,9 +666,9 @@ test("aggregate - Pop하면 최상단에 존재하는 Activity가 exit-done 상�
       activityParams: {},
       eventDate: enoughPastTime(),
     })),
-    makeEvent("Popped", {
+    (poppedEvent = makeEvent("Popped", {
       eventDate: enoughPastTime(),
-    }),
+    })),
   ];
 
   const output = aggregate(events, nowTime());
@@ -681,10 +684,10 @@ test("aggregate - Pop하면 최상단에 존재하는 Activity가 exit-done 상�
           {
             id: "a1",
             params: {},
-            pushedBy: pushedEvent1,
+            enteredBy: pushedEvent1,
           },
         ],
-        pushedBy: pushedEvent1,
+        enteredBy: pushedEvent1,
         isActive: true,
         isTop: true,
         isRoot: true,
@@ -699,10 +702,11 @@ test("aggregate - Pop하면 최상단에 존재하는 Activity가 exit-done 상�
           {
             id: "a2",
             params: {},
-            pushedBy: pushedEvent2,
+            enteredBy: pushedEvent2,
           },
         ],
-        pushedBy: pushedEvent2,
+        enteredBy: pushedEvent2,
+        exitedBy: poppedEvent,
         isActive: false,
         isTop: false,
         isRoot: false,
@@ -723,6 +727,10 @@ test("aggregate - Pop을 여러번하면 차례대로 exit-done 상태가 됩니
   let pushedEvent1: PushedEvent;
   let pushedEvent2: PushedEvent;
   let pushedEvent3: PushedEvent;
+
+  let poppedEvent1: PoppedEvent;
+  let poppedEvent2: PoppedEvent;
+  let poppedEvent3: PoppedEvent;
 
   const initEvents = [
     initializedEvent({
@@ -754,9 +762,9 @@ test("aggregate - Pop을 여러번하면 차례대로 exit-done 상태가 됩니
   const o1 = aggregate(
     [
       ...initEvents,
-      makeEvent("Popped", {
+      (poppedEvent1 = makeEvent("Popped", {
         eventDate: enoughPastTime(),
-      }),
+      })),
     ],
     nowTime(),
   );
@@ -772,10 +780,10 @@ test("aggregate - Pop을 여러번하면 차례대로 exit-done 상태가 됩니
           {
             id: "a1",
             params: {},
-            pushedBy: pushedEvent1,
+            enteredBy: pushedEvent1,
           },
         ],
-        pushedBy: pushedEvent1,
+        enteredBy: pushedEvent1,
         isActive: false,
         isTop: false,
         isRoot: true,
@@ -790,10 +798,10 @@ test("aggregate - Pop을 여러번하면 차례대로 exit-done 상태가 됩니
           {
             id: "a2",
             params: {},
-            pushedBy: pushedEvent2,
+            enteredBy: pushedEvent2,
           },
         ],
-        pushedBy: pushedEvent2,
+        enteredBy: pushedEvent2,
         isActive: true,
         isTop: true,
         isRoot: false,
@@ -808,10 +816,11 @@ test("aggregate - Pop을 여러번하면 차례대로 exit-done 상태가 됩니
           {
             id: "a3",
             params: {},
-            pushedBy: pushedEvent3,
+            enteredBy: pushedEvent3,
           },
         ],
-        pushedBy: pushedEvent3,
+        enteredBy: pushedEvent3,
+        exitedBy: poppedEvent1,
         isActive: false,
         isTop: false,
         isRoot: false,
@@ -830,12 +839,12 @@ test("aggregate - Pop을 여러번하면 차례대로 exit-done 상태가 됩니
   const o2 = aggregate(
     [
       ...initEvents,
-      makeEvent("Popped", {
+      (poppedEvent2 = makeEvent("Popped", {
         eventDate: enoughPastTime(),
-      }),
-      makeEvent("Popped", {
+      })),
+      (poppedEvent3 = makeEvent("Popped", {
         eventDate: enoughPastTime(),
-      }),
+      })),
     ],
     nowTime(),
   );
@@ -851,10 +860,10 @@ test("aggregate - Pop을 여러번하면 차례대로 exit-done 상태가 됩니
           {
             id: "a1",
             params: {},
-            pushedBy: pushedEvent1,
+            enteredBy: pushedEvent1,
           },
         ],
-        pushedBy: pushedEvent1,
+        enteredBy: pushedEvent1,
         isActive: true,
         isTop: true,
         isRoot: true,
@@ -869,10 +878,11 @@ test("aggregate - Pop을 여러번하면 차례대로 exit-done 상태가 됩니
           {
             id: "a2",
             params: {},
-            pushedBy: pushedEvent2,
+            enteredBy: pushedEvent2,
           },
         ],
-        pushedBy: pushedEvent2,
+        enteredBy: pushedEvent2,
+        exitedBy: poppedEvent3,
         isActive: false,
         isTop: false,
         isRoot: false,
@@ -887,10 +897,11 @@ test("aggregate - Pop을 여러번하면 차례대로 exit-done 상태가 됩니
           {
             id: "a3",
             params: {},
-            pushedBy: pushedEvent3,
+            enteredBy: pushedEvent3,
           },
         ],
-        pushedBy: pushedEvent3,
+        enteredBy: pushedEvent3,
+        exitedBy: poppedEvent2,
         isActive: false,
         isTop: false,
         isRoot: false,
@@ -910,6 +921,9 @@ test("aggregate - Pop을 여러번하면 차례대로 exit-done 상태가 됩니
 test("aggregate - 가장 바닥에 있는 Activity는 Pop 되지 않습니다", () => {
   let pushedEvent1: PushedEvent;
   let pushedEvent2: PushedEvent;
+
+  let poppedEvent1: PoppedEvent;
+  let poppedEvent2: PoppedEvent;
 
   const initEvents = [
     initializedEvent({
@@ -935,9 +949,9 @@ test("aggregate - 가장 바닥에 있는 Activity는 Pop 되지 않습니다", 
   const output1 = aggregate(
     [
       ...initEvents,
-      makeEvent("Popped", {
+      (poppedEvent1 = makeEvent("Popped", {
         eventDate: enoughPastTime(),
-      }),
+      })),
     ],
     nowTime(),
   );
@@ -953,10 +967,10 @@ test("aggregate - 가장 바닥에 있는 Activity는 Pop 되지 않습니다", 
           {
             id: "a1",
             params: {},
-            pushedBy: pushedEvent1,
+            enteredBy: pushedEvent1,
           },
         ],
-        pushedBy: pushedEvent1,
+        enteredBy: pushedEvent1,
         isActive: true,
         isTop: true,
         isRoot: true,
@@ -971,10 +985,11 @@ test("aggregate - 가장 바닥에 있는 Activity는 Pop 되지 않습니다", 
           {
             id: "a2",
             params: {},
-            pushedBy: pushedEvent2,
+            enteredBy: pushedEvent2,
           },
         ],
-        pushedBy: pushedEvent2,
+        enteredBy: pushedEvent2,
+        exitedBy: poppedEvent1,
         isActive: false,
         isTop: false,
         isRoot: false,
@@ -993,9 +1008,9 @@ test("aggregate - 가장 바닥에 있는 Activity는 Pop 되지 않습니다", 
   const output2 = aggregate(
     [
       ...initEvents,
-      makeEvent("Popped", {
+      (poppedEvent2 = makeEvent("Popped", {
         eventDate: enoughPastTime(),
-      }),
+      })),
       makeEvent("Popped", {
         eventDate: enoughPastTime(),
       }),
@@ -1014,10 +1029,10 @@ test("aggregate - 가장 바닥에 있는 Activity는 Pop 되지 않습니다", 
           {
             id: "a1",
             params: {},
-            pushedBy: pushedEvent1,
+            enteredBy: pushedEvent1,
           },
         ],
-        pushedBy: pushedEvent1,
+        enteredBy: pushedEvent1,
         isActive: true,
         isTop: true,
         isRoot: true,
@@ -1032,10 +1047,11 @@ test("aggregate - 가장 바닥에 있는 Activity는 Pop 되지 않습니다", 
           {
             id: "a2",
             params: {},
-            pushedBy: pushedEvent2,
+            enteredBy: pushedEvent2,
           },
         ],
-        pushedBy: pushedEvent2,
+        enteredBy: pushedEvent2,
+        exitedBy: poppedEvent2,
         isActive: false,
         isTop: false,
         isRoot: false,
@@ -1058,6 +1074,8 @@ test("aggregate - transitionDuration 이전에 Pop을 한 경우 exit-active 상
   let pushedEvent1: PushedEvent;
   let pushedEvent2: PushedEvent;
 
+  let poppedEvent: PoppedEvent;
+
   const events = [
     initializedEvent({
       transitionDuration: 300,
@@ -1077,9 +1095,9 @@ test("aggregate - transitionDuration 이전에 Pop을 한 경우 exit-active 상
       activityParams: {},
       eventDate: enoughPastTime(),
     })),
-    makeEvent("Popped", {
+    (poppedEvent = makeEvent("Popped", {
       eventDate: t - 150,
-    }),
+    })),
   ];
 
   const output = aggregate(events, t);
@@ -1095,10 +1113,10 @@ test("aggregate - transitionDuration 이전에 Pop을 한 경우 exit-active 상
           {
             id: "a1",
             params: {},
-            pushedBy: pushedEvent1,
+            enteredBy: pushedEvent1,
           },
         ],
-        pushedBy: pushedEvent1,
+        enteredBy: pushedEvent1,
         isActive: true,
         isTop: false,
         isRoot: true,
@@ -1113,10 +1131,11 @@ test("aggregate - transitionDuration 이전에 Pop을 한 경우 exit-active 상
           {
             id: "a2",
             params: {},
-            pushedBy: pushedEvent2,
+            enteredBy: pushedEvent2,
           },
         ],
-        pushedBy: pushedEvent2,
+        enteredBy: pushedEvent2,
+        exitedBy: poppedEvent,
         isActive: false,
         isTop: true,
         isRoot: false,
@@ -1169,10 +1188,10 @@ test("aggregate - 이벤트가 중복되거나 순서가 섞여도 정상적으�
           {
             id: "a1",
             params: {},
-            pushedBy: e3,
+            enteredBy: e3,
           },
         ],
-        pushedBy: e3,
+        enteredBy: e3,
         isActive: true,
         isTop: true,
         isRoot: true,
@@ -1187,10 +1206,11 @@ test("aggregate - 이벤트가 중복되거나 순서가 섞여도 정상적으�
           {
             id: "a2",
             params: {},
-            pushedBy: e4,
+            enteredBy: e4,
           },
         ],
-        pushedBy: e4,
+        enteredBy: e4,
+        exitedBy: e5,
         isActive: false,
         isTop: false,
         isRoot: false,
@@ -1214,6 +1234,9 @@ test("aggregate - 같은 activity.id로 푸시되는 경우, 기존에 푸시되
   let pushedEvent3: PushedEvent;
   let pushedEvent4: PushedEvent;
   let pushedEvent5: PushedEvent;
+
+  let poppedEvent1: PoppedEvent;
+  let poppedEvent2: PoppedEvent;
 
   const events = [
     initializedEvent({
@@ -1246,12 +1269,12 @@ test("aggregate - 같은 activity.id로 푸시되는 경우, 기존에 푸시되
       activityParams: {},
       eventDate: enoughPastTime(),
     })),
-    makeEvent("Popped", {
+    (poppedEvent1 = makeEvent("Popped", {
       eventDate: enoughPastTime(),
-    }),
-    makeEvent("Popped", {
+    })),
+    (poppedEvent2 = makeEvent("Popped", {
       eventDate: enoughPastTime(),
-    }),
+    })),
     makeEvent("Popped", {
       eventDate: enoughPastTime(),
     }),
@@ -1276,10 +1299,10 @@ test("aggregate - 같은 activity.id로 푸시되는 경우, 기존에 푸시되
           {
             id: "a1",
             params: {},
-            pushedBy: pushedEvent1,
+            enteredBy: pushedEvent1,
           },
         ],
-        pushedBy: pushedEvent1,
+        enteredBy: pushedEvent1,
         isActive: false,
         isTop: false,
         isRoot: true,
@@ -1294,10 +1317,10 @@ test("aggregate - 같은 activity.id로 푸시되는 경우, 기존에 푸시되
           {
             id: "a2",
             params: {},
-            pushedBy: pushedEvent5,
+            enteredBy: pushedEvent5,
           },
         ],
-        pushedBy: pushedEvent5,
+        enteredBy: pushedEvent5,
         isActive: true,
         isTop: true,
         isRoot: false,
@@ -1312,10 +1335,11 @@ test("aggregate - 같은 activity.id로 푸시되는 경우, 기존에 푸시되
           {
             id: "a3",
             params: {},
-            pushedBy: pushedEvent3,
+            enteredBy: pushedEvent3,
           },
         ],
-        pushedBy: pushedEvent3,
+        enteredBy: pushedEvent3,
+        exitedBy: poppedEvent2,
         isActive: false,
         isTop: false,
         isRoot: false,
@@ -1330,10 +1354,11 @@ test("aggregate - 같은 activity.id로 푸시되는 경우, 기존에 푸시되
           {
             id: "a4",
             params: {},
-            pushedBy: pushedEvent4,
+            enteredBy: pushedEvent4,
           },
         ],
-        pushedBy: pushedEvent4,
+        enteredBy: pushedEvent4,
+        exitedBy: poppedEvent1,
         isActive: false,
         isTop: false,
         isRoot: false,
@@ -1389,10 +1414,10 @@ test("aggregate - PushedEvent에 params가 담겨있는 경우 액티비티에 �
             params: {
               hello: "world",
             },
-            pushedBy: pushedEvent,
+            enteredBy: pushedEvent,
           },
         ],
-        pushedBy: pushedEvent,
+        enteredBy: pushedEvent,
         isActive: true,
         isTop: true,
         isRoot: true,
@@ -1457,10 +1482,10 @@ test("aggregate - ReplacedEvent가 발생한 직후 최상단의 Activity를 유
             params: {
               hello: "world",
             },
-            pushedBy: pushedEvent,
+            enteredBy: pushedEvent,
           },
         ],
-        pushedBy: pushedEvent,
+        enteredBy: pushedEvent,
         isActive: false,
         isTop: false,
         isRoot: true,
@@ -1479,10 +1504,10 @@ test("aggregate - ReplacedEvent가 발생한 직후 최상단의 Activity를 유
             params: {
               hello: "world",
             },
-            pushedBy: replacedEvent,
+            enteredBy: replacedEvent,
           },
         ],
-        pushedBy: replacedEvent,
+        enteredBy: replacedEvent,
         isActive: true,
         isTop: true,
         isRoot: true,
@@ -1547,10 +1572,11 @@ test("aggregate - ReplacedEvent가 발생한 후 transitionDuration만큼 지난
             params: {
               hello: "world",
             },
-            pushedBy: pushedEvent,
+            enteredBy: pushedEvent,
           },
         ],
-        pushedBy: pushedEvent,
+        enteredBy: pushedEvent,
+        exitedBy: replacedEvent,
         isActive: false,
         isTop: false,
         isRoot: false,
@@ -1569,10 +1595,10 @@ test("aggregate - ReplacedEvent가 발생한 후 transitionDuration만큼 지난
             params: {
               hello: "world",
             },
-            pushedBy: replacedEvent,
+            enteredBy: replacedEvent,
           },
         ],
-        pushedBy: replacedEvent,
+        enteredBy: replacedEvent,
         isActive: true,
         isTop: true,
         isRoot: true,
@@ -1646,10 +1672,11 @@ test("aggregate - ReplacedEvent가 두 번 발생한 후 transitionDuration만�
             params: {
               hello: "world",
             },
-            pushedBy: pushedEvent,
+            enteredBy: pushedEvent,
           },
         ],
-        pushedBy: pushedEvent,
+        enteredBy: pushedEvent,
+        exitedBy: replacedEvent1,
         isActive: false,
         isTop: false,
         isRoot: false,
@@ -1668,10 +1695,11 @@ test("aggregate - ReplacedEvent가 두 번 발생한 후 transitionDuration만�
             params: {
               hello: "world",
             },
-            pushedBy: replacedEvent1,
+            enteredBy: replacedEvent1,
           },
         ],
-        pushedBy: replacedEvent1,
+        enteredBy: replacedEvent1,
+        exitedBy: replacedEvent2,
         isActive: false,
         isTop: false,
         isRoot: false,
@@ -1690,10 +1718,10 @@ test("aggregate - ReplacedEvent가 두 번 발생한 후 transitionDuration만�
             params: {
               hello: "world",
             },
-            pushedBy: replacedEvent2,
+            enteredBy: replacedEvent2,
           },
         ],
-        pushedBy: replacedEvent2,
+        enteredBy: replacedEvent2,
         isActive: true,
         isTop: true,
         isRoot: true,
@@ -1750,10 +1778,10 @@ test("aggregate - skipEnterActiveState가 true이면 eventDate가 transitionDura
             params: {
               hello: "world",
             },
-            pushedBy: pushedEvent,
+            enteredBy: pushedEvent,
           },
         ],
-        pushedBy: pushedEvent,
+        enteredBy: pushedEvent,
         isActive: true,
         isTop: true,
         isRoot: true,
@@ -1775,6 +1803,7 @@ test("aggregate - skipExitActiveState가 true이면 eventDate가 transitionDurat
 
   let pushedEvent1: PushedEvent;
   let pushedEvent2: PushedEvent;
+  let poppedEvent: PoppedEvent;
 
   const events = [
     initializedEvent({
@@ -1795,10 +1824,10 @@ test("aggregate - skipExitActiveState가 true이면 eventDate가 transitionDurat
       activityParams: {},
       eventDate: enoughPastTime(),
     })),
-    makeEvent("Popped", {
+    (poppedEvent = makeEvent("Popped", {
       eventDate: t - 150,
       skipExitActiveState: true,
-    }),
+    })),
   ];
 
   const output = aggregate(events, t);
@@ -1814,10 +1843,10 @@ test("aggregate - skipExitActiveState가 true이면 eventDate가 transitionDurat
           {
             id: "a1",
             params: {},
-            pushedBy: pushedEvent1,
+            enteredBy: pushedEvent1,
           },
         ],
-        pushedBy: pushedEvent1,
+        enteredBy: pushedEvent1,
         isActive: true,
         isTop: true,
         isRoot: true,
@@ -1832,10 +1861,11 @@ test("aggregate - skipExitActiveState가 true이면 eventDate가 transitionDurat
           {
             id: "a2",
             params: {},
-            pushedBy: pushedEvent2,
+            enteredBy: pushedEvent2,
           },
         ],
-        pushedBy: pushedEvent2,
+        enteredBy: pushedEvent2,
+        exitedBy: poppedEvent,
         isActive: false,
         isTop: false,
         isRoot: false,
@@ -1901,10 +1931,11 @@ test("aggregate - skipExitActiveState가 true이면 ReplacedEvent가 발생한 �
             params: {
               hello: "world",
             },
-            pushedBy: pushedEvent,
+            enteredBy: pushedEvent,
           },
         ],
-        pushedBy: pushedEvent,
+        enteredBy: pushedEvent,
+        exitedBy: replacedEvent,
         isActive: false,
         isTop: false,
         isRoot: false,
@@ -1923,10 +1954,10 @@ test("aggregate - skipExitActiveState가 true이면 ReplacedEvent가 발생한 �
             params: {
               hello: "world",
             },
-            pushedBy: replacedEvent,
+            enteredBy: replacedEvent,
           },
         ],
-        pushedBy: replacedEvent,
+        enteredBy: replacedEvent,
         isActive: true,
         isTop: true,
         isRoot: true,
@@ -1979,13 +2010,13 @@ test("aggregate - PushedEvent에 activityContext가 담겨있는 경우 액티�
           {
             id: "a1",
             params: {},
-            pushedBy: pushedEvent,
+            enteredBy: pushedEvent,
           },
         ],
         context: {
           hello: "world",
         },
-        pushedBy: pushedEvent,
+        enteredBy: pushedEvent,
         isActive: true,
         isTop: true,
         isRoot: true,
@@ -2048,13 +2079,13 @@ test("aggregate - ReplacedEvent에 activityContext가 담겨있는 경우 액티
           {
             id: "a1",
             params: {},
-            pushedBy: pushedEvent,
+            enteredBy: pushedEvent,
           },
         ],
         context: {
           hello: "world1",
         },
-        pushedBy: pushedEvent,
+        enteredBy: pushedEvent,
         isActive: false,
         isTop: false,
         isRoot: true,
@@ -2069,13 +2100,13 @@ test("aggregate - ReplacedEvent에 activityContext가 담겨있는 경우 액티
           {
             id: "a2",
             params: {},
-            pushedBy: replacedEvent,
+            enteredBy: replacedEvent,
           },
         ],
         context: {
           hello: "world2",
         },
-        pushedBy: replacedEvent,
+        enteredBy: replacedEvent,
         isActive: true,
         isTop: true,
         isRoot: true,
@@ -2148,10 +2179,10 @@ test("aggregate - ReplacedEvent에 현재 상단에 존재하는 activityId가 �
             params: {
               hello: "world",
             },
-            pushedBy: pushedEvent,
+            enteredBy: pushedEvent,
           },
         ],
-        pushedBy: pushedEvent,
+        enteredBy: pushedEvent,
         isActive: false,
         isTop: false,
         isRoot: true,
@@ -2170,10 +2201,10 @@ test("aggregate - ReplacedEvent에 현재 상단에 존재하는 activityId가 �
             params: {
               hello: "world2",
             },
-            pushedBy: replacedEvent,
+            enteredBy: replacedEvent,
           },
         ],
-        pushedBy: replacedEvent,
+        enteredBy: replacedEvent,
         isActive: true,
         isTop: true,
         isRoot: false,
@@ -2255,10 +2286,10 @@ test("aggregate - ReplacedEvent에 현재 중간에 존재하는 activityId가 �
             params: {
               hello: "world",
             },
-            pushedBy: pushedEvent1,
+            enteredBy: pushedEvent1,
           },
         ],
-        pushedBy: pushedEvent1,
+        enteredBy: pushedEvent1,
         isActive: false,
         isTop: false,
         isRoot: true,
@@ -2277,10 +2308,10 @@ test("aggregate - ReplacedEvent에 현재 중간에 존재하는 activityId가 �
             params: {
               hello: "world2",
             },
-            pushedBy: replacedEvent,
+            enteredBy: replacedEvent,
           },
         ],
-        pushedBy: replacedEvent,
+        enteredBy: replacedEvent,
         isActive: false,
         isTop: false,
         isRoot: false,
@@ -2299,10 +2330,10 @@ test("aggregate - ReplacedEvent에 현재 중간에 존재하는 activityId가 �
             params: {
               hello: "world",
             },
-            pushedBy: pushedEvent3,
+            enteredBy: pushedEvent3,
           },
         ],
-        pushedBy: pushedEvent3,
+        enteredBy: pushedEvent3,
         isActive: true,
         isTop: true,
         isRoot: false,
@@ -2384,10 +2415,10 @@ test("aggregate - ReplacedEvent에 현재 중간에 존재하는 activityId가 �
             params: {
               hello: "world",
             },
-            pushedBy: pushedEvent1,
+            enteredBy: pushedEvent1,
           },
         ],
-        pushedBy: pushedEvent1,
+        enteredBy: pushedEvent1,
         isActive: false,
         isTop: false,
         isRoot: true,
@@ -2406,10 +2437,10 @@ test("aggregate - ReplacedEvent에 현재 중간에 존재하는 activityId가 �
             params: {
               hello: "world2",
             },
-            pushedBy: replacedEvent,
+            enteredBy: replacedEvent,
           },
         ],
-        pushedBy: replacedEvent,
+        enteredBy: replacedEvent,
         isActive: false,
         isTop: false,
         isRoot: false,
@@ -2428,10 +2459,10 @@ test("aggregate - ReplacedEvent에 현재 중간에 존재하는 activityId가 �
             params: {
               hello: "world",
             },
-            pushedBy: pushedEvent3,
+            enteredBy: pushedEvent3,
           },
         ],
-        pushedBy: pushedEvent3,
+        enteredBy: pushedEvent3,
         isActive: true,
         isTop: true,
         isRoot: false,
@@ -2450,6 +2481,8 @@ test("aggregate - ReplacedEvent에 현재 중간에 존재하는 activityId가 �
 
 test("aggregate - ReplacedEvent가 같은 activityId로 여러번 수행되었을때도 정상 작동합니다", () => {
   const t = 1667218241499;
+
+  let poppedEvent: PoppedEvent;
 
   const events = [
     {
@@ -2535,11 +2568,11 @@ test("aggregate - ReplacedEvent가 같은 activityId로 여러번 수행되었�
       skipEnterActiveState: true,
       activityContext: { path: "/articles/02542470/?title=Master&referrer=my" },
     },
-    {
+    (poppedEvent = {
       id: "97a1f31ad18c",
       name: "Popped" as const,
       eventDate: 1667218241499,
-    },
+    }),
   ];
 
   const output = aggregate(events, t);
@@ -2555,7 +2588,7 @@ test("aggregate - ReplacedEvent가 같은 activityId로 여러번 수행되었�
           {
             id: "97a1f1f11a50",
             params: {},
-            pushedBy: {
+            enteredBy: {
               id: "97a1f1f11a51",
               name: "Pushed",
               eventDate: 1667217986388,
@@ -2566,7 +2599,7 @@ test("aggregate - ReplacedEvent가 같은 activityId로 여러번 수행되었�
             },
           },
         ],
-        pushedBy: {
+        enteredBy: {
           id: "97a1f1f11a51",
           name: "Pushed",
           eventDate: 1667217986388,
@@ -2590,7 +2623,7 @@ test("aggregate - ReplacedEvent가 같은 activityId로 여러번 수행되었�
           {
             id: "97a1f315c944",
             params: { articleId: "02542470", title: "Master", referrer: "my" },
-            pushedBy: {
+            enteredBy: {
               id: "97a1f319689d",
               name: "Replaced" as const,
               eventDate: 1667218240575,
@@ -2608,7 +2641,7 @@ test("aggregate - ReplacedEvent가 같은 activityId로 여러번 수행되었�
             },
           },
         ],
-        pushedBy: {
+        enteredBy: {
           id: "97a1f319689d",
           name: "Replaced" as const,
           eventDate: 1667218240575,
@@ -2624,6 +2657,7 @@ test("aggregate - ReplacedEvent가 같은 activityId로 여러번 수행되었�
             path: "/articles/02542470/?title=Master&referrer=my",
           },
         },
+        exitedBy: poppedEvent,
         isTop: true,
         isActive: false,
         isRoot: false,
@@ -2701,10 +2735,10 @@ test("aggregate - 현재 특정 액티비티가 애니메이션 되고 있는 �
             params: {
               hello: "world",
             },
-            pushedBy: pushedEvent1,
+            enteredBy: pushedEvent1,
           },
         ],
-        pushedBy: pushedEvent1,
+        enteredBy: pushedEvent1,
         isActive: false,
         isTop: false,
         isRoot: true,
@@ -2723,10 +2757,10 @@ test("aggregate - 현재 특정 액티비티가 애니메이션 되고 있는 �
             params: {
               hello: "world2",
             },
-            pushedBy: replacedEvent,
+            enteredBy: replacedEvent,
           },
         ],
-        pushedBy: replacedEvent,
+        enteredBy: replacedEvent,
         isActive: true,
         isTop: true,
         isRoot: true,
@@ -2799,10 +2833,10 @@ test("aggregate - 현재 특정 액티비티가 애니메이션이 되고 있는
             params: {
               hello: "world",
             },
-            pushedBy: pushedEvent1,
+            enteredBy: pushedEvent1,
           },
         ],
-        pushedBy: pushedEvent1,
+        enteredBy: pushedEvent1,
         isActive: false,
         isTop: false,
         isRoot: true,
@@ -2821,10 +2855,10 @@ test("aggregate - 현재 특정 액티비티가 애니메이션이 되고 있는
             params: {
               hello: "world2",
             },
-            pushedBy: replacedEvent,
+            enteredBy: replacedEvent,
           },
         ],
-        pushedBy: replacedEvent,
+        enteredBy: replacedEvent,
         isActive: true,
         isTop: true,
         isRoot: false,
@@ -2882,21 +2916,21 @@ test("aggregate - StepPushedEvent가 발생하면, 최상단 액티비티의 파
         params: {
           hello: "world2",
         },
-        pushedBy: pushedEvent,
+        enteredBy: pushedEvent,
         steps: [
           {
             id: "a1",
             params: {
               hello: "world",
             },
-            pushedBy: pushedEvent,
+            enteredBy: pushedEvent,
           },
           {
             id: "s1",
             params: {
               hello: "world2",
             },
-            pushedBy: stepPushedEvent,
+            enteredBy: stepPushedEvent,
           },
         ],
         isActive: true,
@@ -2958,14 +2992,14 @@ test("aggregate - StepPushedEvent가 쌓인 상태에서, StepPoppedEvent가 들
         params: {
           hello: "world",
         },
-        pushedBy: pushedEvent,
+        enteredBy: pushedEvent,
         steps: [
           {
             id: "a1",
             params: {
               hello: "world",
             },
-            pushedBy: pushedEvent,
+            enteredBy: pushedEvent,
           },
         ],
         isActive: true,
@@ -2989,6 +3023,7 @@ test("aggregate - StepPushedEvent가 쌓인 상태에서, PoppedEvent가 들어�
 
   let pushedEvent1: PushedEvent;
   let pushedEvent2: PushedEvent;
+  let poppedEvent: PoppedEvent;
 
   const events = [
     initializedEvent({
@@ -3020,9 +3055,9 @@ test("aggregate - StepPushedEvent가 쌓인 상태에서, PoppedEvent가 들어�
       },
       eventDate: enoughPastTime(),
     }),
-    makeEvent("Popped", {
+    (poppedEvent = makeEvent("Popped", {
       eventDate: enoughPastTime(),
-    }),
+    })),
   ];
 
   const output = aggregate(events, t);
@@ -3042,10 +3077,10 @@ test("aggregate - StepPushedEvent가 쌓인 상태에서, PoppedEvent가 들어�
             params: {
               hello: "a",
             },
-            pushedBy: pushedEvent1,
+            enteredBy: pushedEvent1,
           },
         ],
-        pushedBy: pushedEvent1,
+        enteredBy: pushedEvent1,
         isActive: true,
         isTop: true,
         isRoot: true,
@@ -3064,10 +3099,11 @@ test("aggregate - StepPushedEvent가 쌓인 상태에서, PoppedEvent가 들어�
             params: {
               hello: "b",
             },
-            pushedBy: pushedEvent2,
+            enteredBy: pushedEvent2,
           },
         ],
-        pushedBy: pushedEvent2,
+        enteredBy: pushedEvent2,
+        exitedBy: poppedEvent,
         isActive: false,
         isTop: false,
         isRoot: false,
@@ -3090,6 +3126,7 @@ test("aggregate - StepPushedEvent가 쌓인 상태에서, PoppedEvent가 들어�
   let pushedEvent1: PushedEvent;
   let pushedEvent2: PushedEvent;
   let stepPushedEvent: StepPushedEvent;
+  let poppedEvent: PoppedEvent;
 
   const events = [
     initializedEvent({
@@ -3121,9 +3158,9 @@ test("aggregate - StepPushedEvent가 쌓인 상태에서, PoppedEvent가 들어�
       },
       eventDate: enoughPastTime(),
     })),
-    makeEvent("Popped", {
+    (poppedEvent = makeEvent("Popped", {
       eventDate: t,
-    }),
+    })),
   ];
 
   const output = aggregate(events, t);
@@ -3143,10 +3180,10 @@ test("aggregate - StepPushedEvent가 쌓인 상태에서, PoppedEvent가 들어�
             params: {
               hello: "a",
             },
-            pushedBy: pushedEvent1,
+            enteredBy: pushedEvent1,
           },
         ],
-        pushedBy: pushedEvent1,
+        enteredBy: pushedEvent1,
         isActive: true,
         isTop: false,
         isRoot: true,
@@ -3165,17 +3202,18 @@ test("aggregate - StepPushedEvent가 쌓인 상태에서, PoppedEvent가 들어�
             params: {
               hello: "b",
             },
-            pushedBy: pushedEvent2,
+            enteredBy: pushedEvent2,
           },
           {
             id: "s1",
             params: {
               hello: "c",
             },
-            pushedBy: stepPushedEvent,
+            enteredBy: stepPushedEvent,
           },
         ],
-        pushedBy: pushedEvent2,
+        enteredBy: pushedEvent2,
+        exitedBy: poppedEvent,
         isActive: false,
         isTop: true,
         isRoot: false,
@@ -3233,14 +3271,14 @@ test("aggregate - StepReplacedEvent가 발생하면, 최상단 액티비티의 �
         params: {
           hello: "world2",
         },
-        pushedBy: pushedEvent,
+        enteredBy: pushedEvent,
         steps: [
           {
             id: "s1",
             params: {
               hello: "world2",
             },
-            pushedBy: stepReplacedEvent,
+            enteredBy: stepReplacedEvent,
           },
         ],
         isActive: true,
@@ -3303,14 +3341,14 @@ test("aggregate - 만약 StepPoppedEvent를 통해 제거할 수 있는 영역�
         params: {
           hello: "world2",
         },
-        pushedBy: pushedEvent,
+        enteredBy: pushedEvent,
         steps: [
           {
             id: "s1",
             params: {
               hello: "world2",
             },
-            pushedBy: stepReplacedEvent,
+            enteredBy: stepReplacedEvent,
           },
         ],
         isActive: true,
@@ -3421,10 +3459,11 @@ test("aggregate - After Push > Replace > Replace (skipped), first pushed activit
           {
             id: "A",
             params: {},
-            pushedBy: pushedEvent,
+            enteredBy: pushedEvent,
           },
         ],
-        pushedBy: pushedEvent,
+        enteredBy: pushedEvent,
+        exitedBy: replacedEvent2,
         isActive: false,
         isTop: false,
         isRoot: false,
@@ -3439,10 +3478,11 @@ test("aggregate - After Push > Replace > Replace (skipped), first pushed activit
           {
             id: "B",
             params: {},
-            pushedBy: replacedEvent1,
+            enteredBy: replacedEvent1,
           },
         ],
-        pushedBy: replacedEvent1,
+        enteredBy: replacedEvent1,
+        exitedBy: replacedEvent2,
         isActive: false,
         isTop: false,
         isRoot: false,
@@ -3457,10 +3497,10 @@ test("aggregate - After Push > Replace > Replace (skipped), first pushed activit
           {
             id: "C",
             params: {},
-            pushedBy: replacedEvent2,
+            enteredBy: replacedEvent2,
           },
         ],
-        pushedBy: replacedEvent2,
+        enteredBy: replacedEvent2,
         isActive: true,
         isTop: true,
         isRoot: true,
@@ -3531,10 +3571,10 @@ test("aggregate - After Push > Push > Replace > Replace, first pushed activity s
           {
             id: "A",
             params: {},
-            pushedBy: pushedEvent1,
+            enteredBy: pushedEvent1,
           },
         ],
-        pushedBy: pushedEvent1,
+        enteredBy: pushedEvent1,
         isActive: false,
         isTop: false,
         isRoot: true,
@@ -3549,10 +3589,11 @@ test("aggregate - After Push > Push > Replace > Replace, first pushed activity s
           {
             id: "B",
             params: {},
-            pushedBy: pushedEvent2,
+            enteredBy: pushedEvent2,
           },
         ],
-        pushedBy: pushedEvent2,
+        enteredBy: pushedEvent2,
+        exitedBy: replacedEvent1,
         isActive: false,
         isTop: false,
         isRoot: false,
@@ -3567,10 +3608,11 @@ test("aggregate - After Push > Push > Replace > Replace, first pushed activity s
           {
             id: "C",
             params: {},
-            pushedBy: replacedEvent1,
+            enteredBy: replacedEvent1,
           },
         ],
-        pushedBy: replacedEvent1,
+        enteredBy: replacedEvent1,
+        exitedBy: replacedEvent2,
         isActive: false,
         isTop: false,
         isRoot: false,
@@ -3585,10 +3627,10 @@ test("aggregate - After Push > Push > Replace > Replace, first pushed activity s
           {
             id: "D",
             params: {},
-            pushedBy: replacedEvent2,
+            enteredBy: replacedEvent2,
           },
         ],
-        pushedBy: replacedEvent2,
+        enteredBy: replacedEvent2,
         isActive: true,
         isTop: true,
         isRoot: false,

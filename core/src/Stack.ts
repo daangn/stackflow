@@ -1,22 +1,24 @@
 import type {
+  PoppedEvent,
   PushedEvent,
   ReplacedEvent,
+  StepPoppedEvent,
   StepPushedEvent,
   StepReplacedEvent,
 } from "./event-types";
 
+export type ActivityTransition = "enter" | "exit";
+export type ActivityTransitionProgress = "active" | "done";
 export type ActivityTransitionState =
-  | "enter-active"
-  | "enter-done"
-  | "exit-active"
-  | "exit-done";
+  `${ActivityTransition}-${ActivityTransitionProgress}`;
 
 export type ActivityStep = {
   id: string;
   params: {
     [key: string]: string | undefined;
   };
-  pushedBy: PushedEvent | ReplacedEvent | StepPushedEvent | StepReplacedEvent;
+  enteredBy: PushedEvent | ReplacedEvent | StepPushedEvent | StepReplacedEvent;
+  exitedBy?: ReplacedEvent | PoppedEvent | StepReplacedEvent | StepPoppedEvent;
 };
 
 export type Activity = {
@@ -27,7 +29,8 @@ export type Activity = {
     [key: string]: string | undefined;
   };
   context?: {};
-  pushedBy: PushedEvent | ReplacedEvent;
+  enteredBy: PushedEvent | ReplacedEvent;
+  exitedBy?: ReplacedEvent | PoppedEvent;
   steps: ActivityStep[];
   isTop: boolean;
   isActive: boolean;
