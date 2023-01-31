@@ -34,7 +34,6 @@ export default function findTargetActivityIndexes(
             break;
           }
 
-          // push original index
           targetActivities.push(activities.indexOf(activity));
 
           if (activity.enteredBy.name === "Pushed") {
