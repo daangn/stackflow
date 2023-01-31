@@ -1,5 +1,5 @@
 import type { ActivityTransitionState } from "@stackflow/core";
-import type { RefObject } from "react";
+import type React from "react";
 import { useEffect } from "react";
 
 import { useNullableActivity } from "./useNullableActivity";
@@ -8,7 +8,7 @@ const connections: {
   [styleName: string]: Map<
     number,
     {
-      refs: Array<RefObject<any>>;
+      refs: Array<React.RefObject<any>>;
       hasEffect: boolean;
     }
   >;
@@ -21,10 +21,10 @@ export function useStyleEffect<T extends HTMLElement>({
   effectDeps,
 }: {
   styleName: string;
-  refs: Array<RefObject<T>>;
+  refs: Array<React.RefObject<T>>;
   effect?: (params: {
     activityTransitionState: ActivityTransitionState;
-    refs: Array<RefObject<T>>;
+    refs: Array<React.RefObject<T>>;
   }) => (() => void) | void;
   effectDeps?: any[];
 }) {
@@ -57,7 +57,7 @@ export function useStyleEffect<T extends HTMLElement>({
     }
 
     const refs = (() => {
-      let arr: Array<RefObject<T>> = [];
+      let arr: Array<React.RefObject<T>> = [];
 
       for (let i = 1; i <= activity.zIndex; i += 1) {
         const connection = connections[styleName].get(activity.zIndex - i);
