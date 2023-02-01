@@ -2,6 +2,20 @@ import type { DomainEvent } from "../event-types";
 import type { Activity, ActivityTransitionState } from "../Stack";
 import { findIndices, last } from "../utils";
 
+function isActivityNotExited(activity: Activity) {
+  return !activity.exitedBy;
+}
+
+function sortActivitiesByEventDate(a1: Activity, a2: Activity) {
+  return a2.enteredBy.eventDate - a1.enteredBy.eventDate;
+}
+
+function findLatestActiveActivity(activities: Activity[]) {
+  return activities
+    .filter(isActivityNotExited)
+    .sort(sortActivitiesByEventDate)[0];
+}
+
 export default function findTargetActivityIndexes(
   activities: Activity[],
   event: DomainEvent,
@@ -19,9 +33,7 @@ export default function findTargetActivityIndexes(
         break;
       }
 
-      const sorted = activities
-        .slice()
-        .sort((a1, a2) => a2.enteredBy.eventDate - a1.enteredBy.eventDate);
+      const sorted = activities.slice().sort(sortActivitiesByEventDate);
 
       const transitionState: ActivityTransitionState =
         event.skipEnterActiveState || isTransitionDone
@@ -44,10 +56,7 @@ export default function findTargetActivityIndexes(
       break;
     }
     case "Popped": {
-      const latestActivity = activities
-        .slice(1)
-        .filter((activity) => !activity.exitedBy)
-        .sort((a1, a2) => a2.enteredBy.eventDate - a1.enteredBy.eventDate)[0];
+      const latestActivity = findLatestActiveActivity(activities.slice(1));
 
       if (latestActivity) {
         targetActivities.push(activities.indexOf(latestActivity));
@@ -56,9 +65,7 @@ export default function findTargetActivityIndexes(
     }
     case "StepPushed":
     case "StepReplaced": {
-      const latestActivity = activities
-        .filter((activity) => !activity.exitedBy)
-        .sort((a1, a2) => a2.enteredBy.eventDate - a1.enteredBy.eventDate)[0];
+      const latestActivity = findLatestActiveActivity(activities);
 
       if (latestActivity) {
         targetActivities.push(activities.indexOf(latestActivity));
@@ -66,9 +73,7 @@ export default function findTargetActivityIndexes(
       break;
     }
     case "StepPopped": {
-      const latestActivity = activities
-        .filter((activity) => !activity.exitedBy)
-        .sort((a1, a2) => a2.enteredBy.eventDate - a1.enteredBy.eventDate)[0];
+      const latestActivity = findLatestActiveActivity(activities);
 
       if (latestActivity && latestActivity.steps.length > 1) {
         targetActivities.push(activities.indexOf(latestActivity));
