@@ -1,8 +1,7 @@
 import { useEffect } from "react";
 
 import { useActivity } from "./activity/useActivity";
-
-const noop = () => {};
+import { noop } from "./utils";
 
 export const useActiveEffect = (effect: React.EffectCallback) => {
   const { isActive } = useActivity();

@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 
-import { listenOnce } from "../utils";
+import { listenOnce, noop } from "../utils";
 import { useStyleEffect } from "./useStyleEffect";
 import { OFFSET_PX_CUPERTINO } from "./useStyleEffectOffset";
 
@@ -27,11 +27,11 @@ export function useStyleEffectSwipeBack({
     effect: hasEffect
       ? ({ refs }) => {
           if (theme !== "cupertino") {
-            return () => {};
+            return noop;
           }
 
           if (!dimRef.current || !edgeRef.current || !paperRef.current) {
-            return () => {};
+            return noop;
           }
 
           const $dim = dimRef.current;

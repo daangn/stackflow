@@ -2,6 +2,7 @@ import type { ActivityTransitionState } from "@stackflow/core";
 import type React from "react";
 import { useEffect } from "react";
 
+import { noop } from "../utils";
 import { useNullableActivity } from "./useNullableActivity";
 
 const connections: {
@@ -32,7 +33,7 @@ export function useStyleEffect({
 
   useEffect(() => {
     if (!activity) {
-      return () => {};
+      return noop;
     }
     if (!connections[styleName]) {
       connections[styleName] = new Map();
@@ -50,10 +51,10 @@ export function useStyleEffect({
 
   useEffect(() => {
     if (!activity) {
-      return () => {};
+      return noop;
     }
     if (!effect) {
-      return () => {};
+      return noop;
     }
 
     const refs = (() => {

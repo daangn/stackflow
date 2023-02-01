@@ -2,6 +2,7 @@
 
 import type React from "react";
 
+import { noop } from "../utils";
 import { useStyleEffect } from "./useStyleEffect";
 
 export function useStyleEffectHide({
@@ -45,7 +46,7 @@ export function useStyleEffectHide({
             default: {
               cleanup();
 
-              return () => {};
+              return noop;
             }
           }
         }
