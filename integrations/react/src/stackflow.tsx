@@ -22,9 +22,7 @@ import type {
   UseStepActionsOutputType,
 } from "./useStepActions";
 import { useStepActions } from "./useStepActions";
-import { makeRef } from "./utils";
-
-const isBrowser = typeof window !== "undefined";
+import { isBrowser, makeRef } from "./utils";
 
 function parseActionOptions(options?: { animate?: boolean }) {
   if (!options) {
@@ -120,7 +118,7 @@ export type StackflowOutput<T extends BaseActivities> = {
 export function stackflow<T extends BaseActivities>(
   options: StackflowOptions<T>,
 ): StackflowOutput<T> {
-  if (typeof window !== "undefined") {
+  if (isBrowser()) {
     const html = window.document.documentElement;
 
     // <html style="--stackflow-transition-duration:350ms;">
@@ -180,7 +178,7 @@ export function stackflow<T extends BaseActivities>(
 
       // In a browser environment,
       // memoize `coreStore` so that only one `coreStore` exists throughout the entire app.
-      if (isBrowser && prevCoreStore) {
+      if (isBrowser() && prevCoreStore) {
         return prevCoreStore;
       }
 
@@ -240,7 +238,7 @@ export function stackflow<T extends BaseActivities>(
         plugins,
       });
 
-      if (isBrowser) {
+      if (isBrowser()) {
         store.init();
         setCoreStore(store);
       }

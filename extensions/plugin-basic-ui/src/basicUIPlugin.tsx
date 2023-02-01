@@ -4,7 +4,7 @@ import React, { createContext, useContext } from "react";
 
 import * as theme from "./theme.css";
 import type { RecursivePartial } from "./utils";
-import { compact, compactMap } from "./utils";
+import { compact, compactMap, isBrowser } from "./utils";
 
 type BasicUIPluginOptions = RecursivePartial<theme.GlobalVars> & {
   theme: "android" | "cupertino";
@@ -49,7 +49,7 @@ export const basicUIPlugin: (
       <GlobalOptionsProvider value={options}>
         <div
           className={
-            typeof window !== "undefined"
+            isBrowser()
               ? compact([theme[options.theme], options.rootClassName]).join(" ")
               : options.rootClassName
           }
