@@ -15,17 +15,17 @@ const connections: {
   >;
 } = {};
 
-export function useStyleEffect({
+export function useStyleEffect<T extends HTMLElement>({
   styleName,
   refs,
   effect,
   effectDeps,
 }: {
   styleName: string;
-  refs: Array<React.RefObject<any>>;
+  refs: Array<React.RefObject<T>>;
   effect?: (params: {
     activityTransitionState: ActivityTransitionState;
-    refs: Array<React.RefObject<HTMLElement>>;
+    refs: Array<React.RefObject<T>>;
   }) => (() => void) | void;
   effectDeps?: any[];
 }) {
@@ -58,7 +58,7 @@ export function useStyleEffect({
     }
 
     const refs = (() => {
-      let arr: Array<React.RefObject<any>> = [];
+      let arr: Array<React.RefObject<T>> = [];
 
       for (let i = 1; i <= activity.zIndex; i += 1) {
         const connection = connections[styleName].get(activity.zIndex - i);
