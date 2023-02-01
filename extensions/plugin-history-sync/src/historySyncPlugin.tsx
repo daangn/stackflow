@@ -97,36 +97,35 @@ export function historySyncPlugin<
         const activityNames = Object.keys(options.routes);
 
         if (path) {
-          for (let i = 0; i < activityNames.length; i += 1) {
-            const activityName = activityNames[i] as K;
+          activityNames.forEach((activityName) => {
             const routes = normalizeRoute(options.routes[activityName]);
 
-            for (let j = 0; j < routes.length; j += 1) {
-              const route = routes[j];
-
+            routes.forEach((route) => {
               const template = makeTemplate(route);
               const activityParams = template.parse(path);
               const matched = !!activityParams;
 
-              if (matched) {
-                const activityId = id();
-
-                return [
-                  makeEvent("Pushed", {
-                    activityId,
-                    activityName,
-                    activityParams: {
-                      ...activityParams,
-                    },
-                    eventDate: new Date().getTime() - MINUTE,
-                    activityContext: {
-                      path,
-                    },
-                  }),
-                ];
+              if (!matched) {
+                return null;
               }
-            }
-          }
+
+              const activityId = id();
+
+              return [
+                makeEvent("Pushed", {
+                  activityId,
+                  activityName,
+                  activityParams: {
+                    ...activityParams,
+                  },
+                  eventDate: new Date().getTime() - MINUTE,
+                  activityContext: {
+                    path,
+                  },
+                }),
+              ];
+            });
+          });
         }
 
         const fallbackActivityId = id();
