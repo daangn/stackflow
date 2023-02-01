@@ -6,14 +6,14 @@ function isActivityNotExited(activity: Activity) {
   return !activity.exitedBy;
 }
 
-function sortActivitiesByEventDate(a1: Activity, a2: Activity) {
+function compareActivitiesByEventDate(a1: Activity, a2: Activity) {
   return a2.enteredBy.eventDate - a1.enteredBy.eventDate;
 }
 
 function findLatestActiveActivity(activities: Activity[]) {
   return activities
     .filter(isActivityNotExited)
-    .sort(sortActivitiesByEventDate)[0];
+    .sort(compareActivitiesByEventDate)[0];
 }
 
 export default function findTargetActivityIndexes(
@@ -33,7 +33,7 @@ export default function findTargetActivityIndexes(
         break;
       }
 
-      const sorted = activities.slice().sort(sortActivitiesByEventDate);
+      const sorted = activities.slice().sort(compareActivitiesByEventDate);
 
       const transitionState: ActivityTransitionState =
         event.skipEnterActiveState || isTransitionDone
