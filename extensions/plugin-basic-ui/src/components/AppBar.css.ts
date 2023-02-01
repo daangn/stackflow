@@ -17,8 +17,11 @@ import {
   vars,
 } from "./AppScreen.css";
 
-const minHeight = style({
+const appBarMinHeight = style({
   minHeight: globalVars.appBar.minHeight,
+});
+const appBarOverflow = style({
+  overflow: globalVars.appBar.overflow,
 });
 
 export const appBar = recipe({
@@ -26,8 +29,8 @@ export const appBar = recipe({
     f.posAbs,
     f.fullWidth,
     f.contentBox,
-    f.overflowHidden,
     background,
+    appBarOverflow,
     {
       backgroundColor: globalVars.appBar.backgroundColor,
       zIndex: vars.zIndexes.appBar,
@@ -109,7 +112,7 @@ export const safeArea = style({
 
 export const container = style([
   f.flexAlignEnd,
-  f.overflowHidden,
+  appBarOverflow,
   {
     height: globalVars.appBar.height,
     transition: `height ${globalVars.appBar.heightTransitionDuration}`,
@@ -119,7 +122,7 @@ export const container = style([
 export const left = style([
   f.flexAlignCenter,
   f.fullHeight,
-  minHeight,
+  appBarMinHeight,
   {
     padding: "0 0.5rem",
     ":empty": {
@@ -147,7 +150,7 @@ export const backButton = style([
 
 export const closeButton = style([backButton]);
 
-export const center = style([f.flexAlignCenter, f.flex1, minHeight]);
+export const center = style([f.flexAlignCenter, f.flex1, appBarMinHeight]);
 
 export const centerMain = recipe({
   base: {
@@ -240,7 +243,7 @@ export const right = style([
   f.flexAlignCenter,
   f.fullHeight,
   f.posRel,
-  minHeight,
+  appBarMinHeight,
   {
     padding: "0 0.5rem",
     marginLeft: "auto",

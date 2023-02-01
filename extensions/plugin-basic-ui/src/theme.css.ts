@@ -18,6 +18,7 @@ export const globalVars = createGlobalThemeContract(
       iconColor: "app-bar-icon-color",
       textColor: "app-bar-text-color",
       backgroundColor: "app-bar-background-color",
+      overflow: "app-bar-overflow",
     },
     bottomSheet: {
       borderRadius: "bottom-sheet-border-radius",
@@ -44,6 +45,7 @@ const defaultVars = {
     iconColor: "#212124",
     textColor: "#212124",
     backgroundColor: "#fff",
+    overflow: "hidden",
   },
   bottomSheet: {
     borderRadius: "1rem",
