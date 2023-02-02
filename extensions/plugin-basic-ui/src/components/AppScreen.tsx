@@ -140,7 +140,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
             [css.vars.transitionDuration]:
               transitionState === "enter-active" ||
               transitionState === "exit-active"
-                ? `var(--stackflow-transition-duration)`
+                ? globalVars.transitionDuration
                 : "0ms",
           }),
         )}

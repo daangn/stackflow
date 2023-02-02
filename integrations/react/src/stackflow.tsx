@@ -118,16 +118,6 @@ export type StackflowOutput<T extends BaseActivities> = {
 export function stackflow<T extends BaseActivities>(
   options: StackflowOptions<T>,
 ): StackflowOutput<T> {
-  if (isBrowser()) {
-    const html = window.document.documentElement;
-
-    // <html style="--stackflow-transition-duration:350ms;">
-    html.style.setProperty(
-      "--stackflow-transition-duration",
-      `${options.transitionDuration}ms`,
-    );
-  }
-
   const plugins = (options.plugins ?? [])
     .flat(Infinity as 0)
     .map((p) => p as StackflowReactPlugin<T>);
