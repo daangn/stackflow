@@ -29,7 +29,7 @@ export type UseActionsOutputType<T extends BaseActivities> = {
   /**
    * Push new activity
    */
-  push: <K extends Extract<keyof T, string>>(
+  push<K extends Extract<keyof T, string>>(
     activityName: K,
     params: T[K] extends
       | ActivityComponentType<infer U>
@@ -39,14 +39,14 @@ export type UseActionsOutputType<T extends BaseActivities> = {
     options?: {
       animate?: boolean;
     },
-  ) => {
+  ): {
     activityId: string;
   };
 
   /**
    * Push new activity in the top and remove current top activity when new activity is activated
    */
-  replace: <K extends Extract<keyof T, string>>(
+  replace<K extends Extract<keyof T, string>>(
     activityName: K,
     params: T[K] extends
       | ActivityComponentType<infer U>
@@ -57,14 +57,14 @@ export type UseActionsOutputType<T extends BaseActivities> = {
       animate?: boolean;
       activityId?: string;
     },
-  ) => {
+  ): {
     activityId: string;
   };
 
   /**
    * Remove top activity
    */
-  pop: (options?: { animate?: boolean }) => void;
+  pop(count?: number, options?: { animate?: boolean }): void;
 };
 
 export function useActions<
@@ -104,10 +104,12 @@ export function useActions<
           activityId,
         };
       },
-      pop(options) {
-        coreActions?.pop({
-          skipExitActiveState: parseActionOptions(options).skipActiveState,
-        });
+      pop(count = 1, options = {}) {
+        for (let i = 0; i < count; i += 1) {
+          coreActions?.pop({
+            skipExitActiveState: parseActionOptions(options).skipActiveState,
+          });
+        }
       },
     }),
     [coreActions?.push, coreActions?.replace, coreActions?.pop, pending],
