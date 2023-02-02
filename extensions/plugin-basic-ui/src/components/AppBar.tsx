@@ -18,6 +18,7 @@ type AppBarProps = Partial<
     | "borderSize"
     | "height"
     | "heightTransitionDuration"
+    | "overflow"
     | "iconColor"
     | "textColor"
     | "backgroundColor"
@@ -65,6 +66,8 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
       borderColor,
       borderSize,
       height,
+      heightTransitionDuration,
+      overflow,
       backgroundColor,
       onTopClick,
     },
@@ -266,6 +269,9 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
             [globalVars.appBar.borderColor]: borderColor,
             [globalVars.appBar.borderSize]: borderSize,
             [globalVars.appBar.height]: height,
+            [globalVars.appBar.heightTransitionDuration]:
+              heightTransitionDuration,
+            [globalVars.appBar.overflow]: overflow,
             [globalVars.appBar.backgroundColor]:
               backgroundColor || globalVars.backgroundColor,
             [appScreenCss.vars.appBar.center.mainWidth]: `${maxWidth}px`,
