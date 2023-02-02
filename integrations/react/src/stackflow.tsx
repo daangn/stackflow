@@ -338,10 +338,12 @@ export function stackflow<T extends BaseActivities>(
           activityId,
         };
       },
-      pop(options) {
-        return getCoreStore()?.actions.pop({
-          skipExitActiveState: parseActionOptions(options).skipActiveState,
-        });
+      pop(count = 1, options = {}) {
+        for (let i = 0; i < count; i += 1) {
+          getCoreStore()?.actions.pop({
+            skipExitActiveState: parseActionOptions(options).skipActiveState,
+          });
+        }
       },
       stepPush(params) {
         const stepId = makeStepId();
