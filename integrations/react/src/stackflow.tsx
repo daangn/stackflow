@@ -341,7 +341,8 @@ export function stackflow<T extends BaseActivities>(
       pop(count = 1, options = {}) {
         for (let i = 0; i < count; i += 1) {
           getCoreStore()?.actions.pop({
-            skipExitActiveState: parseActionOptions(options).skipActiveState,
+            skipExitActiveState:
+              i === 0 ? parseActionOptions(options).skipActiveState : true,
           });
         }
       },
