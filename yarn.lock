@@ -3564,6 +3564,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"browserslist@npm:^4.20.2":
+  version: 4.20.4
+  resolution: "browserslist@npm:4.20.4"
+  dependencies:
+    caniuse-lite: ^1.0.30001349
+    electron-to-chromium: ^1.4.147
+    escalade: ^3.1.1
+    node-releases: ^2.0.5
+    picocolors: ^1.0.0
+  bin:
+    browserslist: cli.js
+  checksum: 0e56c42da765524e5c31bc9a1f08afaa8d5dba085071137cf21e56dc78d0cf0283764143df4c7d1c0cd18c3187fc9494e1d93fa0255004f0be493251a28635f9
+  languageName: node
+  linkType: hard
+
 "browserslist@npm:^4.21.3":
   version: 4.21.5
   resolution: "browserslist@npm:4.21.5"
