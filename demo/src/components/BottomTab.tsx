@@ -1,5 +1,3 @@
-import React from "react";
-
 import IconChatting from "../assets/IconChatting";
 import IconHome from "../assets/IconHome";
 import IconMenu from "../assets/IconMenu";

@@ -1,5 +1,3 @@
-import React from "react";
-
 const svg = `
 <svg width="335" height="346" viewBox="0 0 335 346" fill="none" xmlns="http://www.w3.org/2000/svg">
 <rect x="15.5" y="279.5" width="181" height="47" rx="7.5" stroke="currentColor"/>

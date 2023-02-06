@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 
+import { globalVars } from "../theme.css";
 import { listenOnce, noop } from "../utils";
 import { useStyleEffect } from "./useStyleEffect";
 import { OFFSET_PX_CUPERTINO } from "./useStyleEffectOffset";
@@ -101,19 +102,18 @@ export function useStyleEffectSwipeBack({
             return new Promise((resolve) => {
               requestAnimationFrame(() => {
                 $dim.style.opacity = `${swiped ? 0 : 1}`;
-                $dim.style.transition = "var(--stackflow-transition-duration)";
+                $dim.style.transition = globalVars.transitionDuration;
 
                 $paper.style.overflowY = "hidden";
                 $paper.style.transform = `translateX(${swiped ? "100%" : "0"})`;
-                $paper.style.transition =
-                  "var(--stackflow-transition-duration)";
+                $paper.style.transition = globalVars.transitionDuration;
 
                 refs.forEach((ref) => {
                   if (!ref.current) {
                     return;
                   }
 
-                  ref.current.style.transition = `var(--stackflow-transition-duration)`;
+                  ref.current.style.transition = globalVars.transitionDuration;
                   ref.current.style.transform = `translate3d(${
                     swiped ? "0" : `-${OFFSET_PX_CUPERTINO / 16}rem`
                   }, 0, 0)`;

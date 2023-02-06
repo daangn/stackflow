@@ -2,7 +2,7 @@
 
 import { useActions } from "@stackflow/react";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
-import React, { createContext, useContext, useMemo, useRef } from "react";
+import { createContext, useContext, useMemo, useRef } from "react";
 
 import { useGlobalOptions } from "../basicUIPlugin";
 import {
@@ -140,7 +140,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
             [css.vars.transitionDuration]:
               transitionState === "enter-active" ||
               transitionState === "exit-active"
-                ? `var(--stackflow-transition-duration)`
+                ? globalVars.transitionDuration
                 : "0ms",
           }),
         )}

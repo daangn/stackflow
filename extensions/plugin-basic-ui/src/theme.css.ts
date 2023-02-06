@@ -9,6 +9,7 @@ export const globalVars = createGlobalThemeContract(
   {
     backgroundColor: "background-color",
     dimBackgroundColor: "dim-background-color",
+    transitionDuration: "transition-duration",
     appBar: {
       borderColor: "app-bar-border-color",
       borderSize: "app-bar-border-size",
@@ -36,6 +37,7 @@ export type GlobalVars = InferVars<typeof globalVars>;
 const defaultVars = {
   backgroundColor: "#fff",
   dimBackgroundColor: "rgba(0, 0, 0, 0.15)",
+  transitionDuration: "0ms",
   appBar: {
     borderColor: "rgba(0, 0, 0, 0.07)",
     borderSize: "1px",

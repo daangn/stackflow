@@ -51,7 +51,7 @@ const Something: React.FC = () => {
 ```tsx
 import { BottomSheet } from "@stackflow/plugin-basic-ui";
 
-const Something: React.FC = () => {
+const Something = () => {
   return (
     <BottomSheet>
       <div>Hello, World</div>

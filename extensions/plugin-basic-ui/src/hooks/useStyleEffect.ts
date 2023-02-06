@@ -1,5 +1,4 @@
 import type { ActivityTransitionState } from "@stackflow/core";
-import type React from "react";
 import { useEffect } from "react";
 
 import { noop } from "../utils";

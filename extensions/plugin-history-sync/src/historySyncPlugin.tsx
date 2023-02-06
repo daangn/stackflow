@@ -1,6 +1,5 @@
 import { id, makeEvent } from "@stackflow/core";
 import type { StackflowReactPlugin } from "@stackflow/react";
-import React from "react";
 
 import {
   getCurrentState,

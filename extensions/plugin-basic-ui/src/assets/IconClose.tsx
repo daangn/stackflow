@@ -1,5 +1,3 @@
-import React from "react";
-
 const IconClose: React.FC<{
   className?: string;
 }> = (props) => (

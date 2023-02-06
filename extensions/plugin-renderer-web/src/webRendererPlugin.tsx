@@ -1,5 +1,5 @@
 import type { StackflowReactPlugin } from "@stackflow/react";
-import React from "react";
+import { Fragment } from "react";
 
 export function webRendererPlugin(): StackflowReactPlugin {
   return () => ({
@@ -11,9 +11,7 @@ export function webRendererPlugin(): StackflowReactPlugin {
             .render()
             .activities.filter((activity) => activity.isActive)
             .map((activity) => (
-              <React.Fragment key={activity.key}>
-                {activity.render()}
-              </React.Fragment>
+              <Fragment key={activity.key}>{activity.render()}</Fragment>
             ))}
         </>
       );

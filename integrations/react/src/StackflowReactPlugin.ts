@@ -1,5 +1,4 @@
 import type { Activity, Stack, StackflowPlugin } from "@stackflow/core";
-import type React from "react";
 
 export type StackflowReactPlugin<T = never> = () => {
   /**

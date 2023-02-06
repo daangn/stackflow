@@ -6,7 +6,7 @@ import {
 import { usePreloader } from "@stackflow/plugin-preload";
 import type { ActivityComponentType } from "@stackflow/react";
 import { useActions } from "@stackflow/react";
-import React, { useEffect, useMemo, useReducer, useRef } from "react";
+import { forwardRef, useEffect, useMemo, useReducer, useRef } from "react";
 
 import { mergeRefs } from "./mergeRefs";
 import { omit } from "./omit";
@@ -32,7 +32,7 @@ export type TypeLink<T extends { [activityName: string]: unknown } = {}> = <
   props: LinkProps<K, T[K] extends ActivityComponentType<infer U> ? U : never>,
 ) => React.ReactElement | null;
 
-export const Link: TypeLink = React.forwardRef(
+export const Link: TypeLink = forwardRef(
   (props, ref: React.ForwardedRef<HTMLAnchorElement>) => {
     const routes = useRoutes();
     const { preload } = usePreloader();

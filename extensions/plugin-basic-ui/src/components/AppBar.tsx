@@ -1,6 +1,6 @@
 import { useActions } from "@stackflow/react";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
-import React, { useRef } from "react";
+import { forwardRef, useRef } from "react";
 
 import { IconBack, IconClose } from "../assets";
 import { useGlobalOptions } from "../basicUIPlugin";
@@ -50,7 +50,7 @@ type AppBarProps = Partial<
   modalPresentationStyle?: "fullScreen";
   onTopClick?: (e: React.MouseEvent) => void;
 };
-const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
+const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
   (
     {
       title,

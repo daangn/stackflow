@@ -1,6 +1,6 @@
 import type { StackflowReactPlugin } from "@stackflow/react";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
-import React, { createContext, useContext } from "react";
+import { createContext, useContext } from "react";
 
 import * as theme from "./theme.css";
 import type { RecursivePartial } from "./utils";
@@ -57,6 +57,10 @@ export const basicUIPlugin: (
             compactMap({
               [theme.globalVars.backgroundColor]: options.backgroundColor,
               [theme.globalVars.dimBackgroundColor]: options.dimBackgroundColor,
+              [theme.globalVars.transitionDuration]:
+                stack.globalTransitionState === "loading"
+                  ? `${stack.transitionDuration}ms`
+                  : "0ms",
               [theme.globalVars.appBar.borderColor]:
                 options.appBar?.borderColor,
               [theme.globalVars.appBar.borderSize]: options.appBar?.borderSize,
