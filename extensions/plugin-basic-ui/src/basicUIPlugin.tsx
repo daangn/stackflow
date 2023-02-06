@@ -57,6 +57,10 @@ export const basicUIPlugin: (
             compactMap({
               [theme.globalVars.backgroundColor]: options.backgroundColor,
               [theme.globalVars.dimBackgroundColor]: options.dimBackgroundColor,
+              [theme.globalVars.transitionDuration]:
+                stack.globalTransitionState === "loading"
+                  ? `${stack.transitionDuration}ms`
+                  : "0ms",
               [theme.globalVars.appBar.borderColor]:
                 options.appBar?.borderColor,
               [theme.globalVars.appBar.borderSize]: options.appBar?.borderSize,

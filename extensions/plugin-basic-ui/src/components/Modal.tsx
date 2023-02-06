@@ -83,7 +83,7 @@ const Modal: React.FC<ModalProps> = ({
           [css.vars.transitionDuration]:
             transitionState === "enter-active" ||
             transitionState === "exit-active"
-              ? `var(--stackflow-transition-duration)`
+              ? globalVars.transitionDuration
               : "0ms",
         }),
       )}
