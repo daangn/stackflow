@@ -9,10 +9,10 @@ interface ActivityProviderProps {
   children: React.ReactNode;
   value: Activity;
 }
-export const ActivityProvider: React.FC<ActivityProviderProps> = ({
+export const ActivityProvider = ({
   children,
   value,
-}) => (
+}: ActivityProviderProps) => (
   <ActivityContext.Provider value={useMemoDeep(value)}>
     {children}
   </ActivityContext.Provider>

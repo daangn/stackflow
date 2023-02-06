@@ -6,7 +6,7 @@ const SVG = `
 </svg>
 `;
 
-const IconExpandMore: React.FC = () => (
+const IconExpandMore = () => (
   <div className={f.flex} dangerouslySetInnerHTML={{ __html: SVG }} />
 );
 

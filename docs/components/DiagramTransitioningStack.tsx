@@ -24,7 +24,7 @@ const svg = `
 
 `;
 
-const DiagramTransitioningStack: React.FC = () => (
+const DiagramTransitioningStack = () => (
   <div style={{ display: "flex", justifyContent: "center" }}>
     <div
       style={{ width: "100%", padding: "2.5rem 0 1rem", maxWidth: "45rem" }}

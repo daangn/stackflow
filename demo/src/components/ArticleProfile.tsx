@@ -3,7 +3,7 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import ImageProfileRating from "../assets/ImageProfileRating";
 import * as css from "./ArticleProfile.css";
 
-const ArticleProfile: React.FC = () => {
+const ArticleProfile = () => {
   const imageUrl = `https://picsum.photos/120/120/`;
 
   return (

@@ -10,13 +10,13 @@ interface FeedCardProps {
   price: number;
   daysAgo: number;
 }
-const FeedCard: React.FC<FeedCardProps> = ({
+const FeedCard = ({
   articleId,
   title,
   price,
   region,
   daysAgo,
-}) => {
+}: FeedCardProps) => {
   const { push } = useFlow();
 
   const imageUrl = `https://picsum.photos/800/800/?id=${articleId}`;

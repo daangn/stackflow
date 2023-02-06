@@ -17,13 +17,13 @@ export type BottomSheetProps = Partial<
     onOutsideClick?: React.MouseEventHandler;
     children: React.ReactNode;
   };
-const BottomSheet: React.FC<BottomSheetProps> = ({
+const BottomSheet = ({
   borderRadius = "1rem",
   backgroundColor,
   dimBackgroundColor,
   onOutsideClick,
   children,
-}) => {
+}: BottomSheetProps) => {
   const activity = useNullableActivity();
   const { pop } = useActions();
 

@@ -8,11 +8,7 @@ interface ArticleCardProps {
   title: string;
   price: number;
 }
-const ArticleCard: React.FC<ArticleCardProps> = ({
-  articleId,
-  title,
-  price,
-}) => {
+const ArticleCard = ({ articleId, title, price }: ArticleCardProps) => {
   const { push } = useFlow();
 
   const imageUrl = `https://picsum.photos/800/800/?id=${articleId}`;

@@ -17,13 +17,13 @@ export type ModalProps = Partial<
     onOutsideClick?: React.MouseEventHandler;
     children: React.ReactNode;
   };
-const Modal: React.FC<ModalProps> = ({
+const Modal = ({
   backgroundColor,
   dimBackgroundColor,
   borderRadius = "1rem",
   onOutsideClick,
   children,
-}) => {
+}: ModalProps) => {
   const activity = useNullableActivity();
   const { pop } = useActions();
 

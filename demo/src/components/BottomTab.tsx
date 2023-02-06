@@ -5,7 +5,7 @@ import IconProfile from "../assets/IconProfile";
 import IconSell from "../assets/IconSell";
 import * as css from "./BottomTab.css";
 
-const BottomTab: React.FC = () => (
+const BottomTab = () => (
   <div className={css.container}>
     <button type="button" className={css.button}>
       <div className={css.buttonIcon}>

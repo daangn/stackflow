@@ -11,9 +11,7 @@ interface MainRendererProps {
     [key: string]: ActivityComponentType;
   };
 }
-const MainRenderer: React.FC<MainRendererProps> = ({
-  activityComponentMap,
-}) => {
+const MainRenderer = ({ activityComponentMap }: MainRendererProps) => {
   const coreState = useCoreState();
   const plugins = usePlugins();
 
