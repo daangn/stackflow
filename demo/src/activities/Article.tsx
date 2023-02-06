@@ -1,6 +1,5 @@
 import type { ActivityComponentType } from "@stackflow/react";
 import { useActivityParams } from "@stackflow/react";
-import React from "react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import ArticleCard from "../components/ArticleCard";

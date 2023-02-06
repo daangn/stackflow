@@ -1,5 +1,3 @@
-import React from "react";
-
 const svg = `
 <svg width="100%" viewBox="0 0 686 159" fill="none" xmlns="http://www.w3.org/2000/svg">
 <circle cx="143" cy="79" r="49.5" stroke="currentColor"/>

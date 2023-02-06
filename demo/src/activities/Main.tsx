@@ -1,5 +1,4 @@
 import type { ActivityComponentType } from "@stackflow/react";
-import React from "react";
 
 import IconBell from "../assets/IconBell";
 import IconExpandMore from "../assets/IconExpandMore";

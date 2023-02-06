@@ -2,7 +2,6 @@ import type {
   ActivityComponentType,
   StackflowReactPlugin,
 } from "@stackflow/react";
-import React from "react";
 
 import type { Loader } from "./Loader";
 import { LoadersProvider } from "./LoadersContext";

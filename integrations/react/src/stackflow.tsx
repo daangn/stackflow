@@ -6,7 +6,7 @@ import type {
   StepPushedEvent,
 } from "@stackflow/core";
 import { makeCoreStore, makeEvent } from "@stackflow/core";
-import React, { useMemo } from "react";
+import { memo, useMemo } from "react";
 
 import type { ActivityComponentType } from "./activity";
 import { makeActivityId, makeStepId } from "./activity";
@@ -137,9 +137,7 @@ export function stackflow<T extends BaseActivities>(
     (acc, [key, Activity]) => ({
       ...acc,
       [key]:
-        "component" in Activity
-          ? React.memo(Activity.component)
-          : React.memo(Activity),
+        "component" in Activity ? memo(Activity.component) : memo(Activity),
     }),
     {} as {
       [key: string]: ActivityComponentType;
@@ -172,7 +170,7 @@ export function stackflow<T extends BaseActivities>(
 
   const [getCoreStore, setCoreStore] = makeRef<CoreStore>();
 
-  const Stack: StackComponentType = React.memo((props) => {
+  const Stack: StackComponentType = memo((props) => {
     const coreStore = useMemo(() => {
       const prevCoreStore = getCoreStore();
 
@@ -273,7 +271,7 @@ export function stackflow<T extends BaseActivities>(
         return;
       }
 
-      activityComponentMap[activity.name] = React.memo(activity.component);
+      activityComponentMap[activity.name] = memo(activity.component);
 
       staticCoreStore.actions.dispatchEvent("ActivityRegistered", {
         activityName: activity.name,

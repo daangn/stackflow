@@ -1,5 +1,5 @@
 import type { StackflowReactPlugin } from "@stackflow/react";
-import React from "react";
+import { Fragment } from "react";
 
 export function basicRendererPlugin(): StackflowReactPlugin {
   return () => ({
@@ -13,9 +13,7 @@ export function basicRendererPlugin(): StackflowReactPlugin {
               (activity) => activity.transitionState !== "exit-done",
             )
             .map((activity) => (
-              <React.Fragment key={activity.key}>
-                {activity.render()}
-              </React.Fragment>
+              <Fragment key={activity.key}>{activity.render()}</Fragment>
             ))}
         </>
       );

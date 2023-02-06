@@ -1,5 +1,5 @@
 import type { Stack } from "@stackflow/core";
-import React, { createContext } from "react";
+import { createContext } from "react";
 
 import { useMemoDeep } from "../utils";
 

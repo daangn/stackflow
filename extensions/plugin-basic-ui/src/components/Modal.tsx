@@ -2,7 +2,7 @@
 
 import { useActions } from "@stackflow/react";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
-import React, { useRef } from "react";
+import { useRef } from "react";
 
 import { useLazy, useNullableActivity, useStyleEffect } from "../hooks";
 import type { GlobalVars } from "../theme.css";

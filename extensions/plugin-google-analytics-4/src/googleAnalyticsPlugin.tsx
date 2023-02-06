@@ -1,6 +1,5 @@
 import type { Stack } from "@stackflow/core";
 import type { StackflowReactPlugin } from "@stackflow/react";
-import React from "react";
 import ReactGA4 from "react-ga4";
 
 import { GoogleAnalyticsContext } from "./contexts";

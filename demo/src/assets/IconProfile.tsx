@@ -1,5 +1,3 @@
-import React from "react";
-
 import { f } from "../styles";
 
 const SVG = `

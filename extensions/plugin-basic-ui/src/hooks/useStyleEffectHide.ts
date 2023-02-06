@@ -1,7 +1,5 @@
 /* eslint-disable no-param-reassign */
 
-import type React from "react";
-
 import { noop } from "../utils";
 import { useStyleEffect } from "./useStyleEffect";
 

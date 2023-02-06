@@ -1,5 +1,4 @@
 import { Stack } from "@stackflow/demo";
-import React from "react";
 import { useSimpleReveal } from "simple-reveal";
 
 const Demo: React.FC = () => {
