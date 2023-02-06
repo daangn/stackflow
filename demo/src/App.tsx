@@ -1,13 +1,13 @@
-import React, { Suspense } from "react";
+import { StrictMode, Suspense } from "react";
 
 import { Stack } from "./stackflow";
 
 const App: React.FC = () => (
-  <React.StrictMode>
+  <StrictMode>
     <Suspense>
       <Stack />
     </Suspense>
-  </React.StrictMode>
+  </StrictMode>
 );
 
 export default App;

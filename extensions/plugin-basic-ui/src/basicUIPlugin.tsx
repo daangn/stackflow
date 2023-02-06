@@ -1,6 +1,6 @@
 import type { StackflowReactPlugin } from "@stackflow/react";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
-import React, { createContext, useContext } from "react";
+import { createContext, useContext } from "react";
 
 import * as theme from "./theme.css";
 import type { RecursivePartial } from "./utils";

@@ -2,7 +2,7 @@
 
 import { useActions } from "@stackflow/react";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
-import React, { createContext, useContext, useMemo, useRef } from "react";
+import { createContext, useContext, useMemo, useRef } from "react";
 
 import { useGlobalOptions } from "../basicUIPlugin";
 import {

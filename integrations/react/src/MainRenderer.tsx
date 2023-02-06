@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 
 import type { ActivityComponentType } from "./activity";
 import { useCoreState } from "./core";

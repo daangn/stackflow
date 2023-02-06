@@ -1,5 +1,3 @@
-import React from "react";
-
 import type { ActivityComponentType } from "./activity";
 import { ActivityProvider } from "./activity";
 import { useCoreState } from "./core";

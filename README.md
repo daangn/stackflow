@@ -39,7 +39,6 @@ $ yarn add @stackflow/core @stackflow/react
 ```
 
 ```tsx
-import React from 'react'
 import ReactDOM from 'react-dom'
 
 import { stackflow } from '@stackflow/react';

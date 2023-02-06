@@ -1,5 +1,5 @@
 import type { CoreStore, Stack } from "@stackflow/core";
-import React, { createContext } from "react";
+import { createContext } from "react";
 
 import { useDeferredValue, useSyncExternalStore } from "../shims";
 
