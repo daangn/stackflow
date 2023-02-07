@@ -42,7 +42,7 @@ const defaultVars = {
     borderColor: "rgba(0, 0, 0, 0.07)",
     borderSize: "1px",
     height: "3.5rem",
-    heightTransitionDuration: "275ms",
+    heightTransitionDuration: "0ms",
     minHeight: "3.5rem",
     iconColor: "#212124",
     textColor: "#212124",
