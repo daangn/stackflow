@@ -338,11 +338,31 @@ export function stackflow<T extends BaseActivities>(
           activityId,
         };
       },
-      pop(count = 1, options = {}) {
-        for (let i = 0; i < count; i += 1) {
+      pop(
+        count?: number | { animate?: boolean } | undefined,
+        options?: { animate?: boolean } | undefined,
+      ) {
+        let _count = 1;
+        let _options: { animate?: boolean } = {};
+
+        if (typeof count === "object") {
+          _options = {
+            ...count,
+          };
+        }
+        if (typeof count === "number") {
+          _count = count;
+        }
+        if (options) {
+          _options = {
+            ...options,
+          };
+        }
+
+        for (let i = 0; i < _count; i += 1) {
           getCoreStore()?.actions.pop({
             skipExitActiveState:
-              i === 0 ? parseActionOptions(options).skipActiveState : true,
+              i === 0 ? parseActionOptions(_options).skipActiveState : true,
           });
         }
       },
