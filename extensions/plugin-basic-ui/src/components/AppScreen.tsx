@@ -31,7 +31,10 @@ export function useAppScreen() {
 export type AppScreenProps = Partial<
   Pick<GlobalVars, "backgroundColor" | "dimBackgroundColor">
 > & {
-  appBar?: Omit<PropOf<typeof AppBar>, "theme" | "ref" | "key">;
+  appBar?: Omit<
+    PropOf<typeof AppBar>,
+    "theme" | "modalPresentationStyle" | "ref" | "key"
+  >;
   preventSwipeBack?: boolean;
   modalPresentationStyle?: "fullScreen";
   children: React.ReactNode;
