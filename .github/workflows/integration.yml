@@ -93,5 +93,6 @@ jobs:
 
       - name: Check the TypeScript typings of the entire monorepo
         run: |
+          yarn build:dts
           yarn tsc --noEmit
         shell: bash

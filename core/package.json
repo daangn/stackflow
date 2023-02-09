@@ -18,6 +18,7 @@
   "scripts": {
     "prepack": "yarn build --clean",
     "build": "nanobundle build",
+    "build:dts": "nanobundle build --no-bundle",
     "clean": "nanobundle clean",
     "dev": "yarn test --watch",
     "test": "yarn jest"
