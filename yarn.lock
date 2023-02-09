@@ -2629,6 +2629,7 @@ __metadata:
     "@stackflow/eslint-config": ^1.0.0
     "@stackflow/plugin-history-sync": ^1.0.0
     "@stackflow/react": ^1.0.0
+    "@types/node": ^18.13.0
     "@types/react": ^18.0.10
     "@typescript-eslint/eslint-plugin": ^5.32.0
     "@typescript-eslint/parser": ^5.20.0

@@ -3,21 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "license": "MIT",
-  "exports": {
-    ".": {
-      "require": "./dist/stackflow-docs.js",
-      "import": "./dist/stackflow-docs.mjs"
-    },
-    "./style.css": "./dist/stackflow-docs.css"
-  },
-  "main": "./dist/stackflow-docs.js",
-  "module": "./dist/stackflow-docs.mjs",
-  "types": "./dist/stackflow-docs.d.ts",
-  "files": [
-    "dist",
-    "src"
-  ],
+  "main": "./src/stackflow-docs.ts",
   "scripts": {
+    "prepack": "yarn clean && yarn build",
     "build": "yarn build:js && yarn build:dts && yarn build:app",
     "build:app": "vite build",
     "build:dts": "tsc --emitDeclarationOnly",
