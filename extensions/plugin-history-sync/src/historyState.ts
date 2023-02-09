@@ -2,7 +2,7 @@ import type { Activity, ActivityStep } from "@stackflow/core";
 
 import { isServer } from "./utils";
 
-const STATE_TAG = `${process.env.PACKAGE_NAME}@${process.env.PACKAGE_VERSION}`;
+const STATE_TAG = `${process.env.NANOBUNDLE_PACKAGE_NAME}@${process.env.NANOBUNDLE_PACKAGE_VERSION}`;
 
 interface State {
   activity: Activity;

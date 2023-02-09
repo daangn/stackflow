@@ -2321,7 +2321,7 @@ __metadata:
     eslint-plugin-import: ^2.26.0
     eslint-plugin-json-format: ^2.0.1
     eslint-plugin-simple-import-sort: ^7.0.0
-    nanobundle: ^1.4.0
+    nanobundle: ^1.5.0
     react: ^18.1.0
     typescript: ^4.7.4
   peerDependencies:
@@ -2351,7 +2351,7 @@ __metadata:
     eslint-plugin-json-format: ^2.0.1
     eslint-plugin-simple-import-sort: ^7.0.0
     jest: ^28.1.0
-    nanobundle: ^1.4.0
+    nanobundle: ^1.5.0
     react-fast-compare: ^3.2.0
     typescript: ^4.7.4
     ultra-runner: ^3.10.5
@@ -2477,6 +2477,7 @@ __metadata:
     "@stackflow/plugin-history-sync": ^1.0.0
     "@stackflow/plugin-preload": ^1.0.0
     "@stackflow/react": ^1.0.0
+    "@types/node": ^18.13.0
     "@types/react": ^18.0.10
     "@typescript-eslint/eslint-plugin": ^5.32.0
     "@typescript-eslint/parser": ^5.20.0
@@ -2489,7 +2490,7 @@ __metadata:
     eslint-plugin-react: ^7.29.4
     eslint-plugin-react-hooks: ^4.4.0
     eslint-plugin-simple-import-sort: ^7.0.0
-    nanobundle: ^1.4.0
+    nanobundle: ^1.5.0
     react: ^18.1.0
     typescript: ^4.7.4
   peerDependencies:
@@ -2574,7 +2575,7 @@ __metadata:
     eslint-plugin-react: ^7.29.4
     eslint-plugin-react-hooks: ^4.4.0
     eslint-plugin-simple-import-sort: ^7.0.0
-    nanobundle: ^1.4.0
+    nanobundle: ^1.5.0
     react: ^18.1.0
     react-ga4: ^1.4.1
     typescript: ^4.7.4
@@ -2607,7 +2608,7 @@ __metadata:
     eslint-plugin-react: ^7.29.4
     eslint-plugin-react-hooks: ^4.4.0
     eslint-plugin-simple-import-sort: ^7.0.0
-    nanobundle: ^1.4.0
+    nanobundle: ^1.5.0
     react: ^18.1.0
     typescript: ^4.7.4
     url-pattern: ^1.0.3
@@ -2640,7 +2641,7 @@ __metadata:
     eslint-plugin-react: ^7.29.4
     eslint-plugin-react-hooks: ^4.4.0
     eslint-plugin-simple-import-sort: ^7.0.0
-    nanobundle: ^1.4.0
+    nanobundle: ^1.5.0
     react: ^18.1.0
     typescript: ^4.7.4
   peerDependencies:
@@ -2671,7 +2672,7 @@ __metadata:
     eslint-plugin-react: ^7.29.4
     eslint-plugin-react-hooks: ^4.4.0
     eslint-plugin-simple-import-sort: ^7.0.0
-    nanobundle: ^1.4.0
+    nanobundle: ^1.5.0
     react: ^18.1.0
     typescript: ^4.7.4
   peerDependencies:
@@ -2703,7 +2704,7 @@ __metadata:
     eslint-plugin-react: ^7.29.4
     eslint-plugin-react-hooks: ^4.4.0
     eslint-plugin-simple-import-sort: ^7.0.0
-    nanobundle: ^1.4.0
+    nanobundle: ^1.5.0
     react: ^18.1.0
     rimraf: ^3.0.2
     typescript: ^4.7.4
@@ -2734,7 +2735,7 @@ __metadata:
     eslint-plugin-react: ^7.29.4
     eslint-plugin-react-hooks: ^4.4.0
     eslint-plugin-simple-import-sort: ^7.0.0
-    nanobundle: ^1.4.0
+    nanobundle: ^1.5.0
     typescript: ^4.7.4
   peerDependencies:
     "@stackflow/core": 0
@@ -2760,7 +2761,7 @@ __metadata:
     eslint-plugin-react: ^7.29.4
     eslint-plugin-react-hooks: ^4.4.0
     eslint-plugin-simple-import-sort: ^7.0.0
-    nanobundle: ^1.4.0
+    nanobundle: ^1.5.0
     react: ^18.1.0
     react-fast-compare: ^3.2.0
     typescript: ^4.7.4
@@ -3160,6 +3161,13 @@ __metadata:
   version: 18.6.3
   resolution: "@types/node@npm:18.6.3"
   checksum: 38495b8fd27200d2b7ab9ccd8c1e2475d2411fba15330f2cba869a85ef79dd42382a2658c8dd298ace8c21ed3bfafcdea408faecd74928b144377d07d00e7c8c
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^18.13.0":
+  version: 18.13.0
+  resolution: "@types/node@npm:18.13.0"
+  checksum: 4ea10f8802848b01672bce938f678b6774ca2cee0c9774f12275ab064ae07818419c3e2e41d6257ce7ba846d1ea26c63214aa1dfa4166fa3746291752b8c6416
   languageName: node
   linkType: hard
 
@@ -9844,9 +9852,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nanobundle@npm:^1.4.0":
-  version: 1.4.0
-  resolution: "nanobundle@npm:1.4.0"
+"nanobundle@npm:^1.5.0":
+  version: 1.5.0
+  resolution: "nanobundle@npm:1.5.0"
   dependencies:
     "@cometjs/core": ^2.1.0
     browserslist: ^4.21.4
@@ -9865,7 +9873,7 @@ __metadata:
       optional: true
   bin:
     nanobundle: bin.min.mjs
-  checksum: f8576471c0dac2cfa88f08e09506586e5179aa2f24dbe74c8fc4db0b37f3557386cc5ecdc2ed7405e9389f70a2807927b415fb4e897ac85077edb9b9ec0f4370
+  checksum: 8b19e722d29ae6912acfb8adc5bb5c6ad4e0b656329598da719ead77dd8b71010addbaebd4c70c82105a028ce33d028f14e9508672db353cc28b0a0b2e11e514
   languageName: node
   linkType: hard
 
