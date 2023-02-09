@@ -2,18 +2,15 @@
   "name": "@stackflow/plugin-basic-ui",
   "version": "1.0.0",
   "license": "MIT",
-  "main": "./src/index.ts",
-  "publishConfig": {
-    "access": "public",
-    "exports": {
-      ".": {
-        "require": "./dist/index.js",
-        "import": "./dist/index.mjs"
-      },
-      "./index.css": "./dist/index.css"
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
     },
-    "main": "./dist/index.js",
-    "types": "./dist/index.d.ts"
+    "./index.css": "./dist/index.css"
   },
   "files": [
     "dist",
@@ -62,6 +59,9 @@
     "@stackflow/react": "0",
     "@types/react": ">=16.8.0",
     "react": ">=16.8.0"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "ultra": {
     "concurrent": [

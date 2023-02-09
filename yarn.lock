@@ -2375,6 +2375,7 @@ __metadata:
     "@stackflow/plugin-renderer-basic": ^1.0.0
     "@stackflow/plugin-stack-depth-change": ^1.0.0
     "@stackflow/react": ^1.0.0
+    "@types/node": ^18.13.0
     "@types/react": ^18.0.10
     "@types/react-dom": ^18.0.5
     "@types/react-lazy-load-image-component": ^1.5.2
