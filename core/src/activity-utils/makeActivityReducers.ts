@@ -11,18 +11,13 @@ import type {
 } from "../event-types";
 import type { Activity, ActivityTransitionState } from "../Stack";
 import { last } from "../utils";
+import { createReducer } from "./createReducer";
 
 /**
  * Create activity reducers for each event type (Activity + Event => Activity)
  */
-export const makeActivityReducers: (
-  // TODO: If transitionDuration is in event, only 'now' param is required
-  isTransitionDone: boolean,
-) => Record<
-  DomainEvent["name"],
-  (activity: Activity, event: any) => Activity
-> = (isTransitionDone: boolean) =>
-  ({
+export const makeActivityReducers = (isTransitionDone: boolean) =>
+  createReducer({
     /**
      * noop
      */

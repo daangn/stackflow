@@ -28,11 +28,9 @@ export function aggregate(events: DomainEvent[], now: number): Stack {
         isTransitionDone,
       );
 
-      const activityReducer =
-        makeActivityReducers(isTransitionDone)[event.name];
+      const activityReducer = makeActivityReducers(isTransitionDone);
 
-      const activitiesReducer =
-        makeActivitiesReducers(isTransitionDone)[event.name];
+      const activitiesReducer = makeActivitiesReducers(isTransitionDone);
 
       const newActivities = activitiesReducer(activities, event);
 
