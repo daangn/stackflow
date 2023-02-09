@@ -5,6 +5,7 @@
   "author": "Aaron K <aaron@daangn.com>",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "require": "./dist/index.js",
       "import": "./dist/index.mjs"
     }
@@ -14,15 +15,13 @@
   "types": "./dist/index.d.ts",
   "files": [
     "dist",
-    "src",
-    "README.md"
+    "src"
   ],
   "scripts": {
-    "build": "yarn build:js && yarn build:dts",
-    "build:dts": "tsc --emitDeclarationOnly",
-    "build:js": "node ./esbuild.config.js",
-    "clean": "rimraf dist",
-    "dev": "yarn build:js --watch && yarn build:dts --watch"
+    "prepack": "yarn build --clean",
+    "build": "nanobundle build",
+    "clean": "nanobundle clean",
+    "dev": "tsc --emitDeclarationOnly --watch"
   },
   "dependencies": {
     "react-ga4": "^1.4.1"
@@ -35,7 +34,6 @@
     "@types/react": "^18.0.10",
     "@typescript-eslint/eslint-plugin": "^5.32.0",
     "@typescript-eslint/parser": "^5.20.0",
-    "esbuild": "^0.14.51",
     "eslint": "^8.13.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-prettier": "^8.5.0",
@@ -45,8 +43,8 @@
     "eslint-plugin-react": "^7.29.4",
     "eslint-plugin-react-hooks": "^4.4.0",
     "eslint-plugin-simple-import-sort": "^7.0.0",
+    "nanobundle": "^1.4.0",
     "react": "^18.1.0",
-    "rimraf": "^3.0.2",
     "typescript": "^4.7.4"
   },
   "peerDependencies": {
