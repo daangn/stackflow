@@ -19,7 +19,7 @@
     "lerna:publish": "lerna publish",
     "lerna:publish:all": "lerna publish --force-publish",
     "lerna:publish:canary": "lerna publish --canary",
-    "test": "yarn build && ultra -r test",
+    "test": "ultra -r test",
     "typecheck": "tsc --noEmit",
     "version": "yarn install && git stage yarn.lock"
   },

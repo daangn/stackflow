@@ -81,64 +81,14 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v3
         with:
-          node-version: "16"
-
-      - uses: actions/cache@v2
-        id: yarn-unplugged-cache
-        with:
-          path: |
-            '.yarn/unplugged/'
-            '.yarn/build-state.yml'
-            '.yarn/install-state.gz'
-            node_modules
-          key: ${{ runner.os }}-yarn-v1-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-v1-
+          node-version: 18
+          cache: yarn
 
       - name: Install the unplugged dependencies and check that the Yarn files do not change during the installation process. If an error occurs, run "yarn install" and commit and push.
         run: |
           yarn install --immutable
-        shell: bash
-
-      - uses: actions/cache/restore@v3
-        with:
-          path: |
-            core/dist/
-            core/.ultra.cache.json
-            demo/build/
-            demo/dist/
-            demo/.ultra.cache.json
-            docs/.next/
-            docs/.ultra.cache.json
-            extensions/compat-await-push/dist/
-            extensions/compat-await-push/.ultra.cache.json
-            extensions/link/dist/
-            extensions/link/.ultra.cache.json
-            extensions/plugin-basic-ui/dist/
-            extensions/plugin-basic-ui/.ultra.cache.json
-            extensions/plugin-history-sync/dist/
-            extensions/plugin-history-sync/.ultra.cache.json
-            extensions/plugin-preload/dist/
-            extensions/plugin-preload/.ultra.cache.json
-            extensions/plugin-renderer-basic/dist/
-            extensions/plugin-renderer-basic/.ultra.cache.json
-            extensions/plugin-renderer-web/dist/
-            extensions/plugin-renderer-web/.ultra.cache.json
-            extensions/plugin-stack-depth-change/dist/
-            extensions/plugin-stack-depth-change/.ultra.cache.json
-            integrations/react/dist/
-            integrations/react/.ultra.cache.json
-            packages/esbuild-config/.ultra.cache.json
-            packages/eslint-config/.ultra.cache.json
-          key: ultra-cache-main-v2
-          restore-keys: |
-            ultra-cache-main-v2
-
-      - name: Build all .d.ts of packages
-        run: |
-          yarn build:dts
         shell: bash
 
       - name: Check the TypeScript typings of the entire monorepo

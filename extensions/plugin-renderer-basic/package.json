@@ -2,16 +2,19 @@
   "name": "@stackflow/plugin-renderer-basic",
   "version": "1.0.0",
   "license": "MIT",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "require": "./dist/index.js",
-      "import": "./dist/index.mjs"
-    }
+  "main": "./src/index.ts",
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "require": "./dist/index.js",
+        "import": "./dist/index.mjs"
+      }
+    },
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts"
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
   "files": [
     "dist",
     "src"
@@ -48,9 +51,6 @@
     "@stackflow/react": "0",
     "@types/react": ">=16.8.0",
     "react": ">=16.8.0"
-  },
-  "publishConfig": {
-    "access": "public"
   },
   "ultra": {
     "concurrent": [

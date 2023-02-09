@@ -19,20 +19,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v3
         with:
-          node-version: "16"
-
-      - uses: actions/cache@v2
-        with:
-          path: |
-            .yarn/unplugged/
-            .yarn/build-state.yml
-            .yarn/install-state.gz
-            node_modules
-          key: ${{ runner.os }}-yarn-v1-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-v1
+          node-version: 18
+          cache: yarn
 
       - name: Install the unplugged dependencies and check that the Yarn files do not change during the installation process. If an error occurs, run "yarn install" and commit and push.
         run: |
