@@ -43,6 +43,10 @@ export const exitActive = style({});
 export const exitDone = style({
   transform: "translate3d(100%, 0, 0)",
 });
+export const globalIdle = style({});
+export const globalLoading = style({
+  pointerEvents: "none",
+});
 
 export const appScreen = recipe({
   base: [f.posAbsFull, f.overflowHidden],
@@ -52,6 +56,10 @@ export const appScreen = recipe({
       "enter-done": enterDone,
       "exit-active": exitActive,
       "exit-done": exitDone,
+    },
+    globalTransitionState: {
+      idle: globalIdle,
+      loading: globalLoading,
     },
   },
 });

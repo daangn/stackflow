@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 
-import { useActions } from "@stackflow/react";
+import { useActions, useStack } from "@stackflow/react";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
 import { createContext, useContext, useMemo, useRef } from "react";
 
@@ -51,6 +51,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
   const activity = useNullableActivity();
 
   const { pop } = useActions();
+  const { globalTransitionState } = useStack();
 
   const appScreenRef = useRef<HTMLDivElement>(null);
   const dimRef = useRef<HTMLDivElement>(null);
@@ -128,6 +129,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
             transitionState === "enter-done" || transitionState === "exit-done"
               ? transitionState
               : lazyTransitionState,
+          globalTransitionState,
         })}
         style={assignInlineVars(
           compactMap({
