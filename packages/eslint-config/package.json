@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/eslint-config",
-  "version": "0.20.0",
+  "version": "1.0.0",
   "license": "MIT",
   "main": "index.js",
   "exports": {

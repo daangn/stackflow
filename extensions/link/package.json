@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/link",
-  "version": "0.21.3",
+  "version": "1.0.0",
   "license": "MIT",
   "exports": {
     ".": {
@@ -24,12 +24,12 @@
     "dev": "yarn build:js --watch && yarn build:dts --watch"
   },
   "devDependencies": {
-    "@stackflow/core": "^0.21.1",
+    "@stackflow/core": "^1.0.0",
     "@stackflow/esbuild-config": "^0.20.0",
-    "@stackflow/eslint-config": "^0.20.0",
-    "@stackflow/plugin-history-sync": "^0.21.3",
-    "@stackflow/plugin-preload": "^0.21.3",
-    "@stackflow/react": "^0.21.3",
+    "@stackflow/eslint-config": "^1.0.0",
+    "@stackflow/plugin-history-sync": "^1.0.0",
+    "@stackflow/plugin-preload": "^1.0.0",
+    "@stackflow/react": "^1.0.0",
     "@types/react": "^18.0.10",
     "@typescript-eslint/eslint-plugin": "^5.32.0",
     "@typescript-eslint/parser": "^5.20.0",
