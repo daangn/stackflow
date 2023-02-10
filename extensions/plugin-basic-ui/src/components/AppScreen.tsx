@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 
-import { useActions, useStack } from "@stackflow/react";
+import { useActions } from "@stackflow/react";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
 import { createContext, useContext, useMemo, useRef } from "react";
 
