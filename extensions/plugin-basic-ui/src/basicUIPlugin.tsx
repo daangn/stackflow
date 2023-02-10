@@ -5,6 +5,7 @@ import { createContext, useContext } from "react";
 import * as theme from "./theme.css";
 import type { RecursivePartial } from "./utils";
 import { compact, compactMap, isBrowser } from "./utils";
+import * as wrapper from "./wrapper.css";
 
 type BasicUIPluginOptions = RecursivePartial<theme.GlobalVars> & {
   theme: "android" | "cupertino";
@@ -45,14 +46,15 @@ export const basicUIPlugin: (
 ) => StackflowReactPlugin = (options) => () => ({
   key: "basic-ui",
   wrapStack({ stack }) {
+    const isLoading = stack.globalTransitionState === "loading";
     return (
       <GlobalOptionsProvider value={options}>
         <div
-          className={
-            isBrowser()
-              ? compact([theme[options.theme], options.rootClassName]).join(" ")
-              : options.rootClassName
-          }
+          className={compact([
+            isBrowser() ? theme[options.theme] : undefined,
+            isLoading ? wrapper.disablePointerEvents : undefined,
+            options.rootClassName,
+          ]).join(" ")}
           style={assignInlineVars(
             compactMap({
               [theme.globalVars.backgroundColor]: options.backgroundColor,
