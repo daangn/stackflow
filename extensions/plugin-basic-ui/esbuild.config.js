@@ -10,13 +10,17 @@ const external = Object.keys({
 
 Promise.all([
   build({
-    ...config({}),
+    ...config({
+      vanillaExtractIdentifiers: watch ? "debug" : "short",
+    }),
     format: "cjs",
     external,
     watch,
   }),
   build({
-    ...config({}),
+    ...config({
+      vanillaExtractIdentifiers: watch ? "debug" : "short",
+    }),
     format: "esm",
     outExtension: {
       ".js": ".mjs",
