@@ -1,14 +1,14 @@
 import { createThemeContract, style } from "@vanilla-extract/css";
 import { recipe } from "@vanilla-extract/recipes";
 
-import { f } from "../styles";
 import {
   android,
   cupertino,
   globalVars,
   rootAndroid,
   rootCupertino,
-} from "../theme.css";
+} from "../basicUIPlugin.css";
+import { f } from "../styles";
 
 export const vars = createThemeContract({
   transitionDuration: null,

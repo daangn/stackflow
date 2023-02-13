@@ -1,8 +1,8 @@
 import { createThemeContract, style } from "@vanilla-extract/css";
 import { recipe } from "@vanilla-extract/recipes";
 
+import { globalVars } from "../basicUIPlugin.css";
 import { f } from "../styles";
-import { globalVars } from "../theme.css";
 
 export const vars = createThemeContract({
   transitionDuration: null,

@@ -4,9 +4,9 @@ import { forwardRef, useRef } from "react";
 
 import { IconBack, IconClose } from "../assets";
 import { useGlobalOptions } from "../basicUIPlugin";
+import type { GlobalVars } from "../basicUIPlugin.css";
+import { globalVars } from "../basicUIPlugin.css";
 import { useMaxWidth, useNullableActivity } from "../hooks";
-import type { GlobalVars } from "../theme.css";
-import { globalVars } from "../theme.css";
 import { compactMap } from "../utils";
 import * as css from "./AppBar.css";
 import * as appScreenCss from "./AppScreen.css";

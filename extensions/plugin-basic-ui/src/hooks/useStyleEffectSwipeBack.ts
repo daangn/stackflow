@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 
-import { globalVars } from "../theme.css";
+import { globalVars } from "../basicUIPlugin.css";
 import { listenOnce, noop } from "../utils";
 import { useStyleEffect } from "./useStyleEffect";
 import { OFFSET_PX_CUPERTINO } from "./useStyleEffectOffset";
