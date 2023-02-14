@@ -1,4 +1,5 @@
 export { basicUIPlugin } from "./basicUIPlugin";
+export { globalVars as cssVars } from "./basicUIPlugin.css";
 export {
   default as AppScreen,
   AppScreenContext,
@@ -10,4 +11,3 @@ export {
   BottomSheetProps,
 } from "./components/BottomSheet";
 export { default as Modal, ModalProps } from "./components/Modal";
-export { globalVars as cssVars } from "./theme.css";

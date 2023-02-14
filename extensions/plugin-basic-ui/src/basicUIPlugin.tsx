@@ -2,12 +2,11 @@ import type { StackflowReactPlugin } from "@stackflow/react";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
 import { createContext, useContext } from "react";
 
-import * as theme from "./theme.css";
+import * as css from "./basicUIPlugin.css";
 import type { RecursivePartial } from "./utils";
 import { compact, compactMap, isBrowser } from "./utils";
-import * as wrapper from "./wrapper.css";
 
-type BasicUIPluginOptions = RecursivePartial<theme.GlobalVars> & {
+type BasicUIPluginOptions = RecursivePartial<css.GlobalVars> & {
   theme: "android" | "cupertino";
   rootClassName?: string;
   appBar?: {
@@ -46,33 +45,32 @@ export const basicUIPlugin: (
 ) => StackflowReactPlugin = (options) => () => ({
   key: "basic-ui",
   wrapStack({ stack }) {
-    const isLoading = stack.globalTransitionState === "loading";
     return (
       <GlobalOptionsProvider value={options}>
         <div
           className={compact([
-            isBrowser() ? theme[options.theme] : undefined,
-            isLoading ? wrapper.disablePointerEvents : undefined,
+            css.stackWrapper({
+              theme: isBrowser() ? options.theme : undefined,
+              loading: stack.globalTransitionState === "loading",
+            }),
             options.rootClassName,
           ]).join(" ")}
           style={assignInlineVars(
             compactMap({
-              [theme.globalVars.backgroundColor]: options.backgroundColor,
-              [theme.globalVars.dimBackgroundColor]: options.dimBackgroundColor,
-              [theme.globalVars.transitionDuration]:
+              [css.globalVars.backgroundColor]: options.backgroundColor,
+              [css.globalVars.dimBackgroundColor]: options.dimBackgroundColor,
+              [css.globalVars.transitionDuration]:
                 stack.globalTransitionState === "loading"
                   ? `${stack.transitionDuration}ms`
                   : "0ms",
-              [theme.globalVars.appBar.borderColor]:
-                options.appBar?.borderColor,
-              [theme.globalVars.appBar.borderSize]: options.appBar?.borderSize,
-              [theme.globalVars.appBar.height]: options.appBar?.height,
-              [theme.globalVars.appBar.iconColor]: options.appBar?.iconColor,
-              [theme.globalVars.appBar.textColor]: options.appBar?.textColor,
-              [theme.globalVars.bottomSheet.borderRadius]:
+              [css.globalVars.appBar.borderColor]: options.appBar?.borderColor,
+              [css.globalVars.appBar.borderSize]: options.appBar?.borderSize,
+              [css.globalVars.appBar.height]: options.appBar?.height,
+              [css.globalVars.appBar.iconColor]: options.appBar?.iconColor,
+              [css.globalVars.appBar.textColor]: options.appBar?.textColor,
+              [css.globalVars.bottomSheet.borderRadius]:
                 options.bottomSheet?.borderRadius,
-              [theme.globalVars.modal.borderRadius]:
-                options.modal?.borderRadius,
+              [css.globalVars.modal.borderRadius]: options.modal?.borderRadius,
             }),
           )}
         >

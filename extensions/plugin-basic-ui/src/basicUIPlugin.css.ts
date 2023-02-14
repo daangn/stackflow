@@ -4,6 +4,7 @@ import {
   createTheme,
 } from "@vanilla-extract/css";
 import type { MapLeafNodes } from "@vanilla-extract/private";
+import { recipe } from "@vanilla-extract/recipes";
 
 export const globalVars = createGlobalThemeContract(
   {
@@ -34,7 +35,7 @@ export const globalVars = createGlobalThemeContract(
 type InferVars<T> = T extends MapLeafNodes<infer U, any> ? U : never;
 export type GlobalVars = InferVars<typeof globalVars>;
 
-const defaultVars = {
+const androidValues: GlobalVars = {
   backgroundColor: "#fff",
   dimBackgroundColor: "rgba(0, 0, 0, 0.15)",
   transitionDuration: "0ms",
@@ -57,10 +58,10 @@ const defaultVars = {
   },
 };
 
-const cupertinoVars = {
-  ...defaultVars,
+const cupertinoValues: GlobalVars = {
+  ...androidValues,
   appBar: {
-    ...defaultVars.appBar,
+    ...androidValues.appBar,
     height: "2.75rem",
     minHeight: "2.75rem",
     borderSize: "0.5px",
@@ -74,15 +75,30 @@ export const rootCupertino =
   ":root[data-stackflow-plugin-basic-ui-theme=cupertino]";
 
 createGlobalTheme(`${root}, ${rootAndroid}`, globalVars, {
-  ...defaultVars,
+  ...androidValues,
 });
 createGlobalTheme(rootCupertino, globalVars, {
-  ...cupertinoVars,
+  ...cupertinoValues,
 });
 
 export const android = createTheme(globalVars, {
-  ...defaultVars,
+  ...androidValues,
 });
 export const cupertino = createTheme(globalVars, {
-  ...cupertinoVars,
+  ...cupertinoValues,
+});
+
+export const stackWrapper = recipe({
+  base: {},
+  variants: {
+    theme: {
+      android,
+      cupertino,
+    },
+    loading: {
+      true: {
+        pointerEvents: "none",
+      },
+    },
+  },
 });

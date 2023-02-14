@@ -4,6 +4,7 @@ const config = ({
   entryPoints = ["./src/index.ts"],
   outdir = "dist",
   vanillaExtractExternal = [],
+  vanillaExtractIdentifiers = "short",
 }) => ({
   entryPoints,
   outdir,
@@ -11,14 +12,15 @@ const config = ({
   bundle: true,
   minify: false,
   external: ["react"],
+  sourcemap: true,
   plugins: [
     vanillaExtractPlugin({
+      identifiers: vanillaExtractIdentifiers,
       esbuildOptions: {
         external: ["@stackflow", ...vanillaExtractExternal],
       },
     }),
   ],
-  sourcemap: true,
 });
 
 module.exports = config;
