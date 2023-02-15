@@ -1,7 +1,7 @@
 import { id, makeEvent } from "@stackflow/core";
 import type { StackflowReactPlugin } from "@stackflow/react";
-import type {History} from "history";
-import React from "react";
+import type { History, Listener } from "history";
+import { createBrowserHistory } from "history";
 
 import {
   getCurrentState,
@@ -32,8 +32,14 @@ export function historySyncPlugin<
   options: HistorySyncPluginOptions<Extract<keyof T, string>>,
 ): StackflowReactPlugin<T> {
   type K = Extract<keyof T, string>;
-  const history = options.history || window.history;
-  const location = options.history?.location || window.location;
+
+  const history =
+    options.history ??
+    createBrowserHistory({
+      window,
+    });
+
+  const { location } = history;
 
   return () => {
     let pushFlag = 0;
@@ -49,7 +55,7 @@ export function historySyncPlugin<
         );
       },
       overrideInitialEvents({ initialContext }) {
-        const initialHistoryState = parseState(getCurrentState());
+        const initialHistoryState = parseState(getCurrentState({ history }));
 
         if (initialHistoryState) {
           return [
@@ -82,10 +88,10 @@ export function historySyncPlugin<
           }
 
           if (options.useHash) {
-            return window.location.hash.split("#")[1] ?? "/";
+            return location.hash.split("#")[1] ?? "/";
           }
 
-          return window.location.pathname + window.location.search;
+          return location.pathname + location.search;
         }
 
         const path = resolvePath();
@@ -147,11 +153,10 @@ export function historySyncPlugin<
       },
       onInit({ actions: { getStack, dispatchEvent, push, stepPush } }) {
         const rootActivity = getStack().activities[0];
+
         const template = makeTemplate(
           normalizeRoute(options.routes[rootActivity.name])[0],
         );
-
-        (window as any).getStack = getStack;
 
         const lastStep = last(rootActivity.steps);
 
@@ -163,16 +168,15 @@ export function historySyncPlugin<
           },
           useHash: options.useHash,
           history,
-          location
         });
 
-        const onPopState = (e: PopStateEvent) => {
+        const onPopState: Listener = (e) => {
           if (popFlag) {
             popFlag -= 1;
             return;
           }
 
-          const historyState = parseState(e.state);
+          const historyState = parseState(e.location.state);
 
           if (!historyState) {
             return;
@@ -291,7 +295,7 @@ export function historySyncPlugin<
         };
 
         if (!isServer()) {
-          window.addEventListener("popstate", onPopState);
+          history.listen(onPopState);
         }
       },
       onPushed({ effect: { activity } }) {
@@ -305,6 +309,7 @@ export function historySyncPlugin<
         );
 
         pushState({
+          history,
           url: template.fill(activity.params),
           state: {
             activity,
@@ -323,6 +328,7 @@ export function historySyncPlugin<
         );
 
         pushState({
+          history,
           url: template.fill(activity.params),
           state: {
             activity,
@@ -341,6 +347,7 @@ export function historySyncPlugin<
         );
 
         replaceState({
+          history,
           url: template.fill(activity.params),
           state: {
             activity,
@@ -358,6 +365,7 @@ export function historySyncPlugin<
         );
 
         replaceState({
+          history,
           url: template.fill(activity.params),
           state: {
             activity,
@@ -426,7 +434,7 @@ export function historySyncPlugin<
           for (let i = 0; i < popCount; i += 1) {
             history.back();
           }
-        } while (!parseState(getCurrentState()));
+        } while (!parseState(getCurrentState({ history })));
       },
     };
   };

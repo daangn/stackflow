@@ -1,4 +1,5 @@
 import type { Activity, ActivityStep } from "@stackflow/core";
+import type { History } from "history";
 
 import { isServer } from "./utils";
 
@@ -8,32 +9,9 @@ interface State {
   activity: Activity;
   step?: ActivityStep;
 }
+
 interface SerializedState extends State {
   _TAG: typeof STATE_TAG;
-}
-
-export function getCurrentState(): unknown {
-  if (isServer()) {
-    return null;
-  }
-
-  return window.history.state;
-}
-
-export function parseState(state: unknown): State | null {
-  const _state: any = state;
-
-  if (
-    typeof _state === "object" &&
-    _state !== null &&
-    "_TAG" in _state &&
-    typeof _state._TAG === "string" &&
-    _state._TAG === STATE_TAG
-  ) {
-    return state as State;
-  }
-
-  return null;
 }
 
 function serializeStep(step: ActivityStep): ActivityStep {
@@ -71,11 +49,37 @@ function serializeState(state: State): SerializedState {
   };
 }
 
+export function parseState(state: unknown): State | null {
+  const _state: any = state;
+
+  if (
+    typeof _state === "object" &&
+    _state !== null &&
+    "_TAG" in _state &&
+    typeof _state._TAG === "string" &&
+    _state._TAG === STATE_TAG
+  ) {
+    return state as State;
+  }
+
+  return null;
+}
+
+export function getCurrentState({ history }: { history: History }): unknown {
+  if (isServer()) {
+    return null;
+  }
+
+  return history.location.state;
+}
+
 export function pushState({
+  history,
   state,
   url,
   useHash,
 }: {
+  history: History;
   state: State;
   url: string;
   useHash?: boolean;
@@ -83,26 +87,24 @@ export function pushState({
   if (isServer()) {
     return;
   }
-  const nextUrl = useHash ? `${window.location.pathname}#${url}` : url;
-  window.history.pushState(serializeState(state), "", nextUrl);
+  const nextUrl = useHash ? `${history.location.pathname}#${url}` : url;
+  history.push(nextUrl, serializeState(state));
 }
 
 export function replaceState({
+  history,
   url,
   state,
   useHash,
-  history,
-  location
 }: {
+  history: History;
   url: string;
   state: State;
   useHash?: boolean;
-  history: History;
-  location: Location;
 }) {
   if (isServer()) {
     return;
   }
-  const nextUrl = useHash ? `${location.pathname}#${url}` : url;
-  history.replaceState(serializeState(state), "", nextUrl);
+  const nextUrl = useHash ? `${history.location.pathname}#${url}` : url;
+  history.replace(nextUrl, serializeState(state));
 }
