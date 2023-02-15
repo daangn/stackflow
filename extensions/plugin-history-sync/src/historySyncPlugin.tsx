@@ -1,19 +1,18 @@
 import { id, makeEvent } from "@stackflow/core";
 import type { StackflowReactPlugin } from "@stackflow/react";
 import type { History, Listener } from "history";
-import { createBrowserHistory } from "history";
+import { createBrowserHistory, createMemoryHistory } from "history";
 
 import {
   getCurrentState,
-  parseState,
   pushState,
   replaceState,
+  safeParseState,
 } from "./historyState";
 import { last } from "./last";
 import { makeTemplate } from "./makeTemplate";
 import { normalizeRoute } from "./normalizeRoute";
 import { RoutesProvider } from "./RoutesContext";
-import { isServer } from "./utils";
 
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
@@ -35,9 +34,11 @@ export function historySyncPlugin<
 
   const history =
     options.history ??
-    createBrowserHistory({
-      window,
-    });
+    (typeof window === "undefined"
+      ? createMemoryHistory({})
+      : createBrowserHistory({
+          window,
+        }));
 
   const { location } = history;
 
@@ -55,7 +56,9 @@ export function historySyncPlugin<
         );
       },
       overrideInitialEvents({ initialContext }) {
-        const initialHistoryState = parseState(getCurrentState({ history }));
+        const initialHistoryState = safeParseState(
+          getCurrentState({ history }),
+        );
 
         if (initialHistoryState) {
           return [
@@ -81,10 +84,6 @@ export function historySyncPlugin<
             typeof initialContext.req.path === "string"
           ) {
             return initialContext.req.path as string;
-          }
-
-          if (isServer()) {
-            return null;
           }
 
           if (options.useHash) {
@@ -161,13 +160,13 @@ export function historySyncPlugin<
         const lastStep = last(rootActivity.steps);
 
         replaceState({
-          url: template.fill(rootActivity.params),
+          history,
+          pathname: template.fill(rootActivity.params),
           state: {
             activity: rootActivity,
             step: lastStep,
           },
           useHash: options.useHash,
-          history,
         });
 
         const onPopState: Listener = (e) => {
@@ -176,7 +175,7 @@ export function historySyncPlugin<
             return;
           }
 
-          const historyState = parseState(e.location.state);
+          const historyState = safeParseState(e.location.state);
 
           if (!historyState) {
             return;
@@ -294,9 +293,7 @@ export function historySyncPlugin<
           }
         };
 
-        if (!isServer()) {
-          history.listen(onPopState);
-        }
+        history.listen(onPopState);
       },
       onPushed({ effect: { activity } }) {
         if (pushFlag) {
@@ -310,7 +307,7 @@ export function historySyncPlugin<
 
         pushState({
           history,
-          url: template.fill(activity.params),
+          pathname: template.fill(activity.params),
           state: {
             activity,
           },
@@ -329,7 +326,7 @@ export function historySyncPlugin<
 
         pushState({
           history,
-          url: template.fill(activity.params),
+          pathname: template.fill(activity.params),
           state: {
             activity,
             step,
@@ -348,7 +345,7 @@ export function historySyncPlugin<
 
         replaceState({
           history,
-          url: template.fill(activity.params),
+          pathname: template.fill(activity.params),
           state: {
             activity,
           },
@@ -366,7 +363,7 @@ export function historySyncPlugin<
 
         replaceState({
           history,
-          url: template.fill(activity.params),
+          pathname: template.fill(activity.params),
           state: {
             activity,
             step,
@@ -403,10 +400,6 @@ export function historySyncPlugin<
         });
       },
       onBeforeStepPop({ actions: { getStack } }) {
-        if (isServer()) {
-          return;
-        }
-
         const { activities } = getStack();
         const currentActivity = activities.find(
           (activity) => activity.isActive,
@@ -418,10 +411,6 @@ export function historySyncPlugin<
         }
       },
       onBeforePop({ actions: { getStack } }) {
-        if (isServer()) {
-          return;
-        }
-
         const { activities } = getStack();
         const currentActivity = activities.find(
           (activity) => activity.isActive,
@@ -434,7 +423,7 @@ export function historySyncPlugin<
           for (let i = 0; i < popCount; i += 1) {
             history.back();
           }
-        } while (!parseState(getCurrentState({ history })));
+        } while (!safeParseState(getCurrentState({ history })));
       },
     };
   };

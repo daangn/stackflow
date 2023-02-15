@@ -1,8 +1,6 @@
 import type { Activity, ActivityStep } from "@stackflow/core";
 import type { History } from "history";
 
-import { isServer } from "./utils";
-
 const STATE_TAG = `${process.env.PACKAGE_NAME}@${process.env.PACKAGE_VERSION}`;
 
 interface State {
@@ -49,7 +47,7 @@ function serializeState(state: State): SerializedState {
   };
 }
 
-export function parseState(state: unknown): State | null {
+export function safeParseState(state: unknown): State | null {
   const _state: any = state;
 
   if (
@@ -66,45 +64,41 @@ export function parseState(state: unknown): State | null {
 }
 
 export function getCurrentState({ history }: { history: History }): unknown {
-  if (isServer()) {
-    return null;
-  }
-
   return history.location.state;
 }
 
 export function pushState({
   history,
+  pathname,
   state,
-  url,
   useHash,
 }: {
   history: History;
+  pathname: string;
   state: State;
-  url: string;
   useHash?: boolean;
 }) {
-  if (isServer()) {
-    return;
-  }
-  const nextUrl = useHash ? `${history.location.pathname}#${url}` : url;
-  history.push(nextUrl, serializeState(state));
+  const nextPathname = useHash
+    ? `${history.location.pathname}#${pathname}`
+    : pathname;
+
+  history.push(nextPathname, serializeState(state));
 }
 
 export function replaceState({
   history,
-  url,
+  pathname,
   state,
   useHash,
 }: {
   history: History;
-  url: string;
+  pathname: string;
   state: State;
   useHash?: boolean;
 }) {
-  if (isServer()) {
-    return;
-  }
-  const nextUrl = useHash ? `${history.location.pathname}#${url}` : url;
-  history.replace(nextUrl, serializeState(state));
+  const nextPathname = useHash
+    ? `${history.location.pathname}#${pathname}`
+    : pathname;
+
+  history.replace(nextPathname, serializeState(state));
 }
