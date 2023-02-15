@@ -1,5 +1,7 @@
 import { id, makeEvent } from "@stackflow/core";
 import type { StackflowReactPlugin } from "@stackflow/react";
+import type {History} from "history";
+import React from "react";
 
 import {
   getCurrentState,
@@ -22,6 +24,7 @@ type HistorySyncPluginOptions<K extends string> = {
   };
   fallbackActivity: (args: { initialContext: any }) => K;
   useHash?: boolean;
+  history?: History;
 };
 export function historySyncPlugin<
   T extends { [activityName: string]: unknown },
@@ -29,6 +32,8 @@ export function historySyncPlugin<
   options: HistorySyncPluginOptions<Extract<keyof T, string>>,
 ): StackflowReactPlugin<T> {
   type K = Extract<keyof T, string>;
+  const history = options.history || window.history;
+  const location = options.history?.location || window.location;
 
   return () => {
     let pushFlag = 0;
@@ -157,6 +162,8 @@ export function historySyncPlugin<
             step: lastStep,
           },
           useHash: options.useHash,
+          history,
+          location
         });
 
         const onPopState = (e: PopStateEvent) => {
@@ -399,7 +406,7 @@ export function historySyncPlugin<
 
         if ((currentActivity?.steps.length ?? 0) > 1) {
           popFlag += 1;
-          window.history.back();
+          history.back();
         }
       },
       onBeforePop({ actions: { getStack } }) {
@@ -417,7 +424,7 @@ export function historySyncPlugin<
 
         do {
           for (let i = 0; i < popCount; i += 1) {
-            window.history.back();
+            history.back();
           }
         } while (!parseState(getCurrentState()));
       },

@@ -91,14 +91,18 @@ export function replaceState({
   url,
   state,
   useHash,
+  history,
+  location
 }: {
   url: string;
   state: State;
   useHash?: boolean;
+  history: History;
+  location: Location;
 }) {
   if (isServer()) {
     return;
   }
-  const nextUrl = useHash ? `${window.location.pathname}#${url}` : url;
-  window.history.replaceState(serializeState(state), "", nextUrl);
+  const nextUrl = useHash ? `${location.pathname}#${url}` : url;
+  history.replaceState(serializeState(state), "", nextUrl);
 }
