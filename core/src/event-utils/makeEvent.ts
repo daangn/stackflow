@@ -1,22 +1,6 @@
 import type { DomainEvent } from "../event-types";
 import type { BaseDomainEvent } from "../event-types/_base";
-import { id } from "../utils";
-
-let dt = 0;
-let memt = 0;
-
-const time = () => {
-  const t = new Date().getTime();
-
-  if (memt === t) {
-    dt += 1;
-  } else {
-    memt = t;
-    dt = 0;
-  }
-
-  return (t * 1000 + dt) / 1000;
-};
+import { id, time } from "../utils";
 
 export function makeEvent<T extends DomainEvent["name"]>(
   name: T,
