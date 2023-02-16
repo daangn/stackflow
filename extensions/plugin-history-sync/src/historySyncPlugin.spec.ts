@@ -1,11 +1,12 @@
 import type {
   CoreStore,
   PushedEvent,
+  Stack,
   StackflowPlugin,
   StepPushedEvent,
 } from "@stackflow/core";
 import { makeCoreStore, makeEvent } from "@stackflow/core";
-import type { History, Location } from "history";
+import type { Location, MemoryHistory } from "history";
 import { createMemoryHistory } from "history";
 
 import { historySyncPlugin } from "./historySyncPlugin";
@@ -72,8 +73,11 @@ const stackflow = ({
   return coreStore;
 };
 
+const activeActivity = (stack: Stack) =>
+  stack.activities.find((a) => a.isActive);
+
 describe("historySyncPlugin", () => {
-  let history: History;
+  let history: MemoryHistory;
   let actions: CoreStore["actions"];
 
   /**
@@ -99,11 +103,11 @@ describe("historySyncPlugin", () => {
     actions = coreStore.actions;
   });
 
-  test("historySyncPlugin - 초기에 매칭하는 라우트가 없는 경우 fallbackActivity에 설정한 액티비티의 라우트로 이동합니다", () => {
+  test("historySyncPlugin - 초기에 매칭하는 라우트가 없는 경우 fallbackActivity에 설정한 액티비티의 URL로 이동합니다", () => {
     expect(path(history.location)).toEqual("/home/");
   });
 
-  test("historySyncPlugin - actions.push() 후에, 히스토리의 Path가 알맞게 바뀝니다", () => {
+  test("historySyncPlugin - actions.push() 후에, URL 상태가 알맞게 바뀝니다", () => {
     actions.push({
       activityId: "a1",
       activityName: "Article",
@@ -116,7 +120,48 @@ describe("historySyncPlugin", () => {
     expect(path(history.location)).toEqual("/articles/1234/?title=hello");
   });
 
-  test("historySyncPlugin - 히스토리를 pop하는 경우, activity 상태가 바뀝니다", () => {
+  test("historySyncPlugin - actions.push(), actions.pop()을 여러번 하더라도, URL 상태가 알맞게 바뀝니다", () => {
+    actions.push({
+      activityId: "a1",
+      activityName: "Article",
+      activityParams: {
+        articleId: "1",
+        title: "hello",
+      },
+    });
+    expect(path(history.location)).toEqual("/articles/1/?title=hello");
+
+    actions.push({
+      activityId: "a2",
+      activityName: "Article",
+      activityParams: {
+        articleId: "2",
+        title: "hello",
+      },
+    });
+    expect(path(history.location)).toEqual("/articles/2/?title=hello");
+
+    actions.push({
+      activityId: "a3",
+      activityName: "Article",
+      activityParams: {
+        articleId: "3",
+        title: "hello",
+      },
+    });
+    expect(path(history.location)).toEqual("/articles/3/?title=hello");
+
+    actions.pop();
+    expect(path(history.location)).toEqual("/articles/2/?title=hello");
+
+    actions.pop();
+    expect(path(history.location)).toEqual("/articles/1/?title=hello");
+
+    actions.pop();
+    expect(path(history.location)).toEqual("/home/");
+  });
+
+  test("historySyncPlugin - 히스토리를 back하는 경우, 스택 상태가 알맞게 바뀝니다", () => {
     actions.push({
       activityId: "a1",
       activityName: "Article",
@@ -127,11 +172,235 @@ describe("historySyncPlugin", () => {
     });
 
     history.back();
+    expect(activeActivity(actions.getStack())?.name).toEqual("Home");
+    expect(path(history.location)).toEqual("/home/");
+  });
 
-    const activeActivity = actions
-      .getStack()
-      .activities.find((a) => a.isActive);
+  test("historySyncPlugin - 히스토리를 여러번 back하더라도, 스택 상태가 알맞게 바뀝니다", async () => {
+    actions.push({
+      activityId: "a1",
+      activityName: "Article",
+      activityParams: {
+        articleId: "1",
+        title: "hello",
+      },
+    });
+    expect(path(history.location)).toEqual("/articles/1/?title=hello");
 
-    expect(activeActivity?.name).toEqual("Home");
+    actions.push({
+      activityId: "a2",
+      activityName: "Article",
+      activityParams: {
+        articleId: "2",
+        title: "hello",
+      },
+    });
+    expect(path(history.location)).toEqual("/articles/2/?title=hello");
+
+    actions.push({
+      activityId: "a3",
+      activityName: "Article",
+      activityParams: {
+        articleId: "3",
+        title: "hello",
+      },
+    });
+    expect(path(history.location)).toEqual("/articles/3/?title=hello");
+
+    history.back();
+    expect(activeActivity(actions.getStack())?.name).toEqual("Article");
+    expect(activeActivity(actions.getStack())?.params?.articleId).toEqual("2");
+    expect(path(history.location)).toEqual("/articles/2/?title=hello");
+
+    history.back();
+    expect(activeActivity(actions.getStack())?.name).toEqual("Article");
+    expect(activeActivity(actions.getStack())?.params?.articleId).toEqual("1");
+    expect(path(history.location)).toEqual("/articles/1/?title=hello");
+
+    history.back();
+    expect(activeActivity(actions.getStack())?.name).toEqual("Home");
+    expect(path(history.location)).toEqual("/home/");
+  });
+
+  test("historySyncPlugin - 앞으로 가기를 해도, 스택 상태가 알맞게 바뀝니다", async () => {
+    actions.push({
+      activityId: "a1",
+      activityName: "Article",
+      activityParams: {
+        articleId: "1",
+        title: "hello",
+      },
+    });
+    expect(path(history.location)).toEqual("/articles/1/?title=hello");
+
+    actions.push({
+      activityId: "a2",
+      activityName: "Article",
+      activityParams: {
+        articleId: "2",
+        title: "hello",
+      },
+    });
+    expect(path(history.location)).toEqual("/articles/2/?title=hello");
+
+    actions.push({
+      activityId: "a3",
+      activityName: "Article",
+      activityParams: {
+        articleId: "3",
+        title: "hello",
+      },
+    });
+    expect(path(history.location)).toEqual("/articles/3/?title=hello");
+
+    history.back();
+    expect(activeActivity(actions.getStack())?.name).toEqual("Article");
+    expect(activeActivity(actions.getStack())?.params?.articleId).toEqual("2");
+    expect(path(history.location)).toEqual("/articles/2/?title=hello");
+
+    history.back();
+    expect(activeActivity(actions.getStack())?.name).toEqual("Article");
+    expect(activeActivity(actions.getStack())?.params?.articleId).toEqual("1");
+    expect(path(history.location)).toEqual("/articles/1/?title=hello");
+
+    history.back();
+    expect(activeActivity(actions.getStack())?.name).toEqual("Home");
+    expect(path(history.location)).toEqual("/home/");
+
+    history.go(1);
+    expect(activeActivity(actions.getStack())?.name).toEqual("Article");
+    expect(activeActivity(actions.getStack())?.params?.articleId).toEqual("1");
+    expect(path(history.location)).toEqual("/articles/1/?title=hello");
+
+    history.go(1);
+    expect(activeActivity(actions.getStack())?.name).toEqual("Article");
+    expect(activeActivity(actions.getStack())?.params?.articleId).toEqual("2");
+    expect(path(history.location)).toEqual("/articles/2/?title=hello");
+
+    history.go(1);
+    expect(activeActivity(actions.getStack())?.name).toEqual("Article");
+    expect(activeActivity(actions.getStack())?.params?.articleId).toEqual("3");
+    expect(path(history.location)).toEqual("/articles/3/?title=hello");
+  });
+
+  test("historySyncPlugin - actions.stepPush()를 하면, 스택 상태가 알맞게 바뀌고, pop을 하면 한번에 여러 URL 상태가 사라집니다", async () => {
+    actions.push({
+      activityId: "a1",
+      activityName: "Article",
+      activityParams: {
+        articleId: "10",
+        title: "hello",
+      },
+    });
+    expect(path(history.location)).toEqual("/articles/10/?title=hello");
+
+    actions.stepPush({
+      stepId: "s1",
+      stepParams: {
+        articleId: "11",
+        title: "hello",
+      },
+    });
+    expect(path(history.location)).toEqual("/articles/11/?title=hello");
+
+    actions.stepPush({
+      stepId: "s2",
+      stepParams: {
+        articleId: "12",
+        title: "hello",
+      },
+    });
+    expect(path(history.location)).toEqual("/articles/12/?title=hello");
+
+    actions.push({
+      activityId: "a2",
+      activityName: "Article",
+      activityParams: {
+        articleId: "20",
+        title: "world",
+      },
+    });
+    expect(path(history.location)).toEqual("/articles/20/?title=world");
+
+    actions.pop();
+    expect(path(history.location)).toEqual("/articles/12/?title=hello");
+
+    actions.pop();
+    expect(path(history.location)).toEqual("/home/");
+    expect(history.index).toEqual(0);
+  });
+
+  test("historySyncPlugin - actions.stepPush()를 한 상태에서, 앞으로 가기를 하면 스택 상태가 알맞게 바뀌고, pop을 하면 한번에 여러 URL 상태가 사라집니다", async () => {
+    actions.push({
+      activityId: "a1",
+      activityName: "Article",
+      activityParams: {
+        articleId: "10",
+        title: "hello",
+      },
+    });
+    expect(path(history.location)).toEqual("/articles/10/?title=hello");
+
+    actions.stepPush({
+      stepId: "s1",
+      stepParams: {
+        articleId: "11",
+        title: "hello",
+      },
+    });
+    expect(path(history.location)).toEqual("/articles/11/?title=hello");
+
+    actions.stepPush({
+      stepId: "s2",
+      stepParams: {
+        articleId: "12",
+        title: "hello",
+      },
+    });
+    expect(path(history.location)).toEqual("/articles/12/?title=hello");
+
+    actions.push({
+      activityId: "a2",
+      activityName: "Article",
+      activityParams: {
+        articleId: "20",
+        title: "world",
+      },
+    });
+    expect(path(history.location)).toEqual("/articles/20/?title=world");
+
+    history.back();
+    expect(path(history.location)).toEqual("/articles/12/?title=hello");
+    expect(activeActivity(actions.getStack())?.params.articleId).toEqual("12");
+
+    history.back();
+    expect(path(history.location)).toEqual("/articles/11/?title=hello");
+    expect(activeActivity(actions.getStack())?.params.articleId).toEqual("11");
+
+    history.back();
+    expect(path(history.location)).toEqual("/articles/10/?title=hello");
+    expect(activeActivity(actions.getStack())?.params.articleId).toEqual("10");
+
+    history.go(1);
+    expect(path(history.location)).toEqual("/articles/11/?title=hello");
+    expect(activeActivity(actions.getStack())?.params.articleId).toEqual("11");
+
+    history.go(1);
+    expect(path(history.location)).toEqual("/articles/12/?title=hello");
+    expect(activeActivity(actions.getStack())?.params.articleId).toEqual("12");
+
+    history.go(1);
+    expect(path(history.location)).toEqual("/articles/20/?title=world");
+    expect(activeActivity(actions.getStack())?.params.articleId).toEqual("20");
+
+    actions.pop();
+    expect(path(history.location)).toEqual("/articles/12/?title=hello");
+
+    actions.stepPop();
+    expect(path(history.location)).toEqual("/articles/11/?title=hello");
+
+    actions.pop();
+    expect(path(history.location)).toEqual("/home/");
+    expect(history.index).toEqual(0);
   });
 });
