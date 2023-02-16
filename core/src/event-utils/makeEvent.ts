@@ -1,6 +1,6 @@
 import type { DomainEvent } from "../event-types";
 import type { BaseDomainEvent } from "../event-types/_base";
-import { id } from "../utils";
+import { id, time } from "../utils";
 
 export function makeEvent<T extends DomainEvent["name"]>(
   name: T,
@@ -12,7 +12,7 @@ export function makeEvent<T extends DomainEvent["name"]>(
 ) {
   return {
     id: id(),
-    eventDate: new Date().getTime(),
+    eventDate: time(),
     ...parameters,
     name,
   } as Extract<DomainEvent, { name: T }>;

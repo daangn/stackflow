@@ -36,7 +36,7 @@ export function makeTemplate(templateStr: string) {
   return {
     fill(params: { [key: string]: string | undefined }) {
       const pathname = pattern.stringify(params);
-      const pathParams = pattern.match(pathname) ?? {};
+      const pathParams = pattern.match(pathname);
 
       const searchParamsMap = { ...params };
 
