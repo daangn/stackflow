@@ -31,21 +31,6 @@ const stackflow = ({
   activityNames: string[];
   plugins: StackflowPlugin[];
 }) => {
-  /**
-   * `@stackflow/react`에서 복사됨
-   */
-  const pluginInstances = plugins.map((plugin) => plugin());
-  const initialPushedEvents = pluginInstances.reduce<
-    (PushedEvent | StepPushedEvent)[]
-  >(
-    (initialEvents, pluginInstance) =>
-      pluginInstance.overrideInitialEvents?.({
-        initialEvents,
-        initialContext: {},
-      }) ?? initialEvents,
-    [],
-  );
-
   const coreStore = makeCoreStore({
     initialEvents: [
       makeEvent("Initialized", {
@@ -61,9 +46,12 @@ const stackflow = ({
           eventDate: enoughPastTime(),
         }),
       ),
-      ...initialPushedEvents,
     ],
     plugins: [...plugins],
+  });
+
+  coreStore.setInitialPushedEvents({
+    initialContext: {},
   });
 
   /**

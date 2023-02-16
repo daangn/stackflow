@@ -4,13 +4,13 @@ import isEqual from "react-fast-compare";
 
 import { aggregate } from "./aggregate";
 import type { Effect } from "./Effect";
-import type { DomainEvent } from "./event-types";
+import type { DomainEvent, PushedEvent, StepPushedEvent } from "./event-types";
 import type { BaseDomainEvent } from "./event-types/_base";
 import { makeEvent } from "./event-utils";
 import type { StackflowActions, StackflowPlugin } from "./interfaces";
 import { produceEffects } from "./produceEffects";
 import type { Stack } from "./Stack";
-import { once } from "./utils";
+import { id, once, time } from "./utils";
 
 const SECOND = 1000;
 
@@ -24,6 +24,10 @@ export type MakeCoreStoreOptions = {
 
 export type CoreStore = {
   actions: StackflowActions;
+  setInitialPushedEvents: (args: {
+    initialActivityName?: string;
+    initialContext?: any;
+  }) => void;
   init: () => void;
   pullEvents: () => DomainEvent[];
   subscribe: (listener: () => void) => () => void;
@@ -346,6 +350,65 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
         });
       });
     }),
+    setInitialPushedEvents({ initialActivityName, initialContext = {} }) {
+      const { transitionDuration } = actions.getStack();
+
+      const initialPushedEventsByOption = initialActivityName
+        ? [
+            makeEvent("Pushed", {
+              activityId: id(),
+              activityName: initialActivityName,
+              activityParams: {},
+              eventDate: time() - transitionDuration,
+              skipEnterActiveState: false,
+            }),
+          ]
+        : [];
+
+      const initialPushedEvents = pluginInstances.reduce<
+        (PushedEvent | StepPushedEvent)[]
+      >(
+        (initialEvents, pluginInstance) =>
+          pluginInstance.overrideInitialEvents?.({
+            initialEvents,
+            initialContext: initialContext ?? {},
+          }) ?? initialEvents,
+        initialPushedEventsByOption,
+      );
+
+      const isInitialActivityIgnored =
+        initialPushedEvents.length > 0 &&
+        initialPushedEventsByOption.length > 0 &&
+        initialPushedEvents !== initialPushedEventsByOption;
+
+      if (isInitialActivityIgnored) {
+        // eslint-disable-next-line no-console
+        console.warn(
+          `Stackflow -` +
+            ` Some plugin overrides an "initialActivity" option.` +
+            ` The "initialActivity" option you set to "${initialPushedEventsByOption[0].activityName}" in the "stackflow" is ignored.`,
+        );
+      }
+
+      if (initialPushedEvents.length === 0) {
+        // eslint-disable-next-line no-console
+        console.warn(
+          `Stackflow -` +
+            ` There is no initial activity.` +
+            " If you want to set the initial activity," +
+            " add the `initialActivity` option of the `stackflow()` function or" +
+            " add a plugin that sets the initial activity. (e.g. `@stackflow/plugin-history-sync`)",
+        );
+      }
+
+      const nextStackValue = aggregate(
+        [...events.value, ...initialPushedEvents],
+        new Date().getTime(),
+      );
+
+      events.value.push(...initialPushedEvents);
+      stack.value = nextStackValue;
+    },
     pullEvents: () => events.value,
     subscribe(listener) {
       storeListeners.push(listener);
