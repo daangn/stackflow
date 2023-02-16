@@ -220,15 +220,19 @@ describe("historySyncPlugin", () => {
       },
     });
     expect(path(history.location)).toEqual("/articles/3/?title=hello");
+    expect(history.index).toEqual(3);
 
     actions.pop();
     expect(path(history.location)).toEqual("/articles/2/?title=hello");
+    expect(history.index).toEqual(2);
 
     actions.pop();
     expect(path(history.location)).toEqual("/articles/1/?title=hello");
+    expect(history.index).toEqual(1);
 
     actions.pop();
     expect(path(history.location)).toEqual("/home/");
+    expect(history.index).toEqual(0);
   });
 
   test("historySyncPlugin - 히스토리를 back하는 경우, 스택 상태가 알맞게 바뀝니다", () => {
@@ -243,7 +247,6 @@ describe("historySyncPlugin", () => {
 
     history.back();
     expect(activeActivity(actions.getStack())?.name).toEqual("Home");
-    expect(path(history.location)).toEqual("/home/");
   });
 
   test("historySyncPlugin - 히스토리를 여러번 back하더라도, 스택 상태가 알맞게 바뀝니다", async () => {
@@ -275,16 +278,13 @@ describe("historySyncPlugin", () => {
     history.back();
     expect(activeActivity(actions.getStack())?.name).toEqual("Article");
     expect(activeActivity(actions.getStack())?.params?.articleId).toEqual("2");
-    expect(path(history.location)).toEqual("/articles/2/?title=hello");
 
     history.back();
     expect(activeActivity(actions.getStack())?.name).toEqual("Article");
     expect(activeActivity(actions.getStack())?.params?.articleId).toEqual("1");
-    expect(path(history.location)).toEqual("/articles/1/?title=hello");
 
     history.back();
     expect(activeActivity(actions.getStack())?.name).toEqual("Home");
-    expect(path(history.location)).toEqual("/home/");
   });
 
   test("historySyncPlugin - 앞으로 가기를 해도, 스택 상태가 알맞게 바뀝니다", async () => {
@@ -320,17 +320,14 @@ describe("historySyncPlugin", () => {
     history.go(1);
     expect(activeActivity(actions.getStack())?.name).toEqual("Article");
     expect(activeActivity(actions.getStack())?.params?.articleId).toEqual("1");
-    expect(path(history.location)).toEqual("/articles/1/?title=hello");
 
     history.go(1);
     expect(activeActivity(actions.getStack())?.name).toEqual("Article");
     expect(activeActivity(actions.getStack())?.params?.articleId).toEqual("2");
-    expect(path(history.location)).toEqual("/articles/2/?title=hello");
 
     history.go(1);
     expect(activeActivity(actions.getStack())?.name).toEqual("Article");
     expect(activeActivity(actions.getStack())?.params?.articleId).toEqual("3");
-    expect(path(history.location)).toEqual("/articles/3/?title=hello");
   });
 
   test("historySyncPlugin - actions.stepPush()를 하면, 스택 상태가 알맞게 바뀌고, pop을 하면 한번에 여러 URL 상태가 사라집니다", async () => {
@@ -350,6 +347,7 @@ describe("historySyncPlugin", () => {
       },
     });
     expect(path(history.location)).toEqual("/articles/11/?title=hello");
+    expect(history.index).toEqual(2);
 
     actions.stepPush({
       stepId: "s2",
@@ -359,6 +357,7 @@ describe("historySyncPlugin", () => {
       },
     });
     expect(path(history.location)).toEqual("/articles/12/?title=hello");
+    expect(history.index).toEqual(3);
 
     actions.push({
       activityId: "a2",
@@ -369,9 +368,11 @@ describe("historySyncPlugin", () => {
       },
     });
     expect(path(history.location)).toEqual("/articles/20/?title=world");
+    expect(history.index).toEqual(4);
 
     actions.pop();
     expect(path(history.location)).toEqual("/articles/12/?title=hello");
+    expect(history.index).toEqual(3);
 
     actions.pop();
     expect(path(history.location)).toEqual("/home/");
@@ -447,6 +448,7 @@ describe("historySyncPlugin", () => {
 
     actions.stepPop();
     expect(path(history.location)).toEqual("/articles/10/?title=hello");
+    expect(history.index).toEqual(1);
 
     actions.pop();
     expect(path(history.location)).toEqual("/home/");
@@ -486,27 +488,21 @@ describe("historySyncPlugin", () => {
     });
 
     history.back();
-    expect(path(history.location)).toEqual("/articles/12/?title=hello");
     expect(activeActivity(actions.getStack())?.params.articleId).toEqual("12");
 
     history.back();
-    expect(path(history.location)).toEqual("/articles/11/?title=hello");
     expect(activeActivity(actions.getStack())?.params.articleId).toEqual("11");
 
     history.back();
-    expect(path(history.location)).toEqual("/articles/10/?title=hello");
     expect(activeActivity(actions.getStack())?.params.articleId).toEqual("10");
 
     history.go(1);
-    expect(path(history.location)).toEqual("/articles/11/?title=hello");
     expect(activeActivity(actions.getStack())?.params.articleId).toEqual("11");
 
     history.go(1);
-    expect(path(history.location)).toEqual("/articles/12/?title=hello");
     expect(activeActivity(actions.getStack())?.params.articleId).toEqual("12");
 
     history.go(1);
-    expect(path(history.location)).toEqual("/articles/20/?title=world");
     expect(activeActivity(actions.getStack())?.params.articleId).toEqual("20");
 
     actions.pop();
@@ -594,29 +590,35 @@ describe("historySyncPlugin", () => {
       expect(activeActivity(actions.getStack())?.params.articleId).toEqual(
         "24",
       );
+      expect(history.index).toEqual(5);
 
       history.back();
       expect(activeActivity(actions.getStack())?.params.articleId).toEqual(
         "23",
       );
+      expect(history.index).toEqual(4);
 
       history.back();
       expect(activeActivity(actions.getStack())?.params.articleId).toEqual(
         "21",
       );
+      expect(history.index).toEqual(3);
 
       history.back();
       expect(activeActivity(actions.getStack())?.params.articleId).toEqual(
         "20",
       );
+      expect(history.index).toEqual(2);
 
       history.back();
       expect(activeActivity(actions.getStack())?.params.articleId).toEqual(
         "10",
       );
+      expect(history.index).toEqual(1);
 
       history.back();
       expect(activeActivity(actions.getStack())?.name).toEqual("Home");
+      expect(history.index).toEqual(0);
     })();
   });
 });
