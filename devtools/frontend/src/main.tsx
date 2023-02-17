@@ -2,34 +2,51 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
 import "./index.css";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  RouteObject,
+  RouterProvider,
+} from "react-router-dom";
 import ActivitiesTab from "./tabs/ActivitiesTab";
 import EventsTab from "./tabs/EventsTab";
 import PluginsTab from "./tabs/PluginsTab";
-import PlaygroundTab from "./tabs/PlaygroundTab";
+import ConsoleTab from "./tabs/ConsoleTab";
+
+export const routes: (RouteObject & { name: string })[] = [
+  {
+    name: "Activities",
+    index: true,
+    path: "/",
+    element: <ActivitiesTab />,
+  },
+  {
+    name: "Events",
+    path: "/events",
+    element: <EventsTab />,
+  },
+  {
+    name: "Plugins",
+    path: "/plugins",
+    element: <PluginsTab />,
+  },
+  {
+    name: "Console",
+    path: "/console",
+    element: <ConsoleTab />,
+  },
+];
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
-    children: [
-      {
-        index: true,
-        element: <ActivitiesTab />,
-      },
-      {
-        path: "events",
-        element: <EventsTab />,
-      },
-      {
-        path: "plugins",
-        element: <PluginsTab />,
-      },
-      {
-        path: "playground",
-        element: <PlaygroundTab />,
-      },
-    ],
+    children: routes.map((route) => {
+      return {
+        index: !!route.index,
+        path: route.path,
+        element: route.element,
+      };
+    }),
   },
 ]);
 
