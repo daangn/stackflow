@@ -10,6 +10,9 @@ export const activity = style({
       filter: "invert(1)",
     },
   },
+  ":hover": {
+    cursor: "pointer",
+  },
 });
 
 export const text = style({

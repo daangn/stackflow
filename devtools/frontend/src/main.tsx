@@ -8,9 +8,7 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import ActivitiesTab from "./tabs/ActivitiesTab";
-import EventsTab from "./tabs/EventsTab";
-import PluginsTab from "./tabs/PluginsTab";
-import ConsoleTab from "./tabs/ConsoleTab";
+import DispatcherTab from "./tabs/Dispatcher";
 
 export const routes: (RouteObject & { name: string })[] = [
   {
@@ -20,19 +18,9 @@ export const routes: (RouteObject & { name: string })[] = [
     element: <ActivitiesTab />,
   },
   {
-    name: "Events",
-    path: "/events",
-    element: <EventsTab />,
-  },
-  {
-    name: "Plugins",
-    path: "/plugins",
-    element: <PluginsTab />,
-  },
-  {
-    name: "Console",
-    path: "/console",
-    element: <ConsoleTab />,
+    name: "Dispatcher",
+    path: "/dispatcher",
+    element: <DispatcherTab />,
   },
 ];
 

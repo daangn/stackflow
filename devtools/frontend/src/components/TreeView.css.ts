@@ -1,4 +1,4 @@
-import { style } from "@vanilla-extract/css";
+import { style, keyframes } from "@vanilla-extract/css";
 
 export const container = style({
   display: "flex",
@@ -15,18 +15,15 @@ const transition = style({
   },
 });
 
+export const expand = style({
+  padding: "8px 5px 6px 0",
+  display: "flex",
+  cursor: "pointer",
+});
+
 export const rotateBefore = transition;
 
 export const rotate = style([transition, { transform: "rotate(90deg)" }]);
-
-export const branch = style({
-  display: "flex",
-  //alignItems: "center",
-  padding: "7px 0",
-  //marginTop: "1px",
-  marginRight: "6px",
-  marginLeft: "2px",
-});
 
 export const string = style({
   color: "#30a2a6",
@@ -40,4 +37,29 @@ export const string = style({
 
 export const notString = style({
   color: "#9d7fe3",
+});
+
+const updatedKeyframes = {
+  "0%": {
+    backgroundColor: "darkcyan",
+    color: "white",
+  },
+  "100%": {
+    backgroundColor: "transparent",
+    color: "calc(inherit)",
+  },
+};
+
+const updatedAnimation = keyframes(updatedKeyframes);
+// same animation
+const updatedAnimationSecond = keyframes(updatedKeyframes);
+
+export const updated = style({
+  animationName: updatedAnimation,
+  animationDuration: "1s",
+});
+
+export const updatedAgain = style({
+  animationName: updatedAnimationSecond,
+  animationDuration: "1s",
 });

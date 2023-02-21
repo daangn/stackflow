@@ -1,10 +1,13 @@
 import { Stack } from "@stackflow/core";
-import { useRef } from "react";
+import { createContext, useEffect, useRef, useState } from "react";
 import LogWindow from "../components/LogWindow";
 import Splitter from "../components/Splitter";
 import TreeView from "../components/TreeView";
 import * as css from "./ActivitiesTab.css";
 import ActivityComponent from "./activities/ActivityComponent";
+import getDiff from "../utils/diff";
+import merge from "../utils/merge";
+import toggleFlag from "../utils/toggleFlag";
 
 const testData: Stack = {
   activities: [
@@ -158,16 +161,107 @@ const testData: Stack = {
   globalTransitionState: "idle",
 };
 
+const lhs: Stack = {
+  activities: [],
+  globalTransitionState: "idle",
+  registeredActivities: [],
+  transitionDuration: 300,
+};
+
+const rhs: Stack = {
+  activities: [],
+  globalTransitionState: "loading",
+  registeredActivities: [
+    {
+      name: "sample",
+    },
+  ],
+  transitionDuration: 400,
+};
+
+const refContext = createContext<{
+  focus: (id: string) => void;
+}>({
+  focus: () => {},
+});
+
 export default function ActivitiesTab() {
-  const stackWindowRef = useRef(null);
+  const treeWindowRef = useRef(null);
   const logWindowRef = useRef(null);
 
+  const [data, setData] = useState<Stack>(testData);
+  const prevData = useRef({});
+
+  /**
+   * Stack: {
+   *   activities: {
+   *     0: {
+   *       $opened: true
+   *     }
+   *   },
+   *   $opened: true
+   * }
+   */
+  const [openTree, setOpenTree] = useState<any>({});
+
+  // For highlighting, we need to use different classname containing transition with this flag
+  const [updateFlag, setUpdateFlag] = useState(false);
+
+  /**
+   * Stack: {
+   *   activities: {
+   *     0: {
+   *       $value: true
+   *     },
+   *     1: {
+   *       $key : true
+   *     }
+   *   }
+   * }
+   */
+  const [updateTree, setUpdateTree] = useState<any>({});
+
+  const [focused, setFocused] = useState<string[]>([]);
+
+  // const toggle = () => {
+  //   if (data.globalTransitionState === "idle") {
+  //     setData(rhs);
+  //   } else {
+  //     setData(lhs);
+  //   }
+  // };
+
+  useEffect(() => {
+    const diff = getDiff(prevData.current, data);
+    setUpdateFlag((updateFlag) => !updateFlag);
+    setUpdateTree(diff);
+    prevData.current = data;
+  }, [data]);
+
   const onActivityClick = (id: string) => {
+    setOpenTree({
+      ...openTree,
+      activities: {
+        ...openTree?.activities,
+        [data.activities.findIndex((a) => a.id === id).toString()]: {
+          $opened: true,
+        },
+        $opened: true,
+      },
+      $opened: true,
+    });
     console.log("Activity clicked", id);
+  };
+
+  const toggleOpen = (keys: string[]) => {
+    console.log(keys);
+    // slice(1) to remove virtual key "Stack"
+    setOpenTree(toggleFlag(openTree, keys.slice(1), "$opened"));
   };
 
   return (
     <div className={css.tab}>
+      {/* <button onClick={toggle}>ㅋㅋ루삥뽕</button> */}
       <div
         style={{
           flex: "1 1",
@@ -183,22 +277,26 @@ export default function ActivitiesTab() {
             display: "flex",
             flexDirection: "column-reverse",
             overflow: "scroll",
-            //alignItems: "center",
             gap: "0.5rem",
           }}
         >
-          {testData.activities
+          {data.activities.length === 0 && (
+            <div style={{ textAlign: "center", flex: "1 1" }}>
+              No activities provided
+            </div>
+          )}
+          {data.activities
             .filter((activity) => activity.exitedBy)
-            .map((activity) => (
+            .map((activity, idx) => (
               <ActivityComponent
                 activity={activity}
                 onClick={onActivityClick}
                 key={activity.id}
               />
             ))}
-          {testData.activities
+          {data.activities
             .filter((activity) => !activity.exitedBy)
-            .map((activity) => (
+            .map((activity, idx) => (
               <ActivityComponent
                 activity={activity}
                 onClick={onActivityClick}
@@ -206,17 +304,26 @@ export default function ActivitiesTab() {
               />
             ))}
         </div>
-        <Splitter paneRef={stackWindowRef} mode="vertical" />
+        <Splitter paneRef={treeWindowRef} mode="vertical" />
         <div
-          ref={stackWindowRef}
+          ref={treeWindowRef}
           style={{
             flex: "0 0 50%",
             padding: "1rem",
             overflow: "scroll",
             boxSizing: "border-box",
+            position: "relative",
           }}
         >
-          <TreeView data={testData} name="Stack" />
+          <TreeView
+            id="Stack"
+            data={data}
+            name="Stack"
+            updateTree={updateTree}
+            updateFlag={updateFlag}
+            toggleOpen={toggleOpen}
+            openTree={openTree}
+          />
         </div>
       </div>
       <Splitter paneRef={logWindowRef} mode="horizontal" />

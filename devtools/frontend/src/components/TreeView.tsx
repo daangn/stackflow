@@ -3,60 +3,95 @@ import Collapse from "./Collapse";
 import * as css from "./TreeView.css";
 
 export default function TreeView({
+  id,
   name,
   data,
+  updateTree = {},
+  updateFlag,
+  toggleOpen,
+  openTree = {},
 }: {
-  name?: string;
+  id: string;
+  name: string;
   data: unknown;
+  updateTree: Record<string, any>;
+  updateFlag: boolean;
+  toggleOpen: (keys: string[]) => void;
+  openTree: Record<string, any>;
 }) {
-  const [opened, toggle] = useReducer((opened) => !opened, false);
-
   const type = Array.isArray(data) ? "array" : typeof data;
   const expandable =
     (type === "object" && Object.keys(data as object).length > 0) ||
     type === "array";
 
+  const opened: boolean = openTree.$opened;
+
+  const toggle = () => {
+    toggleOpen([name]);
+  };
+
   return (
     <div className={css.container}>
-      {expandable ? <Expand opened={opened} toggle={toggle} /> : <></>}
+      {expandable && <Expand opened={opened} toggle={toggle} />}
       <div>
         <div
           onClick={toggle}
           style={{
             cursor: expandable ? "pointer" : "default",
+            display: "inline-flex",
+            gap: "4px",
           }}
+          className={
+            updateTree.$key ? (updateFlag ? css.updated : css.updatedAgain) : ""
+          }
         >
-          <span
+          <div
             style={{
               fontWeight: "bold",
             }}
           >
             {name}
-          </span>
+            {!expandable && ":"}
+          </div>
 
           {!expandable && (
-            <span>
-              :{" "}
-              <span className={css[type === "string" ? "string" : "notString"]}>
-                {data + ""}
-              </span>
-            </span>
+            <div
+              className={`${css[type === "string" ? "string" : "notString"]} ${
+                updateTree.$value
+                  ? updateFlag
+                    ? css.updated
+                    : css.updatedAgain
+                  : ""
+              }`}
+            >
+              {data + ""}
+            </div>
           )}
 
-          <span
+          <div
             style={{
               color: "gray",
             }}
           >
-            {" "}
             {type}
-          </span>
+          </div>
         </div>
 
         {expandable && (
           <Collapse opened={opened}>
             {Object.entries(data as object).map(([key, value]) => (
-              <TreeView key={key} name={key} data={value} />
+              <TreeView
+                id={`${id}.${key}`}
+                key={key}
+                name={key}
+                data={value}
+                updateTree={updateTree[key] ?? {}}
+                updateFlag={updateFlag}
+                toggleOpen={(keys: string[]) => {
+                  toggleOpen([name, ...keys]);
+                }}
+                openTree={openTree[key] ? openTree[key] : {}}
+              />
             ))}
           </Collapse>
         )}
@@ -67,22 +102,17 @@ export default function TreeView({
 
 function Expand({ opened, toggle }: { opened: boolean; toggle: () => void }) {
   return (
-    <div
-      className={`${opened ? css.rotate : css.rotateBefore} ${css.branch}`}
-      onClick={toggle}
-      style={{
-        cursor: "pointer",
-      }}
-    >
+    <span className={css.expand} onClick={toggle}>
       <svg
-        width="7"
+        width="10"
         height="10"
         viewBox="0 0 15 22"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
+        className={opened ? css.rotate : css.rotateBefore}
       >
         <path d="M15 11L0 21.3923L0 0.607696L15 11Z" fill="black" />
       </svg>
-    </div>
+    </span>
   );
 }
