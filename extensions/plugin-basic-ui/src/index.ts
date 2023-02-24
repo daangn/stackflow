@@ -1,3 +1,4 @@
+export { IconBack, IconClose } from "./assets";
 export { basicUIPlugin } from "./basicUIPlugin";
 export { globalVars as cssVars } from "./basicUIPlugin.css";
 export {
