@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
 
 import { globalVars } from "../basicUIPlugin.css";
+import * as appScreenCss from "../components/AppScreen.css";
 import { listenOnce, noop } from "../utils";
 import { useStyleEffect } from "./useStyleEffect";
 import { OFFSET_PX_CUPERTINO } from "./useStyleEffectOffset";
@@ -124,6 +125,15 @@ export function useStyleEffectSwipeBack({
                 resolve();
 
                 listenOnce($paper, "transitionend", () => {
+                  const _swiped =
+                    swiped ||
+                    $paper.parentElement?.classList.contains(
+                      appScreenCss.exitActive,
+                    ) ||
+                    $paper.parentElement?.classList.contains(
+                      appScreenCss.exitDone,
+                    );
+
                   $dim.style.opacity = "";
                   $paper.style.overflowY = "";
                   $paper.style.transform = "";
@@ -135,7 +145,7 @@ export function useStyleEffectSwipeBack({
 
                     const _cachedRef = _cachedRefs[i];
 
-                    if (swiped) {
+                    if (_swiped) {
                       ref.current.style.transition = "";
                       ref.current.style.transform = "";
 
