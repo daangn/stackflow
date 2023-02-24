@@ -419,11 +419,9 @@ export function historySyncPlugin<
 
         popFlag += popCount;
 
-        do {
-          for (let i = 0; i < popCount; i += 1) {
-            history.back();
-          }
-        } while (!safeParseState(getCurrentState({ history })));
+        if (popCount > 0) {
+          history.go(-popCount);
+        }
       },
     };
   };
