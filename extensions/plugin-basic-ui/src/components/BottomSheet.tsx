@@ -83,7 +83,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
           [css.vars.transitionDuration]:
             transitionState === "enter-active" ||
             transitionState === "exit-active"
-              ? globalVars.transitionDuration
+              ? globalVars.computedTransitionDuration
               : "0ms",
         }),
       )}

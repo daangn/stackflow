@@ -52,7 +52,8 @@ export function useStyleEffectOffset({
                   return;
                 }
 
-                ref.current.style.transition = globalVars.transitionDuration;
+                ref.current.style.transition =
+                  globalVars.computedTransitionDuration;
                 ref.current.style.transform = transform;
               });
 
