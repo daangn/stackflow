@@ -14,6 +14,11 @@
   -webkit-text-size-adjust: 100%;
 }
 
+#root {
+  flex-direction: column;
+  flex: 1 1 auto;
+}
+
 a {
   text-decoration: inherit;
   color: inherit;
@@ -22,8 +27,8 @@ a {
 body {
   margin: 0;
   display: flex;
-  place-items: center;
-  min-height: 100vh;
+  place-items: stretch center;
+  height: 100vh;
 }
 
 h1 {

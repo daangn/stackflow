@@ -1,11 +1,11 @@
 import "./App.css";
 import Layout from "./components/Layout";
-import { Outlet } from "react-router-dom";
+import ActivitiesTab from "./tabs/ActivitiesTab";
 
 function App() {
   return (
     <Layout>
-      <Outlet />
+      <ActivitiesTab />
     </Layout>
   );
 }

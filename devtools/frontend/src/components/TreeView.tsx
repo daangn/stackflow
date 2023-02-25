@@ -16,7 +16,7 @@ export default function TreeView({
   data: unknown;
   updateTree: Record<string, any>;
   updateFlag: boolean;
-  toggleOpen: (keys: string[]) => void;
+  toggleOpen: (id: string) => void;
   openTree: Record<string, any>;
 }) {
   const type = Array.isArray(data) ? "array" : typeof data;
@@ -27,7 +27,7 @@ export default function TreeView({
   const opened: boolean = openTree.$opened;
 
   const toggle = () => {
-    toggleOpen([name]);
+    toggleOpen(id);
   };
 
   return (
@@ -44,6 +44,7 @@ export default function TreeView({
           className={
             updateTree.$key ? (updateFlag ? css.updated : css.updatedAgain) : ""
           }
+          id={id}
         >
           <div
             style={{
@@ -87,10 +88,8 @@ export default function TreeView({
                 data={value}
                 updateTree={updateTree[key] ?? {}}
                 updateFlag={updateFlag}
-                toggleOpen={(keys: string[]) => {
-                  toggleOpen([name, ...keys]);
-                }}
-                openTree={openTree[key] ? openTree[key] : {}}
+                toggleOpen={toggleOpen}
+                openTree={openTree[key] ?? {}}
               />
             ))}
           </Collapse>

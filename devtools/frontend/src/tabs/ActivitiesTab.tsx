@@ -6,7 +6,6 @@ import TreeView from "../components/TreeView";
 import * as css from "./ActivitiesTab.css";
 import ActivityComponent from "./activities/ActivityComponent";
 import getDiff from "../utils/diff";
-import merge from "../utils/merge";
 import toggleFlag from "../utils/toggleFlag";
 
 const testData: Stack = {
@@ -179,12 +178,6 @@ const rhs: Stack = {
   transitionDuration: 400,
 };
 
-const refContext = createContext<{
-  focus: (id: string) => void;
-}>({
-  focus: () => {},
-});
-
 export default function ActivitiesTab() {
   const treeWindowRef = useRef(null);
   const logWindowRef = useRef(null);
@@ -221,8 +214,6 @@ export default function ActivitiesTab() {
    */
   const [updateTree, setUpdateTree] = useState<any>({});
 
-  const [focused, setFocused] = useState<string[]>([]);
-
   // const toggle = () => {
   //   if (data.globalTransitionState === "idle") {
   //     setData(rhs);
@@ -253,8 +244,8 @@ export default function ActivitiesTab() {
     console.log("Activity clicked", id);
   };
 
-  const toggleOpen = (keys: string[]) => {
-    console.log(keys);
+  const toggleOpen = (id: string) => {
+    const keys = id.split(".");
     // slice(1) to remove virtual key "Stack"
     setOpenTree(toggleFlag(openTree, keys.slice(1), "$opened"));
   };
@@ -264,10 +255,9 @@ export default function ActivitiesTab() {
       {/* <button onClick={toggle}>ㅋㅋ루삥뽕</button> */}
       <div
         style={{
-          flex: "1 1",
-          overflow: "scroll",
+          flex: "1 1 auto",
           display: "flex",
-          width: "100%",
+          overflow: "scroll",
         }}
       >
         <div
@@ -286,18 +276,21 @@ export default function ActivitiesTab() {
             </div>
           )}
           {data.activities
-            .filter((activity) => activity.exitedBy)
-            .map((activity, idx) => (
+            .slice()
+            .sort((a, b) => {
+              if (a.exitedBy && !b.exitedBy) {
+                return -1;
+              }
+              if (!a.exitedBy && b.exitedBy) {
+                return 1;
+              }
+              return 0;
+            })
+            .map((activity) => (
               <ActivityComponent
-                activity={activity}
-                onClick={onActivityClick}
-                key={activity.id}
-              />
-            ))}
-          {data.activities
-            .filter((activity) => !activity.exitedBy)
-            .map((activity, idx) => (
-              <ActivityComponent
+                id={data.activities
+                  .findIndex((a) => a.id === activity.id)
+                  .toString()}
                 activity={activity}
                 onClick={onActivityClick}
                 key={activity.id}
@@ -313,6 +306,7 @@ export default function ActivitiesTab() {
             overflow: "scroll",
             boxSizing: "border-box",
             position: "relative",
+            scrollBehavior: "smooth",
           }}
         >
           <TreeView

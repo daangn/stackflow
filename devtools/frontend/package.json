@@ -10,10 +10,12 @@
     "test": "yarn jest"
   },
   "dependencies": {
+    "@rjsf/core": "^5.1.0",
+    "@rjsf/utils": "^5.1.0",
+    "@rjsf/validator-ajv8": "^5.1.0",
     "@vanilla-extract/css": "^1.9.3",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-router-dom": "^6.8.0"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@stackflow/core": "workspace:^",

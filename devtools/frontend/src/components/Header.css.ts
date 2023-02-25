@@ -1,8 +1,8 @@
 import { style } from "@vanilla-extract/css";
 
-export const sidebar = style({
+export const header = style({
   display: "flex",
-  flexDirection: "column",
+  alignItems: "center",
   backgroundColor: "#1f2937",
   padding: "1rem",
 });
@@ -13,8 +13,16 @@ export const tabs = style({
   padding: "1rem",
 });
 
-export const topContent = style({
+export const leftContents = style({
   flex: "1 1 auto",
+  display: "flex",
+});
+
+export const rightContents = style({
+  flex: "0 0",
+  display: "flex",
+  gap: "0.5rem",
+  alignItems: "center",
 });
 
 export const footer = style({
