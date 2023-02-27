@@ -10,6 +10,7 @@ import {
   safeParseState,
 } from "./historyState";
 import { last } from "./last";
+import type { UrlPatternOptions } from "./makeTemplate";
 import { makeTemplate } from "./makeTemplate";
 import { normalizeRoute } from "./normalizeRoute";
 import { RoutesProvider } from "./RoutesContext";
@@ -24,6 +25,7 @@ type HistorySyncPluginOptions<K extends string> = {
   fallbackActivity: (args: { initialContext: any }) => K;
   useHash?: boolean;
   history?: History;
+  urlPatternOptions?: UrlPatternOptions;
 };
 export function historySyncPlugin<
   T extends { [activityName: string]: unknown },
@@ -104,7 +106,7 @@ export function historySyncPlugin<
             for (let j = 0; j < routes.length; j += 1) {
               const route = routes[j];
 
-              const template = makeTemplate(route);
+              const template = makeTemplate(route, options.urlPatternOptions);
               const activityParams = template.parse(path);
               const matched = !!activityParams;
 
@@ -155,6 +157,7 @@ export function historySyncPlugin<
 
         const template = makeTemplate(
           normalizeRoute(options.routes[rootActivity.name])[0],
+          options.urlPatternOptions,
         );
 
         const lastStep = last(rootActivity.steps);
@@ -303,6 +306,7 @@ export function historySyncPlugin<
 
         const template = makeTemplate(
           normalizeRoute(options.routes[activity.name])[0],
+          options.urlPatternOptions,
         );
 
         pushState({
@@ -322,6 +326,7 @@ export function historySyncPlugin<
 
         const template = makeTemplate(
           normalizeRoute(options.routes[activity.name])[0],
+          options.urlPatternOptions,
         );
 
         pushState({
@@ -341,6 +346,7 @@ export function historySyncPlugin<
 
         const template = makeTemplate(
           normalizeRoute(options.routes[activity.name])[0],
+          options.urlPatternOptions,
         );
 
         replaceState({
@@ -359,6 +365,7 @@ export function historySyncPlugin<
 
         const template = makeTemplate(
           normalizeRoute(options.routes[activity.name])[0],
+          options.urlPatternOptions,
         );
 
         replaceState({
@@ -374,6 +381,7 @@ export function historySyncPlugin<
       onBeforePush({ actionParams, actions: { overrideActionParams } }) {
         const template = makeTemplate(
           normalizeRoute(options.routes[actionParams.activityName])[0],
+          options.urlPatternOptions,
         );
         const path = template.fill(actionParams.activityParams);
 
@@ -388,6 +396,7 @@ export function historySyncPlugin<
       onBeforeReplace({ actionParams, actions: { overrideActionParams } }) {
         const template = makeTemplate(
           normalizeRoute(options.routes[actionParams.activityName])[0],
+          options.urlPatternOptions,
         );
         const path = template.fill(actionParams.activityParams);
 
