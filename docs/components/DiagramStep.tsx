@@ -18,7 +18,7 @@ const svg = `
 </svg>
 `;
 
-const DiagramStep: React.FC = () => (
+const DiagramStep = () => (
   <div style={{ display: "flex", justifyContent: "center" }}>
     <div
       style={{ width: "100%", padding: "2rem 0 1rem", maxWidth: "20rem" }}

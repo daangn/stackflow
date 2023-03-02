@@ -39,14 +39,14 @@ export type AppScreenProps = Partial<
   modalPresentationStyle?: "fullScreen";
   children: React.ReactNode;
 };
-const AppScreen: React.FC<AppScreenProps> = ({
+const AppScreen = ({
   backgroundColor,
   dimBackgroundColor,
   appBar,
   preventSwipeBack,
   modalPresentationStyle,
   children,
-}) => {
+}: AppScreenProps) => {
   const globalOptions = useGlobalOptions();
   const activity = useNullableActivity();
 

@@ -47,7 +47,7 @@ const { Stack, useFlow } = stackflow({
   // ...
 });
 
-const App: React.FC = () => {
+const App = () => {
   return (
     <Stack />
   );

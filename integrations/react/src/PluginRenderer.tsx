@@ -12,10 +12,10 @@ interface PluginRendererProps {
   };
   plugin: WithRequired<ReturnType<StackflowReactPlugin>, "render">;
 }
-const PluginRenderer: React.FC<PluginRendererProps> = ({
+const PluginRenderer = ({
   activityComponentMap,
   plugin,
-}) => {
+}: PluginRendererProps) => {
   const coreState = useCoreState();
   const plugins = usePlugins();
 

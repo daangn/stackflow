@@ -42,7 +42,7 @@ const SVG = `
 </svg>
 `;
 
-const ImageProfileRating: React.FC = () => (
+const ImageProfileRating = () => (
   <div className={f.flex} dangerouslySetInnerHTML={{ __html: SVG }} />
 );
 

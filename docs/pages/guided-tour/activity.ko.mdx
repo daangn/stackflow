@@ -141,7 +141,7 @@ type ArticleParams = {
     title: string;
   };
 };
-const Article: React.FC<ArticleParams> = ({ params: { title } }) => {
+const Article = ({ params: { title } }: ArticleParams) => {
   return (
     <AppScreen appBar={{ title: "Article" }}>
       <div>

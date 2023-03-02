@@ -1,6 +1,4 @@
-const IconBack: React.FC<{
-  className?: string;
-}> = (props) => (
+const IconBack = (props: { className?: string }) => (
   <svg
     className={props.className}
     width="24"

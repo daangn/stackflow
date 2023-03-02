@@ -1,7 +1,7 @@
 import { Stack } from "@stackflow/demo";
 import { useSimpleReveal } from "simple-reveal";
 
-const Demo: React.FC = () => {
+const Demo = () => {
   const { cn, ref, style } = useSimpleReveal({
     delay: 200,
     initialTransform: "scale(0.95)",

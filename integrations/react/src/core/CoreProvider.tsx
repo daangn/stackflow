@@ -12,10 +12,7 @@ export interface CoreProviderProps {
   coreStore: CoreStore;
   children: React.ReactNode;
 }
-export const CoreProvider: React.FC<CoreProviderProps> = ({
-  coreStore,
-  children,
-}) => {
+export const CoreProvider = ({ coreStore, children }: CoreProviderProps) => {
   const stack = useSyncExternalStore(
     coreStore.subscribe,
     coreStore.actions.getStack,

@@ -39,7 +39,7 @@ Karrotframe의 경우,
 /**
  * as-is:
  */
-const App: React.FC = () => {
+const App = () => {
   return (
     <Navigator>
       <Screen path="/my-page/:someid" component={MyPage} />
@@ -68,7 +68,7 @@ const { Stack } = stackflow({
   ],
 });
 
-const App: React.FC = () => {
+const App = () => {
   return <Stack />;
 };
 ```

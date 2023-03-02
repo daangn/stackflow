@@ -9,10 +9,7 @@ interface PluginsProviderProps {
   children: React.ReactNode;
   value: PluginsContextValue;
 }
-export const PluginsProvider: React.FC<PluginsProviderProps> = ({
-  children,
-  value,
-}) => (
+export const PluginsProvider = ({ children, value }: PluginsProviderProps) => (
   <PluginsContext.Provider value={value}>{children}</PluginsContext.Provider>
 );
 

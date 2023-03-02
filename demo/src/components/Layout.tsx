@@ -6,7 +6,7 @@ interface LayoutProps {
   appBar?: PropOf<typeof AppScreen>["appBar"];
   children: React.ReactNode;
 }
-const Layout: React.FC<LayoutProps> = ({ appBar, children }) => (
+const Layout = ({ appBar, children }: LayoutProps) => (
   <AppScreen appBar={appBar}>{children}</AppScreen>
 );
 

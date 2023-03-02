@@ -2,7 +2,7 @@ import { StrictMode, Suspense } from "react";
 
 import { Stack } from "./stackflow";
 
-const App: React.FC = () => (
+const App = () => (
   <StrictMode>
     <Suspense>
       <Stack />

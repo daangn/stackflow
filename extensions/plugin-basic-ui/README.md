@@ -27,7 +27,7 @@ const { Stack, useFlow } = stackflow({
 ```tsx
 import { AppScreen } from "@stackflow/plugin-basic-ui";
 
-const Something: React.FC = () => {
+const Something = () => {
   return (
     <AppScreen appBar={{ title: "Home" }}>
       <div>Hello, World</div>
@@ -39,7 +39,7 @@ const Something: React.FC = () => {
 ```tsx
 import { Modal } from "@stackflow/plugin-basic-ui";
 
-const Something: React.FC = () => {
+const Something = () => {
   return (
     <Modal>
       <div>Hello, World</div>

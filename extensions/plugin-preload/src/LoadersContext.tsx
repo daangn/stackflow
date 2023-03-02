@@ -12,7 +12,7 @@ interface LoadersProviderProps {
   loaders: LoadersMap;
   children: React.ReactNode;
 }
-export const LoadersProvider: React.FC<LoadersProviderProps> = (props) => (
+export const LoadersProvider = (props: LoadersProviderProps) => (
   <LoadersContext.Provider value={props.loaders}>
     {props.children}
   </LoadersContext.Provider>

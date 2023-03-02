@@ -9,10 +9,7 @@ interface StackProviderProps {
   children: React.ReactNode;
   value: Stack;
 }
-export const StackProvider: React.FC<StackProviderProps> = ({
-  children,
-  value,
-}) => (
+export const StackProvider = ({ children, value }: StackProviderProps) => (
   <StackContext.Provider value={useMemoDeep(value)}>
     {children}
   </StackContext.Provider>

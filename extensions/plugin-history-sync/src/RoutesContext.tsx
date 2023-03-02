@@ -10,7 +10,7 @@ interface RoutesProviderProps {
   routes: RoutesMap;
   children: React.ReactNode;
 }
-export const RoutesProvider: React.FC<RoutesProviderProps> = (props) => (
+export const RoutesProvider = (props: RoutesProviderProps) => (
   <RoutesContext.Provider value={props.routes}>
     {props.children}
   </RoutesContext.Provider>
