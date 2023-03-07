@@ -7,6 +7,8 @@ import * as css from "./ActivitiesTab.css";
 import ActivityComponent from "./activities/ActivityComponent";
 import getDiff from "../utils/diff";
 import toggleFlag from "../utils/toggleFlag";
+import Dispatcher from "../components/Dispatcher";
+import Dispatcher2 from "../components/Dispatcher2";
 
 const testData: Stack = {
   activities: [
@@ -180,6 +182,7 @@ const rhs: Stack = {
 
 export default function ActivitiesTab() {
   const treeWindowRef = useRef(null);
+  const bottomPaneRef = useRef(null);
   const logWindowRef = useRef(null);
 
   const [data, setData] = useState<Stack>(testData);
@@ -258,6 +261,7 @@ export default function ActivitiesTab() {
           flex: "1 1 auto",
           display: "flex",
           overflow: "scroll",
+          backgroundColor: "#242424",
         }}
       >
         <div
@@ -320,8 +324,72 @@ export default function ActivitiesTab() {
           />
         </div>
       </div>
-      <Splitter paneRef={logWindowRef} mode="horizontal" />
-      <LogWindow ref={logWindowRef} />
+      <Splitter paneRef={bottomPaneRef} mode="horizontal" />
+      <div
+        style={{
+          flex: "0 0 40%",
+          display: "flex",
+          overflow: "scroll",
+          backgroundColor: "#302F36",
+          boxSizing: "border-box",
+        }}
+        ref={bottomPaneRef}
+      >
+        <div
+          style={{
+            flex: "1 1",
+            overflow: "scroll",
+          }}
+        >
+          {/* <Dispatcher registeredActivities={data.registeredActivities} /> */}
+          <Dispatcher2
+            registeredActivities={[
+              {
+                name: "sample",
+                paramsSchema: {
+                  type: "object",
+                  properties: {
+                    a: {
+                      type: "object",
+                      properties: {
+                        aa: {
+                          type: "string",
+                        },
+                      },
+                      required: ["aa"],
+                    },
+                    b: {
+                      type: "string",
+                    },
+                    c: {
+                      type: "boolean",
+                    },
+                    d: {
+                      type: "array",
+                      items: {
+                        type: "string",
+                      },
+                    },
+                  },
+                },
+              },
+            ]}
+          />
+          {/* <Dispatcher3 /> */}
+        </div>
+        <Splitter paneRef={logWindowRef} mode="vertical" />
+        <div
+          style={{
+            flex: "0 0 50%",
+            display: "flex",
+            flexDirection: "column",
+            overflow: "scroll",
+          }}
+          ref={logWindowRef}
+        >
+          <LogWindow />
+        </div>
+      </div>
     </div>
   );
 }

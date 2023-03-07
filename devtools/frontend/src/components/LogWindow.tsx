@@ -1,15 +1,21 @@
 import { forwardRef } from "react";
 import * as css from "./LogWindow.css";
 
+const formatDate = (date: Date) => {
+  return Intl.DateTimeFormat(undefined, {
+    timeStyle: "medium",
+  }).format(date);
+};
+
 const LogWindow = forwardRef<HTMLDivElement>((props, ref) => {
   const logs = [
     {
-      timestamp: Intl.DateTimeFormat().format(new Date()),
-      message: "This is a log 1",
+      timestamp: formatDate(new Date()),
+      message: "PushedEvent",
     },
     {
-      timestamp: Intl.DateTimeFormat().format(new Date()),
-      message: "This is a log 2",
+      timestamp: formatDate(new Date()),
+      message: "ReplacedEvent",
     },
   ];
 

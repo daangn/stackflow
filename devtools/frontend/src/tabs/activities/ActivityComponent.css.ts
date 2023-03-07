@@ -1,7 +1,7 @@
 import { style } from "@vanilla-extract/css";
 
 export const activity = style({
-  border: "1px solid black",
+  border: "1px solid white",
   borderRadius: "0.5rem",
   padding: "0.5rem",
   textAlign: "center",
@@ -13,6 +13,8 @@ export const activity = style({
   ":hover": {
     cursor: "pointer",
   },
+  //backgroundColor: "white",
+  color: "white",
 });
 
 export const text = style({
@@ -24,11 +26,8 @@ export const text = style({
 });
 
 export const top = style({
-  color: "white",
-  backgroundColor: "black",
-});
-
-export const topText = style({
+  color: "black",
+  backgroundColor: "white",
   "@media": {
     "(prefers-color-scheme: dark)": {
       filter: "invert(0)",
