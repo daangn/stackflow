@@ -3016,6 +3016,112 @@ test("aggregate - StepPushedEvent가 쌓인 상태에서, StepPoppedEvent가 들
     transitionDuration: 300,
     globalTransitionState: "idle",
   });
+})
+
+test("aggregate - StepPushedEvent가 쌓인 상태에서, StepPoppedEvent를 실행하고, push 를 하면 step stack 은 사라진다.", () => {
+  const t = nowTime();
+
+  let pushedEvent: PushedEvent;
+  let pushedEventSecond: PushedEvent;
+
+  const events = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+    registeredEvent({
+      activityName: "sample",
+    }),
+    registeredEvent({
+      activityName: "sampleSecond",
+    }),
+    (pushedEvent = makeEvent("Pushed", {
+      activityId: "a1",
+      activityName: "sample",
+      activityParams: {
+        hello: "world",
+      },
+      eventDate: enoughPastTime(),
+    })),
+    makeEvent("StepPushed", {
+      stepId: "s1",
+      stepParams: {
+        hello: "world2",
+      },
+      eventDate: enoughPastTime(),
+    }),
+    makeEvent("StepPopped", {
+      eventDate: enoughPastTime(),
+    }),
+    (pushedEventSecond = makeEvent("Pushed", {
+      activityId: "a2",
+      activityName: "sampleSecond",
+      activityParams: {
+        foo: "bar",
+      },
+      eventDate: enoughPastTime(),
+    }))
+  ];
+
+  const output = aggregate(events, t);
+
+  expect(output).toStrictEqual({
+    activities: [
+      activity({
+        id: "a1",
+        name: "sample",
+        transitionState: "exit-done",
+        params: {
+          hello: "world",
+        },
+        enteredBy: pushedEvent,
+        steps: [
+          {
+            id: "a1",
+            params: {
+              hello: "world",
+            },
+            enteredBy: pushedEvent,
+          }
+        ],
+        isActive: false,
+        isTop: false,
+        isRoot: true,
+        zIndex: 0,
+      }),
+      activity({
+        id: "a2",
+        name: "sampleSecond",
+        transitionState: "enter-done",
+        params: {
+          foo: "bar",
+        },
+        enteredBy: pushedEventSecond,
+        steps: [
+          {
+            id: "a2",
+            params: {
+              foo: "bar",
+            },
+            enteredBy: pushedEventSecond,
+          }
+        ],
+        isActive: true,
+        isTop: true,
+        isRoot: false,
+        zIndex: 1,
+      }),
+    ],
+    registeredActivities: [
+      {
+        name: "sample",
+      },
+      {
+        name: "sampleSecond",
+      },
+    ],
+    transitionDuration: 300,
+    globalTransitionState: "idle",
+  });
 });
 
 test("aggregate - StepPushedEvent가 쌓인 상태에서, PoppedEvent가 들어오면, 쌓여진 StepPushedEvent들을 넘어서서 액티비티가 삭제됩니다", () => {
