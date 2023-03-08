@@ -46,6 +46,30 @@ export function historySyncPlugin<
     let pushFlag = 0;
     let popFlag = 0;
 
+    let pending = false;
+
+    const queue = (cb: () => void) => {
+      const start = () => {
+        pending = true;
+
+        const clean = history.listen(() => {
+          clean();
+          pending = false;
+        });
+
+        cb();
+      };
+
+      if (pending) {
+        const clean = history.listen(() => {
+          clean();
+          start();
+        });
+      } else {
+        start();
+      }
+    };
+
     return {
       key: "plugin-history-sync",
       wrapStack({ stack }) {
@@ -159,15 +183,17 @@ export function historySyncPlugin<
 
         const lastStep = last(rootActivity.steps);
 
-        replaceState({
-          history,
-          pathname: template.fill(rootActivity.params),
-          state: {
-            activity: rootActivity,
-            step: lastStep,
-          },
-          useHash: options.useHash,
-        });
+        queue(() =>
+          replaceState({
+            history,
+            pathname: template.fill(rootActivity.params),
+            state: {
+              activity: rootActivity,
+              step: lastStep,
+            },
+            useHash: options.useHash,
+          }),
+        );
 
         const onPopState: Listener = (e) => {
           if (popFlag) {
@@ -305,14 +331,16 @@ export function historySyncPlugin<
           normalizeRoute(options.routes[activity.name])[0],
         );
 
-        pushState({
-          history,
-          pathname: template.fill(activity.params),
-          state: {
-            activity,
-          },
-          useHash: options.useHash,
-        });
+        queue(() =>
+          pushState({
+            history,
+            pathname: template.fill(activity.params),
+            state: {
+              activity,
+            },
+            useHash: options.useHash,
+          }),
+        );
       },
       onStepPushed({ effect: { activity, step } }) {
         if (pushFlag) {
@@ -324,15 +352,17 @@ export function historySyncPlugin<
           normalizeRoute(options.routes[activity.name])[0],
         );
 
-        pushState({
-          history,
-          pathname: template.fill(activity.params),
-          state: {
-            activity,
-            step,
-          },
-          useHash: options.useHash,
-        });
+        queue(() =>
+          pushState({
+            history,
+            pathname: template.fill(activity.params),
+            state: {
+              activity,
+              step,
+            },
+            useHash: options.useHash,
+          }),
+        );
       },
       onReplaced({ effect: { activity } }) {
         if (!activity.isActive) {
@@ -343,14 +373,16 @@ export function historySyncPlugin<
           normalizeRoute(options.routes[activity.name])[0],
         );
 
-        replaceState({
-          history,
-          pathname: template.fill(activity.params),
-          state: {
-            activity,
-          },
-          useHash: options.useHash,
-        });
+        queue(() =>
+          replaceState({
+            history,
+            pathname: template.fill(activity.params),
+            state: {
+              activity,
+            },
+            useHash: options.useHash,
+          }),
+        );
       },
       onStepReplaced({ effect: { activity, step } }) {
         if (!activity.isActive) {
@@ -361,15 +393,17 @@ export function historySyncPlugin<
           normalizeRoute(options.routes[activity.name])[0],
         );
 
-        replaceState({
-          history,
-          pathname: template.fill(activity.params),
-          state: {
-            activity,
-            step,
-          },
-          useHash: options.useHash,
-        });
+        queue(() =>
+          replaceState({
+            history,
+            pathname: template.fill(activity.params),
+            state: {
+              activity,
+              step,
+            },
+            useHash: options.useHash,
+          }),
+        );
       },
       onBeforePush({ actionParams, actions: { overrideActionParams } }) {
         const template = makeTemplate(
@@ -407,7 +441,7 @@ export function historySyncPlugin<
 
         if ((currentActivity?.steps.length ?? 0) > 1) {
           popFlag += 1;
-          history.back();
+          queue(history.back);
         }
       },
       onBeforePop({ actions: { getStack } }) {
@@ -421,7 +455,7 @@ export function historySyncPlugin<
 
         do {
           for (let i = 0; i < popCount; i += 1) {
-            history.back();
+            queue(history.back);
           }
         } while (!safeParseState(getCurrentState({ history })));
       },
