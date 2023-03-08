@@ -1,11 +1,22 @@
 import { forwardRef } from "react";
 import * as css from "./LogWindow.css";
 
-const formatDate = (date: Date) => {
-  return Intl.DateTimeFormat(undefined, {
-    timeStyle: "medium",
-  }).format(date);
-};
+function formatDate(date: Date) {
+  let p = new Intl.DateTimeFormat("en", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  })
+    .formatToParts(date)
+    .reduce((acc: any, part) => {
+      acc[part.type] = part.value;
+      return acc;
+    }, {});
+
+  return `${p.year}.${p.month}.${p.day} ${p.hour}:${p.minute} ${p.}`;
+}
 
 const LogWindow = forwardRef<HTMLDivElement>((props, ref) => {
   const logs = [
