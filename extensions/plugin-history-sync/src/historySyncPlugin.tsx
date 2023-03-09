@@ -12,6 +12,7 @@ import {
 import { last } from "./last";
 import { makeTemplate } from "./makeTemplate";
 import { normalizeRoute } from "./normalizeRoute";
+import { makeQueue } from "./queue";
 import { RoutesProvider } from "./RoutesContext";
 
 const SECOND = 1000;
@@ -46,29 +47,7 @@ export function historySyncPlugin<
     let pushFlag = 0;
     let popFlag = 0;
 
-    let pending = false;
-
-    const queue = (cb: () => void) => {
-      const start = () => {
-        pending = true;
-
-        const clean = history.listen(() => {
-          clean();
-          pending = false;
-        });
-
-        cb();
-      };
-
-      if (pending) {
-        const clean = history.listen(() => {
-          clean();
-          start();
-        });
-      } else {
-        start();
-      }
-    };
+    const queue = makeQueue(history);
 
     return {
       key: "plugin-history-sync",
