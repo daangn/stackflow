@@ -4,8 +4,6 @@ on:
   push:
     paths:
       - "extensions/**/README.md"
-    branches:
-      - generate-plugin-docs
 
 name: Generate Plugins Docs
 

@@ -34,7 +34,7 @@ fs.readdir(extensionsFolderPath, (err, files) => {
         // -> write to docs/pages/plugins/${file}.ko.mdx
         fs.writeFileSync(
           path.resolve(pluginsFolderPath, `${file}.ko.mdx`),
-          `[plugin github link](${extensionsPathUrl}/${file})\n\n${data}`,
+          `${data}\n- [plugin github link](${extensionsPathUrl}/${file})\n`,
         );
       });
     }
