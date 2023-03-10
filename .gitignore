@@ -28,6 +28,4 @@ build
 coverage
 dist
 lib
-.next
 
-docs/pages/plugins/*

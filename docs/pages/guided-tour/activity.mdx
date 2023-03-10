@@ -1,0 +1,167 @@
+import { Callout } from "nextra-theme-docs";
+import DiagramActivity from "../../components/DiagramActivity.tsx";
+
+# 액티비티
+
+<DiagramActivity />
+
+화면에 하나씩 쌓이는 화면 하나하나를 액티비티라고 해요. 액티비티는 다음과 같은 속성을 갖고, 필요한 경우 `useActivity()` 훅을 통해 가져올 수 있어요.
+
+| 이름              | 설명                                               | 타입                                                     |
+| ----------------- | -------------------------------------------------- | -------------------------------------------------------- |
+| `id`              | 화면에 활성화되는 액티비티마다 가지는 고유한 ID 값 | String                                                   |
+| `name`            | 등록된 액티비티의 이름                             | String                                                   |
+| `transitionState` | 현재 액티비티의 전환 상태                          | `enter-active`, `enter-done`, `exit-active`, `exit-done` |
+
+## 액티비티 등록하기
+
+액티비티를 실제로 사용하기 위해서는 사용하기 전 `stackflow()` 함수에 등록이 필요해요. 액티비티는 `ActivityComponentType`이라는 타입으로 선언되는 리액트 컴포넌트에요.
+
+```tsx
+/**
+ * MyActivity.tsx
+ */
+import { ActivityComponentType } from "@stackflow/react";
+import { AppScreen } from "@stackflow/plugin-basic-ui";
+
+const MyActivity: ActivityComponentType = () => {
+  return (
+    <AppScreen appBar={{ title: "My Activity" }}>
+      <div>My Activity</div>
+    </AppScreen>
+  );
+};
+
+export default MyActivity;
+```
+
+<Callout emoji="💡">
+  `ActivityComponentType`은 `React.ComponentType`와 호환돼요. 따라서 기존에
+  활용하시던 `React.FC`, `React.Component` 등을 그대로 활용할 수 있어요.
+</Callout>
+<Callout emoji="💡">
+  **Stackflow**는 기본적으로 UI를 제공하지 않아요. 대신
+  `@stackflow/plugin-basic-ui`에서 기본 iOS(`cupertino`), Android(`android`)
+  UI를 제공하고 있어요.
+</Callout>
+
+액티비티를 잘 선언했다면, 다음과 같이 `stackflow()` 함수의 `activities` 필드에 등록해요.
+
+```tsx
+/**
+ * stackflow.ts
+ */
+import { stackflow } from "@stackflow/react";
+import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
+import MyActivity from "./MyActivity";
+
+const { Stack, useFlow } = stackflow({
+  transitionDuration: 350,
+  plugins: [
+    basicRendererPlugin(),
+    basicUIPlugin({
+      theme: "cupertino",
+    }),
+  ],
+  activities: {
+    MyActivity,
+  },
+});
+```
+
+## 초기 액티비티 등록하기
+
+액티비티를 성공적으로 등록하셨나요? 하지만 이전에 초기화해놓은 `<Stack />` 컴포넌트에는 아무것도 렌더링되고 있지 않을거에요. 왜냐하면, 초기 액티비티를 설정해주지 않았으니까요. 초기에 특정 액티비티를 로드하고 싶다면, 다음과 같이 옵션에 `initialActicity`를 추가해주세요.
+
+```typescript
+/**
+ * stackflow.ts
+ */
+import { stackflow } from "@stackflow/react";
+import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
+import MyActivity from "./MyActivity";
+
+const { Stack, useFlow } = stackflow({
+  transitionDuration: 350,
+  plugins: [
+    basicRendererPlugin(),
+    basicUIPlugin({
+      theme: "cupertino",
+    }),
+  ],
+  activities: {
+    MyActivity,
+  },
+  initialActivity: () => "MyActivity",
+});
+```
+
+성공적으로 초기 액티비티가 등록됐다면 화면에서 렌더링 된 결과를 눈으로 확인하실 수 있어요.
+
+<Callout emoji="💡">
+  TypeScript에서 `MyActivity` 값이 자동으로 완성되는 경험을 해보셨나요?
+  **Stackflow**는 이런 자동완성 경험을 통해 여러분의 개발생산성 향상을
+  도와줄거에요.
+</Callout>
+
+## 액티비티에 필요한 파라미터 등록하기
+
+해당 액티비티가 사용될 때, 특정 파라미터가 필요한 경우가 있어요. 이런 경우 다음과 같이 액티비티의 Props로 해당 파라미터를 선언해요.
+
+```tsx
+/**
+ * Article.tsx
+ */
+import { ActivityComponentType } from "@stackflow/react";
+import { AppScreen } from "@stackflow/plugin-basic-ui";
+
+type ArticleParams = {
+  title: string;
+};
+const Article: ActivityComponentType<ArticleParams> = ({ params }) => {
+  return (
+    <AppScreen appBar={{ title: "Article" }}>
+      <div>
+        <h1>{params.title}</h1>
+      </div>
+    </AppScreen>
+  );
+};
+
+export default Article;
+```
+
+또는,
+
+```tsx
+import { AppScreen } from "@stackflow/plugin-basic-ui";
+
+type ArticleParams = {
+  params: {
+    title: string;
+  };
+};
+const Article: React.FC<ArticleParams> = ({ params: { title } }) => {
+  return (
+    <AppScreen appBar={{ title: "Article" }}>
+      <div>
+        <h1>{title}</h1>
+      </div>
+    </AppScreen>
+  );
+};
+
+export default Article;
+```
+
+<Callout type="warning" emoji="⚠️">
+  **주의** - 만약 꼭 필요한 파라미터를 이전 화면이 넘겨주지 않은 경우 치명적인
+  오류가 발생할 수 있어요.
+</Callout>
+<Callout type="error" emoji="🚫">
+  **경고** - 초기 액티비티에는 필수 파라미터가 존재하면 안돼요.
+</Callout>
+
+---
+
+액티비티를 성공적으로 잘 등록했나요? 그렇다면 이제 등록된 액티비티를 어떻게 열고, 그 사이를 어떻게 탐험할 수 있는지 알아볼게요.
