@@ -1,8 +1,9 @@
+/* eslint-disable no-console */
 const fs = require("fs");
 const path = require("path");
 
-const extensionsFolderPath = "./extensions";
-const pluginsFolderPath = "./docs/pages/plugins";
+const extensionsFolderPath = "../extensions";
+const pluginsFolderPath = "./pages/plugins";
 
 const githubBaseUrl = "https://github.com/daangn/stackflow";
 const extensionsPathUrl = `${githubBaseUrl}/tree/main/extensions`;
@@ -13,6 +14,10 @@ fs.readdir(extensionsFolderPath, (err, files) => {
   if (err) {
     console.log(err);
     process.exit(1);
+  }
+
+  if (!fs.existsSync(pluginsFolderPath)) {
+    fs.mkdirSync(pluginsFolderPath);
   }
 
   // -> write to docs/pages/plugins/meta.ko.json

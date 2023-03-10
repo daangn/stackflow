@@ -19,7 +19,6 @@
     "lerna:publish": "yarn clean && yarn build && lerna publish",
     "lerna:publish:all": "yarn clean && yarn build && lerna publish --force-publish",
     "lerna:publish:canary": "yarn clean && yarn build && lerna publish --canary",
-    "generate:plugins-docs": "node scripts/generate-plugins-docs.js",
     "test": "yarn build && ultra -r test",
     "typecheck": "tsc --noEmit",
     "version": "yarn install && git stage yarn.lock"
