@@ -97,7 +97,8 @@ export function produceEffects(prevOutput: Stack, nextOutput: Stack): Effect[] {
           "zIndex",
         ]),
       ) &&
-      nextActivity.enteredBy.name === "Replaced"
+      nextActivity.enteredBy.name === "Replaced" &&
+      !isEqual(prevActivity.enteredBy, nextActivity.enteredBy)
     ) {
       output.push({
         _TAG: "REPLACED",

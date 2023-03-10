@@ -1398,6 +1398,342 @@ test("productEffects - StepPushed가 작동해 steps가 늘어난 경우, STEP_P
   ]);
 });
 
+test("produceEffects - StepPushed after Replaced events produces only STEP_PUSHED effect", () => {
+  expect(
+    produceEffects(
+      {
+        activities: [
+          {
+            id: "5f677b4ce2840",
+            name: "common.root",
+            transitionState: "exit-done",
+            params: {},
+            steps: [
+              {
+                id: "5f677b4ce2840",
+                params: {},
+                enteredBy: {
+                  id: "5f677b4ce2841",
+                  eventDate: 1678368818504,
+                  activityId: "5f677b4ce2840",
+                  activityName: "common.root",
+                  activityParams: {},
+                  activityContext: {
+                    path: "/",
+                  },
+                  name: "Pushed",
+                },
+              },
+            ],
+            enteredBy: {
+              id: "5f677b4ce2841",
+              eventDate: 1678368818504,
+              activityId: "5f677b4ce2840",
+              activityName: "common.root",
+              activityParams: {},
+              activityContext: {
+                path: "/",
+              },
+              name: "Pushed",
+            },
+            exitedBy: {
+              id: "5f677b4cea15a",
+              eventDate: 1678368878535.003,
+              activityId: "5f677b4cea159",
+              activityName: "common.main",
+              activityParams: {
+                entry: "common.root",
+              },
+              skipEnterActiveState: false,
+              activityContext: {
+                path: "/main/?entry=common.root",
+              },
+              name: "Replaced",
+            },
+            isTop: false,
+            isActive: false,
+            isRoot: false,
+            zIndex: -1,
+            context: {
+              path: "/",
+            },
+          },
+          {
+            id: "5f677b4cea159",
+            name: "common.main",
+            transitionState: "enter-done",
+            params: {
+              entry: "common.root",
+            },
+            steps: [
+              {
+                id: "5f677b4cea159",
+                params: {
+                  entry: "common.root",
+                },
+                enteredBy: {
+                  id: "5f677b4cea15a",
+                  eventDate: 1678368878535.003,
+                  activityId: "5f677b4cea159",
+                  activityName: "common.main",
+                  activityParams: {
+                    entry: "common.root",
+                  },
+                  skipEnterActiveState: false,
+                  activityContext: {
+                    path: "/main/?entry=common.root",
+                  },
+                  name: "Replaced",
+                },
+              },
+            ],
+            enteredBy: {
+              id: "5f677b4cea15a",
+              eventDate: 1678368878535.003,
+              activityId: "5f677b4cea159",
+              activityName: "common.main",
+              activityParams: {
+                entry: "common.root",
+              },
+              skipEnterActiveState: false,
+              activityContext: {
+                path: "/main/?entry=common.root",
+              },
+              name: "Replaced",
+            },
+            isTop: true,
+            isActive: true,
+            isRoot: true,
+            zIndex: 0,
+            context: {
+              path: "/main/?entry=common.root",
+            },
+          },
+        ],
+        registeredActivities: [],
+        transitionDuration: 350,
+        globalTransitionState: "idle",
+      },
+      {
+        activities: [
+          {
+            id: "5f677b4ce2840",
+            name: "common.root",
+            transitionState: "exit-done",
+            params: {},
+            steps: [
+              {
+                id: "5f677b4ce2840",
+                params: {},
+                enteredBy: {
+                  id: "5f677b4ce2841",
+                  eventDate: 1678368818504,
+                  activityId: "5f677b4ce2840",
+                  activityName: "common.root",
+                  activityParams: {},
+                  activityContext: {
+                    path: "/",
+                  },
+                  name: "Pushed",
+                },
+              },
+            ],
+            enteredBy: {
+              id: "5f677b4ce2841",
+              eventDate: 1678368818504,
+              activityId: "5f677b4ce2840",
+              activityName: "common.root",
+              activityParams: {},
+              activityContext: {
+                path: "/",
+              },
+              name: "Pushed",
+            },
+            exitedBy: {
+              id: "5f677b4cea15a",
+              eventDate: 1678368878535.003,
+              activityId: "5f677b4cea159",
+              activityName: "common.main",
+              activityParams: {
+                entry: "common.root",
+              },
+              skipEnterActiveState: false,
+              activityContext: {
+                path: "/main/?entry=common.root",
+              },
+              name: "Replaced",
+            },
+            isTop: false,
+            isActive: false,
+            isRoot: false,
+            zIndex: -1,
+            context: {
+              path: "/",
+            },
+          },
+          {
+            id: "5f677b4cea159",
+            name: "common.main",
+            transitionState: "enter-done",
+            params: {
+              pageCode: "common.main_nested_search",
+            },
+            steps: [
+              {
+                id: "5f677b4cea159",
+                params: {
+                  entry: "common.root",
+                },
+                enteredBy: {
+                  id: "5f677b4cea15a",
+                  eventDate: 1678368878535.003,
+                  activityId: "5f677b4cea159",
+                  activityName: "common.main",
+                  activityParams: {
+                    entry: "common.root",
+                  },
+                  skipEnterActiveState: false,
+                  activityContext: {
+                    path: "/main/?entry=common.root",
+                  },
+                  name: "Replaced",
+                },
+              },
+              {
+                id: "5f67812e31e40",
+                params: {
+                  pageCode: "common.main_nested_search",
+                },
+                enteredBy: {
+                  id: "5f67812e31e41",
+                  eventDate: 1678370456936.002,
+                  stepId: "5f67812e31e40",
+                  stepParams: {
+                    pageCode: "common.main_nested_search",
+                  },
+                  name: "StepPushed",
+                },
+              },
+            ],
+            enteredBy: {
+              id: "5f677b4cea15a",
+              eventDate: 1678368878535.003,
+              activityId: "5f677b4cea159",
+              activityName: "common.main",
+              activityParams: {
+                entry: "common.root",
+              },
+              skipEnterActiveState: false,
+              activityContext: {
+                path: "/main/?entry=common.root",
+              },
+              name: "Replaced",
+            },
+            isTop: true,
+            isActive: true,
+            isRoot: true,
+            zIndex: 0,
+            context: {
+              path: "/main/?entry=common.root",
+            },
+          },
+        ],
+        registeredActivities: [],
+        transitionDuration: 350,
+        globalTransitionState: "idle",
+      },
+    ),
+  ).toEqual([
+    {
+      _TAG: "%SOMETHING_CHANGED%",
+    },
+    {
+      _TAG: "STEP_PUSHED",
+      activity: {
+        id: "5f677b4cea159",
+        name: "common.main",
+        transitionState: "enter-done",
+        params: {
+          pageCode: "common.main_nested_search",
+        },
+        steps: [
+          {
+            id: "5f677b4cea159",
+            params: {
+              entry: "common.root",
+            },
+            enteredBy: {
+              id: "5f677b4cea15a",
+              eventDate: 1678368878535.003,
+              activityId: "5f677b4cea159",
+              activityName: "common.main",
+              activityParams: {
+                entry: "common.root",
+              },
+              skipEnterActiveState: false,
+              activityContext: {
+                path: "/main/?entry=common.root",
+              },
+              name: "Replaced",
+            },
+          },
+          {
+            id: "5f67812e31e40",
+            params: {
+              pageCode: "common.main_nested_search",
+            },
+            enteredBy: {
+              id: "5f67812e31e41",
+              eventDate: 1678370456936.002,
+              stepId: "5f67812e31e40",
+              stepParams: {
+                pageCode: "common.main_nested_search",
+              },
+              name: "StepPushed",
+            },
+          },
+        ],
+        enteredBy: {
+          id: "5f677b4cea15a",
+          eventDate: 1678368878535.003,
+          activityId: "5f677b4cea159",
+          activityName: "common.main",
+          activityParams: {
+            entry: "common.root",
+          },
+          skipEnterActiveState: false,
+          activityContext: {
+            path: "/main/?entry=common.root",
+          },
+          name: "Replaced",
+        },
+        isTop: true,
+        isActive: true,
+        isRoot: true,
+        zIndex: 0,
+        context: {
+          path: "/main/?entry=common.root",
+        },
+      },
+      step: {
+        id: "5f67812e31e40",
+        params: {
+          pageCode: "common.main_nested_search",
+        },
+        enteredBy: {
+          id: "5f67812e31e41",
+          eventDate: 1678370456936.002,
+          stepId: "5f67812e31e40",
+          stepParams: {
+            pageCode: "common.main_nested_search",
+          },
+          name: "StepPushed",
+        },
+      },
+    },
+  ]);
+});
+
 test("productEffects - StepReplaced가 작동해 파라미터가 바뀐 경우, STEP_REPLACED 이펙트를 추가합니다", () => {
   expect(
     produceEffects(
