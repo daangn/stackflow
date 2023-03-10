@@ -48,7 +48,6 @@ export default {
         content="Mobile-first stack navigator framework with Composable Plugin System"
       />
       <meta name="og:title" content="Stackflow" />
-      <link rel="shortcut icon" href="/favicon.png" />
       <Script dangerouslySetInnerHTML={{ __html: SEED_SCALE_COLOR_SCRIPT }} />
       <Script dangerouslySetInnerHTML={{ __html: NEXTRA_THEME_SCRIPT }} />
       <Script
@@ -56,6 +55,7 @@ export default {
           __html: STACKFLOW_PLUGIN_BASIC_UI_THEME_SCRIPT,
         }}
       />
+      <link rel="shortcut icon" href="/favicon.png" />
     </Head>
   ),
   i18n: [{ locale: "ko", text: "한국어" }],

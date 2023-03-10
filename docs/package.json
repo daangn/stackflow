@@ -5,7 +5,7 @@
   "description": "Mobile-first stack navigator framework with Composable Plugin System",
   "license": "MIT",
   "scripts": {
-    "build": "yarn generate:plugins-docs && next build && next export",
+    "build": "yarn generate:plugins-docs && next build",
     "dev": "next -p 6006",
     "generate:plugins-docs": "node scripts/generate-plugins-docs.js"
   },
