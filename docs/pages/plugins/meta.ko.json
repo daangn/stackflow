@@ -1,0 +1,11 @@
+{
+  "compat-await-push": "compat-await-push",
+  "link": "link",
+  "plugin-basic-ui": "plugin-basic-ui",
+  "plugin-google-analytics-4": "plugin-google-analytics-4",
+  "plugin-history-sync": "plugin-history-sync",
+  "plugin-preload": "plugin-preload",
+  "plugin-renderer-basic": "plugin-renderer-basic",
+  "plugin-renderer-web": "plugin-renderer-web",
+  "plugin-stack-depth-change": "plugin-stack-depth-change"
+}

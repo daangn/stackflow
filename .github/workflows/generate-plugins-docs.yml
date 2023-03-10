@@ -1,0 +1,35 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/github-workflow.json
+
+on:
+  push:
+    paths:
+      - "extensions/**/README.md"
+    branches:
+      - generate-plugin-docs
+
+name: Generate Plugins Docs
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Generate Plugins Docs files
+        run: yarn generate:plugins-docs
+
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v7
+        with:
+          message: "Update extensions README.md files"
+          add: "extensions/**/README.md"
+
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Update extensions README.md files"
+          branch: "update-extensions-readme"
+          title: "docs: Update extensions(plugins) README.md files"
+          body: "This pull request updates the README.md files in the extensions directory."
