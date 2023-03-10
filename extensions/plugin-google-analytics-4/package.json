@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/plugin-google-analytics-4",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "license": "MIT",
   "author": "Aaron K <aaron@daangn.com>",
   "exports": {
@@ -28,10 +28,10 @@
     "react-ga4": "^1.4.1"
   },
   "devDependencies": {
-    "@stackflow/core": "^1.0.2",
+    "@stackflow/core": "^1.0.3",
     "@stackflow/esbuild-config": "^1.0.0",
     "@stackflow/eslint-config": "^1.0.0",
-    "@stackflow/react": "^1.0.2",
+    "@stackflow/react": "^1.0.3",
     "@types/react": "^18.0.10",
     "@typescript-eslint/eslint-plugin": "^5.32.0",
     "@typescript-eslint/parser": "^5.20.0",
