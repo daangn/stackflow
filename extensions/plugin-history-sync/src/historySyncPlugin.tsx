@@ -12,6 +12,7 @@ import {
 import { last } from "./last";
 import { makeTemplate } from "./makeTemplate";
 import { normalizeRoute } from "./normalizeRoute";
+import { makeQueue } from "./queue";
 import { RoutesProvider } from "./RoutesContext";
 
 const SECOND = 1000;
@@ -45,6 +46,8 @@ export function historySyncPlugin<
   return () => {
     let pushFlag = 0;
     let popFlag = 0;
+
+    const queue = makeQueue(history);
 
     return {
       key: "plugin-history-sync",
@@ -159,15 +162,17 @@ export function historySyncPlugin<
 
         const lastStep = last(rootActivity.steps);
 
-        replaceState({
-          history,
-          pathname: template.fill(rootActivity.params),
-          state: {
-            activity: rootActivity,
-            step: lastStep,
-          },
-          useHash: options.useHash,
-        });
+        queue(() =>
+          replaceState({
+            history,
+            pathname: template.fill(rootActivity.params),
+            state: {
+              activity: rootActivity,
+              step: lastStep,
+            },
+            useHash: options.useHash,
+          }),
+        );
 
         const onPopState: Listener = (e) => {
           if (popFlag) {
@@ -305,14 +310,16 @@ export function historySyncPlugin<
           normalizeRoute(options.routes[activity.name])[0],
         );
 
-        pushState({
-          history,
-          pathname: template.fill(activity.params),
-          state: {
-            activity,
-          },
-          useHash: options.useHash,
-        });
+        queue(() =>
+          pushState({
+            history,
+            pathname: template.fill(activity.params),
+            state: {
+              activity,
+            },
+            useHash: options.useHash,
+          }),
+        );
       },
       onStepPushed({ effect: { activity, step } }) {
         if (pushFlag) {
@@ -324,15 +331,17 @@ export function historySyncPlugin<
           normalizeRoute(options.routes[activity.name])[0],
         );
 
-        pushState({
-          history,
-          pathname: template.fill(activity.params),
-          state: {
-            activity,
-            step,
-          },
-          useHash: options.useHash,
-        });
+        queue(() =>
+          pushState({
+            history,
+            pathname: template.fill(activity.params),
+            state: {
+              activity,
+              step,
+            },
+            useHash: options.useHash,
+          }),
+        );
       },
       onReplaced({ effect: { activity } }) {
         if (!activity.isActive) {
@@ -343,14 +352,16 @@ export function historySyncPlugin<
           normalizeRoute(options.routes[activity.name])[0],
         );
 
-        replaceState({
-          history,
-          pathname: template.fill(activity.params),
-          state: {
-            activity,
-          },
-          useHash: options.useHash,
-        });
+        queue(() =>
+          replaceState({
+            history,
+            pathname: template.fill(activity.params),
+            state: {
+              activity,
+            },
+            useHash: options.useHash,
+          }),
+        );
       },
       onStepReplaced({ effect: { activity, step } }) {
         if (!activity.isActive) {
@@ -361,15 +372,17 @@ export function historySyncPlugin<
           normalizeRoute(options.routes[activity.name])[0],
         );
 
-        replaceState({
-          history,
-          pathname: template.fill(activity.params),
-          state: {
-            activity,
-            step,
-          },
-          useHash: options.useHash,
-        });
+        queue(() =>
+          replaceState({
+            history,
+            pathname: template.fill(activity.params),
+            state: {
+              activity,
+              step,
+            },
+            useHash: options.useHash,
+          }),
+        );
       },
       onBeforePush({ actionParams, actions: { overrideActionParams } }) {
         const template = makeTemplate(
@@ -407,7 +420,7 @@ export function historySyncPlugin<
 
         if ((currentActivity?.steps.length ?? 0) > 1) {
           popFlag += 1;
-          history.back();
+          queue(history.back);
         }
       },
       onBeforePop({ actions: { getStack } }) {
@@ -421,7 +434,7 @@ export function historySyncPlugin<
 
         do {
           for (let i = 0; i < popCount; i += 1) {
-            history.back();
+            queue(history.back);
           }
         } while (!safeParseState(getCurrentState({ history })));
       },
