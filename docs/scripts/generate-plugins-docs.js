@@ -22,7 +22,7 @@ fs.readdir(extensionsFolderPath, (err, files) => {
 
   // -> write to docs/pages/plugins/meta.ko.json
   fs.writeFileSync(
-    path.resolve(pluginsFolderPath, "_meta.ko.json"),
+    path.resolve(pluginsFolderPath, "_meta.json"),
     `{\n${files.map((file) => `  "${file}": "${file}"`).join(",\n")}\n}\n`,
   );
 

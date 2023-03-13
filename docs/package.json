@@ -6,8 +6,8 @@
   "license": "MIT",
   "scripts": {
     "build": "yarn generate:plugins-docs && next build",
-    "dev": "next -p 6006",
-    "generate:plugins-docs": "node scripts/generate-plugins-docs.js"
+    "dev": "yarn generate:plugins-docs && next -p 6006",
+    "generate:plugins-docs": "rm -rf ./pages/plugins && node scripts/generate-plugins-docs.js"
   },
   "dependencies": {
     "@mdx-js/react": "^2.1.1",

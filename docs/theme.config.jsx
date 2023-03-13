@@ -1,5 +1,4 @@
-import Head from "next/head";
-import Script from "next/script";
+import Favicon from "./assets/favicon.png";
 
 const logoSvg = `
   <svg width="106" height="24" viewBox="0 0 106 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -32,6 +31,9 @@ export default {
   footer: {
     text: <span>MIT {new Date().getFullYear()} © Stackflow</span>,
   },
+  search: {
+    placeholder: "검색어를 입력하세요...",
+  },
   logo: (
     <div
       // eslint-disable-next-line react/no-danger
@@ -41,22 +43,21 @@ export default {
     />
   ),
   head: (
-    <Head>
+    <>
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <meta
         name="description"
         content="Mobile-first stack navigator framework with Composable Plugin System"
       />
       <meta name="og:title" content="Stackflow" />
-      <Script dangerouslySetInnerHTML={{ __html: SEED_SCALE_COLOR_SCRIPT }} />
-      <Script dangerouslySetInnerHTML={{ __html: NEXTRA_THEME_SCRIPT }} />
-      <Script
+      <link rel="shortcut icon" type="image/x-icon" href={Favicon.src} />
+      <script dangerouslySetInnerHTML={{ __html: SEED_SCALE_COLOR_SCRIPT }} />
+      <script dangerouslySetInnerHTML={{ __html: NEXTRA_THEME_SCRIPT }} />
+      <script
         dangerouslySetInnerHTML={{
           __html: STACKFLOW_PLUGIN_BASIC_UI_THEME_SCRIPT,
         }}
       />
-      <link rel="shortcut icon" href="/favicon.png" />
-    </Head>
+    </>
   ),
-  i18n: [{ locale: "ko", text: "한국어" }],
 };
