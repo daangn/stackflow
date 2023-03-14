@@ -237,7 +237,10 @@ export function stackflow<T extends BaseActivities>(
     return (
       <PluginsProvider value={pluginInstances}>
         <CoreProvider coreStore={coreStore}>
-          <MainRenderer activityComponentMap={activityComponentMap} />
+          <MainRenderer
+            activityComponentMap={activityComponentMap}
+            initialContext={props.initialContext}
+          />
         </CoreProvider>
       </PluginsProvider>
     );

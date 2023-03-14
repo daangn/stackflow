@@ -44,13 +44,18 @@ export const basicUIPlugin: (
   options: BasicUIPluginOptions,
 ) => StackflowReactPlugin = (options) => () => ({
   key: "basic-ui",
-  wrapStack({ stack }) {
+  wrapStack({ stack, initialContext }) {
     return (
-      <GlobalOptionsProvider value={options}>
+      <GlobalOptionsProvider
+        value={{
+          ...options,
+          theme: initialContext?.theme ?? options.theme,
+        }}
+      >
         <div
           className={compact([
             css.stackWrapper({
-              theme: isBrowser() ? options.theme : undefined,
+              theme: initialContext?.theme ?? options.theme,
               loading: stack.globalTransitionState === "loading",
             }),
             options.rootClassName,
