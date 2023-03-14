@@ -2116,6 +2116,7 @@ __metadata:
     "@stackflow/core": "workspace:^"
     "@swc/core": ^1.3.30
     "@swc/jest": ^0.2.21
+    "@types/chrome": ^0.0.223
     "@types/jest": ^28.1.6
     "@types/react": ^18.0.15
     "@types/react-dom": ^18.0.5
@@ -2728,6 +2729,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/chrome@npm:^0.0.223":
+  version: 0.0.223
+  resolution: "@types/chrome@npm:0.0.223"
+  dependencies:
+    "@types/filesystem": "*"
+    "@types/har-format": "*"
+  checksum: 17cdb32396db2ab22b024dcb202c447e06b516e8b2a1018aaec61e1e4b9fdf0e57a327be62f990558253fa7502a4fe9e40210cb6df6c48c47e3912828aca9b8e
+  languageName: node
+  linkType: hard
+
 "@types/debug@npm:^4.0.0":
   version: 4.1.7
   resolution: "@types/debug@npm:4.1.7"
@@ -2782,6 +2793,13 @@ __metadata:
   dependencies:
     "@types/node": "npm:*"
   checksum: 10/d076bb61f45d0fc42dee496ef8b1c2f8742e15d5e47e90e20d0243386e426c04d4efd408a48875ab432f7960b4ce3414db20ed0fbbfc7bcc89d84e574f6e045a
+  languageName: node
+  linkType: hard
+
+"@types/har-format@npm:*":
+  version: 1.2.10
+  resolution: "@types/har-format@npm:1.2.10"
+  checksum: 14c0118d809e77a0bac9deec0a87159c28beab21105cfce3aa291b51e28d4c07142851c4e6b93b7ecb4ea237fe07d39ba98a42bb2de2f5891144733411ac76b7
   languageName: node
   linkType: hard
 
