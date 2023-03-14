@@ -1,13 +1,7 @@
 import { style } from "@vanilla-extract/css";
 import { recipe } from "@vanilla-extract/recipes";
 
-import {
-  android,
-  cupertino,
-  globalVars,
-  rootAndroid,
-  rootCupertino,
-} from "../basicUIPlugin.css";
+import { android, cupertino, globalVars } from "../basicUIPlugin.css";
 import { f } from "../styles";
 import {
   background,
@@ -36,32 +30,21 @@ export const appBar = recipe({
       zIndex: vars.zIndexes.appBar,
       willChange: "transform, opacity",
       selectors: {
-        [`
-          ${cupertino} &,
-          ${rootCupertino} &
-        `]: {
+        [`${cupertino} &`]: {
           position: "absolute",
         },
-        [`
-          ${cupertino} ${exitActive} &,
-          ${rootCupertino} ${exitActive} &
-        `]: {
+        [`${cupertino} ${exitActive} &`]: {
           transform: "translate3d(100%, 0, 0)",
           transition: "0s",
         },
-        [`
-          ${android} &,
-          ${rootAndroid} &
-        `]: {
+        [`${android} &`]: {
           opacity: 0,
           transform: "translate3d(0, 10rem, 0)",
           transition: `transform ${vars.transitionDuration}, opacity ${vars.transitionDuration}`,
         },
         [`
           ${android} ${enterActive} &,
-          ${rootAndroid} ${enterActive} &,
-          ${android} ${enterDone} &,
-          ${rootAndroid} ${enterDone} &
+          ${android} ${enterDone} &
         `]: {
           opacity: 1,
           transform: "translate3d(0, 0, 0)",
@@ -78,25 +61,17 @@ export const appBar = recipe({
     presentModalFullScreen: {
       true: {
         selectors: {
-          [`
-            ${cupertino} &,
-            ${rootCupertino} &
-          `]: {
+          [`${cupertino} &`]: {
             transform: "translate3d(0, 100vh, 0)",
             transition: `transform ${vars.transitionDuration}, opacity ${vars.transitionDuration}`,
           },
           [`
             ${cupertino} ${enterActive} &,
-            ${rootCupertino} ${enterActive} &,
-            ${cupertino} ${enterDone} &,
-            ${rootCupertino} ${enterDone} &
+            ${cupertino} ${enterDone} &
           `]: {
             transform: "translate3d(0, 0, 0)",
           },
-          [`
-            ${cupertino} ${exitActive} &,
-            ${rootCupertino} ${exitActive} &
-          `]: {
+          [`${cupertino} ${exitActive} &`]: {
             transform: "translate3d(0, 100vh, 0)",
             transition: `transform ${vars.transitionDuration}, opacity ${vars.transitionDuration}`,
           },
@@ -158,10 +133,7 @@ export const centerMain = recipe({
     color: globalVars.appBar.textColor,
     transition: `height ${globalVars.appBar.heightTransitionDuration}`,
     selectors: {
-      [`
-        ${android} &,
-        ${rootAndroid} &
-      `]: {
+      [`${android} &`]: {
         width: "100%",
         justifyContent: "flex-start",
         paddingLeft: "1rem",
@@ -170,10 +142,7 @@ export const centerMain = recipe({
         fontWeight: "bold",
         boxSizing: "border-box",
       },
-      [`
-        ${cupertino} &,
-        ${rootCupertino} &
-      `]: {
+      [`${cupertino} &`]: {
         position: "absolute",
         display: "flex",
         alignItems: "center",
@@ -193,10 +162,7 @@ export const centerMain = recipe({
     hasLeft: {
       true: {
         selectors: {
-          [`
-            ${android} &,
-            ${rootAndroid} &
-          `]: {
+          [`${android} &`]: {
             paddingLeft: "0.375rem",
           },
         },
@@ -218,10 +184,7 @@ export const centerMainEdge = style([
     display: "none",
     width: vars.appBar.center.mainWidth,
     selectors: {
-      [`
-        ${cupertino} &,
-        ${rootCupertino} &
-      `]: {
+      [`${cupertino} &`]: {
         display: "block",
       },
     },
@@ -251,10 +214,7 @@ export const right = style([
       display: "none",
     },
     selectors: {
-      [`
-        ${android} &,
-        ${rootAndroid} &
-      `]: {
+      [`${android} &`]: {
         padding: "0 0.5rem 0 0",
       },
     },

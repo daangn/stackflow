@@ -1,13 +1,7 @@
 import { createThemeContract, style } from "@vanilla-extract/css";
 import { recipe } from "@vanilla-extract/recipes";
 
-import {
-  android,
-  cupertino,
-  globalVars,
-  rootAndroid,
-  rootCupertino,
-} from "../basicUIPlugin.css";
+import { android, cupertino, globalVars } from "../basicUIPlugin.css";
 import { f } from "../styles";
 
 export const vars = createThemeContract({
@@ -65,10 +59,7 @@ export const dim = style([
     zIndex: vars.zIndexes.dim,
     willChange: "opacity",
     selectors: {
-      [`
-        ${android} &,
-        ${rootAndroid} &
-      `]: {
+      [`${android} &`]: {
         height: "10rem",
         background: `linear-gradient(${globalVars.dimBackgroundColor}, rgba(0, 0, 0, 0))`,
       },
@@ -102,32 +93,22 @@ export const paper = recipe({
       zIndex: vars.zIndexes.paper,
       willChange: "transform",
       selectors: {
-        [`
-          ${cupertino} &,
-          ${rootCupertino} &
-        `]: {
+        [`${cupertino} &`]: {
           transform: "translate3d(100%, 0, 0)",
         },
         [`
           ${cupertino} ${enterActive} &,
-          ${rootCupertino} ${enterActive} &,
-          ${cupertino} ${enterDone} &,
-          ${rootCupertino} ${enterDone} &
+          ${cupertino} ${enterDone} &
         `]: {
           transform: "translate3d(0, 0, 0)",
         },
-        [`
-          ${android} &,
-          ${rootAndroid} &
-        `]: {
+        [`${android} &`]: {
           opacity: 0,
           transform: "translate3d(0, 10rem, 0)",
         },
         [`
           ${android} ${enterActive} &,
-          ${rootAndroid} ${enterActive} &,
-          ${android} ${enterDone} &,
-          ${rootAndroid} ${enterDone} &
+          ${android} ${enterDone} &
         `]: {
           opacity: 1,
           transform: "translate3d(0, 0, 0)",
@@ -151,10 +132,7 @@ export const paper = recipe({
     presentModalFullScreen: {
       true: {
         selectors: {
-          [`
-            ${cupertino} &,
-            ${rootCupertino} &
-          `]: {
+          [`${cupertino} &`]: {
             transform: "translate3d(0, 100%, 0)",
           },
         },

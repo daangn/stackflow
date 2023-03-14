@@ -8,7 +8,6 @@ const logoSvg = `
 
 const SEED_SCALE_COLOR_SCRIPT = `(()=>{var e=document.documentElement,d=window.matchMedia("(prefers-color-scheme: dark)"),a=()=>{e.dataset.seed="",e.dataset.seedScaleColor=d.matches?"dark":"light"};"addEventListener"in d?d.addEventListener("change",a):"addListener"in d&&d.addListener(a),a()})();`;
 const NEXTRA_THEME_SCRIPT = `(()=>{var e=document.documentElement,d=window.matchMedia("(prefers-color-scheme: dark)"),s=()=>{e.classList.remove("light"),e.classList.remove("dark"),d.matches?e.classList.add("dark"):e.classList.add("light")};"addEventListener"in d?d.addEventListener("change",s):"addListener"in d&&d.addListener(s),s()})();`;
-const STACKFLOW_PLUGIN_BASIC_UI_THEME_SCRIPT = `(()=>{var htmlElement = document.documentElement;htmlElement.setAttribute("data-stackflow-plugin-basic-ui-theme", "cupertino");})();`;
 
 export default {
   project: {
@@ -53,11 +52,6 @@ export default {
       <link rel="shortcut icon" type="image/x-icon" href={Favicon.src} />
       <script dangerouslySetInnerHTML={{ __html: SEED_SCALE_COLOR_SCRIPT }} />
       <script dangerouslySetInnerHTML={{ __html: NEXTRA_THEME_SCRIPT }} />
-      <script
-        dangerouslySetInnerHTML={{
-          __html: STACKFLOW_PLUGIN_BASIC_UI_THEME_SCRIPT,
-        }}
-      />
     </>
   ),
 };
