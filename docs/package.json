@@ -5,8 +5,9 @@
   "description": "Mobile-first stack navigator framework with Composable Plugin System",
   "license": "MIT",
   "scripts": {
-    "build": "next build",
-    "start": "next"
+    "build": "yarn generate:plugins-docs && next build",
+    "dev": "yarn generate:plugins-docs && next -p 6006",
+    "generate:plugins-docs": "rm -rf ./pages/plugins && node scripts/generate-plugins-docs.js"
   },
   "dependencies": {
     "@mdx-js/react": "^2.1.1",
@@ -29,9 +30,9 @@
     "eslint-plugin-react": "^7.29.4",
     "eslint-plugin-react-hooks": "^4.4.0",
     "eslint-plugin-simple-import-sort": "^7.0.0",
-    "next": "^12.1.6",
-    "nextra": "^2.0.0-beta.5",
-    "nextra-theme-docs": "2.0.0-beta.5",
+    "next": "^13.2.4",
+    "nextra": "^2.2.18",
+    "nextra-theme-docs": "^2.2.18",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "simple-reveal": "^0.6.0"

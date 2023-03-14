@@ -1,0 +1,110 @@
+import { Callout } from "nextra-theme-docs";
+import Demo from "../components/Demo.tsx";
+
+# Stackflow 시작하기
+
+<Demo />
+
+**Stackflow**는 모바일 디바이스(iOS/Android 등)에서 주로 활용되는 Stack Navigation UX를 JavaScript 환경에서 구현하고, 이를 통해 하이브리드 앱과 웹뷰 개발을 쉽게 할 수 있도록 돕는 프로젝트에요.
+
+- 화면을 쌓고 스크롤을 유지해요.
+- 화면이 쌓이는 전환효과와 뒤로가기 시 화면이 사라지는 전환효과를 지원해요.
+- iOS 스타일의 스와이프백을 통한 뒤로가기 동작을 지원해요.
+- 전환되는 화면에 필요한 파라미터를 전달해요.
+
+그렇다면 **Stackflow**는 기존 Navigation 라이브러리와 대비해서, 어떤 장점을 가지고 있을까요?
+
+- UI 없이 스택 및 전환에 대한 상태만 따로 사용할 수 있어요. 원하는 입맛대로 UI를 뜯어서 사용할 수 있어요.
+- 플러그인 인터페이스를 통해 원하는 추가 확장을 라이프사이클 사이에 주입할 수 있어요.
+- 코어 로직과 통합 레이어가 분리되어 있어서, 다양한 프론트엔드 프레임워크와 통합할 수 있어요.
+- 렌더 로직과 UI를 외부에서 주입 할 수 있어서, 한 코드베이스에서 모바일 웹뷰와 데스크탑 개발을 동시에 할 수 있어요.
+- Server-Side Rendering을 지원해요. (`ReactDOMServer.renderToString`)
+
+<Callout emoji="💡">
+  2022년 6월 시점에서는 React와 React DOM까지 레퍼런스로 지원하고 있어요.
+</Callout>
+
+## 설치 및 설정하기
+
+React 프로젝트 내에서 다음 명령어로 **Stackflow**를 설치해요.
+
+```bash
+$ yarn add @stackflow/core @stackflow/react
+```
+
+프로젝트 내에 JavaScript(TypeScript) 파일을 하나 생성하고, stackflow() 함수를 호출해 `<Stack />`과 `useFlow()` 함수를 생성해요.
+
+그리고 다른 컴포넌트에서 `<Stack />`과 `useFlow()`를 활용할 수 있도록 `export ...` 해줘요.
+
+```typescript
+import { stackflow } from "@stackflow/react";
+
+export const { Stack, useFlow } = stackflow({
+  transitionDuration: 350,
+  activities: {},
+  plugins: [],
+});
+```
+
+## 기본 UI 확장 설치하기
+
+**Stackflow**는 기본적으로 UI(DOM과 CSS) 구현을 포함하지 않아요. 원하는 렌더링 결과를 얻기 위해서는 플러그인 추가가 필요해요. 다음 명령어로 `@stackflow/plugin-renderer-basic` 플러그인과 `@stackflow/plugin-basic-ui` 확장을 설치해요.
+
+```bash
+# 앞서 설치한 스택 상태 관리 패키지
+$ yarn add @stackflow/core @stackflow/react
+
+# 기본적인 UI 구현을 위한 패키지
+$ yarn add @stackflow/plugin-renderer-basic @stackflow/plugin-basic-ui
+```
+
+그리고 다음과 같이 `stackflow()` 함수의 `plugins` 필드에 `@stackflow/plugin-renderer-basic`에 들어있는 `basicRendererPlugin()` 플러그인과 `@stackflow/plugin-basic-ui`의 `basicUIPlugin()` 플러그인을 초기화해줘요.
+
+```typescript
+/**
+ * stackflow.ts
+ */
+import { stackflow } from "@stackflow/react";
+import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
+import { basicUIPlugin } from "@stackflow/plugin-basic-ui";
+
+export const { Stack, useFlow } = stackflow({
+  transitionDuration: 350,
+  activities: {},
+  plugins: [
+    basicRendererPlugin(),
+    basicUIPlugin({
+      theme: "cupertino",
+    }),
+  ],
+});
+```
+
+`@stackflow/plugin-basic-ui`에서 제공하는 CSS도 내 코드 어딘가에 삽입해요.
+
+```typescript
+import "@stackflow/plugin-basic-ui/index.css";
+```
+
+그리고 원하는 렌더링 위치에 다음과 같이 `<Stack />` 컴포넌트를 초기화 해줘요.
+
+```tsx
+/**
+ * App.tsx
+ */
+import { Stack } from "./stackflow";
+
+const App: React.FC = () => {
+  return (
+    <div>
+      <Stack />
+    </div>
+  );
+};
+
+export default App;
+```
+
+---
+
+여기까지 완료되셨다면 다음으로 넘어가서 액티비티를 등록하는 방법에 대해서 알아봐요.

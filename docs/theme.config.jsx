@@ -1,0 +1,63 @@
+import Favicon from "./assets/favicon.png";
+
+const logoSvg = `
+  <svg width="106" height="24" viewBox="0 0 106 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M2 0C0.895431 0 0 0.89543 0 2V22C0 23.1046 0.89543 24 2 24H103.818C104.923 24 105.818 23.1046 105.818 22V2C105.818 0.895431 104.923 0 103.818 0H2ZM66.9076 8.06676H64.4147V7.06534C64.4147 5.93608 64.9793 5.44602 66.1832 5.44602C66.3856 5.44602 66.7159 5.46733 67.142 5.53125V3.63494C66.6945 3.54971 66.1299 3.48579 65.5866 3.48579C63.4666 3.48579 62.1455 4.65767 62.1349 6.72443V8.06676H60.3451V9.87784H62.1349V19.6364H64.4147V9.87784H66.9076V8.06676ZM13.7258 8.27983H16.0056C15.9311 5.78693 13.7471 3.99716 10.615 3.99716C7.49355 3.99716 5.1285 5.76562 5.11784 8.42898C5.1285 10.581 6.66259 11.8381 9.14483 12.5199L10.9772 13.0099C12.6072 13.4467 13.8856 13.9901 13.8963 15.3324C13.8856 16.8452 12.458 17.8359 10.4872 17.8466C8.68673 17.8359 7.19526 17.0369 7.05676 15.3537H4.71301C4.86216 18.1662 7.03546 19.892 10.4872 19.892C14.1306 19.892 16.208 17.9851 16.2187 15.375C16.208 12.5838 13.7365 11.5078 11.7656 11.0284L10.2741 10.6236C9.04895 10.3359 7.46159 9.76065 7.46159 8.30114C7.47225 6.99077 8.66543 6.02131 10.5511 6.02131C12.3195 6.02131 13.5766 6.84162 13.7258 8.27983ZM23.9531 8.06676H21.588V5.29687H19.3295V8.06676H17.6249V9.87784H19.3295V16.696C19.3082 18.8054 20.9168 19.7855 22.696 19.7855C23.3245 19.7855 23.8146 19.7429 24.1235 19.7003V17.7187C23.8039 17.7507 23.3032 17.7827 22.973 17.7827C22.2379 17.772 21.5987 17.5376 21.588 16.2273V9.87784H23.9531V8.06676ZM29.5355 19.892C27.3409 19.892 25.6257 18.6349 25.6363 16.3764C25.6257 13.7344 27.8735 13.0526 29.9616 12.9034C30.7286 12.8608 32.4651 12.7649 32.9978 12.7436L32.9872 11.8168C32.9978 10.5064 32.1882 9.75 30.6434 9.75C29.3011 9.75 28.4914 10.3679 28.257 11.2202H25.9985C26.2009 9.30256 27.9907 7.91761 30.7286 7.91761C32.5717 7.91761 35.2563 8.58878 35.267 11.9446V19.6364H33.0511V18.0597H32.9659C32.5184 18.9226 31.4531 19.892 29.5355 19.892ZM30.2812 14.5866C28.7897 14.6932 27.8522 15.2578 27.8522 16.3977C27.8522 17.5057 28.7684 18.0703 30.0468 18.081C31.9005 18.0703 33.0085 16.8345 33.0085 15.4602L32.9978 14.4055C32.7584 14.4202 32.2815 14.4528 31.7829 14.4868L31.7827 14.4869L31.7826 14.4869L31.7825 14.4869C31.194 14.5271 30.5753 14.5693 30.2812 14.5866ZM42.9161 19.8707C45.6434 19.8707 47.4225 18.2195 47.6676 15.9716H45.4516C45.164 17.218 44.2052 17.9425 42.9161 17.9318C41.0092 17.9425 39.784 16.3764 39.784 13.8409C39.784 11.38 41.0411 9.82457 42.9161 9.81392C44.3543 9.82457 45.2173 10.7301 45.4516 11.8168H47.6676C47.4225 9.47301 45.5156 7.91761 42.8735 7.91761C39.6136 7.91761 37.4936 10.3785 37.5042 13.9048C37.4936 17.3885 39.539 19.8707 42.9161 19.8707ZM52.0994 19.6364H49.8195V4.21023H52.0994V12.946H52.2911L56.8721 8.06676H59.5994L54.9225 13.0312L59.919 19.6364H57.1278L53.1967 14.4375L52.0994 15.5241V19.6364ZM68.9744 4.21023H71.2542V19.6364H68.9744V4.21023ZM78.9247 19.8707C82.1846 19.8707 84.3153 17.4844 84.3153 13.9048C84.3153 10.304 82.1846 7.91761 78.9247 7.91761C75.6434 7.91761 73.5021 10.304 73.5127 13.9048C73.5021 17.4844 75.6434 19.8707 78.9247 19.8707ZM75.7926 13.9048C75.7926 11.6889 76.8046 9.80327 78.9247 9.79261C81.0127 9.80327 82.0142 11.6889 82.0142 13.9048C82.0142 16.1101 81.0127 17.9744 78.9247 17.9744C76.8046 17.9744 75.7926 16.1101 75.7926 13.9048ZM91.0269 19.6364H88.6832L85.2954 8.06676H87.6392L89.8977 16.5469H90.0255L92.284 8.06676H94.6278L96.865 16.5043H96.9928L99.2301 8.06676H101.574L98.186 19.6364H95.8636L93.5198 11.3054H93.3494L91.0269 19.6364Z" fill="currentColor"/>
+  </svg>
+`;
+
+const SEED_SCALE_COLOR_SCRIPT = `(()=>{var e=document.documentElement,d=window.matchMedia("(prefers-color-scheme: dark)"),a=()=>{e.dataset.seed="",e.dataset.seedScaleColor=d.matches?"dark":"light"};"addEventListener"in d?d.addEventListener("change",a):"addListener"in d&&d.addListener(a),a()})();`;
+const NEXTRA_THEME_SCRIPT = `(()=>{var e=document.documentElement,d=window.matchMedia("(prefers-color-scheme: dark)"),s=()=>{e.classList.remove("light"),e.classList.remove("dark"),d.matches?e.classList.add("dark"):e.classList.add("light")};"addEventListener"in d?d.addEventListener("change",s):"addListener"in d&&d.addListener(s),s()})();`;
+const STACKFLOW_PLUGIN_BASIC_UI_THEME_SCRIPT = `(()=>{var htmlElement = document.documentElement;htmlElement.setAttribute("data-stackflow-plugin-basic-ui-theme", "cupertino");})();`;
+
+export default {
+  project: {
+    link: "https://github.com/daangn/stackflow",
+  },
+  docsRepositoryBase: "https://github.com/daangn/stackflow",
+  useNextSeoProps() {
+    return {
+      titleTemplate: "%s - Stackflow",
+    };
+  },
+  sidebar: {
+    defaultMenuCollapseLevel: 2,
+  },
+  navigation: {
+    prev: true,
+    next: true,
+  },
+  darkMode: false,
+  footer: {
+    text: <span>MIT {new Date().getFullYear()} © Stackflow</span>,
+  },
+  search: {
+    placeholder: "검색어를 입력하세요...",
+  },
+  logo: (
+    <div
+      // eslint-disable-next-line react/no-danger
+      dangerouslySetInnerHTML={{
+        __html: logoSvg,
+      }}
+    />
+  ),
+  head: (
+    <>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <meta
+        name="description"
+        content="Mobile-first stack navigator framework with Composable Plugin System"
+      />
+      <meta name="og:title" content="Stackflow" />
+      <link rel="shortcut icon" type="image/x-icon" href={Favicon.src} />
+      <script dangerouslySetInnerHTML={{ __html: SEED_SCALE_COLOR_SCRIPT }} />
+      <script dangerouslySetInnerHTML={{ __html: NEXTRA_THEME_SCRIPT }} />
+      <script
+        dangerouslySetInnerHTML={{
+          __html: STACKFLOW_PLUGIN_BASIC_UI_THEME_SCRIPT,
+        }}
+      />
+    </>
+  ),
+};
