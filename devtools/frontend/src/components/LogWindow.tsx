@@ -8,6 +8,7 @@ function formatDate(date: Date) {
     day: "2-digit",
     hour: "2-digit",
     minute: "2-digit",
+    second: "2-digit",
   })
     .formatToParts(date)
     .reduce((acc: any, part) => {
@@ -15,7 +16,9 @@ function formatDate(date: Date) {
       return acc;
     }, {});
 
-  return `${p.year}.${p.month}.${p.day} ${p.hour}:${p.minute} ${p.}`;
+  console.log(p);
+
+  return `${p.year}.${p.month}.${p.day} ${p.hour}:${p.minute}:${p.second}`;
 }
 
 const LogWindow = forwardRef<HTMLDivElement>((props, ref) => {
