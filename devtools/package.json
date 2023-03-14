@@ -23,6 +23,7 @@
     "uniforms-semantic": "^4.0.0-alpha.1"
   },
   "devDependencies": {
+    "@crxjs/vite-plugin": "beta",
     "@stackflow/core": "workspace:^",
     "@swc/core": "^1.3.30",
     "@swc/jest": "^0.2.21",
