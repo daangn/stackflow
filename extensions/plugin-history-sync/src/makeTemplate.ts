@@ -60,7 +60,19 @@ export function makeTemplate(
         delete searchParamsMap[key];
       });
 
-      const searchParams = new URLSearchParams(searchParamsMap as any);
+      const searchParams = new URLSearchParams(
+        Object.entries(searchParamsMap).reduce(
+          (acc, [key, value]) => ({
+            ...acc,
+            ...(value
+              ? {
+                  [key]: value,
+                }
+              : null),
+          }),
+          {} as Record<string, string>,
+        ),
+      );
 
       return (
         appendTrailingSlashInPathname(pathname) +
