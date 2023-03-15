@@ -342,7 +342,7 @@ export default function ActivitiesTab() {
           }}
         >
           {/* <Dispatcher registeredActivities={data.registeredActivities} /> */}
-          <Dispatcher2
+          {/* <Dispatcher2
             registeredActivities={[
               {
                 name: "sample",
@@ -374,7 +374,7 @@ export default function ActivitiesTab() {
                 },
               },
             ]}
-          />
+          /> */}
           {/* <Dispatcher3 /> */}
         </div>
         <Splitter paneRef={logWindowRef} mode="vertical" />
