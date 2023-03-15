@@ -25,11 +25,16 @@ a {
   color: inherit;
 }
 
+html {
+  font-size: 12px;
+}
+
 body {
   margin: 0;
   display: flex;
   place-items: stretch center;
   height: 100vh;
+  font-size: 12px;
 }
 
 h1 {

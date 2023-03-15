@@ -13,10 +13,12 @@ const transition = style({
       filter: "invert(1)",
     },
   },
+  height: "0.625rem",
+  width: "0.625rem",
 });
 
 export const expand = style({
-  padding: "8px 5px 6px 0",
+  padding: "0.5rem 0.3125rem 0.375rem 0",
   display: "flex",
   cursor: "pointer",
 });
