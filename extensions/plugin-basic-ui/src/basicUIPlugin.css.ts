@@ -70,19 +70,6 @@ const cupertinoValues: GlobalVars = {
   },
 };
 
-const root = ":root";
-export const rootAndroid =
-  ":root[data-stackflow-plugin-basic-ui-theme=android]";
-export const rootCupertino =
-  ":root[data-stackflow-plugin-basic-ui-theme=cupertino]";
-
-createGlobalTheme(`${root}, ${rootAndroid}`, globalVars, {
-  ...androidValues,
-});
-createGlobalTheme(rootCupertino, globalVars, {
-  ...cupertinoValues,
-});
-
 export const android = createTheme(globalVars, {
   ...androidValues,
 });
