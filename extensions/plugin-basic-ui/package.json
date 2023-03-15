@@ -22,7 +22,8 @@
     "build:dts": "tsc --emitDeclarationOnly",
     "build:js": "node ./esbuild.config.js",
     "clean": "rimraf dist",
-    "dev": "yarn build:js --watch && yarn build:dts --watch"
+    "dev": "yarn build:js --watch && yarn build:dts --watch",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@vanilla-extract/dynamic": "^2.0.2",

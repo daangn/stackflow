@@ -24,7 +24,8 @@
     "build:js": "node ./esbuild.config.js",
     "clean": "rimraf dist && rimraf build",
     "dev": "yarn dev:app && yarn build:js --watch && yarn build:dts --watch",
-    "dev:app": "yarn vite --host 0.0.0.0"
+    "dev:app": "yarn vite --host 0.0.0.0",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@seed-design/design-token": "^1.0.0-alpha.0",
