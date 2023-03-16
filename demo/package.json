@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/demo",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "private": true,
   "license": "MIT",
   "exports": {
@@ -33,7 +33,7 @@
     "@stackflow/core": "^1.0.3",
     "@stackflow/eslint-config": "^1.0.0",
     "@stackflow/link": "^1.3.1",
-    "@stackflow/plugin-basic-ui": "^1.2.0",
+    "@stackflow/plugin-basic-ui": "^1.2.1",
     "@stackflow/plugin-history-sync": "^1.3.1",
     "@stackflow/plugin-preload": "^1.2.1",
     "@stackflow/plugin-renderer-basic": "^1.1.0",
