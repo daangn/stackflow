@@ -22,7 +22,8 @@
     "build:js": "node ./esbuild.config.js",
     "clean": "rimraf dist",
     "dev": "yarn build:js --watch && yarn build:dts --watch && yarn test --watch",
-    "test": "yarn jest"
+    "test": "yarn jest",
+    "typecheck": "tsc --noEmit"
   },
   "jest": {
     "coveragePathIgnorePatterns": [

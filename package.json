@@ -20,7 +20,7 @@
     "lerna:publish:all": "yarn clean && yarn build && lerna publish --force-publish",
     "lerna:publish:canary": "yarn clean && yarn build && lerna publish --canary",
     "test": "yarn build && ultra -r test",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "ultra -r typecheck",
     "version": "yarn install && git stage yarn.lock"
   },
   "resolutions": {
