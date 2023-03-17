@@ -33,7 +33,10 @@ export default function findTargetActivityIndexes(
         break;
       }
 
-      const sorted = activities.slice().sort(compareActivitiesByEventDate);
+      const sorted = activities
+        .slice()
+        .sort(compareActivitiesByEventDate)
+        .filter(isActivityNotExited);
 
       const transitionState: ActivityTransitionState =
         event.skipEnterActiveState || isTransitionDone
@@ -41,17 +44,16 @@ export default function findTargetActivityIndexes(
           : "enter-active";
 
       if (transitionState === "enter-done") {
-        for (const activity of sorted) {
-          if (activity.exitedBy) {
-            break;
-          }
+        const range = sorted.findIndex(
+          (activity) =>
+            !(
+              event.skipEnterActiveState &&
+              activity.enteredBy.name === "Replaced" &&
+              activity.transitionState === "enter-active"
+            ),
+        );
 
-          targetActivities.push(activities.indexOf(activity));
-
-          if (activity.enteredBy.name === "Pushed") {
-            break;
-          }
-        }
+        return sorted.slice(0, range + 1).map((a) => activities.indexOf(a));
       }
       break;
     }
