@@ -25,7 +25,7 @@ export default function ActivityComponent({
       }}
     >
       <span className={activity.isTop ? "" : css.text}>
-        {activity.id}: {activity.name}
+        {activity.name}: {activity.id}
       </span>
     </a>
   );
