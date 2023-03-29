@@ -110,7 +110,7 @@ function Expand({ opened, toggle }: { opened: boolean; toggle: () => void }) {
         xmlns="http://www.w3.org/2000/svg"
         className={opened ? css.rotate : css.rotateBefore}
       >
-        <path d="M15 11L0 21.3923L0 0.607696L15 11Z" fill="black" />
+        <path d="M15 11L0 21.3923L0 0.607696L15 11Z" fill="white" />
       </svg>
     </span>
   );
