@@ -5,9 +5,6 @@ import TreeView from "./TreeView";
 
 function formatDate(date: Date) {
   let p = new Intl.DateTimeFormat("en", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
     hour: "2-digit",
     minute: "2-digit",
     second: "numeric",
@@ -19,7 +16,7 @@ function formatDate(date: Date) {
       return acc;
     }, {});
 
-  return `${p.year}.${p.month}.${p.day} ${p.hour}:${p.minute}:${p.second}`;
+  return `${p.hour}:${p.minute}:${p.second}.${p.fractionalSecond}`;
 }
 
 const LogWindow = forwardRef<HTMLDivElement>((props, ref) => {
