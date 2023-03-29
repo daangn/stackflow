@@ -13,7 +13,7 @@ export const input = style({
   transition: "border 0.1s ease-in-out",
   ":focus": {
     outline: "none",
-    border: "0.0625rem solid #f57c00",
+    border: "0.0625rem solid cornflowerblue",
   },
   "@media": {
     "(prefers-color-scheme: dark)": {
