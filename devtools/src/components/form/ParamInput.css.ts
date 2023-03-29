@@ -4,7 +4,7 @@ export const input = style({
   display: "block",
   // width: "100%",
   padding: "0.75rem 1rem",
-  border: "0.0625rem solid white",
+  border: "0.0625rem solid gray",
   color: "white",
   // backgroundColor: "#f2f2f2",
   backgroundColor: "#333333",
