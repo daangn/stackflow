@@ -73,7 +73,7 @@ export default function ActivitiesTab() {
 
     if (stackExplorerOptions.trackNewActivity) {
       const newActivities = Object.entries(diff.activities || {}).filter(
-        ([key, value]) => key !== "$key" && value.$key,
+        ([key, value]) => key !== "$key" && (value as any).$key,
       );
 
       const newActivityKey = +newActivities[0]?.[0];
