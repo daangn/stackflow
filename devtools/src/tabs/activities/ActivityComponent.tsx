@@ -24,9 +24,7 @@ export default function ActivityComponent({
         }, 222);
       }}
     >
-      <span className={activity.isTop ? "" : css.text}>
-        {activity.name}: {activity.id}
-      </span>
+      <span className={activity.isTop ? "" : css.text}>{activity.name}</span>
     </a>
   );
 }

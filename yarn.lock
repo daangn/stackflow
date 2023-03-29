@@ -2110,14 +2110,18 @@ __metadata:
   resolution: "@stackflow/devtools@workspace:devtools"
   dependencies:
     "@crxjs/vite-plugin": beta
+    "@hookform/resolvers": ^3.0.0
     "@rjsf/core": ^5.1.0
     "@rjsf/utils": ^5.1.0
     "@rjsf/validator-ajv8": ^5.1.0
     "@stackflow/core": "workspace:^"
+    "@stackflow/plugin-devtools": "workspace:^"
     "@swc/core": ^1.3.30
     "@swc/jest": ^0.2.21
+    "@ts-react/form": ^1.4.5
     "@types/chrome": ^0.0.223
     "@types/jest": ^28.1.6
+    "@types/json-schema": ^7.0.11
     "@types/react": ^18.0.15
     "@types/react-dom": ^18.0.5
     "@vanilla-extract/css": ^1.9.3
@@ -2128,12 +2132,14 @@ __metadata:
     jest: ^28.1.0
     react: ^18.2.0
     react-dom: ^18.2.0
+    react-hook-form: ^7.43.7
     react-modal: ^3.16.1
     typescript: ^4.7.4
     uniforms: ^4.0.0-alpha.1
     uniforms-bridge-json-schema: ^4.0.0-alpha.1
     uniforms-semantic: ^4.0.0-alpha.1
     vite: ^4.1.0
+    zod: ^3.21.4
   languageName: unknown
   linkType: soft
 
@@ -2653,6 +2659,18 @@ __metadata:
   version: 2.0.0
   resolution: "@tootallnate/once@npm:2.0.0"
   checksum: 10/ad87447820dd3f24825d2d947ebc03072b20a42bfc96cbafec16bff8bbda6c1a81fcb0be56d5b21968560c5359a0af4038a68ba150c3e1694fe4c109a063bed8
+  languageName: node
+  linkType: hard
+
+"@ts-react/form@npm:^1.4.5":
+  version: 1.4.5
+  resolution: "@ts-react/form@npm:1.4.5"
+  peerDependencies:
+    "@hookform/resolvers": ^2.8.0
+    react: ^18.0.0
+    react-hook-form: ^7.39.0
+    zod: ^3.19.0
+  checksum: 78a0f0c889f3232d476cb23fd3bb7892b516f31654af1fa21c53847e3034e76c5057e2488d9151319485dac64f19daea88e265648971d309f20979619ded5b31
   languageName: node
   linkType: hard
 

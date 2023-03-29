@@ -1,5 +1,4 @@
-import { Stack } from "@stackflow/core";
-import { createContext, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import LogWindow from "../components/LogWindow";
 import Splitter from "../components/Splitter";
 import TreeView from "../components/TreeView";
@@ -7,185 +6,22 @@ import * as css from "./ActivitiesTab.css";
 import ActivityComponent from "./activities/ActivityComponent";
 import getDiff from "../utils/diff";
 import toggleFlag from "../utils/toggleFlag";
-import Dispatcher from "../components/Dispatcher";
-import Dispatcher2 from "../components/Dispatcher2";
+import DispatcherTab from "./Dispatcher";
 
-const testData: Stack = {
-  activities: [
-    {
-      id: "A",
-      name: "sample",
-      transitionState: "enter-done",
-      params: {},
-      steps: [
-        {
-          id: "A",
-          params: {},
-          enteredBy: {
-            id: "987ac1916f82",
-            eventDate: 1676529949813,
-            activityId: "A",
-            activityName: "sample",
-            activityParams: {},
-            name: "Pushed",
-          },
-        },
-      ],
-      enteredBy: {
-        id: "987ac1916f82",
-        eventDate: 1676529949813,
-        activityId: "A",
-        activityName: "sample",
-        activityParams: {},
-        name: "Pushed",
-      },
-      isTop: false,
-      isActive: false,
-      isRoot: true,
-      zIndex: 0,
-    },
-    {
-      id: "B",
-      name: "sample",
-      transitionState: "exit-done",
-      params: {},
-      steps: [
-        {
-          id: "B",
-          params: {},
-          enteredBy: {
-            id: "987ac1916f83",
-            eventDate: 1676529949814,
-            activityId: "B",
-            activityName: "sample",
-            activityParams: {},
-            name: "Pushed",
-          },
-        },
-      ],
-      enteredBy: {
-        id: "987ac1916f83",
-        eventDate: 1676529949814,
-        activityId: "B",
-        activityName: "sample",
-        activityParams: {},
-        name: "Pushed",
-      },
-      exitedBy: {
-        id: "987ac1916f84",
-        eventDate: 1676529949815,
-        activityId: "C",
-        activityName: "sample",
-        activityParams: {},
-        name: "Replaced",
-      },
-      isTop: false,
-      isActive: false,
-      isRoot: false,
-      zIndex: -1,
-    },
-    {
-      id: "C",
-      name: "sample",
-      transitionState: "exit-done",
-      params: {},
-      steps: [
-        {
-          id: "C",
-          params: {},
-          enteredBy: {
-            id: "987ac1916f84",
-            eventDate: 1676529949815,
-            activityId: "C",
-            activityName: "sample",
-            activityParams: {},
-            name: "Replaced",
-          },
-        },
-      ],
-      enteredBy: {
-        id: "987ac1916f84",
-        eventDate: 1676529949815,
-        activityId: "C",
-        activityName: "sample",
-        activityParams: {},
-        name: "Replaced",
-      },
-      exitedBy: {
-        id: "987ac1916f85",
-        eventDate: 1676530009660,
-        activityId: "D",
-        activityName: "sample",
-        activityParams: {},
-        name: "Replaced",
-      },
-      isTop: false,
-      isActive: false,
-      isRoot: false,
-      zIndex: -1,
-    },
-    {
-      id: "D",
-      name: "sample",
-      transitionState: "enter-done",
-      params: {},
-      steps: [
-        {
-          id: "D",
-          params: {},
-          enteredBy: {
-            id: "987ac1916f85",
-            eventDate: 1676530009660,
-            activityId: "D",
-            activityName: "sample",
-            activityParams: {},
-            name: "Replaced",
-          },
-        },
-      ],
-      enteredBy: {
-        id: "987ac1916f85",
-        eventDate: 1676530009660,
-        activityId: "D",
-        activityName: "sample",
-        activityParams: {},
-        name: "Replaced",
-      },
-      isTop: true,
-      isActive: true,
-      isRoot: false,
-      zIndex: 1,
-    },
-  ],
-  registeredActivities: [{ name: "sample" }],
-  transitionDuration: 300,
-  globalTransitionState: "idle",
-};
+import useStack from "../hooks/useStack";
+import Settings from "../components/Settings";
 
-const lhs: Stack = {
-  activities: [],
-  globalTransitionState: "idle",
-  registeredActivities: [],
-  transitionDuration: 300,
-};
-
-const rhs: Stack = {
-  activities: [],
-  globalTransitionState: "loading",
-  registeredActivities: [
-    {
-      name: "sample",
-    },
-  ],
-  transitionDuration: 400,
-};
+export type StackViewOptions = { hideExitedActivities: boolean };
+export type StackExplorerOptions = { trackNewActivity: boolean };
+export type Options = StackViewOptions | StackExplorerOptions;
 
 export default function ActivitiesTab() {
   const treeWindowRef = useRef(null);
   const bottomPaneRef = useRef(null);
   const logWindowRef = useRef(null);
 
-  const [data, setData] = useState<Stack>(testData);
+  const data = useStack();
+
   const prevData = useRef({});
 
   /**
@@ -217,13 +53,14 @@ export default function ActivitiesTab() {
    */
   const [updateTree, setUpdateTree] = useState<any>({});
 
-  // const toggle = () => {
-  //   if (data.globalTransitionState === "idle") {
-  //     setData(rhs);
-  //   } else {
-  //     setData(lhs);
-  //   }
-  // };
+  const [stackViewOptions, setStackViewOptions] = useState<StackViewOptions>({
+    hideExitedActivities: false,
+  });
+
+  const [stackExplorerOptions, setStackExplorerOptions] =
+    useState<StackExplorerOptions>({
+      trackNewActivity: true,
+    });
 
   useEffect(() => {
     const diff = getDiff(prevData.current, data);
@@ -255,7 +92,6 @@ export default function ActivitiesTab() {
 
   return (
     <div className={css.tab}>
-      {/* <button onClick={toggle}>ㅋㅋ루삥뽕</button> */}
       <div
         style={{
           flex: "1 1 auto",
@@ -267,39 +103,68 @@ export default function ActivitiesTab() {
         <div
           style={{
             flex: "1 1",
-            padding: "1rem",
             display: "flex",
-            flexDirection: "column-reverse",
+            position: "relative",
             overflow: "scroll",
-            gap: "0.5rem",
           }}
         >
-          {data.activities.length === 0 && (
-            <div style={{ textAlign: "center", flex: "1 1" }}>
-              No activities provided
-            </div>
-          )}
-          {data.activities
-            .slice()
-            .sort((a, b) => {
-              if (a.exitedBy && !b.exitedBy) {
-                return -1;
-              }
-              if (!a.exitedBy && b.exitedBy) {
-                return 1;
-              }
-              return 0;
-            })
-            .map((activity) => (
-              <ActivityComponent
-                id={data.activities
-                  .findIndex((a) => a.id === activity.id)
-                  .toString()}
-                activity={activity}
-                onClick={onActivityClick}
-                key={activity.id}
-              />
-            ))}
+          <div
+            style={{
+              position: "absolute",
+              right: "0",
+            }}
+          >
+            <Settings
+              options={stackViewOptions}
+              onChangeOption={(option, value) => {
+                setStackViewOptions({
+                  ...stackViewOptions,
+                  [option]: value,
+                });
+              }}
+            />
+          </div>
+          <div
+            style={{
+              flex: "1 1",
+              display: "flex",
+              flexDirection: "column-reverse",
+              gap: "0.5rem",
+              overflow: "scroll",
+              padding: "1rem",
+            }}
+          >
+            {data.activities.length === 0 && (
+              <div style={{ textAlign: "center", flex: "1 1" }}>
+                No activities provided
+              </div>
+            )}
+            {data.activities
+              .filter(
+                (activity) =>
+                  !stackViewOptions.hideExitedActivities ||
+                  activity.transitionState !== "exit-done",
+              )
+              .sort((a, b) => {
+                if (a.exitedBy && !b.exitedBy) {
+                  return -1;
+                }
+                if (!a.exitedBy && b.exitedBy) {
+                  return 1;
+                }
+                return 0;
+              })
+              .map((activity) => (
+                <ActivityComponent
+                  id={data.activities
+                    .findIndex((a) => a.id === activity.id)
+                    .toString()}
+                  activity={activity}
+                  onClick={onActivityClick}
+                  key={activity.id}
+                />
+              ))}
+          </div>
         </div>
         <Splitter paneRef={treeWindowRef} mode="vertical" />
         <div
@@ -313,15 +178,37 @@ export default function ActivitiesTab() {
             scrollBehavior: "smooth",
           }}
         >
-          <TreeView
-            id="Stack"
-            data={data}
-            name="Stack"
-            updateTree={updateTree}
-            updateFlag={updateFlag}
-            toggleOpen={toggleOpen}
-            openTree={openTree}
-          />
+          <div
+            style={{
+              position: "absolute",
+              right: "0",
+            }}
+          >
+            <Settings
+              options={stackExplorerOptions}
+              onChangeOption={(option, value) => {
+                setStackExplorerOptions({
+                  ...stackExplorerOptions,
+                  [option]: value,
+                });
+              }}
+            />
+          </div>
+          <div
+            style={{
+              marginBottom: "40%",
+            }}
+          >
+            <TreeView
+              id="Stack"
+              data={data}
+              name="Stack"
+              updateTree={updateTree}
+              updateFlag={updateFlag}
+              toggleOpen={toggleOpen}
+              openTree={openTree}
+            />
+          </div>
         </div>
       </div>
       <Splitter paneRef={bottomPaneRef} mode="horizontal" />
@@ -341,41 +228,7 @@ export default function ActivitiesTab() {
             overflow: "scroll",
           }}
         >
-          {/* <Dispatcher registeredActivities={data.registeredActivities} /> */}
-          {/* <Dispatcher2
-            registeredActivities={[
-              {
-                name: "sample",
-                paramsSchema: {
-                  type: "object",
-                  properties: {
-                    a: {
-                      type: "object",
-                      properties: {
-                        aa: {
-                          type: "string",
-                        },
-                      },
-                      required: ["aa"],
-                    },
-                    b: {
-                      type: "string",
-                    },
-                    c: {
-                      type: "boolean",
-                    },
-                    d: {
-                      type: "array",
-                      items: {
-                        type: "string",
-                      },
-                    },
-                  },
-                },
-              },
-            ]}
-          /> */}
-          {/* <Dispatcher3 /> */}
+          <DispatcherTab />
         </div>
         <Splitter paneRef={logWindowRef} mode="vertical" />
         <div

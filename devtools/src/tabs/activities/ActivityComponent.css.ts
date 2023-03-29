@@ -5,11 +5,11 @@ export const activity = style({
   borderRadius: "0.5rem",
   padding: "0.5rem",
   textAlign: "center",
-  "@media": {
-    "(prefers-color-scheme: dark)": {
-      filter: "invert(1)",
-    },
-  },
+  // "@media": {
+  //   "(prefers-color-scheme: dark)": {
+  //     filter: "invert(1)",
+  //   },
+  // },
   ":hover": {
     cursor: "pointer",
   },
@@ -18,11 +18,11 @@ export const activity = style({
 });
 
 export const text = style({
-  "@media": {
-    "(prefers-color-scheme: dark)": {
-      filter: "invert(1)",
-    },
-  },
+  // "@media": {
+  //   "(prefers-color-scheme: dark)": {
+  //     filter: "invert(0)",
+  //   },
+  // },
 });
 
 export const top = style({
