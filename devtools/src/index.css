@@ -35,6 +35,7 @@ body {
   place-items: stretch center;
   height: 100vh;
   font-size: 12px;
+  background-color: #242424;
 }
 
 h1 {
