@@ -11,21 +11,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@hookform/resolvers": "^3.0.0",
-    "@rjsf/core": "^5.1.0",
-    "@rjsf/utils": "^5.1.0",
-    "@rjsf/validator-ajv8": "^5.1.0",
-    "@ts-react/form": "^1.4.5",
     "@vanilla-extract/css": "^1.9.3",
-    "ajv": "^8.12.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-hook-form": "^7.43.7",
-    "react-modal": "^3.16.1",
-    "uniforms": "^4.0.0-alpha.1",
-    "uniforms-bridge-json-schema": "^4.0.0-alpha.1",
-    "uniforms-semantic": "^4.0.0-alpha.1",
-    "zod": "^3.21.4"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "beta",
