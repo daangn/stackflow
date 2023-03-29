@@ -67,20 +67,44 @@ export default function ActivitiesTab() {
     setUpdateFlag((updateFlag) => !updateFlag);
     setUpdateTree(diff);
     prevData.current = data;
+
+    if (stackExplorerOptions.trackNewActivity) {
+      const newActivities = Object.entries(diff.activities || {}).filter(
+        ([key, value]) => key !== "$key" && value.$key,
+      );
+
+      const newActivityKey = +newActivities[0]?.[0];
+
+      if (newActivityKey) {
+        const newActivity = data.activities[newActivityKey];
+
+        const id = newActivity.id;
+
+        onActivityClick(id);
+      }
+    }
   }, [data]);
 
   const onActivityClick = (id: string) => {
+    const index = data.activities.findIndex((a) => a.id === id);
+
     setOpenTree({
       ...openTree,
       activities: {
         ...openTree?.activities,
-        [data.activities.findIndex((a) => a.id === id).toString()]: {
+        [index]: {
           $opened: true,
         },
         $opened: true,
       },
       $opened: true,
     });
+
+    setTimeout(() => {
+      window.location.hash = `#`;
+      window.location.hash = `#Stack.activities.${index}`;
+    }, 222);
+
     console.log("Activity clicked", id);
   };
 
