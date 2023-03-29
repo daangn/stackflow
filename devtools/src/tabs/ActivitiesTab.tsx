@@ -10,6 +10,9 @@ import DispatcherTab from "./Dispatcher";
 
 import useStack from "../hooks/useStack";
 import Settings from "../components/Settings";
+import FloatingButton from "../components/FloatingButton";
+import SettingsIcon from "../components/icons/SettingsIcon";
+import PhotoIcon from "../components/icons/PhotoIcon";
 
 export type StackViewOptions = { hideExitedActivities: boolean };
 export type StackExplorerOptions = { trackNewActivity: boolean };
@@ -195,32 +198,58 @@ export default function ActivitiesTab() {
           ref={treeWindowRef}
           style={{
             flex: "0 0 50%",
-            padding: "1rem",
             overflow: "scroll",
             boxSizing: "border-box",
             position: "relative",
             scrollBehavior: "smooth",
+            display: "flex",
           }}
         >
           <div
             style={{
               position: "absolute",
               right: "0",
+              display: "flex",
             }}
           >
-            <Settings
-              options={stackExplorerOptions}
-              onChangeOption={(option, value) => {
-                setStackExplorerOptions({
-                  ...stackExplorerOptions,
-                  [option]: value,
-                });
-              }}
-            />
+            <FloatingButton icon={<PhotoIcon />}>
+              <div>haha</div>
+            </FloatingButton>
+            <FloatingButton icon={<SettingsIcon />}>
+              {Object.entries(stackExplorerOptions).map(([name, value]) => (
+                <div
+                  key={name}
+                  style={{
+                    display: "flex",
+                    gap: "0.25rem",
+                    whiteSpace: "nowrap",
+                    userSelect: "none",
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    name={name}
+                    id={name}
+                    checked={value}
+                    onChange={(e) => {
+                      setStackExplorerOptions({
+                        ...stackExplorerOptions,
+                        [name]: e.target.checked,
+                      });
+                    }}
+                  />
+                  <label htmlFor={name}>{name}</label>
+                </div>
+              ))}
+            </FloatingButton>
           </div>
           <div
             style={{
-              marginBottom: "40%",
+              padding: "1rem",
+              overflow: "scroll",
+              scrollBehavior: "smooth",
+              flex: "1 1",
+              paddingBottom: "40vh",
             }}
           >
             <TreeView
