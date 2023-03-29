@@ -6,28 +6,28 @@ import type {
   StackflowPlugin,
 } from "@stackflow/core";
 
-export type EffectLog = {
+export type DevtoolsEffectLog = {
   effect: Effect;
   timestamp: number;
 };
 
-export type StackflowData = {
+export type DevtoolsDataStore = {
   stack: Stack;
   eventLogs: DomainEvent[];
-  effectLogs: EffectLog[];
+  effectLogs: DevtoolsEffectLog[];
 };
 
-export type StackflowDataKey = keyof StackflowData;
+export type DevtoolsDataKey = keyof DevtoolsDataStore;
 
-export type DataChangedMessage = {
+export type DevtoolsDataChangedMessage = {
   type: "DATA_CHANGED";
-  payload: StackflowDataKey;
+  payload: DevtoolsDataKey;
 };
 
-export type StackflowMessage = DataChangedMessage;
+export type DevtoolsMessage = DevtoolsDataChangedMessage;
 
-export type StackflowHook = {
-  data: StackflowData;
+export type DevtoolsGlobalHook = {
+  data: DevtoolsDataStore;
   actions: StackflowActions;
 };
 
@@ -36,17 +36,17 @@ type EffectType<T extends Tag> = Extract<Effect, { _TAG: T }>;
 
 declare global {
   interface Window {
-    __STACKFLOW_DEVTOOLS__: StackflowHook;
+    __STACKFLOW_DEVTOOLS__: DevtoolsGlobalHook;
   }
 }
 
-function sendMessage(msg: StackflowMessage) {
+function sendMessage(msg: DevtoolsMessage) {
   window.postMessage(msg, "*");
 }
 
-function changeData<K extends StackflowDataKey>(
+function changeData<K extends DevtoolsDataKey>(
   key: K,
-  reducer: (data: StackflowData[K]) => StackflowData[K],
+  reducer: (data: DevtoolsDataStore[K]) => DevtoolsDataStore[K],
 ) {
   window.__STACKFLOW_DEVTOOLS__.data[key] = reducer(
     window.__STACKFLOW_DEVTOOLS__.data[key],
