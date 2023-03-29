@@ -42,7 +42,7 @@ export default function Settings({
         style={{
           position: "absolute",
           right: 0,
-          border: "1px solid #ccc",
+          border: "1px solid gray",
           borderRadius: "0.5rem",
           padding: "0.5rem",
           transition: "opacity 0.1s ease-in-out",
