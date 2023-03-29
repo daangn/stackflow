@@ -21,6 +21,11 @@ export const expand = style({
   padding: "0.5rem 0.3125rem 0.375rem 0",
   display: "flex",
   cursor: "pointer",
+  "@media": {
+    "(prefers-color-scheme: dark)": {
+      filter: "invert(1)",
+    },
+  },
 });
 
 export const rotateBefore = transition;
