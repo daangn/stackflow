@@ -13,6 +13,7 @@ export const items = style({
 export const actions = style({
   display: "flex",
   gap: "0.5rem",
+  flexWrap: "wrap",
 });
 
 export const select = style({
