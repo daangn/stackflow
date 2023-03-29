@@ -21,7 +21,7 @@ export default function FloatingButton({
           width: "1.5rem",
           height: "1.5rem",
           opacity: 0.5,
-          lineHeight: "0",
+          display: "inline-block",
           padding: "0.25rem",
           cursor: "pointer",
           userSelect: "none",

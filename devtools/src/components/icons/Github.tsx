@@ -1,6 +1,12 @@
 export default function Github() {
   return (
-    <a href="https://github.com/daangn/stackflow" target={"_blank"}>
+    <a
+      href="https://github.com/daangn/stackflow"
+      target={"_blank"}
+      style={{
+        display: "inline-block",
+      }}
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="32"
