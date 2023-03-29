@@ -1,21 +1,21 @@
 import {
-  StackflowDataKey,
-  StackflowMessage,
-  StackflowData,
+  DevtoolsDataKey,
+  DevtoolsMessage,
+  DevtoolsDataStore,
 } from "@stackflow/plugin-devtools";
 import { useEffect, useLayoutEffect, useState } from "react";
 
-export default function useData<K extends StackflowDataKey>(
+export default function useData<K extends DevtoolsDataKey>(
   key: K,
-  defaultValue: StackflowData[K],
+  defaultValue: DevtoolsDataStore[K],
 ) {
-  const [data, setData] = useState<StackflowData[K]>(defaultValue);
+  const [data, setData] = useState<DevtoolsDataStore[K]>(defaultValue);
 
   // fetch initial data
   useEffect(() => {
     chrome.devtools.inspectedWindow.eval(
       `window.__STACKFLOW_DEVTOOLS__.data.${key}`,
-      (result: StackflowData[K]) => {
+      (result: DevtoolsDataStore[K]) => {
         console.log("fetching initial stack", result);
         setData(result);
       },
@@ -24,11 +24,11 @@ export default function useData<K extends StackflowDataKey>(
 
   // listen for data changes
   useEffect(() => {
-    const listener = (message: StackflowMessage) => {
+    const listener = (message: DevtoolsMessage) => {
       if (message.type === "DATA_CHANGED" && message.payload === key) {
         chrome.devtools.inspectedWindow.eval(
           `window.__STACKFLOW_DEVTOOLS__.data.${key}`,
-          (result: StackflowData[K]) => {
+          (result: DevtoolsDataStore[K]) => {
             setData(result);
           },
         );

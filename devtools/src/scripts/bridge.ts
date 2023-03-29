@@ -1,8 +1,8 @@
-import type { StackflowMessage } from "@stackflow/plugin-devtools";
+import type { DevtoolsMessage } from "@stackflow/plugin-devtools";
 
 // From App
 window.addEventListener("message", (ev) => {
-  const msg: StackflowMessage = ev.data;
+  const msg: DevtoolsMessage = ev.data;
 
   switch (msg.type) {
     case "DATA_CHANGED": {

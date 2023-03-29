@@ -1,7 +1,7 @@
 // push, pop command
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { StackflowData } from "@stackflow/plugin-devtools";
+import type { DevtoolsDataStore } from "@stackflow/plugin-devtools";
 import { RegisteredActivity } from "@stackflow/core";
 
 import type { JSONSchema7 } from "json-schema";
@@ -28,7 +28,7 @@ export default function DispatcherTab() {
   useEffect(() => {
     chrome.devtools.inspectedWindow.eval(
       `window.__STACKFLOW_DEVTOOLS__.data.stack.registeredActivities`,
-      (result: StackflowData["stack"]["registeredActivities"]) => {
+      (result: DevtoolsDataStore["stack"]["registeredActivities"]) => {
         setActivityName(result[0].name);
         registeredActivities.current = result;
 
