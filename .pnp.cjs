@@ -40,6 +40,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:extensions/plugin-basic-ui"\
       },\
       {\
+        "name": "@stackflow/plugin-devtools",\
+        "reference": "workspace:extensions/plugin-devtools"\
+      },\
+      {\
         "name": "@stackflow/plugin-google-analytics-4",\
         "reference": "workspace:extensions/plugin-google-analytics-4"\
       },\
@@ -88,6 +92,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@stackflow/link", ["virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/link", "workspace:extensions/link"]],\
       ["@stackflow/monorepo", ["workspace:."]],\
       ["@stackflow/plugin-basic-ui", ["virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-basic-ui", "workspace:extensions/plugin-basic-ui"]],\
+      ["@stackflow/plugin-devtools", ["workspace:extensions/plugin-devtools"]],\
       ["@stackflow/plugin-google-analytics-4", ["workspace:extensions/plugin-google-analytics-4"]],\
       ["@stackflow/plugin-history-sync", ["virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-history-sync", "workspace:extensions/plugin-history-sync"]],\
       ["@stackflow/plugin-preload", ["virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-preload", "workspace:extensions/plugin-preload"]],\
@@ -3771,6 +3776,33 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react", "npm:18.2.0"],\
             ["rimraf", "npm:3.0.2"],\
             ["ts-pattern", "npm:4.0.5"],\
+            ["typescript", "patch:typescript@npm%3A4.7.4#~builtin<compat/typescript>::version=4.7.4&hash=701156"]\
+          ],\
+          "linkType": "SOFT"\
+        }]\
+      ]],\
+      ["@stackflow/plugin-devtools", [\
+        ["workspace:extensions/plugin-devtools", {\
+          "packageLocation": "./extensions/plugin-devtools/",\
+          "packageDependencies": [\
+            ["@stackflow/plugin-devtools", "workspace:extensions/plugin-devtools"],\
+            ["@stackflow/core", "workspace:core"],\
+            ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
+            ["@stackflow/eslint-config", "workspace:packages/eslint-config"],\
+            ["@types/node", "npm:18.6.3"],\
+            ["@typescript-eslint/eslint-plugin", "virtual:b327d7e228fba669b88a8bb23bcf526374e46fa67e617b1e6848e8a205357fee5ce94b47c49b5a570fd9e8a44fa218a13cd00e2eca327c99114cbd21d72ecf9c#npm:5.32.0"],\
+            ["@typescript-eslint/parser", "virtual:b327d7e228fba669b88a8bb23bcf526374e46fa67e617b1e6848e8a205357fee5ce94b47c49b5a570fd9e8a44fa218a13cd00e2eca327c99114cbd21d72ecf9c#npm:5.28.0"],\
+            ["esbuild", "npm:0.16.17"],\
+            ["eslint", "npm:8.14.0"],\
+            ["eslint-config-airbnb", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#npm:19.0.4"],\
+            ["eslint-config-prettier", "virtual:5d222998b86cceed4c8d843e557f0e3b94c8ccb1e8952571a8d45c8a6806e6624abcd819a5fa16c66371a9250ca177cd0fc04f42e577bbbc49771098023bb79e#npm:8.5.0"],\
+            ["eslint-plugin-import", "virtual:b327d7e228fba669b88a8bb23bcf526374e46fa67e617b1e6848e8a205357fee5ce94b47c49b5a570fd9e8a44fa218a13cd00e2eca327c99114cbd21d72ecf9c#npm:2.26.0"],\
+            ["eslint-plugin-json-format", "virtual:5d222998b86cceed4c8d843e557f0e3b94c8ccb1e8952571a8d45c8a6806e6624abcd819a5fa16c66371a9250ca177cd0fc04f42e577bbbc49771098023bb79e#npm:2.0.1"],\
+            ["eslint-plugin-jsx-a11y", "virtual:5d222998b86cceed4c8d843e557f0e3b94c8ccb1e8952571a8d45c8a6806e6624abcd819a5fa16c66371a9250ca177cd0fc04f42e577bbbc49771098023bb79e#npm:6.5.1"],\
+            ["eslint-plugin-react", "virtual:5d222998b86cceed4c8d843e557f0e3b94c8ccb1e8952571a8d45c8a6806e6624abcd819a5fa16c66371a9250ca177cd0fc04f42e577bbbc49771098023bb79e#npm:7.30.0"],\
+            ["eslint-plugin-react-hooks", "virtual:5d222998b86cceed4c8d843e557f0e3b94c8ccb1e8952571a8d45c8a6806e6624abcd819a5fa16c66371a9250ca177cd0fc04f42e577bbbc49771098023bb79e#npm:4.6.0"],\
+            ["eslint-plugin-simple-import-sort", "virtual:5d222998b86cceed4c8d843e557f0e3b94c8ccb1e8952571a8d45c8a6806e6624abcd819a5fa16c66371a9250ca177cd0fc04f42e577bbbc49771098023bb79e#npm:7.0.0"],\
+            ["rimraf", "npm:3.0.2"],\
             ["typescript", "patch:typescript@npm%3A4.7.4#~builtin<compat/typescript>::version=4.7.4&hash=701156"]\
           ],\
           "linkType": "SOFT"\
