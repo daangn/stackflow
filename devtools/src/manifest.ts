@@ -1,9 +1,11 @@
 import { defineManifest } from "@crxjs/vite-plugin";
 
+import { version } from "../package.json";
+
 export default defineManifest({
   name: "Stackflow Devtools",
   description: "Devtools for Stackflow Apps",
-  version: "0.1.0",
+  version,
   manifest_version: 3,
   action: {
     default_popup: "index.html",
