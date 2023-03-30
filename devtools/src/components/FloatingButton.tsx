@@ -39,6 +39,7 @@ export default function FloatingButton({
           padding: "0.5rem",
           transition: "opacity 0.1s ease-in-out",
           opacity: open ? 1 : 0,
+          visibility: open ? "visible" : "hidden",
           backgroundColor: "#242424",
           zIndex: 2,
         }}
