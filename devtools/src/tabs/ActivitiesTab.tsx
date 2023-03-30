@@ -11,8 +11,8 @@ import DispatcherTab from "./Dispatcher";
 import useStack from "../hooks/useStack";
 import Settings from "../components/Settings";
 import FloatingButton from "../components/FloatingButton";
-import SettingsIcon from "../components/icons/SettingsIcon";
 import PhotoIcon from "../components/icons/PhotoIcon";
+import { Stack } from "@stackflow/core";
 
 export type StackViewOptions = { hideExitedActivities: boolean };
 export type StackExplorerOptions = { trackNewActivity: boolean };
@@ -64,6 +64,8 @@ export default function ActivitiesTab() {
     useState<StackExplorerOptions>({
       trackNewActivity: true,
     });
+
+  const [snapshots, setSnapshots] = useState<Stack[]>([]);
 
   useEffect(() => {
     const diff = getDiff(prevData.current, data);
@@ -213,35 +215,41 @@ export default function ActivitiesTab() {
             }}
           >
             <FloatingButton icon={<PhotoIcon />}>
-              <div>haha</div>
-            </FloatingButton>
-            <FloatingButton icon={<SettingsIcon />}>
-              {Object.entries(stackExplorerOptions).map(([name, value]) => (
-                <div
-                  key={name}
-                  style={{
-                    display: "flex",
-                    gap: "0.25rem",
-                    whiteSpace: "nowrap",
-                    userSelect: "none",
+              <div>
+                <button
+                  onClick={() => {
+                    console.log("Snapshot", data);
+                    setSnapshots([...snapshots, data]);
                   }}
                 >
-                  <input
-                    type="checkbox"
-                    name={name}
-                    id={name}
-                    checked={value}
-                    onChange={(e) => {
-                      setStackExplorerOptions({
-                        ...stackExplorerOptions,
-                        [name]: e.target.checked,
-                      });
-                    }}
-                  />
-                  <label htmlFor={name}>{name}</label>
-                </div>
-              ))}
+                  Snapshot
+                </button>
+                {snapshots.map((snapshot, index) => (
+                  <div key={index}>
+                    <span>#{index + 1}</span>
+                    <button
+                      onClick={() => {
+                        // copy to clipboard
+                        navigator.clipboard.writeText(
+                          JSON.stringify(snapshot, null, 2),
+                        );
+                      }}
+                    >
+                      Copy
+                    </button>
+                  </div>
+                ))}
+              </div>
             </FloatingButton>
+            <Settings
+              options={stackExplorerOptions}
+              onChangeOption={(option, value) => {
+                setStackExplorerOptions({
+                  ...stackExplorerOptions,
+                  [option]: value,
+                });
+              }}
+            />
           </div>
           <div
             style={{
