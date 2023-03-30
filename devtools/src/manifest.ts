@@ -2,7 +2,7 @@ import { defineManifest } from "@crxjs/vite-plugin";
 
 export default defineManifest({
   name: "Stackflow Devtools",
-  description: "",
+  description: "Devtools for Stackflow Apps",
   version: "0.0.0",
   manifest_version: 3,
   action: {
@@ -15,4 +15,5 @@ export default defineManifest({
       js: ["src/scripts/bridge.ts"],
     },
   ],
+  permissions: ["clipboardWrite", "clipboardRead"],
 });
