@@ -1,5 +1,6 @@
 import { vars } from "@seed-design/design-token";
 import { basicUIPlugin } from "@stackflow/plugin-basic-ui";
+import { devtoolsPlugin } from "@stackflow/plugin-devtools";
 import { historySyncPlugin } from "@stackflow/plugin-history-sync";
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
 import { stackflow } from "@stackflow/react";
@@ -28,6 +29,7 @@ export const { Stack, activities } = stackflow({
     },
   },
   plugins: [
+    devtoolsPlugin(),
     basicRendererPlugin(),
     basicUIPlugin({
       theme: "cupertino",
