@@ -15,5 +15,5 @@ export default defineManifest({
       js: ["src/scripts/bridge.ts"],
     },
   ],
-  permissions: ["clipboardWrite", "clipboardRead"],
+  permissions: ["clipboardWrite"],
 });
