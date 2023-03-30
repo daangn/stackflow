@@ -92,14 +92,7 @@ export default function DispatcherTab() {
             }}
           />
           <div className={css.actions}>
-            {[
-              "push",
-              "pop",
-              "replace",
-              "stepPush",
-              "stepPop",
-              "stepReplace",
-            ].map((action) => (
+            {["push", "pop", "replace"].map((action) => (
               <ActionButton
                 type={action as ActionType}
                 params={params[activityName]}
