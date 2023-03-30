@@ -241,7 +241,13 @@ export default function ActivitiesTab() {
             }}
           >
             <FloatingButton icon={<PhotoIcon />}>
-              <div>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "0.5rem",
+                }}
+              >
                 <button
                   onClick={() => {
                     console.log("Snapshot", data);
@@ -251,7 +257,14 @@ export default function ActivitiesTab() {
                   Snapshot
                 </button>
                 {snapshots.map((snapshot, index) => (
-                  <div key={index}>
+                  <div
+                    key={index}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
                     <span>#{index + 1}</span>
                     <button
                       onClick={() => {
