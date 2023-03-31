@@ -21,7 +21,7 @@ export default function TreeView({
 }) {
   const type = Array.isArray(data) ? "array" : typeof data;
   const expandable =
-    (type === "object" && Object.keys(data as object).length > 0) ||
+    (type === "object" && Object.keys((data as object) ?? {}).length > 0) ||
     type === "array";
 
   const opened: boolean = openTree.$opened;
@@ -65,7 +65,7 @@ export default function TreeView({
                   : ""
               }`}
             >
-              {data + ""}
+              {typeof data === "object" && data !== null ? "{}" : data + ""}
             </div>
           )}
 
