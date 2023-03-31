@@ -35,6 +35,7 @@
     "@stackflow/eslint-config": "^1.0.0",
     "@stackflow/link": "^1.3.2",
     "@stackflow/plugin-basic-ui": "^1.2.2",
+    "@stackflow/plugin-devtools": "^0.1.1",
     "@stackflow/plugin-history-sync": "^1.3.2",
     "@stackflow/plugin-preload": "^1.2.2",
     "@stackflow/plugin-renderer-basic": "^1.1.1",
