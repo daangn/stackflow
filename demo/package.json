@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/demo",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "private": true,
   "license": "MIT",
   "exports": {
@@ -33,11 +33,11 @@
     "@stackflow/compat-await-push": "^1.1.1",
     "@stackflow/core": "^1.0.4",
     "@stackflow/eslint-config": "^1.0.0",
-    "@stackflow/link": "^1.3.2",
+    "@stackflow/link": "^1.3.3",
     "@stackflow/plugin-basic-ui": "^1.2.2",
     "@stackflow/plugin-devtools": "^0.1.1",
-    "@stackflow/plugin-history-sync": "^1.3.2",
-    "@stackflow/plugin-preload": "^1.2.2",
+    "@stackflow/plugin-history-sync": "^1.3.3",
+    "@stackflow/plugin-preload": "^1.2.3",
     "@stackflow/plugin-renderer-basic": "^1.1.1",
     "@stackflow/plugin-stack-depth-change": "^1.0.4",
     "@stackflow/react": "^1.1.1",
