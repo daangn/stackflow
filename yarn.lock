@@ -2664,7 +2664,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/demo@^1.2.3, @stackflow/demo@workspace:demo":
+"@stackflow/demo@^1.2.4, @stackflow/demo@workspace:demo":
   version: 0.0.0-use.local
   resolution: "@stackflow/demo@workspace:demo"
   dependencies:
@@ -2719,7 +2719,7 @@ __metadata:
     "@mdx-js/react": ^2.1.1
     "@seed-design/stylesheet": ^1.0.0-alpha.0
     "@stackflow/core": ^1.0.4
-    "@stackflow/demo": ^1.2.3
+    "@stackflow/demo": ^1.2.4
     "@stackflow/eslint-config": ^1.0.0
     "@stackflow/plugin-basic-ui": ^1.2.2
     "@stackflow/plugin-history-sync": ^1.3.2
