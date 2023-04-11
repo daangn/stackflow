@@ -1,3 +1,4 @@
+import type { UrlPatternOptions } from "@stackflow/plugin-history-sync";
 import {
   makeTemplate,
   normalizeRoute,
@@ -24,6 +25,7 @@ export type LinkProps<K, P> = {
   activityParams: P;
   animate?: boolean;
   replace?: boolean;
+  urlPatternOptions?: UrlPatternOptions;
 } & AnchorProps;
 
 export type TypeLink<T extends { [activityName: string]: unknown } = {}> = <
@@ -48,7 +50,10 @@ export const Link: TypeLink = forwardRef(
         return undefined;
       }
 
-      const template = makeTemplate(normalizeRoute(route)[0]);
+      const template = makeTemplate(
+        normalizeRoute(route)[0],
+        props.urlPatternOptions,
+      );
       const path = template.fill(props.activityParams);
 
       return path;
