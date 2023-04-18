@@ -1,9 +1,9 @@
 import { createContext, useContext } from "react";
-import ReactGA4 from "react-ga4";
+import * as ReactGA4 from "react-ga4";
 
 export const GoogleAnalyticsContext = createContext({
-  sendEvent: ReactGA4.event,
-  setConfig: ReactGA4.set,
+  sendEvent: ReactGA4.default.event,
+  setConfig: ReactGA4.default.set,
 });
 
 export const useGoogleAnalyticsContext = () =>
