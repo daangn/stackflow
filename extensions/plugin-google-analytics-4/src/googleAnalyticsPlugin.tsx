@@ -1,6 +1,6 @@
 import type { Stack } from "@stackflow/core";
 import type { StackflowReactPlugin } from "@stackflow/react";
-import ReactGA4 from "react-ga4";
+import * as ReactGA4 from "react-ga4";
 
 import { GoogleAnalyticsContext } from "./contexts";
 
@@ -33,13 +33,13 @@ export function googleAnalyticsPlugin<
   return () => ({
     key: "@daangn/stackflow-google-analytics-plugin",
     onInit() {
-      ReactGA4.initialize(trackingId, {
+      ReactGA4.default.initialize(trackingId, {
         gaOptions: {
           send_page_view: false,
         },
       });
 
-      ReactGA4.set({
+      ReactGA4.default.set({
         user_id: userInfo?.userId,
         user_properties: userInfo?.userProperties,
       });
@@ -50,7 +50,7 @@ export function googleAnalyticsPlugin<
         | K
         | undefined;
 
-      ReactGA4.send({
+      ReactGA4.default.send({
         hitType: "pageview",
         path: window.location.pathname,
         location: window.location.pathname,
@@ -64,7 +64,7 @@ export function googleAnalyticsPlugin<
         | K
         | undefined;
 
-      ReactGA4.send({
+      ReactGA4.default.send({
         hitType: "pageview",
         path: window.location.pathname,
         location: window.location.pathname,
@@ -78,7 +78,7 @@ export function googleAnalyticsPlugin<
         | K
         | undefined;
 
-      ReactGA4.send({
+      ReactGA4.default.send({
         hitType: "pageview",
         path: window.location.pathname,
         location: window.location.pathname,
@@ -91,8 +91,8 @@ export function googleAnalyticsPlugin<
         <GoogleAnalyticsContext.Provider
           // eslint-disable-next-line react/jsx-no-constructed-context-values
           value={{
-            sendEvent: ReactGA4.event,
-            setConfig: ReactGA4.set,
+            sendEvent: ReactGA4.default.event,
+            setConfig: ReactGA4.default.set,
           }}
         >
           {stack.render()}
