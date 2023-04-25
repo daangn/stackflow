@@ -5,6 +5,7 @@
   "license": "MIT",
   "exports": {
     ".": {
+      "types": "./dist/stackflow-docs.d.ts",
       "require": "./dist/stackflow-docs.js",
       "import": "./dist/stackflow-docs.mjs"
     },
