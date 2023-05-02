@@ -348,22 +348,10 @@ export function historySyncPlugin<
           }),
         );
       },
-      onReplaced({ effect: { activity }, actions: {getStack} }) {
+      onReplaced({ effect: { activity } }) {
         if (!activity.isActive) {
           return;
         }
-
-        const { activities } = getStack();
-        const enteredActivities = activities.filter(
-          (currentActivity) => currentActivity.transitionState === "enter-active" || currentActivity.transitionState === "enter-done"
-        );
-        const currentActivityIndex = enteredActivities.findIndex(
-          (currentActivity) => currentActivity.id === activity.id,
-        );
-        const previousActivity = currentActivityIndex && currentActivityIndex > 0 ? enteredActivities[currentActivityIndex - 1] : null;
-        const popCount =  previousActivity?.steps.length ? previousActivity.steps.length + 1 : 0;
-
-        popFlag += popCount;
 
         const template = makeTemplate(
           normalizeRoute(options.routes[activity.name])[0],
@@ -449,11 +437,22 @@ export function historySyncPlugin<
         const currentActivity = activities.find(
           (activity) => activity.isActive,
         );
-        const popCount = popFlag > 0 ? popFlag : (currentActivity?.steps.length ?? 0);
 
-        if(popFlag <= 0) {
-          popFlag += popCount;
-        }
+        const enteredActivities = activities.filter(
+          (currentActivity) => currentActivity.transitionState === "enter-active" || currentActivity.transitionState === "enter-done"
+        );
+
+        const currentActivityIndex = enteredActivities.findIndex(
+          (currentActivity) => currentActivity.isActive
+        );
+        const previousActivity = currentActivityIndex && currentActivityIndex > 0 ? enteredActivities[currentActivityIndex - 1] : null;
+
+        const currentStepLength = currentActivity?.steps.length ?? 0;
+        const previousStepLength = previousActivity?.steps.length ?? 0;
+        // Replaced 이벤트의 경우 replace 로 대체하는 stack의 step 들에 모두 history.back 을 호출한다.
+        const popCount = currentActivity?.enteredBy.name === "Replaced" ? currentStepLength + previousStepLength - 1 : currentStepLength ;
+
+        popFlag += popCount;
 
         do {
           for (let i = 0; i < popCount; i += 1) {
