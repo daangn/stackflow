@@ -21,6 +21,12 @@ const enoughPastTime = () => {
   return new Date(Date.now() - MINUTE).getTime() + dt;
 };
 
+async function delay(ms: number) {
+  return new Promise<void>((res) => {
+    setTimeout(res, ms);
+  });
+}
+
 const path = (location: Location) =>
   location.pathname + location.search + location.hash;
 
@@ -623,7 +629,7 @@ describe("historySyncPlugin", () => {
     })();
   });
 
-  test("historySyncPlugin - Hugh Issue", () => {
+  test("historySyncPlugin - Hugh Issue", async () => {
     actions.push({
       activityId: "a2",
       activityName: "Article",
@@ -662,6 +668,10 @@ describe("historySyncPlugin", () => {
     });
 
     actions.pop();
+
+    // 전환이 끝나기까지 충분한 시간
+    // 코어쪽 추가된 테스트 코드가 Resolve 되면 삭제 가능
+    await delay(32 + 16);
 
     expect(path(history.location)).toEqual("/home/");
     expect(activeActivity(actions.getStack())?.name).toEqual("Home");
