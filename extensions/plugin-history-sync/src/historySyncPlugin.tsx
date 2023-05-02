@@ -438,19 +438,25 @@ export function historySyncPlugin<
           (activity) => activity.isActive,
         );
 
-        const enteredActivities = activities.filter(
-          (currentActivity) => currentActivity.transitionState === "enter-active" || currentActivity.transitionState === "enter-done"
-        );
+        const currentStepsLength = currentActivity?.steps.length ?? 0;
+        let popCount = currentStepsLength
 
-        const currentActivityIndex = enteredActivities.findIndex(
-          (currentActivity) => currentActivity.isActive
-        );
-        const previousActivity = currentActivityIndex && currentActivityIndex > 0 ? enteredActivities[currentActivityIndex - 1] : null;
+        if (currentActivity?.enteredBy.name === "Replaced") {
+          const enteredActivities = activities.filter(
+            (currentActivity) => currentActivity.transitionState === "enter-active" || currentActivity.transitionState === "enter-done"
+          );
 
-        const currentStepLength = currentActivity?.steps.length ?? 0;
-        const previousStepLength = previousActivity?.steps.length ?? 0;
-        // Replaced 이벤트의 경우 replace 로 대체하는 stack의 step 들에 모두 history.back 을 호출한다.
-        const popCount = currentActivity?.enteredBy.name === "Replaced" ? currentStepLength + previousStepLength - 1 : currentStepLength ;
+          const currentActivityIndex = enteredActivities.findIndex(
+            (currentActivity) => currentActivity.isActive
+          );
+          const previousActivity = currentActivityIndex && currentActivityIndex > 0 ? enteredActivities[currentActivityIndex - 1] : null;
+          if(!previousActivity) return
+
+          const previousStepsLength = previousActivity.steps.length;
+
+          // Replaced 이벤트의 경우 'replace 로 대체하는 stack' 의 step 들에 대하여 history.back 를 통해 history 를 stack 상태와 동기화 시킨다.
+          popCount = currentStepsLength + previousStepsLength - 1;
+        }
 
         popFlag += popCount;
 
