@@ -348,10 +348,22 @@ export function historySyncPlugin<
           }),
         );
       },
-      onReplaced({ effect: { activity } }) {
+      onReplaced({ effect: { activity }, actions: {getStack} }) {
         if (!activity.isActive) {
           return;
         }
+
+        const { activities } = getStack();
+        const enteredActivities = activities.filter(
+          (currentActivity) => currentActivity.transitionState === "enter-active" || currentActivity.transitionState === "enter-done"
+        );
+        const currentActivityIndex = enteredActivities.findIndex(
+          (currentActivity) => currentActivity.id === activity.id,
+        );
+        const previousActivity = currentActivityIndex && currentActivityIndex > 0 ? enteredActivities[currentActivityIndex - 1] : null;
+        const popCount =  previousActivity?.steps.length ? previousActivity.steps.length + 1 : 0;
+
+        popFlag += popCount;
 
         const template = makeTemplate(
           normalizeRoute(options.routes[activity.name])[0],
@@ -437,9 +449,11 @@ export function historySyncPlugin<
         const currentActivity = activities.find(
           (activity) => activity.isActive,
         );
-        const popCount = currentActivity?.steps.length ?? 0;
+        const popCount = popFlag > 0 ? popFlag : (currentActivity?.steps.length ?? 0);
 
-        popFlag += popCount;
+        if(popFlag <= 0) {
+          popFlag += popCount;
+        }
 
         do {
           for (let i = 0; i < popCount; i += 1) {
