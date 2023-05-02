@@ -88,13 +88,14 @@ describe("historySyncPlugin", () => {
     history = createMemoryHistory();
 
     const coreStore = stackflow({
-      activityNames: ["Home", "Article"],
+      activityNames: ["Home", "Article", "ThirdActivity"],
       plugins: [
         historySyncPlugin({
           history,
           routes: {
             Home: "/home/",
             Article: "/articles/:articleId",
+            ThirdActivity: "/third/:thirdId",
           },
           fallbackActivity: () => "Home",
         }),
@@ -620,5 +621,49 @@ describe("historySyncPlugin", () => {
       expect(activeActivity(actions.getStack())?.name).toEqual("Home");
       expect(history.index).toEqual(0);
     })();
+  });
+
+  test("historySyncPlugin - Hugh Issue", () => {
+    actions.push({
+      activityId: "a2",
+      activityName: "Article",
+      activityParams: {
+        articleId: "1",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s2",
+      stepParams: {
+        articleId: "2",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s3",
+      stepParams: {
+        articleId: "3",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s4",
+      stepParams: {
+        articleId: "4",
+      },
+    });
+
+    actions.replace({
+      activityId: "a3",
+      activityName: "ThirdActivity",
+      activityParams: {
+        thirdId: "234",
+      },
+    });
+
+    actions.pop();
+
+    expect(path(history.location)).toEqual("/home/");
+    expect(activeActivity(actions.getStack())?.name).toEqual("Home");
   });
 });
