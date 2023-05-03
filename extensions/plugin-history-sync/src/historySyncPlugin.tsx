@@ -438,10 +438,10 @@ export function historySyncPlugin<
           (activity) => activity.isActive,
         );
         const enteredActivities = activities.filter(
-          (currentActivity) => currentActivity.transitionState === "enter-active" || currentActivity.transitionState === "enter-done"
+          (activity) => activity.transitionState === "enter-active" || activity.transitionState === "enter-done"
         );
         const currentActivityIndex = enteredActivities.findIndex(
-          (currentActivity) => currentActivity.isActive
+          (activity) => activity.isActive
         );
         const previousActivity = currentActivityIndex && currentActivityIndex > 0 ? enteredActivities[currentActivityIndex - 1] : null;
 
