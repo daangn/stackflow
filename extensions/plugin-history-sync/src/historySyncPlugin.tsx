@@ -437,7 +437,34 @@ export function historySyncPlugin<
         const currentActivity = activities.find(
           (activity) => activity.isActive,
         );
-        const popCount = currentActivity?.steps.length ?? 0;
+        const enteredActivities = activities.filter(
+          (activity) =>
+            activity.transitionState === "enter-active" ||
+            activity.transitionState === "enter-done",
+        );
+        const currentActivityIndex = enteredActivities.findIndex(
+          (activity) => activity.isActive,
+        );
+        const previousActivity =
+          currentActivityIndex && currentActivityIndex > 0
+            ? enteredActivities[currentActivityIndex - 1]
+            : null;
+
+        const currentStepsLength = currentActivity?.steps.length ?? 0;
+        let popCount = currentStepsLength;
+
+        if (
+          currentActivity?.enteredBy.name === "Replaced" &&
+          previousActivity
+        ) {
+          const previousStepsLength = previousActivity.steps.length;
+
+          // replace action 을 통해 1회 pop 을 수행한 것이 되기 때문에 popCount 에서 1 을 빼준다.
+          const replacedActivityDepth = 1;
+          // Replaced 이벤트의 경우 'replace 로 대체하는 stack' 의 step 들에 대하여 history.back 를 수행해 history 를 stack 상태와 동기화 시킨다.
+          popCount =
+            currentStepsLength + previousStepsLength - replacedActivityDepth;
+        }
 
         popFlag += popCount;
 

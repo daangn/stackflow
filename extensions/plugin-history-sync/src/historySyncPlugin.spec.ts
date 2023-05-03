@@ -21,6 +21,12 @@ const enoughPastTime = () => {
   return new Date(Date.now() - MINUTE).getTime() + dt;
 };
 
+async function delay(ms: number) {
+  return new Promise<void>((res) => {
+    setTimeout(res, ms);
+  });
+}
+
 const path = (location: Location) =>
   location.pathname + location.search + location.hash;
 
@@ -88,13 +94,15 @@ describe("historySyncPlugin", () => {
     history = createMemoryHistory();
 
     const coreStore = stackflow({
-      activityNames: ["Home", "Article"],
+      activityNames: ["Home", "Article", "ThirdActivity", "FourthActivity"],
       plugins: [
         historySyncPlugin({
           history,
           routes: {
             Home: "/home/",
             Article: "/articles/:articleId",
+            ThirdActivity: "/third/:thirdId",
+            FourthActivity: "/fourth/:fourthId",
           },
           fallbackActivity: () => "Home",
         }),
@@ -621,4 +629,189 @@ describe("historySyncPlugin", () => {
       expect(history.index).toEqual(0);
     })();
   });
+
+  test("historySyncPlugin - push 후 stepPush 를 반복한 뒤, replace 를 하고 pop 을 수행하면 첫번째 stack 을 가리킵니다.", async () => {
+    actions.push({
+      activityId: "a2",
+      activityName: "Article",
+      activityParams: {
+        articleId: "1",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s2",
+      stepParams: {
+        articleId: "2",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s3",
+      stepParams: {
+        articleId: "3",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s4",
+      stepParams: {
+        articleId: "4",
+      },
+    });
+
+    actions.replace({
+      activityId: "a3",
+      activityName: "ThirdActivity",
+      activityParams: {
+        thirdId: "234",
+      },
+    });
+
+    actions.pop();
+
+    // 전환이 끝나기까지 충분한 시간
+    // 코어쪽 추가된 테스트 코드가 Resolve 되면 삭제 가능
+    await delay(32 + 16);
+
+    expect(path(history.location)).toEqual("/home/");
+    expect(activeActivity(actions.getStack())?.name).toEqual("Home");
+  });
+
+  test("historySyncPlugin - push 후 stepPush 를 반복한 뒤, push 와 pop 을 1회 수행하고 replace를 수행하고 pop 을 진행하면 첫번째 stack 을 가리킵니다.", async () => {
+    actions.push({
+      activityId: "a2",
+      activityName: "Article",
+      activityParams: {
+        articleId: "1",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s2",
+      stepParams: {
+        articleId: "2",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s3",
+      stepParams: {
+        articleId: "3",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s4",
+      stepParams: {
+        articleId: "4",
+      },
+    });
+
+    actions.push({
+      activityId: "a3",
+      activityName: "ThirdActivity",
+      activityParams: {
+        thirdId: "234",
+      },
+    });
+
+    actions.pop();
+
+    actions.replace({
+      activityId: "a4",
+      activityName: "FourthActivity",
+      activityParams: {
+        fourthId: "345",
+      },
+    });
+
+    actions.pop();
+
+    // 전환이 끝나기까지 충분한 시간
+    // 코어쪽 추가된 테스트 코드가 Resolve 되면 삭제 가능
+    await delay(16 * 5);
+
+    expect(path(history.location)).toEqual("/home/");
+    expect(activeActivity(actions.getStack())?.name).toEqual("Home");
+  })
+
+  test("historySyncPlugin - push 후 stepPush 를 반복한 뒤, push 와 pop 을 1회 수행하고 replace 를 한 뒤 stepPush 를 반복하고 pop 을 진행해도 첫번째 stack 을 가리킵니다.", async () => {
+    actions.push({
+      activityId: "a2",
+      activityName: "Article",
+      activityParams: {
+        articleId: "1",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s2",
+      stepParams: {
+        articleId: "2",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s3",
+      stepParams: {
+        articleId: "3",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s4",
+      stepParams: {
+        articleId: "4",
+      },
+    });
+
+    actions.push({
+      activityId: "a3",
+      activityName: "ThirdActivity",
+      activityParams: {
+        thirdId: "234",
+      },
+    });
+
+    actions.pop();
+
+    actions.replace({
+      activityId: "a4",
+      activityName: "FourthActivity",
+      activityParams: {
+        fourthId: "345",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s5",
+      stepParams: {
+        fourthId: "5",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s6",
+      stepParams: {
+        fourthId: "6",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s7",
+      stepParams: {
+        fourthId: "7",
+      },
+    });
+
+    actions.pop();
+
+    // 전환이 끝나기까지 충분한 시간
+    // 코어쪽 추가된 테스트 코드가 Resolve 되면 삭제 가능
+    await delay(16 * 7);
+
+    expect(path(history.location)).toEqual("/home/");
+    expect(activeActivity(actions.getStack())?.name).toEqual("Home");
+  })
 });
