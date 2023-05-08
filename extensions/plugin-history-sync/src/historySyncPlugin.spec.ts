@@ -14,6 +14,9 @@ import { historySyncPlugin } from "./historySyncPlugin";
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
 
+// 2프레임 + 1프레임
+const ENOUGH_DELAY_TIME = 32+16;
+
 let dt = 0;
 
 const enoughPastTime = () => {
@@ -667,7 +670,7 @@ describe("historySyncPlugin", () => {
         thirdId: "234",
       },
     });
-    await delay(100);
+    await delay(ENOUGH_DELAY_TIME);
 
     actions.pop();
 
@@ -726,7 +729,7 @@ describe("historySyncPlugin", () => {
         fourthId: "345",
       },
     });
-    await delay(100);
+    await delay(ENOUGH_DELAY_TIME);
 
     actions.pop();
 
@@ -775,8 +778,7 @@ describe("historySyncPlugin", () => {
         fourthId: "345",
       },
     });
-    await delay(100);
-
+    await delay(ENOUGH_DELAY_TIME);
 
     actions.stepPush({
       stepId: "s5",
@@ -846,7 +848,7 @@ describe("historySyncPlugin", () => {
         thirdId: "234",
       },
     });
-    await delay(100);
+    await delay(ENOUGH_DELAY_TIME);
 
     actions.stepPush({
       stepId: "s2",
@@ -876,12 +878,12 @@ describe("historySyncPlugin", () => {
         fourthId: "345",
       },
     });
-    await delay(100);
+    await delay(ENOUGH_DELAY_TIME);
     actions.pop();
 
     // 전환이 끝나기까지 충분한 시간
     // 코어쪽 추가된 테스트 코드가 Resolve 되면 삭제 가능
-    await delay(100);
+    await delay(ENOUGH_DELAY_TIME);
 
     expect(path(history.location)).toEqual("/home/");
     expect(activeActivity(actions.getStack())?.name).toEqual("Home");
@@ -953,10 +955,10 @@ describe("historySyncPlugin", () => {
         fourthId: "345",
       },
     });
-    await delay(100);
+    await delay(ENOUGH_DELAY_TIME);
     actions.pop();
 
-    await delay(100);
+    await delay(ENOUGH_DELAY_TIME);
 
     expect(path(history.location)).toEqual("/home/");
     expect(activeActivity(actions.getStack())?.name).toEqual("Home");
