@@ -471,7 +471,19 @@ export function historySyncPlugin<
             : null;
 
         const currentStepsLength = currentActivity?.steps.length ?? 0;
-        const popCount = replacePopCount + currentStepsLength;
+
+        let popCount = currentStepsLength;
+
+        if (
+          currentActivity?.enteredBy.name === "Replaced" &&
+          previousActivity
+        ) {
+          // replace 이후에 stepPush 만 진행하고 pop 을 수행하는 경우
+          const shouldPopForCurrentStepPush = currentStepsLength > 1;
+          popCount = shouldPopForCurrentStepPush
+            ? replacePopCount + currentStepsLength
+            : replacePopCount;
+        }
         popFlag += popCount;
 
         do {
