@@ -15,7 +15,7 @@ const SECOND = 1000;
 const MINUTE = 60 * SECOND;
 
 // 2프레임 + 1프레임
-const ENOUGH_DELAY_TIME = 32+16;
+const ENOUGH_DELAY_TIME = 32 + 16;
 
 let dt = 0;
 
@@ -739,7 +739,7 @@ describe("historySyncPlugin", () => {
 
     expect(path(history.location)).toEqual("/home/");
     expect(activeActivity(actions.getStack())?.name).toEqual("Home");
-  })
+  });
 
   test("historySyncPlugin - push 후 stepPush 를 반복한 뒤, replace 를 한 뒤 stepPush 를 반복하고 pop 을 진행해도 첫번째 stack 을 가리킵니다.", async () => {
     actions.push({
@@ -809,7 +809,7 @@ describe("historySyncPlugin", () => {
 
     expect(path(history.location)).toEqual("/home/");
     expect(activeActivity(actions.getStack())?.name).toEqual("Home");
-  })
+  });
 
   test("historySyncPlugin - push 후 stepPush 를 반복한 뒤, replace 를 수행하고 stepPush 를 반복하고 replace를 수행하고 pop을 진행해도 첫번째 stack을 가리킵니다.(for Hugh)", async () => {
     actions.push({
@@ -887,7 +887,7 @@ describe("historySyncPlugin", () => {
 
     expect(path(history.location)).toEqual("/home/");
     expect(activeActivity(actions.getStack())?.name).toEqual("Home");
-  })
+  });
 
   test("historySyncPlugin - push 후 stepPush 를 반복한 뒤, push 를 수행하고 stepPush 를 반복한 뒤 pop 을 수행, 그 후 replace 를 수행하고 pop을 진행해도 첫번째 stack을 가리킵니다.", async () => {
     actions.push({
@@ -963,7 +963,7 @@ describe("historySyncPlugin", () => {
 
     expect(path(history.location)).toEqual("/home/");
     expect(activeActivity(actions.getStack())?.name).toEqual("Home");
-  })
+  });
 
   test("historySyncPlugin - 2회 반복:push 후 stepPush 를 반복한 뒤, push 를 수행하고 stepPush 를 반복한 뒤 pop 을 수행, 그 후 replace 를 수행하고 pop을 진행해도 첫번째 stack을 가리킵니다.", async () => {
     actions.push({
@@ -1109,5 +1109,5 @@ describe("historySyncPlugin", () => {
 
     expect(path(history.location)).toEqual("/home/");
     expect(activeActivity(actions.getStack())?.name).toEqual("Home");
-  })
+  });
 });

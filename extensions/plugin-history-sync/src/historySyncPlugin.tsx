@@ -407,7 +407,10 @@ export function historySyncPlugin<
           },
         });
       },
-      onBeforeReplace({ actionParams, actions: { overrideActionParams, getStack } }) {
+      onBeforeReplace({
+        actionParams,
+        actions: { overrideActionParams, getStack },
+      }) {
         const template = makeTemplate(
           normalizeRoute(options.routes[actionParams.activityName])[0],
           options.urlPatternOptions,
@@ -424,10 +427,17 @@ export function historySyncPlugin<
 
         const { activities } = getStack();
         const enteredActivities = activities.filter(
-          (currentActivity) => currentActivity.transitionState === "enter-active" || currentActivity.transitionState === "enter-done"
+          (currentActivity) =>
+            currentActivity.transitionState === "enter-active" ||
+            currentActivity.transitionState === "enter-done",
         );
-        const previousActivity = enteredActivities.length > 0 ? enteredActivities[enteredActivities.length - 1] : null;
-        const popCount =  previousActivity?.steps.length ? previousActivity.steps.length : 0;
+        const previousActivity =
+          enteredActivities.length > 0
+            ? enteredActivities[enteredActivities.length - 1]
+            : null;
+        const popCount = previousActivity?.steps.length
+          ? previousActivity.steps.length
+          : 0;
 
         replacePopCount += popCount;
       },
@@ -461,7 +471,7 @@ export function historySyncPlugin<
             : null;
 
         const currentStepsLength = currentActivity?.steps.length ?? 0;
-        const popCount =  replacePopCount + currentStepsLength;
+        const popCount = replacePopCount + currentStepsLength;
         popFlag += popCount;
 
         do {
@@ -471,7 +481,8 @@ export function historySyncPlugin<
 
           if (
             currentActivity?.enteredBy.name === "Replaced" &&
-            previousActivity && replacePopCount > 0
+            previousActivity &&
+            replacePopCount > 0
           ) {
             replacePopCount = 0;
           }
