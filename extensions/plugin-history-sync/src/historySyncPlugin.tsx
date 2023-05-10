@@ -48,6 +48,7 @@ export function historySyncPlugin<
   return () => {
     let pushFlag = 0;
     let popFlag = 0;
+    let replacePopCount = 0;
 
     const queue = makeQueue(history);
 
@@ -406,7 +407,10 @@ export function historySyncPlugin<
           },
         });
       },
-      onBeforeReplace({ actionParams, actions: { overrideActionParams } }) {
+      onBeforeReplace({
+        actionParams,
+        actions: { overrideActionParams, getStack },
+      }) {
         const template = makeTemplate(
           normalizeRoute(options.routes[actionParams.activityName])[0],
           options.urlPatternOptions,
@@ -420,6 +424,22 @@ export function historySyncPlugin<
             path,
           },
         });
+
+        const { activities } = getStack();
+        const enteredActivities = activities.filter(
+          (currentActivity) =>
+            currentActivity.transitionState === "enter-active" ||
+            currentActivity.transitionState === "enter-done",
+        );
+        const previousActivity =
+          enteredActivities.length > 0
+            ? enteredActivities[enteredActivities.length - 1]
+            : null;
+        const popCount = previousActivity?.steps.length
+          ? previousActivity.steps.length
+          : 0;
+
+        replacePopCount += popCount;
       },
       onBeforeStepPop({ actions: { getStack } }) {
         const { activities } = getStack();
@@ -451,26 +471,32 @@ export function historySyncPlugin<
             : null;
 
         const currentStepsLength = currentActivity?.steps.length ?? 0;
+
         let popCount = currentStepsLength;
 
         if (
           currentActivity?.enteredBy.name === "Replaced" &&
           previousActivity
         ) {
-          const previousStepsLength = previousActivity.steps.length;
-
-          // replace action 을 통해 1회 pop 을 수행한 것이 되기 때문에 popCount 에서 1 을 빼준다.
-          const replacedActivityDepth = 1;
-          // Replaced 이벤트의 경우 'replace 로 대체하는 stack' 의 step 들에 대하여 history.back 를 수행해 history 를 stack 상태와 동기화 시킨다.
-          popCount =
-            currentStepsLength + previousStepsLength - replacedActivityDepth;
+          // replace 이후에 stepPush 만 진행하고 pop 을 수행하는 경우
+          const shouldPopForCurrentStepPush = currentStepsLength > 1;
+          popCount = shouldPopForCurrentStepPush
+            ? replacePopCount + currentStepsLength
+            : replacePopCount;
         }
-
         popFlag += popCount;
 
         do {
           for (let i = 0; i < popCount; i += 1) {
             queue(history.back);
+          }
+
+          if (
+            currentActivity?.enteredBy.name === "Replaced" &&
+            previousActivity &&
+            replacePopCount > 0
+          ) {
+            replacePopCount = 0;
           }
         } while (!safeParseState(getCurrentState({ history })));
       },
