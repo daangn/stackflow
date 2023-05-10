@@ -13,10 +13,6 @@ Promise.all([
     ...config({}),
     format: "cjs",
     external,
-    define: {
-      "process.env.PACKAGE_NAME": `"${pkg.name}"`,
-      "process.env.PACKAGE_VERSION": `"${pkg.version}"`,
-    },
     watch,
   }),
   build({
@@ -26,10 +22,6 @@ Promise.all([
       ".js": ".mjs",
     },
     external,
-    define: {
-      "process.env.PACKAGE_NAME": `"${pkg.name}"`,
-      "process.env.PACKAGE_VERSION": `"${pkg.version}"`,
-    },
     watch,
   }),
 ]).catch(() => process.exit(1));
