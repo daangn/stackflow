@@ -1,6 +1,6 @@
 # @stackflow/plugin-map-initial-activity
 
-Render the activity that should be rendered by default using the stack state.
+Map initial activity using given URL
 
 - [Documentation](https://stackflow.so)
 
@@ -14,6 +14,17 @@ const { Stack, useFlow } = stackflow({
   activities: {
     // ...
   },
-  plugins: [mapInitialActivityPlugin()],
+  plugins: [
+    mapInitialActivityPlugin({
+      mapper(url) {
+        // implement mapping logic using url parameter
+
+        return {
+          activityName: "...",
+          activityParams: {},
+        };
+      },
+    }),
+  ],
 });
 ```
