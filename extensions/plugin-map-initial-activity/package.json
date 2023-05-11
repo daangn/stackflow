@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/plugin-map-initial-activity",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "license": "MIT",
   "exports": {
     ".": {
