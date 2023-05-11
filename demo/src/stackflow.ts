@@ -2,8 +2,10 @@ import { vars } from "@seed-design/design-token";
 import { basicUIPlugin } from "@stackflow/plugin-basic-ui";
 import { devtoolsPlugin } from "@stackflow/plugin-devtools";
 import { historySyncPlugin } from "@stackflow/plugin-history-sync";
+import { mapInitialActivityPlugin } from "@stackflow/plugin-map-initial-activity";
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
 import { stackflow } from "@stackflow/react";
+import { decompressFromEncodedURIComponent } from "lz-string";
 
 import Article from "./activities/Article";
 import Main from "./activities/Main";
@@ -52,6 +54,38 @@ export const { Stack, activities } = stackflow({
         Article: "/articles/:articleId",
       },
       fallbackActivity: () => "Main",
+    }),
+    mapInitialActivityPlugin({
+      mapper(url) {
+        try {
+          if (!url.pathname.startsWith("/.lzstring/")) {
+            return null;
+          }
+
+          const [, encodedString] = url.pathname.split("/.lzstring/");
+
+          const parsed = JSON.parse(
+            decompressFromEncodedURIComponent(encodedString),
+          );
+
+          if (typeof parsed.activityName !== "string") {
+            return null;
+          }
+          if (
+            typeof parsed.activityParams !== "undefined" &&
+            typeof parsed.activityParams !== "object"
+          ) {
+            return null;
+          }
+
+          return {
+            activityName: parsed.activityName,
+            activityParams: parsed.activityParams || {},
+          };
+        } catch {
+          return null;
+        }
+      },
     }),
   ],
 });
