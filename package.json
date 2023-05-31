@@ -14,13 +14,13 @@
     "build": "ultra -r build",
     "build:dts": "ultra -r --build build:dts",
     "clean": "ultra -r clean",
-    "dev": "ultra -r dev",
+    "dev": "ultra -r --concurrency 100 dev",
     "format": "eslint . --fix --ext .ts,.tsx --ignore-path .gitignore && prettier -w .",
     "lerna:publish": "yarn clean && yarn build && lerna publish",
     "lerna:publish:all": "yarn clean && yarn build && lerna publish --force-publish",
     "lerna:publish:canary": "yarn clean && yarn build && lerna publish --canary",
     "test": "yarn build && ultra -r test",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "ultra -r typecheck",
     "version": "yarn install && git stage yarn.lock"
   },
   "resolutions": {

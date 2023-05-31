@@ -54,7 +54,7 @@ export function googleAnalyticsPlugin<
         hitType: "pageview",
         path: window.location.pathname,
         location: window.location.pathname,
-        title: useTitle ? window.location.pathname : activityName,
+        title: useTitle ? document.title : activityName,
         page_referrer: document.referrer,
       });
     },
@@ -68,7 +68,7 @@ export function googleAnalyticsPlugin<
         hitType: "pageview",
         path: window.location.pathname,
         location: window.location.pathname,
-        title: useTitle ? window.location.pathname : activityName,
+        title: useTitle ? document.title : activityName,
         page_referrer: document.referrer,
       });
     },
@@ -82,7 +82,7 @@ export function googleAnalyticsPlugin<
         hitType: "pageview",
         path: window.location.pathname,
         location: window.location.pathname,
-        title: useTitle ? window.location.pathname : activityName,
+        title: useTitle ? document.title : activityName,
         page_referrer: document.referrer,
       });
     },

@@ -30,8 +30,24 @@ function prependQuestionMarkInSearchParams(searchParams: URLSearchParams) {
   return searchParams;
 }
 
-export function makeTemplate(templateStr: string) {
-  const pattern = new UrlPattern(`${templateStr}(/)`);
+/**
+ * import { UrlPatternOptions } from "url-pattern"
+ */
+export interface UrlPatternOptions {
+  escapeChar?: string;
+  segmentNameStartChar?: string;
+  segmentValueCharset?: string;
+  segmentNameCharset?: string;
+  optionalSegmentStartChar?: string;
+  optionalSegmentEndChar?: string;
+  wildcardChar?: string;
+}
+
+export function makeTemplate(
+  templateStr: string,
+  urlPatternOptions?: UrlPatternOptions,
+) {
+  const pattern = new UrlPattern(`${templateStr}(/)`, urlPatternOptions);
 
   return {
     fill(params: { [key: string]: string | undefined }) {
@@ -44,7 +60,19 @@ export function makeTemplate(templateStr: string) {
         delete searchParamsMap[key];
       });
 
-      const searchParams = new URLSearchParams(searchParamsMap as any);
+      const searchParams = new URLSearchParams(
+        Object.entries(searchParamsMap).reduce(
+          (acc, [key, value]) => ({
+            ...acc,
+            ...(value
+              ? {
+                  [key]: value,
+                }
+              : null),
+          }),
+          {} as Record<string, string>,
+        ),
+      );
 
       return (
         appendTrailingSlashInPathname(pathname) +

@@ -52,3 +52,14 @@ test("makeTemplate - 패스 파라미터와 쿼리 파라미터를 적절하게 
     title: "hello",
   });
 });
+
+test("makeTemplate - 패스 파라미터에 `undefined` 값이 포함된 경우 삭제합니다", () => {
+  const template = makeTemplate("/articles");
+
+  expect(
+    template.fill({
+      articleId: "1234",
+      test: undefined,
+    }),
+  ).toEqual("/articles/?articleId=1234");
+});

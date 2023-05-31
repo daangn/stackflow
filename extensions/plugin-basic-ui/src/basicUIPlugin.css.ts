@@ -14,13 +14,18 @@ export const globalVars = createGlobalThemeContract(
     computedTransitionDuration: "computed-transition-duration",
     appBar: {
       borderColor: "app-bar-border-color",
+      borderColorTransitionDuration: "app-bar-border-color-transition-duration",
       borderSize: "app-bar-border-size",
       height: "app-bar-height",
       heightTransitionDuration: "app-bar-height-transition-duration",
       minHeight: "app-bar-min-height",
       iconColor: "app-bar-icon-color",
+      iconColorTransitionDuration: "app-bar-icon-color-transition-duration",
       textColor: "app-bar-text-color",
+      textColorTransitionDuration: "app-bar-text-color-transition-duration",
       backgroundColor: "app-bar-background-color",
+      backgroundColorTransitionDuration:
+        "app-bar-background-color-transition-duration",
       overflow: "app-bar-overflow",
     },
     bottomSheet: {
@@ -39,17 +44,21 @@ export type GlobalVars = InferVars<typeof globalVars>;
 const androidValues: GlobalVars = {
   backgroundColor: "#fff",
   dimBackgroundColor: "rgba(0, 0, 0, 0.15)",
-  transitionDuration: "0ms",
-  computedTransitionDuration: "0ms",
+  transitionDuration: "0s",
+  computedTransitionDuration: "0s",
   appBar: {
     borderColor: "rgba(0, 0, 0, 0.07)",
+    borderColorTransitionDuration: "0s",
     borderSize: "1px",
     height: "3.5rem",
-    heightTransitionDuration: "0ms",
+    heightTransitionDuration: "0s",
     minHeight: "3.5rem",
     iconColor: "#212124",
+    iconColorTransitionDuration: "0s",
     textColor: "#212124",
+    textColorTransitionDuration: "0s",
     backgroundColor: "#fff",
+    backgroundColorTransitionDuration: "0s",
     overflow: "hidden",
   },
   bottomSheet: {
@@ -69,19 +78,6 @@ const cupertinoValues: GlobalVars = {
     borderSize: "0.5px",
   },
 };
-
-const root = ":root";
-export const rootAndroid =
-  ":root[data-stackflow-plugin-basic-ui-theme=android]";
-export const rootCupertino =
-  ":root[data-stackflow-plugin-basic-ui-theme=cupertino]";
-
-createGlobalTheme(`${root}, ${rootAndroid}`, globalVars, {
-  ...androidValues,
-});
-createGlobalTheme(rootCupertino, globalVars, {
-  ...cupertinoValues,
-});
 
 export const android = createTheme(globalVars, {
   ...androidValues,

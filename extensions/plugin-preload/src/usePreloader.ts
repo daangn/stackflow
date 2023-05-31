@@ -1,3 +1,4 @@
+import type { UrlPatternOptions } from "@stackflow/plugin-history-sync";
 import {
   makeTemplate,
   normalizeRoute,
@@ -18,7 +19,13 @@ export type PreloadFunc<T extends { [activityName: string]: unknown }> = <
   },
 ) => any;
 
-export function usePreloader<T extends { [activityName: string]: unknown }>(): {
+export type UsePreloaderOptions = {
+  urlPatternOptions?: UrlPatternOptions;
+};
+
+export function usePreloader<T extends { [activityName: string]: unknown }>(
+  usePreloaderOptions?: UsePreloaderOptions,
+): {
   preload: PreloadFunc<T>;
 } {
   const loaders = useLoaders();
@@ -35,8 +42,12 @@ export function usePreloader<T extends { [activityName: string]: unknown }>(): {
 
         const route = routes[activityName];
         const template = route
-          ? makeTemplate(normalizeRoute(route)[0])
+          ? makeTemplate(
+              normalizeRoute(route)[0],
+              usePreloaderOptions?.urlPatternOptions,
+            )
           : undefined;
+
         const path = template?.fill(activityParams);
 
         return loader({

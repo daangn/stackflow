@@ -1,7 +1,7 @@
 import type { Activity, ActivityStep } from "@stackflow/core";
 import type { History } from "history";
 
-const STATE_TAG = `${process.env.PACKAGE_NAME}@${process.env.PACKAGE_VERSION}`;
+const STATE_TAG = `@stackflow/plugin-history-sync`;
 
 interface State {
   activity: Activity;

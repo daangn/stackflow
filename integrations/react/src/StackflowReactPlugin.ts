@@ -15,6 +15,7 @@ export type StackflowReactPlugin<T = never> = () => {
         >;
       };
     };
+    initialContext: any;
   }) => React.ReactElement<any, any> | null;
 
   /**
@@ -24,6 +25,7 @@ export type StackflowReactPlugin<T = never> = () => {
     stack: Stack & {
       render: () => React.ReactNode;
     };
+    initialContext: any;
   }) => React.ReactElement<any, any> | null;
 
   /**
@@ -33,5 +35,6 @@ export type StackflowReactPlugin<T = never> = () => {
     activity: Activity & {
       render: () => React.ReactNode;
     };
+    initialContext: any;
   }) => React.ReactElement<any, any> | null;
 } & ReturnType<StackflowPlugin>;

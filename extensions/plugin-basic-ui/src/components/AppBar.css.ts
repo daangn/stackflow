@@ -1,13 +1,7 @@
 import { style } from "@vanilla-extract/css";
 import { recipe } from "@vanilla-extract/recipes";
 
-import {
-  android,
-  cupertino,
-  globalVars,
-  rootAndroid,
-  rootCupertino,
-} from "../basicUIPlugin.css";
+import { android, cupertino, globalVars } from "../basicUIPlugin.css";
 import { f } from "../styles";
 import {
   background,
@@ -24,6 +18,16 @@ const appBarOverflow = style({
   overflow: globalVars.appBar.overflow,
 });
 
+function transitions(args: { [cssFieldName: string]: string }) {
+  return Object.entries(args)
+    .map(([cssFieldName, value]) => `${cssFieldName} ${value}`)
+    .join(", ");
+}
+const appBarCommonTransition = {
+  "background-color": globalVars.appBar.backgroundColorTransitionDuration,
+  "box-shadow": globalVars.appBar.borderColorTransitionDuration,
+};
+
 export const appBar = recipe({
   base: [
     f.posAbs,
@@ -35,33 +39,30 @@ export const appBar = recipe({
       backgroundColor: globalVars.appBar.backgroundColor,
       zIndex: vars.zIndexes.appBar,
       willChange: "transform, opacity",
+      transition: transitions(appBarCommonTransition),
       selectors: {
-        [`
-          ${cupertino} &,
-          ${rootCupertino} &
-        `]: {
+        [`${cupertino} &`]: {
           position: "absolute",
         },
-        [`
-          ${cupertino} ${exitActive} &,
-          ${rootCupertino} ${exitActive} &
-        `]: {
+        [`${cupertino} ${exitActive} &`]: {
           transform: "translate3d(100%, 0, 0)",
-          transition: "0s",
+          transition: transitions({
+            ...appBarCommonTransition,
+            transform: "0s",
+          }),
         },
-        [`
-          ${android} &,
-          ${rootAndroid} &
-        `]: {
+        [`${android} &`]: {
           opacity: 0,
           transform: "translate3d(0, 10rem, 0)",
-          transition: `transform ${vars.transitionDuration}, opacity ${vars.transitionDuration}`,
+          transition: transitions({
+            ...appBarCommonTransition,
+            transform: vars.transitionDuration,
+            opacity: vars.transitionDuration,
+          }),
         },
         [`
           ${android} ${enterActive} &,
-          ${rootAndroid} ${enterActive} &,
-          ${android} ${enterDone} &,
-          ${rootAndroid} ${enterDone} &
+          ${android} ${enterDone} &
         `]: {
           opacity: 1,
           transform: "translate3d(0, 0, 0)",
@@ -78,27 +79,27 @@ export const appBar = recipe({
     presentModalFullScreen: {
       true: {
         selectors: {
-          [`
-            ${cupertino} &,
-            ${rootCupertino} &
-          `]: {
+          [`${cupertino} &`]: {
             transform: "translate3d(0, 100vh, 0)",
-            transition: `transform ${vars.transitionDuration}, opacity ${vars.transitionDuration}`,
+            transition: transitions({
+              ...appBarCommonTransition,
+              transform: vars.transitionDuration,
+              opacity: vars.transitionDuration,
+            }),
           },
           [`
             ${cupertino} ${enterActive} &,
-            ${rootCupertino} ${enterActive} &,
-            ${cupertino} ${enterDone} &,
-            ${rootCupertino} ${enterDone} &
+            ${cupertino} ${enterDone} &
           `]: {
             transform: "translate3d(0, 0, 0)",
           },
-          [`
-            ${cupertino} ${exitActive} &,
-            ${rootCupertino} ${exitActive} &
-          `]: {
+          [`${cupertino} ${exitActive} &`]: {
             transform: "translate3d(0, 100vh, 0)",
-            transition: `transform ${vars.transitionDuration}, opacity ${vars.transitionDuration}`,
+            transition: transitions({
+              ...appBarCommonTransition,
+              transform: vars.transitionDuration,
+              opacity: vars.transitionDuration,
+            }),
           },
         },
       },
@@ -115,7 +116,9 @@ export const container = style([
   appBarOverflow,
   {
     height: globalVars.appBar.height,
-    transition: `height ${globalVars.appBar.heightTransitionDuration}`,
+    transition: transitions({
+      height: globalVars.appBar.heightTransitionDuration,
+    }),
   },
 ]);
 
@@ -138,12 +141,18 @@ export const backButton = style([
   f.resetButton,
   {
     color: globalVars.appBar.iconColor,
-    transition: "opacity 300ms",
+    transition: transitions({
+      opacity: "300ms",
+      color: globalVars.appBar.iconColorTransitionDuration,
+    }),
     width: "2.25rem",
     height: "2.75rem",
     ":active": {
       opacity: "0.2",
-      transition: "opacity 0s",
+      transition: transitions({
+        opacity: "0s",
+        color: globalVars.appBar.iconColorTransitionDuration,
+      }),
     },
   },
 ]);
@@ -156,12 +165,12 @@ export const centerMain = recipe({
   base: {
     width: vars.appBar.center.mainWidth,
     color: globalVars.appBar.textColor,
-    transition: `height ${globalVars.appBar.heightTransitionDuration}`,
+    transition: transitions({
+      height: globalVars.appBar.heightTransitionDuration,
+      color: globalVars.appBar.textColorTransitionDuration,
+    }),
     selectors: {
-      [`
-        ${android} &,
-        ${rootAndroid} &
-      `]: {
+      [`${android} &`]: {
         width: "100%",
         justifyContent: "flex-start",
         paddingLeft: "1rem",
@@ -170,10 +179,7 @@ export const centerMain = recipe({
         fontWeight: "bold",
         boxSizing: "border-box",
       },
-      [`
-        ${cupertino} &,
-        ${rootCupertino} &
-      `]: {
+      [`${cupertino} &`]: {
         position: "absolute",
         display: "flex",
         alignItems: "center",
@@ -193,10 +199,7 @@ export const centerMain = recipe({
     hasLeft: {
       true: {
         selectors: {
-          [`
-            ${android} &,
-            ${rootAndroid} &
-          `]: {
+          [`${android} &`]: {
             paddingLeft: "0.375rem",
           },
         },
@@ -218,10 +221,7 @@ export const centerMainEdge = style([
     display: "none",
     width: vars.appBar.center.mainWidth,
     selectors: {
-      [`
-        ${cupertino} &,
-        ${rootCupertino} &
-      `]: {
+      [`${cupertino} &`]: {
         display: "block",
       },
     },
@@ -251,10 +251,7 @@ export const right = style([
       display: "none",
     },
     selectors: {
-      [`
-        ${android} &,
-        ${rootAndroid} &
-      `]: {
+      [`${android} &`]: {
         padding: "0 0.5rem 0 0",
       },
     },

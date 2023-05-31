@@ -11,10 +11,12 @@ interface PluginRendererProps {
     [key: string]: ActivityComponentType;
   };
   plugin: WithRequired<ReturnType<StackflowReactPlugin>, "render">;
+  initialContext: any;
 }
 const PluginRenderer: React.FC<PluginRendererProps> = ({
   activityComponentMap,
   plugin,
+  initialContext,
 }) => {
   const coreState = useCoreState();
   const plugins = usePlugins();
@@ -46,6 +48,7 @@ const PluginRenderer: React.FC<PluginRendererProps> = ({
                       ...activity,
                       render: () => output,
                     },
+                    initialContext,
                   }) ?? output;
               });
 
@@ -67,6 +70,7 @@ const PluginRenderer: React.FC<PluginRendererProps> = ({
         };
       },
     },
+    initialContext,
   });
 };
 

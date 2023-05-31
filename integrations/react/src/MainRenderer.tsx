@@ -10,9 +10,11 @@ interface MainRendererProps {
   activityComponentMap: {
     [key: string]: ActivityComponentType;
   };
+  initialContext: any;
 }
 const MainRenderer: React.FC<MainRendererProps> = ({
   activityComponentMap,
+  initialContext,
 }) => {
   const coreState = useCoreState();
   const plugins = usePlugins();
@@ -41,6 +43,7 @@ const MainRenderer: React.FC<MainRendererProps> = ({
           key={plugin.key}
           activityComponentMap={activityComponentMap}
           plugin={plugin}
+          initialContext={initialContext}
         />
       ))}
     </>
@@ -55,6 +58,7 @@ const MainRenderer: React.FC<MainRendererProps> = ({
             return output;
           },
         },
+        initialContext,
       }) ?? output;
   });
 

@@ -14,12 +14,21 @@ import { historySyncPlugin } from "./historySyncPlugin";
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
 
+// 2프레임 + 1프레임
+const ENOUGH_DELAY_TIME = 32 + 16;
+
 let dt = 0;
 
 const enoughPastTime = () => {
   dt += 1;
   return new Date(Date.now() - MINUTE).getTime() + dt;
 };
+
+async function delay(ms: number) {
+  return new Promise<void>((res) => {
+    setTimeout(res, ms);
+  });
+}
 
 const path = (location: Location) =>
   location.pathname + location.search + location.hash;
@@ -88,13 +97,15 @@ describe("historySyncPlugin", () => {
     history = createMemoryHistory();
 
     const coreStore = stackflow({
-      activityNames: ["Home", "Article"],
+      activityNames: ["Home", "Article", "ThirdActivity", "FourthActivity"],
       plugins: [
         historySyncPlugin({
           history,
           routes: {
             Home: "/home/",
             Article: "/articles/:articleId",
+            ThirdActivity: "/third/:thirdId",
+            FourthActivity: "/fourth/:fourthId",
           },
           fallbackActivity: () => "Home",
         }),
@@ -620,5 +631,539 @@ describe("historySyncPlugin", () => {
       expect(activeActivity(actions.getStack())?.name).toEqual("Home");
       expect(history.index).toEqual(0);
     })();
+  });
+
+  test("historySyncPlugin - push 후 stepPush 를 반복한 뒤, replace 를 하고 pop 을 수행하면 첫번째 stack 을 가리킵니다.", async () => {
+    actions.push({
+      activityId: "a2",
+      activityName: "Article",
+      activityParams: {
+        articleId: "1",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s2",
+      stepParams: {
+        articleId: "2",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s3",
+      stepParams: {
+        articleId: "3",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s4",
+      stepParams: {
+        articleId: "4",
+      },
+    });
+
+    actions.replace({
+      activityId: "a3",
+      activityName: "ThirdActivity",
+      activityParams: {
+        thirdId: "234",
+      },
+    });
+    await delay(ENOUGH_DELAY_TIME);
+
+    actions.pop();
+
+    // 전환이 끝나기까지 충분한 시간
+    // 코어쪽 추가된 테스트 코드가 Resolve 되면 삭제 가능
+    await delay(32 + 16);
+
+    expect(path(history.location)).toEqual("/home/");
+    expect(activeActivity(actions.getStack())?.name).toEqual("Home");
+  });
+
+  test("historySyncPlugin - push 후 *push 를 한 번 더 수행한 뒤*, stepPush 를 반복한 뒤, replace 를 하고 pop 을 수행하면 *두번째 stack* 을 가리킵니다.", async () => {
+    actions.push({
+      activityId: "a2",
+      activityName: "Article",
+      activityParams: {
+        articleId: "1",
+      },
+    });
+    actions.push({
+      activityId: "a3",
+      activityName: "ThirdActivity",
+      activityParams: {
+        thirdId: "234",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s2",
+      stepParams: {
+        thirdId: "2",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s3",
+      stepParams: {
+        thirdId: "3",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s4",
+      stepParams: {
+        thirdId: "4",
+      },
+    });
+
+    actions.replace({
+      activityId: "a4",
+      activityName: "FourthActivity",
+      activityParams: {
+        fourthId: "567",
+      },
+    });
+    await delay(ENOUGH_DELAY_TIME);
+
+    actions.pop();
+
+    // 전환이 끝나기까지 충분한 시간
+    // 코어쪽 추가된 테스트 코드가 Resolve 되면 삭제 가능
+    await delay(32 + 16);
+
+    expect(path(history.location)).toEqual("/articles/1/");
+    expect(activeActivity(actions.getStack())?.name).toEqual("Article");
+  });
+
+  test("historySyncPlugin - push 후 stepPush 를 반복한 뒤, push 와 pop 을 1회 수행하고 replace를 수행하고 pop 을 진행하면 첫번째 stack 을 가리킵니다.", async () => {
+    actions.push({
+      activityId: "a2",
+      activityName: "Article",
+      activityParams: {
+        articleId: "1",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s2",
+      stepParams: {
+        articleId: "2",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s3",
+      stepParams: {
+        articleId: "3",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s4",
+      stepParams: {
+        articleId: "4",
+      },
+    });
+
+    actions.push({
+      activityId: "a3",
+      activityName: "ThirdActivity",
+      activityParams: {
+        thirdId: "234",
+      },
+    });
+
+    actions.pop();
+
+    actions.replace({
+      activityId: "a4",
+      activityName: "FourthActivity",
+      activityParams: {
+        fourthId: "345",
+      },
+    });
+    await delay(ENOUGH_DELAY_TIME);
+
+    actions.pop();
+
+    // 전환이 끝나기까지 충분한 시간
+    // 코어쪽 추가된 테스트 코드가 Resolve 되면 삭제 가능
+    await delay(16 * 5);
+
+    expect(path(history.location)).toEqual("/home/");
+    expect(activeActivity(actions.getStack())?.name).toEqual("Home");
+  });
+
+  test("historySyncPlugin - push 후 stepPush 를 반복한 뒤, replace 를 한 뒤 stepPush 를 반복하고 pop 을 진행해도 첫번째 stack 을 가리킵니다.", async () => {
+    actions.push({
+      activityId: "a2",
+      activityName: "Article",
+      activityParams: {
+        articleId: "1",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s2",
+      stepParams: {
+        articleId: "2",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s3",
+      stepParams: {
+        articleId: "3",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s4",
+      stepParams: {
+        articleId: "4",
+      },
+    });
+
+    actions.replace({
+      activityId: "a4",
+      activityName: "FourthActivity",
+      activityParams: {
+        fourthId: "345",
+      },
+    });
+    await delay(ENOUGH_DELAY_TIME);
+
+    actions.stepPush({
+      stepId: "s5",
+      stepParams: {
+        fourthId: "5",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s6",
+      stepParams: {
+        fourthId: "6",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s7",
+      stepParams: {
+        fourthId: "7",
+      },
+    });
+
+    actions.pop();
+
+    // 전환이 끝나기까지 충분한 시간
+    // 코어쪽 추가된 테스트 코드가 Resolve 되면 삭제 가능
+    await delay(ENOUGH_DELAY_TIME);
+
+    expect(path(history.location)).toEqual("/home/");
+    expect(activeActivity(actions.getStack())?.name).toEqual("Home");
+  });
+
+  test("historySyncPlugin - push 후 stepPush 를 반복한 뒤, replace 를 수행하고 stepPush 를 반복하고 replace를 수행하고 pop을 진행해도 첫번째 stack을 가리킵니다.(for Hugh)", async () => {
+    actions.push({
+      activityId: "a2",
+      activityName: "Article",
+      activityParams: {
+        articleId: "1",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s2",
+      stepParams: {
+        articleId: "2",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s3",
+      stepParams: {
+        articleId: "3",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s4",
+      stepParams: {
+        articleId: "4",
+      },
+    });
+
+    actions.replace({
+      activityId: "a3",
+      activityName: "ThirdActivity",
+      activityParams: {
+        thirdId: "234",
+      },
+    });
+    await delay(ENOUGH_DELAY_TIME);
+
+    actions.stepPush({
+      stepId: "s2",
+      stepParams: {
+        thirdId: "2",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s3",
+      stepParams: {
+        thirdId: "3",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s4",
+      stepParams: {
+        thirdId: "4",
+      },
+    });
+
+    actions.replace({
+      activityId: "a4",
+      activityName: "FourthActivity",
+      activityParams: {
+        fourthId: "345",
+      },
+    });
+    await delay(ENOUGH_DELAY_TIME);
+    actions.pop();
+
+    // 전환이 끝나기까지 충분한 시간
+    // 코어쪽 추가된 테스트 코드가 Resolve 되면 삭제 가능
+    await delay(ENOUGH_DELAY_TIME);
+
+    expect(path(history.location)).toEqual("/home/");
+    expect(activeActivity(actions.getStack())?.name).toEqual("Home");
+  });
+
+  test("historySyncPlugin - push 후 stepPush 를 반복한 뒤, push 를 수행하고 stepPush 를 반복한 뒤 pop 을 수행, 그 후 replace 를 수행하고 pop을 진행해도 첫번째 stack을 가리킵니다.", async () => {
+    actions.push({
+      activityId: "a2",
+      activityName: "Article",
+      activityParams: {
+        articleId: "1",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s2",
+      stepParams: {
+        articleId: "2",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s3",
+      stepParams: {
+        articleId: "3",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s4",
+      stepParams: {
+        articleId: "4",
+      },
+    });
+
+    actions.push({
+      activityId: "a3",
+      activityName: "ThirdActivity",
+      activityParams: {
+        thirdId: "234",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s2",
+      stepParams: {
+        thirdId: "2",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s3",
+      stepParams: {
+        thirdId: "3",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s4",
+      stepParams: {
+        thirdId: "4",
+      },
+    });
+    actions.pop();
+
+    actions.replace({
+      activityId: "a4",
+      activityName: "FourthActivity",
+      activityParams: {
+        fourthId: "345",
+      },
+    });
+    await delay(ENOUGH_DELAY_TIME);
+    actions.pop();
+
+    await delay(ENOUGH_DELAY_TIME);
+
+    expect(path(history.location)).toEqual("/home/");
+    expect(activeActivity(actions.getStack())?.name).toEqual("Home");
+  });
+
+  test("historySyncPlugin - 2회 반복:push 후 stepPush 를 반복한 뒤, push 를 수행하고 stepPush 를 반복한 뒤 pop 을 수행, 그 후 replace 를 수행하고 pop을 진행해도 첫번째 stack을 가리킵니다.", async () => {
+    actions.push({
+      activityId: "a2",
+      activityName: "Article",
+      activityParams: {
+        articleId: "1",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s2",
+      stepParams: {
+        articleId: "2",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s3",
+      stepParams: {
+        articleId: "3",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s4",
+      stepParams: {
+        articleId: "4",
+      },
+    });
+
+    actions.push({
+      activityId: "a3",
+      activityName: "ThirdActivity",
+      activityParams: {
+        thirdId: "234",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s2",
+      stepParams: {
+        thirdId: "2",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s3",
+      stepParams: {
+        thirdId: "3",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s4",
+      stepParams: {
+        thirdId: "4",
+      },
+    });
+    actions.pop();
+
+    actions.replace({
+      activityId: "a4",
+      activityName: "FourthActivity",
+      activityParams: {
+        fourthId: "345",
+      },
+    });
+    await delay(ENOUGH_DELAY_TIME);
+    actions.pop();
+
+    await delay(ENOUGH_DELAY_TIME);
+    actions.push({
+      activityId: "a5",
+      activityName: "ThirdActivity",
+      activityParams: {
+        thirdId: "1",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s2",
+      stepParams: {
+        thirdId: "2",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s3",
+      stepParams: {
+        thirdId: "3",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s4",
+      stepParams: {
+        thirdId: "4",
+      },
+    });
+
+    actions.push({
+      activityId: "a6",
+      activityName: "FourthActivity",
+      activityParams: {
+        fourthId: "234",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s2",
+      stepParams: {
+        fourthId: "2",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s3",
+      stepParams: {
+        fourthId: "3",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s4",
+      stepParams: {
+        fourthId: "4",
+      },
+    });
+    actions.pop();
+
+    actions.replace({
+      activityId: "a7",
+      activityName: "Article",
+      activityParams: {
+        articleId: "345",
+      },
+    });
+    await delay(ENOUGH_DELAY_TIME);
+    actions.pop();
+
+    await delay(ENOUGH_DELAY_TIME);
+
+    expect(path(history.location)).toEqual("/home/");
+    expect(activeActivity(actions.getStack())?.name).toEqual("Home");
   });
 });

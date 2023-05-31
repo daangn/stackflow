@@ -41,38 +41,48 @@ export function useGlobalOptions() {
 }
 
 export const basicUIPlugin: (
-  options: BasicUIPluginOptions,
+  options:
+    | BasicUIPluginOptions
+    | ((args: { initialContext?: any }) => BasicUIPluginOptions),
 ) => StackflowReactPlugin = (options) => () => ({
   key: "basic-ui",
-  wrapStack({ stack }) {
+  wrapStack({ stack, initialContext }) {
+    const _options =
+      typeof options === "function" ? options({ initialContext }) : options;
+
     return (
-      <GlobalOptionsProvider value={options}>
+      <GlobalOptionsProvider
+        value={{
+          ...options,
+          theme: initialContext?.theme ?? _options.theme,
+        }}
+      >
         <div
           className={compact([
             css.stackWrapper({
-              theme: isBrowser() ? options.theme : undefined,
+              theme: initialContext?.theme ?? _options.theme,
               loading: stack.globalTransitionState === "loading",
             }),
-            options.rootClassName,
+            _options.rootClassName,
           ]).join(" ")}
           style={assignInlineVars(
             compactMap({
-              [css.globalVars.backgroundColor]: options.backgroundColor,
-              [css.globalVars.dimBackgroundColor]: options.dimBackgroundColor,
+              [css.globalVars.backgroundColor]: _options.backgroundColor,
+              [css.globalVars.dimBackgroundColor]: _options.dimBackgroundColor,
               [css.globalVars
                 .transitionDuration]: `${stack.transitionDuration}ms`,
               [css.globalVars.computedTransitionDuration]:
                 stack.globalTransitionState === "loading"
                   ? `${stack.transitionDuration}ms`
                   : "0ms",
-              [css.globalVars.appBar.borderColor]: options.appBar?.borderColor,
-              [css.globalVars.appBar.borderSize]: options.appBar?.borderSize,
-              [css.globalVars.appBar.height]: options.appBar?.height,
-              [css.globalVars.appBar.iconColor]: options.appBar?.iconColor,
-              [css.globalVars.appBar.textColor]: options.appBar?.textColor,
+              [css.globalVars.appBar.borderColor]: _options.appBar?.borderColor,
+              [css.globalVars.appBar.borderSize]: _options.appBar?.borderSize,
+              [css.globalVars.appBar.height]: _options.appBar?.height,
+              [css.globalVars.appBar.iconColor]: _options.appBar?.iconColor,
+              [css.globalVars.appBar.textColor]: _options.appBar?.textColor,
               [css.globalVars.bottomSheet.borderRadius]:
-                options.bottomSheet?.borderRadius,
-              [css.globalVars.modal.borderRadius]: options.modal?.borderRadius,
+                _options.bottomSheet?.borderRadius,
+              [css.globalVars.modal.borderRadius]: _options.modal?.borderRadius,
             }),
           )}
         >

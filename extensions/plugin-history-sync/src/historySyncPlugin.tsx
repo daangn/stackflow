@@ -10,8 +10,10 @@ import {
   safeParseState,
 } from "./historyState";
 import { last } from "./last";
+import type { UrlPatternOptions } from "./makeTemplate";
 import { makeTemplate } from "./makeTemplate";
 import { normalizeRoute } from "./normalizeRoute";
+import { makeQueue } from "./queue";
 import { RoutesProvider } from "./RoutesContext";
 
 const SECOND = 1000;
@@ -24,6 +26,7 @@ type HistorySyncPluginOptions<K extends string> = {
   fallbackActivity: (args: { initialContext: any }) => K;
   useHash?: boolean;
   history?: History;
+  urlPatternOptions?: UrlPatternOptions;
 };
 export function historySyncPlugin<
   T extends { [activityName: string]: unknown },
@@ -45,6 +48,9 @@ export function historySyncPlugin<
   return () => {
     let pushFlag = 0;
     let popFlag = 0;
+    let replacePopCount = 0;
+
+    const queue = makeQueue(history);
 
     return {
       key: "plugin-history-sync",
@@ -151,19 +157,22 @@ export function historySyncPlugin<
 
         const template = makeTemplate(
           normalizeRoute(options.routes[rootActivity.name])[0],
+          options.urlPatternOptions,
         );
 
         const lastStep = last(rootActivity.steps);
 
-        replaceState({
-          history,
-          pathname: template.fill(rootActivity.params),
-          state: {
-            activity: rootActivity,
-            step: lastStep,
-          },
-          useHash: options.useHash,
-        });
+        queue(() =>
+          replaceState({
+            history,
+            pathname: template.fill(rootActivity.params),
+            state: {
+              activity: rootActivity,
+              step: lastStep,
+            },
+            useHash: options.useHash,
+          }),
+        );
 
         const onPopState: Listener = (e) => {
           if (popFlag) {
@@ -299,16 +308,19 @@ export function historySyncPlugin<
 
         const template = makeTemplate(
           normalizeRoute(options.routes[activity.name])[0],
+          options.urlPatternOptions,
         );
 
-        pushState({
-          history,
-          pathname: template.fill(activity.params),
-          state: {
-            activity,
-          },
-          useHash: options.useHash,
-        });
+        queue(() =>
+          pushState({
+            history,
+            pathname: template.fill(activity.params),
+            state: {
+              activity,
+            },
+            useHash: options.useHash,
+          }),
+        );
       },
       onStepPushed({ effect: { activity, step } }) {
         if (pushFlag) {
@@ -318,17 +330,20 @@ export function historySyncPlugin<
 
         const template = makeTemplate(
           normalizeRoute(options.routes[activity.name])[0],
+          options.urlPatternOptions,
         );
 
-        pushState({
-          history,
-          pathname: template.fill(activity.params),
-          state: {
-            activity,
-            step,
-          },
-          useHash: options.useHash,
-        });
+        queue(() =>
+          pushState({
+            history,
+            pathname: template.fill(activity.params),
+            state: {
+              activity,
+              step,
+            },
+            useHash: options.useHash,
+          }),
+        );
       },
       onReplaced({ effect: { activity } }) {
         if (!activity.isActive) {
@@ -337,16 +352,19 @@ export function historySyncPlugin<
 
         const template = makeTemplate(
           normalizeRoute(options.routes[activity.name])[0],
+          options.urlPatternOptions,
         );
 
-        replaceState({
-          history,
-          pathname: template.fill(activity.params),
-          state: {
-            activity,
-          },
-          useHash: options.useHash,
-        });
+        queue(() =>
+          replaceState({
+            history,
+            pathname: template.fill(activity.params),
+            state: {
+              activity,
+            },
+            useHash: options.useHash,
+          }),
+        );
       },
       onStepReplaced({ effect: { activity, step } }) {
         if (!activity.isActive) {
@@ -355,21 +373,25 @@ export function historySyncPlugin<
 
         const template = makeTemplate(
           normalizeRoute(options.routes[activity.name])[0],
+          options.urlPatternOptions,
         );
 
-        replaceState({
-          history,
-          pathname: template.fill(activity.params),
-          state: {
-            activity,
-            step,
-          },
-          useHash: options.useHash,
-        });
+        queue(() =>
+          replaceState({
+            history,
+            pathname: template.fill(activity.params),
+            state: {
+              activity,
+              step,
+            },
+            useHash: options.useHash,
+          }),
+        );
       },
       onBeforePush({ actionParams, actions: { overrideActionParams } }) {
         const template = makeTemplate(
           normalizeRoute(options.routes[actionParams.activityName])[0],
+          options.urlPatternOptions,
         );
         const path = template.fill(actionParams.activityParams);
 
@@ -381,9 +403,13 @@ export function historySyncPlugin<
           },
         });
       },
-      onBeforeReplace({ actionParams, actions: { overrideActionParams } }) {
+      onBeforeReplace({
+        actionParams,
+        actions: { overrideActionParams, getStack },
+      }) {
         const template = makeTemplate(
           normalizeRoute(options.routes[actionParams.activityName])[0],
+          options.urlPatternOptions,
         );
         const path = template.fill(actionParams.activityParams);
 
@@ -394,6 +420,22 @@ export function historySyncPlugin<
             path,
           },
         });
+
+        const { activities } = getStack();
+        const enteredActivities = activities.filter(
+          (currentActivity) =>
+            currentActivity.transitionState === "enter-active" ||
+            currentActivity.transitionState === "enter-done",
+        );
+        const previousActivity =
+          enteredActivities.length > 0
+            ? enteredActivities[enteredActivities.length - 1]
+            : null;
+        const popCount = previousActivity?.steps.length
+          ? previousActivity.steps.length
+          : 0;
+
+        replacePopCount += popCount;
       },
       onBeforeStepPop({ actions: { getStack } }) {
         const { activities } = getStack();
@@ -403,7 +445,7 @@ export function historySyncPlugin<
 
         if ((currentActivity?.steps.length ?? 0) > 1) {
           popFlag += 1;
-          history.back();
+          queue(history.back);
         }
       },
       onBeforePop({ actions: { getStack } }) {
@@ -411,13 +453,46 @@ export function historySyncPlugin<
         const currentActivity = activities.find(
           (activity) => activity.isActive,
         );
-        const popCount = currentActivity?.steps.length ?? 0;
+        const enteredActivities = activities.filter(
+          (activity) =>
+            activity.transitionState === "enter-active" ||
+            activity.transitionState === "enter-done",
+        );
+        const currentActivityIndex = enteredActivities.findIndex(
+          (activity) => activity.isActive,
+        );
+        const previousActivity =
+          currentActivityIndex && currentActivityIndex > 0
+            ? enteredActivities[currentActivityIndex - 1]
+            : null;
 
+        const currentStepsLength = currentActivity?.steps.length ?? 0;
+
+        let popCount = currentStepsLength;
+
+        if (
+          currentActivity?.enteredBy.name === "Replaced" &&
+          previousActivity
+        ) {
+          // replace 이후에 stepPush 만 진행하고 pop 을 수행하는 경우
+          const shouldPopForCurrentStepPush = currentStepsLength > 1;
+          popCount = shouldPopForCurrentStepPush
+            ? replacePopCount + currentStepsLength
+            : replacePopCount;
+        }
         popFlag += popCount;
 
         do {
           for (let i = 0; i < popCount; i += 1) {
-            history.back();
+            queue(history.back);
+          }
+
+          if (
+            currentActivity?.enteredBy.name === "Replaced" &&
+            previousActivity &&
+            replacePopCount > 0
+          ) {
+            replacePopCount = 0;
           }
         } while (!safeParseState(getCurrentState({ history })));
       },

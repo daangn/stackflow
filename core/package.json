@@ -1,9 +1,10 @@
 {
   "name": "@stackflow/core",
-  "version": "1.0.2",
+  "version": "1.0.5",
   "license": "MIT",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "require": "./dist/index.js",
       "import": "./dist/index.mjs"
     }
@@ -22,7 +23,8 @@
     "build:js": "node ./esbuild.config.js",
     "clean": "rimraf dist",
     "dev": "yarn test --watch && yarn build:js --watch && yarn build:dts --watch",
-    "test": "yarn jest"
+    "test": "yarn jest",
+    "typecheck": "tsc --noEmit"
   },
   "jest": {
     "coveragePathIgnorePatterns": [
