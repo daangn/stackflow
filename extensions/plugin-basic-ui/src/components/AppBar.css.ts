@@ -18,6 +18,16 @@ const appBarOverflow = style({
   overflow: globalVars.appBar.overflow,
 });
 
+function transitions(args: { [cssFieldName: string]: string }) {
+  return Object.entries(args)
+    .map(([cssFieldName, value]) => `${cssFieldName} ${value}`)
+    .join(", ");
+}
+const appBarCommonTransition = {
+  "background-color": globalVars.appBar.backgroundColorTransitionDuration,
+  "box-shadow": globalVars.appBar.borderColorTransitionDuration,
+};
+
 export const appBar = recipe({
   base: [
     f.posAbs,
@@ -29,18 +39,26 @@ export const appBar = recipe({
       backgroundColor: globalVars.appBar.backgroundColor,
       zIndex: vars.zIndexes.appBar,
       willChange: "transform, opacity",
+      transition: transitions(appBarCommonTransition),
       selectors: {
         [`${cupertino} &`]: {
           position: "absolute",
         },
         [`${cupertino} ${exitActive} &`]: {
           transform: "translate3d(100%, 0, 0)",
-          transition: "0s",
+          transition: transitions({
+            ...appBarCommonTransition,
+            transform: "0s",
+          }),
         },
         [`${android} &`]: {
           opacity: 0,
           transform: "translate3d(0, 10rem, 0)",
-          transition: `transform ${vars.transitionDuration}, opacity ${vars.transitionDuration}`,
+          transition: transitions({
+            ...appBarCommonTransition,
+            transform: vars.transitionDuration,
+            opacity: vars.transitionDuration,
+          }),
         },
         [`
           ${android} ${enterActive} &,
@@ -63,7 +81,11 @@ export const appBar = recipe({
         selectors: {
           [`${cupertino} &`]: {
             transform: "translate3d(0, 100vh, 0)",
-            transition: `transform ${vars.transitionDuration}, opacity ${vars.transitionDuration}`,
+            transition: transitions({
+              ...appBarCommonTransition,
+              transform: vars.transitionDuration,
+              opacity: vars.transitionDuration,
+            }),
           },
           [`
             ${cupertino} ${enterActive} &,
@@ -73,7 +95,11 @@ export const appBar = recipe({
           },
           [`${cupertino} ${exitActive} &`]: {
             transform: "translate3d(0, 100vh, 0)",
-            transition: `transform ${vars.transitionDuration}, opacity ${vars.transitionDuration}`,
+            transition: transitions({
+              ...appBarCommonTransition,
+              transform: vars.transitionDuration,
+              opacity: vars.transitionDuration,
+            }),
           },
         },
       },
@@ -90,7 +116,9 @@ export const container = style([
   appBarOverflow,
   {
     height: globalVars.appBar.height,
-    transition: `height ${globalVars.appBar.heightTransitionDuration}`,
+    transition: transitions({
+      height: globalVars.appBar.heightTransitionDuration,
+    }),
   },
 ]);
 
@@ -113,12 +141,18 @@ export const backButton = style([
   f.resetButton,
   {
     color: globalVars.appBar.iconColor,
-    transition: "opacity 300ms",
+    transition: transitions({
+      opacity: "300ms",
+      color: globalVars.appBar.iconColorTransitionDuration,
+    }),
     width: "2.25rem",
     height: "2.75rem",
     ":active": {
       opacity: "0.2",
-      transition: "opacity 0s",
+      transition: transitions({
+        opacity: "0s",
+        color: globalVars.appBar.iconColorTransitionDuration,
+      }),
     },
   },
 ]);
@@ -131,7 +165,10 @@ export const centerMain = recipe({
   base: {
     width: vars.appBar.center.mainWidth,
     color: globalVars.appBar.textColor,
-    transition: `height ${globalVars.appBar.heightTransitionDuration}`,
+    transition: transitions({
+      height: globalVars.appBar.heightTransitionDuration,
+      color: globalVars.appBar.textColorTransitionDuration,
+    }),
     selectors: {
       [`${android} &`]: {
         width: "100%",

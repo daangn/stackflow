@@ -143,5 +143,5 @@ jobs:
 
       - name: Check the TypeScript typings of the entire monorepo
         run: |
-          yarn tsc --noEmit
+          yarn typecheck
         shell: bash

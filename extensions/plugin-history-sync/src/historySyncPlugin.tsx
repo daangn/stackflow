@@ -48,6 +48,7 @@ export function historySyncPlugin<
   return () => {
     let pushFlag = 0;
     let popFlag = 0;
+    let replacePopCount = 0;
 
     const queue = makeQueue(history);
 
@@ -406,7 +407,10 @@ export function historySyncPlugin<
           },
         });
       },
-      onBeforeReplace({ actionParams, actions: { overrideActionParams } }) {
+      onBeforeReplace({
+        actionParams,
+        actions: { overrideActionParams, getStack },
+      }) {
         const template = makeTemplate(
           normalizeRoute(options.routes[actionParams.activityName])[0],
           options.urlPatternOptions,
@@ -420,6 +424,22 @@ export function historySyncPlugin<
             path,
           },
         });
+
+        const { activities } = getStack();
+        const enteredActivities = activities.filter(
+          (currentActivity) =>
+            currentActivity.transitionState === "enter-active" ||
+            currentActivity.transitionState === "enter-done",
+        );
+        const previousActivity =
+          enteredActivities.length > 0
+            ? enteredActivities[enteredActivities.length - 1]
+            : null;
+        const popCount = previousActivity?.steps.length
+          ? previousActivity.steps.length
+          : 0;
+
+        replacePopCount += popCount;
       },
       onBeforeStepPop({ actions: { getStack } }) {
         const { activities } = getStack();
@@ -437,13 +457,46 @@ export function historySyncPlugin<
         const currentActivity = activities.find(
           (activity) => activity.isActive,
         );
-        const popCount = currentActivity?.steps.length ?? 0;
+        const enteredActivities = activities.filter(
+          (activity) =>
+            activity.transitionState === "enter-active" ||
+            activity.transitionState === "enter-done",
+        );
+        const currentActivityIndex = enteredActivities.findIndex(
+          (activity) => activity.isActive,
+        );
+        const previousActivity =
+          currentActivityIndex && currentActivityIndex > 0
+            ? enteredActivities[currentActivityIndex - 1]
+            : null;
 
+        const currentStepsLength = currentActivity?.steps.length ?? 0;
+
+        let popCount = currentStepsLength;
+
+        if (
+          currentActivity?.enteredBy.name === "Replaced" &&
+          previousActivity
+        ) {
+          // replace 이후에 stepPush 만 진행하고 pop 을 수행하는 경우
+          const shouldPopForCurrentStepPush = currentStepsLength > 1;
+          popCount = shouldPopForCurrentStepPush
+            ? replacePopCount + currentStepsLength
+            : replacePopCount;
+        }
         popFlag += popCount;
 
         do {
           for (let i = 0; i < popCount; i += 1) {
             queue(history.back);
+          }
+
+          if (
+            currentActivity?.enteredBy.name === "Replaced" &&
+            previousActivity &&
+            replacePopCount > 0
+          ) {
+            replacePopCount = 0;
           }
         } while (!safeParseState(getCurrentState({ history })));
       },

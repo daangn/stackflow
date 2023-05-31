@@ -15,13 +15,17 @@ type AppBarProps = Partial<
   Pick<
     GlobalVars["appBar"],
     | "borderColor"
+    | "borderColorTransitionDuration"
     | "borderSize"
     | "height"
     | "heightTransitionDuration"
     | "overflow"
     | "iconColor"
+    | "iconColorTransitionDuration"
     | "textColor"
+    | "textColorTransitionDuration"
     | "backgroundColor"
+    | "backgroundColorTransitionDuration"
   >
 > & {
   title?: React.ReactNode;
@@ -62,13 +66,17 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
       border = true,
       modalPresentationStyle,
       iconColor,
+      iconColorTransitionDuration,
       textColor,
+      textColorTransitionDuration,
       borderColor,
+      borderColorTransitionDuration,
       borderSize,
       height,
       heightTransitionDuration,
       overflow,
       backgroundColor,
+      backgroundColorTransitionDuration,
       onTopClick,
     },
     ref,
@@ -265,8 +273,14 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
         style={assignInlineVars(
           compactMap({
             [globalVars.appBar.iconColor]: iconColor,
+            [globalVars.appBar.iconColorTransitionDuration]:
+              iconColorTransitionDuration,
             [globalVars.appBar.textColor]: textColor,
+            [globalVars.appBar.textColorTransitionDuration]:
+              textColorTransitionDuration,
             [globalVars.appBar.borderColor]: borderColor,
+            [globalVars.appBar.borderColorTransitionDuration]:
+              borderColorTransitionDuration,
             [globalVars.appBar.borderSize]: borderSize,
             [globalVars.appBar.height]: height,
             [globalVars.appBar.heightTransitionDuration]:
@@ -274,6 +288,8 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
             [globalVars.appBar.overflow]: overflow,
             [globalVars.appBar.backgroundColor]:
               backgroundColor || globalVars.backgroundColor,
+            [globalVars.appBar.backgroundColorTransitionDuration]:
+              backgroundColorTransitionDuration,
             [appScreenCss.vars.appBar.center.mainWidth]: `${maxWidth}px`,
           }),
         )}
