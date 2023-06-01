@@ -35,6 +35,7 @@ export const scrollable = style([
   f.overflowScroll,
   {
     paddingTop: [
+      cssVars.appBar.height,
       `calc(${cssVars.appBar.height} + constant(safe-area-inset-top))`,
       `calc(${cssVars.appBar.height} + env(safe-area-inset-top))`,
     ],

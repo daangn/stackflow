@@ -123,6 +123,7 @@ export const paper = recipe({
         {
           transition: `transform ${vars.transitionDuration}, opacity ${vars.transitionDuration}, padding-top ${globalVars.appBar.heightTransitionDuration}`,
           paddingTop: [
+            globalVars.appBar.height,
             `calc(${globalVars.appBar.height} + constant(safe-area-inset-top))`,
             `calc(${globalVars.appBar.height} + env(safe-area-inset-top))`,
           ],
