@@ -206,7 +206,7 @@ export function useStyleEffectSwipeBack({
           };
 
           const onTouchMove = (e: TouchEvent) => {
-            if (!x0) {
+            if (x0 == null) {
               resetState();
               return;
             }
@@ -217,7 +217,7 @@ export function useStyleEffectSwipeBack({
           };
 
           const onTouchEnd = () => {
-            if (!x0 || !t0 || !x) {
+            if (x0 == null || !t0 || !x) {
               resetState();
               return;
             }
