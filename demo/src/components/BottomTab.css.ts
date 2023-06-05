@@ -9,10 +9,15 @@ export const container = style([
     gridTemplateColumns: "1.5rem 1.5rem 1.5rem 1.5rem 1.5rem",
     justifyContent: "space-between",
     padding: ".5rem 7.25% 0",
-    paddingBottom: [
-      "calc(.375rem + constant(safe-area-inset-bottom))",
-      "calc(.375rem + env(safe-area-inset-bottom))",
-    ],
+    paddingBottom: ".375rem",
+    "@supports": {
+      "(padding-bottom: constant(safe-area-inset-bottom))": {
+        paddingBottom: "calc(.375rem + constant(safe-area-inset-bottom))",
+      },
+      "(padding-bottom: env(safe-area-inset-bottom))": {
+        paddingBottom: "calc(.375rem + env(safe-area-inset-bottom))",
+      },
+    },
     boxShadow: `0 -1px 0 0 ${vars.$semantic.color.divider2}`,
   },
 ]);

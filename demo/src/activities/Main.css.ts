@@ -34,11 +34,15 @@ export const scrollable = style([
   f.flex1,
   f.overflowScroll,
   {
-    paddingTop: [
-      cssVars.appBar.height,
-      `calc(${cssVars.appBar.height} + constant(safe-area-inset-top))`,
-      `calc(${cssVars.appBar.height} + env(safe-area-inset-top))`,
-    ],
+    paddingTop: cssVars.appBar.height,
+    "@supports": {
+      "(padding-top: constant(safe-area-inset-top))": {
+        paddingTop: `calc(${cssVars.appBar.height} + constant(safe-area-inset-top))`,
+      },
+      "(padding-top: env(safe-area-inset-top))": {
+        paddingTop: `calc(${cssVars.appBar.height} + env(safe-area-inset-top))`,
+      },
+    },
   },
 ]);
 
