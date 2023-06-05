@@ -122,10 +122,15 @@ export const paper = recipe({
         f.borderBox,
         {
           transition: `transform ${vars.transitionDuration}, opacity ${vars.transitionDuration}, padding-top ${globalVars.appBar.heightTransitionDuration}`,
-          paddingTop: [
-            `calc(${globalVars.appBar.height} + constant(safe-area-inset-top))`,
-            `calc(${globalVars.appBar.height} + env(safe-area-inset-top))`,
-          ],
+          paddingTop: globalVars.appBar.height,
+          "@supports": {
+            "(padding-top: constant(safe-area-inset-top))": {
+              paddingTop: `calc(${globalVars.appBar.height} + constant(safe-area-inset-top))`,
+            },
+            "(padding-top: env(safe-area-inset-top))": {
+              paddingTop: `calc(${globalVars.appBar.height} + env(safe-area-inset-top))`,
+            },
+          },
         },
       ],
     },
