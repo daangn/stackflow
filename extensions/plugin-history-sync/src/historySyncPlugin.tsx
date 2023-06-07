@@ -107,7 +107,7 @@ export function historySyncPlugin<
             const routes = normalizeRoute(options.routes[activityName as K]);
 
             for (const route of routes) {
-              const template = makeTemplate(route);
+              const template = makeTemplate(route, options.urlPatternOptions);
               const activityParams = template.parse(path);
 
               if (activityParams) {
