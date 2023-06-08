@@ -103,18 +103,14 @@ export function historySyncPlugin<
         const activityNames = Object.keys(options.routes);
 
         if (path) {
-          for (let i = 0; i < activityNames.length; i += 1) {
-            const activityName = activityNames[i] as K;
-            const routes = normalizeRoute(options.routes[activityName]);
+          for (const activityName of activityNames) {
+            const routes = normalizeRoute(options.routes[activityName as K]);
 
-            for (let j = 0; j < routes.length; j += 1) {
-              const route = routes[j];
-
+            for (const route of routes) {
               const template = makeTemplate(route, options.urlPatternOptions);
               const activityParams = template.parse(path);
-              const matched = !!activityParams;
 
-              if (matched) {
+              if (activityParams) {
                 const activityId = id();
 
                 return [
