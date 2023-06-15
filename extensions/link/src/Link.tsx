@@ -50,10 +50,11 @@ export const Link: TypeLink = forwardRef(
         return undefined;
       }
 
-      const template = makeTemplate(
-        normalizeRoute(route)[0],
-        props.urlPatternOptions,
-      );
+      const template =
+        typeof route === "function"
+          ? makeTemplate(normalizeRoute(route())[0], props.urlPatternOptions)
+          : makeTemplate(normalizeRoute(route)[0], props.urlPatternOptions);
+
       const path = template.fill(props.activityParams);
 
       return path;
