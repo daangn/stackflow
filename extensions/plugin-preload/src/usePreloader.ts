@@ -41,12 +41,19 @@ export function usePreloader<T extends { [activityName: string]: unknown }>(
         }
 
         const route = routes[activityName];
-        const template = route
-          ? makeTemplate(
-              normalizeRoute(route)[0],
-              usePreloaderOptions?.urlPatternOptions,
-            )
-          : undefined;
+
+        const template =
+          typeof route === "function"
+            ? makeTemplate(
+                normalizeRoute(route())[0],
+                usePreloaderOptions?.urlPatternOptions,
+              )
+            : typeof route === "object"
+            ? makeTemplate(
+                normalizeRoute(route)[0],
+                usePreloaderOptions?.urlPatternOptions,
+              )
+            : undefined;
 
         const path = template?.fill(activityParams);
 
