@@ -21,7 +21,7 @@ const MINUTE = 60 * SECOND;
 
 type HistorySyncPluginOptions<K extends string> = {
   routes: {
-    [key in K]: string | string[];
+    [key in K]: string | string[] | (() => string) | (() => string[]);
   };
   fallbackActivity: (args: { initialContext: any }) => K;
   useHash?: boolean;
@@ -104,7 +104,12 @@ export function historySyncPlugin<
 
         if (path) {
           for (const activityName of activityNames) {
-            const routes = normalizeRoute(options.routes[activityName as K]);
+            const route = options.routes[activityName as K];
+
+            const routes =
+              typeof route === "function"
+                ? normalizeRoute(route())
+                : normalizeRoute(route);
 
             for (const route of routes) {
               const template = makeTemplate(route, options.urlPatternOptions);
@@ -135,9 +140,13 @@ export function historySyncPlugin<
         const fallbackActivityName = options.fallbackActivity({
           initialContext,
         });
-        const fallbackActivityRoutes = normalizeRoute(
-          options.routes[fallbackActivityName],
-        );
+        const fallbackRoute = options.routes[fallbackActivityName];
+
+        const fallbackActivityRoutes =
+          typeof fallbackRoute === "function"
+            ? normalizeRoute(fallbackRoute())
+            : normalizeRoute(fallbackRoute);
+
         const fallbackActivityPath = fallbackActivityRoutes[0];
 
         return [
@@ -155,8 +164,12 @@ export function historySyncPlugin<
       onInit({ actions: { getStack, dispatchEvent, push, stepPush } }) {
         const rootActivity = getStack().activities[0];
 
+        const rootRoute = options.routes[rootActivity.name];
+
         const template = makeTemplate(
-          normalizeRoute(options.routes[rootActivity.name])[0],
+          typeof rootRoute === "function"
+            ? normalizeRoute(rootRoute())[0]
+            : normalizeRoute(rootRoute)[0],
           options.urlPatternOptions,
         );
 
@@ -306,8 +319,12 @@ export function historySyncPlugin<
           return;
         }
 
+        const route = options.routes[activity.name];
+
         const template = makeTemplate(
-          normalizeRoute(options.routes[activity.name])[0],
+          typeof route === "function"
+            ? normalizeRoute(route())[0]
+            : normalizeRoute(route)[0],
           options.urlPatternOptions,
         );
 
@@ -328,8 +345,12 @@ export function historySyncPlugin<
           return;
         }
 
+        const route = options.routes[activity.name];
+
         const template = makeTemplate(
-          normalizeRoute(options.routes[activity.name])[0],
+          typeof route === "function"
+            ? normalizeRoute(route())[0]
+            : normalizeRoute(route)[0],
           options.urlPatternOptions,
         );
 
@@ -350,8 +371,12 @@ export function historySyncPlugin<
           return;
         }
 
+        const route = options.routes[activity.name];
+
         const template = makeTemplate(
-          normalizeRoute(options.routes[activity.name])[0],
+          typeof route === "function"
+            ? normalizeRoute(route())[0]
+            : normalizeRoute(route)[0],
           options.urlPatternOptions,
         );
 
@@ -371,8 +396,12 @@ export function historySyncPlugin<
           return;
         }
 
+        const route = options.routes[activity.name];
+
         const template = makeTemplate(
-          normalizeRoute(options.routes[activity.name])[0],
+          typeof route === "function"
+            ? normalizeRoute(route())[0]
+            : normalizeRoute(route)[0],
           options.urlPatternOptions,
         );
 
@@ -389,10 +418,15 @@ export function historySyncPlugin<
         );
       },
       onBeforePush({ actionParams, actions: { overrideActionParams } }) {
+        const route = options.routes[actionParams.activityName];
+
         const template = makeTemplate(
-          normalizeRoute(options.routes[actionParams.activityName])[0],
+          typeof route === "function"
+            ? normalizeRoute(route())[0]
+            : normalizeRoute(route)[0],
           options.urlPatternOptions,
         );
+
         const path = template.fill(actionParams.activityParams);
 
         overrideActionParams({
@@ -407,10 +441,15 @@ export function historySyncPlugin<
         actionParams,
         actions: { overrideActionParams, getStack },
       }) {
+        const route = options.routes[actionParams.activityName];
+
         const template = makeTemplate(
-          normalizeRoute(options.routes[actionParams.activityName])[0],
+          typeof route === "function"
+            ? normalizeRoute(route())[0]
+            : normalizeRoute(route)[0],
           options.urlPatternOptions,
         );
+
         const path = template.fill(actionParams.activityParams);
 
         overrideActionParams({
