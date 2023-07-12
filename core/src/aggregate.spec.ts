@@ -1066,7 +1066,7 @@ test("aggregate - 가장 바닥에 있는 Activity는 Pop 되지 않습니다", 
     transitionDuration: 300,
     globalTransitionState: "idle",
   });
-})
+});
 
 test("aggregate - push 후 replace 한 뒤 stepPush를 하고 pop 을 수행하면 pop을 무효화한다.", () => {
   let pushedEvent1: PushedEvent;
@@ -1101,22 +1101,22 @@ test("aggregate - push 후 replace 한 뒤 stepPush를 하고 pop 을 수행하�
         eventDate: enoughPastTime(),
       })),
       (stepPushedEvent1 = makeEvent("StepPushed", {
-        stepId: 's1',
+        stepId: "s1",
         stepParams: {
-          foo: 'bar'
+          foo: "bar",
         },
         eventDate: enoughPastTime(),
       })),
-      (makeEvent("Popped", {
+      makeEvent("Popped", {
         eventDate: enoughPastTime(),
-      }))
+      }),
     ],
     nowTime(),
   );
 
   expect(output1).toStrictEqual({
     activities: [
-     activity({
+      activity({
         id: "a1",
         name: "home",
         transitionState: "exit-done",
@@ -1140,7 +1140,7 @@ test("aggregate - push 후 replace 한 뒤 stepPush를 하고 pop 을 수행하�
         name: "sample",
         transitionState: "enter-done",
         params: {
-          "foo": "bar"
+          foo: "bar",
         },
         steps: [
           {
@@ -1154,22 +1154,22 @@ test("aggregate - push 후 replace 한 뒤 stepPush를 하고 pop 을 수행하�
               foo: "bar",
             },
             enteredBy: stepPushedEvent1,
-          }
+          },
         ],
         enteredBy: replacedEvent1,
         isActive: true,
         isTop: true,
         isRoot: true,
         zIndex: 0,
-      })
+      }),
     ],
     registeredActivities: [
       {
         name: "home",
       },
       {
-        name: "sample"
-      }
+        name: "sample",
+      },
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
