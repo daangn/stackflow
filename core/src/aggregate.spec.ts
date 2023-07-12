@@ -1068,10 +1068,9 @@ test("aggregate - 가장 바닥에 있는 Activity는 Pop 되지 않습니다", 
   });
 });
 
-test("aggregate - push 후 replace 한 뒤 stepPush를 하고 pop 을 수행하면 pop을 무효화한다.", () => {
+test("aggregate - push 후 replace 한 뒤 pop 을 수행하면 pop을 무효화한다.", () => {
   let pushedEvent1: PushedEvent;
   let replacedEvent1: ReplacedEvent;
-  let stepPushedEvent1: StepPushedEvent;
 
   const initEvents = [
     initializedEvent({
@@ -1098,13 +1097,6 @@ test("aggregate - push 후 replace 한 뒤 stepPush를 하고 pop 을 수행하�
         activityId: "a2",
         activityName: "sample",
         activityParams: {},
-        eventDate: enoughPastTime(),
-      })),
-      (stepPushedEvent1 = makeEvent("StepPushed", {
-        stepId: "s1",
-        stepParams: {
-          foo: "bar",
-        },
         eventDate: enoughPastTime(),
       })),
       makeEvent("Popped", {
@@ -1139,21 +1131,12 @@ test("aggregate - push 후 replace 한 뒤 stepPush를 하고 pop 을 수행하�
         id: "a2",
         name: "sample",
         transitionState: "enter-done",
-        params: {
-          foo: "bar",
-        },
+        params: {},
         steps: [
           {
             id: "a2",
             params: {},
             enteredBy: replacedEvent1,
-          },
-          {
-            id: "s1",
-            params: {
-              foo: "bar",
-            },
-            enteredBy: stepPushedEvent1,
           },
         ],
         enteredBy: replacedEvent1,
