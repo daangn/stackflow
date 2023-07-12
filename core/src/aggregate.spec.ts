@@ -1068,6 +1068,97 @@ test("aggregate - 가장 바닥에 있는 Activity는 Pop 되지 않습니다", 
   });
 });
 
+test("aggregate - push 후 replace 한 뒤 pop 을 수행하면 pop을 무효화한다.", () => {
+  let pushedEvent1: PushedEvent;
+  let replacedEvent1: ReplacedEvent;
+
+  const initEvents = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+    registeredEvent({
+      activityName: "home",
+    }),
+    registeredEvent({
+      activityName: "sample",
+    }),
+    (pushedEvent1 = makeEvent("Pushed", {
+      activityId: "a1",
+      activityName: "home",
+      activityParams: {},
+      eventDate: enoughPastTime(),
+    })),
+  ];
+
+  const output1 = aggregate(
+    [
+      ...initEvents,
+      (replacedEvent1 = makeEvent("Replaced", {
+        activityId: "a2",
+        activityName: "sample",
+        activityParams: {},
+        eventDate: enoughPastTime(),
+      })),
+      makeEvent("Popped", {
+        eventDate: enoughPastTime(),
+      }),
+    ],
+    nowTime(),
+  );
+
+  expect(output1).toStrictEqual({
+    activities: [
+      activity({
+        id: "a1",
+        name: "home",
+        transitionState: "exit-done",
+        params: {},
+        steps: [
+          {
+            id: "a1",
+            params: {},
+            enteredBy: pushedEvent1,
+          },
+        ],
+        enteredBy: pushedEvent1,
+        exitedBy: replacedEvent1,
+        isActive: false,
+        isTop: false,
+        isRoot: false,
+        zIndex: -1,
+      }),
+      activity({
+        id: "a2",
+        name: "sample",
+        transitionState: "enter-done",
+        params: {},
+        steps: [
+          {
+            id: "a2",
+            params: {},
+            enteredBy: replacedEvent1,
+          },
+        ],
+        enteredBy: replacedEvent1,
+        isActive: true,
+        isTop: true,
+        isRoot: true,
+        zIndex: 0,
+      }),
+    ],
+    registeredActivities: [
+      {
+        name: "home",
+      },
+      {
+        name: "sample",
+      },
+    ],
+    transitionDuration: 300,
+    globalTransitionState: "idle",
+  });
+});
+
 test("aggregate - transitionDuration 이전에 Pop을 한 경우 exit-active 상태입니다", () => {
   const t = nowTime();
 
