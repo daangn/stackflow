@@ -58,7 +58,11 @@ export default function findTargetActivityIndexes(
       break;
     }
     case "Popped": {
-      const latestActivity = findLatestActiveActivity(activities.slice(1));
+      const sorted = activities
+        .filter(isActivityNotExited)
+        .sort(compareActivitiesByEventDate);
+
+      const latestActivity = sorted.slice(0, sorted.length - 1)[0];
 
       if (latestActivity) {
         targetActivities.push(activities.indexOf(latestActivity));
