@@ -80,6 +80,8 @@ export const basicUIPlugin: (
               [css.globalVars.appBar.height]: _options.appBar?.height,
               [css.globalVars.appBar.iconColor]: _options.appBar?.iconColor,
               [css.globalVars.appBar.textColor]: _options.appBar?.textColor,
+              [css.globalVars.appBar.forceSafeAreaInsetTop]:
+                _options.appBar?.forceSafeAreaInsetTop,
               [css.globalVars.bottomSheet.borderRadius]:
                 _options.bottomSheet?.borderRadius,
               [css.globalVars.modal.borderRadius]: _options.modal?.borderRadius,

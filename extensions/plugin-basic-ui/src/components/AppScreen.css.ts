@@ -125,10 +125,10 @@ export const paper = recipe({
           paddingTop: globalVars.appBar.height,
           "@supports": {
             "(padding-top: constant(safe-area-inset-top))": {
-              paddingTop: `calc(${globalVars.appBar.height} + constant(safe-area-inset-top))`,
+              paddingTop: `calc(${globalVars.appBar.height} + max(${globalVars.appBar.forceSafeAreaInsetTop}, constant(safe-area-inset-top)))`,
             },
             "(padding-top: env(safe-area-inset-top))": {
-              paddingTop: `calc(${globalVars.appBar.height} + env(safe-area-inset-top))`,
+              paddingTop: `calc(${globalVars.appBar.height} + max(${globalVars.appBar.forceSafeAreaInsetTop}, env(safe-area-inset-top)))`,
             },
           },
         },
