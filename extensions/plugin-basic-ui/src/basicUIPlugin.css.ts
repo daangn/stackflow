@@ -27,7 +27,7 @@ export const globalVars = createGlobalThemeContract(
       backgroundColorTransitionDuration:
         "app-bar-background-color-transition-duration",
       overflow: "app-bar-overflow",
-      forceSafeAreaInsetTop: "force-safe-area-inset-top",
+      minSafeAreaInsetTop: "app-bar-min-safe-area-inset-top",
     },
     bottomSheet: {
       borderRadius: "bottom-sheet-border-radius",
@@ -61,7 +61,7 @@ const androidValues: GlobalVars = {
     backgroundColor: "#fff",
     backgroundColorTransitionDuration: "0s",
     overflow: "hidden",
-    forceSafeAreaInsetTop: "0px",
+    minSafeAreaInsetTop: "0px",
   },
   bottomSheet: {
     borderRadius: "1rem",

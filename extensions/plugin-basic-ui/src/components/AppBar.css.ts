@@ -109,8 +109,8 @@ export const appBar = recipe({
 
 export const safeArea = style({
   height: [
-    `max(${globalVars.appBar.forceSafeAreaInsetTop}, constant(safe-area-inset-top))`,
-    `max(${globalVars.appBar.forceSafeAreaInsetTop}, env(safe-area-inset-top))`,
+    `max(${globalVars.appBar.minSafeAreaInsetTop}, constant(safe-area-inset-top))`,
+    `max(${globalVars.appBar.minSafeAreaInsetTop}, env(safe-area-inset-top))`,
   ],
 });
 
@@ -195,8 +195,8 @@ export const centerMain = recipe({
         transform: "translate(-50%)",
         height: globalVars.appBar.height,
         top: [
-          `max(${globalVars.appBar.forceSafeAreaInsetTop}, constant(safe-area-inset-top))`,
-          `max(${globalVars.appBar.forceSafeAreaInsetTop}, env(safe-area-inset-top))`,
+          `max(${globalVars.appBar.minSafeAreaInsetTop}, constant(safe-area-inset-top))`,
+          `max(${globalVars.appBar.minSafeAreaInsetTop}, env(safe-area-inset-top))`,
         ],
       },
     },
