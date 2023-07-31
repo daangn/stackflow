@@ -20,7 +20,7 @@ export type PreloadPluginOptions<
 
 export function preloadPlugin<T extends { [activityName: string]: unknown }>(
   options: PreloadPluginOptions<T>,
-): StackflowReactPlugin<T> {
+): StackflowReactPlugin {
   return () => ({
     key: "plugin-preload",
     wrapStack({ stack }) {

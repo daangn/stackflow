@@ -29,7 +29,7 @@ export function googleAnalyticsPlugin<
   trackingId,
   userInfo,
   useTitle = false,
-}: GoogleAnalyticsPluginOptions): StackflowReactPlugin<T> {
+}: GoogleAnalyticsPluginOptions): StackflowReactPlugin {
   return () => ({
     key: "@daangn/stackflow-google-analytics-plugin",
     onInit() {

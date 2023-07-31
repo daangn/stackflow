@@ -11,7 +11,7 @@ export const useSyncExternalStore: typeof React.useSyncExternalStore =
       });
 
       return dispose;
-    });
+    }, []);
 
     return state;
   });

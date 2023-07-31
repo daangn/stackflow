@@ -1,6 +1,6 @@
 import type { Activity, Stack, StackflowPlugin } from "@stackflow/core";
 
-export type StackflowReactPlugin<T = never> = () => {
+export type StackflowReactPlugin = () => {
   /**
    * Determine how to render by using the stack state
    */

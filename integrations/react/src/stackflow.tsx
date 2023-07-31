@@ -29,8 +29,8 @@ function parseActionOptions(options?: { animate?: boolean }) {
     return { skipActiveState: false };
   }
 
-  const isNullableAnimateOption =
-    options.animate === undefined || options.animate == null;
+  const isNullableAnimateOption = options.animate == null;
+  
   if (isNullableAnimateOption) {
     return { skipActiveState: false };
   }
@@ -43,7 +43,7 @@ export type StackComponentType = React.FC<{
 }>;
 
 type StackflowPluginsEntry<T extends BaseActivities> =
-  | StackflowReactPlugin<T>
+  | StackflowReactPlugin
   | StackflowPluginsEntry<T>[];
 
 export type StackflowOptions<T extends BaseActivities> = {
@@ -120,7 +120,7 @@ export function stackflow<T extends BaseActivities>(
 ): StackflowOutput<T> {
   const plugins = (options.plugins ?? [])
     .flat(Infinity as 0)
-    .map((p) => p as StackflowReactPlugin<T>);
+    .map((p) => p as StackflowReactPlugin);
   const pluginInstances = plugins.map((plugin) => plugin());
 
   const activityComponentMap = Object.entries(options.activities).reduce(
@@ -285,7 +285,7 @@ export function stackflow<T extends BaseActivities>(
 
       [plugin]
         .flat(Infinity as 0)
-        .map((p) => p as StackflowReactPlugin<T>)
+        .map((p) => p as StackflowReactPlugin)
         .forEach((p) => {
           plugins.push(p);
           pluginInstances.push(p());
