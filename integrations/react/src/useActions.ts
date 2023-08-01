@@ -11,8 +11,8 @@ function parseActionOptions(options?: { animate?: boolean }) {
     return { skipActiveState: false };
   }
 
-  const isNullableAnimateOption =
-    options.animate === undefined || options.animate == null;
+  const isNullableAnimateOption = options.animate == null;
+  
   if (isNullableAnimateOption) {
     return { skipActiveState: false };
   }

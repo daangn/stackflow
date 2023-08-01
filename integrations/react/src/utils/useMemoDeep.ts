@@ -10,7 +10,7 @@ export function useMemoDeep<T>(next: T) {
     if (!isEqual) {
       previousRef.current = next;
     }
-  });
+  }, [next]);
 
   return isEqual ? previous : next;
 }
