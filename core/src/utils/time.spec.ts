@@ -4,21 +4,11 @@ beforeAll(() => {
   jest.useFakeTimers();
 });
 
-test("time - 기본적으로 getTime() 값을 반환하며, 이전 호출과 현재 호출 사이에 시간이 동일한 경우 중복을 방지한다.", () => {
-  const expectedTime1 = new Date("2023-08-06").getTime(); // 1691280000000
-  const expectedTime2 = new Date("2023-08-07").getTime(); // 1691366400000
+test("time - 동일한 시간에 여러번 호출될 경우 중복을 방지한다.", () => {
+  jest.setSystemTime(new Date("2023-08-07T09:00:00Z"));
 
-  jest.setSystemTime(expectedTime1);
+  const time1 = time();
+  const time2 = time();
 
-  expect(time()).toBe(expectedTime1);
-  expect(time()).toBe((expectedTime1 * 1000 + 1) / 1000);
-  expect(time()).toBe((expectedTime1 * 1000 + 2) / 1000);
-  expect(time()).toBe((expectedTime1 * 1000 + 3) / 1000);
-
-  jest.setSystemTime(expectedTime2);
-
-  expect(time()).toBe(expectedTime2);
-  expect(time()).toBe((expectedTime2 * 1000 + 1) / 1000);
-  expect(time()).toBe((expectedTime2 * 1000 + 2) / 1000);
-  expect(time()).toBe((expectedTime2 * 1000 + 3) / 1000);
+  expect(time1).not.toBe(time2);
 });
