@@ -76,8 +76,8 @@ export const appBar = recipe({
         boxShadow: `inset 0px calc(-1 * ${globalVars.appBar.borderSize}) 0 ${globalVars.appBar.borderColor}`,
       },
     },
-    presentModalFullScreen: {
-      true: {
+    modalPresentationStyle: {
+      fullScreen: {
         selectors: {
           [`${cupertino} &`]: {
             transform: "translate3d(0, 100vh, 0)",
@@ -99,6 +99,23 @@ export const appBar = recipe({
               ...appBarCommonTransition,
               transform: vars.transitionDuration,
               opacity: vars.transitionDuration,
+            }),
+          },
+        },
+      },
+    },
+    activityEnterStyle: {
+      slideInLeft: {
+        selectors: {
+          [`${android} &`]: {
+            opacity: 1,
+            transform: "translate3d(0, 0, 0)",
+          },
+          [`${android} ${exitActive} &`]: {
+            transform: "translate3d(100%, 0, 0)",
+            transition: transitions({
+              ...appBarCommonTransition,
+              transform: "0s",
             }),
           },
         },

@@ -36,7 +36,8 @@ export type AppScreenProps = Partial<
     "theme" | "modalPresentationStyle" | "ref" | "key"
   >;
   preventSwipeBack?: boolean;
-  modalPresentationStyle?: "fullScreen";
+  CUPERTINO_ONLY_modalPresentationStyle?: "fullScreen";
+  ANDROID_ONLY_activityEnterStyle?: "slideInLeft";
   children: React.ReactNode;
 };
 const AppScreen: React.FC<AppScreenProps> = ({
@@ -44,7 +45,8 @@ const AppScreen: React.FC<AppScreenProps> = ({
   dimBackgroundColor,
   appBar,
   preventSwipeBack,
-  modalPresentationStyle,
+  CUPERTINO_ONLY_modalPresentationStyle,
+  ANDROID_ONLY_activityEnterStyle,
   children,
 }) => {
   const globalOptions = useGlobalOptions();
@@ -58,43 +60,77 @@ const AppScreen: React.FC<AppScreenProps> = ({
   const edgeRef = useRef<HTMLDivElement>(null);
   const appBarRef = useRef<HTMLDivElement>(null);
 
-  const presentModalFullScreen = modalPresentationStyle === "fullScreen";
-  const swipeBackPrevented = preventSwipeBack || presentModalFullScreen;
+  const modalPresentationStyle =
+    globalOptions.theme === "cupertino"
+      ? CUPERTINO_ONLY_modalPresentationStyle
+      : undefined;
+  const activityEnterStyle =
+    globalOptions.theme === "android"
+      ? ANDROID_ONLY_activityEnterStyle
+      : undefined;
+
+  const swipeBackPrevented =
+    preventSwipeBack || modalPresentationStyle === "fullScreen";
+
+  const hasAppBar = !!appBar;
+
+  const zIndexBase = (activity?.zIndex ?? 0) * 5;
+
+  let zIndexDim: number;
+  let zIndexPaper: number;
+  let zIndexEdge: number;
+  let zIndexAppBar: number;
+
+  switch (globalOptions.theme) {
+    case "cupertino": {
+      zIndexDim =
+        zIndexBase + (modalPresentationStyle === "fullScreen" ? 2 : 0);
+      zIndexPaper =
+        zIndexBase +
+        (hasAppBar && modalPresentationStyle !== "fullScreen" ? 1 : 3);
+      zIndexEdge = zIndexBase + 4;
+      zIndexAppBar = zIndexBase + 7;
+      break;
+    }
+    case "android":
+    default: {
+      zIndexDim = zIndexBase;
+      zIndexPaper = zIndexBase + (activityEnterStyle === "slideInLeft" ? 1 : 3);
+      zIndexEdge = zIndexBase + 4;
+      zIndexAppBar =
+        zIndexBase + (activityEnterStyle === "slideInLeft" ? 7 : 4);
+      break;
+    }
+  }
+
+  const transitionState = activity?.transitionState ?? "enter-done";
+  const lazyTransitionState = useLazy(transitionState);
 
   useStyleEffectHide({
     refs: [appScreenRef],
     hasEffect: true,
   });
   useStyleEffectOffset({
-    theme: globalOptions.theme,
     refs:
-      globalOptions.theme === "cupertino" ? [paperRef] : [paperRef, appBarRef],
-    hasEffect: !presentModalFullScreen,
+      globalOptions.theme === "cupertino" ||
+      activityEnterStyle === "slideInLeft"
+        ? [paperRef]
+        : [paperRef, appBarRef],
+    theme: globalOptions.theme,
+    activityEnterStyle,
+    hasEffect: modalPresentationStyle !== "fullScreen",
   });
   useStyleEffectSwipeBack({
-    theme: globalOptions.theme,
     dimRef,
     edgeRef,
     paperRef,
-    hasEffect: true,
+    theme: globalOptions.theme,
     prevented: swipeBackPrevented,
     onSwiped() {
       pop();
     },
+    hasEffect: true,
   });
-
-  const hasAppBar = !!appBar;
-
-  const zIndexBase = (activity?.zIndex ?? 0) * 5;
-  const zIndexDim = zIndexBase;
-  const zIndexPaper =
-    zIndexBase + (globalOptions.theme === "cupertino" && hasAppBar ? 1 : 3);
-  const zIndexEdge = zIndexBase + 4;
-  const zIndexAppBar =
-    globalOptions.theme === "cupertino" ? zIndexBase + 7 : zIndexBase + 4;
-
-  const transitionState = activity?.transitionState ?? "enter-done";
-  const lazyTransitionState = useLazy(transitionState);
 
   const onAppBarTopClick: React.MouseEventHandler = (e) => {
     appBar?.onTopClick?.(e);
@@ -148,12 +184,15 @@ const AppScreen: React.FC<AppScreenProps> = ({
           }),
         )}
       >
-        <div className={css.dim} ref={dimRef} />
+        {activityEnterStyle !== "slideInLeft" && (
+          <div className={css.dim} ref={dimRef} />
+        )}
         {appBar && (
           <AppBar
             {...appBar}
             ref={appBarRef}
             modalPresentationStyle={modalPresentationStyle}
+            activityEnterStyle={activityEnterStyle}
             onTopClick={onAppBarTopClick}
           />
         )}
@@ -161,7 +200,8 @@ const AppScreen: React.FC<AppScreenProps> = ({
           key={activity?.id}
           className={css.paper({
             hasAppBar,
-            presentModalFullScreen,
+            modalPresentationStyle,
+            activityEnterStyle,
           })}
           ref={paperRef}
         >
