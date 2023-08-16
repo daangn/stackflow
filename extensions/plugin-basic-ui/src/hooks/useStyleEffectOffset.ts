@@ -11,7 +11,7 @@ export function useStyleEffectOffset({
   refs,
   theme,
   activityEnterStyle,
-  hasEffect,
+  hasEffect = false,
 }: {
   refs: Array<React.RefObject<any>>;
   theme: "android" | "cupertino";
