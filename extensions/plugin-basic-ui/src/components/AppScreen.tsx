@@ -147,6 +147,9 @@ const AppScreen: React.FC<AppScreenProps> = ({
                 : "0ms",
           }),
         )}
+        data-stackflow-component-name="AppScreen"
+        data-stackflow-activity-id={activity?.id}
+        data-stackflow-activity-is-active={activity?.isActive}
       >
         <div className={css.dim} ref={dimRef} />
         {appBar && (
