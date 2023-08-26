@@ -431,11 +431,16 @@ export function historySyncPlugin<
           enteredActivities.length > 0
             ? enteredActivities[enteredActivities.length - 1]
             : null;
-        const popCount = previousActivity?.steps.length
-          ? previousActivity.steps.length
-          : 0;
 
-        replacePopCount += popCount;
+        if (previousActivity) {
+          popFlag += previousActivity.steps.length - 1;
+
+          do {
+            for (let i = 0; i < previousActivity.steps.length - 1; i += 1) {
+              queue(history.back);
+            }
+          } while (!safeParseState(getCurrentState({ history })));
+        }
       },
       onBeforeStepPop({ actions: { getStack } }) {
         const { activities } = getStack();
