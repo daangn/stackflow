@@ -48,7 +48,6 @@ export function historySyncPlugin<
   return () => {
     let pushFlag = 0;
     let popFlag = 0;
-    let replacePopCount = 0;
 
     const queue = makeQueue(history);
 
@@ -458,48 +457,20 @@ export function historySyncPlugin<
         const currentActivity = activities.find(
           (activity) => activity.isActive,
         );
-        const enteredActivities = activities.filter(
-          (activity) =>
-            activity.transitionState === "enter-active" ||
-            activity.transitionState === "enter-done",
-        );
-        const currentActivityIndex = enteredActivities.findIndex(
-          (activity) => activity.isActive,
-        );
-        const previousActivity =
-          currentActivityIndex && currentActivityIndex > 0
-            ? enteredActivities[currentActivityIndex - 1]
-            : null;
 
-        const currentStepsLength = currentActivity?.steps.length ?? 0;
+        if (currentActivity) {
+          const { isRoot, steps } = currentActivity;
 
-        let popCount = currentStepsLength;
+          const popCount = isRoot ? 0 : steps.length;
 
-        if (
-          currentActivity?.enteredBy.name === "Replaced" &&
-          previousActivity
-        ) {
-          // replace 이후에 stepPush 만 진행하고 pop 을 수행하는 경우
-          const shouldPopForCurrentStepPush = currentStepsLength > 1;
-          popCount = shouldPopForCurrentStepPush
-            ? replacePopCount + currentStepsLength
-            : replacePopCount;
+          popFlag += popCount;
+
+          do {
+            for (let i = 0; i < popCount; i += 1) {
+              queue(history.back);
+            }
+          } while (!safeParseState(getCurrentState({ history })));
         }
-        popFlag += popCount;
-
-        do {
-          for (let i = 0; i < popCount; i += 1) {
-            queue(history.back);
-          }
-
-          if (
-            currentActivity?.enteredBy.name === "Replaced" &&
-            previousActivity &&
-            replacePopCount > 0
-          ) {
-            replacePopCount = 0;
-          }
-        } while (!safeParseState(getCurrentState({ history })));
       },
     };
   };
