@@ -1166,4 +1166,104 @@ describe("historySyncPlugin", () => {
     expect(path(history.location)).toEqual("/home/");
     expect(activeActivity(actions.getStack())?.name).toEqual("Home");
   });
+
+  test("historySyncPlugin - push > push > stepPush > pop", async () => {
+    actions.push({
+      activityId: "a1",
+      activityName: "Article",
+      activityParams: {
+        articleId: "1",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s1",
+      stepParams: {
+        articleId: "2",
+      },
+    });
+
+    actions.push({
+      activityId: "a2",
+      activityName: "Article",
+      activityParams: {
+        articleId: "3",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s2",
+      stepParams: {
+        articleId: "4",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s3",
+      stepParams: {
+        articleId: "5",
+      },
+    });
+
+    actions.replace({
+      activityId: "a3",
+      activityName: "ThirdActivity",
+      activityParams: {
+        thirdId: "1",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s3",
+      stepParams: {
+        thirdId: "2",
+      },
+    });
+
+    actions.pop();
+
+    await delay(ENOUGH_DELAY_TIME);
+
+    expect(path(history.location)).toEqual("/articles/2/");
+    expect(activeActivity(actions.getStack())?.name).toEqual("Article");
+    expect(history.index).toEqual(2);
+  });
+
+  test("historySyncPlugin - push > stepPush > stepPush > replace", async () => {
+    actions.push({
+      activityId: "a1",
+      activityName: "Article",
+      activityParams: {
+        articleId: "1",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s1",
+      stepParams: {
+        articleId: "2",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s2",
+      stepParams: {
+        articleId: "3",
+      },
+    });
+
+    actions.replace({
+      activityId: "a3",
+      activityName: "ThirdActivity",
+      activityParams: {
+        thirdId: "1",
+      },
+    });
+
+    await delay(ENOUGH_DELAY_TIME);
+
+    expect(path(history.location)).toEqual("/third/1/");
+    expect(activeActivity(actions.getStack())?.name).toEqual("ThirdActivity");
+    expect(history.index).toEqual(1);
+  });
 });
