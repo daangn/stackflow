@@ -58,8 +58,8 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
   (
     {
       title,
-      renderLeft: appendLeft,
-      renderRight: appendRight,
+      renderLeft,
+      renderRight,
       backButton,
       closeButton,
       closeButtonLocation = "left",
@@ -260,7 +260,7 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
     const hasLeft = !!(
       (closeButtonLocation === "left" && closeButton) ||
       backButton ||
-      appendLeft
+      renderLeft
     );
 
     return (
@@ -299,7 +299,7 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
           <div className={css.left}>
             {closeButtonLocation === "left" && renderCloseButton()}
             {renderBackButton()}
-            {appendLeft?.()}
+            {renderLeft?.()}
           </div>
           <div ref={centerRef} className={css.center}>
             <div
@@ -321,7 +321,7 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
             </div>
           </div>
           <div className={css.right}>
-            {appendRight?.()}
+            {renderRight?.()}
             {closeButtonLocation === "right" && renderCloseButton()}
           </div>
         </div>
