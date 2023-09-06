@@ -29,8 +29,8 @@ type AppBarProps = Partial<
   >
 > & {
   title?: React.ReactNode;
-  appendLeft?: () => React.ReactNode;
-  appendRight?: () => React.ReactNode;
+  renderLeft?: () => React.ReactNode;
+  renderRight?: () => React.ReactNode;
   backButton?:
     | {
         renderIcon?: () => React.ReactNode;
@@ -58,8 +58,8 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
   (
     {
       title,
-      appendLeft,
-      appendRight,
+      renderLeft: appendLeft,
+      renderRight: appendRight,
       backButton,
       closeButton,
       closeButtonLocation = "left",
