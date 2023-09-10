@@ -4,27 +4,20 @@ import type { History } from "history";
  * This function is required to avoid any race conditions caused by asynchronous history updates.
  */
 export const makeQueue = (history: History) => {
-  let pending = false;
+  let previousTask = Promise.resolve();
 
   const queue = (cb: () => void) => {
-    const start = () => {
-      pending = true;
-      const clean = history.listen(() => {
-        clean();
-        pending = false;
-      });
+    previousTask = previousTask.then(
+      () =>
+        new Promise<void>((resolve) => {
+          const clean = history.listen(() => {
+            clean();
+            resolve();
+          });
 
-      cb();
-    };
-
-    if (pending) {
-      const clean = history.listen(() => {
-        clean();
-        start();
-      });
-    } else {
-      start();
-    }
+          cb();
+        }),
+    );
   };
 
   return queue;
