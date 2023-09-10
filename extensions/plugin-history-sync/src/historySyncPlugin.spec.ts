@@ -17,6 +17,48 @@ const MINUTE = 60 * SECOND;
 // 2프레임 + 1프레임
 const ENOUGH_DELAY_TIME = 32 + 16;
 
+declare global {
+  interface ProxyConstructor {
+    new <TSource extends object, TTarget extends object>(
+      target: TSource,
+      handler: ProxyHandler<TSource>,
+    ): TTarget;
+  }
+}
+
+type PromiseProxy<T extends Record<string, (...args: any[]) => any>> = {
+  [K in keyof T]: (...args: Parameters<T[K]>) => Promise<ReturnType<T[K]>>;
+};
+
+const makeActionsProxy = <T extends CoreStore["actions"]>({
+  history,
+  actions,
+}: {
+  history: MemoryHistory;
+  actions: T;
+}): PromiseProxy<T> =>
+  new Proxy(actions, {
+    get<K extends keyof CoreStore["actions"]>(target: typeof actions, p: K) {
+      return (...args: Parameters<typeof target[K]>) =>
+        new Promise<ReturnType<typeof target[K]>>((resolve) => {
+          let ret: ReturnType<typeof target[K]>;
+
+          const clean = history.listen(() => {
+            clean();
+            resolve(ret);
+          });
+
+          // @ts-ignore
+          ret = target[p](...args);
+
+          if (p === "getStack") {
+            clean();
+            resolve(ret);
+          }
+        });
+    },
+  });
+
 let dt = 0;
 
 const enoughPastTime = () => {
@@ -88,7 +130,7 @@ const activeActivity = (stack: Stack) =>
 
 describe("historySyncPlugin", () => {
   let history: MemoryHistory;
-  let actions: CoreStore["actions"];
+  let actions: PromiseProxy<CoreStore["actions"]>;
 
   /**
    * 매 테스트마다 history와 coreStore를 초기화합니다
@@ -112,7 +154,10 @@ describe("historySyncPlugin", () => {
       ],
     });
 
-    actions = coreStore.actions;
+    actions = makeActionsProxy({
+      history,
+      actions: coreStore.actions,
+    });
   });
 
   test("historySyncPlugin - 초기에 매칭하는 라우트가 없는 경우 fallbackActivity에 설정한 액티비티의 URL로 이동합니다", () => {
@@ -173,7 +218,10 @@ describe("historySyncPlugin", () => {
       ],
     });
 
-    actions = coreStore.actions;
+    actions = makeActionsProxy({
+      history,
+      actions: coreStore.actions,
+    });
 
     actions.push({
       activityId: "a1",
