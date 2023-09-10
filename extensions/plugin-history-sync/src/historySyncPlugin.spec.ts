@@ -160,11 +160,11 @@ describe("historySyncPlugin", () => {
     });
   });
 
-  test("historySyncPlugin - 초기에 매칭하는 라우트가 없는 경우 fallbackActivity에 설정한 액티비티의 URL로 이동합니다", () => {
+  test("historySyncPlugin - 초기에 매칭하는 라우트가 없는 경우 fallbackActivity에 설정한 액티비티의 URL로 이동합니다", async () => {
     expect(path(history.location)).toEqual("/home/");
   });
 
-  test("historySyncPlugin - 초기에 매칭하는 라우트가 있는 경우 해당 액티비티의 URL로 이동합니다", () => {
+  test("historySyncPlugin - 초기에 매칭하는 라우트가 있는 경우 해당 액티비티의 URL로 이동합니다", async () => {
     history = createMemoryHistory({
       initialEntries: ["/articles/123/?title=hello"],
     });
@@ -187,7 +187,7 @@ describe("historySyncPlugin", () => {
     expect(activeActivity(actions.getStack())?.params.title).toEqual("hello");
   });
 
-  test("historySyncPlugin - actions.push() 후에, URL 상태가 알맞게 바뀝니다", () => {
+  test("historySyncPlugin - actions.push() 후에, URL 상태가 알맞게 바뀝니다", async () => {
     actions.push({
       activityId: "a1",
       activityName: "Article",
@@ -200,7 +200,7 @@ describe("historySyncPlugin", () => {
     expect(path(history.location)).toEqual("/articles/1234/?title=hello");
   });
 
-  test("historySyncPlugin - useHash: true이더라도, actions.push() 후에, URL 상태가 알맞게 바뀝니다", () => {
+  test("historySyncPlugin - useHash: true이더라도, actions.push() 후에, URL 상태가 알맞게 바뀝니다", async () => {
     history = createMemoryHistory();
 
     const coreStore = stackflow({
@@ -235,7 +235,7 @@ describe("historySyncPlugin", () => {
     expect(path(history.location)).toEqual("/#/articles/1234/?title=hello");
   });
 
-  test("historySyncPlugin - actions.replace() 후에, URL 상태가 알맞게 바뀝니다", () => {
+  test("historySyncPlugin - actions.replace() 후에, URL 상태가 알맞게 바뀝니다", async () => {
     actions.replace({
       activityId: "a1",
       activityName: "Article",
@@ -249,7 +249,7 @@ describe("historySyncPlugin", () => {
     expect(history.index).toEqual(0);
   });
 
-  test("historySyncPlugin - actions.push(), actions.pop()을 여러번 하더라도, URL 상태가 알맞게 바뀝니다", () => {
+  test("historySyncPlugin - actions.push(), actions.pop()을 여러번 하더라도, URL 상태가 알맞게 바뀝니다", async () => {
     actions.push({
       activityId: "a1",
       activityName: "Article",
@@ -294,7 +294,7 @@ describe("historySyncPlugin", () => {
     expect(history.index).toEqual(0);
   });
 
-  test("historySyncPlugin - 히스토리를 back하는 경우, 스택 상태가 알맞게 바뀝니다", () => {
+  test("historySyncPlugin - 히스토리를 back하는 경우, 스택 상태가 알맞게 바뀝니다", async () => {
     actions.push({
       activityId: "a1",
       activityName: "Article",
@@ -575,7 +575,7 @@ describe("historySyncPlugin", () => {
     expect(history.index).toEqual(0);
   });
 
-  test("historySyncPlugin - 여러 행동 후에 새로고침을 하고 히스토리 조작을 하더라도, 스택 상태가 알맞게 바뀝니다", () => {
+  test("historySyncPlugin - 여러 행동 후에 새로고침을 하고 히스토리 조작을 하더라도, 스택 상태가 알맞게 바뀝니다", async () => {
     actions.push({
       activityId: "a1",
       activityName: "Article",
