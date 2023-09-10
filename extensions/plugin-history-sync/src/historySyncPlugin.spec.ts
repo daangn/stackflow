@@ -14,9 +14,6 @@ import { historySyncPlugin } from "./historySyncPlugin";
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
 
-// 2프레임 + 1프레임
-const ENOUGH_DELAY_TIME = 32 + 16;
-
 declare global {
   interface ProxyConstructor {
     new <TSource extends object, TTarget extends object>(
@@ -31,30 +28,25 @@ type PromiseProxy<T extends Record<string, (...args: any[]) => any>> = {
 };
 
 const makeActionsProxy = <T extends CoreStore["actions"]>({
-  history,
   actions,
 }: {
-  history: MemoryHistory;
   actions: T;
 }): PromiseProxy<T> =>
   new Proxy(actions, {
     get<K extends keyof CoreStore["actions"]>(target: typeof actions, p: K) {
       return (...args: Parameters<typeof target[K]>) =>
         new Promise<ReturnType<typeof target[K]>>((resolve) => {
-          let ret: ReturnType<typeof target[K]>;
-
-          const clean = history.listen(() => {
-            clean();
-            resolve(ret);
-          });
-
           // @ts-ignore
-          ret = target[p](...args);
+          const ret: ReturnType<typeof target[K]> = target[p](...args);
 
           if (p === "getStack") {
-            clean();
             resolve(ret);
+            return;
           }
+
+          setTimeout(() => {
+            resolve(ret);
+          }, 16);
         });
     },
   });
@@ -65,12 +57,6 @@ const enoughPastTime = () => {
   dt += 1;
   return new Date(Date.now() - MINUTE).getTime() + dt;
 };
-
-async function delay(ms: number) {
-  return new Promise<void>((res) => {
-    setTimeout(res, ms);
-  });
-}
 
 const path = (location: Location) =>
   location.pathname + location.search + location.hash;
@@ -155,7 +141,6 @@ describe("historySyncPlugin", () => {
     });
 
     actions = makeActionsProxy({
-      history,
       actions: coreStore.actions,
     });
   });
@@ -188,7 +173,7 @@ describe("historySyncPlugin", () => {
   });
 
   test("historySyncPlugin - actions.push() 후에, URL 상태가 알맞게 바뀝니다", async () => {
-    actions.push({
+    await actions.push({
       activityId: "a1",
       activityName: "Article",
       activityParams: {
@@ -219,11 +204,10 @@ describe("historySyncPlugin", () => {
     });
 
     actions = makeActionsProxy({
-      history,
       actions: coreStore.actions,
     });
 
-    actions.push({
+    await actions.push({
       activityId: "a1",
       activityName: "Article",
       activityParams: {
@@ -236,7 +220,7 @@ describe("historySyncPlugin", () => {
   });
 
   test("historySyncPlugin - actions.replace() 후에, URL 상태가 알맞게 바뀝니다", async () => {
-    actions.replace({
+    await actions.replace({
       activityId: "a1",
       activityName: "Article",
       activityParams: {
@@ -250,7 +234,7 @@ describe("historySyncPlugin", () => {
   });
 
   test("historySyncPlugin - actions.push(), actions.pop()을 여러번 하더라도, URL 상태가 알맞게 바뀝니다", async () => {
-    actions.push({
+    await actions.push({
       activityId: "a1",
       activityName: "Article",
       activityParams: {
@@ -260,7 +244,7 @@ describe("historySyncPlugin", () => {
     });
     expect(path(history.location)).toEqual("/articles/1/?title=hello");
 
-    actions.push({
+    await actions.push({
       activityId: "a2",
       activityName: "Article",
       activityParams: {
@@ -270,7 +254,7 @@ describe("historySyncPlugin", () => {
     });
     expect(path(history.location)).toEqual("/articles/2/?title=hello");
 
-    actions.push({
+    await actions.push({
       activityId: "a3",
       activityName: "Article",
       activityParams: {
@@ -281,21 +265,21 @@ describe("historySyncPlugin", () => {
     expect(path(history.location)).toEqual("/articles/3/?title=hello");
     expect(history.index).toEqual(3);
 
-    actions.pop();
+    await actions.pop();
     expect(path(history.location)).toEqual("/articles/2/?title=hello");
     expect(history.index).toEqual(2);
 
-    actions.pop();
+    await actions.pop();
     expect(path(history.location)).toEqual("/articles/1/?title=hello");
     expect(history.index).toEqual(1);
 
-    actions.pop();
+    await actions.pop();
     expect(path(history.location)).toEqual("/home/");
     expect(history.index).toEqual(0);
   });
 
   test("historySyncPlugin - 히스토리를 back하는 경우, 스택 상태가 알맞게 바뀝니다", async () => {
-    actions.push({
+    await actions.push({
       activityId: "a1",
       activityName: "Article",
       activityParams: {
@@ -305,11 +289,11 @@ describe("historySyncPlugin", () => {
     });
 
     history.back();
-    expect(activeActivity(actions.getStack())?.name).toEqual("Home");
+    expect(activeActivity(await actions.getStack())?.name).toEqual("Home");
   });
 
   test("historySyncPlugin - 히스토리를 여러번 back하더라도, 스택 상태가 알맞게 바뀝니다", async () => {
-    actions.push({
+    await actions.push({
       activityId: "a1",
       activityName: "Article",
       activityParams: {
@@ -317,7 +301,7 @@ describe("historySyncPlugin", () => {
         title: "hello",
       },
     });
-    actions.push({
+    await actions.push({
       activityId: "a2",
       activityName: "Article",
       activityParams: {
@@ -325,7 +309,7 @@ describe("historySyncPlugin", () => {
         title: "hello",
       },
     });
-    actions.push({
+    await actions.push({
       activityId: "a3",
       activityName: "Article",
       activityParams: {
@@ -335,19 +319,23 @@ describe("historySyncPlugin", () => {
     });
 
     history.back();
-    expect(activeActivity(actions.getStack())?.name).toEqual("Article");
-    expect(activeActivity(actions.getStack())?.params?.articleId).toEqual("2");
+    expect(activeActivity(await actions.getStack())?.name).toEqual("Article");
+    expect(activeActivity(await actions.getStack())?.params?.articleId).toEqual(
+      "2",
+    );
 
     history.back();
-    expect(activeActivity(actions.getStack())?.name).toEqual("Article");
-    expect(activeActivity(actions.getStack())?.params?.articleId).toEqual("1");
+    expect(activeActivity(await actions.getStack())?.name).toEqual("Article");
+    expect(activeActivity(await actions.getStack())?.params?.articleId).toEqual(
+      "1",
+    );
 
     history.back();
-    expect(activeActivity(actions.getStack())?.name).toEqual("Home");
+    expect(activeActivity(await actions.getStack())?.name).toEqual("Home");
   });
 
   test("historySyncPlugin - 앞으로 가기를 해도, 스택 상태가 알맞게 바뀝니다", async () => {
-    actions.push({
+    await actions.push({
       activityId: "a1",
       activityName: "Article",
       activityParams: {
@@ -355,7 +343,7 @@ describe("historySyncPlugin", () => {
         title: "hello",
       },
     });
-    actions.push({
+    await actions.push({
       activityId: "a2",
       activityName: "Article",
       activityParams: {
@@ -363,7 +351,7 @@ describe("historySyncPlugin", () => {
         title: "hello",
       },
     });
-    actions.push({
+    await actions.push({
       activityId: "a3",
       activityName: "Article",
       activityParams: {
@@ -377,20 +365,26 @@ describe("historySyncPlugin", () => {
     history.back();
 
     history.go(1);
-    expect(activeActivity(actions.getStack())?.name).toEqual("Article");
-    expect(activeActivity(actions.getStack())?.params?.articleId).toEqual("1");
+    expect(activeActivity(await actions.getStack())?.name).toEqual("Article");
+    expect(activeActivity(await actions.getStack())?.params?.articleId).toEqual(
+      "1",
+    );
 
     history.go(1);
-    expect(activeActivity(actions.getStack())?.name).toEqual("Article");
-    expect(activeActivity(actions.getStack())?.params?.articleId).toEqual("2");
+    expect(activeActivity(await actions.getStack())?.name).toEqual("Article");
+    expect(activeActivity(await actions.getStack())?.params?.articleId).toEqual(
+      "2",
+    );
 
     history.go(1);
-    expect(activeActivity(actions.getStack())?.name).toEqual("Article");
-    expect(activeActivity(actions.getStack())?.params?.articleId).toEqual("3");
+    expect(activeActivity(await actions.getStack())?.name).toEqual("Article");
+    expect(activeActivity(await actions.getStack())?.params?.articleId).toEqual(
+      "3",
+    );
   });
 
   test("historySyncPlugin - actions.stepPush()를 하면, 스택 상태가 알맞게 바뀌고, pop을 하면 한번에 여러 URL 상태가 사라집니다", async () => {
-    actions.push({
+    await actions.push({
       activityId: "a1",
       activityName: "Article",
       activityParams: {
@@ -398,7 +392,7 @@ describe("historySyncPlugin", () => {
         title: "hello",
       },
     });
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s1",
       stepParams: {
         articleId: "11",
@@ -408,7 +402,7 @@ describe("historySyncPlugin", () => {
     expect(path(history.location)).toEqual("/articles/11/?title=hello");
     expect(history.index).toEqual(2);
 
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s2",
       stepParams: {
         articleId: "12",
@@ -418,7 +412,7 @@ describe("historySyncPlugin", () => {
     expect(path(history.location)).toEqual("/articles/12/?title=hello");
     expect(history.index).toEqual(3);
 
-    actions.push({
+    await actions.push({
       activityId: "a2",
       activityName: "Article",
       activityParams: {
@@ -429,17 +423,18 @@ describe("historySyncPlugin", () => {
     expect(path(history.location)).toEqual("/articles/20/?title=world");
     expect(history.index).toEqual(4);
 
-    actions.pop();
+    await actions.pop();
     expect(path(history.location)).toEqual("/articles/12/?title=hello");
     expect(history.index).toEqual(3);
 
-    actions.pop();
+    await actions.pop();
+
     expect(path(history.location)).toEqual("/home/");
     expect(history.index).toEqual(0);
   });
 
   test("historySyncPlugin - actions.stepPop()을 여러번 하더라도 남은 스텝이 없으면 아무일도 일어나지 않습니다", async () => {
-    actions.push({
+    await actions.push({
       activityId: "a1",
       activityName: "Article",
       activityParams: {
@@ -447,14 +442,14 @@ describe("historySyncPlugin", () => {
         title: "hello",
       },
     });
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s1",
       stepParams: {
         articleId: "11",
         title: "hello",
       },
     });
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s2",
       stepParams: {
         articleId: "12",
@@ -462,24 +457,24 @@ describe("historySyncPlugin", () => {
       },
     });
 
-    actions.stepPop();
-    actions.stepPop();
+    await actions.stepPop();
+    await actions.stepPop();
 
-    actions.stepPop();
+    await actions.stepPop();
     expect(path(history.location)).toEqual("/articles/10/?title=hello");
     expect(history.index).toEqual(1);
 
-    actions.stepPop();
+    await actions.stepPop();
     expect(path(history.location)).toEqual("/articles/10/?title=hello");
     expect(history.index).toEqual(1);
 
-    actions.pop();
+    await actions.pop();
     expect(path(history.location)).toEqual("/home/");
     expect(history.index).toEqual(0);
   });
 
   test("historySyncPlugin - actions.stepReplace()를 하면, 스택 상태가 알맞게 바뀌고, pop을 하면 한번에 여러 URL 상태가 사라집니다", async () => {
-    actions.push({
+    await actions.push({
       activityId: "a1",
       activityName: "Article",
       activityParams: {
@@ -487,7 +482,7 @@ describe("historySyncPlugin", () => {
         title: "hello",
       },
     });
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s1",
       stepParams: {
         articleId: "11",
@@ -495,7 +490,7 @@ describe("historySyncPlugin", () => {
       },
     });
 
-    actions.stepReplace({
+    await actions.stepReplace({
       stepId: "s2",
       stepParams: {
         articleId: "12",
@@ -505,17 +500,17 @@ describe("historySyncPlugin", () => {
     expect(path(history.location)).toEqual("/articles/12/?title=hello");
     expect(history.index).toEqual(2);
 
-    actions.stepPop();
+    await actions.stepPop();
     expect(path(history.location)).toEqual("/articles/10/?title=hello");
     expect(history.index).toEqual(1);
 
-    actions.pop();
+    await actions.pop();
     expect(path(history.location)).toEqual("/home/");
     expect(history.index).toEqual(0);
   });
 
   test("historySyncPlugin - actions.stepPush()를 한 상태에서, 뒤로 가기, 앞으로 가기를 하면 스택 상태가 알맞게 바뀌고, pop을 하면 한번에 여러 URL 상태가 사라집니다", async () => {
-    actions.push({
+    await actions.push({
       activityId: "a1",
       activityName: "Article",
       activityParams: {
@@ -523,21 +518,21 @@ describe("historySyncPlugin", () => {
         title: "hello",
       },
     });
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s1",
       stepParams: {
         articleId: "11",
         title: "hello",
       },
     });
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s2",
       stepParams: {
         articleId: "12",
         title: "hello",
       },
     });
-    actions.push({
+    await actions.push({
       activityId: "a2",
       activityName: "Article",
       activityParams: {
@@ -547,36 +542,48 @@ describe("historySyncPlugin", () => {
     });
 
     history.back();
-    expect(activeActivity(actions.getStack())?.params.articleId).toEqual("12");
+    expect(activeActivity(await actions.getStack())?.params.articleId).toEqual(
+      "12",
+    );
 
     history.back();
-    expect(activeActivity(actions.getStack())?.params.articleId).toEqual("11");
+    expect(activeActivity(await actions.getStack())?.params.articleId).toEqual(
+      "11",
+    );
 
     history.back();
-    expect(activeActivity(actions.getStack())?.params.articleId).toEqual("10");
+    expect(activeActivity(await actions.getStack())?.params.articleId).toEqual(
+      "10",
+    );
 
     history.go(1);
-    expect(activeActivity(actions.getStack())?.params.articleId).toEqual("11");
+    expect(activeActivity(await actions.getStack())?.params.articleId).toEqual(
+      "11",
+    );
 
     history.go(1);
-    expect(activeActivity(actions.getStack())?.params.articleId).toEqual("12");
+    expect(activeActivity(await actions.getStack())?.params.articleId).toEqual(
+      "12",
+    );
 
     history.go(1);
-    expect(activeActivity(actions.getStack())?.params.articleId).toEqual("20");
+    expect(activeActivity(await actions.getStack())?.params.articleId).toEqual(
+      "20",
+    );
 
-    actions.pop();
+    await actions.pop();
     expect(path(history.location)).toEqual("/articles/12/?title=hello");
 
-    actions.stepPop();
+    await actions.stepPop();
     expect(path(history.location)).toEqual("/articles/11/?title=hello");
 
-    actions.pop();
+    await actions.pop();
     expect(path(history.location)).toEqual("/home/");
     expect(history.index).toEqual(0);
   });
 
   test("historySyncPlugin - 여러 행동 후에 새로고침을 하고 히스토리 조작을 하더라도, 스택 상태가 알맞게 바뀝니다", async () => {
-    actions.push({
+    await actions.push({
       activityId: "a1",
       activityName: "Article",
       activityParams: {
@@ -584,7 +591,7 @@ describe("historySyncPlugin", () => {
         title: "hello",
       },
     });
-    actions.push({
+    await actions.push({
       activityId: "a2",
       activityName: "Article",
       activityParams: {
@@ -592,35 +599,35 @@ describe("historySyncPlugin", () => {
         title: "hello",
       },
     });
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s1",
       stepParams: {
         articleId: "21",
         title: "hello",
       },
     });
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s2",
       stepParams: {
         articleId: "22",
         title: "hello",
       },
     });
-    actions.stepReplace({
+    await actions.stepReplace({
       stepId: "s3",
       stepParams: {
         articleId: "23",
         title: "hello",
       },
     });
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s4",
       stepParams: {
         articleId: "24",
         title: "hello",
       },
     });
-    actions.push({
+    await actions.push({
       activityId: "a3",
       activityName: "Article",
       activityParams: {
@@ -682,7 +689,7 @@ describe("historySyncPlugin", () => {
   });
 
   test("historySyncPlugin - push 후 stepPush 를 반복한 뒤, replace 를 하고 pop 을 수행하면 첫번째 stack 을 가리킵니다.", async () => {
-    actions.push({
+    await actions.push({
       activityId: "a2",
       activityName: "Article",
       activityParams: {
@@ -690,55 +697,50 @@ describe("historySyncPlugin", () => {
       },
     });
 
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s2",
       stepParams: {
         articleId: "2",
       },
     });
 
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s3",
       stepParams: {
         articleId: "3",
       },
     });
 
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s4",
       stepParams: {
         articleId: "4",
       },
     });
 
-    actions.replace({
+    await actions.replace({
       activityId: "a3",
       activityName: "ThirdActivity",
       activityParams: {
         thirdId: "234",
       },
     });
-    await delay(ENOUGH_DELAY_TIME);
 
-    actions.pop();
-
-    // 전환이 끝나기까지 충분한 시간
-    // 코어쪽 추가된 테스트 코드가 Resolve 되면 삭제 가능
-    await delay(32 + 16);
+    await actions.pop();
 
     expect(path(history.location)).toEqual("/home/");
-    expect(activeActivity(actions.getStack())?.name).toEqual("Home");
+    expect(activeActivity(await actions.getStack())?.name).toEqual("Home");
   });
 
   test("historySyncPlugin - push 후 *push 를 한 번 더 수행한 뒤*, stepPush 를 반복한 뒤, replace 를 하고 pop 을 수행하면 *두번째 stack* 을 가리킵니다.", async () => {
-    actions.push({
+    await actions.push({
       activityId: "a2",
       activityName: "Article",
       activityParams: {
         articleId: "1",
       },
     });
-    actions.push({
+    await actions.push({
       activityId: "a3",
       activityName: "ThirdActivity",
       activityParams: {
@@ -746,48 +748,42 @@ describe("historySyncPlugin", () => {
       },
     });
 
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s2",
       stepParams: {
         thirdId: "2",
       },
     });
 
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s3",
       stepParams: {
         thirdId: "3",
       },
     });
 
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s4",
       stepParams: {
         thirdId: "4",
       },
     });
 
-    actions.replace({
+    await actions.replace({
       activityId: "a4",
       activityName: "FourthActivity",
       activityParams: {
         fourthId: "567",
       },
     });
-    await delay(ENOUGH_DELAY_TIME);
 
-    actions.pop();
-
-    // 전환이 끝나기까지 충분한 시간
-    // 코어쪽 추가된 테스트 코드가 Resolve 되면 삭제 가능
-    await delay(32 + 16);
-
+    await actions.pop();
     expect(path(history.location)).toEqual("/articles/1/");
-    expect(activeActivity(actions.getStack())?.name).toEqual("Article");
+    expect(activeActivity(await actions.getStack())?.name).toEqual("Article");
   });
 
   test("historySyncPlugin - push 후 stepPush 를 반복한 뒤, push 와 pop 을 1회 수행하고 replace를 수행하고 pop 을 진행하면 첫번째 stack 을 가리킵니다.", async () => {
-    actions.push({
+    await actions.push({
       activityId: "a2",
       activityName: "Article",
       activityParams: {
@@ -795,28 +791,28 @@ describe("historySyncPlugin", () => {
       },
     });
 
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s2",
       stepParams: {
         articleId: "2",
       },
     });
 
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s3",
       stepParams: {
         articleId: "3",
       },
     });
 
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s4",
       stepParams: {
         articleId: "4",
       },
     });
 
-    actions.push({
+    await actions.push({
       activityId: "a3",
       activityName: "ThirdActivity",
       activityParams: {
@@ -824,29 +820,24 @@ describe("historySyncPlugin", () => {
       },
     });
 
-    actions.pop();
+    await actions.pop();
 
-    actions.replace({
+    await actions.replace({
       activityId: "a4",
       activityName: "FourthActivity",
       activityParams: {
         fourthId: "345",
       },
     });
-    await delay(ENOUGH_DELAY_TIME);
 
-    actions.pop();
-
-    // 전환이 끝나기까지 충분한 시간
-    // 코어쪽 추가된 테스트 코드가 Resolve 되면 삭제 가능
-    await delay(16 * 5);
+    await actions.pop();
 
     expect(path(history.location)).toEqual("/home/");
-    expect(activeActivity(actions.getStack())?.name).toEqual("Home");
+    expect(activeActivity(await actions.getStack())?.name).toEqual("Home");
   });
 
   test("historySyncPlugin - push 후 stepPush 를 반복한 뒤, replace 를 한 뒤 stepPush 를 반복하고 pop 을 진행해도 첫번째 stack 을 가리킵니다.", async () => {
-    actions.push({
+    await actions.push({
       activityId: "a2",
       activityName: "Article",
       activityParams: {
@@ -854,69 +845,64 @@ describe("historySyncPlugin", () => {
       },
     });
 
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s2",
       stepParams: {
         articleId: "2",
       },
     });
 
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s3",
       stepParams: {
         articleId: "3",
       },
     });
 
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s4",
       stepParams: {
         articleId: "4",
       },
     });
 
-    actions.replace({
+    await actions.replace({
       activityId: "a4",
       activityName: "FourthActivity",
       activityParams: {
         fourthId: "345",
       },
     });
-    await delay(ENOUGH_DELAY_TIME);
 
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s5",
       stepParams: {
         fourthId: "5",
       },
     });
 
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s6",
       stepParams: {
         fourthId: "6",
       },
     });
 
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s7",
       stepParams: {
         fourthId: "7",
       },
     });
 
-    actions.pop();
-
-    // 전환이 끝나기까지 충분한 시간
-    // 코어쪽 추가된 테스트 코드가 Resolve 되면 삭제 가능
-    await delay(ENOUGH_DELAY_TIME);
+    await actions.pop();
 
     expect(path(history.location)).toEqual("/home/");
-    expect(activeActivity(actions.getStack())?.name).toEqual("Home");
+    expect(activeActivity(await actions.getStack())?.name).toEqual("Home");
   });
 
   test("historySyncPlugin - push 후 stepPush 를 반복한 뒤, replace 를 수행하고 stepPush 를 반복하고 replace를 수행하고 pop을 진행해도 첫번째 stack을 가리킵니다.(for Hugh)", async () => {
-    actions.push({
+    await actions.push({
       activityId: "a2",
       activityName: "Article",
       activityParams: {
@@ -924,77 +910,70 @@ describe("historySyncPlugin", () => {
       },
     });
 
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s2",
       stepParams: {
         articleId: "2",
       },
     });
 
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s3",
       stepParams: {
         articleId: "3",
       },
     });
 
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s4",
       stepParams: {
         articleId: "4",
       },
     });
 
-    actions.replace({
+    await actions.replace({
       activityId: "a3",
       activityName: "ThirdActivity",
       activityParams: {
         thirdId: "234",
       },
     });
-    await delay(ENOUGH_DELAY_TIME);
 
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s2",
       stepParams: {
         thirdId: "2",
       },
     });
 
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s3",
       stepParams: {
         thirdId: "3",
       },
     });
 
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s4",
       stepParams: {
         thirdId: "4",
       },
     });
 
-    actions.replace({
+    await actions.replace({
       activityId: "a4",
       activityName: "FourthActivity",
       activityParams: {
         fourthId: "345",
       },
     });
-    await delay(ENOUGH_DELAY_TIME);
-    actions.pop();
-
-    // 전환이 끝나기까지 충분한 시간
-    // 코어쪽 추가된 테스트 코드가 Resolve 되면 삭제 가능
-    await delay(ENOUGH_DELAY_TIME);
-
+    await actions.pop();
     expect(path(history.location)).toEqual("/home/");
-    expect(activeActivity(actions.getStack())?.name).toEqual("Home");
+    expect(activeActivity(await actions.getStack())?.name).toEqual("Home");
   });
 
   test("historySyncPlugin - push 후 stepPush 를 반복한 뒤, push 를 수행하고 stepPush 를 반복한 뒤 pop 을 수행, 그 후 replace 를 수행하고 pop을 진행해도 첫번째 stack을 가리킵니다.", async () => {
-    actions.push({
+    await actions.push({
       activityId: "a2",
       activityName: "Article",
       activityParams: {
@@ -1002,28 +981,28 @@ describe("historySyncPlugin", () => {
       },
     });
 
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s2",
       stepParams: {
         articleId: "2",
       },
     });
 
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s3",
       stepParams: {
         articleId: "3",
       },
     });
 
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s4",
       stepParams: {
         articleId: "4",
       },
     });
 
-    actions.push({
+    await actions.push({
       activityId: "a3",
       activityName: "ThirdActivity",
       activityParams: {
@@ -1031,46 +1010,43 @@ describe("historySyncPlugin", () => {
       },
     });
 
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s2",
       stepParams: {
         thirdId: "2",
       },
     });
 
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s3",
       stepParams: {
         thirdId: "3",
       },
     });
 
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s4",
       stepParams: {
         thirdId: "4",
       },
     });
-    actions.pop();
+    await actions.pop();
 
-    actions.replace({
+    await actions.replace({
       activityId: "a4",
       activityName: "FourthActivity",
       activityParams: {
         fourthId: "345",
       },
     });
-    await delay(ENOUGH_DELAY_TIME);
-    actions.pop();
-
-    await delay(ENOUGH_DELAY_TIME);
+    await actions.pop();
 
     expect(path(history.location)).toEqual("/home/");
-    expect(activeActivity(actions.getStack())?.name).toEqual("Home");
+    expect(activeActivity(await actions.getStack())?.name).toEqual("Home");
   });
 
   test("historySyncPlugin - 2회 반복:push 후 stepPush 를 반복한 뒤, push 를 수행하고 stepPush 를 반복한 뒤 pop 을 수행, 그 후 replace 를 수행하고 pop을 진행해도 첫번째 stack을 가리킵니다.", async () => {
-    actions.push({
+    await actions.push({
       activityId: "a2",
       activityName: "Article",
       activityParams: {
@@ -1078,28 +1054,28 @@ describe("historySyncPlugin", () => {
       },
     });
 
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s2",
       stepParams: {
         articleId: "2",
       },
     });
 
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s3",
       stepParams: {
         articleId: "3",
       },
     });
 
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s4",
       stepParams: {
         articleId: "4",
       },
     });
 
-    actions.push({
+    await actions.push({
       activityId: "a3",
       activityName: "ThirdActivity",
       activityParams: {
@@ -1107,40 +1083,38 @@ describe("historySyncPlugin", () => {
       },
     });
 
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s2",
       stepParams: {
         thirdId: "2",
       },
     });
 
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s3",
       stepParams: {
         thirdId: "3",
       },
     });
 
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s4",
       stepParams: {
         thirdId: "4",
       },
     });
-    actions.pop();
+    await actions.pop();
 
-    actions.replace({
+    await actions.replace({
       activityId: "a4",
       activityName: "FourthActivity",
       activityParams: {
         fourthId: "345",
       },
     });
-    await delay(ENOUGH_DELAY_TIME);
-    actions.pop();
+    await actions.pop();
 
-    await delay(ENOUGH_DELAY_TIME);
-    actions.push({
+    await actions.push({
       activityId: "a5",
       activityName: "ThirdActivity",
       activityParams: {
@@ -1148,28 +1122,28 @@ describe("historySyncPlugin", () => {
       },
     });
 
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s2",
       stepParams: {
         thirdId: "2",
       },
     });
 
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s3",
       stepParams: {
         thirdId: "3",
       },
     });
 
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s4",
       stepParams: {
         thirdId: "4",
       },
     });
 
-    actions.push({
+    await actions.push({
       activityId: "a6",
       activityName: "FourthActivity",
       activityParams: {
@@ -1177,46 +1151,43 @@ describe("historySyncPlugin", () => {
       },
     });
 
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s2",
       stepParams: {
         fourthId: "2",
       },
     });
 
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s3",
       stepParams: {
         fourthId: "3",
       },
     });
 
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s4",
       stepParams: {
         fourthId: "4",
       },
     });
-    actions.pop();
+    await actions.pop();
 
-    actions.replace({
+    await actions.replace({
       activityId: "a7",
       activityName: "Article",
       activityParams: {
         articleId: "345",
       },
     });
-    await delay(ENOUGH_DELAY_TIME);
-    actions.pop();
-
-    await delay(ENOUGH_DELAY_TIME);
+    await actions.pop();
 
     expect(path(history.location)).toEqual("/home/");
-    expect(activeActivity(actions.getStack())?.name).toEqual("Home");
+    expect(activeActivity(await actions.getStack())?.name).toEqual("Home");
   });
 
   test("historySyncPlugin - push > push > stepPush > pop", async () => {
-    actions.push({
+    await actions.push({
       activityId: "a1",
       activityName: "Article",
       activityParams: {
@@ -1224,14 +1195,14 @@ describe("historySyncPlugin", () => {
       },
     });
 
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s1",
       stepParams: {
         articleId: "2",
       },
     });
 
-    actions.push({
+    await actions.push({
       activityId: "a2",
       activityName: "Article",
       activityParams: {
@@ -1239,21 +1210,21 @@ describe("historySyncPlugin", () => {
       },
     });
 
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s2",
       stepParams: {
         articleId: "4",
       },
     });
 
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s3",
       stepParams: {
         articleId: "5",
       },
     });
 
-    actions.replace({
+    await actions.replace({
       activityId: "a3",
       activityName: "ThirdActivity",
       activityParams: {
@@ -1261,24 +1232,22 @@ describe("historySyncPlugin", () => {
       },
     });
 
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s3",
       stepParams: {
         thirdId: "2",
       },
     });
 
-    actions.pop();
-
-    await delay(ENOUGH_DELAY_TIME);
+    await actions.pop();
 
     expect(path(history.location)).toEqual("/articles/2/");
-    expect(activeActivity(actions.getStack())?.name).toEqual("Article");
+    expect(activeActivity(await actions.getStack())?.name).toEqual("Article");
     expect(history.index).toEqual(2);
   });
 
   test("historySyncPlugin - push > stepPush > stepPush > replace", async () => {
-    actions.push({
+    await actions.push({
       activityId: "a1",
       activityName: "Article",
       activityParams: {
@@ -1286,21 +1255,21 @@ describe("historySyncPlugin", () => {
       },
     });
 
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s1",
       stepParams: {
         articleId: "2",
       },
     });
 
-    actions.stepPush({
+    await actions.stepPush({
       stepId: "s2",
       stepParams: {
         articleId: "3",
       },
     });
 
-    actions.replace({
+    await actions.replace({
       activityId: "a3",
       activityName: "ThirdActivity",
       activityParams: {
@@ -1308,10 +1277,10 @@ describe("historySyncPlugin", () => {
       },
     });
 
-    await delay(ENOUGH_DELAY_TIME);
-
     expect(path(history.location)).toEqual("/third/1/");
-    expect(activeActivity(actions.getStack())?.name).toEqual("ThirdActivity");
+    expect(activeActivity(await actions.getStack())?.name).toEqual(
+      "ThirdActivity",
+    );
     expect(history.index).toEqual(1);
   });
 });
