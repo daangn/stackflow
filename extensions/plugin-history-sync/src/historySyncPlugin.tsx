@@ -188,6 +188,12 @@ export function historySyncPlugin<
           const targetActivity = historyState.activity;
           const targetActivityId = historyState.activity.id;
           const targetStep = historyState.step;
+          const { silent } = historyState;
+
+          if (silent) {
+            historyState.silent = false;
+            return;
+          }
 
           const { activities } = getStack();
           const currentActivity = activities.find(
@@ -322,6 +328,7 @@ export function historySyncPlugin<
             pathname: template.fill(activity.params),
             state: {
               activity,
+              silent: true,
             },
             useHash: options.useHash,
           }),
@@ -345,6 +352,7 @@ export function historySyncPlugin<
             state: {
               activity,
               step,
+              silent: true,
             },
             useHash: options.useHash,
           }),
@@ -366,6 +374,7 @@ export function historySyncPlugin<
             pathname: template.fill(activity.params),
             state: {
               activity,
+              silent: true,
             },
             useHash: options.useHash,
           }),
@@ -388,6 +397,7 @@ export function historySyncPlugin<
             state: {
               activity,
               step,
+              silent: true,
             },
             useHash: options.useHash,
           }),
