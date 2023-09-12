@@ -46,7 +46,7 @@ const makeActionsProxy = <T extends CoreStore["actions"]>({
 
           setTimeout(() => {
             resolve(ret);
-          }, 16);
+          }, 16 + 32);
         });
     },
   });
@@ -293,7 +293,7 @@ describe("historySyncPlugin", () => {
   });
 
   test("historySyncPlugin - 히스토리를 여러번 back하더라도, 스택 상태가 알맞게 바뀝니다", async () => {
-    await actions.push({
+    actions.push({
       activityId: "a1",
       activityName: "Article",
       activityParams: {
@@ -301,7 +301,7 @@ describe("historySyncPlugin", () => {
         title: "hello",
       },
     });
-    await actions.push({
+    actions.push({
       activityId: "a2",
       activityName: "Article",
       activityParams: {
@@ -335,7 +335,7 @@ describe("historySyncPlugin", () => {
   });
 
   test("historySyncPlugin - 앞으로 가기를 해도, 스택 상태가 알맞게 바뀝니다", async () => {
-    await actions.push({
+    actions.push({
       activityId: "a1",
       activityName: "Article",
       activityParams: {
@@ -343,7 +343,7 @@ describe("historySyncPlugin", () => {
         title: "hello",
       },
     });
-    await actions.push({
+    actions.push({
       activityId: "a2",
       activityName: "Article",
       activityParams: {
@@ -384,7 +384,7 @@ describe("historySyncPlugin", () => {
   });
 
   test("historySyncPlugin - actions.stepPush()를 하면, 스택 상태가 알맞게 바뀌고, pop을 하면 한번에 여러 URL 상태가 사라집니다", async () => {
-    await actions.push({
+    actions.push({
       activityId: "a1",
       activityName: "Article",
       activityParams: {
@@ -434,7 +434,7 @@ describe("historySyncPlugin", () => {
   });
 
   test("historySyncPlugin - actions.stepPop()을 여러번 하더라도 남은 스텝이 없으면 아무일도 일어나지 않습니다", async () => {
-    await actions.push({
+    actions.push({
       activityId: "a1",
       activityName: "Article",
       activityParams: {
@@ -442,7 +442,7 @@ describe("historySyncPlugin", () => {
         title: "hello",
       },
     });
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s1",
       stepParams: {
         articleId: "11",
@@ -457,8 +457,8 @@ describe("historySyncPlugin", () => {
       },
     });
 
-    await actions.stepPop();
-    await actions.stepPop();
+    actions.stepPop();
+    actions.stepPop();
 
     await actions.stepPop();
     expect(path(history.location)).toEqual("/articles/10/?title=hello");
@@ -474,7 +474,7 @@ describe("historySyncPlugin", () => {
   });
 
   test("historySyncPlugin - actions.stepReplace()를 하면, 스택 상태가 알맞게 바뀌고, pop을 하면 한번에 여러 URL 상태가 사라집니다", async () => {
-    await actions.push({
+    actions.push({
       activityId: "a1",
       activityName: "Article",
       activityParams: {
@@ -482,7 +482,7 @@ describe("historySyncPlugin", () => {
         title: "hello",
       },
     });
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s1",
       stepParams: {
         articleId: "11",
@@ -510,7 +510,7 @@ describe("historySyncPlugin", () => {
   });
 
   test("historySyncPlugin - actions.stepPush()를 한 상태에서, 뒤로 가기, 앞으로 가기를 하면 스택 상태가 알맞게 바뀌고, pop을 하면 한번에 여러 URL 상태가 사라집니다", async () => {
-    await actions.push({
+    actions.push({
       activityId: "a1",
       activityName: "Article",
       activityParams: {
@@ -518,14 +518,14 @@ describe("historySyncPlugin", () => {
         title: "hello",
       },
     });
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s1",
       stepParams: {
         articleId: "11",
         title: "hello",
       },
     });
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s2",
       stepParams: {
         articleId: "12",
@@ -583,7 +583,7 @@ describe("historySyncPlugin", () => {
   });
 
   test("historySyncPlugin - 여러 행동 후에 새로고침을 하고 히스토리 조작을 하더라도, 스택 상태가 알맞게 바뀝니다", async () => {
-    await actions.push({
+    actions.push({
       activityId: "a1",
       activityName: "Article",
       activityParams: {
@@ -591,7 +591,7 @@ describe("historySyncPlugin", () => {
         title: "hello",
       },
     });
-    await actions.push({
+    actions.push({
       activityId: "a2",
       activityName: "Article",
       activityParams: {
@@ -599,28 +599,28 @@ describe("historySyncPlugin", () => {
         title: "hello",
       },
     });
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s1",
       stepParams: {
         articleId: "21",
         title: "hello",
       },
     });
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s2",
       stepParams: {
         articleId: "22",
         title: "hello",
       },
     });
-    await actions.stepReplace({
+    actions.stepReplace({
       stepId: "s3",
       stepParams: {
         articleId: "23",
         title: "hello",
       },
     });
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s4",
       stepParams: {
         articleId: "24",
@@ -637,7 +637,7 @@ describe("historySyncPlugin", () => {
     });
 
     // 새로고침 후
-    (() => {
+    (async () => {
       const { actions } = stackflow({
         activityNames: ["Home", "Article"],
         plugins: [
@@ -689,7 +689,7 @@ describe("historySyncPlugin", () => {
   });
 
   test("historySyncPlugin - push 후 stepPush 를 반복한 뒤, replace 를 하고 pop 을 수행하면 첫번째 stack 을 가리킵니다.", async () => {
-    await actions.push({
+    actions.push({
       activityId: "a2",
       activityName: "Article",
       activityParams: {
@@ -697,21 +697,21 @@ describe("historySyncPlugin", () => {
       },
     });
 
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s2",
       stepParams: {
         articleId: "2",
       },
     });
 
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s3",
       stepParams: {
         articleId: "3",
       },
     });
 
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s4",
       stepParams: {
         articleId: "4",
@@ -733,14 +733,14 @@ describe("historySyncPlugin", () => {
   });
 
   test("historySyncPlugin - push 후 *push 를 한 번 더 수행한 뒤*, stepPush 를 반복한 뒤, replace 를 하고 pop 을 수행하면 *두번째 stack* 을 가리킵니다.", async () => {
-    await actions.push({
+    actions.push({
       activityId: "a2",
       activityName: "Article",
       activityParams: {
         articleId: "1",
       },
     });
-    await actions.push({
+    actions.push({
       activityId: "a3",
       activityName: "ThirdActivity",
       activityParams: {
@@ -748,28 +748,28 @@ describe("historySyncPlugin", () => {
       },
     });
 
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s2",
       stepParams: {
         thirdId: "2",
       },
     });
 
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s3",
       stepParams: {
         thirdId: "3",
       },
     });
 
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s4",
       stepParams: {
         thirdId: "4",
       },
     });
 
-    await actions.replace({
+    actions.replace({
       activityId: "a4",
       activityName: "FourthActivity",
       activityParams: {
@@ -783,7 +783,7 @@ describe("historySyncPlugin", () => {
   });
 
   test("historySyncPlugin - push 후 stepPush 를 반복한 뒤, push 와 pop 을 1회 수행하고 replace를 수행하고 pop 을 진행하면 첫번째 stack 을 가리킵니다.", async () => {
-    await actions.push({
+    actions.push({
       activityId: "a2",
       activityName: "Article",
       activityParams: {
@@ -791,28 +791,28 @@ describe("historySyncPlugin", () => {
       },
     });
 
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s2",
       stepParams: {
         articleId: "2",
       },
     });
 
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s3",
       stepParams: {
         articleId: "3",
       },
     });
 
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s4",
       stepParams: {
         articleId: "4",
       },
     });
 
-    await actions.push({
+    actions.push({
       activityId: "a3",
       activityName: "ThirdActivity",
       activityParams: {
@@ -820,9 +820,9 @@ describe("historySyncPlugin", () => {
       },
     });
 
-    await actions.pop();
+    actions.pop();
 
-    await actions.replace({
+    actions.replace({
       activityId: "a4",
       activityName: "FourthActivity",
       activityParams: {
@@ -837,7 +837,7 @@ describe("historySyncPlugin", () => {
   });
 
   test("historySyncPlugin - push 후 stepPush 를 반복한 뒤, replace 를 한 뒤 stepPush 를 반복하고 pop 을 진행해도 첫번째 stack 을 가리킵니다.", async () => {
-    await actions.push({
+    actions.push({
       activityId: "a2",
       activityName: "Article",
       activityParams: {
@@ -845,28 +845,28 @@ describe("historySyncPlugin", () => {
       },
     });
 
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s2",
       stepParams: {
         articleId: "2",
       },
     });
 
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s3",
       stepParams: {
         articleId: "3",
       },
     });
 
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s4",
       stepParams: {
         articleId: "4",
       },
     });
 
-    await actions.replace({
+    actions.replace({
       activityId: "a4",
       activityName: "FourthActivity",
       activityParams: {
@@ -874,21 +874,21 @@ describe("historySyncPlugin", () => {
       },
     });
 
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s5",
       stepParams: {
         fourthId: "5",
       },
     });
 
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s6",
       stepParams: {
         fourthId: "6",
       },
     });
 
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s7",
       stepParams: {
         fourthId: "7",
@@ -902,7 +902,7 @@ describe("historySyncPlugin", () => {
   });
 
   test("historySyncPlugin - push 후 stepPush 를 반복한 뒤, replace 를 수행하고 stepPush 를 반복하고 replace를 수행하고 pop을 진행해도 첫번째 stack을 가리킵니다.(for Hugh)", async () => {
-    await actions.push({
+    actions.push({
       activityId: "a2",
       activityName: "Article",
       activityParams: {
@@ -910,28 +910,28 @@ describe("historySyncPlugin", () => {
       },
     });
 
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s2",
       stepParams: {
         articleId: "2",
       },
     });
 
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s3",
       stepParams: {
         articleId: "3",
       },
     });
 
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s4",
       stepParams: {
         articleId: "4",
       },
     });
 
-    await actions.replace({
+    actions.replace({
       activityId: "a3",
       activityName: "ThirdActivity",
       activityParams: {
@@ -939,28 +939,28 @@ describe("historySyncPlugin", () => {
       },
     });
 
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s2",
       stepParams: {
         thirdId: "2",
       },
     });
 
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s3",
       stepParams: {
         thirdId: "3",
       },
     });
 
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s4",
       stepParams: {
         thirdId: "4",
       },
     });
 
-    await actions.replace({
+    actions.replace({
       activityId: "a4",
       activityName: "FourthActivity",
       activityParams: {
@@ -973,7 +973,7 @@ describe("historySyncPlugin", () => {
   });
 
   test("historySyncPlugin - push 후 stepPush 를 반복한 뒤, push 를 수행하고 stepPush 를 반복한 뒤 pop 을 수행, 그 후 replace 를 수행하고 pop을 진행해도 첫번째 stack을 가리킵니다.", async () => {
-    await actions.push({
+    actions.push({
       activityId: "a2",
       activityName: "Article",
       activityParams: {
@@ -981,28 +981,28 @@ describe("historySyncPlugin", () => {
       },
     });
 
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s2",
       stepParams: {
         articleId: "2",
       },
     });
 
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s3",
       stepParams: {
         articleId: "3",
       },
     });
 
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s4",
       stepParams: {
         articleId: "4",
       },
     });
 
-    await actions.push({
+    actions.push({
       activityId: "a3",
       activityName: "ThirdActivity",
       activityParams: {
@@ -1010,29 +1010,29 @@ describe("historySyncPlugin", () => {
       },
     });
 
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s2",
       stepParams: {
         thirdId: "2",
       },
     });
 
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s3",
       stepParams: {
         thirdId: "3",
       },
     });
 
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s4",
       stepParams: {
         thirdId: "4",
       },
     });
-    await actions.pop();
+    actions.pop();
 
-    await actions.replace({
+    actions.replace({
       activityId: "a4",
       activityName: "FourthActivity",
       activityParams: {
@@ -1046,7 +1046,7 @@ describe("historySyncPlugin", () => {
   });
 
   test("historySyncPlugin - 2회 반복:push 후 stepPush 를 반복한 뒤, push 를 수행하고 stepPush 를 반복한 뒤 pop 을 수행, 그 후 replace 를 수행하고 pop을 진행해도 첫번째 stack을 가리킵니다.", async () => {
-    await actions.push({
+    actions.push({
       activityId: "a2",
       activityName: "Article",
       activityParams: {
@@ -1054,28 +1054,28 @@ describe("historySyncPlugin", () => {
       },
     });
 
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s2",
       stepParams: {
         articleId: "2",
       },
     });
 
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s3",
       stepParams: {
         articleId: "3",
       },
     });
 
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s4",
       stepParams: {
         articleId: "4",
       },
     });
 
-    await actions.push({
+    actions.push({
       activityId: "a3",
       activityName: "ThirdActivity",
       activityParams: {
@@ -1083,38 +1083,38 @@ describe("historySyncPlugin", () => {
       },
     });
 
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s2",
       stepParams: {
         thirdId: "2",
       },
     });
 
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s3",
       stepParams: {
         thirdId: "3",
       },
     });
 
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s4",
       stepParams: {
         thirdId: "4",
       },
     });
-    await actions.pop();
+    actions.pop();
 
-    await actions.replace({
+    actions.replace({
       activityId: "a4",
       activityName: "FourthActivity",
       activityParams: {
         fourthId: "345",
       },
     });
-    await actions.pop();
+    actions.pop();
 
-    await actions.push({
+    actions.push({
       activityId: "a5",
       activityName: "ThirdActivity",
       activityParams: {
@@ -1122,28 +1122,28 @@ describe("historySyncPlugin", () => {
       },
     });
 
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s2",
       stepParams: {
         thirdId: "2",
       },
     });
 
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s3",
       stepParams: {
         thirdId: "3",
       },
     });
 
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s4",
       stepParams: {
         thirdId: "4",
       },
     });
 
-    await actions.push({
+    actions.push({
       activityId: "a6",
       activityName: "FourthActivity",
       activityParams: {
@@ -1151,29 +1151,29 @@ describe("historySyncPlugin", () => {
       },
     });
 
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s2",
       stepParams: {
         fourthId: "2",
       },
     });
 
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s3",
       stepParams: {
         fourthId: "3",
       },
     });
 
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s4",
       stepParams: {
         fourthId: "4",
       },
     });
-    await actions.pop();
+    actions.pop();
 
-    await actions.replace({
+    actions.replace({
       activityId: "a7",
       activityName: "Article",
       activityParams: {
@@ -1187,7 +1187,7 @@ describe("historySyncPlugin", () => {
   });
 
   test("historySyncPlugin - push > push > stepPush > pop", async () => {
-    await actions.push({
+    actions.push({
       activityId: "a1",
       activityName: "Article",
       activityParams: {
@@ -1195,14 +1195,14 @@ describe("historySyncPlugin", () => {
       },
     });
 
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s1",
       stepParams: {
         articleId: "2",
       },
     });
 
-    await actions.push({
+    actions.push({
       activityId: "a2",
       activityName: "Article",
       activityParams: {
@@ -1210,21 +1210,21 @@ describe("historySyncPlugin", () => {
       },
     });
 
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s2",
       stepParams: {
         articleId: "4",
       },
     });
 
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s3",
       stepParams: {
         articleId: "5",
       },
     });
 
-    await actions.replace({
+    actions.replace({
       activityId: "a3",
       activityName: "ThirdActivity",
       activityParams: {
@@ -1232,7 +1232,7 @@ describe("historySyncPlugin", () => {
       },
     });
 
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s3",
       stepParams: {
         thirdId: "2",
@@ -1247,7 +1247,7 @@ describe("historySyncPlugin", () => {
   });
 
   test("historySyncPlugin - push > stepPush > stepPush > replace", async () => {
-    await actions.push({
+    actions.push({
       activityId: "a1",
       activityName: "Article",
       activityParams: {
@@ -1255,14 +1255,14 @@ describe("historySyncPlugin", () => {
       },
     });
 
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s1",
       stepParams: {
         articleId: "2",
       },
     });
 
-    await actions.stepPush({
+    actions.stepPush({
       stepId: "s2",
       stepParams: {
         articleId: "3",
