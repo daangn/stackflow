@@ -244,18 +244,22 @@ export function historySyncPlugin<
             dispatchEvent("Popped", {});
 
             if (!nextActivity) {
-              pushFlag += 1;
-              push({
-                ...targetActivity.enteredBy,
+              queue(() => {
+                pushFlag += 1;
+                push({
+                  ...targetActivity.enteredBy,
+                });
               });
 
               if (
                 targetStep?.enteredBy.name === "StepPushed" ||
                 targetStep?.enteredBy.name === "StepReplaced"
               ) {
-                pushFlag += 1;
-                stepPush({
-                  ...targetStep.enteredBy,
+                queue(() => {
+                  pushFlag += 1;
+                  stepPush({
+                    ...targetStep.enteredBy,
+                  });
                 });
               }
             }
@@ -267,9 +271,11 @@ export function historySyncPlugin<
               (targetStep?.enteredBy.name === "StepPushed" ||
                 targetStep?.enteredBy.name === "StepReplaced")
             ) {
-              pushFlag += 1;
-              stepPush({
-                ...targetStep.enteredBy,
+              queue(() => {
+                pushFlag += 1;
+                stepPush({
+                  ...targetStep.enteredBy,
+                });
               });
             }
 
@@ -432,11 +438,12 @@ export function historySyncPlugin<
             : null;
 
         if (previousActivity) {
-          popFlag += previousActivity.steps.length - 1;
-
           do {
             for (let i = 0; i < previousActivity.steps.length - 1; i += 1) {
-              queue(history.back);
+              queue(() => {
+                popFlag += 1;
+                history.back();
+              });
             }
           } while (!safeParseState(getCurrentState({ history })));
         }
@@ -448,8 +455,10 @@ export function historySyncPlugin<
         );
 
         if ((currentActivity?.steps.length ?? 0) > 1) {
-          popFlag += 1;
-          queue(history.back);
+          queue(() => {
+            popFlag += 1;
+            history.back();
+          });
         }
       },
       onBeforePop({ actions: { getStack } }) {
@@ -463,11 +472,12 @@ export function historySyncPlugin<
 
           const popCount = isRoot ? 0 : steps.length;
 
-          popFlag += popCount;
-
           do {
             for (let i = 0; i < popCount; i += 1) {
-              queue(history.back);
+              queue(() => {
+                popFlag += 1;
+                history.back();
+              });
             }
           } while (!safeParseState(getCurrentState({ history })));
         }
