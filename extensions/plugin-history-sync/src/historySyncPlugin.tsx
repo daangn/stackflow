@@ -261,10 +261,12 @@ export function historySyncPlugin<
                 targetStep?.enteredBy.name === "StepPushed" ||
                 targetStep?.enteredBy.name === "StepReplaced"
               ) {
+                const { enteredBy } = targetStep;
+
                 queue(() => {
                   pushFlag += 1;
                   stepPush({
-                    ...targetStep.enteredBy,
+                    ...enteredBy,
                   });
                 });
               }
@@ -277,10 +279,12 @@ export function historySyncPlugin<
               (targetStep?.enteredBy.name === "StepPushed" ||
                 targetStep?.enteredBy.name === "StepReplaced")
             ) {
+              const { enteredBy } = targetStep;
+
               queue(() => {
                 pushFlag += 1;
                 stepPush({
-                  ...targetStep.enteredBy,
+                  ...enteredBy,
                 });
               });
             }
