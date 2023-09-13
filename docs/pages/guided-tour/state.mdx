@@ -84,7 +84,7 @@ const MyActivity: ActivityComponentType = () => {
 
   useEffect(() => {
     console.log("현재 액티비티의 전환 상태:", activity.transitionState);
-  }, [stack]);
+  }, [activity]);
 
   return (
     <AppScreen appBar={{ title: "My Activity" }}>
