@@ -449,6 +449,7 @@ export function historySyncPlugin<
         if (previousActivity) {
           do {
             for (let i = 0; i < previousActivity.steps.length - 1; i += 1) {
+              // eslint-disable-next-line no-loop-func
               queue(() => {
                 popFlag += 1;
                 history.back();
@@ -483,6 +484,7 @@ export function historySyncPlugin<
 
           do {
             for (let i = 0; i < popCount; i += 1) {
+              // eslint-disable-next-line no-loop-func
               queue(() => {
                 popFlag += 1;
                 history.back();
