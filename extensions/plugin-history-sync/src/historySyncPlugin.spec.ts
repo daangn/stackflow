@@ -47,7 +47,8 @@ const makeActionsProxy = <T extends CoreStore["actions"]>({
           const ret: ReturnType<typeof target[K]> = target[p](...args);
 
           setTimeout(() => {
-            resolve(ret);
+            // @ts-ignore
+            resolve(p === "getStack" ? target[p](...args) : ret);
           }, 16 + 32);
         });
     },
