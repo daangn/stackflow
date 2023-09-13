@@ -14,13 +14,6 @@ import { historySyncPlugin } from "./historySyncPlugin";
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
 
-const delay = (ms: number) =>
-  new Promise<void>((resolve) => {
-    setTimeout(() => {
-      resolve();
-    }, ms);
-  });
-
 declare global {
   interface ProxyConstructor {
     new <TSource extends object, TTarget extends object>(
