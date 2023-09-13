@@ -250,11 +250,9 @@ export function historySyncPlugin<
             dispatchEvent("Popped", {});
 
             if (!nextActivity) {
-              queue(() => {
-                pushFlag += 1;
-                push({
-                  ...targetActivity.enteredBy,
-                });
+              pushFlag += 1;
+              push({
+                ...targetActivity.enteredBy,
               });
 
               if (
@@ -262,12 +260,9 @@ export function historySyncPlugin<
                 targetStep?.enteredBy.name === "StepReplaced"
               ) {
                 const { enteredBy } = targetStep;
-
-                queue(() => {
-                  pushFlag += 1;
-                  stepPush({
-                    ...enteredBy,
-                  });
+                pushFlag += 1;
+                stepPush({
+                  ...enteredBy,
                 });
               }
             }
