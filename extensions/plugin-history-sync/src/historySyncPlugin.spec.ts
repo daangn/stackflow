@@ -14,6 +14,13 @@ import { historySyncPlugin } from "./historySyncPlugin";
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
 
+const delay = (ms: number) =>
+  new Promise<void>((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, ms);
+  });
+
 declare global {
   interface ProxyConstructor {
     new <TSource extends object, TTarget extends object>(
@@ -38,11 +45,6 @@ const makeActionsProxy = <T extends CoreStore["actions"]>({
         new Promise<ReturnType<typeof target[K]>>((resolve) => {
           // @ts-ignore
           const ret: ReturnType<typeof target[K]> = target[p](...args);
-
-          if (p === "getStack") {
-            resolve(ret);
-            return;
-          }
 
           setTimeout(() => {
             resolve(ret);
@@ -637,7 +639,7 @@ describe("historySyncPlugin", () => {
     });
 
     // 새로고침 후
-    (async () => {
+    await (async () => {
       const { actions } = stackflow({
         activityNames: ["Home", "Article"],
         plugins: [
@@ -652,38 +654,52 @@ describe("historySyncPlugin", () => {
         ],
       });
 
+      const proxyActions = makeActionsProxy({
+        actions,
+      });
+
+      await proxyActions.getStack();
+
       history.back();
-      expect(activeActivity(actions.getStack())?.params.articleId).toEqual(
-        "24",
-      );
+
+      expect(
+        activeActivity(await proxyActions.getStack())?.params.articleId,
+      ).toEqual("24");
       expect(history.index).toEqual(5);
 
       history.back();
-      expect(activeActivity(actions.getStack())?.params.articleId).toEqual(
-        "23",
-      );
+
+      expect(
+        activeActivity(await proxyActions.getStack())?.params.articleId,
+      ).toEqual("23");
       expect(history.index).toEqual(4);
 
       history.back();
-      expect(activeActivity(actions.getStack())?.params.articleId).toEqual(
-        "21",
-      );
+
+      expect(
+        activeActivity(await proxyActions.getStack())?.params.articleId,
+      ).toEqual("21");
       expect(history.index).toEqual(3);
 
       history.back();
-      expect(activeActivity(actions.getStack())?.params.articleId).toEqual(
-        "20",
-      );
+
+      expect(
+        activeActivity(await proxyActions.getStack())?.params.articleId,
+      ).toEqual("20");
       expect(history.index).toEqual(2);
 
       history.back();
-      expect(activeActivity(actions.getStack())?.params.articleId).toEqual(
-        "10",
-      );
+
+      expect(
+        activeActivity(await proxyActions.getStack())?.params.articleId,
+      ).toEqual("10");
       expect(history.index).toEqual(1);
 
       history.back();
-      expect(activeActivity(actions.getStack())?.name).toEqual("Home");
+
+      expect(activeActivity(await proxyActions.getStack())?.name).toEqual(
+        "Home",
+      );
       expect(history.index).toEqual(0);
     })();
   });
