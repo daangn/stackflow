@@ -13,7 +13,7 @@ import { last } from "./last";
 import type { UrlPatternOptions } from "./makeTemplate";
 import { makeTemplate } from "./makeTemplate";
 import { normalizeRoute } from "./normalizeRoute";
-import { makeQueue } from "./queue";
+import { makeHistoryTaskQueue } from "./queue";
 import { RoutesProvider } from "./RoutesContext";
 
 const SECOND = 1000;
@@ -49,7 +49,7 @@ export function historySyncPlugin<
     let pushFlag = 0;
     let popFlag = 0;
 
-    const queue = makeQueue(history);
+    const { enqueue } = makeHistoryTaskQueue(history);
 
     return {
       key: "plugin-history-sync",
@@ -161,7 +161,7 @@ export function historySyncPlugin<
 
         const lastStep = last(rootActivity.steps);
 
-        queue(() =>
+        enqueue(() =>
           replaceState({
             history,
             pathname: template.fill(rootActivity.params),
@@ -188,6 +188,12 @@ export function historySyncPlugin<
           const targetActivity = historyState.activity;
           const targetActivityId = historyState.activity.id;
           const targetStep = historyState.step;
+          const { silent } = historyState;
+
+          if (silent) {
+            historyState.silent = false;
+            return;
+          }
 
           const { activities } = getStack();
           const currentActivity = activities.find(
@@ -253,9 +259,10 @@ export function historySyncPlugin<
                 targetStep?.enteredBy.name === "StepPushed" ||
                 targetStep?.enteredBy.name === "StepReplaced"
               ) {
+                const { enteredBy } = targetStep;
                 pushFlag += 1;
                 stepPush({
-                  ...targetStep.enteredBy,
+                  ...enteredBy,
                 });
               }
             }
@@ -267,9 +274,13 @@ export function historySyncPlugin<
               (targetStep?.enteredBy.name === "StepPushed" ||
                 targetStep?.enteredBy.name === "StepReplaced")
             ) {
-              pushFlag += 1;
-              stepPush({
-                ...targetStep.enteredBy,
+              const { enteredBy } = targetStep;
+
+              enqueue(() => {
+                pushFlag += 1;
+                stepPush({
+                  ...enteredBy,
+                });
               });
             }
 
@@ -310,12 +321,13 @@ export function historySyncPlugin<
           options.urlPatternOptions,
         );
 
-        queue(() =>
+        enqueue(() =>
           pushState({
             history,
             pathname: template.fill(activity.params),
             state: {
               activity,
+              silent: true,
             },
             useHash: options.useHash,
           }),
@@ -332,13 +344,14 @@ export function historySyncPlugin<
           options.urlPatternOptions,
         );
 
-        queue(() =>
+        enqueue(() =>
           pushState({
             history,
             pathname: template.fill(activity.params),
             state: {
               activity,
               step,
+              silent: true,
             },
             useHash: options.useHash,
           }),
@@ -354,12 +367,13 @@ export function historySyncPlugin<
           options.urlPatternOptions,
         );
 
-        queue(() =>
+        enqueue(() =>
           replaceState({
             history,
             pathname: template.fill(activity.params),
             state: {
               activity,
+              silent: true,
             },
             useHash: options.useHash,
           }),
@@ -375,13 +389,14 @@ export function historySyncPlugin<
           options.urlPatternOptions,
         );
 
-        queue(() =>
+        enqueue(() =>
           replaceState({
             history,
             pathname: template.fill(activity.params),
             state: {
               activity,
               step,
+              silent: true,
             },
             useHash: options.useHash,
           }),
@@ -432,11 +447,13 @@ export function historySyncPlugin<
             : null;
 
         if (previousActivity) {
-          popFlag += previousActivity.steps.length - 1;
-
           do {
             for (let i = 0; i < previousActivity.steps.length - 1; i += 1) {
-              queue(history.back);
+              // eslint-disable-next-line no-loop-func
+              enqueue(() => {
+                popFlag += 1;
+                history.back();
+              });
             }
           } while (!safeParseState(getCurrentState({ history })));
         }
@@ -448,8 +465,10 @@ export function historySyncPlugin<
         );
 
         if ((currentActivity?.steps.length ?? 0) > 1) {
-          popFlag += 1;
-          queue(history.back);
+          enqueue(() => {
+            popFlag += 1;
+            history.back();
+          });
         }
       },
       onBeforePop({ actions: { getStack } }) {
@@ -463,11 +482,13 @@ export function historySyncPlugin<
 
           const popCount = isRoot ? 0 : steps.length;
 
-          popFlag += popCount;
-
           do {
             for (let i = 0; i < popCount; i += 1) {
-              queue(history.back);
+              // eslint-disable-next-line no-loop-func
+              enqueue(() => {
+                popFlag += 1;
+                history.back();
+              });
             }
           } while (!safeParseState(getCurrentState({ history })));
         }

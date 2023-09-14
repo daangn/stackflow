@@ -6,6 +6,7 @@ const STATE_TAG = `@stackflow/plugin-history-sync`;
 interface State {
   activity: Activity;
   step?: ActivityStep;
+  silent?: boolean;
 }
 
 interface SerializedState extends State {
@@ -44,6 +45,7 @@ function serializeState(state: State): SerializedState {
     _TAG: STATE_TAG,
     activity: serializeActivity(state.activity),
     step: state.step ? serializeStep(state.step) : undefined,
+    silent: state.silent,
   };
 }
 
