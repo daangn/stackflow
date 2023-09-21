@@ -1,5 +1,8 @@
 import { id, makeEvent } from "@stackflow/core";
-import type { StackflowReactPlugin } from "@stackflow/react";
+import type {
+  ActivityComponentType,
+  StackflowReactPlugin,
+} from "@stackflow/react";
 import type { History, Listener } from "history";
 import { createBrowserHistory, createMemoryHistory } from "history";
 
@@ -43,14 +46,24 @@ export type RouteParameters<Route extends string> = string extends Route
         : unknown)
   : {};
 
-type Route<K, T extends string = string> = {
+type Route<K, T extends string> = {
   path: T;
-  decode: (params: RouteParameters<T>) => K;
+  decode: (
+    params: RouteParameters<T>,
+  ) => K extends ActivityComponentType<infer U> ? U : never;
 };
 
-type HistorySyncPluginOptions<T, K extends keyof T> = {
+type HistorySyncPluginOptions<
+  T,
+  K extends Extract<keyof T, string>,
+  U extends Record<string, string>,
+> = {
   routes: {
-    [key in K]: string | string[] | Route<T[key]> | Route<T[key]>[];
+    [key in keyof U]:
+      | string
+      | string[]
+      | Route<T[key], U[key]>
+      | Route<T[key], U[key]>[];
   };
   fallbackActivity: (args: { initialContext: any }) => K;
   useHash?: boolean;
@@ -61,7 +74,8 @@ type HistorySyncPluginOptions<T, K extends keyof T> = {
 export function historySyncPlugin<
   T extends { [activityName: string]: unknown },
   K extends Extract<keyof T, string>,
->(options: HistorySyncPluginOptions<T, K>): StackflowReactPlugin {
+  U extends Record<string, string>,
+>(options: HistorySyncPluginOptions<T, K, U>): StackflowReactPlugin {
   const history =
     options.history ??
     (typeof window === "undefined"
