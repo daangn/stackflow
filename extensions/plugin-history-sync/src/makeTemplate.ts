@@ -1,5 +1,7 @@
 import UrlPattern from "url-pattern";
 
+import type { Route } from "./RoutesContext";
+
 function pathToUrl(path: string) {
   return new URL(path, "file://");
 }
@@ -43,8 +45,8 @@ export interface UrlPatternOptions {
   wildcardChar?: string;
 }
 
-export function makeTemplate(
-  templateStr: string,
+export function makeTemplate<T>(
+  { path: templateStr, decode }: Route<T>,
   urlPatternOptions?: UrlPatternOptions,
 ) {
   const pattern = new UrlPattern(`${templateStr}(/)`, urlPatternOptions);
@@ -92,7 +94,7 @@ export function makeTemplate(
 
       return {
         ...searchParams,
-        ...pathParams,
+        ...(decode ? decode(pathParams) : pathParams),
       };
     },
   };
