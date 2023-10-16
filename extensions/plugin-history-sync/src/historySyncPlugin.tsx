@@ -161,17 +161,15 @@ export function historySyncPlugin<
 
         const lastStep = last(rootActivity.steps);
 
-        enqueue(() =>
-          replaceState({
-            history,
-            pathname: template.fill(rootActivity.params),
-            state: {
-              activity: rootActivity,
-              step: lastStep,
-            },
-            useHash: options.useHash,
-          }),
-        );
+        replaceState({
+          history,
+          pathname: template.fill(rootActivity.params),
+          state: {
+            activity: rootActivity,
+            step: lastStep,
+          },
+          useHash: options.useHash,
+        });
 
         const onPopState: Listener = (e) => {
           if (popFlag) {
