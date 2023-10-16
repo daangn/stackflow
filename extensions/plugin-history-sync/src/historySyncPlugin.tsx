@@ -276,11 +276,9 @@ export function historySyncPlugin<
             ) {
               const { enteredBy } = targetStep;
 
-              enqueue(() => {
-                pushFlag += 1;
-                stepPush({
-                  ...enteredBy,
-                });
+              pushFlag += 1;
+              stepPush({
+                ...enteredBy,
               });
             }
 
