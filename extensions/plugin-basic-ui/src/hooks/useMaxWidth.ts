@@ -34,7 +34,7 @@ export function useMaxWidth({
     });
 
     return dispose;
-  }, []);
+  });
 
   return {
     maxWidth,

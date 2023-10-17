@@ -33,7 +33,7 @@ type HistorySyncPluginOptions<T, K extends Extract<keyof T, string>> = {
 export function historySyncPlugin<
   T extends { [activityName: string]: unknown },
   K extends Extract<keyof T, string>,
->(options: HistorySyncPluginOptions<T, K>): StackflowReactPlugin {
+>(options: HistorySyncPluginOptions<T, K>): StackflowReactPlugin<T> {
   const history =
     options.history ??
     (typeof window === "undefined"
