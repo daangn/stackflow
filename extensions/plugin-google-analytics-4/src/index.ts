@@ -1,2 +1,2 @@
-export * from "./googleAnalyticsPlugin";
 export { useGoogleAnalyticsContext } from "./contexts";
+export * from "./googleAnalyticsPlugin";

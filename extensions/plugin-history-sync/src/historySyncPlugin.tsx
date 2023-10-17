@@ -32,7 +32,7 @@ export function historySyncPlugin<
   T extends { [activityName: string]: unknown },
 >(
   options: HistorySyncPluginOptions<Extract<keyof T, string>>,
-): StackflowReactPlugin {
+): StackflowReactPlugin<T> {
   type K = Extract<keyof T, string>;
 
   const history =
