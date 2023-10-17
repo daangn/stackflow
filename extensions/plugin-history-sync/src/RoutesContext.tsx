@@ -5,7 +5,7 @@ export type Route<K> = {
   path: string;
   decode?: (
     params: Record<string, string>,
-  ) => K extends ActivityComponentType<infer U> ? U : never;
+  ) => K extends ActivityComponentType<infer U> ? U : {};
 };
 
 export type RouteLike<T> = string | string[] | Route<T> | Route<T>[];
