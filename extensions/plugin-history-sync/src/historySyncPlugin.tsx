@@ -3,6 +3,7 @@ import type { StackflowReactPlugin } from "@stackflow/react";
 import type { History, Listener } from "history";
 import { createBrowserHistory, createMemoryHistory } from "history";
 
+import { HistoryQueueProvider } from "./HistoryQueueContext";
 import {
   getCurrentState,
   pushState,
@@ -55,9 +56,11 @@ export function historySyncPlugin<
       key: "plugin-history-sync",
       wrapStack({ stack }) {
         return (
-          <RoutesProvider routes={options.routes}>
-            {stack.render()}
-          </RoutesProvider>
+          <HistoryQueueProvider enqueue={enqueue}>
+            <RoutesProvider routes={options.routes}>
+              {stack.render()}
+            </RoutesProvider>
+          </HistoryQueueProvider>
         );
       },
       overrideInitialEvents({ initialContext }) {
