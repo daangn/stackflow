@@ -1,2 +1,3 @@
-export type ActivityComponentType<T extends { [K in keyof T]: any } = {}> =
-  React.ComponentType<{ params: T }>;
+export type ActivityComponentType<
+  T extends { [K in keyof T]: string | undefined } = {},
+> = React.ComponentType<{ params: T }>;

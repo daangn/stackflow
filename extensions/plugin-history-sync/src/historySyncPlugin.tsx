@@ -15,26 +15,27 @@ import type { UrlPatternOptions } from "./makeTemplate";
 import { makeTemplate } from "./makeTemplate";
 import { normalizeRoute } from "./normalizeRoute";
 import { makeHistoryTaskQueue } from "./queue";
-import type { RouteLike } from "./RoutesContext";
 import { RoutesProvider } from "./RoutesContext";
 
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
 
-type HistorySyncPluginOptions<T, K extends Extract<keyof T, string>> = {
+type HistorySyncPluginOptions<K extends string> = {
   routes: {
-    [key in keyof T]: RouteLike<T[key]>;
+    [key in K]: string | string[];
   };
   fallbackActivity: (args: { initialContext: any }) => K;
   useHash?: boolean;
   history?: History;
   urlPatternOptions?: UrlPatternOptions;
 };
-
 export function historySyncPlugin<
   T extends { [activityName: string]: unknown },
-  K extends Extract<keyof T, string>,
->(options: HistorySyncPluginOptions<T, K>): StackflowReactPlugin<T> {
+>(
+  options: HistorySyncPluginOptions<Extract<keyof T, string>>,
+): StackflowReactPlugin<T> {
+  type K = Extract<keyof T, string>;
+
   const history =
     options.history ??
     (typeof window === "undefined"
