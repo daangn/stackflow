@@ -6,16 +6,22 @@ import type { History } from "history";
 export const makeHistoryTaskQueue = (history: History) => {
   let previousTask = Promise.resolve();
 
-  const enqueue = (cb: () => void) => {
+  const enqueue = (cb: () => void, listen: boolean = true) => {
     previousTask = previousTask.then(
       () =>
         new Promise<void>((resolve) => {
-          const clean = history.listen(() => {
-            clean();
-            resolve();
-          });
+          if (listen) {
+            const clean = history.listen(() => {
+              clean();
+              resolve();
+            });
+          }
 
           cb();
+
+          if (!listen) {
+            resolve();
+          }
         }),
     );
   };
