@@ -1,7 +1,7 @@
 import { createContext, useContext, useMemo } from "react";
 
-type HistoryQueueContextValue = {
-  enqueue: (action: () => void) => void;
+export type HistoryQueueContextValue = {
+  enqueue: (action: () => void, listen: boolean) => void;
 };
 
 export const HistoryQueueContext = createContext<HistoryQueueContextValue>({
