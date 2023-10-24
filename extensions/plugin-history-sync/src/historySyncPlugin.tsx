@@ -174,26 +174,25 @@ export function historySyncPlugin<
         );
 
         const onPopState: Listener = (e) => {
-          if (popFlag) {
-            popFlag -= 1;
-            return;
-          }
-
           const historyState = safeParseState(e.location.state);
 
-          if (!historyState) {
+          const earlyReturn = !historyState || popFlag;
+
+          if (historyState?.silent) {
+            historyState.silent = false;
+          }
+
+          if (popFlag) {
+            popFlag -= 1;
+          }
+
+          if (earlyReturn) {
             return;
           }
 
           const targetActivity = historyState.activity;
           const targetActivityId = historyState.activity.id;
           const targetStep = historyState.step;
-          const { silent } = historyState;
-
-          if (silent) {
-            historyState.silent = false;
-            return;
-          }
 
           const { activities } = getStack();
           const currentActivity = activities.find(

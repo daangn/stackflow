@@ -379,6 +379,55 @@ describe("historySyncPlugin", () => {
     );
   });
 
+  test("historySyncPlugin - 앞으로 가기를 해도, 스택 상태가 알맞게 바뀝니다 2", async () => {
+    actions.push({
+      activityId: "a1",
+      activityName: "Article",
+      activityParams: {
+        articleId: "1",
+        title: "hello",
+      },
+    });
+    actions.push({
+      activityId: "a2",
+      activityName: "Article",
+      activityParams: {
+        articleId: "2",
+        title: "hello",
+      },
+    });
+    await actions.push({
+      activityId: "a3",
+      activityName: "Article",
+      activityParams: {
+        articleId: "3",
+        title: "hello",
+      },
+    });
+
+    history.back();
+    history.back();
+    history.back();
+
+    history.go(1);
+    expect(activeActivity(await actions.getStack())?.name).toEqual("Article");
+    expect(activeActivity(await actions.getStack())?.params?.articleId).toEqual(
+      "1",
+    );
+
+    history.go(1);
+    expect(activeActivity(await actions.getStack())?.name).toEqual("Article");
+    expect(activeActivity(await actions.getStack())?.params?.articleId).toEqual(
+      "2",
+    );
+
+    history.go(1);
+    expect(activeActivity(await actions.getStack())?.name).toEqual("Article");
+    expect(activeActivity(await actions.getStack())?.params?.articleId).toEqual(
+      "3",
+    );
+  });
+
   test("historySyncPlugin - actions.stepPush()를 하면, 스택 상태가 알맞게 바뀌고, pop을 하면 한번에 여러 URL 상태가 사라집니다", async () => {
     actions.push({
       activityId: "a1",
