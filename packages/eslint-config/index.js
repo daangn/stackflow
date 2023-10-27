@@ -43,6 +43,7 @@ module.exports = {
         disallowTypeAnnotations: false,
       },
     ],
+    camelcase: "off",
   },
   ignorePatterns: ["**/__generated__/**/*", "**/lib/**/*", "**/dist/**/*"],
 };
