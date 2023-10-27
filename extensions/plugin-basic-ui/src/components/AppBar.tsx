@@ -29,8 +29,8 @@ type AppBarProps = Partial<
   >
 > & {
   title?: React.ReactNode;
-  appendLeft?: () => React.ReactNode;
-  appendRight?: () => React.ReactNode;
+  renderLeft?: () => React.ReactNode;
+  renderRight?: () => React.ReactNode;
   backButton?:
     | {
         renderIcon?: () => React.ReactNode;
@@ -59,8 +59,8 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
   (
     {
       title,
-      appendLeft,
-      appendRight,
+      renderLeft,
+      renderRight,
       backButton,
       closeButton,
       closeButtonLocation = "left",
@@ -260,7 +260,7 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
     const hasLeft = !!(
       (closeButtonLocation === "left" && closeButton) ||
       backButton ||
-      appendLeft
+      renderLeft
     );
 
     return (
@@ -300,7 +300,7 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
           <div className={css.left}>
             {closeButtonLocation === "left" && renderCloseButton()}
             {renderBackButton()}
-            {appendLeft?.()}
+            {renderLeft?.()}
           </div>
           <div ref={centerRef} className={css.center}>
             <div
@@ -322,7 +322,7 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
             </div>
           </div>
           <div className={css.right}>
-            {appendRight?.()}
+            {renderRight?.()}
             {closeButtonLocation === "right" && renderCloseButton()}
           </div>
         </div>
