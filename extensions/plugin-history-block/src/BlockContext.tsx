@@ -2,10 +2,11 @@ import type { History, Transition } from "history";
 import { createBrowserHistory, createMemoryHistory } from "history";
 import {
   createContext,
-  createRef,
+  forwardRef,
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 
@@ -18,22 +19,23 @@ const BlockContext = createContext<{
       : createBrowserHistory(),
 });
 
-export function BlockProvider({
-  children,
-  history,
-}: {
-  children: React.ReactNode;
-  history: History;
-}) {
-  const ctx = useMemo(
-    () => ({
-      history,
-    }),
-    [history],
-  );
+export const BlockProvider = forwardRef(
+  (
+    { children, history }: { children: React.ReactNode; history: History },
+    ref,
+  ) => {
+    const ctx = useMemo(
+      () => ({
+        history,
+      }),
+      [history],
+    );
 
-  return <BlockContext.Provider value={ctx}>{children}</BlockContext.Provider>;
-}
+    return (
+      <BlockContext.Provider value={ctx}>{children}</BlockContext.Provider>
+    );
+  },
+);
 
 export function useBlockContext(options: {
   onBlocked?: (unblock: () => void, transition: Transition) => void;
@@ -42,7 +44,11 @@ export function useBlockContext(options: {
 
   const [blocked, setBlocked] = useState(false);
 
+  const innerRef = useRef(false);
+
   useEffect(() => {
+    innerRef.current = blocked;
+
     if (blocked) {
       const unblock = () => {
         setBlocked(false);
@@ -62,7 +68,6 @@ export function useBlockContext(options: {
   return {
     blocked,
     setBlocked,
+    innerRef,
   };
 }
-
-const ref = createRef();
