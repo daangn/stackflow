@@ -7,7 +7,7 @@ import type { HistoryQueueContextValue } from "HistoryQueueContext";
 export const makeHistoryTaskQueue = (history: History) => {
   let previousTask = Promise.resolve();
 
-  const enqueue: HistoryQueueContextValue["enqueue"] = (
+  const requestHistoryTick: HistoryQueueContextValue["requestHistoryTick"] = (
     cb: () => void,
     listen: boolean = true,
   ) => {
@@ -30,5 +30,5 @@ export const makeHistoryTaskQueue = (history: History) => {
     );
   };
 
-  return { enqueue };
+  return { requestHistoryTick };
 };

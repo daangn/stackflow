@@ -50,13 +50,13 @@ export function historySyncPlugin<
     let pushFlag = 0;
     let popFlag = 0;
 
-    const { enqueue } = makeHistoryTaskQueue(history);
+    const { requestHistoryTick } = makeHistoryTaskQueue(history);
 
     return {
       key: "plugin-history-sync",
       wrapStack({ stack }) {
         return (
-          <HistoryQueueProvider enqueue={enqueue}>
+          <HistoryQueueProvider requestHistoryTick={requestHistoryTick}>
             <RoutesProvider routes={options.routes}>
               {stack.render()}
             </RoutesProvider>
@@ -164,7 +164,7 @@ export function historySyncPlugin<
 
         const lastStep = last(rootActivity.steps);
 
-        enqueue(() =>
+        requestHistoryTick(() =>
           replaceState({
             history,
             pathname: template.fill(rootActivity.params),
@@ -279,7 +279,7 @@ export function historySyncPlugin<
             ) {
               const { enteredBy } = targetStep;
 
-              enqueue(() => {
+              requestHistoryTick(() => {
                 pushFlag += 1;
                 stepPush({
                   ...enteredBy,
@@ -324,7 +324,7 @@ export function historySyncPlugin<
           options.urlPatternOptions,
         );
 
-        enqueue(() =>
+        requestHistoryTick(() =>
           pushState({
             history,
             pathname: template.fill(activity.params),
@@ -347,7 +347,7 @@ export function historySyncPlugin<
           options.urlPatternOptions,
         );
 
-        enqueue(() =>
+        requestHistoryTick(() =>
           pushState({
             history,
             pathname: template.fill(activity.params),
@@ -370,7 +370,7 @@ export function historySyncPlugin<
           options.urlPatternOptions,
         );
 
-        enqueue(() =>
+        requestHistoryTick(() =>
           replaceState({
             history,
             pathname: template.fill(activity.params),
@@ -392,7 +392,7 @@ export function historySyncPlugin<
           options.urlPatternOptions,
         );
 
-        enqueue(() =>
+        requestHistoryTick(() =>
           replaceState({
             history,
             pathname: template.fill(activity.params),
@@ -453,7 +453,7 @@ export function historySyncPlugin<
           do {
             for (let i = 0; i < previousActivity.steps.length - 1; i += 1) {
               // eslint-disable-next-line no-loop-func
-              enqueue(() => {
+              requestHistoryTick(() => {
                 popFlag += 1;
                 history.back();
               });
@@ -468,7 +468,7 @@ export function historySyncPlugin<
         );
 
         if ((currentActivity?.steps.length ?? 0) > 1) {
-          enqueue(() => {
+          requestHistoryTick(() => {
             popFlag += 1;
             history.back();
           });
@@ -488,7 +488,7 @@ export function historySyncPlugin<
           do {
             for (let i = 0; i < popCount; i += 1) {
               // eslint-disable-next-line no-loop-func
-              enqueue(() => {
+              requestHistoryTick(() => {
                 popFlag += 1;
                 history.back();
               });

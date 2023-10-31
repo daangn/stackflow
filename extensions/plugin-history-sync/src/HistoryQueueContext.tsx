@@ -1,24 +1,24 @@
 import { createContext, useContext, useMemo } from "react";
 
 export type HistoryQueueContextValue = {
-  enqueue: (action: () => void, listen?: boolean) => void;
+  requestHistoryTick: (action: () => void, listen?: boolean) => void;
 };
 
 export const HistoryQueueContext = createContext<HistoryQueueContextValue>({
-  enqueue: () => {},
+  requestHistoryTick: () => {},
 });
 
 export const HistoryQueueProvider = ({
   children,
-  enqueue,
+  requestHistoryTick,
 }: {
   children: React.ReactNode;
 } & HistoryQueueContextValue) => {
   const ctx = useMemo(
     () => ({
-      enqueue,
+      requestHistoryTick,
     }),
-    [enqueue],
+    [requestHistoryTick],
   );
 
   return (
@@ -28,4 +28,4 @@ export const HistoryQueueProvider = ({
   );
 };
 
-export const useHistoryQueue = () => useContext(HistoryQueueContext);
+export const useHistoryTick = () => useContext(HistoryQueueContext);
