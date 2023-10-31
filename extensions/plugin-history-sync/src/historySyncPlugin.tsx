@@ -3,6 +3,7 @@ import type { StackflowReactPlugin } from "@stackflow/react";
 import type { History, Listener } from "history";
 import { createBrowserHistory, createMemoryHistory } from "history";
 
+import { HistoryQueueProvider } from "./HistoryQueueContext";
 import {
   getCurrentState,
   pushState,
@@ -49,15 +50,17 @@ export function historySyncPlugin<
     let pushFlag = 0;
     let silentFlag = false;
 
-    const { enqueue } = makeHistoryTaskQueue(history);
+    const { requestHistoryTick } = makeHistoryTaskQueue(history);
 
     return {
       key: "plugin-history-sync",
       wrapStack({ stack }) {
         return (
-          <RoutesProvider routes={options.routes}>
-            {stack.render()}
-          </RoutesProvider>
+          <HistoryQueueProvider requestHistoryTick={requestHistoryTick}>
+            <RoutesProvider routes={options.routes}>
+              {stack.render()}
+            </RoutesProvider>
+          </HistoryQueueProvider>
         );
       },
       overrideInitialEvents({ initialContext }) {
@@ -161,7 +164,7 @@ export function historySyncPlugin<
 
         const lastStep = last(rootActivity.steps);
 
-        enqueue(() =>
+        requestHistoryTick(() =>
           replaceState({
             history,
             pathname: template.fill(rootActivity.params),
@@ -270,7 +273,7 @@ export function historySyncPlugin<
             ) {
               const { enteredBy } = targetStep;
 
-              enqueue(() => {
+              requestHistoryTick(() => {
                 pushFlag += 1;
                 stepPush({
                   ...enteredBy,
@@ -315,7 +318,7 @@ export function historySyncPlugin<
           options.urlPatternOptions,
         );
 
-        enqueue(() => {
+        requestHistoryTick(() => {
           silentFlag = true;
           pushState({
             history,
@@ -338,7 +341,7 @@ export function historySyncPlugin<
           options.urlPatternOptions,
         );
 
-        enqueue(() => {
+        requestHistoryTick(() => {
           silentFlag = true;
           pushState({
             history,
@@ -361,7 +364,7 @@ export function historySyncPlugin<
           options.urlPatternOptions,
         );
 
-        enqueue(() => {
+        requestHistoryTick(() => {
           silentFlag = true;
           replaceState({
             history,
@@ -383,7 +386,7 @@ export function historySyncPlugin<
           options.urlPatternOptions,
         );
 
-        enqueue(() => {
+        requestHistoryTick(() => {
           silentFlag = true;
           replaceState({
             history,
@@ -444,7 +447,7 @@ export function historySyncPlugin<
           do {
             for (let i = 0; i < previousActivity.steps.length - 1; i += 1) {
               // eslint-disable-next-line no-loop-func
-              enqueue(() => {
+              requestHistoryTick(() => {
                 silentFlag = true;
                 history.back();
               });
@@ -459,7 +462,7 @@ export function historySyncPlugin<
         );
 
         if ((currentActivity?.steps.length ?? 0) > 1) {
-          enqueue(() => {
+          requestHistoryTick(() => {
             silentFlag = true;
             history.back();
           });
@@ -479,7 +482,7 @@ export function historySyncPlugin<
           do {
             for (let i = 0; i < popCount; i += 1) {
               // eslint-disable-next-line no-loop-func
-              enqueue(() => {
+              requestHistoryTick(() => {
                 silentFlag = true;
                 history.back();
               });
