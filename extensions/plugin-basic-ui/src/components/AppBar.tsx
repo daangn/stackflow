@@ -29,8 +29,8 @@ type AppBarProps = Partial<
   >
 > & {
   title?: React.ReactNode;
-  appendLeft?: () => React.ReactNode;
-  appendRight?: () => React.ReactNode;
+  renderLeft?: () => React.ReactNode;
+  renderRight?: () => React.ReactNode;
   backButton?:
     | {
         renderIcon?: () => React.ReactNode;
@@ -52,19 +52,21 @@ type AppBarProps = Partial<
   closeButtonLocation?: "left" | "right";
   border?: boolean;
   modalPresentationStyle?: "fullScreen";
+  activityEnterStyle?: "slideInLeft";
   onTopClick?: (e: React.MouseEvent) => void;
 };
 const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
   (
     {
       title,
-      appendLeft,
-      appendRight,
+      renderLeft,
+      renderRight,
       backButton,
       closeButton,
       closeButtonLocation = "left",
       border = true,
       modalPresentationStyle,
+      activityEnterStyle,
       iconColor,
       iconColorTransitionDuration,
       textColor,
@@ -95,8 +97,6 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
       innerRef: centerRef,
       enable: globalOptions.theme === "cupertino",
     });
-
-    const presentModalFullScreen = modalPresentationStyle === "fullScreen";
 
     const onBackClick = (e: React.MouseEvent<HTMLButtonElement>) => {
       if (backButton && "onClick" in backButton && backButton.onClick) {
@@ -168,7 +168,7 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
               return globalBackButton.renderIcon();
             }
 
-            if (presentModalFullScreen) {
+            if (modalPresentationStyle === "fullScreen") {
               return <IconClose />;
             }
 
@@ -260,7 +260,7 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
     const hasLeft = !!(
       (closeButtonLocation === "left" && closeButton) ||
       backButton ||
-      appendLeft
+      renderLeft
     );
 
     return (
@@ -268,7 +268,8 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
         ref={ref}
         className={css.appBar({
           border,
-          presentModalFullScreen,
+          modalPresentationStyle,
+          activityEnterStyle,
         })}
         style={assignInlineVars(
           compactMap({
@@ -299,7 +300,7 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
           <div className={css.left}>
             {closeButtonLocation === "left" && renderCloseButton()}
             {renderBackButton()}
-            {appendLeft?.()}
+            {renderLeft?.()}
           </div>
           <div ref={centerRef} className={css.center}>
             <div
@@ -321,7 +322,7 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
             </div>
           </div>
           <div className={css.right}>
-            {appendRight?.()}
+            {renderRight?.()}
             {closeButtonLocation === "right" && renderCloseButton()}
           </div>
         </div>

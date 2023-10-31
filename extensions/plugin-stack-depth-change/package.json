@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/plugin-stack-depth-change",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "license": "MIT",
   "exports": {
     ".": {
@@ -26,9 +26,9 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "@stackflow/core": "^1.0.7",
+    "@stackflow/core": "^1.0.8",
     "@stackflow/esbuild-config": "^1.0.0",
-    "@stackflow/eslint-config": "^1.0.0",
+    "@stackflow/eslint-config": "^1.0.1",
     "@types/node": "^18.6.3",
     "@typescript-eslint/eslint-plugin": "^5.32.0",
     "@typescript-eslint/parser": "^5.20.0",

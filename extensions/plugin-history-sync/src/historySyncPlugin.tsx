@@ -48,7 +48,7 @@ export function historySyncPlugin<
 
   return () => {
     let pushFlag = 0;
-    let popFlag = 0;
+    let silentFlag = false;
 
     const { requestHistoryTick } = makeHistoryTaskQueue(history);
 
@@ -177,8 +177,8 @@ export function historySyncPlugin<
         );
 
         const onPopState: Listener = (e) => {
-          if (popFlag) {
-            popFlag -= 1;
+          if (silentFlag) {
+            silentFlag = false;
             return;
           }
 
@@ -191,12 +191,6 @@ export function historySyncPlugin<
           const targetActivity = historyState.activity;
           const targetActivityId = historyState.activity.id;
           const targetStep = historyState.step;
-          const { silent } = historyState;
-
-          if (silent) {
-            historyState.silent = false;
-            return;
-          }
 
           const { activities } = getStack();
           const currentActivity = activities.find(
@@ -324,17 +318,17 @@ export function historySyncPlugin<
           options.urlPatternOptions,
         );
 
-        requestHistoryTick(() =>
+        requestHistoryTick(() => {
+          silentFlag = true;
           pushState({
             history,
             pathname: template.fill(activity.params),
             state: {
               activity,
-              silent: true,
             },
             useHash: options.useHash,
-          }),
-        );
+          });
+        });
       },
       onStepPushed({ effect: { activity, step } }) {
         if (pushFlag) {
@@ -347,18 +341,18 @@ export function historySyncPlugin<
           options.urlPatternOptions,
         );
 
-        requestHistoryTick(() =>
+        requestHistoryTick(() => {
+          silentFlag = true;
           pushState({
             history,
             pathname: template.fill(activity.params),
             state: {
               activity,
               step,
-              silent: true,
             },
             useHash: options.useHash,
-          }),
-        );
+          });
+        });
       },
       onReplaced({ effect: { activity } }) {
         if (!activity.isActive) {
@@ -370,17 +364,17 @@ export function historySyncPlugin<
           options.urlPatternOptions,
         );
 
-        requestHistoryTick(() =>
+        requestHistoryTick(() => {
+          silentFlag = true;
           replaceState({
             history,
             pathname: template.fill(activity.params),
             state: {
               activity,
-              silent: true,
             },
             useHash: options.useHash,
-          }),
-        );
+          });
+        });
       },
       onStepReplaced({ effect: { activity, step } }) {
         if (!activity.isActive) {
@@ -392,18 +386,18 @@ export function historySyncPlugin<
           options.urlPatternOptions,
         );
 
-        requestHistoryTick(() =>
+        requestHistoryTick(() => {
+          silentFlag = true;
           replaceState({
             history,
             pathname: template.fill(activity.params),
             state: {
               activity,
               step,
-              silent: true,
             },
             useHash: options.useHash,
-          }),
-        );
+          });
+        });
       },
       onBeforePush({ actionParams, actions: { overrideActionParams } }) {
         const template = makeTemplate(
@@ -454,7 +448,7 @@ export function historySyncPlugin<
             for (let i = 0; i < previousActivity.steps.length - 1; i += 1) {
               // eslint-disable-next-line no-loop-func
               requestHistoryTick(() => {
-                popFlag += 1;
+                silentFlag = true;
                 history.back();
               });
             }
@@ -469,7 +463,7 @@ export function historySyncPlugin<
 
         if ((currentActivity?.steps.length ?? 0) > 1) {
           requestHistoryTick(() => {
-            popFlag += 1;
+            silentFlag = true;
             history.back();
           });
         }
@@ -489,7 +483,7 @@ export function historySyncPlugin<
             for (let i = 0; i < popCount; i += 1) {
               // eslint-disable-next-line no-loop-func
               requestHistoryTick(() => {
-                popFlag += 1;
+                silentFlag = true;
                 history.back();
               });
             }

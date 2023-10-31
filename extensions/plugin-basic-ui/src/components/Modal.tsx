@@ -87,6 +87,9 @@ const Modal: React.FC<ModalProps> = ({
               : "0ms",
         }),
       )}
+      data-stackflow-component-name="Modal"
+      data-stackflow-activity-id={activity?.id}
+      data-stackflow-activity-is-active={activity?.isActive}
     >
       <div className={css.dim} ref={paperRef} onClick={onDimClick}>
         <div className={css.paper} onClick={onPaperClick}>

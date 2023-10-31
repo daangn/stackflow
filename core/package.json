@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/core",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "license": "MIT",
   "exports": {
     ".": {
@@ -40,7 +40,7 @@
   },
   "devDependencies": {
     "@stackflow/esbuild-config": "^1.0.0",
-    "@stackflow/eslint-config": "^1.0.0",
+    "@stackflow/eslint-config": "^1.0.1",
     "@swc/core": "^1.2.182",
     "@swc/jest": "^0.2.21",
     "@types/jest": "^28.1.6",

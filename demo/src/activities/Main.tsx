@@ -103,8 +103,8 @@ const Main: ActivityComponentType = () => {
   return (
     <Layout
       appBar={{
-        appendLeft: appBarLeft,
-        appendRight: appBarRight,
+        renderLeft: appBarLeft,
+        renderRight: appBarRight,
       }}
     >
       <div className={css.wrapper}>
