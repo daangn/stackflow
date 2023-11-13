@@ -2819,6 +2819,7 @@ __metadata:
     "@types/jest": ^28.1.6
     "@types/node": ^18.6.3
     "@types/react": ^18.0.15
+    conventional-changelog-conventionalcommits: ^7.0.2
     eslint: ^8.13.0
     lerna: ^4.0.0
     prettier: ^2.6.2
@@ -5021,6 +5022,15 @@ __metadata:
     compare-func: ^2.0.0
     q: ^1.5.1
   checksum: 6ed4972fce25a50f9f038c749cc9db501363131b0fb2efc1fccecba14e4b1c80651d0d758d4c350a609f32010c66fa343eefd49c02e79e911884be28f53f3f90
+  languageName: node
+  linkType: hard
+
+"conventional-changelog-conventionalcommits@npm:^7.0.2":
+  version: 7.0.2
+  resolution: "conventional-changelog-conventionalcommits@npm:7.0.2"
+  dependencies:
+    compare-func: ^2.0.0
+  checksum: e17ac5970ae09d6e9b0c3a7edaed075b836c0c09c34c514589cbe06554f46ed525067fa8150a8467cc03b1cf9af2073e7ecf48790d4f5ea399921b1cbe313711
   languageName: node
   linkType: hard
 

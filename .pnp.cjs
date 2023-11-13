@@ -116,6 +116,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/jest", "npm:28.1.6"],\
             ["@types/node", "npm:18.6.3"],\
             ["@types/react", "npm:18.0.15"],\
+            ["conventional-changelog-conventionalcommits", "npm:7.0.2"],\
             ["eslint", "npm:8.14.0"],\
             ["lerna", "npm:4.0.0"],\
             ["prettier", "npm:2.6.2"],\
@@ -3704,6 +3705,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/jest", "npm:28.1.6"],\
             ["@types/node", "npm:18.6.3"],\
             ["@types/react", "npm:18.0.15"],\
+            ["conventional-changelog-conventionalcommits", "npm:7.0.2"],\
             ["eslint", "npm:8.14.0"],\
             ["lerna", "npm:4.0.0"],\
             ["prettier", "npm:2.6.2"],\
@@ -6684,6 +6686,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["conventional-changelog-angular", "npm:5.0.13"],\
             ["compare-func", "npm:2.0.0"],\
             ["q", "npm:1.5.1"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["conventional-changelog-conventionalcommits", [\
+        ["npm:7.0.2", {\
+          "packageLocation": "./.yarn/cache/conventional-changelog-conventionalcommits-npm-7.0.2-f878f86efe-e17ac5970a.zip/node_modules/conventional-changelog-conventionalcommits/",\
+          "packageDependencies": [\
+            ["conventional-changelog-conventionalcommits", "npm:7.0.2"],\
+            ["compare-func", "npm:2.0.0"]\
           ],\
           "linkType": "HARD"\
         }]\
