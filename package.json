@@ -16,9 +16,8 @@
     "clean": "ultra -r clean",
     "dev": "ultra -r --concurrency 100 dev",
     "format": "eslint . --fix --ext .ts,.tsx --ignore-path .gitignore && prettier -w .",
-    "lerna:publish": "yarn clean && yarn build && lerna publish",
-    "lerna:publish:all": "yarn clean && yarn build && lerna publish --force-publish",
-    "lerna:publish:canary": "yarn clean && yarn build && lerna publish --canary",
+    "release": "yarn clean && yarn build && changeset && changeset version && changeset publish",
+    "release:canary": "yarn clean && yarn build && changeset pre enter canary && changeset && changeset version && changeset publish && changeset pre exit",
     "test": "yarn build && ultra -r test",
     "typecheck": "ultra -r typecheck",
     "version": "yarn install && git stage yarn.lock"
