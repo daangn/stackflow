@@ -1,0 +1,114 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/github-workflow.json
+
+on:
+  push:
+    branches:
+      - main
+
+name: Release
+
+jobs:
+  release:
+    name: Create PR or release packages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "18.x"
+
+      - uses: actions/cache@v2
+        id: yarn-unplugged-cache
+        with:
+          path: |
+            '.yarn/unplugged/'
+            '.yarn/build-state.yml'
+            '.yarn/install-state.gz'
+            node_modules
+          key: ${{ runner.os }}-yarn-v1-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-v1-
+
+      - name: Install the unplugged dependencies and check that the Yarn files do not change during the installation process. If an error occurs, run "yarn install" and commit and push.
+        run: |
+          yarn install --immutable
+        shell: bash
+
+      - uses: actions/cache/restore@v3
+        with:
+          path: |
+            core/dist/
+            core/.ultra.cache.json
+            demo/build/
+            demo/dist/
+            demo/.ultra.cache.json
+            docs/.next/
+            docs/.ultra.cache.json
+            extensions/compat-await-push/dist/
+            extensions/compat-await-push/.ultra.cache.json
+            extensions/link/dist/
+            extensions/link/.ultra.cache.json
+            extensions/plugin-basic-ui/dist/
+            extensions/plugin-basic-ui/.ultra.cache.json
+            extensions/plugin-history-sync/dist/
+            extensions/plugin-history-sync/.ultra.cache.json
+            extensions/plugin-preload/dist/
+            extensions/plugin-preload/.ultra.cache.json
+            extensions/plugin-renderer-basic/dist/
+            extensions/plugin-renderer-basic/.ultra.cache.json
+            extensions/plugin-renderer-web/dist/
+            extensions/plugin-renderer-web/.ultra.cache.json
+            extensions/plugin-stack-depth-change/dist/
+            extensions/plugin-stack-depth-change/.ultra.cache.json
+            integrations/react/dist/
+            integrations/react/.ultra.cache.json
+            packages/esbuild-config/.ultra.cache.json
+            packages/eslint-config/.ultra.cache.json
+          key: ultra-cache-main-v2
+          restore-keys: |
+            ultra-cache-main-v2
+
+      - name: Build the entire monorepo
+        run: |
+          yarn build
+
+      - uses: actions/cache/save@v3
+        with:
+          path: |
+            core/dist/
+            core/.ultra.cache.json
+            demo/build/
+            demo/dist/
+            demo/.ultra.cache.json
+            docs/.next/
+            docs/.ultra.cache.json
+            extensions/compat-await-push/dist/
+            extensions/compat-await-push/.ultra.cache.json
+            extensions/link/dist/
+            extensions/link/.ultra.cache.json
+            extensions/plugin-basic-ui/dist/
+            extensions/plugin-basic-ui/.ultra.cache.json
+            extensions/plugin-history-sync/dist/
+            extensions/plugin-history-sync/.ultra.cache.json
+            extensions/plugin-preload/dist/
+            extensions/plugin-preload/.ultra.cache.json
+            extensions/plugin-renderer-basic/dist/
+            extensions/plugin-renderer-basic/.ultra.cache.json
+            extensions/plugin-renderer-web/dist/
+            extensions/plugin-renderer-web/.ultra.cache.json
+            extensions/plugin-stack-depth-change/dist/
+            extensions/plugin-stack-depth-change/.ultra.cache.json
+            integrations/react/dist/
+            integrations/react/.ultra.cache.json
+            packages/esbuild-config/.ultra.cache.json
+            packages/eslint-config/.ultra.cache.json
+          key: ultra-cache-main-v2
+
+      - name: Create PR or release packages
+        uses: changesets/action@v1
+        with:
+          publish: yarn changeset publish
+          version: yarn changeset version
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
