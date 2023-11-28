@@ -112,3 +112,4 @@ jobs:
           version: yarn changeset version
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
