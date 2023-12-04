@@ -10,10 +10,6 @@
     "packages/*",
     "extensions/*"
   ],
-  "engineStrict": true,
-  "engines": {
-    "node": "16.x"
-  },
   "scripts": {
     "build": "ultra -r build",
     "build:dts": "ultra -r --build build:dts",
