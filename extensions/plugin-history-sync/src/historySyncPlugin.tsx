@@ -164,17 +164,15 @@ export function historySyncPlugin<
 
         const lastStep = last(rootActivity.steps);
 
-        // requestHistoryTick(() =>
-          replaceState({
-            history,
-            pathname: template.fill(rootActivity.params),
-            state: {
-              activity: rootActivity,
-              step: lastStep,
-            },
-            useHash: options.useHash,
-          }),
-        // );
+        replaceState({
+          history,
+          pathname: template.fill(rootActivity.params),
+          state: {
+            activity: rootActivity,
+            step: lastStep,
+          },
+          useHash: options.useHash,
+        });
 
         const onPopState: Listener = (e) => {
           if (silentFlag) {
@@ -273,12 +271,10 @@ export function historySyncPlugin<
             ) {
               const { enteredBy } = targetStep;
 
-              // requestHistoryTick(() => {
-                pushFlag += 1;
-                stepPush({
-                  ...enteredBy,
-                });
-              // });
+              pushFlag += 1;
+              stepPush({
+                ...enteredBy,
+              });
             }
 
             dispatchEvent("StepPopped", {});
