@@ -72,7 +72,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
 
   const hasAppBar = !!appBar;
 
-  const zIndexBase = (activity?.zIndex ?? 0) * 5;
+  const zIndexBase = (activity?.isTop ? 1 : 0) * 5;
 
   let zIndexDim: number;
   let zIndexPaper: number;
