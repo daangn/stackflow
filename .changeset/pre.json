@@ -1,0 +1,26 @@
+{
+  "mode": "exit",
+  "tag": "canary",
+  "initialVersions": {
+    "@stackflow/core": "1.0.8",
+    "@stackflow/demo": "1.2.17",
+    "@stackflow/docs": "1.2.18",
+    "@stackflow/compat-await-push": "1.1.5",
+    "@stackflow/link": "1.3.14",
+    "@stackflow/plugin-basic-ui": "1.4.1",
+    "@stackflow/plugin-devtools": "0.1.6",
+    "@stackflow/plugin-google-analytics-4": "1.1.7",
+    "@stackflow/plugin-history-sync": "1.3.13",
+    "@stackflow/plugin-map-initial-activity": "1.0.3",
+    "@stackflow/plugin-preload": "1.2.13",
+    "@stackflow/plugin-renderer-basic": "1.1.5",
+    "@stackflow/plugin-renderer-web": "1.1.5",
+    "@stackflow/plugin-stack-depth-change": "1.0.9",
+    "@stackflow/react": "1.1.5",
+    "@stackflow/esbuild-config": "1.0.0",
+    "@stackflow/eslint-config": "1.0.1"
+  },
+  "changesets": [
+    "dull-eyes-love"
+  ]
+}
