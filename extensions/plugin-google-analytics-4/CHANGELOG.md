@@ -1,6 +1,6 @@
-# @stackflow/plugin-basic-ui
+# @stackflow/plugin-google-analytics-4
 
-## 1.4.2
+## 1.1.8
 
 ### Patch Changes
 
@@ -8,9 +8,3 @@
 - Updated dependencies [e4c49cdc]
   - @stackflow/core@1.0.9
   - @stackflow/react@1.1.6
-
-## 1.4.1
-
-### Patch Changes
-
-- 7dca11ee: feat(plugin-basic-ui): update IconBack component (#423)
