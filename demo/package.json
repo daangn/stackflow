@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/demo",
-  "version": "1.2.17",
+  "version": "1.2.18-canary.0",
   "private": true,
   "license": "MIT",
   "exports": {
@@ -41,7 +41,7 @@
     "@stackflow/plugin-map-initial-activity": "^1.0.3",
     "@stackflow/plugin-preload": "^1.2.13",
     "@stackflow/plugin-renderer-basic": "^1.1.5",
-    "@stackflow/plugin-stack-depth-change": "^1.0.9",
+    "@stackflow/plugin-stack-depth-change": "^1.1.0-canary.0",
     "@stackflow/react": "^1.1.5",
     "@typescript-eslint/eslint-plugin": "^5.32.0",
     "@typescript-eslint/parser": "^5.20.0",
