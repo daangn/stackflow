@@ -22,14 +22,20 @@ function getActiveActivities(activities: Activity[]) {
 export function stackDepthChangePlugin(
   options: StackDepthChangePluginOptions,
 ): StackflowPlugin {
+  let prevDepth = 0;
+
   return () => ({
     key: "plugin-stack-depth-change",
     onInit({ actions: { getStack } }) {
       const { activities } = getStack();
       const activeActivities = getActiveActivities(activities);
 
+      const depth = activeActivities.length;
+
+      prevDepth = depth;
+
       options.onInit?.({
-        depth: activeActivities.length,
+        depth,
         activeActivities,
         activities,
       });
@@ -38,11 +44,17 @@ export function stackDepthChangePlugin(
       const { activities } = getStack();
       const activeActivities = getActiveActivities(activities);
 
-      options.onDepthChanged?.({
-        depth: activeActivities.length,
-        activeActivities,
-        activities,
-      });
+      const depth = activeActivities.length;
+
+      if (prevDepth !== depth) {
+        prevDepth = depth;
+
+        options.onDepthChanged?.({
+          depth,
+          activeActivities,
+          activities,
+        });
+      }
     },
   });
 }
