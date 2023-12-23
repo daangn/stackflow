@@ -1,5 +1,11 @@
 # @stackflow/plugin-basic-ui
 
+## 1.5.0
+
+### Minor Changes
+
+- dd5be87f: feat(plugin-basic-ui): export css variables from components
+
 ## 1.4.2
 
 ### Patch Changes
