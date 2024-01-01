@@ -20,14 +20,14 @@ const { Stack, useFlow } = stackflow({
       /**
        * Initial loading
        * @param depth
-       * @param activeActivites
+       * @param activeActivities
        * @param activities
        */
       onInit: ({ depth, activities, activeActivities }) => {},
       /**
        * When the depth changes
        * @param depth
-       * @param activeActivites
+       * @param activeActivities
        * @param activities
        */
       onDepthChanged: ({ depth, activities, activeActivities }) => {},
