@@ -7,6 +7,7 @@ import type { GlobalVars } from "../basicUIPlugin.css";
 import { globalVars } from "../basicUIPlugin.css";
 import {
   useLazy,
+  useMounted,
   useNullableActivity,
   useStyleEffectHide,
   useStyleEffectOffset,
@@ -49,6 +50,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
 }) => {
   const globalOptions = useGlobalOptions();
   const activity = useNullableActivity();
+  const mounted = useMounted();
 
   const { pop } = useActions();
 
@@ -182,8 +184,10 @@ const AppScreen: React.FC<AppScreenProps> = ({
           }),
         )}
         data-stackflow-component-name="AppScreen"
-        data-stackflow-activity-id={activity?.id}
-        data-stackflow-activity-is-active={activity?.isActive}
+        data-stackflow-activity-id={mounted ? activity?.id : undefined}
+        data-stackflow-activity-is-active={
+          mounted ? activity?.isActive : undefined
+        }
       >
         {activityEnterStyle !== "slideInLeft" && (
           <div className={css.dim} ref={dimRef} />
