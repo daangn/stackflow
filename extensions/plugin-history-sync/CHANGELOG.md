@@ -1,5 +1,11 @@
 # @stackflow/plugin-history-sync
 
+## 1.3.15
+
+### Patch Changes
+
+- f3b2d720: fix(plugin-history-sync): fix history queue on init
+
 ## 1.3.14
 
 ### Patch Changes
