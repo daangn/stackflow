@@ -30,7 +30,7 @@ function parseActionOptions(options?: { animate?: boolean }) {
   }
 
   const isNullableAnimateOption = options.animate == null;
-  
+
   if (isNullableAnimateOption) {
     return { skipActiveState: false };
   }
@@ -43,7 +43,7 @@ export type StackComponentType = React.FC<{
 }>;
 
 type StackflowPluginsEntry<T extends BaseActivities> =
-  | StackflowReactPlugin
+  | StackflowReactPlugin<T>
   | StackflowPluginsEntry<T>[];
 
 export type StackflowOptions<T extends BaseActivities> = {

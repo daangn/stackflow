@@ -3,6 +3,7 @@ import type { StackflowReactPlugin } from "@stackflow/react";
 import type { History, Listener } from "history";
 import { createBrowserHistory, createMemoryHistory } from "history";
 
+import { HistoryQueueProvider } from "./HistoryQueueContext";
 import {
   getCurrentState,
   pushState,
@@ -32,7 +33,7 @@ export function historySyncPlugin<
   T extends { [activityName: string]: unknown },
 >(
   options: HistorySyncPluginOptions<Extract<keyof T, string>>,
-): StackflowReactPlugin {
+): StackflowReactPlugin<T> {
   type K = Extract<keyof T, string>;
 
   const history =
@@ -47,17 +48,19 @@ export function historySyncPlugin<
 
   return () => {
     let pushFlag = 0;
-    let popFlag = 0;
+    let silentFlag = false;
 
-    const { enqueue } = makeHistoryTaskQueue(history);
+    const { requestHistoryTick } = makeHistoryTaskQueue(history);
 
     return {
       key: "plugin-history-sync",
       wrapStack({ stack }) {
         return (
-          <RoutesProvider routes={options.routes}>
-            {stack.render()}
-          </RoutesProvider>
+          <HistoryQueueProvider requestHistoryTick={requestHistoryTick}>
+            <RoutesProvider routes={options.routes}>
+              {stack.render()}
+            </RoutesProvider>
+          </HistoryQueueProvider>
         );
       },
       overrideInitialEvents({ initialContext }) {
@@ -172,8 +175,8 @@ export function historySyncPlugin<
         });
 
         const onPopState: Listener = (e) => {
-          if (popFlag) {
-            popFlag -= 1;
+          if (silentFlag) {
+            silentFlag = false;
             return;
           }
 
@@ -186,12 +189,6 @@ export function historySyncPlugin<
           const targetActivity = historyState.activity;
           const targetActivityId = historyState.activity.id;
           const targetStep = historyState.step;
-          const { silent } = historyState;
-
-          if (silent) {
-            historyState.silent = false;
-            return;
-          }
 
           const { activities } = getStack();
           const currentActivity = activities.find(
@@ -317,17 +314,17 @@ export function historySyncPlugin<
           options.urlPatternOptions,
         );
 
-        enqueue(() =>
+        requestHistoryTick(() => {
+          silentFlag = true;
           pushState({
             history,
             pathname: template.fill(activity.params),
             state: {
               activity,
-              silent: true,
             },
             useHash: options.useHash,
-          }),
-        );
+          });
+        });
       },
       onStepPushed({ effect: { activity, step } }) {
         if (pushFlag) {
@@ -340,18 +337,18 @@ export function historySyncPlugin<
           options.urlPatternOptions,
         );
 
-        enqueue(() =>
+        requestHistoryTick(() => {
+          silentFlag = true;
           pushState({
             history,
             pathname: template.fill(activity.params),
             state: {
               activity,
               step,
-              silent: true,
             },
             useHash: options.useHash,
-          }),
-        );
+          });
+        });
       },
       onReplaced({ effect: { activity } }) {
         if (!activity.isActive) {
@@ -363,17 +360,17 @@ export function historySyncPlugin<
           options.urlPatternOptions,
         );
 
-        enqueue(() =>
+        requestHistoryTick(() => {
+          silentFlag = true;
           replaceState({
             history,
             pathname: template.fill(activity.params),
             state: {
               activity,
-              silent: true,
             },
             useHash: options.useHash,
-          }),
-        );
+          });
+        });
       },
       onStepReplaced({ effect: { activity, step } }) {
         if (!activity.isActive) {
@@ -385,18 +382,18 @@ export function historySyncPlugin<
           options.urlPatternOptions,
         );
 
-        enqueue(() =>
+        requestHistoryTick(() => {
+          silentFlag = true;
           replaceState({
             history,
             pathname: template.fill(activity.params),
             state: {
               activity,
               step,
-              silent: true,
             },
             useHash: options.useHash,
-          }),
-        );
+          });
+        });
       },
       onBeforePush({ actionParams, actions: { overrideActionParams } }) {
         const template = makeTemplate(
@@ -446,8 +443,8 @@ export function historySyncPlugin<
           do {
             for (let i = 0; i < previousActivity.steps.length - 1; i += 1) {
               // eslint-disable-next-line no-loop-func
-              enqueue(() => {
-                popFlag += 1;
+              requestHistoryTick(() => {
+                silentFlag = true;
                 history.back();
               });
             }
@@ -461,8 +458,8 @@ export function historySyncPlugin<
         );
 
         if ((currentActivity?.steps.length ?? 0) > 1) {
-          enqueue(() => {
-            popFlag += 1;
+          requestHistoryTick(() => {
+            silentFlag = true;
             history.back();
           });
         }
@@ -481,8 +478,8 @@ export function historySyncPlugin<
           do {
             for (let i = 0; i < popCount; i += 1) {
               // eslint-disable-next-line no-loop-func
-              enqueue(() => {
-                popFlag += 1;
+              requestHistoryTick(() => {
+                silentFlag = true;
                 history.back();
               });
             }

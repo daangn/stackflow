@@ -2,6 +2,10 @@
 
 ## Setup
 
+### Node.js
+
+> **Stackflow** only works in [Node.js](https://nodejs.org) version `16.x`.
+
 ### Install dependencies
 
 Install the dependencies by entering the following command in the project root

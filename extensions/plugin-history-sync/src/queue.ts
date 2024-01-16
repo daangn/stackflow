@@ -1,4 +1,5 @@
 import type { History } from "history";
+import type { HistoryQueueContextValue } from "HistoryQueueContext";
 
 /**
  * This function is required to avoid any race conditions caused by asynchronous history updates.
@@ -6,19 +7,28 @@ import type { History } from "history";
 export const makeHistoryTaskQueue = (history: History) => {
   let previousTask = Promise.resolve();
 
-  const enqueue = (cb: () => void) => {
+  const requestHistoryTick: HistoryQueueContextValue["requestHistoryTick"] = (
+    cb: () => void,
+    listen: boolean = true,
+  ) => {
     previousTask = previousTask.then(
       () =>
         new Promise<void>((resolve) => {
-          const clean = history.listen(() => {
-            clean();
-            resolve();
-          });
+          if (listen) {
+            const clean = history.listen(() => {
+              clean();
+              resolve();
+            });
+          }
 
           cb();
+
+          if (!listen) {
+            resolve();
+          }
         }),
     );
   };
 
-  return { enqueue };
+  return { requestHistoryTick };
 };

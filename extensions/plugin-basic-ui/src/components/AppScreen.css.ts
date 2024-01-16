@@ -134,11 +134,20 @@ export const paper = recipe({
         },
       ],
     },
-    presentModalFullScreen: {
-      true: {
+    modalPresentationStyle: {
+      fullScreen: {
         selectors: {
           [`${cupertino} &`]: {
             transform: "translate3d(0, 100%, 0)",
+          },
+        },
+      },
+    },
+    activityEnterStyle: {
+      slideInLeft: {
+        selectors: {
+          [`${android} &`]: {
+            transform: "translate3d(50%, 0, 0)",
           },
         },
       },

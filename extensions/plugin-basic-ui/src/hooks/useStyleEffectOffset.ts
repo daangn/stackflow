@@ -10,10 +10,12 @@ export const OFFSET_PX_CUPERTINO = 80;
 export function useStyleEffectOffset({
   refs,
   theme,
-  hasEffect,
+  activityEnterStyle,
+  hasEffect = false,
 }: {
   refs: Array<React.RefObject<any>>;
   theme: "android" | "cupertino";
+  activityEnterStyle?: "slideInLeft";
   hasEffect?: boolean;
 }) {
   useStyleEffect({
@@ -21,10 +23,25 @@ export function useStyleEffectOffset({
     refs,
     effect: hasEffect
       ? ({ activityTransitionState, refs }) => {
-          const transform =
-            theme === "cupertino"
-              ? `translate3d(-${OFFSET_PX_CUPERTINO / 16}rem, 0, 0)`
-              : `translate3d(0, -${OFFSET_PX_ANDROID / 16}rem, 0)`;
+          let transform: string;
+          let opacity: string;
+
+          switch (theme) {
+            case "cupertino": {
+              transform = `translate3d(-${OFFSET_PX_CUPERTINO / 16}rem, 0, 0)`;
+              opacity = "1";
+              break;
+            }
+            case "android":
+            default: {
+              transform =
+                activityEnterStyle === "slideInLeft"
+                  ? `translate3d(-50%, 0, 0)`
+                  : `translate3d(0, -${OFFSET_PX_ANDROID / 16}rem, 0)`;
+              opacity = activityEnterStyle === "slideInLeft" ? "0" : "1";
+              break;
+            }
+          }
 
           const cleanup = () => {
             requestNextFrame(() => {
@@ -36,6 +53,7 @@ export function useStyleEffectOffset({
                 const $el = ref.current;
 
                 $el.style.transform = "";
+                $el.style.opacity = "";
 
                 listenOnce($el, "transitionend", () => {
                   $el.style.transition = "";
@@ -55,6 +73,7 @@ export function useStyleEffectOffset({
                 ref.current.style.transition =
                   globalVars.computedTransitionDuration;
                 ref.current.style.transform = transform;
+                ref.current.style.opacity = opacity;
               });
 
               switch (activityTransitionState) {
