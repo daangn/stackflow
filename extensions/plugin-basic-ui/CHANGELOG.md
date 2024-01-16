@@ -1,5 +1,11 @@
 # @stackflow/plugin-basic-ui
 
+## 1.5.1
+
+### Patch Changes
+
+- d4e86c55: fix hydration mismatch warning in server-side rendering
+
 ## 1.5.0
 
 ### Minor Changes
