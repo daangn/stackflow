@@ -32,7 +32,7 @@ const { Stack, useFlow } = stackflow({
           // https://bit.ly/3uQbriR
         },
       },
-      useTitle: true, // Optional. If true, the title of the current screen will be sent to GA. if false, ActivityName will be sent to GA.(defalut false).
+      useTitle: true, // Optional. If true, the title of the current screen will be sent to GA. if false, ActivityName will be sent to GA.(default false).
     }),
   ],
 });
