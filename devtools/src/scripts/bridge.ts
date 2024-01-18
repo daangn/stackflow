@@ -6,7 +6,7 @@ window.addEventListener("message", (ev) => {
 
   switch (msg.type) {
     case "DATA_CHANGED": {
-      chrome.runtime.sendMessage(msg);
+      chrome.runtime.sendMessage(msg).catch(() => {});
       break;
     }
   }
