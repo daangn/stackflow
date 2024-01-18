@@ -1,5 +1,12 @@
 # @stackflow/demo
 
+## 1.2.19-canary.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @stackflow/plugin-stack-depth-change@1.1.1-canary.0
+
 ## 1.2.18
 
 ### Patch Changes
