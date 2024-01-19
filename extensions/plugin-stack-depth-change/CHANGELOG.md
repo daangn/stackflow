@@ -1,5 +1,11 @@
 # @stackflow/plugin-stack-depth-change
 
+## 1.1.1
+
+### Patch Changes
+
+- da18f07e: fix(plugin-stack-depth-change): invoke `onDepthChanged` only when transition is done
+
 ## 1.1.1-canary.0
 
 ### Patch Changes
