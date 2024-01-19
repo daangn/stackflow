@@ -14,7 +14,7 @@ type StackDepthChangePluginOptions = {
 function getActiveActivities(activities: Activity[]) {
   return activities.filter(
     (activity) =>
-      activity.transitionState === "enter-active" ||
+      activity.transitionState === "exit-active" ||
       activity.transitionState === "enter-done",
   );
 }

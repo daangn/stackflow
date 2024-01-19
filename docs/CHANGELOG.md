@@ -1,5 +1,11 @@
 # @stackflow/docs
 
+## 1.2.20-canary.0
+
+### Patch Changes
+
+- @stackflow/demo@1.2.19-canary.0
+
 ## 1.2.19
 
 ### Patch Changes
