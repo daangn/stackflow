@@ -8,24 +8,20 @@ export const makeHistoryTaskQueue = (history: History) => {
   let previousTask = Promise.resolve();
 
   const requestHistoryTick: HistoryQueueContextValue["requestHistoryTick"] = (
-    cb: () => void,
-    listen: boolean = true,
+    cb,
   ) => {
     previousTask = previousTask.then(
       () =>
         new Promise<void>((resolve) => {
-          if (listen) {
-            const clean = history.listen(() => {
-              clean();
-              resolve();
-            });
-          }
-
-          cb();
-
-          if (!listen) {
+          const clean = history.listen(() => {
+            clean();
             resolve();
-          }
+          });
+
+          cb(() => {
+            clean();
+            resolve();
+          });
         }),
     );
   };

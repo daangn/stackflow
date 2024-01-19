@@ -1,7 +1,7 @@
 import { createContext, useContext, useMemo } from "react";
 
 export type HistoryQueueContextValue = {
-  requestHistoryTick: (action: () => void, listen?: boolean) => void;
+  requestHistoryTick: (cb: (resolve: () => void) => void) => void;
 };
 
 export const HistoryQueueContext = createContext<HistoryQueueContextValue>({
