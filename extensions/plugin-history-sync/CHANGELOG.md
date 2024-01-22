@@ -1,5 +1,11 @@
 # @stackflow/plugin-history-sync
 
+## 1.3.16
+
+### Patch Changes
+
+- 45cf3f4d: fix(plugin-history-sync)!: reduce loop count for parsing state
+
 ## 1.3.15
 
 ### Patch Changes
