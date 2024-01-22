@@ -1,5 +1,11 @@
 # @stackflow/plugin-history-sync
 
+## 1.3.17
+
+### Patch Changes
+
+- 99c34fa4: fix(plugin-history-sync): request history tick on init
+
 ## 1.3.16
 
 ### Patch Changes
