@@ -1,4 +1,5 @@
 export * from "./compareBy";
+export * from "./divideBy";
 export * from "./findIndices";
 export * from "./id";
 export * from "./last";
