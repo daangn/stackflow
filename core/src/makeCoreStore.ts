@@ -1,7 +1,6 @@
 /* eslint-disable no-use-before-define */
 
 import isEqual from "react-fast-compare";
-import { divideBy } from "utils/divideBy";
 
 import { aggregate } from "./aggregate";
 import type { Effect } from "./Effect";
@@ -11,7 +10,7 @@ import { makeEvent } from "./event-utils";
 import type { StackflowActions, StackflowPlugin } from "./interfaces";
 import { produceEffects } from "./produceEffects";
 import type { Stack } from "./Stack";
-import { once } from "./utils";
+import { divideBy, once } from "./utils";
 
 const SECOND = 1000;
 
