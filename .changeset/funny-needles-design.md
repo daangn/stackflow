@@ -16,4 +16,4 @@
 "@stackflow/docs": patch
 ---
 
-fix(core)!: delegate overrideInitialEvents to makeCoreStore
+chore: bump patch version
