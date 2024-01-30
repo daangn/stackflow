@@ -1,5 +1,24 @@
 # @stackflow/demo
 
+## 1.2.20
+
+### Patch Changes
+
+- a32a7e09: chore: bump patch version
+- Updated dependencies [a32a7e09]
+- Updated dependencies [a32a7e09]
+  - @stackflow/plugin-map-initial-activity@1.0.5
+  - @stackflow/plugin-stack-depth-change@1.1.2
+  - @stackflow/plugin-renderer-basic@1.1.7
+  - @stackflow/plugin-history-sync@1.3.18
+  - @stackflow/compat-await-push@1.1.7
+  - @stackflow/plugin-basic-ui@1.5.2
+  - @stackflow/plugin-devtools@0.1.8
+  - @stackflow/plugin-preload@1.2.15
+  - @stackflow/react@1.1.7
+  - @stackflow/link@1.3.16
+  - @stackflow/core@1.0.10
+
 ## 1.2.20-canary.0
 
 ### Patch Changes

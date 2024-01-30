@@ -1,5 +1,15 @@
 # @stackflow/plugin-google-analytics-4
 
+## 1.1.9
+
+### Patch Changes
+
+- a32a7e09: chore: bump patch version
+- Updated dependencies [a32a7e09]
+- Updated dependencies [a32a7e09]
+  - @stackflow/react@1.1.7
+  - @stackflow/core@1.0.10
+
 ## 1.1.9-canary.0
 
 ### Patch Changes

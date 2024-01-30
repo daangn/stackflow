@@ -1,5 +1,19 @@
 # @stackflow/docs
 
+## 1.2.21
+
+### Patch Changes
+
+- a32a7e09: chore: bump patch version
+- Updated dependencies [a32a7e09]
+- Updated dependencies [a32a7e09]
+  - @stackflow/plugin-renderer-basic@1.1.7
+  - @stackflow/plugin-history-sync@1.3.18
+  - @stackflow/plugin-basic-ui@1.5.2
+  - @stackflow/react@1.1.7
+  - @stackflow/core@1.0.10
+  - @stackflow/demo@1.2.20
+
 ## 1.2.21-canary.0
 
 ### Patch Changes
