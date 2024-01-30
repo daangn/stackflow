@@ -121,7 +121,6 @@ export function stackflow<T extends BaseActivities>(
   const plugins = (options.plugins ?? [])
     .flat(Infinity as 0)
     .map((p) => p as StackflowReactPlugin);
-  const pluginInstances = plugins.map((plugin) => plugin());
 
   const activityComponentMap = Object.entries(options.activities).reduce(
     (acc, [key, Activity]) => ({
@@ -182,48 +181,35 @@ export function stackflow<T extends BaseActivities>(
           ]
         : [];
 
-      const initialPushedEvents = pluginInstances.reduce<
-        (PushedEvent | StepPushedEvent)[]
-      >(
-        (initialEvents, pluginInstance) =>
-          pluginInstance.overrideInitialEvents?.({
-            initialEvents,
-            initialContext: props.initialContext ?? {},
-          }) ?? initialEvents,
-        initialPushedEventsByOption,
-      );
-
-      const isInitialActivityIgnored =
-        initialPushedEvents.length > 0 &&
-        initialPushedEventsByOption.length > 0 &&
-        initialPushedEvents !== initialPushedEventsByOption;
-
-      if (isInitialActivityIgnored) {
-        // eslint-disable-next-line no-console
-        console.warn(
-          `Stackflow -` +
-            ` Some plugin overrides an "initialActivity" option.` +
-            ` The "initialActivity" option you set to "${initialPushedEventsByOption[0].activityName}" in the "stackflow" is ignored.`,
-        );
-      }
-
-      if (initialPushedEvents.length === 0) {
-        // eslint-disable-next-line no-console
-        console.warn(
-          `Stackflow -` +
-            ` There is no initial activity.` +
-            " If you want to set the initial activity," +
-            " add the `initialActivity` option of the `stackflow()` function or" +
-            " add a plugin that sets the initial activity. (e.g. `@stackflow/plugin-history-sync`)",
-        );
-      }
-
       const store = makeCoreStore({
         initialEvents: [
           ...staticCoreStore.pullEvents(),
-          ...initialPushedEvents,
+          ...initialPushedEventsByOption,
         ],
+        initialContext: props.initialContext,
         plugins,
+        handlers: {
+          onInitialActivityIgnored: (initialPushedEvents) => {
+            // eslint-disable-next-line no-console
+            console.warn(
+              `Stackflow -` +
+                ` Some plugin overrides an "initialActivity" option.` +
+                ` The "initialActivity" option you set to "${
+                  (initialPushedEvents[0] as PushedEvent).activityName
+                }" in the "stackflow" is ignored.`,
+            );
+          },
+          onInitialActivityNotFound: () => {
+            // eslint-disable-next-line no-console
+            console.warn(
+              `Stackflow -` +
+                ` There is no initial activity.` +
+                " If you want to set the initial activity," +
+                " add the `initialActivity` option of the `stackflow()` function or" +
+                " add a plugin that sets the initial activity. (e.g. `@stackflow/plugin-history-sync`)",
+            );
+          },
+        },
       });
 
       if (isBrowser()) {
@@ -235,7 +221,7 @@ export function stackflow<T extends BaseActivities>(
     }, []);
 
     return (
-      <PluginsProvider value={pluginInstances}>
+      <PluginsProvider value={coreStore.pluginInstances}>
         <CoreProvider coreStore={coreStore}>
           <MainRenderer
             activityComponentMap={activityComponentMap}
@@ -288,7 +274,6 @@ export function stackflow<T extends BaseActivities>(
         .map((p) => p as StackflowReactPlugin)
         .forEach((p) => {
           plugins.push(p);
-          pluginInstances.push(p());
         });
     },
     actions: {

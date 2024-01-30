@@ -1,10 +1,11 @@
 /* eslint-disable no-use-before-define */
 
 import isEqual from "react-fast-compare";
+import { divideBy } from "utils/divideBy";
 
 import { aggregate } from "./aggregate";
 import type { Effect } from "./Effect";
-import type { DomainEvent } from "./event-types";
+import type { DomainEvent, PushedEvent, StepPushedEvent } from "./event-types";
 import type { BaseDomainEvent } from "./event-types/_base";
 import { makeEvent } from "./event-utils";
 import type { StackflowActions, StackflowPlugin } from "./interfaces";
@@ -19,7 +20,14 @@ const INTERVAL_MS = SECOND / 60;
 
 export type MakeCoreStoreOptions = {
   initialEvents: DomainEvent[];
+  initialContext?: any;
   plugins: StackflowPlugin[];
+  handlers?: {
+    onInitialActivityIgnored?: (
+      initialPushedEvents: (PushedEvent | StepPushedEvent)[],
+    ) => void;
+    onInitialActivityNotFound?: () => void;
+  };
 };
 
 export type CoreStore = {
@@ -27,18 +35,10 @@ export type CoreStore = {
   init: () => void;
   pullEvents: () => DomainEvent[];
   subscribe: (listener: () => void) => () => void;
+  pluginInstances: ReturnType<StackflowPlugin>[];
 };
 
 export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
-  const events: {
-    value: DomainEvent[];
-  } = {
-    value: [...options.initialEvents],
-  };
-  const stack = {
-    value: aggregate(events.value, new Date().getTime()),
-  };
-
   const storeListeners: Array<() => void> = [];
 
   const defaultPlugin: StackflowPlugin = () => ({
@@ -52,6 +52,43 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
     defaultPlugin(),
     ...options.plugins.map((plugin) => plugin()),
   ];
+
+  const [initialPushedEventsByOption, initialRemainingEvents] = divideBy(
+    options.initialEvents,
+    (e) => e.name === "Pushed" || e.name === "StepPushed",
+  );
+
+  const initialPushedEvents = pluginInstances.reduce(
+    (initialEvents, pluginInstance) =>
+      pluginInstance.overrideInitialEvents?.({
+        initialEvents,
+        initialContext: options.initialContext ?? {},
+      }) ?? initialEvents,
+    initialPushedEventsByOption as (PushedEvent | StepPushedEvent)[],
+  );
+
+  const isInitialActivityIgnored =
+    initialPushedEvents.length > 0 &&
+    initialPushedEventsByOption.length > 0 &&
+    initialPushedEvents !== initialPushedEventsByOption;
+
+  if (isInitialActivityIgnored) {
+    options.handlers?.onInitialActivityIgnored?.(initialPushedEvents);
+  }
+
+  if (initialPushedEvents.length === 0) {
+    options.handlers?.onInitialActivityNotFound?.();
+  }
+
+  const events: {
+    value: DomainEvent[];
+  } = {
+    value: [...initialRemainingEvents, ...initialPushedEvents],
+  };
+
+  const stack = {
+    value: aggregate(events.value, new Date().getTime()),
+  };
 
   const setStackValue = (nextStackValue: Stack) => {
     const effects = produceEffects(stack.value, nextStackValue);
@@ -358,5 +395,6 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
         }
       };
     },
+    pluginInstances,
   };
 }
