@@ -14,9 +14,7 @@ export type ActivityTransitionState =
 
 export type ActivityStep = {
   id: string;
-  params: {
-    [key: string]: string | undefined;
-  };
+  params: Record<string, string | undefined>;
   enteredBy: PushedEvent | ReplacedEvent | StepPushedEvent | StepReplacedEvent;
   exitedBy?: ReplacedEvent | PoppedEvent | StepReplacedEvent | StepPoppedEvent;
 };
@@ -25,9 +23,7 @@ export type Activity = {
   id: string;
   name: string;
   transitionState: ActivityTransitionState;
-  params: {
-    [key: string]: string | undefined;
-  };
+  params: Record<string, string | undefined>;
   context?: {};
   enteredBy: PushedEvent | ReplacedEvent;
   exitedBy?: ReplacedEvent | PoppedEvent;

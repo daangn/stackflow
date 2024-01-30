@@ -5,7 +5,7 @@ function pathToUrl(path: string) {
 }
 
 function urlSearchParamsToMap(urlSearchParams: URLSearchParams) {
-  const map: { [key: string]: any } = {};
+  const map: Record<string, any> = {};
 
   urlSearchParams.forEach((value, key) => {
     map[key] = value;
@@ -50,7 +50,7 @@ export function makeTemplate(
   const pattern = new UrlPattern(`${templateStr}(/)`, urlPatternOptions);
 
   return {
-    fill(params: { [key: string]: string | undefined }) {
+    fill(params: Record<string, string | undefined>) {
       const pathname = pattern.stringify(params);
       const pathParams = pattern.match(pathname);
 
@@ -79,7 +79,7 @@ export function makeTemplate(
         prependQuestionMarkInSearchParams(searchParams)
       );
     },
-    parse<T extends { [key: string]: string | undefined }>(
+    parse<T extends Record<string, string | undefined>>(
       path: string,
     ): T | null {
       const url = pathToUrl(path);

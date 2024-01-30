@@ -6,9 +6,7 @@ import type {
 import type { Loader } from "./Loader";
 import { LoadersProvider } from "./LoadersContext";
 
-export type PreloadPluginOptions<
-  T extends { [activityName: string]: unknown },
-> = {
+export type PreloadPluginOptions<T extends Record<string, unknown>> = {
   loaders: {
     [key in Extract<keyof T, string>]?: T[key] extends ActivityComponentType<
       infer U
@@ -18,7 +16,7 @@ export type PreloadPluginOptions<
   };
 };
 
-export function preloadPlugin<T extends { [activityName: string]: unknown }>(
+export function preloadPlugin<T extends Record<string, unknown>>(
   options: PreloadPluginOptions<T>,
 ): StackflowReactPlugin<T> {
   return () => ({

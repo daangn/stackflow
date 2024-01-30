@@ -7,9 +7,7 @@ import type { StackflowReactPlugin } from "./StackflowReactPlugin";
 import type { WithRequired } from "./utils";
 
 interface PluginRendererProps {
-  activityComponentMap: {
-    [key: string]: ActivityComponentType;
-  };
+  activityComponentMap: Record<string, ActivityComponentType>;
   plugin: WithRequired<ReturnType<StackflowReactPlugin>, "render">;
   initialContext: any;
 }

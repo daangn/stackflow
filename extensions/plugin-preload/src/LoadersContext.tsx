@@ -2,10 +2,7 @@ import { createContext, useContext } from "react";
 
 import type { Loader } from "./Loader";
 
-export type LoadersMap = {
-  [activityName in string]?: Loader;
-};
-
+export type LoadersMap = Record<string, Loader | undefined>;
 export const LoadersContext = createContext<LoadersMap>({});
 
 interface LoadersProviderProps {

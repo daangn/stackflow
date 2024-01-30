@@ -6,12 +6,7 @@ export type ActivityRegisteredEvent = BaseDomainEvent<
     activityName: string;
     activityParamsSchema?: {
       type: "object";
-      properties: {
-        [key: string]: {
-          type: "string";
-          enum?: string[];
-        };
-      };
+      properties: Record<string, { type: "string"; enum?: string[] }>;
       required: string[];
     };
   }

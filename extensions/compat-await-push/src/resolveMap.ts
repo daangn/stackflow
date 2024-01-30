@@ -1,3 +1,1 @@
-export const resolveMap: {
-  [key: string]: (value: unknown) => void;
-} = {};
+export const resolveMap: Record<string, (value: unknown) => void> = {};

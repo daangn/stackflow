@@ -23,9 +23,7 @@ export type GoogleAnalyticsPluginOptions = {
   };
 };
 
-export function googleAnalyticsPlugin<
-  T extends { [activityName: string]: unknown },
->({
+export function googleAnalyticsPlugin<T extends Record<string, unknown>>({
   trackingId,
   userInfo,
   useTitle = false,

@@ -4,8 +4,6 @@ export type StepReplacedEvent = BaseDomainEvent<
   "StepReplaced",
   {
     stepId: string;
-    stepParams: {
-      [key: string]: string | undefined;
-    };
+    stepParams: Record<string, string | undefined>;
   }
 >;

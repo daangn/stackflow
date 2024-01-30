@@ -28,7 +28,7 @@ export type LinkProps<K, P> = {
   urlPatternOptions?: UrlPatternOptions;
 } & AnchorProps;
 
-export type TypeLink<T extends { [activityName: string]: unknown } = {}> = <
+export type TypeLink<T extends Record<string, unknown> = {}> = <
   K extends Extract<keyof T, string>,
 >(
   props: LinkProps<K, T[K] extends ActivityComponentType<infer U> ? U : never>,

@@ -7,9 +7,7 @@ import { usePlugins } from "./plugins";
 import type { WithRequired } from "./utils";
 
 interface MainRendererProps {
-  activityComponentMap: {
-    [key: string]: ActivityComponentType;
-  };
+  activityComponentMap: Record<string, ActivityComponentType>;
   initialContext: any;
 }
 const MainRenderer: React.FC<MainRendererProps> = ({

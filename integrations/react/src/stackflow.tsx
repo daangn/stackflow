@@ -128,9 +128,7 @@ export function stackflow<T extends BaseActivities>(
       [key]:
         "component" in Activity ? memo(Activity.component) : memo(Activity),
     }),
-    {} as {
-      [key: string]: ActivityComponentType;
-    },
+    {} as Record<string, ActivityComponentType>,
   );
 
   const enoughPastTime = () =>
