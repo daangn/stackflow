@@ -95,5 +95,6 @@ export function makeTemplate(
         ...pathParams,
       };
     },
+    variableCount: (pattern as any).names.length,
   };
 }

@@ -16,6 +16,7 @@ import { makeTemplate } from "./makeTemplate";
 import { normalizeRoute } from "./normalizeRoute";
 import { makeHistoryTaskQueue } from "./queue";
 import { RoutesProvider } from "./RoutesContext";
+import { sortRoutes } from "./sortRoutes";
 
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
@@ -102,33 +103,32 @@ export function historySyncPlugin<
         }
 
         const path = resolvePath();
-        const activityNames = Object.keys(options.routes);
+        const routes = sortRoutes(options.routes);
 
         if (path) {
-          for (const activityName of activityNames) {
-            const routes = normalizeRoute(options.routes[activityName as K]);
+          for (const route of routes) {
+            const template = makeTemplate(
+              route.templateStr,
+              options.urlPatternOptions,
+            );
+            const activityParams = template.parse(path);
 
-            for (const route of routes) {
-              const template = makeTemplate(route, options.urlPatternOptions);
-              const activityParams = template.parse(path);
+            if (activityParams) {
+              const activityId = id();
 
-              if (activityParams) {
-                const activityId = id();
-
-                return [
-                  makeEvent("Pushed", {
-                    activityId,
-                    activityName,
-                    activityParams: {
-                      ...activityParams,
-                    },
-                    eventDate: new Date().getTime() - MINUTE,
-                    activityContext: {
-                      path,
-                    },
-                  }),
-                ];
-              }
+              return [
+                makeEvent("Pushed", {
+                  activityId,
+                  activityName: route.activityName,
+                  activityParams: {
+                    ...activityParams,
+                  },
+                  eventDate: new Date().getTime() - MINUTE,
+                  activityContext: {
+                    path,
+                  },
+                }),
+              ];
             }
           }
         }
