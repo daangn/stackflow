@@ -1,13 +1,11 @@
 import { createContext, useContext } from "react";
 
-export type RoutesMap = {
-  [activityName in string]?: string | string[];
-};
+import type { ActivityRoute } from "./ActivityRoute";
 
-export const RoutesContext = createContext<RoutesMap>({});
+export const RoutesContext = createContext<ActivityRoute[]>([]);
 
 interface RoutesProviderProps {
-  routes: RoutesMap;
+  routes: ActivityRoute[];
   children: React.ReactNode;
 }
 export const RoutesProvider: React.FC<RoutesProviderProps> = (props) => (

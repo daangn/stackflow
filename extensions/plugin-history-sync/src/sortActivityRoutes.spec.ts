@@ -1,0 +1,27 @@
+import { sortActivityRoutes } from "./sortActivityRoutes";
+
+test("sortActivityRoutes - 우선순위가 높은 라우트가 먼저 놓여집니다", () => {
+  const routes = sortActivityRoutes([
+    { activityName: "B", path: "/hello/:param" },
+    { activityName: "A", path: "/hello/world" },
+  ]);
+
+  expect(routes).toStrictEqual([
+    { activityName: "A", path: "/hello/world" },
+    { activityName: "B", path: "/hello/:param" },
+  ]);
+});
+
+test("sortActivityRoutes - 한 액티비티가 여러 라우트를 가지는 경우, 여러번 route에 등록됩니다", () => {
+  const routes = sortActivityRoutes([
+    { activityName: "B", path: "/hello/:param" },
+    { activityName: "B", path: "/hello/second" },
+    { activityName: "A", path: "/hello/world" },
+  ]);
+
+  expect(routes).toStrictEqual([
+    { activityName: "B", path: "/hello/second" },
+    { activityName: "A", path: "/hello/world" },
+    { activityName: "B", path: "/hello/:param" },
+  ]);
+});

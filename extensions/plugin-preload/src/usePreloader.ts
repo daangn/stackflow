@@ -1,7 +1,7 @@
 import type { UrlPatternOptions } from "@stackflow/plugin-history-sync";
 import {
   makeTemplate,
-  normalizeRoute,
+  normalizeRouteInput,
   useRoutes,
 } from "@stackflow/plugin-history-sync";
 import type { ActivityComponentType } from "@stackflow/react";
@@ -40,12 +40,10 @@ export function usePreloader<T extends { [activityName: string]: unknown }>(
           return null;
         }
 
-        const route = routes[activityName];
-        const template = route
-          ? makeTemplate(
-              normalizeRoute(route)[0],
-              usePreloaderOptions?.urlPatternOptions,
-            )
+        const match = routes.find((r) => r.activityName === activityName);
+
+        const template = match
+          ? makeTemplate(match.path, usePreloaderOptions?.urlPatternOptions)
           : undefined;
 
         const path = template?.fill(activityParams);
