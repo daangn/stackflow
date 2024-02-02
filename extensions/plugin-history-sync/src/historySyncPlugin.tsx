@@ -91,7 +91,7 @@ export function historySyncPlugin<
           ];
         }
 
-        function resolvePath() {
+        function resolveCurrentPath() {
           if (
             initialContext?.req?.path &&
             typeof initialContext.req.path === "string"
@@ -106,12 +106,12 @@ export function historySyncPlugin<
           return location.pathname + location.search;
         }
 
-        const path = resolvePath();
+        const currentPath = resolveCurrentPath();
 
-        if (path) {
-          for (const { activityName, path: route } of activityRoutes) {
-            const template = makeTemplate(route, options.urlPatternOptions);
-            const activityParams = template.parse(path);
+        if (currentPath) {
+          for (const { activityName, path } of activityRoutes) {
+            const template = makeTemplate(path, options.urlPatternOptions);
+            const activityParams = template.parse(currentPath);
 
             if (activityParams) {
               const activityId = id();
@@ -125,7 +125,7 @@ export function historySyncPlugin<
                   },
                   eventDate: new Date().getTime() - MINUTE,
                   activityContext: {
-                    path,
+                    path: currentPath,
                   },
                 }),
               ];
