@@ -1,9 +1,5 @@
 import type { UrlPatternOptions } from "@stackflow/plugin-history-sync";
-import {
-  makeTemplate,
-  normalizeRouteInput,
-  useRoutes,
-} from "@stackflow/plugin-history-sync";
+import { makeTemplate, useRoutes } from "@stackflow/plugin-history-sync";
 import type { ActivityComponentType } from "@stackflow/react";
 import { useMemo } from "react";
 
