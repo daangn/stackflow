@@ -1,9 +1,5 @@
 import type { UrlPatternOptions } from "@stackflow/plugin-history-sync";
-import {
-  makeTemplate,
-  normalizeRoute,
-  useRoutes,
-} from "@stackflow/plugin-history-sync";
+import { makeTemplate, useRoutes } from "@stackflow/plugin-history-sync";
 import { usePreloader } from "@stackflow/plugin-preload";
 import type { ActivityComponentType } from "@stackflow/react";
 import { useActions } from "@stackflow/react";
@@ -44,16 +40,13 @@ export const Link: TypeLink = forwardRef(
     const [preloaded, flagPreloaded] = useReducer(() => true, false);
 
     const href = useMemo(() => {
-      const route = routes[props.activityName];
+      const match = routes.find((r) => r.activityName === props.activityName);
 
-      if (!route) {
+      if (!match) {
         return undefined;
       }
 
-      const template = makeTemplate(
-        normalizeRoute(route)[0],
-        props.urlPatternOptions,
-      );
+      const template = makeTemplate(match.path, props.urlPatternOptions);
       const path = template.fill(props.activityParams);
 
       return path;

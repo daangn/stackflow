@@ -44,10 +44,10 @@ export interface UrlPatternOptions {
 }
 
 export function makeTemplate(
-  templateStr: string,
+  path: string,
   urlPatternOptions?: UrlPatternOptions,
 ) {
-  const pattern = new UrlPattern(`${templateStr}(/)`, urlPatternOptions);
+  const pattern = new UrlPattern(`${path}(/)`, urlPatternOptions);
 
   return {
     fill(params: { [key: string]: string | undefined }) {
@@ -95,5 +95,6 @@ export function makeTemplate(
         ...pathParams,
       };
     },
+    variableCount: (pattern as any).names.length,
   };
 }
