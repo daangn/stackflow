@@ -2,9 +2,10 @@ import type { ActivityRoute } from "./ActivityRoute";
 import type { ActivityRouteMapInput } from "./ActivityRouteMapInput";
 import { normalizeRouteInput } from "./normalizeRouteInput";
 
-export function normalizeActivityRouteMap<T extends ActivityRouteMapInput>(
-  activityRouteMap: T,
-): ActivityRoute[] {
+export function normalizeActivityRouteMap<
+  K,
+  T extends ActivityRouteMapInput<K>,
+>(activityRouteMap: T): ActivityRoute<K>[] {
   const routes = Object.keys(activityRouteMap).flatMap((activityName) => {
     const routeInput = activityRouteMap[activityName];
 
@@ -12,9 +13,10 @@ export function normalizeActivityRouteMap<T extends ActivityRouteMapInput>(
       return [];
     }
 
-    return normalizeRouteInput(routeInput).map((path) => ({
+    return normalizeRouteInput(routeInput).map(({ path, decode }) => ({
       activityName,
       path,
+      decode,
     }));
   });
 

@@ -15,15 +15,16 @@ import { makeHistoryTaskQueue } from "./makeHistoryTaskQueue";
 import type { UrlPatternOptions } from "./makeTemplate";
 import { makeTemplate } from "./makeTemplate";
 import { normalizeActivityRouteMap } from "./normalizeActivityRouteMap";
+import type { RouteLike } from "./RouteLike";
 import { RoutesProvider } from "./RoutesContext";
 import { sortActivityRoutes } from "./sortActivityRoutes";
 
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
 
-type HistorySyncPluginOptions<K extends string> = {
+type HistorySyncPluginOptions<T, K extends Extract<keyof T, string>> = {
   routes: {
-    [key in K]: string | string[];
+    [key in keyof T]: RouteLike<T[key]>;
   };
   fallbackActivity: (args: { initialContext: any }) => K;
   useHash?: boolean;
@@ -32,11 +33,8 @@ type HistorySyncPluginOptions<K extends string> = {
 };
 export function historySyncPlugin<
   T extends { [activityName: string]: unknown },
->(
-  options: HistorySyncPluginOptions<Extract<keyof T, string>>,
-): StackflowReactPlugin<T> {
-  type K = Extract<keyof T, string>;
-
+  K extends Extract<keyof T, string>,
+>(options: HistorySyncPluginOptions<T, K>): StackflowReactPlugin<T> {
   const history =
     options.history ??
     (typeof window === "undefined"
@@ -109,8 +107,11 @@ export function historySyncPlugin<
         const currentPath = resolveCurrentPath();
 
         if (currentPath) {
-          for (const { activityName, path } of activityRoutes) {
-            const template = makeTemplate(path, options.urlPatternOptions);
+          for (const activityRoute of activityRoutes) {
+            const template = makeTemplate(
+              activityRoute,
+              options.urlPatternOptions,
+            );
             const activityParams = template.parse(currentPath);
 
             if (activityParams) {
@@ -119,7 +120,7 @@ export function historySyncPlugin<
               return [
                 makeEvent("Pushed", {
                   activityId,
-                  activityName,
+                  activityName: activityRoute.activityName,
                   activityParams: {
                     ...activityParams,
                   },
@@ -159,8 +160,8 @@ export function historySyncPlugin<
 
         const match = activityRoutes.find(
           (r) => r.activityName === rootActivity.name,
-        );
-        const template = makeTemplate(match!.path, options.urlPatternOptions);
+        )!;
+        const template = makeTemplate(match, options.urlPatternOptions);
 
         const lastStep = last(rootActivity.steps);
 
@@ -313,8 +314,9 @@ export function historySyncPlugin<
 
         const match = activityRoutes.find(
           (r) => r.activityName === activity.name,
-        );
-        const template = makeTemplate(match!.path, options.urlPatternOptions);
+        )!;
+
+        const template = makeTemplate(match, options.urlPatternOptions);
 
         requestHistoryTick(() => {
           silentFlag = true;
@@ -336,8 +338,9 @@ export function historySyncPlugin<
 
         const match = activityRoutes.find(
           (r) => r.activityName === activity.name,
-        );
-        const template = makeTemplate(match!.path, options.urlPatternOptions);
+        )!;
+
+        const template = makeTemplate(match, options.urlPatternOptions);
 
         requestHistoryTick(() => {
           silentFlag = true;
@@ -359,8 +362,9 @@ export function historySyncPlugin<
 
         const match = activityRoutes.find(
           (r) => r.activityName === activity.name,
-        );
-        const template = makeTemplate(match!.path, options.urlPatternOptions);
+        )!;
+
+        const template = makeTemplate(match, options.urlPatternOptions);
 
         requestHistoryTick(() => {
           silentFlag = true;
@@ -381,8 +385,9 @@ export function historySyncPlugin<
 
         const match = activityRoutes.find(
           (r) => r.activityName === activity.name,
-        );
-        const template = makeTemplate(match!.path, options.urlPatternOptions);
+        )!;
+
+        const template = makeTemplate(match, options.urlPatternOptions);
 
         requestHistoryTick(() => {
           silentFlag = true;
@@ -400,8 +405,8 @@ export function historySyncPlugin<
       onBeforePush({ actionParams, actions: { overrideActionParams } }) {
         const match = activityRoutes.find(
           (r) => r.activityName === actionParams.activityName,
-        );
-        const template = makeTemplate(match!.path, options.urlPatternOptions);
+        )!;
+        const template = makeTemplate(match, options.urlPatternOptions);
         const path = template.fill(actionParams.activityParams);
 
         overrideActionParams({
@@ -418,8 +423,8 @@ export function historySyncPlugin<
       }) {
         const match = activityRoutes.find(
           (r) => r.activityName === actionParams.activityName,
-        );
-        const template = makeTemplate(match!.path, options.urlPatternOptions);
+        )!;
+        const template = makeTemplate(match, options.urlPatternOptions);
         const path = template.fill(actionParams.activityParams);
 
         overrideActionParams({

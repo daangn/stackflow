@@ -72,6 +72,9 @@ const Article: ActivityComponentType<ArticleParams> = () => {
   }>();
   const imageUrl = `https://picsum.photos/800/800/?id=${articleId}`;
 
+  console.log(typeof articleId);
+  console.log(articleId);
+
   return (
     <Layout appBar={{}}>
       <div className={css.container}>
