@@ -52,12 +52,6 @@ export const { Stack, activities } = stackflow({
       routes: {
         Main: "/",
         Article: "/articles/:articleId",
-        // Article: {
-        //   path: "/articles/:articleId",
-        //   decode: ({ articleId }) => ({
-        //     articleId,
-        //   }),
-        // },
       },
       fallbackActivity: () => "Main",
     }),
