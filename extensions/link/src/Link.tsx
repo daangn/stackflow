@@ -46,7 +46,7 @@ export const Link: TypeLink = forwardRef(
         return undefined;
       }
 
-      const template = makeTemplate(match.path, props.urlPatternOptions);
+      const template = makeTemplate(match, props.urlPatternOptions);
       const path = template.fill(props.activityParams);
 
       return path;
