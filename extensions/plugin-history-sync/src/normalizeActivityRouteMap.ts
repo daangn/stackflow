@@ -13,10 +13,9 @@ export function normalizeActivityRouteMap<
       return [];
     }
 
-    return normalizeRouteInput(routeInput).map(({ path, decode }) => ({
+    return normalizeRouteInput(routeInput).map((route) => ({
       activityName,
-      path,
-      decode,
+      ...route,
     }));
   });
 
