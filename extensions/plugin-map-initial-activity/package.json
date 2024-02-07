@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/plugin-map-initial-activity",
-  "version": "1.0.5",
+  "version": "1.0.6-canary.0",
   "license": "MIT",
   "exports": {
     ".": {
@@ -29,7 +29,7 @@
     "@stackflow/core": "^1.0.10",
     "@stackflow/esbuild-config": "^1.0.1",
     "@stackflow/eslint-config": "^1.0.2",
-    "@stackflow/react": "^1.1.7",
+    "@stackflow/react": "^1.1.8-canary.0",
     "@typescript-eslint/eslint-plugin": "^5.32.0",
     "@typescript-eslint/parser": "^5.20.0",
     "esbuild": "^0.14.51",
@@ -44,7 +44,7 @@
   },
   "peerDependencies": {
     "@stackflow/core": "^1.0.10",
-    "@stackflow/react": "^1.1.7"
+    "@stackflow/react": "^1.1.8-canary.0"
   },
   "publishConfig": {
     "access": "public"

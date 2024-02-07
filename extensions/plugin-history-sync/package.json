@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/plugin-history-sync",
-  "version": "1.3.18",
+  "version": "1.4.0-canary.0",
   "license": "MIT",
   "exports": {
     ".": {
@@ -43,7 +43,7 @@
     "@stackflow/core": "^1.0.10",
     "@stackflow/esbuild-config": "^1.0.1",
     "@stackflow/eslint-config": "^1.0.2",
-    "@stackflow/react": "^1.1.7",
+    "@stackflow/react": "^1.1.8-canary.0",
     "@swc/core": "^1.3.35",
     "@swc/jest": "^0.2.24",
     "@types/jest": "^29.4.0",
@@ -68,7 +68,7 @@
   },
   "peerDependencies": {
     "@stackflow/core": "^1.0.10",
-    "@stackflow/react": "^1.1.7",
+    "@stackflow/react": "^1.1.8-canary.0",
     "@types/react": ">=16.8.0",
     "react": ">=16.8.0"
   },

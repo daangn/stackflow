@@ -1,5 +1,20 @@
 # @stackflow/link
 
+## 2.0.0-canary.0
+
+### Minor Changes
+
+- 36613e35: Sort routes by variable count and refactor useRoutes(), normalizeRouteInput() function
+
+### Patch Changes
+
+- feat: add decode interface
+- Updated dependencies
+- Updated dependencies [36613e35]
+  - @stackflow/plugin-history-sync@1.4.0-canary.0
+  - @stackflow/plugin-preload@1.3.0-canary.0
+  - @stackflow/react@1.1.8-canary.0
+
 ## 1.3.16
 
 ### Patch Changes
