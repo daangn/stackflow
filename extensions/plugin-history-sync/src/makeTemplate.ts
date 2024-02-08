@@ -92,10 +92,12 @@ export function makeTemplate<T>(
         return null;
       }
 
-      return {
+      const params = {
         ...searchParams,
-        ...(decode ? decode(pathParams) : pathParams),
+        ...pathParams,
       };
+
+      return decode ? decode(params) : params;
     },
     variableCount: (pattern as any).names.length,
   };
