@@ -1,5 +1,11 @@
 # @stackflow/plugin-history-sync
 
+## 1.4.0-canary.1
+
+### Patch Changes
+
+- fix(plugin-history-sync): decode search params
+
 ## 1.4.0-canary.0
 
 ### Minor Changes

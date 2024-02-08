@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/plugin-history-sync",
-  "version": "1.4.0-canary.0",
+  "version": "1.4.0-canary.1",
   "license": "MIT",
   "exports": {
     ".": {
