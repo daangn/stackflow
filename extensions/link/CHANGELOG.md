@@ -1,5 +1,17 @@
 # @stackflow/link
 
+## 1.4.0
+
+### Minor Changes
+
+- 36613e35: Sort routes by variable count and refactor useRoutes(), normalizeRouteInput() function
+
+### Patch Changes
+
+- 43a2f2a4: Resolved issue where `urlPatternOptions` props were passed to anchor tag.
+- 6ad362f7: feat: add decode interface
+- 8c774239: pass `urlPatternOptions` to `usePreloader()` hook
+
 ## 1.3.17-canary.0
 
 ### Minor Changes
