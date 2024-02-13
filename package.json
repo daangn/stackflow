@@ -25,7 +25,8 @@
   },
   "resolutions": {
     "@mdx-js/react": "2.1.1",
-    "esbuild": "^0.16"
+    "esbuild": "^0.16",
+    "@changesets/assemble-release-plan@^5.2.4": "patch:@changesets/assemble-release-plan@npm%3A5.2.4#./.yarn/patches/@changesets-assemble-release-plan-npm-5.2.4-2920e4dc4c.patch"
   },
   "devDependencies": {
     "@changesets/cli": "^2.26.2",
