@@ -1,5 +1,16 @@
 # @stackflow/plugin-preload
 
+## 1.3.0
+
+### Minor Changes
+
+- 36613e35: Sort routes by variable count and refactor useRoutes(), normalizeRouteInput() function
+
+### Patch Changes
+
+- Updated dependencies [36613e35]
+  - @stackflow/plugin-history-sync@1.4.0
+
 ## 1.2.15
 
 ### Patch Changes
