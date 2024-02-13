@@ -1,5 +1,15 @@
 # @stackflow/demo
 
+## 1.2.21
+
+### Patch Changes
+
+- Updated dependencies [43a2f2a4]
+- Updated dependencies [36613e35]
+  - @stackflow/link@2.0.0
+  - @stackflow/plugin-history-sync@1.4.0
+  - @stackflow/plugin-preload@1.3.0
+
 ## 1.2.20
 
 ### Patch Changes
