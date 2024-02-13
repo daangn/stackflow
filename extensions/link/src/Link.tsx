@@ -86,11 +86,15 @@ export const Link: TypeLink = forwardRef(
     }, [anchorRef, flagPreloaded]);
 
     const anchorProps = omit(props, [
+      // Custom Props
       "activityName",
       "activityParams",
       "animate",
-      "onClick",
       "replace",
+      "urlPatternOptions",
+
+      // Overriden Props
+      "onClick",
     ]);
 
     const onClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
