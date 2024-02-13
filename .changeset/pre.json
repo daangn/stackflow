@@ -6,7 +6,7 @@
     "@stackflow/demo": "1.2.21-canary.0",
     "@stackflow/docs": "1.2.22-canary.0",
     "@stackflow/compat-await-push": "1.1.8-canary.0",
-    "@stackflow/link": "2.0.0-canary.0",
+    "@stackflow/link": "1.3.17-canary.0",
     "@stackflow/plugin-basic-ui": "1.5.3-canary.0",
     "@stackflow/plugin-devtools": "0.1.8",
     "@stackflow/plugin-google-analytics-4": "1.1.10-canary.0",

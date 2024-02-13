@@ -1,6 +1,6 @@
 # @stackflow/link
 
-## 2.0.0-canary.0
+## 1.3.17-canary.0
 
 ### Minor Changes
 

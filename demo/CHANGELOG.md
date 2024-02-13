@@ -9,7 +9,7 @@
   - @stackflow/plugin-history-sync@1.4.0-canary.0
   - @stackflow/plugin-preload@1.3.0-canary.0
   - @stackflow/react@1.1.8-canary.0
-  - @stackflow/link@2.0.0-canary.0
+  - @stackflow/link@1.3.17-canary.0
   - @stackflow/compat-await-push@1.1.8-canary.0
   - @stackflow/plugin-basic-ui@1.5.3-canary.0
   - @stackflow/plugin-map-initial-activity@1.0.6-canary.0
