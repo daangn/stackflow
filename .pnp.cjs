@@ -1005,10 +1005,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@changesets/assemble-release-plan", [\
-        ["patch:@changesets/assemble-release-plan@npm%3A5.2.4#./.yarn/patches/@changesets-assemble-release-plan-npm-5.2.4-2920e4dc4c.patch::version=5.2.4&hash=81bab7&locator=%40stackflow%2Fmonorepo%40workspace%3A.", {\
-          "packageLocation": "./.yarn/cache/@changesets-assemble-release-plan-patch-80a6f9159f-6376a753f9.zip/node_modules/@changesets/assemble-release-plan/",\
+        ["patch:@changesets/assemble-release-plan@npm%3A5.2.4#./.yarn/patches/@changesets-assemble-release-plan-npm-5.2.4-2920e4dc4c.patch::version=5.2.4&hash=2f0e82&locator=%40stackflow%2Fmonorepo%40workspace%3A.", {\
+          "packageLocation": "./.yarn/cache/@changesets-assemble-release-plan-patch-85a7603b58-fd9b0386c4.zip/node_modules/@changesets/assemble-release-plan/",\
           "packageDependencies": [\
-            ["@changesets/assemble-release-plan", "patch:@changesets/assemble-release-plan@npm%3A5.2.4#./.yarn/patches/@changesets-assemble-release-plan-npm-5.2.4-2920e4dc4c.patch::version=5.2.4&hash=81bab7&locator=%40stackflow%2Fmonorepo%40workspace%3A."],\
+            ["@changesets/assemble-release-plan", "patch:@changesets/assemble-release-plan@npm%3A5.2.4#./.yarn/patches/@changesets-assemble-release-plan-npm-5.2.4-2920e4dc4c.patch::version=5.2.4&hash=2f0e82&locator=%40stackflow%2Fmonorepo%40workspace%3A."],\
             ["@babel/runtime", "npm:7.23.4"],\
             ["@changesets/errors", "npm:0.1.4"],\
             ["@changesets/get-dependents-graph", "npm:1.3.6"],\
@@ -1036,7 +1036,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@changesets/cli", "npm:2.26.2"],\
             ["@babel/runtime", "npm:7.23.4"],\
             ["@changesets/apply-release-plan", "npm:6.1.4"],\
-            ["@changesets/assemble-release-plan", "patch:@changesets/assemble-release-plan@npm%3A5.2.4#./.yarn/patches/@changesets-assemble-release-plan-npm-5.2.4-2920e4dc4c.patch::version=5.2.4&hash=81bab7&locator=%40stackflow%2Fmonorepo%40workspace%3A."],\
+            ["@changesets/assemble-release-plan", "patch:@changesets/assemble-release-plan@npm%3A5.2.4#./.yarn/patches/@changesets-assemble-release-plan-npm-5.2.4-2920e4dc4c.patch::version=5.2.4&hash=2f0e82&locator=%40stackflow%2Fmonorepo%40workspace%3A."],\
             ["@changesets/changelog-git", "npm:0.1.14"],\
             ["@changesets/config", "npm:2.3.1"],\
             ["@changesets/errors", "npm:0.1.4"],\
@@ -1117,7 +1117,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@changesets/get-release-plan", "npm:3.0.17"],\
             ["@babel/runtime", "npm:7.23.4"],\
-            ["@changesets/assemble-release-plan", "patch:@changesets/assemble-release-plan@npm%3A5.2.4#./.yarn/patches/@changesets-assemble-release-plan-npm-5.2.4-2920e4dc4c.patch::version=5.2.4&hash=81bab7&locator=%40stackflow%2Fmonorepo%40workspace%3A."],\
+            ["@changesets/assemble-release-plan", "patch:@changesets/assemble-release-plan@npm%3A5.2.4#./.yarn/patches/@changesets-assemble-release-plan-npm-5.2.4-2920e4dc4c.patch::version=5.2.4&hash=2f0e82&locator=%40stackflow%2Fmonorepo%40workspace%3A."],\
             ["@changesets/config", "npm:2.3.1"],\
             ["@changesets/pre", "npm:1.0.14"],\
             ["@changesets/read", "npm:0.5.9"],\
