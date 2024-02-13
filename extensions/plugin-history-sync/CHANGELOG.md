@@ -1,5 +1,11 @@
 # @stackflow/plugin-history-sync
 
+## 1.4.0
+
+### Minor Changes
+
+- 36613e35: Sort routes by variable count and refactor useRoutes(), normalizeRouteInput() function
+
 ## 1.3.18
 
 ### Patch Changes
