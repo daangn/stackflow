@@ -1,5 +1,11 @@
 # @stackflow/react
 
+## 1.1.8-canary.0
+
+### Patch Changes
+
+- feat: add decode interface
+
 ## 1.1.7
 
 ### Patch Changes

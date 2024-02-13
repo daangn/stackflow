@@ -1,5 +1,12 @@
 # @stackflow/plugin-renderer-web
 
+## 1.1.8-canary.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @stackflow/react@1.1.8-canary.0
+
 ## 1.1.7
 
 ### Patch Changes

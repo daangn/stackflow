@@ -39,7 +39,7 @@ export function usePreloader<T extends { [activityName: string]: unknown }>(
         const match = routes.find((r) => r.activityName === activityName);
 
         const template = match
-          ? makeTemplate(match.path, usePreloaderOptions?.urlPatternOptions)
+          ? makeTemplate(match, usePreloaderOptions?.urlPatternOptions)
           : undefined;
 
         const path = template?.fill(activityParams);
