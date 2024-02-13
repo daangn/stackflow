@@ -33,7 +33,9 @@ export type TypeLink<T extends { [activityName: string]: unknown } = {}> = <
 export const Link: TypeLink = forwardRef(
   (props, ref: React.ForwardedRef<HTMLAnchorElement>) => {
     const routes = useRoutes();
-    const { preload } = usePreloader();
+    const { preload } = usePreloader({
+      urlPatternOptions: props.urlPatternOptions,
+    });
     const { push, replace } = useActions();
 
     const anchorRef = useRef<HTMLAnchorElement>(null);
