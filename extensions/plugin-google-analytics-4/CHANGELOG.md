@@ -1,5 +1,7 @@
 # @stackflow/plugin-google-analytics-4
 
+## 1.1.10
+
 ## 1.1.10-canary.0
 
 ### Patch Changes

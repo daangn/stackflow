@@ -1,5 +1,16 @@
 # @stackflow/plugin-history-sync
 
+## 1.4.0
+
+### Minor Changes
+
+- 36613e35: Sort routes by variable count and refactor useRoutes(), normalizeRouteInput() function
+
+### Patch Changes
+
+- 6ad362f7: feat: add decode interface
+- 6ad362f7: fix(plugin-history-sync): decode search params
+
 ## 1.4.0-canary.1
 
 ### Patch Changes

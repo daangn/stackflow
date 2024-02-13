@@ -1,5 +1,18 @@
 # @stackflow/docs
 
+## 1.2.22
+
+### Patch Changes
+
+- Updated dependencies [6ad362f7]
+- Updated dependencies [6ad362f7]
+- Updated dependencies [36613e35]
+  - @stackflow/plugin-history-sync@1.4.0
+  - @stackflow/react@1.1.8
+  - @stackflow/demo@1.2.21
+  - @stackflow/plugin-basic-ui@1.5.3
+  - @stackflow/plugin-renderer-basic@1.1.8
+
 ## 1.2.22-canary.0
 
 ### Patch Changes

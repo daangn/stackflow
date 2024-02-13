@@ -1,5 +1,23 @@
 # @stackflow/demo
 
+## 1.2.21
+
+### Patch Changes
+
+- Updated dependencies [43a2f2a4]
+- Updated dependencies [6ad362f7]
+- Updated dependencies [6ad362f7]
+- Updated dependencies [8c774239]
+- Updated dependencies [36613e35]
+  - @stackflow/link@1.4.0
+  - @stackflow/plugin-history-sync@1.4.0
+  - @stackflow/plugin-preload@1.3.0
+  - @stackflow/react@1.1.8
+  - @stackflow/compat-await-push@1.1.8
+  - @stackflow/plugin-basic-ui@1.5.3
+  - @stackflow/plugin-map-initial-activity@1.0.6
+  - @stackflow/plugin-renderer-basic@1.1.8
+
 ## 1.2.21-canary.0
 
 ### Patch Changes
