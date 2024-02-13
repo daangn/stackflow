@@ -48,8 +48,8 @@
     "typescript": "^4.7.4"
   },
   "peerDependencies": {
-    "@stackflow/core": "^1.0.10",
-    "@stackflow/react": "^1.1.7",
+    "@stackflow/core": "^1",
+    "@stackflow/react": "^1",
     "@types/react": ">=16.8.0",
     "react": ">=16.8.0"
   },
