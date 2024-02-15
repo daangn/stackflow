@@ -1,6 +1,11 @@
 {
   "name": "@stackflow/plugin-devtools",
   "version": "0.1.8",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/daangn/stackflow.git",
+    "directory": "extensions/plugin-devtools"
+  },
   "license": "MIT",
   "exports": {
     ".": {

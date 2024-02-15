@@ -1,6 +1,11 @@
 {
   "name": "@stackflow/compat-await-push",
   "version": "1.1.8",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/daangn/stackflow.git",
+    "directory": "extensions/compat-await-push"
+  },
   "license": "MIT",
   "exports": {
     ".": {
