@@ -1,6 +1,11 @@
 {
   "name": "@stackflow/plugin-history-sync",
   "version": "1.4.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/daangn/stackflow.git",
+    "directory": "extensions/plugin-history-sync"
+  },
   "license": "MIT",
   "exports": {
     ".": {

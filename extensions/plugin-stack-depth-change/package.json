@@ -1,6 +1,11 @@
 {
   "name": "@stackflow/plugin-stack-depth-change",
   "version": "1.1.2",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/daangn/stackflow.git",
+    "directory": "extensions/plugin-stack-depth-change"
+  },
   "license": "MIT",
   "exports": {
     ".": {

@@ -1,6 +1,11 @@
 {
   "name": "@stackflow/plugin-renderer-web",
   "version": "1.1.8",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/daangn/stackflow.git",
+    "directory": "extensions/plugin-renderer-web"
+  },
   "license": "MIT",
   "exports": {
     ".": {

@@ -1,6 +1,11 @@
 {
   "name": "@stackflow/core",
   "version": "1.0.10",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/daangn/stackflow.git",
+    "directory": "core"
+  },
   "license": "MIT",
   "exports": {
     ".": {

@@ -1,6 +1,11 @@
 {
   "name": "@stackflow/esbuild-config",
   "version": "1.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/daangn/stackflow.git",
+    "directory": "packages/esbuild-config"
+  },
   "license": "MIT",
   "main": "index.js",
   "scripts": {
