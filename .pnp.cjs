@@ -3064,6 +3064,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react", "npm:18.2.0"],\
             ["rimraf", "npm:3.0.2"],\
             ["typescript", "patch:typescript@npm%3A4.7.4#~builtin<compat/typescript>::version=4.7.4&hash=701156"],\
+            ["uri-templates", "npm:0.2.0"],\
             ["url-pattern", "npm:1.0.3"]\
           ],\
           "packagePeers": [\
@@ -3106,6 +3107,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react", "npm:18.2.0"],\
             ["rimraf", "npm:3.0.2"],\
             ["typescript", "patch:typescript@npm%3A4.7.4#~builtin<compat/typescript>::version=4.7.4&hash=701156"],\
+            ["uri-templates", "npm:0.2.0"],\
             ["url-pattern", "npm:1.0.3"]\
           ],\
           "linkType": "SOFT"\
@@ -14177,6 +14179,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["uri-js", "npm:4.4.1"],\
             ["punycode", "npm:2.1.1"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["uri-templates", [\
+        ["npm:0.2.0", {\
+          "packageLocation": "./.yarn/cache/uri-templates-npm-0.2.0-b13fa5efda-ed3101fcb8.zip/node_modules/uri-templates/",\
+          "packageDependencies": [\
+            ["uri-templates", "npm:0.2.0"]\
           ],\
           "linkType": "HARD"\
         }]\

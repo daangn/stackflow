@@ -2222,6 +2222,7 @@ __metadata:
     react: ^18.1.0
     rimraf: ^3.0.2
     typescript: ^4.7.4
+    uri-templates: ^0.2.0
     url-pattern: ^1.0.3
   peerDependencies:
     "@stackflow/core": ^1
@@ -11417,6 +11418,13 @@ __metadata:
   dependencies:
     punycode: ^2.1.0
   checksum: 7167432de6817fe8e9e0c9684f1d2de2bb688c94388f7569f7dbdb1587c9f4ca2a77962f134ec90be0cc4d004c939ff0d05acc9f34a0db39a3c797dada262633
+  languageName: node
+  linkType: hard
+
+"uri-templates@npm:^0.2.0":
+  version: 0.2.0
+  resolution: "uri-templates@npm:0.2.0"
+  checksum: ed3101fcb85331d8709ebd80391e0257e0821173197e2f0a00da17b2c725f4e238adcf453229141ce9cc076b042c4b9ce775952855b709322b9b343c4955051a
   languageName: node
   linkType: hard
 
