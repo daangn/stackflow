@@ -3047,6 +3047,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/react", "npm:18.0.15"],\
             ["@types/stackflow__core", null],\
             ["@types/stackflow__react", null],\
+            ["@types/uri-templates", "npm:0.1.34"],\
             ["@typescript-eslint/eslint-plugin", "virtual:b327d7e228fba669b88a8bb23bcf526374e46fa67e617b1e6848e8a205357fee5ce94b47c49b5a570fd9e8a44fa218a13cd00e2eca327c99114cbd21d72ecf9c#npm:5.32.0"],\
             ["@typescript-eslint/parser", "virtual:b327d7e228fba669b88a8bb23bcf526374e46fa67e617b1e6848e8a205357fee5ce94b47c49b5a570fd9e8a44fa218a13cd00e2eca327c99114cbd21d72ecf9c#npm:5.28.0"],\
             ["esbuild", "npm:0.16.17"],\
@@ -3090,6 +3091,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/jest", "npm:29.4.0"],\
             ["@types/node", "npm:18.6.3"],\
             ["@types/react", "npm:18.0.15"],\
+            ["@types/uri-templates", "npm:0.1.34"],\
             ["@typescript-eslint/eslint-plugin", "virtual:b327d7e228fba669b88a8bb23bcf526374e46fa67e617b1e6848e8a205357fee5ce94b47c49b5a570fd9e8a44fa218a13cd00e2eca327c99114cbd21d72ecf9c#npm:5.32.0"],\
             ["@typescript-eslint/parser", "virtual:b327d7e228fba669b88a8bb23bcf526374e46fa67e617b1e6848e8a205357fee5ce94b47c49b5a570fd9e8a44fa218a13cd00e2eca327c99114cbd21d72ecf9c#npm:5.28.0"],\
             ["esbuild", "npm:0.16.17"],\
@@ -3999,6 +4001,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/@types-unist-npm-2.0.6-82641b4aa5-25cb860ff1.zip/node_modules/@types/unist/",\
           "packageDependencies": [\
             ["@types/unist", "npm:2.0.6"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["@types/uri-templates", [\
+        ["npm:0.1.34", {\
+          "packageLocation": "./.yarn/cache/@types-uri-templates-npm-0.1.34-7f58ab6e06-4067dac323.zip/node_modules/@types/uri-templates/",\
+          "packageDependencies": [\
+            ["@types/uri-templates", "npm:0.1.34"]\
           ],\
           "linkType": "HARD"\
         }]\
