@@ -23,7 +23,7 @@ const SECOND = 1000;
 const MINUTE = 60 * SECOND;
 
 type HistorySyncPluginOptions<T, K extends Extract<keyof T, string>> = {
-  routes: {
+  routes?: {
     [key in keyof T]: RouteLike<T[key]>;
   };
   v2_routes?: {
@@ -49,7 +49,9 @@ export function historySyncPlugin<
   const { location } = history;
 
   const activityRoutes = sortActivityRoutes([
-    ...normalizeActivityRouteMap(options.routes, "url-pattern"),
+    ...(options.routes
+      ? normalizeActivityRouteMap(options.routes, "url-pattern")
+      : []),
     ...(options.v2_routes
       ? normalizeActivityRouteMap(options.v2_routes, "uri-template")
       : []),
