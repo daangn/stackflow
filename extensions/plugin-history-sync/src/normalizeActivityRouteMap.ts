@@ -5,8 +5,11 @@ import { normalizeRouteInput } from "./normalizeRouteInput";
 export function normalizeActivityRouteMap<
   K,
   T extends ActivityRouteMapInput<K>,
->(activityRouteMap: T): ActivityRoute<K>[] {
-  const routes = Object.keys(activityRouteMap).flatMap((activityName) => {
+>(
+  activityRouteMap: T,
+  type: "url-pattern" | "uri-template",
+): ActivityRoute<K>[] {
+  return Object.keys(activityRouteMap).flatMap((activityName) => {
     const routeInput = activityRouteMap[activityName];
 
     if (!routeInput) {
@@ -15,9 +18,8 @@ export function normalizeActivityRouteMap<
 
     return normalizeRouteInput(routeInput).map((route) => ({
       activityName,
+      type,
       ...route,
     }));
   });
-
-  return routes;
 }

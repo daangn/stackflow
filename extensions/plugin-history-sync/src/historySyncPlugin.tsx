@@ -26,6 +26,9 @@ type HistorySyncPluginOptions<T, K extends Extract<keyof T, string>> = {
   routes: {
     [key in keyof T]: RouteLike<T[key]>;
   };
+  v2_routes?: {
+    [key in keyof T]: RouteLike<T[key]>;
+  };
   fallbackActivity: (args: { initialContext: any }) => K;
   useHash?: boolean;
   history?: History;
@@ -45,9 +48,12 @@ export function historySyncPlugin<
 
   const { location } = history;
 
-  const activityRoutes = sortActivityRoutes(
-    normalizeActivityRouteMap(options.routes),
-  );
+  const activityRoutes = sortActivityRoutes([
+    ...normalizeActivityRouteMap(options.routes, "url-pattern"),
+    ...(options.v2_routes
+      ? normalizeActivityRouteMap(options.v2_routes, "uri-template")
+      : []),
+  ]);
 
   return () => {
     let pushFlag = 0;
