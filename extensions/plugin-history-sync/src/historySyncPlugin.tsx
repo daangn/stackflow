@@ -1,5 +1,5 @@
 import { id, makeEvent } from "@stackflow/core";
-import type { StackflowReactPlugin } from "@stackflow/react";
+import type { BaseActivities, StackflowReactPlugin } from "@stackflow/react";
 import type { History, Listener } from "history";
 import { createBrowserHistory, createMemoryHistory } from "history";
 
@@ -35,7 +35,7 @@ type HistorySyncPluginOptions<T, K extends Extract<keyof T, string>> = {
   urlPatternOptions?: UrlPatternOptions;
 };
 export function historySyncPlugin<
-  T extends { [activityName: string]: unknown },
+  T extends { [activityName: string]: BaseActivities },
   K extends Extract<keyof T, string>,
 >(options: HistorySyncPluginOptions<T, K>): StackflowReactPlugin<T> {
   const history =
