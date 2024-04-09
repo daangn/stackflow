@@ -89,12 +89,12 @@ export const cupertino = createTheme(globalVars, {
 });
 
 createGlobalTheme(
-  ":root[data-stackflow-basic-ui-theme=cupertino]",
+  ":root[data-stackflow-plugin-basic-ui-theme=cupertino]",
   globalVars,
   cupertinoValues,
 );
 createGlobalTheme(
-  ":root[data-stackflow-basic-ui-theme=android]",
+  ":root[data-stackflow-plugin-basic-ui-theme=android]",
   globalVars,
   androidValues,
 );
