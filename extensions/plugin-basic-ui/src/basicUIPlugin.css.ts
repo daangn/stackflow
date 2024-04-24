@@ -88,6 +88,17 @@ export const cupertino = createTheme(globalVars, {
   ...cupertinoValues,
 });
 
+createGlobalTheme(
+  ":root[data-stackflow-plugin-basic-ui-theme=cupertino]",
+  globalVars,
+  cupertinoValues,
+);
+createGlobalTheme(
+  ":root[data-stackflow-plugin-basic-ui-theme=android]",
+  globalVars,
+  androidValues,
+);
+
 export const stackWrapper = recipe({
   base: {},
   variants: {
