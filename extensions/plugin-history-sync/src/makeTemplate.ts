@@ -7,7 +7,13 @@ export function pathToUrl(path: string) {
 }
 
 export function urlSearchParamsToMap(urlSearchParams: URLSearchParams) {
-  return Object.fromEntries(urlSearchParams.entries());
+  const map: { [key: string]: any } = {};
+
+  urlSearchParams.forEach((value, key) => {
+    map[key] = value;
+  });
+
+  return map;
 }
 
 function appendTrailingSlashInPathname(pathname: string) {
