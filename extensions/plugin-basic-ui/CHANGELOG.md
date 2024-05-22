@@ -1,5 +1,11 @@
 # @stackflow/plugin-basic-ui
 
+## 1.6.0
+
+### Minor Changes
+
+- 20d19546: theme branching via :root's dataset
+
 ## 1.5.3
 
 ## 1.5.3-canary.0

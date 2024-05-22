@@ -1,5 +1,11 @@
 # @stackflow/plugin-history-sync
 
+## 1.5.0
+
+### Minor Changes
+
+- cea51375: Pass initial search params to fallback activity as an activity params
+
 ## 1.4.0
 
 ### Minor Changes
