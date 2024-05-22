@@ -13,7 +13,7 @@ import {
 import { last } from "./last";
 import { makeHistoryTaskQueue } from "./makeHistoryTaskQueue";
 import type { UrlPatternOptions } from "./makeTemplate";
-import { makeTemplate } from "./makeTemplate";
+import { makeTemplate, pathToUrl } from "./makeTemplate";
 import { normalizeActivityRouteMap } from "./normalizeActivityRouteMap";
 import type { RouteLike } from "./RouteLike";
 import { RoutesProvider } from "./RoutesContext";
@@ -142,12 +142,17 @@ export function historySyncPlugin<
           (r) => r.activityName === fallbackActivityName,
         );
         const fallbackActivityPath = fallbackActivityRoute?.path;
+        const fallbackActivityParams = Object.fromEntries(
+          pathToUrl(currentPath).searchParams.entries(),
+        );
 
         return [
           makeEvent("Pushed", {
             activityId: fallbackActivityId,
             activityName: fallbackActivityName,
-            activityParams: {},
+            activityParams: {
+              ...fallbackActivityParams,
+            },
             eventDate: new Date().getTime() - MINUTE,
             activityContext: {
               path: fallbackActivityPath,

@@ -2,7 +2,7 @@ import UrlPattern from "url-pattern";
 
 import type { Route } from "./RouteLike";
 
-function pathToUrl(path: string) {
+export function pathToUrl(path: string) {
   return new URL(path, "file://");
 }
 
