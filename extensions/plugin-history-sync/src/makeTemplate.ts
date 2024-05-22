@@ -6,14 +6,8 @@ export function pathToUrl(path: string) {
   return new URL(path, "file://");
 }
 
-function urlSearchParamsToMap(urlSearchParams: URLSearchParams) {
-  const map: { [key: string]: any } = {};
-
-  urlSearchParams.forEach((value, key) => {
-    map[key] = value;
-  });
-
-  return map;
+export function urlSearchParamsToMap(urlSearchParams: URLSearchParams) {
+  return Object.fromEntries(urlSearchParams.entries());
 }
 
 function appendTrailingSlashInPathname(pathname: string) {
