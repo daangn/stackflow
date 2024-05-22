@@ -1293,4 +1293,35 @@ describe("historySyncPlugin", () => {
     );
     expect(history.index).toEqual(1);
   });
+
+  test("historySyncPlugin - search param이 붙은 채로 fallback activity로 이동하는 경우 activity params로 만들어줍니다", async () => {
+    history = createMemoryHistory({
+      initialEntries: ["/not/found/route/?foo=1&bar=2"],
+    });
+
+    const coreStore = stackflow({
+      activityNames: ["Home", "Article"],
+      plugins: [
+        historySyncPlugin({
+          history,
+          routes: {
+            Home: "/home",
+            Article: "/articles/:articleId",
+          },
+          fallbackActivity: () => "Home",
+        }),
+      ],
+    });
+
+    actions = makeActionsProxy({
+      actions: coreStore.actions,
+    });
+
+    const stack = await actions.getStack();
+
+    expect(activeActivity(stack)?.name).toEqual("Home");
+    expect(activeActivity(stack)?.params.foo).toEqual("1");
+    expect(activeActivity(stack)?.params.bar).toEqual("2");
+    expect(path(history.location)).toEqual("/home/?foo=1&bar=2");
+  });
 });

@@ -2,11 +2,11 @@ import UrlPattern from "url-pattern";
 
 import type { Route } from "./RouteLike";
 
-function pathToUrl(path: string) {
+export function pathToUrl(path: string) {
   return new URL(path, "file://");
 }
 
-function urlSearchParamsToMap(urlSearchParams: URLSearchParams) {
+export function urlSearchParamsToMap(urlSearchParams: URLSearchParams) {
   const map: { [key: string]: any } = {};
 
   urlSearchParams.forEach((value, key) => {
