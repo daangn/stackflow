@@ -13,7 +13,7 @@ export default {
   project: {
     link: "https://github.com/daangn/stackflow",
   },
-  docsRepositoryBase: "https://github.com/daangn/stackflow",
+  docsRepositoryBase: "https://github.com/daangn/stackflow/tree/main/docs",
   useNextSeoProps() {
     return {
       titleTemplate: "%s - Stackflow",
