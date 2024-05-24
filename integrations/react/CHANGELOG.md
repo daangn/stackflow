@@ -1,5 +1,11 @@
 # @stackflow/react
 
+## 1.1.9
+
+### Patch Changes
+
+- 27246ad7: fix(react): infer `BaseActivities` from given activities
+
 ## 1.1.8
 
 ### Patch Changes
