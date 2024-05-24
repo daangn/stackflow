@@ -46,6 +46,8 @@ type StackflowPluginsEntry<T extends BaseActivities> =
   | StackflowReactPlugin<T>
   | StackflowPluginsEntry<T>[];
 
+type NoInfer<T> = [T][T extends any ? 0 : never];
+
 export type StackflowOptions<T extends BaseActivities> = {
   /**
    * Register activities used in your app
@@ -61,12 +63,12 @@ export type StackflowOptions<T extends BaseActivities> = {
    * Set the first activity to load at the bottom
    * (It can be overwritten by plugin)
    */
-  initialActivity?: () => Extract<keyof T, string>;
+  initialActivity?: () => Extract<keyof NoInfer<T>, string>;
 
   /**
    * Inject stackflow plugins
    */
-  plugins?: Array<StackflowPluginsEntry<T>>;
+  plugins?: Array<StackflowPluginsEntry<NoInfer<T>>>;
 };
 
 export type StackflowOutput<T extends BaseActivities> = {
