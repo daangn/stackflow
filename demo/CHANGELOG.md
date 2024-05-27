@@ -1,5 +1,12 @@
 # @stackflow/demo
 
+## 1.2.22-canary.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @stackflow/plugin-basic-ui@1.7.0-canary.0
+
 ## 1.2.21
 
 ### Patch Changes

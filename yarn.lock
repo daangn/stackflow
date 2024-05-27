@@ -1932,7 +1932,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/demo@^1.2.21, @stackflow/demo@workspace:demo":
+"@stackflow/demo@^1.2.22-canary.0, @stackflow/demo@workspace:demo":
   version: 0.0.0-use.local
   resolution: "@stackflow/demo@workspace:demo"
   dependencies:
@@ -1943,7 +1943,7 @@ __metadata:
     "@stackflow/esbuild-config": ^1.0.1
     "@stackflow/eslint-config": ^1.0.2
     "@stackflow/link": ^1.4.0
-    "@stackflow/plugin-basic-ui": ^1.5.3
+    "@stackflow/plugin-basic-ui": ^1.7.0-canary.0
     "@stackflow/plugin-devtools": ^0.1.8
     "@stackflow/plugin-history-sync": ^1.4.0
     "@stackflow/plugin-map-initial-activity": ^1.0.6
@@ -1989,9 +1989,9 @@ __metadata:
     "@mdx-js/react": ^2.1.1
     "@seed-design/stylesheet": ^1.0.0-alpha.0
     "@stackflow/core": ^1.0.10
-    "@stackflow/demo": ^1.2.21
+    "@stackflow/demo": ^1.2.22-canary.0
     "@stackflow/eslint-config": ^1.0.2
-    "@stackflow/plugin-basic-ui": ^1.5.3
+    "@stackflow/plugin-basic-ui": ^1.7.0-canary.0
     "@stackflow/plugin-history-sync": ^1.4.0
     "@stackflow/plugin-renderer-basic": ^1.1.8
     "@stackflow/react": ^1.1.8
@@ -2095,7 +2095,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/plugin-basic-ui@^1.5.3, @stackflow/plugin-basic-ui@workspace:extensions/plugin-basic-ui":
+"@stackflow/plugin-basic-ui@^1.7.0-canary.0, @stackflow/plugin-basic-ui@workspace:extensions/plugin-basic-ui":
   version: 0.0.0-use.local
   resolution: "@stackflow/plugin-basic-ui@workspace:extensions/plugin-basic-ui"
   dependencies:
