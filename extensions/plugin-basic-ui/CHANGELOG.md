@@ -1,5 +1,11 @@
 # @stackflow/plugin-basic-ui
 
+## 1.7.0-canary.1
+
+### Minor Changes
+
+- feat(plugin-basic-ui): add `useZIndexBase()`
+
 ## 1.7.0-canary.0
 
 ### Minor Changes
