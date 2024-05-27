@@ -3,11 +3,11 @@
   "tag": "canary",
   "initialVersions": {
     "@stackflow/core": "1.0.10",
-    "@stackflow/demo": "1.2.21",
-    "@stackflow/docs": "1.2.22",
+    "@stackflow/demo": "1.2.22-canary.0",
+    "@stackflow/docs": "1.2.23-canary.0",
     "@stackflow/compat-await-push": "1.1.8",
     "@stackflow/link": "1.4.0",
-    "@stackflow/plugin-basic-ui": "1.6.0",
+    "@stackflow/plugin-basic-ui": "1.7.0-canary.0",
     "@stackflow/plugin-devtools": "0.1.8",
     "@stackflow/plugin-google-analytics-4": "1.1.10",
     "@stackflow/plugin-history-sync": "1.5.0",
@@ -21,6 +21,7 @@
     "@stackflow/eslint-config": "1.0.2"
   },
   "changesets": [
-    "funny-kings-attack"
+    "funny-kings-attack",
+    "gentle-kangaroos-study"
   ]
 }
