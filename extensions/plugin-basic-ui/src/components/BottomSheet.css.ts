@@ -71,8 +71,8 @@ export const paper = style([
         opacity: 1,
       },
       [`${exitActive} &, ${exitDone} &`]: {
-        transform: "translate3d(0, 100%, 0)",
-        opacity: 0,
+        transform: "translate3d(0, 100%, 0) !important",
+        opacity: "0 !important",
       },
     },
   },

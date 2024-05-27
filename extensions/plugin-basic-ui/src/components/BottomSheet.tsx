@@ -14,6 +14,7 @@ export type BottomSheetProps = Partial<
   Pick<GlobalVars, "backgroundColor" | "dimBackgroundColor">
 > &
   Partial<GlobalVars["bottomSheet"]> & {
+    paperRef?: React.Ref<HTMLDivElement>;
     onOutsideClick?: React.MouseEventHandler;
     children: React.ReactNode;
   };
@@ -21,6 +22,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
   borderRadius = "1rem",
   backgroundColor,
   dimBackgroundColor,
+  paperRef,
   onOutsideClick,
   children,
 }) => {
@@ -28,7 +30,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
   const { pop } = useActions();
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const paperRef = useRef<HTMLDivElement>(null);
+  const dimRef = useRef<HTMLDivElement>(null);
 
   useStyleEffect({
     styleName: "hide",
@@ -36,11 +38,11 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
   });
   useStyleEffect({
     styleName: "offset",
-    refs: [paperRef],
+    refs: [dimRef],
   });
   useStyleEffect({
     styleName: "swipe-back",
-    refs: [paperRef],
+    refs: [dimRef],
   });
 
   const popLock = useRef(false);
@@ -91,8 +93,8 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
       data-stackflow-activity-id={activity?.id}
       data-stackflow-activity-is-active={activity?.isActive}
     >
-      <div className={css.dim} ref={paperRef} onClick={onDimClick}>
-        <div className={css.paper} onClick={onPaperClick}>
+      <div className={css.dim} ref={dimRef} onClick={onDimClick}>
+        <div className={css.paper} ref={paperRef} onClick={onPaperClick}>
           {children}
         </div>
       </div>
