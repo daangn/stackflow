@@ -2310,7 +2310,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/demo@npm:^1.2.21, @stackflow/demo@workspace:demo":
+"@stackflow/demo@npm:^1.2.22-canary.0, @stackflow/demo@workspace:demo":
   version: 0.0.0-use.local
   resolution: "@stackflow/demo@workspace:demo"
   dependencies:
@@ -2355,7 +2355,7 @@ __metadata:
     "@mdx-js/react": "npm:^3.0.1"
     "@seed-design/stylesheet": "npm:^1.0.4"
     "@stackflow/core": "npm:^1.0.10"
-    "@stackflow/demo": "npm:^1.2.21"
+    "@stackflow/demo": "npm:^1.2.22-canary.0"
     "@stackflow/plugin-basic-ui": "npm:^1.7.0"
     "@stackflow/plugin-history-sync": "npm:^1.5.0"
     "@stackflow/plugin-renderer-basic": "npm:^1.1.8"
