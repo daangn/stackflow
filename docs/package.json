@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/docs",
-  "version": "1.2.22",
+  "version": "1.2.23-canary.0",
   "private": true,
   "description": "Mobile-first stack navigator framework with Composable Plugin System",
   "license": "MIT",
@@ -12,9 +12,9 @@
   "dependencies": {
     "@mdx-js/react": "^2.1.1",
     "@stackflow/core": "^1.0.10",
-    "@stackflow/demo": "^1.2.21",
+    "@stackflow/demo": "^1.2.22-canary.0",
     "@stackflow/eslint-config": "^1.0.2",
-    "@stackflow/plugin-basic-ui": "^1.5.3",
+    "@stackflow/plugin-basic-ui": "^1.7.0-canary.0",
     "@stackflow/plugin-history-sync": "^1.4.0",
     "@stackflow/plugin-renderer-basic": "^1.1.8",
     "@stackflow/react": "^1.1.8",
