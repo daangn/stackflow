@@ -1,5 +1,11 @@
 # @stackflow/plugin-basic-ui
 
+## 1.7.0
+
+### Minor Changes
+
+- 207b8490: Expose `paperRef` from `<BottomSheet />` and add `!important` paper exit transition
+
 ## 1.6.0
 
 ### Minor Changes
