@@ -12,7 +12,7 @@ function parseActionOptions(options?: { animate?: boolean }) {
   }
 
   const isNullableAnimateOption = options.animate == null;
-  
+
   if (isNullableAnimateOption) {
     return { skipActiveState: false };
   }

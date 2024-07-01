@@ -120,6 +120,7 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
         return (
           <button
             type="button"
+            aria-label="Go Back"
             className={css.backButton}
             onClick={onBackClick}
           >
@@ -147,8 +148,8 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
             backButton && "ariaLabel" in backButton
               ? backButton.ariaLabel
               : globalBackButton && "ariaLabel" in globalBackButton
-              ? globalBackButton.ariaLabel
-              : undefined
+                ? globalBackButton.ariaLabel
+                : undefined
           }
           onClick={onBackClick}
         >
@@ -230,8 +231,8 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
             closeButton && "ariaLabel" in closeButton
               ? closeButton.ariaLabel
               : globalCloseButton && "ariaLabel" in globalCloseButton
-              ? globalCloseButton.ariaLabel
-              : undefined
+                ? globalCloseButton.ariaLabel
+                : undefined
           }
           onClick={onCloseClick}
         >
