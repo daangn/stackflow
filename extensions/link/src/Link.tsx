@@ -28,7 +28,7 @@ export type TypeLink<T extends { [activityName: string]: unknown } = {}> = <
   K extends Extract<keyof T, string>,
 >(
   props: LinkProps<K, T[K] extends ActivityComponentType<infer U> ? U : never>,
-) => React.ReactElement | null;
+) => React.ReactNode | null;
 
 export const Link: TypeLink = forwardRef(
   (props, ref: React.ForwardedRef<HTMLAnchorElement>) => {
