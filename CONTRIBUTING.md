@@ -14,7 +14,7 @@ Install the dependencies by entering the following command in the project root
 $ yarn
 ```
 
-> **Stackflow** uses [Yarn 3](https://yarnpkg.com) and Yarn workspace
+> **Stackflow** uses [Yarn 4](https://yarnpkg.com) and Yarn workspace
 
 ### Build
 

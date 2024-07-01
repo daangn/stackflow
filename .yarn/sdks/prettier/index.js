@@ -1,20 +1,27 @@
 #!/usr/bin/env node
 
 const {existsSync} = require(`fs`);
-const {createRequire, createRequireFromPath} = require(`module`);
+const {createRequire, register} = require(`module`);
 const {resolve} = require(`path`);
+const {pathToFileURL} = require(`url`);
 
 const relPnpApiPath = "../../../.pnp.cjs";
 
 const absPnpApiPath = resolve(__dirname, relPnpApiPath);
-const absRequire = (createRequire || createRequireFromPath)(absPnpApiPath);
+const absRequire = createRequire(absPnpApiPath);
+
+const absPnpLoaderPath = resolve(absPnpApiPath, `../.pnp.loader.mjs`);
+const isPnpLoaderEnabled = existsSync(absPnpLoaderPath);
 
 if (existsSync(absPnpApiPath)) {
   if (!process.versions.pnp) {
-    // Setup the environment to be able to require prettier/index.js
+    // Setup the environment to be able to require prettier
     require(absPnpApiPath).setup();
+    if (isPnpLoaderEnabled && register) {
+      register(pathToFileURL(absPnpLoaderPath));
+    }
   }
 }
 
-// Defer to the real prettier/index.js your application uses
-module.exports = absRequire(`prettier/index.js`);
+// Defer to the real prettier your application uses
+module.exports = absRequire(`prettier`);
