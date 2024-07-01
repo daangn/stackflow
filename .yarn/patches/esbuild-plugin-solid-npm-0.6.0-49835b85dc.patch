@@ -1,0 +1,65 @@
+diff --git a/dist/index.cjs b/dist/index.cjs
+index d9013dcb4901fafc9f2fb2f23b2504cfb3a7b13e..da57f1a7fd60aeeaaf72d57be718d031a1ded40a 100644
+--- a/dist/index.cjs
++++ b/dist/index.cjs
+@@ -15,7 +15,7 @@ function solidPlugin(options) {
+   return {
+     name: "esbuild:solid",
+     setup(build) {
+-      build.onLoad({ filter: /\.(t|j)sx$/ }, async (args) => {
++      build.onLoad({ filter: options?.filter ?? /\.(t|j)sx$/ }, async (args) => {
+         const source = await promises.readFile(args.path, { encoding: "utf-8" });
+         const { name, ext } = node_path.parse(args.path);
+         const filename = name + ext;
+diff --git a/dist/index.d.cts b/dist/index.d.cts
+index 8f1e6a571a710cf5dde33c8e569f1955840b5f48..c3b607aa413ab96f87b6c6de69e68a97cfee3631 100644
+--- a/dist/index.d.cts
++++ b/dist/index.d.cts
+@@ -3,6 +3,8 @@ import { TransformOptions } from '@babel/core';
+ 
+ /** Configuration options for esbuild-plugin-solid */
+ interface Options {
++    /** The filter to use for deciding which files to transform @default /\.(t|j)sx$/ */
++    filter?: RegExp;
+     /** The options to use for @babel/preset-typescript @default {} */
+     typescript?: object;
+     /**
+diff --git a/dist/index.d.mts b/dist/index.d.mts
+index 8f1e6a571a710cf5dde33c8e569f1955840b5f48..c3b607aa413ab96f87b6c6de69e68a97cfee3631 100644
+--- a/dist/index.d.mts
++++ b/dist/index.d.mts
+@@ -3,6 +3,8 @@ import { TransformOptions } from '@babel/core';
+ 
+ /** Configuration options for esbuild-plugin-solid */
+ interface Options {
++    /** The filter to use for deciding which files to transform @default /\.(t|j)sx$/ */
++    filter?: RegExp;
+     /** The options to use for @babel/preset-typescript @default {} */
+     typescript?: object;
+     /**
+diff --git a/dist/index.d.ts b/dist/index.d.ts
+index 8f1e6a571a710cf5dde33c8e569f1955840b5f48..c3b607aa413ab96f87b6c6de69e68a97cfee3631 100644
+--- a/dist/index.d.ts
++++ b/dist/index.d.ts
+@@ -3,6 +3,8 @@ import { TransformOptions } from '@babel/core';
+ 
+ /** Configuration options for esbuild-plugin-solid */
+ interface Options {
++    /** The filter to use for deciding which files to transform @default /\.(t|j)sx$/ */
++    filter?: RegExp;
+     /** The options to use for @babel/preset-typescript @default {} */
+     typescript?: object;
+     /**
+diff --git a/dist/index.mjs b/dist/index.mjs
+index 6b50f5fd2507bf613fcdebd4fd0338741c0acea2..9077e2cd0b61f7d8d54af296a54d9c0c5bf387f9 100644
+--- a/dist/index.mjs
++++ b/dist/index.mjs
+@@ -8,7 +8,7 @@ function solidPlugin(options) {
+   return {
+     name: "esbuild:solid",
+     setup(build) {
+-      build.onLoad({ filter: /\.(t|j)sx$/ }, async (args) => {
++      build.onLoad({ filter: options?.filter ?? /\.(t|j)sx$/ }, async (args) => {
+         const source = await readFile(args.path, { encoding: "utf-8" });
+         const { name, ext } = parse(args.path);
+         const filename = name + ext;
