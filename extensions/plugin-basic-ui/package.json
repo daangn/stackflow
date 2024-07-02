@@ -32,10 +32,10 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@vanilla-extract/css": "^1.7.2",
-    "@vanilla-extract/dynamic": "^2.0.2",
-    "@vanilla-extract/private": "^1.0.3",
-    "@vanilla-extract/recipes": "^0.2.5"
+    "@vanilla-extract/css": "^1.15.3",
+    "@vanilla-extract/dynamic": "^2.1.1",
+    "@vanilla-extract/private": "^1.0.5",
+    "@vanilla-extract/recipes": "^0.5.3"
   },
   "devDependencies": {
     "@stackflow/core": "^1.0.10",
