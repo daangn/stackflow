@@ -3,6 +3,7 @@
   "version": "1.2.21",
   "private": true,
   "license": "MIT",
+  "type": "module",
   "exports": {
     ".": {
       "types": "./dist/stackflow-docs.d.ts",

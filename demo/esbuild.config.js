@@ -1,6 +1,6 @@
-const { context } = require("esbuild");
-const config = require("@stackflow/esbuild-config");
-const pkg = require("./package.json");
+import { context } from "esbuild";
+import config from "@stackflow/esbuild-config";
+import pkg from "./package.json" assert { type: "json" };
 
 const watch = process.argv.includes("--watch");
 const external = Object.keys({
