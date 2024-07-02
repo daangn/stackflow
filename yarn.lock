@@ -2456,7 +2456,6 @@ __metadata:
     eslint-plugin-simple-import-sort: "npm:^12.1.0"
     react: "npm:^18.3.1"
     rimraf: "npm:^3.0.2"
-    ts-pattern: "npm:^4.0.5"
     typescript: "npm:^5.5.3"
   peerDependencies:
     "@stackflow/core": ^1
@@ -12641,13 +12640,6 @@ __metadata:
   version: 2.2.0
   resolution: "ts-dedent@npm:2.2.0"
   checksum: 10/93ed8f7878b6d5ed3c08d99b740010eede6bccfe64bce61c5a4da06a2c17d6ddbb80a8c49c2d15251de7594a4f93ffa21dd10e7be75ef66a4dc9951b4a94e2af
-  languageName: node
-  linkType: hard
-
-"ts-pattern@npm:^4.0.5":
-  version: 4.0.5
-  resolution: "ts-pattern@npm:4.0.5"
-  checksum: 10/6c19de4e7ac0befb5cc08198145e6d0b929b6c3207c1ac545af9e963585ab2cdfab95bd3fff06811dbad8e36db15c4827447b0939251fd44b7a25b15701ccdfb
   languageName: node
   linkType: hard
 
