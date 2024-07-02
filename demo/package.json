@@ -71,7 +71,7 @@
     "@vanilla-extract/css": "^1.7.2",
     "@vanilla-extract/vite-plugin": "^3.2.1",
     "@vitejs/plugin-react": "^4.3.1",
-    "esbuild": "^0.16.17",
+    "esbuild": "^0.23.0",
     "rimraf": "^3.0.2",
     "typescript": "^5.5.3"
   },

@@ -37,7 +37,7 @@
     "@stackflow/react": "^1.1.9",
     "@typescript-eslint/eslint-plugin": "^7.15.0",
     "@typescript-eslint/parser": "^7.15.0",
-    "esbuild": "^0.16.17",
+    "esbuild": "^0.23.0",
     "eslint": "^8.57.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^9.1.0",
