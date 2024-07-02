@@ -3265,7 +3265,6 @@ const RAW_RUNTIME_STATE =
           ["eslint-plugin-simple-import-sort", "virtual:5d222998b86cceed4c8d843e557f0e3b94c8ccb1e8952571a8d45c8a6806e6624abcd819a5fa16c66371a9250ca177cd0fc04f42e577bbbc49771098023bb79e#npm:12.1.0"],\
           ["react", "npm:18.3.1"],\
           ["rimraf", "npm:3.0.2"],\
-          ["ts-pattern", "npm:4.0.5"],\
           ["typescript", "patch:typescript@npm%3A5.5.3#optional!builtin<compat/typescript>::version=5.5.3&hash=379a07"]\
         ],\
         "packagePeers": [\
@@ -3305,7 +3304,6 @@ const RAW_RUNTIME_STATE =
           ["eslint-plugin-simple-import-sort", "virtual:5d222998b86cceed4c8d843e557f0e3b94c8ccb1e8952571a8d45c8a6806e6624abcd819a5fa16c66371a9250ca177cd0fc04f42e577bbbc49771098023bb79e#npm:12.1.0"],\
           ["react", "npm:18.3.1"],\
           ["rimraf", "npm:3.0.2"],\
-          ["ts-pattern", "npm:4.0.5"],\
           ["typescript", "patch:typescript@npm%3A5.5.3#optional!builtin<compat/typescript>::version=5.5.3&hash=379a07"]\
         ],\
         "linkType": "SOFT"\
@@ -15318,15 +15316,6 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/ts-dedent-npm-2.2.0-00389a0e6b-93ed8f7878.zip/node_modules/ts-dedent/",\
         "packageDependencies": [\
           ["ts-dedent", "npm:2.2.0"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["ts-pattern", [\
-      ["npm:4.0.5", {\
-        "packageLocation": "./.yarn/cache/ts-pattern-npm-4.0.5-7ba0b14201-6c19de4e7a.zip/node_modules/ts-pattern/",\
-        "packageDependencies": [\
-          ["ts-pattern", "npm:4.0.5"]\
         ],\
         "linkType": "HARD"\
       }]\
