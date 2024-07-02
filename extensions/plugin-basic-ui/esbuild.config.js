@@ -1,4 +1,4 @@
-const { build } = require("esbuild");
+const { context } = require("esbuild");
 const config = require("@stackflow/esbuild-config");
 const pkg = require("./package.json");
 
@@ -9,15 +9,16 @@ const external = Object.keys({
 });
 
 Promise.all([
-  build({
+  context({
     ...config({
       vanillaExtractIdentifiers: watch ? "debug" : "short",
     }),
     format: "cjs",
     external,
-    watch,
-  }),
-  build({
+  }).then((ctx) =>
+    watch ? ctx.watch() : ctx.rebuild().then(() => ctx.dispose()),
+  ),
+  context({
     ...config({
       vanillaExtractIdentifiers: watch ? "debug" : "short",
     }),
@@ -26,6 +27,7 @@ Promise.all([
       ".js": ".mjs",
     },
     external,
-    watch,
-  }),
+  }).then((ctx) =>
+    watch ? ctx.watch() : ctx.rebuild().then(() => ctx.dispose()),
+  ),
 ]).catch(() => process.exit(1));
