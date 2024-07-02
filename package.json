@@ -26,10 +26,10 @@
   "resolutions": {
     "@mdx-js/react": "3.0.1",
     "@types/react": "18.3.3",
-    "@changesets/assemble-release-plan@^5.2.4": "patch:@changesets/assemble-release-plan@npm%3A5.2.4#./.yarn/patches/@changesets-assemble-release-plan-npm-5.2.4-2920e4dc4c.patch"
+    "@changesets/assemble-release-plan@npm:^6.0.3": "patch:@changesets/assemble-release-plan@npm%3A6.0.3#~/.yarn/patches/@changesets-assemble-release-plan-npm-6.0.3-29726de363.patch"
   },
   "devDependencies": {
-    "@changesets/cli": "^2.26.2",
+    "@changesets/cli": "^2.27.7",
     "@types/jest": "^29.5.12",
     "@types/node": "^20.14.9",
     "@types/react": "^18.3.3",
