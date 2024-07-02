@@ -1,6 +1,6 @@
-const { build } = require("esbuild");
-const config = require("@stackflow/esbuild-config");
-const pkg = require("./package.json");
+import { context } from "esbuild";
+import config from "@stackflow/esbuild-config";
+import pkg from "./package.json" assert { type: "json" };
 
 const watch = process.argv.includes("--watch");
 const external = Object.keys({
@@ -9,16 +9,17 @@ const external = Object.keys({
 });
 
 Promise.all([
-  build({
+  context({
     ...config({
       entryPoints: ["./src/stackflow-docs.ts"],
       vanillaExtractExternal: ["@seed-design"],
     }),
     format: "cjs",
     external,
-    watch,
-  }),
-  build({
+  }).then((ctx) =>
+    watch ? ctx.watch() : ctx.rebuild().then(() => ctx.dispose()),
+  ),
+  context({
     ...config({
       entryPoints: ["./src/stackflow-docs.ts"],
       vanillaExtractExternal: ["@seed-design"],
@@ -28,6 +29,7 @@ Promise.all([
       ".js": ".mjs",
     },
     external,
-    watch,
-  }),
+  }).then((ctx) =>
+    watch ? ctx.watch() : ctx.rebuild().then(() => ctx.dispose()),
+  ),
 ]).catch(() => process.exit(1));

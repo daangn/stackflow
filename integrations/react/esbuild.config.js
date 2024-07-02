@@ -1,4 +1,4 @@
-const { build } = require("esbuild");
+const { context } = require("esbuild");
 const config = require("@stackflow/esbuild-config");
 const pkg = require("./package.json");
 
@@ -9,19 +9,21 @@ const external = Object.keys({
 const watch = process.argv.includes("--watch");
 
 Promise.all([
-  build({
+  context({
     ...config({}),
     format: "cjs",
-    watch,
     external,
-  }),
-  build({
+  }).then((ctx) =>
+    watch ? ctx.watch() : ctx.rebuild().then(() => ctx.dispose()),
+  ),
+  context({
     ...config({}),
     format: "esm",
     outExtension: {
       ".js": ".mjs",
     },
     external,
-    watch,
-  }),
+  }).then((ctx) =>
+    watch ? ctx.watch() : ctx.rebuild().then(() => ctx.dispose()),
+  ),
 ]).catch(() => process.exit(1));
