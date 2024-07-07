@@ -1,5 +1,5 @@
+import type { StackflowPlugin } from "@stackflow/core";
 import { id, makeEvent } from "@stackflow/core";
-import type { StackflowReactPlugin } from "@stackflow/react";
 
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
@@ -13,7 +13,7 @@ type MapInitialActivityPluginOptions = {
 
 export function mapInitialActivityPlugin(
   options: MapInitialActivityPluginOptions,
-): StackflowReactPlugin {
+): StackflowPlugin {
   return () => ({
     key: "@stackflow/plugin-override-initial-activity",
     overrideInitialEvents({ initialEvents }) {
