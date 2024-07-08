@@ -4,7 +4,7 @@
 
 ### Node.js
 
-> **Stackflow** only works in [Node.js](https://nodejs.org) version `16.x`.
+> **Stackflow** only supports maintained versions of [Node.js](https://nodejs.org).
 
 ### Install dependencies
 
