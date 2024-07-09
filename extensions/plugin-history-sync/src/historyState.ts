@@ -12,31 +12,16 @@ interface SerializedState extends State {
   _TAG: typeof STATE_TAG;
 }
 
+function clone<T>(input: T): T {
+  return JSON.parse(JSON.stringify(input));
+}
+
 function serializeStep(step: ActivityStep): ActivityStep {
-  return {
-    ...step,
-    enteredBy:
-      "activityContext" in step.enteredBy
-        ? {
-            ...step.enteredBy,
-            activityContext: undefined,
-          }
-        : {
-            ...step.enteredBy,
-          },
-  };
+  return clone(step);
 }
 
 function serializeActivity(activity: Activity): Activity {
-  return {
-    ...activity,
-    context: undefined,
-    enteredBy: {
-      ...activity.enteredBy,
-      activityContext: undefined,
-    },
-    steps: activity.steps.map(serializeStep),
-  };
+  return clone(activity);
 }
 
 function serializeState(state: State): SerializedState {

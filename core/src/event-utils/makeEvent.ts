@@ -2,6 +2,10 @@ import type { DomainEvent } from "../event-types";
 import type { BaseDomainEvent } from "../event-types/_base";
 import { id, time } from "../utils";
 
+function clone<T extends {}>(input: T): T {
+  return JSON.parse(JSON.stringify(input));
+}
+
 export function makeEvent<T extends DomainEvent["name"]>(
   name: T,
   parameters: Omit<
@@ -13,7 +17,7 @@ export function makeEvent<T extends DomainEvent["name"]>(
   return {
     id: id(),
     eventDate: time(),
-    ...parameters,
+    ...clone(parameters),
     name,
   } as Extract<DomainEvent, { name: T }>;
 }
