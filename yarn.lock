@@ -1905,7 +1905,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/core@^1.0.10, @stackflow/core@workspace:core":
+"@stackflow/core@^1.0.10, @stackflow/core@^1.0.11, @stackflow/core@workspace:core":
   version: 0.0.0-use.local
   resolution: "@stackflow/core@workspace:core"
   dependencies:
@@ -2196,7 +2196,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@stackflow/plugin-history-sync@workspace:extensions/plugin-history-sync"
   dependencies:
-    "@stackflow/core": ^1.0.10
+    "@stackflow/core": ^1.0.11
     "@stackflow/esbuild-config": ^1.0.1
     "@stackflow/eslint-config": ^1.0.2
     "@stackflow/react": ^1.1.8
