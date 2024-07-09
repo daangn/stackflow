@@ -1,5 +1,11 @@
 # @stackflow/plugin-history-sync
 
+## 1.5.1
+
+### Patch Changes
+
+- 7df36f1b: accept only serializable parameters when making domain event
+
 ## 1.5.0
 
 ### Minor Changes

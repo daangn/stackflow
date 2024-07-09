@@ -1,5 +1,11 @@
 # @stackflow/core
 
+## 1.0.11
+
+### Patch Changes
+
+- 7df36f1b: accept only serializable parameters when making domain event
+
 ## 1.0.10
 
 ### Patch Changes

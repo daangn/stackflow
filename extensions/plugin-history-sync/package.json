@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/plugin-history-sync",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/daangn/stackflow.git",
@@ -45,7 +45,7 @@
     "url-pattern": "^1.0.3"
   },
   "devDependencies": {
-    "@stackflow/core": "^1.0.10",
+    "@stackflow/core": "^1.0.11",
     "@stackflow/esbuild-config": "^1.0.1",
     "@stackflow/eslint-config": "^1.0.2",
     "@stackflow/react": "^1.1.8",
