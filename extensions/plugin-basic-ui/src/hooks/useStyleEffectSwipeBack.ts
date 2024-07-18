@@ -1,5 +1,3 @@
-/* eslint-disable no-param-reassign */
-
 import { globalVars } from "../basicUIPlugin.css";
 import * as appScreenCss from "../components/AppScreen.css";
 import { listenOnce, noop } from "../utils";
@@ -175,7 +173,7 @@ export function useStyleEffectSwipeBack({
             const { activeElement } = document as any;
 
             activeElement?.blur?.();
-            // eslint-disable-next-line no-multi-assign
+
             x0 = x = e.touches[0].clientX;
             t0 = Date.now();
 

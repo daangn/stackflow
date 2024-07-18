@@ -15,7 +15,8 @@
     "build:dts": "ultra -r --build build:dts",
     "clean": "ultra -r clean",
     "dev": "ultra -r --concurrency 100 dev",
-    "format": "eslint . --fix --ext .ts,.tsx --ignore-path .gitignore && prettier -w .",
+    "format": "biome check --write .",
+    "lint": "biome lint .",
     "changeset:version": "changeset version && yarn install --no-immutable",
     "release": "yarn clean && yarn build && changeset && yarn changeset:version && changeset publish",
     "release:canary": "yarn clean && yarn build && changeset pre enter canary && changeset && yarn changeset:version && changeset publish && changeset pre exit",
@@ -29,12 +30,11 @@
     "@changesets/assemble-release-plan@npm:^6.0.3": "patch:@changesets/assemble-release-plan@npm%3A6.0.3#~/.yarn/patches/@changesets-assemble-release-plan-npm-6.0.3-29726de363.patch"
   },
   "devDependencies": {
+    "@biomejs/biome": "^1.8.3",
     "@changesets/cli": "^2.27.7",
     "@types/jest": "^29.5.12",
     "@types/node": "^20.14.9",
     "@types/react": "^18.3.3",
-    "eslint": "^8.57.0",
-    "prettier": "^3.3.2",
     "typescript": "^5.5.3",
     "ultra-runner": "^3.10.5"
   },

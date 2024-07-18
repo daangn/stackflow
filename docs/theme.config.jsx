@@ -35,7 +35,6 @@ export default {
   },
   logo: (
     <div
-      // eslint-disable-next-line react/no-danger
       dangerouslySetInnerHTML={{
         __html: logoSvg,
       }}

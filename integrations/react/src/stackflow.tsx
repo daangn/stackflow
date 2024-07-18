@@ -8,13 +8,13 @@ import type {
 import { makeCoreStore, makeEvent } from "@stackflow/core";
 import { memo, useMemo } from "react";
 
+import type { BaseActivities } from "./BaseActivities";
+import MainRenderer from "./MainRenderer";
+import type { StackflowReactPlugin } from "./StackflowReactPlugin";
 import type { ActivityComponentType } from "./activity";
 import { makeActivityId, makeStepId } from "./activity";
-import type { BaseActivities } from "./BaseActivities";
 import { CoreProvider } from "./core";
-import MainRenderer from "./MainRenderer";
 import { PluginsProvider } from "./plugins";
-import type { StackflowReactPlugin } from "./StackflowReactPlugin";
 import type { UseActionsOutputType } from "./useActions";
 import { useActions } from "./useActions";
 import type {
@@ -121,7 +121,7 @@ export function stackflow<T extends BaseActivities>(
   options: StackflowOptions<T>,
 ): StackflowOutput<T> {
   const plugins = (options.plugins ?? [])
-    .flat(Infinity as 0)
+    .flat(Number.POSITIVE_INFINITY as 0)
     .map((p) => p as StackflowReactPlugin);
 
   const activityComponentMap = Object.entries(options.activities).reduce(
@@ -192,20 +192,16 @@ export function stackflow<T extends BaseActivities>(
         plugins,
         handlers: {
           onInitialActivityIgnored: (initialPushedEvents) => {
-            // eslint-disable-next-line no-console
             console.warn(
-              `Stackflow -` +
-                ` Some plugin overrides an "initialActivity" option.` +
-                ` The "initialActivity" option you set to "${
-                  (initialPushedEvents[0] as PushedEvent).activityName
-                }" in the "stackflow" is ignored.`,
+              `Stackflow - Some plugin overrides an "initialActivity" option. The "initialActivity" option you set to "${
+                (initialPushedEvents[0] as PushedEvent).activityName
+              }" in the "stackflow" is ignored.`,
             );
           },
           onInitialActivityNotFound: () => {
-            // eslint-disable-next-line no-console
             console.warn(
-              `Stackflow -` +
-                ` There is no initial activity.` +
+              "Stackflow -" +
+                " There is no initial activity." +
                 " If you want to set the initial activity," +
                 " add the `initialActivity` option of the `stackflow()` function or" +
                 " add a plugin that sets the initial activity. (e.g. `@stackflow/plugin-history-sync`)",
@@ -243,9 +239,8 @@ export function stackflow<T extends BaseActivities>(
     useStepFlow: useStepActions,
     addActivity(activity) {
       if (getCoreStore()) {
-        // eslint-disable-next-line no-console
         console.warn(
-          `Stackflow -` +
+          "Stackflow -" +
             " `addActivity()` API cannot be called after a `<Stack />` component has been rendered",
         );
 
@@ -262,9 +257,8 @@ export function stackflow<T extends BaseActivities>(
     },
     addPlugin(plugin) {
       if (getCoreStore()) {
-        // eslint-disable-next-line no-console
         console.warn(
-          `Stackflow -` +
+          "Stackflow -" +
             " `addPlugin()` API cannot be called after a `<Stack />` component has been rendered",
         );
 
@@ -272,7 +266,7 @@ export function stackflow<T extends BaseActivities>(
       }
 
       [plugin]
-        .flat(Infinity as 0)
+        .flat(Number.POSITIVE_INFINITY as 0)
         .map((p) => p as StackflowReactPlugin)
         .forEach((p) => {
           plugins.push(p);

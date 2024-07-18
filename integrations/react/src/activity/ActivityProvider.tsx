@@ -1,5 +1,6 @@
 import type { Activity } from "@stackflow/core";
-import React, { createContext } from "react";
+import type React from "react";
+import { createContext } from "react";
 
 import { useMemoDeep } from "../utils";
 

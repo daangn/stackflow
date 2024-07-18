@@ -4,7 +4,7 @@ import ImageProfileRating from "../assets/ImageProfileRating";
 import * as css from "./ArticleProfile.css";
 
 const ArticleProfile: React.FC = () => {
-  const imageUrl = `https://picsum.photos/120/120/`;
+  const imageUrl = "https://picsum.photos/120/120/";
 
   return (
     <div className={css.container}>

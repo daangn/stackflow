@@ -1,7 +1,7 @@
 import type { Activity, ActivityStep } from "@stackflow/core";
 import type { History } from "history";
 
-const STATE_TAG = `@stackflow/plugin-history-sync`;
+const STATE_TAG = "@stackflow/plugin-history-sync";
 
 interface State {
   activity: Activity;

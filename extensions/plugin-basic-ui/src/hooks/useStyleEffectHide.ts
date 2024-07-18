@@ -1,5 +1,3 @@
-/* eslint-disable no-param-reassign */
-
 import { noop } from "../utils";
 import { useStyleEffect } from "./useStyleEffect";
 

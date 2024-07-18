@@ -28,7 +28,6 @@ const DiagramTransitioningStack: React.FC = () => (
   <div style={{ display: "flex", justifyContent: "center" }}>
     <div
       style={{ width: "100%", padding: "2.5rem 0 1rem", maxWidth: "45rem" }}
-      // eslint-disable-next-line react/no-danger
       dangerouslySetInnerHTML={{ __html: svg }}
     />
   </div>

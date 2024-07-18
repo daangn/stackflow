@@ -1,5 +1,5 @@
-import type { History } from "history";
 import type { HistoryQueueContextValue } from "HistoryQueueContext";
+import type { History } from "history";
 
 /**
  * This function is required to avoid any race conditions caused by asynchronous history updates.

@@ -1,9 +1,9 @@
+import type { Activity, Stack } from "./Stack";
 import findTargetActivityIndexes from "./activity-utils/findTargetActivityIndexes";
 import { makeActivitiesReducers } from "./activity-utils/makeActivitiesReducers";
 import { makeActivityReducers } from "./activity-utils/makeActivityReducers";
 import type { DomainEvent } from "./event-types";
 import { filterEvents, validateEvents } from "./event-utils";
-import type { Activity, Stack } from "./Stack";
 import { compareBy, uniqBy } from "./utils";
 
 export function aggregate(events: DomainEvent[], now: number): Stack {

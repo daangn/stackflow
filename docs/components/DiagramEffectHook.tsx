@@ -27,7 +27,6 @@ const svg = `
 `;
 
 const DiagramEffectHook: React.FC = () => (
-  // eslint-disable-next-line react/no-danger
   <div style={{ width: "100%" }} dangerouslySetInnerHTML={{ __html: svg }} />
 );
 

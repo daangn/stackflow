@@ -1,15 +1,13 @@
-/* eslint-disable no-use-before-define */
-
 import isEqual from "react-fast-compare";
 
-import { aggregate } from "./aggregate";
 import type { Effect } from "./Effect";
+import type { Stack } from "./Stack";
+import { aggregate } from "./aggregate";
 import type { DomainEvent, PushedEvent, StepPushedEvent } from "./event-types";
 import type { BaseDomainEvent } from "./event-types/_base";
 import { makeEvent } from "./event-utils";
 import type { StackflowActions, StackflowPlugin } from "./interfaces";
 import { produceEffects } from "./produceEffects";
-import type { Stack } from "./Stack";
 import { divideBy, once } from "./utils";
 
 const SECOND = 1000;
@@ -139,7 +137,7 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
 
       // delete params.id;
       // delete params.eventDate;
-      delete params.name;
+      params.name = undefined;
 
       return params;
     }

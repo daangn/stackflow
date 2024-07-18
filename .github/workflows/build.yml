@@ -68,7 +68,6 @@ jobs:
             integrations/react/dist/
             integrations/react/.ultra.cache.json
             packages/esbuild-config/.ultra.cache.json
-            packages/eslint-config/.ultra.cache.json
           key: ultra-cache-main-v2
           restore-keys: |
             ultra-cache-main-v2
@@ -107,5 +106,4 @@ jobs:
             integrations/react/dist/
             integrations/react/.ultra.cache.json
             packages/esbuild-config/.ultra.cache.json
-            packages/eslint-config/.ultra.cache.json
           key: ultra-cache-main-v2

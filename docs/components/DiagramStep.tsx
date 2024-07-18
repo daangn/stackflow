@@ -22,7 +22,6 @@ const DiagramStep: React.FC = () => (
   <div style={{ display: "flex", justifyContent: "center" }}>
     <div
       style={{ width: "100%", padding: "2rem 0 1rem", maxWidth: "20rem" }}
-      // eslint-disable-next-line react/no-danger
       dangerouslySetInnerHTML={{ __html: svg }}
     />
   </div>

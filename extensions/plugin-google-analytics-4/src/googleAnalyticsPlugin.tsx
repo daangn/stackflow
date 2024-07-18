@@ -89,7 +89,6 @@ export function googleAnalyticsPlugin<
     wrapStack({ stack }) {
       return (
         <GoogleAnalyticsContext.Provider
-          // eslint-disable-next-line react/jsx-no-constructed-context-values
           value={{
             sendEvent: ReactGA4.event,
             setConfig: ReactGA4.set,

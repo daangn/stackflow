@@ -317,7 +317,6 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
               <button
                 className={css.centerMainEdge}
                 type="button"
-                aria-hidden="true"
                 onClick={onTopClick}
               />
             </div>
