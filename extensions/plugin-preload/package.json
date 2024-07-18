@@ -23,9 +23,7 @@
     "README.md"
   ],
   "scripts": {
-    "build": "yarn build:js && yarn build:dts",
-    "build:dts": "tsc --emitDeclarationOnly",
-    "build:js": "node ./esbuild.config.js",
+    "build": "nanobundle build",
     "clean": "rimraf dist",
     "dev": "yarn build:js --watch && yarn build:dts --watch",
     "typecheck": "tsc --noEmit"
@@ -35,10 +33,9 @@
   },
   "devDependencies": {
     "@stackflow/core": "^1.0.10",
-    "@stackflow/esbuild-config": "^1.0.1",
     "@stackflow/react": "^1.1.9",
     "@types/react": "^18.3.3",
-    "esbuild": "^0.23.0",
+    "nanobundle": "^2.1.0",
     "react": "^18.3.1",
     "rimraf": "^3.0.2",
     "typescript": "^5.5.3"
