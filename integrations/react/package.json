@@ -12,6 +12,16 @@
       "types": "./dist/index.d.ts",
       "require": "./dist/index.js",
       "import": "./dist/index.mjs"
+    },
+    "./stable": {
+      "types": "./dist/stable/index.d.ts",
+      "require": "./dist/stable/index.js",
+      "import": "./dist/stable/index.mjs"
+    },
+    "./future": {
+      "types": "./dist/future/index.d.ts",
+      "require": "./dist/future/index.js",
+      "import": "./dist/future/index.mjs"
     }
   },
   "main": "./dist/index.js",
