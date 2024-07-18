@@ -453,7 +453,6 @@ export function historySyncPlugin<
 
         if (previousActivity) {
           for (let i = 0; i < previousActivity.steps.length - 1; i += 1) {
-            // eslint-disable-next-line no-loop-func
             requestHistoryTick((resolve) => {
               if (!safeParseState(getCurrentState({ history }))) {
                 silentFlag = true;
@@ -463,7 +462,6 @@ export function historySyncPlugin<
               }
             });
 
-            // eslint-disable-next-line no-loop-func
             requestHistoryTick(() => {
               silentFlag = true;
               history.back();
@@ -496,7 +494,6 @@ export function historySyncPlugin<
           const popCount = isRoot ? 0 : steps.length;
 
           for (let i = 0; i < popCount; i += 1) {
-            // eslint-disable-next-line no-loop-func
             requestHistoryTick((resolve) => {
               if (!safeParseState(getCurrentState({ history }))) {
                 silentFlag = true;
@@ -506,7 +503,6 @@ export function historySyncPlugin<
               }
             });
 
-            // eslint-disable-next-line no-loop-func
             requestHistoryTick(() => {
               silentFlag = true;
               history.back();

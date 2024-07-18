@@ -4,9 +4,6 @@ const withNextra = require("nextra")({
 });
 
 module.exports = withNextra({
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   images: {
     unoptimized: true,
   },

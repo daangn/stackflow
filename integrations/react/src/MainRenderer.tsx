@@ -26,7 +26,6 @@ const MainRenderer: React.FC<MainRendererProps> = ({
 
   useEffect(() => {
     if (renderingPlugins.length === 0) {
-      // eslint-disable-next-line no-console
       console.warn(
         `Stackflow -` +
           ` There is no rendering plugin, so "<Stack />" doesn't render anything.` +

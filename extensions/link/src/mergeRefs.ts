@@ -16,7 +16,6 @@ export const mergeRefs = <T>(...refs: Array<React.ForwardedRef<T>>) => {
       if (typeof ref === "function") {
         ref(inst);
       } else if (ref) {
-        // eslint-disable-next-line no-param-reassign
         ref.current = inst;
       }
     });

@@ -192,7 +192,6 @@ export function stackflow<T extends BaseActivities>(
         plugins,
         handlers: {
           onInitialActivityIgnored: (initialPushedEvents) => {
-            // eslint-disable-next-line no-console
             console.warn(
               `Stackflow -` +
                 ` Some plugin overrides an "initialActivity" option.` +
@@ -202,7 +201,6 @@ export function stackflow<T extends BaseActivities>(
             );
           },
           onInitialActivityNotFound: () => {
-            // eslint-disable-next-line no-console
             console.warn(
               `Stackflow -` +
                 ` There is no initial activity.` +
@@ -243,7 +241,6 @@ export function stackflow<T extends BaseActivities>(
     useStepFlow: useStepActions,
     addActivity(activity) {
       if (getCoreStore()) {
-        // eslint-disable-next-line no-console
         console.warn(
           `Stackflow -` +
             " `addActivity()` API cannot be called after a `<Stack />` component has been rendered",
@@ -262,7 +259,6 @@ export function stackflow<T extends BaseActivities>(
     },
     addPlugin(plugin) {
       if (getCoreStore()) {
-        // eslint-disable-next-line no-console
         console.warn(
           `Stackflow -` +
             " `addPlugin()` API cannot be called after a `<Stack />` component has been rendered",

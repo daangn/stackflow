@@ -1,5 +1,3 @@
-/* eslint-disable no-use-before-define */
-
 import isEqual from "react-fast-compare";
 
 import { aggregate } from "./aggregate";
