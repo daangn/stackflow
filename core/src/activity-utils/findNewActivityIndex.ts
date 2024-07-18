@@ -1,5 +1,5 @@
-import type { PushedEvent, ReplacedEvent } from "../event-types";
 import type { Activity } from "../Stack";
+import type { PushedEvent, ReplacedEvent } from "../event-types";
 import { findIndices, last } from "../utils";
 
 export default function findNewActivityIndex(

@@ -4,6 +4,8 @@ import type { History, Listener } from "history";
 import { createBrowserHistory, createMemoryHistory } from "history";
 
 import { HistoryQueueProvider } from "./HistoryQueueContext";
+import type { RouteLike } from "./RouteLike";
+import { RoutesProvider } from "./RoutesContext";
 import {
   getCurrentState,
   pushState,
@@ -15,8 +17,6 @@ import { makeHistoryTaskQueue } from "./makeHistoryTaskQueue";
 import type { UrlPatternOptions } from "./makeTemplate";
 import { makeTemplate, pathToUrl, urlSearchParamsToMap } from "./makeTemplate";
 import { normalizeActivityRouteMap } from "./normalizeActivityRouteMap";
-import type { RouteLike } from "./RouteLike";
-import { RoutesProvider } from "./RoutesContext";
 import { sortActivityRoutes } from "./sortActivityRoutes";
 
 const SECOND = 1000;

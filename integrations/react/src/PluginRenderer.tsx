@@ -1,9 +1,9 @@
+import type { StackflowReactPlugin } from "./StackflowReactPlugin";
 import type { ActivityComponentType } from "./activity";
 import { ActivityProvider } from "./activity";
 import { useCoreState } from "./core";
 import { usePlugins } from "./plugins";
 import { StackProvider } from "./stack";
-import type { StackflowReactPlugin } from "./StackflowReactPlugin";
 import type { WithRequired } from "./utils";
 
 interface PluginRendererProps {

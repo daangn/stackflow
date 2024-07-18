@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 
+import PluginRenderer from "./PluginRenderer";
 import type { ActivityComponentType } from "./activity";
 import { useCoreState } from "./core";
-import PluginRenderer from "./PluginRenderer";
 import { usePlugins } from "./plugins";
 import type { WithRequired } from "./utils";
 
@@ -27,10 +27,10 @@ const MainRenderer: React.FC<MainRendererProps> = ({
   useEffect(() => {
     if (renderingPlugins.length === 0) {
       console.warn(
-        `Stackflow -` +
+        "Stackflow -" +
           ` There is no rendering plugin, so "<Stack />" doesn't render anything.` +
           ` If you want to render some UI, use "@stackflow/plugin-renderer-basic"` +
-          ` or add another rendering plugin.`,
+          " or add another rendering plugin.",
       );
     }
   }, [renderingPlugins]);

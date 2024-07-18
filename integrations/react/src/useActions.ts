@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 
+import type { BaseActivities } from "./BaseActivities";
 import type { ActivityComponentType } from "./activity";
 import { makeActivityId } from "./activity";
-import type { BaseActivities } from "./BaseActivities";
 import { useCoreActions } from "./core";
 import { useTransition } from "./shims";
 

@@ -25,7 +25,7 @@ export function useStyleEffect<T extends HTMLElement>({
   effect?: (params: {
     activityTransitionState: ActivityTransitionState;
     refs: Array<React.RefObject<T>>;
-  }) => (() => void) | void;
+  }) => (() => void) | undefined;
   effectDeps?: any[];
 }) {
   const activity = useNullableActivity();

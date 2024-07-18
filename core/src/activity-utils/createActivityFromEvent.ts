@@ -1,5 +1,5 @@
-import type { PushedEvent, ReplacedEvent } from "../event-types";
 import type { Activity, ActivityTransitionState } from "../Stack";
+import type { PushedEvent, ReplacedEvent } from "../event-types";
 
 export const createActivityFromEvent = (
   event: PushedEvent | ReplacedEvent,

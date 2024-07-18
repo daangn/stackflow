@@ -30,11 +30,10 @@ export function useStyleEffectOffset({
               opacity = "1";
               break;
             }
-            case "android":
             default: {
               transform =
                 activityEnterStyle === "slideInLeft"
-                  ? `translate3d(-50%, 0, 0)`
+                  ? "translate3d(-50%, 0, 0)"
                   : `translate3d(0, -${OFFSET_PX_ANDROID / 16}rem, 0)`;
               opacity = activityEnterStyle === "slideInLeft" ? "0" : "1";
               break;
@@ -79,7 +78,6 @@ export function useStyleEffectOffset({
                   return () => {
                     cleanup();
                   };
-                case "enter-active":
                 default:
                   return noop;
               }

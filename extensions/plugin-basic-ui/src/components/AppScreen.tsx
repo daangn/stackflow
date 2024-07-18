@@ -92,7 +92,6 @@ const AppScreen: React.FC<AppScreenProps> = ({
       zIndexAppBar = zIndexBase + 7;
       break;
     }
-    case "android":
     default: {
       zIndexDim = zIndexBase;
       zIndexPaper = zIndexBase + (activityEnterStyle === "slideInLeft" ? 1 : 3);
