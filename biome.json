@@ -1,0 +1,33 @@
+{
+  "$schema": "https://biomejs.dev/schemas/1.8.3/schema.json",
+  "organizeImports": {
+    "enabled": true
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true
+    }
+  },
+  "formatter": {
+    "indentStyle": "space",
+    "indentWidth": 2
+  },
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "files": {
+    "ignore": [
+      ".pnp.cjs",
+      ".pnp.loader.mjs",
+      ".changeset/**/*",
+      ".github/**/*",
+      ".vscode/**/*",
+      ".yarn/**/*",
+      ".ultra.cache.json",
+      "package.json"
+    ]
+  }
+}
