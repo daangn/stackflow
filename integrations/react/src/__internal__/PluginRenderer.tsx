@@ -1,5 +1,5 @@
+import type { ActivityComponentType } from "./ActivityComponentType";
 import type { StackflowReactPlugin } from "./StackflowReactPlugin";
-import type { ActivityComponentType } from "./activity";
 import { ActivityProvider } from "./activity";
 import { useCoreState } from "./core";
 import { usePlugins } from "./plugins";

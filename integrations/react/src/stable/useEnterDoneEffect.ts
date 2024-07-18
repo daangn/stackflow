@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 
-import { useActivity } from "./activity/useActivity";
-import { noop } from "./utils";
+import { useActivity } from "../__internal__/activity/useActivity";
+import { noop } from "../__internal__/utils";
 
 export const useEnterDoneEffect = (
   effect: React.EffectCallback,
