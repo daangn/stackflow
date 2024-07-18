@@ -22,10 +22,11 @@
     "ignore": [
       ".pnp.cjs",
       ".pnp.loader.mjs",
-      ".changeset/**/*",
-      ".github/**/*",
-      ".vscode/**/*",
-      ".yarn/**/*",
+      ".changeset/**",
+      ".github/**",
+      ".vscode/**",
+      ".yarn/**",
+      ".next/**",
       ".ultra.cache.json",
       "package.json"
     ]
