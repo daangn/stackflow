@@ -4,7 +4,7 @@
 
 ### Node.js
 
-> **Stackflow** only works in [Node.js](https://nodejs.org) version `16.x`.
+> **Stackflow** only supports maintained versions of [Node.js](https://nodejs.org).
 
 ### Install dependencies
 
@@ -14,7 +14,7 @@ Install the dependencies by entering the following command in the project root
 $ yarn
 ```
 
-> **Stackflow** uses [Yarn 3](https://yarnpkg.com) and Yarn workspace
+> **Stackflow** uses [Yarn 4](https://yarnpkg.com) and Yarn workspace
 
 ### Build
 

@@ -6,12 +6,5 @@ export default defineConfig({
   build: {
     outDir: "./build",
   },
-  plugins: [
-    react(),
-    vanillaExtractPlugin({
-      esbuildOptions: {
-        external: ["@seed-design", "@stackflow"],
-      },
-    }),
-  ],
+  plugins: [react(), vanillaExtractPlugin()],
 });

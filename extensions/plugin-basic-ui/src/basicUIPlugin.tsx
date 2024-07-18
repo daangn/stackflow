@@ -69,8 +69,8 @@ export const basicUIPlugin: (
             compactMap({
               [css.globalVars.backgroundColor]: _options.backgroundColor,
               [css.globalVars.dimBackgroundColor]: _options.dimBackgroundColor,
-              [css.globalVars
-                .transitionDuration]: `${stack.transitionDuration}ms`,
+              [css.globalVars.transitionDuration]:
+                `${stack.transitionDuration}ms`,
               [css.globalVars.computedTransitionDuration]:
                 stack.globalTransitionState === "loading"
                   ? `${stack.transitionDuration}ms`

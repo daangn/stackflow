@@ -12,7 +12,7 @@
     "build": "echo \"noop\""
   },
   "dependencies": {
-    "@vanilla-extract/esbuild-plugin": "^2.1.0"
+    "@vanilla-extract/esbuild-plugin": "^2.3.8"
   },
   "publishConfig": {
     "access": "public"
