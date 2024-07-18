@@ -1,1 +1,3 @@
-export function stack() {}
+export function stack() {
+  throw new Error("UNIMPLEMENTED");
+}

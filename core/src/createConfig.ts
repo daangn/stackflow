@@ -1,3 +1,3 @@
-export function flow() {
+export function createConfig() {
   throw new Error("UNIMPLEMENTED");
 }
