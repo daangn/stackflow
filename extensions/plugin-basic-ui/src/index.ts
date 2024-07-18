@@ -15,4 +15,4 @@ export {
 export { vars as bottomSheetVars } from "./components/BottomSheet.css";
 export { default as Modal, ModalProps } from "./components/Modal";
 export { vars as modalVars } from "./components/Modal.css";
-export { useStyleEffect } from "./hooks";
+export { useStyleEffect, useZIndexBase } from "./hooks";
