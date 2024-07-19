@@ -12,6 +12,9 @@ export const { Stack } = stack({
     Main,
     Article,
   },
+  useHistorySync: {
+    fallbackActivity: () => "Main",
+  },
   plugins: [
     basicRendererPlugin(),
     basicUIPlugin({
@@ -27,12 +30,6 @@ export const { Stack } = stack({
         closeButton: {
           ariaLabel: "닫기",
         },
-      },
-    }),
-    () => ({
-      key: "??",
-      onChanged({ actions }) {
-        console.log(JSON.stringify(actions.getStack(), null, 2));
       },
     }),
   ],

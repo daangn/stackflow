@@ -14,7 +14,6 @@ export const PluginsProvider: React.FC<PluginsProviderProps> = ({
   children,
   value,
 }) => {
-  console.log("???");
   return (
     <PluginsContext.Provider value={value}>{children}</PluginsContext.Provider>
   );

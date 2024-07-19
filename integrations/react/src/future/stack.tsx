@@ -9,6 +9,10 @@ import type {
   BaseParams,
   StackflowConfig,
 } from "@stackflow/core/future";
+import {
+  type HistorySyncPluginOptions,
+  historySyncPlugin,
+} from "@stackflow/plugin-history-sync";
 import React, { useMemo } from "react";
 import MainRenderer from "../__internal__/MainRenderer";
 import { makeActivityId } from "../__internal__/activity";
@@ -20,6 +24,7 @@ import type {
   StackComponentType,
   StackflowReactPlugin,
 } from "../stable";
+import { loaderPlugin } from "./loader";
 import { type Actions, makeActions } from "./makeActions";
 
 export type StackflowPluginsEntry =
@@ -32,6 +37,13 @@ export type StackInput<T extends ActivityDefinition<string, BaseParams>> = {
     [activityName in T["name"]]: ActivityComponentType<any>;
   };
   plugins?: Array<StackflowPluginsEntry>;
+  useHistorySync?: Omit<
+    HistorySyncPluginOptions<
+      { [key in T["name"]]: unknown },
+      Extract<T["name"], string>
+    >,
+    "routes"
+  >;
 };
 
 export type StackOutput<T extends ActivityDefinition<string, BaseParams>> = {
@@ -42,9 +54,32 @@ export type StackOutput<T extends ActivityDefinition<string, BaseParams>> = {
 export function stack<T extends ActivityDefinition<string, BaseParams>>(
   input: StackInput<T>,
 ): StackOutput<T> {
-  const plugins = (input.plugins ?? [])
-    .flat(Number.POSITIVE_INFINITY as 0)
-    .map((p) => p as StackflowReactPlugin);
+  const defaultPlugins = [
+    input.useHistorySync
+      ? historySyncPlugin({
+          ...input.useHistorySync,
+          routes: input.config.activities.reduce(
+            (acc, a) => ({
+              ...acc,
+              [a.name]: a.path,
+            }),
+            {},
+          ),
+        })
+      : null,
+
+    /**
+     * `loaderPlugin()` must be placed after `historySyncPlugin()`
+     */
+    loaderPlugin(input.config),
+  ].filter((e) => !!e);
+
+  const plugins = [
+    ...defaultPlugins,
+    ...(input.plugins ?? [])
+      .flat(Number.POSITIVE_INFINITY as 0)
+      .map((p) => p as StackflowReactPlugin),
+  ];
 
   const enoughPastTime = () =>
     new Date().getTime() - input.config.transitionDuration * 2;
@@ -71,8 +106,10 @@ export function stack<T extends ActivityDefinition<string, BaseParams>>(
     const coreStore = useMemo(() => {
       const prevCoreStore = getCoreStore();
 
-      // In a browser environment,
-      // memoize `coreStore` so that only one `coreStore` exists throughout the entire app.
+      /**
+       * In a browser environment,
+       * memoize `coreStore` so that only one `coreStore` exists throughout the entire app.
+       */
       if (isBrowser() && prevCoreStore) {
         return prevCoreStore;
       }

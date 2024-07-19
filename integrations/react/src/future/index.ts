@@ -6,3 +6,4 @@ export * from "../__internal__/StackflowReactPlugin";
 export * from "./flow";
 export * from "./stack";
 export * from "./stepFlow";
+export * from "./loader/useLoaderData";

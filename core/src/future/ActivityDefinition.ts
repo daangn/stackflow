@@ -1,3 +1,4 @@
+import type { ActivityLoader } from "./ActivityLoader";
 import type { BaseParams } from "./BaseParams";
 
 export type ActivityDefinition<
@@ -7,7 +8,5 @@ export type ActivityDefinition<
   name: Name;
   path: string;
   paramTypes?: Params;
-  loader?: (args: { params: Partial<Params>; context: any }) =>
-    | any
-    | Promise<any>;
+  loader?: ActivityLoader<Params>;
 };
