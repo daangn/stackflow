@@ -7,5 +7,7 @@ export type ActivityDefinition<
   name: Name;
   path: string;
   paramTypes?: Params;
-  loader?: (args: { params: Params; context: any }) => any | Promise<any>;
+  loader?: (args: { params: Partial<Params>; context: any }) =>
+    | any
+    | Promise<any>;
 };

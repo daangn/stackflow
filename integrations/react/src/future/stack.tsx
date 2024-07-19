@@ -20,6 +20,7 @@ import type {
   StackComponentType,
   StackflowReactPlugin,
 } from "../stable";
+import { type Actions, makeActions } from "./makeActions";
 
 export type StackflowPluginsEntry =
   | StackflowReactPlugin<never>
@@ -33,16 +34,14 @@ export type StackInput<T extends ActivityDefinition<string, BaseParams>> = {
   plugins?: Array<StackflowPluginsEntry>;
 };
 
-export type StackOutput = {
-  /**
-   * Created `<Stack />` component
-   */
+export type StackOutput<T extends ActivityDefinition<string, BaseParams>> = {
   Stack: StackComponentType;
+  actions: Actions<T>;
 };
 
 export function stack<T extends ActivityDefinition<string, BaseParams>>(
   input: StackInput<T>,
-): StackOutput {
+): StackOutput<T> {
   const plugins = (input.plugins ?? [])
     .flat(Number.POSITIVE_INFINITY as 0)
     .map((p) => p as StackflowReactPlugin);
@@ -141,5 +140,6 @@ export function stack<T extends ActivityDefinition<string, BaseParams>>(
 
   return {
     Stack,
+    actions: makeActions(() => getCoreStore()?.actions),
   };
 }

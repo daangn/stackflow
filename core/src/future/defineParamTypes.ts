@@ -1,3 +1,3 @@
-export function defineParamTypes<T>(): Partial<T> {
+export function defineParamTypes<T>(): T {
   return undefined as any;
 }
