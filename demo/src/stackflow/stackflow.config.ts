@@ -1,4 +1,8 @@
-import { createConfig, defineActivity } from "@stackflow/core/future";
+import {
+  createConfig,
+  defineActivity,
+  defineParamTypes,
+} from "@stackflow/core/future";
 
 export const config = createConfig({
   activities: [
@@ -9,6 +13,11 @@ export const config = createConfig({
     defineActivity({
       name: "Article" as const,
       path: "/articles/:articleId",
+      paramTypes: defineParamTypes<{
+        articleId: string;
+      }>(),
     }),
   ],
+  transitionDuration: 270,
+  initialActivity: () => "Main",
 });
