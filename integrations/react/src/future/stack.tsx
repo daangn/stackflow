@@ -9,10 +9,6 @@ import type {
   BaseParams,
   StackflowConfig,
 } from "@stackflow/core/future";
-import {
-  type HistorySyncPluginOptions,
-  historySyncPlugin,
-} from "@stackflow/plugin-history-sync";
 import React, { useMemo } from "react";
 import MainRenderer from "../__internal__/MainRenderer";
 import { makeActivityId } from "../__internal__/activity";
@@ -24,6 +20,10 @@ import type {
   StackComponentType,
   StackflowReactPlugin,
 } from "../stable";
+import {
+  type HistorySyncPluginOptions,
+  historySyncPlugin,
+} from "./history-sync";
 import { loaderPlugin } from "./loader";
 import { type Actions, makeActions } from "./makeActions";
 
