@@ -13,10 +13,8 @@ interface PluginsProviderProps {
 export const PluginsProvider: React.FC<PluginsProviderProps> = ({
   children,
   value,
-}) => {
-  return (
-    <PluginsContext.Provider value={value}>{children}</PluginsContext.Provider>
-  );
-};
+}) => (
+  <PluginsContext.Provider value={value}>{children}</PluginsContext.Provider>
+);
 
 PluginsProvider.displayName = "PluginsProvider";
