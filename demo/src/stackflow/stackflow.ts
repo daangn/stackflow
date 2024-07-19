@@ -7,8 +7,8 @@ import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
 import { stackflow } from "@stackflow/react";
 import { decompressFromEncodedURIComponent } from "lz-string";
 
-import Article from "./activities/Article";
-import Main from "./activities/Main";
+import Article from "../activities/Article";
+import Main from "../activities/Main";
 
 export const { Stack, activities } = stackflow({
   transitionDuration: 350,

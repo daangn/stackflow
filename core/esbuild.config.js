@@ -26,4 +26,27 @@ Promise.all([
   }).then((ctx) =>
     watch ? ctx.watch() : ctx.rebuild().then(() => ctx.dispose()),
   ),
+  context({
+    ...config({
+      entryPoints: ["./src/future/index.ts"],
+      outdir: "./dist/future",
+    }),
+    format: "cjs",
+    external,
+  }).then((ctx) =>
+    watch ? ctx.watch() : ctx.rebuild().then(() => ctx.dispose()),
+  ),
+  context({
+    ...config({
+      entryPoints: ["./src/future/index.ts"],
+      outdir: "./dist/future",
+    }),
+    format: "esm",
+    outExtension: {
+      ".js": ".mjs",
+    },
+    external,
+  }).then((ctx) =>
+    watch ? ctx.watch() : ctx.rebuild().then(() => ctx.dispose()),
+  ),
 ]).catch(() => process.exit(1));

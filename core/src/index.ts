@@ -13,4 +13,3 @@ export {
   Stack,
 } from "./Stack";
 export { id } from "./utils";
-export * from "./createConfig";

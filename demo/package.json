@@ -6,15 +6,15 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/stackflow-docs.d.ts",
-      "require": "./dist/stackflow-docs.js",
-      "import": "./dist/stackflow-docs.mjs"
+      "types": "./dist/stackflow/stackflow.docs.d.ts",
+      "require": "./dist/stackflow/stackflow.docs.js",
+      "import": "./dist/stackflow/stackflow.docs.mjs"
     },
-    "./style.css": "./dist/stackflow-docs.css"
+    "./style.css": "./dist/stackflow/stackflow.docs.css"
   },
-  "main": "./dist/stackflow-docs.js",
-  "module": "./dist/stackflow-docs.mjs",
-  "types": "./dist/stackflow-docs.d.ts",
+  "main": "./dist/stackflow/stackflow.docs.js",
+  "module": "./dist/stackflow/stackflow.docs.mjs",
+  "types": "./dist/stackflow/stackflow.docs.d.ts",
   "files": [
     "dist",
     "src"
