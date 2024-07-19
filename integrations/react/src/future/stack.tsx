@@ -21,7 +21,7 @@ import type {
   StackflowReactPlugin,
 } from "../stable";
 
-type StackflowPluginsEntry =
+export type StackflowPluginsEntry =
   | StackflowReactPlugin<never>
   | StackflowPluginsEntry[];
 
