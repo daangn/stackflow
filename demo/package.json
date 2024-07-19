@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/demo",
-  "version": "1.2.21",
+  "version": "1.2.22-canary.0",
   "private": true,
   "license": "MIT",
   "type": "module",

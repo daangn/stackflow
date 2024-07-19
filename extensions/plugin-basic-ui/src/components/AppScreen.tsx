@@ -12,6 +12,7 @@ import {
   useStyleEffectHide,
   useStyleEffectOffset,
   useStyleEffectSwipeBack,
+  useZIndexBase,
 } from "../hooks";
 import type { PropOf } from "../utils";
 import { compactMap } from "../utils";
@@ -74,7 +75,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
 
   const hasAppBar = !!appBar;
 
-  const zIndexBase = (activity?.zIndex ?? 0) * 5;
+  const zIndexBase = useZIndexBase();
 
   let zIndexDim: number;
   let zIndexPaper: number;

@@ -4,7 +4,12 @@ import { useRef } from "react";
 
 import type { GlobalVars } from "../basicUIPlugin.css";
 import { globalVars } from "../basicUIPlugin.css";
-import { useLazy, useNullableActivity, useStyleEffect } from "../hooks";
+import {
+  useLazy,
+  useNullableActivity,
+  useStyleEffect,
+  useZIndexBase,
+} from "../hooks";
 import { compactMap } from "../utils";
 import * as css from "./BottomSheet.css";
 
@@ -63,8 +68,8 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
     e.stopPropagation();
   };
 
-  const zIndexBase = (activity?.zIndex ?? 0) * 5 + 3;
-  const zIndexPaper = (activity?.zIndex ?? 0) * 5 + 4;
+  const zIndexBase = useZIndexBase() + 3;
+  const zIndexPaper = useZIndexBase() + 4;
   const transitionState = activity?.transitionState ?? "enter-done";
 
   return (
