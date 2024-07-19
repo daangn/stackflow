@@ -22,7 +22,7 @@ import { sortActivityRoutes } from "./sortActivityRoutes";
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
 
-export type HistorySyncPluginOptions<T, K extends Extract<keyof T, string>> = {
+type HistorySyncPluginOptions<T, K extends Extract<keyof T, string>> = {
   routes: {
     [key in keyof T]: RouteLike<T[key]>;
   };
