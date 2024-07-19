@@ -1,1 +1,1 @@
-export * from "./stackflow";
+export * from "./stack";
