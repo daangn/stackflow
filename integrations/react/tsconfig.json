@@ -5,5 +5,5 @@
     "rootDir": "./src",
     "outDir": "./dist"
   },
-  "exclude": ["./dist/**/*"]
+  "exclude": ["./dist"]
 }
