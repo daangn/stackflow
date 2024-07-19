@@ -17,9 +17,6 @@ function parseActionOptions(options?: { animate?: boolean }) {
 }
 
 export type Actions<T extends ActivityDefinition<string, BaseParams>> = {
-  /**
-   * Push new activity
-   */
   push<K extends T["name"]>(
     activityName: K,
     params: NonNullable<Extract<T, { name: K }>["paramTypes"]>,
@@ -29,10 +26,6 @@ export type Actions<T extends ActivityDefinition<string, BaseParams>> = {
   ): {
     activityId: string;
   };
-
-  /**
-   * Push new activity in the top and remove current top activity when new activity is activated
-   */
   replace<K extends T["name"]>(
     activityName: K,
     params: NonNullable<Extract<T, { name: K }>["paramTypes"]>,
@@ -43,10 +36,6 @@ export type Actions<T extends ActivityDefinition<string, BaseParams>> = {
   ): {
     activityId: string;
   };
-
-  /**
-   * Remove top activity
-   */
   pop(): void;
   pop(options: { animate?: boolean }): void;
   pop(count: number, options?: { animate?: boolean }): void;
