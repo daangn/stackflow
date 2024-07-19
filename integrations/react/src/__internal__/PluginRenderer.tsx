@@ -18,6 +18,7 @@ const PluginRenderer: React.FC<PluginRendererProps> = ({
   plugin,
   initialContext,
 }) => {
+  console.log("PLUGIN");
   const coreState = useCoreState();
   const plugins = usePlugins();
 

@@ -15,6 +15,7 @@ export const config = createConfig({
       path: "/articles/:articleId",
       paramTypes: defineParamTypes<{
         articleId: string;
+        title: string;
       }>(),
     }),
   ],

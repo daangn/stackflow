@@ -1,6 +1,6 @@
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
-import { useFlow } from "../useFlow";
+import { useFlow } from "../stackflow";
 import * as css from "./ArticleCard.css";
 
 interface ArticleCardProps {

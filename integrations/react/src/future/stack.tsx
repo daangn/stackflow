@@ -9,11 +9,11 @@ import type {
   BaseParams,
   StackflowConfig,
 } from "@stackflow/core/future";
-import MainRenderer from "__internal__/MainRenderer";
-import { makeActivityId } from "__internal__/activity";
-import { CoreProvider } from "__internal__/core";
-import { PluginsProvider } from "__internal__/plugins";
 import React, { useMemo } from "react";
+import MainRenderer from "../__internal__/MainRenderer";
+import { makeActivityId } from "../__internal__/activity";
+import { CoreProvider } from "../__internal__/core";
+import { PluginsProvider } from "../__internal__/plugins";
 import { isBrowser, makeRef } from "../__internal__/utils";
 import type {
   ActivityComponentType,

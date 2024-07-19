@@ -1,5 +1,4 @@
-import type { ActivityComponentType } from "@stackflow/react";
-
+import { type ActivityComponentType, useActivity } from "@stackflow/react";
 import IconBell from "../assets/IconBell";
 import IconExpandMore from "../assets/IconExpandMore";
 import IconSearch from "../assets/IconSearch";
@@ -83,6 +82,10 @@ const cards = [
 ];
 
 const Main: ActivityComponentType = () => {
+  const activity = useActivity();
+
+  console.log(activity);
+
   const appBarLeft = () => (
     <div className={css.appBarLeft}>
       Woolston

@@ -1,7 +1,9 @@
-import type { ActivityComponentType } from "@stackflow/react";
-import { useActivityParams } from "@stackflow/react";
+import {
+  type ActivityComponentType,
+  useActivity,
+  useActivityParams,
+} from "@stackflow/react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
-
 import ArticleCard from "../components/ArticleCard";
 import ArticleProfile from "../components/ArticleProfile";
 import Layout from "../components/Layout";
@@ -66,10 +68,13 @@ export interface ArticleParams {
 }
 
 const Article: ActivityComponentType<ArticleParams> = () => {
+  const activity = useActivity();
   const { articleId, title } = useActivityParams<{
     articleId: string;
     title: string;
   }>();
+
+  console.log(activity);
   const imageUrl = `https://picsum.photos/800/800/?id=${articleId}`;
 
   return (
