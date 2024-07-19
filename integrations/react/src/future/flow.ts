@@ -16,9 +16,7 @@ export type FlowOutput<T extends ActivityDefinition<string, BaseParams>> = {
 
 export function flow<T extends ActivityDefinition<string, BaseParams>>(
   input: FlowInput<T>,
-): {
-  useFlow: () => Actions<T>;
-} {
+): FlowOutput<T> {
   return {
     useFlow: () => {
       const coreActions = useCoreActions();

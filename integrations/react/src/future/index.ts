@@ -7,4 +7,5 @@ export * from "./flow";
 export * from "./stack";
 export * from "./stepFlow";
 export * from "./makeActions";
+export * from "./makeStepActions";
 export * from "./loader/useLoaderData";

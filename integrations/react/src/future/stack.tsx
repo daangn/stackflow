@@ -26,6 +26,7 @@ import {
 } from "./history-sync";
 import { loaderPlugin } from "./loader";
 import { type Actions, makeActions } from "./makeActions";
+import { type StepActions, makeStepActions } from "./makeStepActions";
 
 export type StackflowPluginsEntry =
   | StackflowReactPlugin<never>
@@ -49,6 +50,7 @@ export type StackInput<T extends ActivityDefinition<string, BaseParams>> = {
 export type StackOutput<T extends ActivityDefinition<string, BaseParams>> = {
   Stack: StackComponentType;
   actions: Actions<T>;
+  stepActions: StepActions<BaseParams>;
 };
 
 export function stack<T extends ActivityDefinition<string, BaseParams>>(
@@ -178,5 +180,6 @@ export function stack<T extends ActivityDefinition<string, BaseParams>>(
   return {
     Stack,
     actions: makeActions(() => getCoreStore()?.actions),
+    stepActions: makeStepActions(() => getCoreStore()?.actions),
   };
 }
