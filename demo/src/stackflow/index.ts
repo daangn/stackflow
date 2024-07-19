@@ -1,2 +1,2 @@
-export * from "./stack";
+export * from "./Stack";
 export * from "./useFlow";
