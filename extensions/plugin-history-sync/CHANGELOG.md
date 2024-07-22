@@ -1,5 +1,11 @@
 # @stackflow/plugin-history-sync
 
+## 1.5.2
+
+### Patch Changes
+
+- edfffda: use Biome for lint instead of ESLint and fix fixable errors
+
 ## 1.5.1
 
 ### Patch Changes

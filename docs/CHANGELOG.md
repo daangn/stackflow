@@ -1,5 +1,21 @@
 # @stackflow/docs
 
+## 1.2.23
+
+### Patch Changes
+
+- edfffda: use Biome for lint instead of ESLint and fix fixable errors
+- Updated dependencies [0f882e8]
+- Updated dependencies [0f882e8]
+- Updated dependencies [edfffda]
+- Updated dependencies [3872e44]
+  - @stackflow/plugin-basic-ui@1.8.0
+  - @stackflow/plugin-renderer-basic@1.1.9
+  - @stackflow/plugin-history-sync@1.5.2
+  - @stackflow/react@1.1.10
+  - @stackflow/core@1.0.12
+  - @stackflow/demo@1.2.22
+
 ## 1.2.23-canary.0
 
 ### Patch Changes

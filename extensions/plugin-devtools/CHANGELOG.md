@@ -1,5 +1,11 @@
 # @stackflow/plugin-devtools
 
+## 0.1.9
+
+### Patch Changes
+
+- edfffda: use Biome for lint instead of ESLint and fix fixable errors
+
 ## 0.1.8
 
 ### Patch Changes

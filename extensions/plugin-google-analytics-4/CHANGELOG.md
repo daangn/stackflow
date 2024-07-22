@@ -1,5 +1,11 @@
 # @stackflow/plugin-google-analytics-4
 
+## 1.1.11
+
+### Patch Changes
+
+- edfffda: use Biome for lint instead of ESLint and fix fixable errors
+
 ## 1.1.10
 
 ## 1.1.10-canary.0

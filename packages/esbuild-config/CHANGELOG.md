@@ -1,5 +1,11 @@
 # @stackflow/esbuild-config
 
+## 1.0.2
+
+### Patch Changes
+
+- edfffda: use Biome for lint instead of ESLint and fix fixable errors
+
 ## 1.0.1
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @stackflow/plugin-preload
 
+## 1.3.1
+
+### Patch Changes
+
+- edfffda: use Biome for lint instead of ESLint and fix fixable errors
+- Updated dependencies [edfffda]
+  - @stackflow/plugin-history-sync@1.5.2
+
 ## 1.3.0
 
 ### Minor Changes

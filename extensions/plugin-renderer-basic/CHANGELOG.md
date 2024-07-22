@@ -1,5 +1,11 @@
 # @stackflow/plugin-renderer-basic
 
+## 1.1.9
+
+### Patch Changes
+
+- edfffda: use Biome for lint instead of ESLint and fix fixable errors
+
 ## 1.1.8
 
 ## 1.1.8-canary.0

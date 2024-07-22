@@ -1,5 +1,11 @@
 # @stackflow/plugin-stack-depth-change
 
+## 1.1.3
+
+### Patch Changes
+
+- edfffda: use Biome for lint instead of ESLint and fix fixable errors
+
 ## 1.1.2
 
 ### Patch Changes

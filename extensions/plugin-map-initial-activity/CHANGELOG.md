@@ -1,5 +1,11 @@
 # @stackflow/plugin-map-initial-activity
 
+## 1.0.7
+
+### Patch Changes
+
+- edfffda: use Biome for lint instead of ESLint and fix fixable errors
+
 ## 1.0.6
 
 ## 1.0.6-canary.0
