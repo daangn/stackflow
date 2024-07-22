@@ -1,5 +1,11 @@
 # @stackflow/link
 
+## 1.4.1
+
+### Patch Changes
+
+- edfffda: use Biome for lint instead of ESLint and fix fixable errors
+
 ## 1.4.0
 
 ### Minor Changes

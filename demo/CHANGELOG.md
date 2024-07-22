@@ -1,5 +1,26 @@
 # @stackflow/demo
 
+## 1.2.22
+
+### Patch Changes
+
+- edfffda: use Biome for lint instead of ESLint and fix fixable errors
+- Updated dependencies [0f882e8]
+- Updated dependencies [0f882e8]
+- Updated dependencies [edfffda]
+- Updated dependencies [3872e44]
+  - @stackflow/plugin-basic-ui@1.8.0
+  - @stackflow/plugin-map-initial-activity@1.0.7
+  - @stackflow/plugin-stack-depth-change@1.1.3
+  - @stackflow/plugin-renderer-basic@1.1.9
+  - @stackflow/plugin-history-sync@1.5.2
+  - @stackflow/compat-await-push@1.1.9
+  - @stackflow/plugin-devtools@0.1.9
+  - @stackflow/plugin-preload@1.3.1
+  - @stackflow/react@1.1.10
+  - @stackflow/link@1.4.1
+  - @stackflow/core@1.0.12
+
 ## 1.2.22-canary.0
 
 ### Patch Changes

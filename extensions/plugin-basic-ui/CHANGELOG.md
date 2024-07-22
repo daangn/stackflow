@@ -1,5 +1,17 @@
 # @stackflow/plugin-basic-ui
 
+## 1.8.0
+
+### Minor Changes
+
+- 0f882e8: feat(plugin-basic-ui): export `useStyleEffect()`
+- 0f882e8: feat(plugin-basic-ui): add `useZIndexBase()`
+
+### Patch Changes
+
+- edfffda: use Biome for lint instead of ESLint and fix fixable errors
+- 3872e44: style(plugin-basic-ui): move top padding to margin
+
 ## 1.7.0
 
 ### Minor Changes
