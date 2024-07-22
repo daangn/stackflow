@@ -51,6 +51,12 @@ export function makeTemplate<T>(
 ) {
   const pattern = new UrlPattern(`${path}(/)`, urlPatternOptions);
 
+  const hasAsterisk = (pattern as any).names.includes("_");
+
+  const variableCount = hasAsterisk
+    ? Number.POSITIVE_INFINITY
+    : (pattern as any).names.length;
+
   return {
     fill(params: { [key: string]: string | undefined }) {
       const pathname = pattern.stringify(params);
@@ -99,6 +105,6 @@ export function makeTemplate<T>(
 
       return decode ? decode(params) : params;
     },
-    variableCount: (pattern as any).names.length,
+    variableCount,
   };
 }
