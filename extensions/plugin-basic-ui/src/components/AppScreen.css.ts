@@ -121,14 +121,15 @@ export const paper = recipe({
       true: [
         f.borderBox,
         {
-          transition: `transform ${vars.transitionDuration}, opacity ${vars.transitionDuration}, padding-top ${globalVars.appBar.heightTransitionDuration}`,
-          paddingTop: globalVars.appBar.height,
+          transition: `transform ${vars.transitionDuration}, opacity ${vars.transitionDuration}, margin-top ${globalVars.appBar.heightTransitionDuration}`,
+          marginTop: globalVars.appBar.height,
+          height: `calc(100% - ${globalVars.appBar.height})`,
           "@supports": {
-            "(padding-top: constant(safe-area-inset-top))": {
-              paddingTop: `calc(${globalVars.appBar.height} + max(${globalVars.appBar.minSafeAreaInsetTop}, constant(safe-area-inset-top)))`,
+            "(margin-top: constant(safe-area-inset-top))": {
+              marginTop: `calc(${globalVars.appBar.height} + max(${globalVars.appBar.minSafeAreaInsetTop}, constant(safe-area-inset-top)))`,
             },
-            "(padding-top: env(safe-area-inset-top))": {
-              paddingTop: `calc(${globalVars.appBar.height} + max(${globalVars.appBar.minSafeAreaInsetTop}, env(safe-area-inset-top)))`,
+            "(margin-top: env(safe-area-inset-top))": {
+              marginTop: `calc(${globalVars.appBar.height} + max(${globalVars.appBar.minSafeAreaInsetTop}, env(safe-area-inset-top)))`,
             },
           },
         },
