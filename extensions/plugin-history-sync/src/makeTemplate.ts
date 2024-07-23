@@ -51,9 +51,9 @@ export function makeTemplate<T>(
 ) {
   const pattern = new UrlPattern(`${path}(/)`, urlPatternOptions);
 
-  const hasAsterisk = (pattern as any).names.includes("_");
+  const onlyAsterisk = path === "*" || path === "/*";
 
-  const variableCount = hasAsterisk
+  const variableCount = onlyAsterisk
     ? Number.POSITIVE_INFINITY
     : (pattern as any).names.length;
 
