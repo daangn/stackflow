@@ -25,3 +25,19 @@ test("sortActivityRoutes - 한 액티비티가 여러 라우트를 가지는 경
     { activityName: "B", path: "/hello/:param" },
   ]);
 });
+
+test("sortActivityRoutes - *이 들어간 경우 해당 라우트를 맨 뒤로 옮깁니다", () => {
+  const routes = sortActivityRoutes([
+    { activityName: "A", path: "*" },
+    { activityName: "A", path: "/detailed/*" },
+    { activityName: "B", path: "/:hello/:world" },
+    { activityName: "C", path: "/:hello/:world/:foo/:bar" },
+  ]);
+
+  expect(routes).toStrictEqual([
+    { activityName: "A", path: "/detailed/*" },
+    { activityName: "B", path: "/:hello/:world" },
+    { activityName: "C", path: "/:hello/:world/:foo/:bar" },
+    { activityName: "A", path: "*" },
+  ]);
+});
