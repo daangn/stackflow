@@ -1,5 +1,11 @@
 # @stackflow/plugin-history-sync
 
+## 1.5.3
+
+### Patch Changes
+
+- 7788fbc: change asterisk(`*`) priority to lowest
+
 ## 1.5.2
 
 ### Patch Changes
