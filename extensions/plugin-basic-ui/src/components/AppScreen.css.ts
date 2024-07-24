@@ -91,7 +91,6 @@ export const paper = recipe({
         display: "none",
       },
       zIndex: vars.zIndexes.paper,
-      willChange: "transform",
       selectors: {
         [`${cupertino} &`]: {
           transform: "translate3d(100%, 0, 0)",
