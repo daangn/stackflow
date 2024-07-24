@@ -1,5 +1,11 @@
 # @stackflow/plugin-basic-ui
 
+## 1.8.1
+
+### Patch Changes
+
+- bef6214: fix(plugin-basic-ui): remove `will-change` property
+
 ## 1.8.0
 
 ### Minor Changes
