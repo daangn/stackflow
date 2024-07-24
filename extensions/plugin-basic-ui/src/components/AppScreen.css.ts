@@ -57,7 +57,6 @@ export const dim = style([
   {
     opacity: 0,
     zIndex: vars.zIndexes.dim,
-    willChange: "opacity",
     selectors: {
       [`${android} &`]: {
         height: "10rem",
@@ -91,7 +90,6 @@ export const paper = recipe({
         display: "none",
       },
       zIndex: vars.zIndexes.paper,
-      willChange: "transform",
       selectors: {
         [`${cupertino} &`]: {
           transform: "translate3d(100%, 0, 0)",

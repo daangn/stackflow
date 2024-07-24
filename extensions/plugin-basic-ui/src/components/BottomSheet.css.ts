@@ -62,7 +62,6 @@ export const paper = style([
     backgroundColor: globalVars.backgroundColor,
     width: "100%",
     borderRadius: `${globalVars.bottomSheet.borderRadius} ${globalVars.bottomSheet.borderRadius} 0 0`,
-    willChange: "transform, opacity",
     transform: "translate3d(0, 100%, 0)",
     opacity: 0,
     selectors: {

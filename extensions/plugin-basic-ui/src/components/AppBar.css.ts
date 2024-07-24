@@ -38,7 +38,6 @@ export const appBar = recipe({
     {
       backgroundColor: globalVars.appBar.backgroundColor,
       zIndex: vars.zIndexes.appBar,
-      willChange: "transform, opacity",
       transition: transitions(appBarCommonTransition),
       selectors: {
         [`${cupertino} &`]: {
