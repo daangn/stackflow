@@ -57,7 +57,6 @@ export const dim = style([
   {
     opacity: 0,
     zIndex: vars.zIndexes.dim,
-    willChange: "opacity",
     selectors: {
       [`${android} &`]: {
         height: "10rem",
