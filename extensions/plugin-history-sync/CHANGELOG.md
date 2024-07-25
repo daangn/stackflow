@@ -1,5 +1,11 @@
 # @stackflow/plugin-history-sync
 
+## 1.5.4
+
+### Patch Changes
+
+- 3e35026: chore: include declaration map
+
 ## 1.5.3
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @stackflow/plugin-map-initial-activity
 
+## 1.0.8
+
+### Patch Changes
+
+- 3e35026: chore: include declaration map
+
 ## 1.0.7
 
 ### Patch Changes

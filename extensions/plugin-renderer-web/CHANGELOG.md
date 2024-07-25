@@ -1,5 +1,11 @@
 # @stackflow/plugin-renderer-web
 
+## 1.1.10
+
+### Patch Changes
+
+- 3e35026: chore: include declaration map
+
 ## 1.1.9
 
 ### Patch Changes

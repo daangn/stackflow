@@ -1,5 +1,13 @@
 # @stackflow/plugin-preload
 
+## 1.3.2
+
+### Patch Changes
+
+- 3e35026: chore: include declaration map
+- Updated dependencies [3e35026]
+  - @stackflow/plugin-history-sync@1.5.4
+
 ## 1.3.1
 
 ### Patch Changes

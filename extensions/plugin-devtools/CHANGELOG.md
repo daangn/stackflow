@@ -1,5 +1,11 @@
 # @stackflow/plugin-devtools
 
+## 0.1.10
+
+### Patch Changes
+
+- 3e35026: chore: include declaration map
+
 ## 0.1.9
 
 ### Patch Changes

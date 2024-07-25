@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/plugin-google-analytics-4",
-  "version": "1.1.11",
+  "version": "1.1.12",
   "repository": {
     "type": "git",
     "url": "https://github.com/daangn/stackflow.git",
@@ -35,9 +35,9 @@
     "react-ga4": "^2.1.0"
   },
   "devDependencies": {
-    "@stackflow/core": "^1.0.12",
-    "@stackflow/esbuild-config": "^1.0.2",
-    "@stackflow/react": "^1.1.10",
+    "@stackflow/core": "^1.0.13",
+    "@stackflow/esbuild-config": "^1.0.3",
+    "@stackflow/react": "^1.1.11",
     "@types/react": "^18.3.3",
     "esbuild": "^0.23.0",
     "react": "^18.3.1",

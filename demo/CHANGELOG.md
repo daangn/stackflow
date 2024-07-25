@@ -1,5 +1,23 @@
 # @stackflow/demo
 
+## 1.2.23
+
+### Patch Changes
+
+- 3e35026: chore: include declaration map
+- Updated dependencies [3e35026]
+  - @stackflow/core@1.0.13
+  - @stackflow/compat-await-push@1.1.10
+  - @stackflow/link@1.4.2
+  - @stackflow/plugin-basic-ui@1.8.2
+  - @stackflow/plugin-devtools@0.1.10
+  - @stackflow/plugin-history-sync@1.5.4
+  - @stackflow/plugin-map-initial-activity@1.0.8
+  - @stackflow/plugin-preload@1.3.2
+  - @stackflow/plugin-renderer-basic@1.1.10
+  - @stackflow/plugin-stack-depth-change@1.1.4
+  - @stackflow/react@1.1.11
+
 ## 1.2.22
 
 ### Patch Changes

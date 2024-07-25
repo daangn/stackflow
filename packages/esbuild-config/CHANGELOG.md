@@ -1,5 +1,11 @@
 # @stackflow/esbuild-config
 
+## 1.0.3
+
+### Patch Changes
+
+- 3e35026: chore: include declaration map
+
 ## 1.0.2
 
 ### Patch Changes

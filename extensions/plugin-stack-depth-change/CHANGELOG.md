@@ -1,5 +1,11 @@
 # @stackflow/plugin-stack-depth-change
 
+## 1.1.4
+
+### Patch Changes
+
+- 3e35026: chore: include declaration map
+
 ## 1.1.3
 
 ### Patch Changes

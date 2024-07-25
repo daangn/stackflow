@@ -1,5 +1,18 @@
 # @stackflow/docs
 
+## 1.2.24
+
+### Patch Changes
+
+- 3e35026: chore: include declaration map
+- Updated dependencies [3e35026]
+  - @stackflow/core@1.0.13
+  - @stackflow/demo@1.2.23
+  - @stackflow/plugin-basic-ui@1.8.2
+  - @stackflow/plugin-history-sync@1.5.4
+  - @stackflow/plugin-renderer-basic@1.1.10
+  - @stackflow/react@1.1.11
+
 ## 1.2.23
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @stackflow/react
 
+## 1.1.11
+
+### Patch Changes
+
+- 3e35026: chore: include declaration map
+
 ## 1.1.10
 
 ### Patch Changes
