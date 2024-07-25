@@ -1,28 +1,26 @@
 import type { ActivityTransitionState } from "@stackflow/core";
-import { useNullableActivity } from "useNullableActivity";
 import { useStyleEffect } from "./useStyleEffect";
-import { OFFSET_PX_CUPERTINO } from "./useStyleEffectOffset";
 import { listenOnce, noop } from "./utils";
 
 export function useStyleEffectSwipeBack({
-  theme,
+  enable,
   dimRef,
   edgeRef,
   paperRef,
+  offset,
   transitionDuration,
   getActivityTransitionState,
   hasEffect,
-  prevented,
   onSwiped,
 }: {
-  theme: "android" | "cupertino";
+  enable: boolean;
   dimRef: React.RefObject<HTMLDivElement>;
   edgeRef: React.RefObject<HTMLDivElement>;
   paperRef: React.RefObject<HTMLDivElement>;
+  offset: number;
   transitionDuration: string;
   getActivityTransitionState: () => ActivityTransitionState | null;
   hasEffect?: boolean;
-  prevented?: boolean;
   onSwiped?: () => void;
 }) {
   useStyleEffect({
@@ -30,7 +28,7 @@ export function useStyleEffectSwipeBack({
     refs: [paperRef],
     effect: hasEffect
       ? ({ refs }) => {
-          if (theme !== "cupertino") {
+          if (!enable) {
             return noop;
           }
 
@@ -87,7 +85,7 @@ export function useStyleEffectSwipeBack({
                   }
 
                   ref.current.style.transform = `translate3d(${
-                    -1 * (1 - p) * OFFSET_PX_CUPERTINO
+                    -1 * (1 - p) * offset
                   }px, 0, 0)`;
                   ref.current.style.transition = "0s";
 
@@ -118,7 +116,7 @@ export function useStyleEffectSwipeBack({
 
                   ref.current.style.transition = transitionDuration;
                   ref.current.style.transform = `translate3d(${
-                    swiped ? "0" : `-${OFFSET_PX_CUPERTINO / 16}rem`
+                    swiped ? "0" : `-${offset / 16}rem`
                   }, 0, 0)`;
                 });
 
@@ -246,6 +244,6 @@ export function useStyleEffectSwipeBack({
           };
         }
       : undefined,
-    effectDeps: [prevented],
+    effectDeps: [enable],
   });
 }

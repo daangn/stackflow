@@ -1,20 +1,18 @@
 import { useStyleEffect } from "./useStyleEffect";
 import { listenOnce, noop, requestNextFrame } from "./utils";
 
-export const OFFSET_PX_ANDROID = 32;
-export const OFFSET_PX_CUPERTINO = 80;
-
 export function useStyleEffectOffset({
   refs,
-  theme,
   transitionDuration,
-  activityEnterStyle,
+  offsetStyles,
   hasEffect = false,
 }: {
   refs: Array<React.RefObject<any>>;
-  theme: "android" | "cupertino";
   transitionDuration: string;
-  activityEnterStyle?: "slideInLeft";
+  offsetStyles: {
+    transform: string;
+    opacity: string;
+  };
   hasEffect?: boolean;
 }) {
   useStyleEffect({
@@ -22,25 +20,6 @@ export function useStyleEffectOffset({
     refs,
     effect: hasEffect
       ? ({ activityTransitionState, refs }) => {
-          let transform: string;
-          let opacity: string;
-
-          switch (theme) {
-            case "cupertino": {
-              transform = `translate3d(-${OFFSET_PX_CUPERTINO / 16}rem, 0, 0)`;
-              opacity = "1";
-              break;
-            }
-            default: {
-              transform =
-                activityEnterStyle === "slideInLeft"
-                  ? "translate3d(-50%, 0, 0)"
-                  : `translate3d(0, -${OFFSET_PX_ANDROID / 16}rem, 0)`;
-              opacity = activityEnterStyle === "slideInLeft" ? "0" : "1";
-              break;
-            }
-          }
-
           const cleanup = () => {
             requestNextFrame(() => {
               refs.forEach((ref) => {
@@ -69,8 +48,8 @@ export function useStyleEffectOffset({
                 }
 
                 ref.current.style.transition = transitionDuration;
-                ref.current.style.transform = transform;
-                ref.current.style.opacity = opacity;
+                ref.current.style.transform = offsetStyles.transform;
+                ref.current.style.opacity = offsetStyles.opacity;
               });
 
               switch (activityTransitionState) {

@@ -19,6 +19,9 @@ import { compactMap } from "../utils";
 import AppBar from "./AppBar";
 import * as css from "./AppScreen.css";
 
+export const OFFSET_PX_ANDROID = 32;
+export const OFFSET_PX_CUPERTINO = 80;
+
 export type AppScreenContext = {
   scroll: (args: { top: number }) => void;
 };
@@ -116,17 +119,30 @@ const AppScreen: React.FC<AppScreenProps> = ({
       activityEnterStyle === "slideInLeft"
         ? [paperRef]
         : [paperRef, appBarRef],
-    theme: globalOptions.theme,
+    offsetStyles:
+      globalOptions.theme === "cupertino"
+        ? {
+            transform: `translate3d(-${OFFSET_PX_CUPERTINO / 16}rem, 0, 0)`,
+            opacity: "1",
+          }
+        : activityEnterStyle === "slideInLeft"
+          ? {
+              transform: "translate3d(-50%, 0, 0)",
+              opacity: "0",
+            }
+          : {
+              transform: `translate3d(0, -${OFFSET_PX_ANDROID / 16}rem, 0)`,
+              opacity: "1",
+            },
     transitionDuration: globalVars.computedTransitionDuration,
-    activityEnterStyle,
     hasEffect: modalPresentationStyle !== "fullScreen",
   });
   useStyleEffectSwipeBack({
+    enable: globalOptions.theme === "cupertino" && !swipeBackPrevented,
     dimRef,
     edgeRef,
     paperRef,
-    theme: globalOptions.theme,
-    prevented: swipeBackPrevented,
+    offset: OFFSET_PX_CUPERTINO,
     transitionDuration: globalVars.transitionDuration,
     getActivityTransitionState() {
       const $paper = paperRef.current;
