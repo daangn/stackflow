@@ -1,5 +1,11 @@
 # @stackflow/link
 
+## 1.4.2
+
+### Patch Changes
+
+- 3e35026: chore: include declaration map
+
 ## 1.4.1
 
 ### Patch Changes

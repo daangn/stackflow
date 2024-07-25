@@ -1,5 +1,11 @@
 # @stackflow/core
 
+## 1.0.13
+
+### Patch Changes
+
+- 3e35026: chore: include declaration map
+
 ## 1.0.12
 
 ### Patch Changes

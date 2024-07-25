@@ -1,5 +1,11 @@
 # @stackflow/plugin-basic-ui
 
+## 1.8.2
+
+### Patch Changes
+
+- 3e35026: chore: include declaration map
+
 ## 1.8.1
 
 ### Patch Changes

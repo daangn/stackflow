@@ -1,5 +1,11 @@
 # @stackflow/plugin-google-analytics-4
 
+## 1.1.12
+
+### Patch Changes
+
+- 3e35026: chore: include declaration map
+
 ## 1.1.11
 
 ### Patch Changes

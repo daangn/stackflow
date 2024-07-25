@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/core",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "repository": {
     "type": "git",
     "url": "https://github.com/daangn/stackflow.git",
@@ -44,7 +44,7 @@
     "react-fast-compare": "^3.2.2"
   },
   "devDependencies": {
-    "@stackflow/esbuild-config": "^1.0.2",
+    "@stackflow/esbuild-config": "^1.0.3",
     "@swc/core": "^1.6.6",
     "@swc/jest": "^0.2.36",
     "@types/jest": "^29.5.12",
