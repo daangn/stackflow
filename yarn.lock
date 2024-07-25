@@ -2304,7 +2304,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/core@npm:^1.0.13, @stackflow/core@workspace:core":
+"@stackflow/core@npm:^1.0.12, @stackflow/core@npm:^1.0.13, @stackflow/core@workspace:core":
   version: 0.0.0-use.local
   resolution: "@stackflow/core@workspace:core"
   dependencies:
@@ -2385,7 +2385,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/esbuild-config@npm:^1.0.3, @stackflow/esbuild-config@workspace:packages/esbuild-config":
+"@stackflow/esbuild-config@npm:^1.0.2, @stackflow/esbuild-config@npm:^1.0.3, @stackflow/esbuild-config@workspace:packages/esbuild-config":
   version: 0.0.0-use.local
   resolution: "@stackflow/esbuild-config@workspace:packages/esbuild-config"
   dependencies:
@@ -2438,6 +2438,7 @@ __metadata:
     "@stackflow/core": "npm:^1.0.13"
     "@stackflow/esbuild-config": "npm:^1.0.3"
     "@stackflow/react": "npm:^1.2.0"
+    "@stackflow/react-ui-core": "npm:^1.0.0"
     "@types/react": "npm:^18.3.3"
     "@vanilla-extract/css": "npm:^1.15.3"
     "@vanilla-extract/dynamic": "npm:^2.1.1"
@@ -2613,7 +2614,27 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/react@npm:^1.2.0, @stackflow/react@workspace:integrations/react":
+"@stackflow/react-ui-core@npm:^1.0.0, @stackflow/react-ui-core@workspace:extensions/react-ui-core":
+  version: 0.0.0-use.local
+  resolution: "@stackflow/react-ui-core@workspace:extensions/react-ui-core"
+  dependencies:
+    "@stackflow/core": "npm:^1.0.12"
+    "@stackflow/esbuild-config": "npm:^1.0.2"
+    "@stackflow/react": "npm:^1.1.10"
+    "@types/react": "npm:^18.3.3"
+    esbuild: "npm:^0.23.0"
+    react: "npm:^18.3.1"
+    rimraf: "npm:^3.0.2"
+    typescript: "npm:^5.5.3"
+  peerDependencies:
+    "@stackflow/core": ^1
+    "@stackflow/react": ^1
+    "@types/react": ">=16.8.0"
+    react: ">=16.8.0"
+  languageName: unknown
+  linkType: soft
+
+"@stackflow/react@npm:^1.1.10, @stackflow/react@npm:^1.2.0, @stackflow/react@workspace:integrations/react":
   version: 0.0.0-use.local
   resolution: "@stackflow/react@workspace:integrations/react"
   dependencies:

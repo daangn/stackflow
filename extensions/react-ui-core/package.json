@@ -1,10 +1,10 @@
 {
-  "name": "@stackflow/plugin-basic-ui",
-  "version": "1.8.4",
+  "name": "@stackflow/react-ui-core",
+  "version": "1.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/daangn/stackflow.git",
-    "directory": "extensions/plugin-basic-ui"
+    "directory": "extensions/react-ui-core"
   },
   "license": "MIT",
   "exports": {
@@ -31,17 +31,10 @@
     "dev": "yarn build:js --watch && yarn build:dts --watch",
     "typecheck": "tsc --noEmit"
   },
-  "dependencies": {
-    "@stackflow/react-ui-core": "^1.0.0",
-    "@vanilla-extract/css": "^1.15.3",
-    "@vanilla-extract/dynamic": "^2.1.1",
-    "@vanilla-extract/private": "^1.0.5",
-    "@vanilla-extract/recipes": "^0.5.3"
-  },
   "devDependencies": {
-    "@stackflow/core": "^1.0.13",
-    "@stackflow/esbuild-config": "^1.0.3",
-    "@stackflow/react": "^1.2.0",
+    "@stackflow/core": "^1.0.12",
+    "@stackflow/esbuild-config": "^1.0.2",
+    "@stackflow/react": "^1.1.10",
     "@types/react": "^18.3.3",
     "esbuild": "^0.23.0",
     "react": "^18.3.1",
@@ -50,7 +43,7 @@
   },
   "peerDependencies": {
     "@stackflow/core": "^1",
-    "@stackflow/react": "^1.2.0-canary.0",
+    "@stackflow/react": "^1",
     "@types/react": ">=16.8.0",
     "react": ">=16.8.0"
   },

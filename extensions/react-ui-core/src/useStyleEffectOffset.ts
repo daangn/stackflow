@@ -1,6 +1,5 @@
-import { globalVars } from "../basicUIPlugin.css";
-import { listenOnce, noop, requestNextFrame } from "../utils";
 import { useStyleEffect } from "./useStyleEffect";
+import { listenOnce, noop, requestNextFrame } from "./utils";
 
 export const OFFSET_PX_ANDROID = 32;
 export const OFFSET_PX_CUPERTINO = 80;
@@ -8,11 +7,13 @@ export const OFFSET_PX_CUPERTINO = 80;
 export function useStyleEffectOffset({
   refs,
   theme,
+  transitionDuration,
   activityEnterStyle,
   hasEffect = false,
 }: {
   refs: Array<React.RefObject<any>>;
   theme: "android" | "cupertino";
+  transitionDuration: string;
   activityEnterStyle?: "slideInLeft";
   hasEffect?: boolean;
 }) {
@@ -67,8 +68,7 @@ export function useStyleEffectOffset({
                   return;
                 }
 
-                ref.current.style.transition =
-                  globalVars.computedTransitionDuration;
+                ref.current.style.transition = transitionDuration;
                 ref.current.style.transform = transform;
                 ref.current.style.opacity = opacity;
               });

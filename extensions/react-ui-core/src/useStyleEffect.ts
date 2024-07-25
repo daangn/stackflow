@@ -1,8 +1,8 @@
 import type { ActivityTransitionState } from "@stackflow/core";
 import { useEffect } from "react";
 
-import { noop } from "../utils";
 import { useNullableActivity } from "./useNullableActivity";
+import { noop } from "./utils";
 
 const connections: {
   [styleName: string]: Map<

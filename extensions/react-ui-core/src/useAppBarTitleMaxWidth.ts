@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 
-import { listenResize, noop } from "../utils";
+import { listenResize, noop } from "./utils";
 
-export function useMaxWidth({
+export function useAppBarTitleMaxWidth({
   outerRef,
   innerRef,
   enable,

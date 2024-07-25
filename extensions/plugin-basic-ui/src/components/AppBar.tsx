@@ -2,11 +2,15 @@ import { useActions } from "@stackflow/react";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
 import { forwardRef, useRef } from "react";
 
+import {
+  useAppBarTitleMaxWidth,
+  useNullableActivity,
+} from "@stackflow/react-ui-core";
 import { IconBack, IconClose } from "../assets";
 import { useGlobalOptions } from "../basicUIPlugin";
 import type { GlobalVars } from "../basicUIPlugin.css";
 import { globalVars } from "../basicUIPlugin.css";
-import { useMaxWidth, useNullableActivity } from "../hooks";
+
 import { compactMap } from "../utils";
 import * as css from "./AppBar.css";
 import * as appScreenCss from "./AppScreen.css";
@@ -92,7 +96,7 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
 
     const centerRef = useRef<any>(null);
 
-    const { maxWidth } = useMaxWidth({
+    const { maxWidth } = useAppBarTitleMaxWidth({
       outerRef: ref,
       innerRef: centerRef,
       enable: globalOptions.theme === "cupertino",

@@ -2,9 +2,6 @@ import { useActions } from "@stackflow/react";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
 import { createContext, useContext, useMemo, useRef } from "react";
 
-import { useGlobalOptions } from "../basicUIPlugin";
-import type { GlobalVars } from "../basicUIPlugin.css";
-import { globalVars } from "../basicUIPlugin.css";
 import {
   useLazy,
   useMounted,
@@ -13,7 +10,10 @@ import {
   useStyleEffectOffset,
   useStyleEffectSwipeBack,
   useZIndexBase,
-} from "../hooks";
+} from "@stackflow/react-ui-core";
+import { useGlobalOptions } from "../basicUIPlugin";
+import type { GlobalVars } from "../basicUIPlugin.css";
+import { globalVars } from "../basicUIPlugin.css";
 import type { PropOf } from "../utils";
 import { compactMap } from "../utils";
 import AppBar from "./AppBar";
@@ -117,6 +117,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
         ? [paperRef]
         : [paperRef, appBarRef],
     theme: globalOptions.theme,
+    transitionDuration: globalVars.computedTransitionDuration,
     activityEnterStyle,
     hasEffect: modalPresentationStyle !== "fullScreen",
   });
@@ -126,6 +127,30 @@ const AppScreen: React.FC<AppScreenProps> = ({
     paperRef,
     theme: globalOptions.theme,
     prevented: swipeBackPrevented,
+    transitionDuration: globalVars.transitionDuration,
+    getActivityTransitionState() {
+      const $paper = paperRef.current;
+      const $appScreen = $paper?.parentElement;
+
+      if (!$appScreen) {
+        return null;
+      }
+
+      if ($appScreen.classList.contains(css.enterActive)) {
+        return "enter-active";
+      }
+      if ($appScreen.classList.contains(css.enterDone)) {
+        return "enter-done";
+      }
+      if ($appScreen.classList.contains(css.exitActive)) {
+        return "exit-active";
+      }
+      if ($appScreen.classList.contains(css.exitDone)) {
+        return "exit-done";
+      }
+
+      return null;
+    },
     onSwiped() {
       pop();
     },
@@ -221,7 +246,5 @@ const AppScreen: React.FC<AppScreenProps> = ({
     </Context.Provider>
   );
 };
-
-AppScreen.displayName = "AppScreen";
 
 export default AppScreen;

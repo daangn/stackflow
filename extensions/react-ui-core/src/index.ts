@@ -1,5 +1,5 @@
 export * from "./useLazy";
-export * from "./useMaxWidth";
+export * from "./useAppBarTitleMaxWidth";
 export * from "./useMounted";
 export * from "./useNullableActivity";
 export * from "./useStyleEffect";

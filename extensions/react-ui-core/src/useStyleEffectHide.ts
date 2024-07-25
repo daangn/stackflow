@@ -1,5 +1,5 @@
-import { noop } from "../utils";
 import { useStyleEffect } from "./useStyleEffect";
+import { noop } from "./utils";
 
 export function useStyleEffectHide({
   refs,

@@ -1,14 +1,16 @@
-import { globalVars } from "../basicUIPlugin.css";
-import * as appScreenCss from "../components/AppScreen.css";
-import { listenOnce, noop } from "../utils";
+import type { ActivityTransitionState } from "@stackflow/core";
+import { useNullableActivity } from "useNullableActivity";
 import { useStyleEffect } from "./useStyleEffect";
 import { OFFSET_PX_CUPERTINO } from "./useStyleEffectOffset";
+import { listenOnce, noop } from "./utils";
 
 export function useStyleEffectSwipeBack({
   theme,
   dimRef,
   edgeRef,
   paperRef,
+  transitionDuration,
+  getActivityTransitionState,
   hasEffect,
   prevented,
   onSwiped,
@@ -17,6 +19,8 @@ export function useStyleEffectSwipeBack({
   dimRef: React.RefObject<HTMLDivElement>;
   edgeRef: React.RefObject<HTMLDivElement>;
   paperRef: React.RefObject<HTMLDivElement>;
+  transitionDuration: string;
+  getActivityTransitionState: () => ActivityTransitionState | null;
   hasEffect?: boolean;
   prevented?: boolean;
   onSwiped?: () => void;
@@ -101,18 +105,18 @@ export function useStyleEffectSwipeBack({
             return new Promise((resolve) => {
               requestAnimationFrame(() => {
                 $dim.style.opacity = `${swiped ? 0 : 1}`;
-                $dim.style.transition = globalVars.transitionDuration;
+                $dim.style.transition = transitionDuration;
 
                 $paper.style.overflowY = "hidden";
                 $paper.style.transform = `translateX(${swiped ? "100%" : "0"})`;
-                $paper.style.transition = globalVars.transitionDuration;
+                $paper.style.transition = transitionDuration;
 
                 refs.forEach((ref) => {
                   if (!ref.current) {
                     return;
                   }
 
-                  ref.current.style.transition = globalVars.transitionDuration;
+                  ref.current.style.transition = transitionDuration;
                   ref.current.style.transform = `translate3d(${
                     swiped ? "0" : `-${OFFSET_PX_CUPERTINO / 16}rem`
                   }, 0, 0)`;
@@ -125,12 +129,8 @@ export function useStyleEffectSwipeBack({
                 listenOnce($paper, "transitionend", () => {
                   const _swiped =
                     swiped ||
-                    $paper.parentElement?.classList.contains(
-                      appScreenCss.exitActive,
-                    ) ||
-                    $paper.parentElement?.classList.contains(
-                      appScreenCss.exitDone,
-                    );
+                    getActivityTransitionState() === "exit-active" ||
+                    getActivityTransitionState() === "exit-done";
 
                   $dim.style.opacity = "";
                   $paper.style.overflowY = "";
