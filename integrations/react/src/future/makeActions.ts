@@ -1,5 +1,9 @@
 import type { CoreStore } from "@stackflow/core";
-import type { ActivityDefinition, BaseParams } from "@stackflow/core/future";
+import type {
+  ActivityDefinition,
+  ActivityParamTypes,
+  BaseParams,
+} from "@stackflow/core/future";
 import { makeActivityId } from "../__internal__/activity";
 
 function parseActionOptions(options?: { animate?: boolean }) {
@@ -19,7 +23,7 @@ function parseActionOptions(options?: { animate?: boolean }) {
 export type Actions<T extends ActivityDefinition<string, BaseParams>> = {
   push<K extends T["name"]>(
     activityName: K,
-    params: NonNullable<Extract<T, { name: K }>["paramTypes"]>,
+    param: ActivityParamTypes<Extract<T, { name: K }>>,
     options?: {
       animate?: boolean;
     },
@@ -28,7 +32,7 @@ export type Actions<T extends ActivityDefinition<string, BaseParams>> = {
   };
   replace<K extends T["name"]>(
     activityName: K,
-    params: NonNullable<Extract<T, { name: K }>["paramTypes"]>,
+    param: ActivityParamTypes<Extract<T, { name: K }>>,
     options?: {
       animate?: boolean;
       activityId?: string;

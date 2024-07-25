@@ -7,6 +7,5 @@ export type ActivityDefinition<
 > = {
   name: Name;
   path: string;
-  paramTypes?: Params;
   loader?: ActivityLoader<Params>;
 };
