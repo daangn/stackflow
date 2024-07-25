@@ -1,4 +1,4 @@
 import { flow } from "@stackflow/react/future";
-import { config } from "./stackflow.config";
+import type { Actions } from "./Stack";
 
-export const { useFlow } = flow({ config });
+export const { useFlow } = flow<Actions>();
