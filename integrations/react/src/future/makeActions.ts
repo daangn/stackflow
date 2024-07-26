@@ -5,7 +5,7 @@ import type {
   BaseParams,
 } from "@stackflow/core/future";
 import { makeActivityId } from "../__internal__/activity";
-import { ActivityComponentType } from "../stable";
+import type { ActivityComponentType } from "../stable";
 
 function parseActionOptions(options?: { animate?: boolean }) {
   if (!options) {
