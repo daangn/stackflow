@@ -9,12 +9,12 @@ import { loader as mainLoader } from "../activities/Main.loader";
 export const config = createConfig({
   activities: [
     defineActivity({
-      name: "Main",
+      name: "Main" as const,
       path: "/",
       loader: mainLoader,
     }),
     defineActivity({
-      name: "Article",
+      name: "Article" as const,
       path: "/articles/:articleId",
       paramTypes: defineParamTypes<{
         articleId: string;

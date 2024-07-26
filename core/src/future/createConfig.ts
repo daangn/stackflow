@@ -5,8 +5,7 @@ import type { StackflowConfigInput } from "./StackflowConfigInput";
 import { type UrlPatternOptions, makeTemplate } from "./makeTemplate";
 
 export function createConfig<
-  ActivityNames extends string,
-  Activity extends ActivityDefinition<ActivityNames, BaseParams>,
+  Activity extends ActivityDefinition<string, BaseParams>,
 >(
   config: StackflowConfigInput<Activity>,
   options?: { urlPatternOptions?: UrlPatternOptions },
