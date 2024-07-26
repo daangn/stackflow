@@ -1,12 +1,12 @@
 import type {
+  ActivityBaseSchema,
   ActivityDefinition,
-  BaseParams,
-  StackflowConfig,
-} from "@stackflow/core/future";
+  Config,
+} from "@stackflow/config";
 import type { StackflowReactPlugin } from "../../__internal__/StackflowReactPlugin";
 
 export function loaderPlugin(
-  config: StackflowConfig<ActivityDefinition<string, BaseParams>>,
+  config: Config<ActivityDefinition<string, ActivityBaseSchema>>,
 ): StackflowReactPlugin {
   return () => ({
     key: "plugin-loader",

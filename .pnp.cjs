@@ -15,6 +15,10 @@ const RAW_RUNTIME_STATE =
       "reference": "workspace:."\
     },\
     {\
+      "name": "@stackflow/config",\
+      "reference": "workspace:config"\
+    },\
+    {\
       "name": "@stackflow/core",\
       "reference": "workspace:core"\
     },\
@@ -83,6 +87,7 @@ const RAW_RUNTIME_STATE =
   "ignorePatternData": "(^(?:\\\\.yarn\\\\/sdks(?:\\\\/(?!\\\\.{1,2}(?:\\\\/|$))(?:(?:(?!(?:^|\\\\/)\\\\.{1,2}(?:\\\\/|$)).)*?)|$))$)",\
   "fallbackExclusionList": [\
     ["@stackflow/compat-await-push", ["virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/compat-await-push", "workspace:extensions/compat-await-push"]],\
+    ["@stackflow/config", ["workspace:config"]],\
     ["@stackflow/core", ["workspace:core"]],\
     ["@stackflow/demo", ["workspace:demo"]],\
     ["@stackflow/docs", ["workspace:docs"]],\
@@ -3019,6 +3024,21 @@ const RAW_RUNTIME_STATE =
         "linkType": "SOFT"\
       }]\
     ]],\
+    ["@stackflow/config", [\
+      ["workspace:config", {\
+        "packageLocation": "./config/",\
+        "packageDependencies": [\
+          ["@stackflow/config", "workspace:config"],\
+          ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
+          ["esbuild", "npm:0.23.0"],\
+          ["rimraf", "npm:3.0.2"],\
+          ["typescript", "patch:typescript@npm%3A5.5.3#optional!builtin<compat/typescript>::version=5.5.3&hash=379a07"],\
+          ["ultra-runner", "npm:3.10.5"],\
+          ["zod", "npm:3.23.8"]\
+        ],\
+        "linkType": "SOFT"\
+      }]\
+    ]],\
     ["@stackflow/core", [\
       ["workspace:core", {\
         "packageLocation": "./core/",\
@@ -3048,6 +3068,7 @@ const RAW_RUNTIME_STATE =
           ["@seed-design/design-token", "npm:1.0.3"],\
           ["@seed-design/stylesheet", "npm:1.0.4"],\
           ["@stackflow/compat-await-push", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/compat-await-push"],\
+          ["@stackflow/config", "workspace:config"],\
           ["@stackflow/core", "workspace:core"],\
           ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
           ["@stackflow/link", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/link"],\
@@ -3075,7 +3096,8 @@ const RAW_RUNTIME_STATE =
           ["react-lazy-load-image-component", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#npm:1.6.2"],\
           ["rimraf", "npm:3.0.2"],\
           ["typescript", "patch:typescript@npm%3A5.5.3#optional!builtin<compat/typescript>::version=5.5.3&hash=379a07"],\
-          ["vite", "virtual:2c30557d8ca5e7c67e7558d45bc44bef6c7a622b34a97fa8102f3235f92769c87777d34ed37059c12d8f3a21841ea06cf4badc5dc796697b0f765c17db6e24e5#npm:5.3.2"]\
+          ["vite", "virtual:2c30557d8ca5e7c67e7558d45bc44bef6c7a622b34a97fa8102f3235f92769c87777d34ed37059c12d8f3a21841ea06cf4badc5dc796697b0f765c17db6e24e5#npm:5.3.2"],\
+          ["zod", "npm:3.23.8"]\
         ],\
         "linkType": "SOFT"\
       }]\
@@ -3517,9 +3539,11 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@stackflow-react-virtual-eeae00ab9c/1/integrations/react/",\
         "packageDependencies": [\
           ["@stackflow/react", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:integrations/react"],\
+          ["@stackflow/config", "workspace:config"],\
           ["@stackflow/core", "workspace:core"],\
           ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
           ["@types/react", "npm:18.3.3"],\
+          ["@types/stackflow__config", null],\
           ["@types/stackflow__core", null],\
           ["esbuild", "npm:0.23.0"],\
           ["history", "npm:5.3.0"],\
@@ -3530,8 +3554,10 @@ const RAW_RUNTIME_STATE =
           ["url-pattern", "npm:1.0.3"]\
         ],\
         "packagePeers": [\
+          "@stackflow/config",\
           "@stackflow/core",\
           "@types/react",\
+          "@types/stackflow__config",\
           "@types/stackflow__core",\
           "react"\
         ],\
@@ -3541,6 +3567,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./integrations/react/",\
         "packageDependencies": [\
           ["@stackflow/react", "workspace:integrations/react"],\
+          ["@stackflow/config", "workspace:config"],\
           ["@stackflow/core", "workspace:core"],\
           ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
           ["@types/react", "npm:18.3.3"],\

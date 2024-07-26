@@ -1,11 +1,10 @@
-import type { CoreStore } from "@stackflow/core";
 import type {
+  ActivityBaseSchema,
   ActivityDefinition,
-  ActivityParamTypes,
-  BaseParams,
-} from "@stackflow/core/future";
+  InferActivityParams,
+} from "@stackflow/config";
+import type { CoreStore } from "@stackflow/core";
 import { makeActivityId } from "../__internal__/activity";
-import type { ActivityComponentType } from "../stable";
 
 function parseActionOptions(options?: { animate?: boolean }) {
   if (!options) {
@@ -21,48 +20,35 @@ function parseActionOptions(options?: { animate?: boolean }) {
   return { skipActiveState: !options.animate };
 }
 
-export type Actions<
-  T extends ActivityDefinition<string, BaseParams>,
-  R extends {
-    [activityName in T["name"]]: ActivityComponentType<any>;
-  },
-> = {
-  push<K extends T["name"]>(
-    activityName: K,
-    param: ActivityParamTypes<Extract<T, { name: K }>> &
-      R[K] extends ActivityComponentType<infer P>
-      ? P
-      : never,
-    options?: {
-      animate?: boolean;
-    },
-  ): {
-    activityId: string;
+export type Actions<T extends ActivityDefinition<string, ActivityBaseSchema>> =
+  {
+    push<K extends T["name"]>(
+      activityName: K,
+      activityParams: InferActivityParams<T>,
+      options?: {
+        animate?: boolean;
+      },
+    ): {
+      activityId: string;
+    };
+    replace<K extends T["name"]>(
+      activityName: K,
+      activityParams: InferActivityParams<T>,
+      options?: {
+        animate?: boolean;
+        activityId?: string;
+      },
+    ): {
+      activityId: string;
+    };
+    pop(): void;
+    pop(options: { animate?: boolean }): void;
+    pop(count: number, options?: { animate?: boolean }): void;
   };
-  replace<K extends T["name"]>(
-    activityName: K,
-    param: ActivityParamTypes<Extract<T, { name: K }>> &
-      R[K] extends ActivityComponentType<infer P>
-      ? P
-      : never,
-    options?: {
-      animate?: boolean;
-      activityId?: string;
-    },
-  ): {
-    activityId: string;
-  };
-  pop(): void;
-  pop(options: { animate?: boolean }): void;
-  pop(count: number, options?: { animate?: boolean }): void;
-};
 
 export function makeActions<
-  T extends ActivityDefinition<string, BaseParams>,
-  R extends {
-    [activityName in T["name"]]: ActivityComponentType<any>;
-  },
->(getCoreActions: () => CoreStore["actions"] | undefined): Actions<T, R> {
+  T extends ActivityDefinition<string, ActivityBaseSchema>,
+>(getCoreActions: () => CoreStore["actions"] | undefined): Actions<T> {
   return {
     push(activityName, activityParams, options) {
       const activityId = makeActivityId();
@@ -70,7 +56,7 @@ export function makeActions<
       getCoreActions()?.push({
         activityId,
         activityName,
-        activityParams: activityParams as any,
+        activityParams,
         skipEnterActiveState: parseActionOptions(options).skipActiveState,
       });
 
@@ -84,7 +70,7 @@ export function makeActions<
       getCoreActions()?.replace({
         activityId: options?.activityId ?? makeActivityId(),
         activityName,
-        activityParams: activityParams as any,
+        activityParams,
         skipEnterActiveState: parseActionOptions(options).skipActiveState,
       });
 

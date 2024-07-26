@@ -2292,6 +2292,19 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@stackflow/config@npm:^1.0.0, @stackflow/config@workspace:config":
+  version: 0.0.0-use.local
+  resolution: "@stackflow/config@workspace:config"
+  dependencies:
+    "@stackflow/esbuild-config": "npm:^1.0.3"
+    esbuild: "npm:^0.23.0"
+    rimraf: "npm:^3.0.2"
+    typescript: "npm:^5.5.3"
+    ultra-runner: "npm:^3.10.5"
+    zod: "npm:^3.23.8"
+  languageName: unknown
+  linkType: soft
+
 "@stackflow/core@npm:^1.0.13, @stackflow/core@workspace:core":
   version: 0.0.0-use.local
   resolution: "@stackflow/core@workspace:core"
@@ -2318,6 +2331,7 @@ __metadata:
     "@seed-design/design-token": "npm:^1.0.3"
     "@seed-design/stylesheet": "npm:^1.0.4"
     "@stackflow/compat-await-push": "npm:^1.1.10"
+    "@stackflow/config": "npm:^1.0.0"
     "@stackflow/core": "npm:^1.0.13"
     "@stackflow/esbuild-config": "npm:^1.0.3"
     "@stackflow/link": "npm:^1.4.2"
@@ -2346,6 +2360,7 @@ __metadata:
     rimraf: "npm:^3.0.2"
     typescript: "npm:^5.5.3"
     vite: "npm:^5.3.2"
+    zod: "npm:^3.23.8"
   languageName: unknown
   linkType: soft
 
@@ -2601,6 +2616,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@stackflow/react@workspace:integrations/react"
   dependencies:
+    "@stackflow/config": "npm:^1.0.0"
     "@stackflow/core": "npm:^1.0.13"
     "@stackflow/esbuild-config": "npm:^1.0.3"
     "@types/react": "npm:^18.3.3"
@@ -2612,6 +2628,7 @@ __metadata:
     typescript: "npm:^5.5.3"
     url-pattern: "npm:^1.0.3"
   peerDependencies:
+    "@stackflow/config": ^1
     "@stackflow/core": ^1
     "@types/react": ">=16.8.0"
     react: ">=16.8.0"
@@ -10389,7 +10406,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:^3.22.3":
+"zod@npm:^3.22.3, zod@npm:^3.23.8":
   version: 3.23.8
   resolution: "zod@npm:3.23.8"
   checksum: 10/846fd73e1af0def79c19d510ea9e4a795544a67d5b34b7e1c4d0425bf6bfd1c719446d94cdfa1721c1987d891321d61f779e8236fde517dc0e524aa851a6eff1

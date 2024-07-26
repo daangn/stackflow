@@ -1,14 +1,15 @@
+import type {
+  ActivityBaseSchema,
+  ActivityDefinition,
+  Config,
+  InferActivityParams,
+} from "@stackflow/config";
 import {
   type CoreStore,
   type PushedEvent,
   makeCoreStore,
   makeEvent,
 } from "@stackflow/core";
-import type {
-  ActivityDefinition,
-  BaseParams,
-  StackflowConfig,
-} from "@stackflow/core/future";
 import React, { useMemo } from "react";
 import MainRenderer from "../__internal__/MainRenderer";
 import { makeActivityId } from "../__internal__/activity";
@@ -33,12 +34,12 @@ export type StackflowPluginsEntry =
   | StackflowPluginsEntry[];
 
 export type StackInput<
-  T extends ActivityDefinition<string, BaseParams>,
+  T extends ActivityDefinition<string, ActivityBaseSchema>,
   R extends {
     [activityName in T["name"]]: ActivityComponentType<any>;
   },
 > = {
-  config: StackflowConfig<T>;
+  config: Config<T>;
   components: R;
   plugins?: Array<StackflowPluginsEntry>;
   useHistorySync?: Omit<
@@ -51,22 +52,19 @@ export type StackInput<
 };
 
 export type StackOutput<
-  T extends ActivityDefinition<string, BaseParams>,
-  R extends {
-    [activityName in T["name"]]: ActivityComponentType<any>;
-  },
+  T extends ActivityDefinition<string, ActivityBaseSchema>,
 > = {
   Stack: StackComponentType;
-  actions: Actions<T, R>;
-  stepActions: StepActions<BaseParams>;
+  actions: Actions<T>;
+  stepActions: StepActions<InferActivityParams<T>>;
 };
 
 export function stack<
-  T extends ActivityDefinition<string, BaseParams>,
+  T extends ActivityDefinition<string, ActivityBaseSchema>,
   R extends {
     [activityName in T["name"]]: ActivityComponentType<any>;
   },
->(input: StackInput<T, R>): StackOutput<T, R> {
+>(input: StackInput<T, R>): StackOutput<T> {
   const defaultPlugins = [
     input.useHistorySync
       ? historySyncPlugin({

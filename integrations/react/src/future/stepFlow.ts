@@ -1,25 +1,29 @@
 import type {
+  ActivityBaseSchema,
   ActivityDefinition,
-  ActivityParamTypes,
-  BaseParams,
-  StackflowConfig,
-} from "@stackflow/core/future";
+  Config,
+  InferActivityParams,
+} from "@stackflow/config";
 import { useCoreActions } from "../__internal__/core";
 import { type StepActions, makeStepActions } from "./makeStepActions";
 
-export type StepFlowInput<T extends ActivityDefinition<string, BaseParams>> = {
-  config: StackflowConfig<T>;
+export type StepFlowInput<
+  T extends ActivityDefinition<string, ActivityBaseSchema>,
+> = {
+  config: Config<T>;
 };
 
-export type StepFlowOutput<T extends ActivityDefinition<string, BaseParams>> = {
+export type StepFlowOutput<
+  T extends ActivityDefinition<string, ActivityBaseSchema>,
+> = {
   useStepFlow: <K extends T["name"]>(
     activityName: K,
-  ) => StepActions<ActivityParamTypes<Extract<T, { name: K }>>>;
+  ) => StepActions<InferActivityParams<T>>;
 };
 
-export function stepFlow<T extends ActivityDefinition<string, BaseParams>>(
-  input: StepFlowInput<T>,
-): StepFlowOutput<T> {
+export function stepFlow<
+  T extends ActivityDefinition<string, ActivityBaseSchema>,
+>(input: StepFlowInput<T>): StepFlowOutput<T> {
   return {
     useStepFlow: () => {
       const coreActions = useCoreActions();

@@ -1,9 +1,9 @@
-import type { CoreStore } from "@stackflow/core";
 import type {
+  ActivityBaseSchema,
   ActivityDefinition,
-  ActivityParamTypes,
-  BaseParams,
-} from "@stackflow/core/future";
+  InferActivityParams,
+} from "@stackflow/config";
+import type { CoreStore } from "@stackflow/core";
 import { makeStepId } from "../__internal__/activity";
 
 export type StepActions<Params> = {
@@ -13,26 +13,25 @@ export type StepActions<Params> = {
 };
 
 export function makeStepActions<
-  T extends ActivityDefinition<string, BaseParams>,
-  K extends string,
+  T extends ActivityDefinition<string, ActivityBaseSchema>,
 >(
   getCoreActions: () => CoreStore["actions"] | undefined,
-): StepActions<ActivityParamTypes<Extract<T, { name: K }>>> {
+): StepActions<InferActivityParams<T>> {
   return {
-    pushStep(params) {
+    pushStep(stepParams) {
       const stepId = makeStepId();
 
       getCoreActions()?.stepPush({
         stepId,
-        stepParams: params,
+        stepParams,
       });
     },
-    replaceStep(params) {
+    replaceStep(stepParams) {
       const stepId = makeStepId();
 
       getCoreActions()?.stepReplace({
         stepId,
-        stepParams: params,
+        stepParams,
       });
     },
     popStep() {

@@ -1,10 +1,10 @@
 {
-  "name": "@stackflow/react",
-  "version": "1.1.11",
+  "name": "@stackflow/config",
+  "version": "1.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/daangn/stackflow.git",
-    "directory": "integrations/react"
+    "directory": "config"
   },
   "license": "MIT",
   "exports": {
@@ -12,16 +12,6 @@
       "types": "./dist/index.d.ts",
       "require": "./dist/index.js",
       "import": "./dist/index.mjs"
-    },
-    "./stable": {
-      "types": "./dist/stable/index.d.ts",
-      "require": "./dist/stable/index.js",
-      "import": "./dist/stable/index.mjs"
-    },
-    "./future": {
-      "types": "./dist/future/index.d.ts",
-      "require": "./dist/future/index.js",
-      "import": "./dist/future/index.mjs"
     }
   },
   "main": "./dist/index.js",
@@ -37,29 +27,16 @@
     "build:dts": "tsc --emitDeclarationOnly",
     "build:js": "node ./esbuild.config.js",
     "clean": "rimraf dist",
-    "dev": "yarn build:js --watch && yarn build:dts --watch",
+    "dev": "yarn test --watch && yarn build:js --watch && yarn build:dts --watch",
+    "test": "yarn jest",
     "typecheck": "tsc --noEmit"
   },
-  "dependencies": {
-    "history": "^5.3.0",
-    "react-fast-compare": "^3.2.2",
-    "url-pattern": "^1.0.3"
-  },
   "devDependencies": {
-    "@stackflow/config": "^1.0.0",
-    "@stackflow/core": "^1.0.13",
     "@stackflow/esbuild-config": "^1.0.3",
-    "@types/react": "^18.3.3",
     "esbuild": "^0.23.0",
-    "react": "^18.3.1",
     "rimraf": "^3.0.2",
-    "typescript": "^5.5.3"
-  },
-  "peerDependencies": {
-    "@stackflow/config": "^1",
-    "@stackflow/core": "^1",
-    "@types/react": ">=16.8.0",
-    "react": ">=16.8.0"
+    "typescript": "^5.5.3",
+    "ultra-runner": "^3.10.5"
   },
   "publishConfig": {
     "access": "public"
@@ -69,5 +46,8 @@
       "dev",
       "build"
     ]
+  },
+  "dependencies": {
+    "zod": "^3.23.8"
   }
 }
