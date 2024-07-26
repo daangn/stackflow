@@ -32,14 +32,11 @@ export type StackflowPluginsEntry =
   | StackflowReactPlugin<never>
   | StackflowPluginsEntry[];
 
-export type StackInput<
-  T extends ActivityDefinition<string, BaseParams>,
-  R extends {
-    [activityName in T["name"]]: ActivityComponentType<any>;
-  },
-> = {
+export type StackInput<T extends ActivityDefinition<string, BaseParams>> = {
   config: StackflowConfig<T>;
-  components: R;
+  components: {
+    [activityName in T["name"]]: ActivityComponentType<any>;
+  };
   plugins?: Array<StackflowPluginsEntry>;
   useHistorySync?: Omit<
     HistorySyncPluginOptions<
@@ -50,23 +47,15 @@ export type StackInput<
   >;
 };
 
-export type StackOutput<
-  T extends ActivityDefinition<string, BaseParams>,
-  R extends {
-    [activityName in T["name"]]: ActivityComponentType<any>;
-  },
-> = {
+export type StackOutput<T extends ActivityDefinition<string, BaseParams>> = {
   Stack: StackComponentType;
-  actions: Actions<T, R>;
+  actions: Actions<T>;
   stepActions: StepActions<BaseParams>;
 };
 
-export function stack<
-  T extends ActivityDefinition<string, BaseParams>,
-  R extends {
-    [activityName in T["name"]]: ActivityComponentType<any>;
-  },
->(input: StackInput<T, R>): StackOutput<T, R> {
+export function stack<T extends ActivityDefinition<string, BaseParams>>(
+  input: StackInput<T>,
+): StackOutput<T> {
   const defaultPlugins = [
     input.useHistorySync
       ? historySyncPlugin({

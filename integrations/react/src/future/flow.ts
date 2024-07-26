@@ -1,31 +1,26 @@
-import type { ActivityDefinition, BaseParams } from "@stackflow/core/future";
+import type {
+  ActivityDefinition,
+  BaseParams,
+  StackflowConfig,
+} from "@stackflow/core/future";
 import { useCoreActions } from "../__internal__/core";
-import { ActivityComponentType } from "../stable";
 import { type Actions, makeActions } from "./makeActions";
 
-export type FlowOutput<
-  T extends Actions<
-    ActivityDefinition<string, BaseParams>,
-    {
-      [x: string]: ActivityComponentType<any>;
-    }
-  >,
-> = {
-  useFlow: () => T;
+export type FlowInput<T extends ActivityDefinition<string, BaseParams>> = {
+  config: StackflowConfig<T>;
 };
 
-export function flow<
-  T extends Actions<
-    ActivityDefinition<string, BaseParams>,
-    {
-      [x: string]: ActivityComponentType<any>;
-    }
-  >,
->(): FlowOutput<T> {
+export type FlowOutput<T extends ActivityDefinition<string, BaseParams>> = {
+  useFlow: () => Actions<T>;
+};
+
+export function flow<T extends ActivityDefinition<string, BaseParams>>(
+  input: FlowInput<T>,
+): FlowOutput<T> {
   return {
     useFlow: () => {
       const coreActions = useCoreActions();
-      return makeActions(() => coreActions) as T;
+      return makeActions(() => coreActions);
     },
   };
 }

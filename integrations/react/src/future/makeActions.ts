@@ -5,7 +5,6 @@ import type {
   BaseParams,
 } from "@stackflow/core/future";
 import { makeActivityId } from "../__internal__/activity";
-import { ActivityComponentType } from "../stable";
 
 function parseActionOptions(options?: { animate?: boolean }) {
   if (!options) {
@@ -21,18 +20,10 @@ function parseActionOptions(options?: { animate?: boolean }) {
   return { skipActiveState: !options.animate };
 }
 
-export type Actions<
-  T extends ActivityDefinition<string, BaseParams>,
-  R extends {
-    [activityName in T["name"]]: ActivityComponentType<any>;
-  },
-> = {
+export type Actions<T extends ActivityDefinition<string, BaseParams>> = {
   push<K extends T["name"]>(
     activityName: K,
-    param: ActivityParamTypes<Extract<T, { name: K }>> &
-      R[K] extends ActivityComponentType<infer P>
-      ? P
-      : never,
+    param: ActivityParamTypes<Extract<T, { name: K }>>,
     options?: {
       animate?: boolean;
     },
@@ -41,10 +32,7 @@ export type Actions<
   };
   replace<K extends T["name"]>(
     activityName: K,
-    param: ActivityParamTypes<Extract<T, { name: K }>> &
-      R[K] extends ActivityComponentType<infer P>
-      ? P
-      : never,
+    param: ActivityParamTypes<Extract<T, { name: K }>>,
     options?: {
       animate?: boolean;
       activityId?: string;
@@ -57,12 +45,9 @@ export type Actions<
   pop(count: number, options?: { animate?: boolean }): void;
 };
 
-export function makeActions<
-  T extends ActivityDefinition<string, BaseParams>,
-  R extends {
-    [activityName in T["name"]]: ActivityComponentType<any>;
-  },
->(getCoreActions: () => CoreStore["actions"] | undefined): Actions<T, R> {
+export function makeActions<T extends ActivityDefinition<string, BaseParams>>(
+  getCoreActions: () => CoreStore["actions"] | undefined,
+): Actions<T> {
   return {
     push(activityName, activityParams, options) {
       const activityId = makeActivityId();

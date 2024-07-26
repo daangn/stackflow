@@ -6,7 +6,7 @@ import Article from "../activities/Article";
 import Main from "../activities/Main";
 import { config } from "./stackflow.config";
 
-export const { Stack, actions } = stack({
+export const { Stack } = stack({
   config,
   components: {
     Main,
@@ -34,5 +34,3 @@ export const { Stack, actions } = stack({
     }),
   ],
 });
-
-export type Actions = typeof actions;
