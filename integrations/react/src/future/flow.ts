@@ -1,6 +1,6 @@
 import type { ActivityDefinition, BaseParams } from "@stackflow/core/future";
 import { useCoreActions } from "../__internal__/core";
-import { ActivityComponentType } from "../stable";
+import type { ActivityComponentType } from "../stable";
 import { type Actions, makeActions } from "./makeActions";
 
 export type FlowOutput<
