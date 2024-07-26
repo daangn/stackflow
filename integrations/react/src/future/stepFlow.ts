@@ -1,6 +1,5 @@
 import type {
   ActivityDefinition,
-  ActivityParamTypes,
   BaseParams,
   StackflowConfig,
 } from "@stackflow/core/future";
@@ -14,7 +13,7 @@ export type StepFlowInput<T extends ActivityDefinition<string, BaseParams>> = {
 export type StepFlowOutput<T extends ActivityDefinition<string, BaseParams>> = {
   useStepFlow: <K extends T["name"]>(
     activityName: K,
-  ) => StepActions<ActivityParamTypes<Extract<T, { name: K }>>>;
+  ) => StepActions<NonNullable<Extract<T, { name: K }>["paramTypes"]>>;
 };
 
 export function stepFlow<T extends ActivityDefinition<string, BaseParams>>(
