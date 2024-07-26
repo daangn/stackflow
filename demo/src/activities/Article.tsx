@@ -9,10 +9,10 @@ import ArticleProfile from "../components/ArticleProfile";
 import Layout from "../components/Layout";
 import * as css from "./Article.css";
 
-export type ArticleParams = {
+export interface ArticleParams {
   articleId: string;
   title: string;
-};
+}
 
 const Article: ActivityComponentType<ArticleParams> = () => {
   const { title } = useActivityParams<{

@@ -30,6 +30,9 @@ export const appBarRight = style([
   },
 ]);
 
-export const scrollable = style([f.flex1, f.overflowScroll]);
+export const scrollable = style([
+  f.flex1,
+  f.overflowScroll,
+]);
 
 export const bottom = style({});
