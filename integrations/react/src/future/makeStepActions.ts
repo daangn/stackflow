@@ -1,8 +1,4 @@
-import type {
-  ActivityBaseSchema,
-  ActivityDefinition,
-  InferActivityParams,
-} from "@stackflow/config";
+import type { ActivityBaseParams } from "@stackflow/config";
 import type { CoreStore } from "@stackflow/core";
 import { makeStepId } from "../__internal__/activity";
 
@@ -12,11 +8,9 @@ export type StepActions<Params> = {
   popStep: (options?: {}) => void;
 };
 
-export function makeStepActions<
-  T extends ActivityDefinition<string, ActivityBaseSchema>,
->(
+export function makeStepActions(
   getCoreActions: () => CoreStore["actions"] | undefined,
-): StepActions<InferActivityParams<T>> {
+): StepActions<ActivityBaseParams> {
   return {
     pushStep(stepParams) {
       const stepId = makeStepId();

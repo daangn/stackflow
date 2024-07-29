@@ -1,25 +1,22 @@
-import { defineActivity, defineConfig } from "@stackflow/config";
-import { z } from "zod";
-import { loader as articleLoader } from "../activities/Article.loader";
-import { loader as mainLoader } from "../activities/Main.loader";
+import { defineConfig } from "@stackflow/config";
+import type { ArticleParamTypes } from "../activities/Article";
+import { articleLoader } from "../activities/Article.loader";
+import type { MainParamTypes } from "../activities/Main";
 
 export const config = defineConfig({
   activities: [
-    defineActivity({
-      name: "Main",
-      path: "/",
-      schema: z.object({
-        hello: z.string(),
-      }),
-      loader: () => {},
-      // loader: mainLoader,
-    }),
-    // defineActivity({
-    //   name: "Article",
-    //   path: "/articles/:articleId",
-    //   loader: articleLoader,
-    // }),
+    { name: "Main", path: "/" },
+    { name: "Article", path: "/articles/:articleId", loader: articleLoader },
   ],
   transitionDuration: 270,
   initialActivity: () => "Main",
 });
+
+declare module "@stackflow/config" {
+  interface Register {
+    activityParamTypes: {
+      Main: MainParamTypes;
+      Article: ArticleParamTypes;
+    };
+  }
+}

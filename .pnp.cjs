@@ -3033,8 +3033,7 @@ const RAW_RUNTIME_STATE =
           ["esbuild", "npm:0.23.0"],\
           ["rimraf", "npm:3.0.2"],\
           ["typescript", "patch:typescript@npm%3A5.5.3#optional!builtin<compat/typescript>::version=5.5.3&hash=379a07"],\
-          ["ultra-runner", "npm:3.10.5"],\
-          ["zod", "npm:3.23.8"]\
+          ["ultra-runner", "npm:3.10.5"]\
         ],\
         "linkType": "SOFT"\
       }]\

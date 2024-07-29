@@ -1,15 +1,7 @@
-import type { ActivityBaseSchema } from "./ActivityBaseSchema";
 import type { ActivityLoader } from "./ActivityLoader";
-import type { InferActivityParams } from "./InferActivityParams";
 
-export type ActivityDefinition<
-  Name extends string,
-  Schema extends ActivityBaseSchema,
-> = {
-  name: Name;
+export type ActivityDefinition<ActivityName extends string> = {
+  name: ActivityName;
   path: string;
-  schema?: Schema;
-  loader?: ActivityLoader<
-    InferActivityParams<ActivityDefinition<Name, Schema>>
-  >;
+  loader?: ActivityLoader<any>;
 };

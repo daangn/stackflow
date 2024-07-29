@@ -1,7 +1,6 @@
 import type {
-  ActivityBaseSchema,
-  ActivityDefinition,
   InferActivityParams,
+  RegisteredActivityParamTypes,
 } from "@stackflow/config";
 import type { CoreStore } from "@stackflow/core";
 import { makeActivityId } from "../__internal__/activity";
@@ -20,35 +19,34 @@ function parseActionOptions(options?: { animate?: boolean }) {
   return { skipActiveState: !options.animate };
 }
 
-export type Actions<T extends ActivityDefinition<string, ActivityBaseSchema>> =
-  {
-    push<K extends T["name"]>(
-      activityName: K,
-      activityParams: InferActivityParams<T>,
-      options?: {
-        animate?: boolean;
-      },
-    ): {
-      activityId: string;
-    };
-    replace<K extends T["name"]>(
-      activityName: K,
-      activityParams: InferActivityParams<T>,
-      options?: {
-        animate?: boolean;
-        activityId?: string;
-      },
-    ): {
-      activityId: string;
-    };
-    pop(): void;
-    pop(options: { animate?: boolean }): void;
-    pop(count: number, options?: { animate?: boolean }): void;
+export type Actions = {
+  push<K extends keyof RegisteredActivityParamTypes>(
+    activityName: K,
+    activityParams: InferActivityParams<K>,
+    options?: {
+      animate?: boolean;
+    },
+  ): {
+    activityId: string;
   };
+  replace<K extends keyof RegisteredActivityParamTypes>(
+    activityName: K,
+    activityParams: InferActivityParams<K>,
+    options?: {
+      animate?: boolean;
+      activityId?: string;
+    },
+  ): {
+    activityId: string;
+  };
+  pop(): void;
+  pop(options: { animate?: boolean }): void;
+  pop(count: number, options?: { animate?: boolean }): void;
+};
 
-export function makeActions<
-  T extends ActivityDefinition<string, ActivityBaseSchema>,
->(getCoreActions: () => CoreStore["actions"] | undefined): Actions<T> {
+export function makeActions(
+  getCoreActions: () => CoreStore["actions"] | undefined,
+): Actions {
   return {
     push(activityName, activityParams, options) {
       const activityId = makeActivityId();

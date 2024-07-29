@@ -1,8 +1,7 @@
 import type {
-  ActivityBaseSchema,
+  ActivityBaseParams,
   ActivityDefinition,
   Config,
-  InferActivityParams,
 } from "@stackflow/config";
 import {
   type CoreStore,
@@ -34,7 +33,7 @@ export type StackflowPluginsEntry =
   | StackflowPluginsEntry[];
 
 export type StackInput<
-  T extends ActivityDefinition<string, ActivityBaseSchema>,
+  T extends ActivityDefinition<string>,
   R extends {
     [activityName in T["name"]]: ActivityComponentType<any>;
   },
@@ -51,20 +50,18 @@ export type StackInput<
   >;
 };
 
-export type StackOutput<
-  T extends ActivityDefinition<string, ActivityBaseSchema>,
-> = {
+export type StackOutput = {
   Stack: StackComponentType;
-  actions: Actions<T>;
-  stepActions: StepActions<InferActivityParams<T>>;
+  actions: Actions;
+  stepActions: StepActions<ActivityBaseParams>;
 };
 
 export function stack<
-  T extends ActivityDefinition<string, ActivityBaseSchema>,
+  T extends ActivityDefinition<string>,
   R extends {
     [activityName in T["name"]]: ActivityComponentType<any>;
   },
->(input: StackInput<T, R>): StackOutput<T> {
+>(input: StackInput<T, R>): StackOutput {
   const defaultPlugins = [
     input.useHistorySync
       ? historySyncPlugin({

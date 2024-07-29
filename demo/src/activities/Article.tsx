@@ -9,12 +9,12 @@ import ArticleProfile from "../components/ArticleProfile";
 import Layout from "../components/Layout";
 import * as css from "./Article.css";
 
-export type ArticleParams = {
+export type ArticleParamTypes = {
   articleId: string;
-  title: string;
+  title?: string;
 };
 
-const Article: ActivityComponentType<ArticleParams> = () => {
+const Article: ActivityComponentType<ArticleParamTypes> = () => {
   const { title } = useActivityParams<{
     articleId: string;
     title: string;

@@ -1,9 +1,7 @@
-import type { z } from "zod";
-import type { ActivityDefinition } from "./ActivityDefinition";
+import type { ActivityBaseParams } from "./ActivityBaseParams";
+import type { RegisteredActivityParamTypes } from "./RegisteredActivityParamTypes";
 
-export type InferActivityParams<A extends ActivityDefinition<any, any>> =
-  A extends ActivityDefinition<any, infer S>
-    ? keyof z.infer<S> extends never
-      ? { [key: string]: string | undefined }
-      : z.infer<S>
-    : never;
+export type InferActivityParams<ActivityName extends string> =
+  ActivityName extends keyof RegisteredActivityParamTypes
+    ? RegisteredActivityParamTypes[ActivityName]
+    : ActivityBaseParams;

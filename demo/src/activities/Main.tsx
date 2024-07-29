@@ -10,7 +10,9 @@ import FeedCard from "../components/FeedCard";
 import Layout from "../components/Layout";
 import * as css from "./Main.css";
 
-const Main: ActivityComponentType = () => {
+export type MainParamTypes = {};
+
+const Main: ActivityComponentType<MainParamTypes> = () => {
   const { cards } = useLoaderData<{
     cards: Array<{
       articleId: string;
