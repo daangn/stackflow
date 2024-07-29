@@ -1,6 +1,6 @@
-import type { ActivityLoader } from "@stackflow/config";
+import type { ActivityLoaderArgs } from "@stackflow/config";
 
-export const articleLoader: ActivityLoader<"Article"> = ({ params }) => {
+export function articleLoader({ params }: ActivityLoaderArgs<"Article">) {
   const imageUrl = `https://picsum.photos/800/800/?id=${params.articleId}`;
 
   const recommenderCards = [
@@ -60,4 +60,4 @@ export const articleLoader: ActivityLoader<"Article"> = ({ params }) => {
     imageUrl,
     recommenderCards,
   };
-};
+}

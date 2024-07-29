@@ -1,6 +1,4 @@
-import type { ActivityLoader } from "@stackflow/config";
-
-export const loader: ActivityLoader<"Main"> = () => {
+export function mainLoader() {
   return {
     cards: [
       {
@@ -75,4 +73,4 @@ export const loader: ActivityLoader<"Main"> = () => {
       },
     ],
   };
-};
+}

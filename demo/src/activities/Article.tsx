@@ -8,6 +8,7 @@ import ArticleCard from "../components/ArticleCard";
 import ArticleProfile from "../components/ArticleProfile";
 import Layout from "../components/Layout";
 import * as css from "./Article.css";
+import type { articleLoader } from "./Article.loader";
 
 declare module "@stackflow/config" {
   interface Register {
@@ -20,15 +21,7 @@ declare module "@stackflow/config" {
 
 const Article: ActivityComponentType<"Article"> = ({ params }) => {
   const { title } = useActivityParams<"Article">();
-
-  const { imageUrl, recommenderCards } = useLoaderData<{
-    imageUrl: string;
-    recommenderCards: Array<{
-      articleId: string;
-      price: number;
-      title: string;
-    }>;
-  }>();
+  const { imageUrl, recommenderCards } = useLoaderData<typeof articleLoader>();
 
   return (
     <Layout appBar={{}}>

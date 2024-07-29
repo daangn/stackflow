@@ -1,5 +1,5 @@
 import type { ActivityComponentType } from "@stackflow/react/future";
-import { useActivityParams, useLoaderData } from "@stackflow/react/future";
+import { useLoaderData } from "@stackflow/react/future";
 
 import IconBell from "../assets/IconBell";
 import IconExpandMore from "../assets/IconExpandMore";
@@ -9,6 +9,7 @@ import BottomTab from "../components/BottomTab";
 import FeedCard from "../components/FeedCard";
 import Layout from "../components/Layout";
 import * as css from "./Main.css";
+import type { mainLoader } from "./Main.loader";
 
 declare module "@stackflow/config" {
   interface Register {
@@ -17,15 +18,7 @@ declare module "@stackflow/config" {
 }
 
 const Main: ActivityComponentType<"Main"> = () => {
-  const { cards } = useLoaderData<{
-    cards: Array<{
-      articleId: string;
-      price: number;
-      title: string;
-      region: string;
-      daysAgo: number;
-    }>;
-  }>();
+  const { cards } = useLoaderData<typeof mainLoader>();
 
   const appBarLeft = () => (
     <div className={css.appBarLeft}>
