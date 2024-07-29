@@ -2496,6 +2496,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@stackflow/plugin-history-sync@workspace:extensions/plugin-history-sync"
   dependencies:
+    "@stackflow/config": "npm:^1.0.0"
     "@stackflow/core": "npm:^1.0.13"
     "@stackflow/esbuild-config": "npm:^1.0.3"
     "@stackflow/react": "npm:^1.1.11"
@@ -2512,6 +2513,7 @@ __metadata:
     typescript: "npm:^5.5.3"
     url-pattern: "npm:^1.0.3"
   peerDependencies:
+    "@stackflow/config": ^1
     "@stackflow/core": ^1
     "@stackflow/react": ^1
     "@types/react": ">=16.8.0"

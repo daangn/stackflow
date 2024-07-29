@@ -20,10 +20,6 @@ import type {
   StackComponentType,
   StackflowReactPlugin,
 } from "../stable";
-import {
-  type HistorySyncPluginOptions,
-  historySyncPlugin,
-} from "./history-sync";
 import { loaderPlugin } from "./loader";
 import { type Actions, makeActions } from "./makeActions";
 import { type StepActions, makeStepActions } from "./makeStepActions";
@@ -41,13 +37,6 @@ export type StackInput<
   config: Config<T>;
   components: R;
   plugins?: Array<StackflowPluginsEntry>;
-  useHistorySync?: Omit<
-    HistorySyncPluginOptions<
-      { [key in T["name"]]: unknown },
-      Extract<T["name"], string>
-    >,
-    "routes"
-  >;
 };
 
 export type StackOutput = {
@@ -62,31 +51,15 @@ export function stack<
     [activityName in T["name"]]: ActivityComponentType<any>;
   },
 >(input: StackInput<T, R>): StackOutput {
-  const defaultPlugins = [
-    input.useHistorySync
-      ? historySyncPlugin({
-          ...input.useHistorySync,
-          routes: input.config.activities.reduce(
-            (acc, a) => ({
-              ...acc,
-              [a.name]: a.path,
-            }),
-            {},
-          ),
-        })
-      : null,
+  const plugins = [
+    ...(input.plugins ?? [])
+      .flat(Number.POSITIVE_INFINITY as 0)
+      .map((p) => p as StackflowReactPlugin),
 
     /**
      * `loaderPlugin()` must be placed after `historySyncPlugin()`
      */
     loaderPlugin(input.config),
-  ].filter((e) => !!e);
-
-  const plugins = [
-    ...defaultPlugins,
-    ...(input.plugins ?? [])
-      .flat(Number.POSITIVE_INFINITY as 0)
-      .map((p) => p as StackflowReactPlugin),
   ];
 
   const enoughPastTime = () =>

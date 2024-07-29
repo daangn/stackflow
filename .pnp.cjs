@@ -3310,6 +3310,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@stackflow-plugin-history-sync-virtual-991015ceb8/1/extensions/plugin-history-sync/",\
         "packageDependencies": [\
           ["@stackflow/plugin-history-sync", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-history-sync"],\
+          ["@stackflow/config", "workspace:config"],\
           ["@stackflow/core", "workspace:core"],\
           ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
           ["@stackflow/react", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:integrations/react"],\
@@ -3318,6 +3319,7 @@ const RAW_RUNTIME_STATE =
           ["@types/jest", "npm:29.5.12"],\
           ["@types/node", "npm:20.14.9"],\
           ["@types/react", "npm:18.3.3"],\
+          ["@types/stackflow__config", null],\
           ["@types/stackflow__core", null],\
           ["@types/stackflow__react", null],\
           ["esbuild", "npm:0.23.0"],\
@@ -3329,9 +3331,11 @@ const RAW_RUNTIME_STATE =
           ["url-pattern", "npm:1.0.3"]\
         ],\
         "packagePeers": [\
+          "@stackflow/config",\
           "@stackflow/core",\
           "@stackflow/react",\
           "@types/react",\
+          "@types/stackflow__config",\
           "@types/stackflow__core",\
           "@types/stackflow__react",\
           "react"\
@@ -3342,6 +3346,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./extensions/plugin-history-sync/",\
         "packageDependencies": [\
           ["@stackflow/plugin-history-sync", "workspace:extensions/plugin-history-sync"],\
+          ["@stackflow/config", "workspace:config"],\
           ["@stackflow/core", "workspace:core"],\
           ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
           ["@stackflow/react", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:integrations/react"],\
