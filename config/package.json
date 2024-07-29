@@ -27,8 +27,7 @@
     "build:dts": "tsc --emitDeclarationOnly",
     "build:js": "node ./esbuild.config.js",
     "clean": "rimraf dist",
-    "dev": "yarn test --watch && yarn build:js --watch && yarn build:dts --watch",
-    "test": "yarn jest",
+    "dev": "yarn build:js --watch && yarn build:dts --watch",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
