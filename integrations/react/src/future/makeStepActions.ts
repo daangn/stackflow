@@ -2,9 +2,9 @@ import type { ActivityBaseParams } from "@stackflow/config";
 import type { CoreStore } from "@stackflow/core";
 import { makeStepId } from "../__internal__/activity";
 
-export type StepActions<Params> = {
-  pushStep: (params: Params, options?: {}) => void;
-  replaceStep: (params: Params, options?: {}) => void;
+export type StepActions<ActivityParams> = {
+  pushStep: (params: ActivityParams, options?: {}) => void;
+  replaceStep: (params: ActivityParams, options?: {}) => void;
   popStep: (options?: {}) => void;
 };
 

@@ -1,5 +1,5 @@
-import type { ActivityComponentType } from "@stackflow/react";
-import { useLoaderData } from "@stackflow/react/future";
+import type { ActivityComponentType } from "@stackflow/react/future";
+import { useActivityParams, useLoaderData } from "@stackflow/react/future";
 
 import IconBell from "../assets/IconBell";
 import IconExpandMore from "../assets/IconExpandMore";
@@ -10,9 +10,13 @@ import FeedCard from "../components/FeedCard";
 import Layout from "../components/Layout";
 import * as css from "./Main.css";
 
-export type MainParamTypes = {};
+declare module "@stackflow/config" {
+  interface Register {
+    Main: {};
+  }
+}
 
-const Main: ActivityComponentType<MainParamTypes> = () => {
+const Main: ActivityComponentType<"Main"> = () => {
   const { cards } = useLoaderData<{
     cards: Array<{
       articleId: string;

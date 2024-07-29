@@ -1,7 +1,7 @@
 import {
   type ActivityComponentType,
   useActivityParams,
-} from "@stackflow/react";
+} from "@stackflow/react/future";
 import { useLoaderData } from "@stackflow/react/future";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import ArticleCard from "../components/ArticleCard";
@@ -9,16 +9,18 @@ import ArticleProfile from "../components/ArticleProfile";
 import Layout from "../components/Layout";
 import * as css from "./Article.css";
 
-export type ArticleParamTypes = {
-  articleId: string;
-  title?: string;
-};
+declare module "@stackflow/config" {
+  interface Register {
+    Article: {
+      articleId: string;
+      title?: string;
+    };
+  }
+}
 
-const Article: ActivityComponentType<ArticleParamTypes> = () => {
-  const { title } = useActivityParams<{
-    articleId: string;
-    title: string;
-  }>();
+const Article: ActivityComponentType<"Article"> = ({ params }) => {
+  const { title } = useActivityParams<"Article">();
+
   const { imageUrl, recommenderCards } = useLoaderData<{
     imageUrl: string;
     recommenderCards: Array<{

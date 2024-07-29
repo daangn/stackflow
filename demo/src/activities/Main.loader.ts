@@ -1,6 +1,6 @@
-import type { ActivityLoader } from "@stackflow/core/future";
+import type { ActivityLoader } from "@stackflow/config";
 
-export const loader: ActivityLoader<{}> = () => {
+export const loader: ActivityLoader<"Main"> = () => {
   return {
     cards: [
       {

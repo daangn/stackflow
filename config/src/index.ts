@@ -1,5 +1,4 @@
 export * from "./defineConfig";
-export * from "./defineActivityLoader";
 export * from "./ActivityBaseParams";
 export * from "./ActivityDefinition";
 export * from "./ActivityLoader";

@@ -6,8 +6,8 @@ import { useCoreActions } from "../__internal__/core";
 import { type StepActions, makeStepActions } from "./makeStepActions";
 
 export function useStepFlow<
-  K extends Extract<keyof RegisteredActivityParamTypes, string>,
->(activityName: K): StepActions<InferActivityParams<K>> {
+  ActivityName extends Extract<keyof RegisteredActivityParamTypes, string>,
+>(activityName: ActivityName): StepActions<InferActivityParams<ActivityName>> {
   const coreActions = useCoreActions();
   return makeStepActions(() => coreActions);
 }
