@@ -20,7 +20,7 @@ function parseActionOptions(options?: { animate?: boolean }) {
 }
 
 export type Actions = {
-  push<K extends keyof RegisteredActivityParamTypes>(
+  push<K extends Extract<keyof RegisteredActivityParamTypes, string>>(
     activityName: K,
     activityParams: InferActivityParams<K>,
     options?: {
@@ -29,7 +29,7 @@ export type Actions = {
   ): {
     activityId: string;
   };
-  replace<K extends keyof RegisteredActivityParamTypes>(
+  replace<K extends Extract<keyof RegisteredActivityParamTypes, string>>(
     activityName: K,
     activityParams: InferActivityParams<K>,
     options?: {

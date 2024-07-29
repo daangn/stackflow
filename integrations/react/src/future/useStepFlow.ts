@@ -5,9 +5,9 @@ import type {
 import { useCoreActions } from "../__internal__/core";
 import { type StepActions, makeStepActions } from "./makeStepActions";
 
-export function useStepFlow<K extends keyof RegisteredActivityParamTypes>(
-  activityName: K,
-): StepActions<InferActivityParams<K>> {
+export function useStepFlow<
+  K extends Extract<keyof RegisteredActivityParamTypes, string>,
+>(activityName: K): StepActions<InferActivityParams<K>> {
   const coreActions = useCoreActions();
   return makeStepActions(() => coreActions);
 }
