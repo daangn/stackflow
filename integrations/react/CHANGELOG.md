@@ -1,5 +1,11 @@
 # @stackflow/react
 
+## 1.2.0-canary.2
+
+### Minor Changes
+
+- Change package to ESM Only
+
 ## 1.2.0-canary.1
 
 ### Minor Changes
