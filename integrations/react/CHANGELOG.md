@@ -1,5 +1,11 @@
 # @stackflow/react
 
+## 1.2.0-canary.1
+
+### Minor Changes
+
+- Future API
+
 ## 1.2.0-canary.0
 
 ### Minor Changes
