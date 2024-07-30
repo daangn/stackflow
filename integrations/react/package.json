@@ -10,22 +10,19 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "require": "./dist/index.js",
-      "import": "./dist/index.mjs"
+      "import": "./dist/index.js"
     },
     "./stable": {
       "types": "./dist/stable/index.d.ts",
-      "require": "./dist/stable/index.js",
-      "import": "./dist/stable/index.mjs"
+      "import": "./dist/stable/index.js"
     },
     "./future": {
       "types": "./dist/future/index.d.ts",
-      "require": "./dist/future/index.js",
-      "import": "./dist/future/index.mjs"
+      "import": "./dist/future/index.js"
     }
   },
   "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
     "dist",
