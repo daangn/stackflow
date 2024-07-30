@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/config",
-  "version": "1.0.0",
+  "version": "1.0.1-canary.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/daangn/stackflow.git",
