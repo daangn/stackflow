@@ -6,7 +6,7 @@ export function loaderPlugin(
 ): StackflowReactPlugin {
   return () => ({
     key: "plugin-loader",
-    overrideInitialEvents({ initialEvents }) {
+    overrideInitialEvents({ initialEvents, initialContext }) {
       if (initialEvents.length === 0) {
         return [];
       }
@@ -16,11 +16,22 @@ export function loaderPlugin(
           return event;
         }
 
+        if (initialContext.initialLoaderData) {
+          return {
+            ...event,
+            activityContext: {
+              ...event.activityContext,
+              loaderData: initialContext.initialLoaderData,
+            },
+          };
+        }
+
         const { activityName, activityParams } = event;
 
-        const loader = config.activities.find(
+        const matchActivity = config.activities.find(
           (activity) => activity.name === activityName,
-        )?.loader;
+        );
+        const loader = matchActivity?.loader;
 
         if (!loader) {
           return event;

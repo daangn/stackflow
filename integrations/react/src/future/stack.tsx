@@ -15,11 +15,8 @@ import { makeActivityId } from "../__internal__/activity";
 import { CoreProvider } from "../__internal__/core";
 import { PluginsProvider } from "../__internal__/plugins";
 import { isBrowser, makeRef } from "../__internal__/utils";
-import type {
-  ActivityComponentType,
-  StackComponentType,
-  StackflowReactPlugin,
-} from "../stable";
+import type { ActivityComponentType, StackflowReactPlugin } from "../stable";
+import type { StackComponentType } from "./StackComponentType";
 import { loaderPlugin } from "./loader";
 import { type Actions, makeActions } from "./makeActions";
 import { type StepActions, makeStepActions } from "./makeStepActions";
@@ -112,7 +109,9 @@ export function stack<
           ...staticCoreStore.pullEvents(),
           ...initialPushedEventsByOption,
         ],
-        initialContext: props.initialContext,
+        initialContext: {
+          initialLoaderData: props.initialLoaderData,
+        },
         plugins,
         handlers: {
           onInitialActivityIgnored: (initialPushedEvents) => {
@@ -147,7 +146,9 @@ export function stack<
         <CoreProvider coreStore={coreStore}>
           <MainRenderer
             activityComponentMap={input.components}
-            initialContext={props.initialContext}
+            initialContext={{
+              initialLoaderData: props.initialLoaderData,
+            }}
           />
         </CoreProvider>
       </PluginsProvider>
