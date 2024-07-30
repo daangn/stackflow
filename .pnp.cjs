@@ -3053,8 +3053,7 @@ const RAW_RUNTIME_STATE =
           ["react-fast-compare", "npm:3.2.2"],\
           ["rimraf", "npm:3.0.2"],\
           ["typescript", "patch:typescript@npm%3A5.5.3#optional!builtin<compat/typescript>::version=5.5.3&hash=379a07"],\
-          ["ultra-runner", "npm:3.10.5"],\
-          ["url-pattern", "npm:1.0.3"]\
+          ["ultra-runner", "npm:3.10.5"]\
         ],\
         "linkType": "SOFT"\
       }]\

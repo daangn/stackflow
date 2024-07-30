@@ -2319,7 +2319,6 @@ __metadata:
     rimraf: "npm:^3.0.2"
     typescript: "npm:^5.5.3"
     ultra-runner: "npm:^3.10.5"
-    url-pattern: "npm:^1.0.3"
   languageName: unknown
   linkType: soft
 
