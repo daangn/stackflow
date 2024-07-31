@@ -4,6 +4,7 @@
   "license": "MIT",
   "workspaces": [
     "docs",
+    "config",
     "core",
     "demo",
     "integrations/*",

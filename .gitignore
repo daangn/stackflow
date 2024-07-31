@@ -29,3 +29,4 @@ coverage
 dist
 lib
 
+vite.config.js.timestamp-**

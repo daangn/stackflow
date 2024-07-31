@@ -1,5 +1,12 @@
 # @stackflow/plugin-basic-ui
 
+## 1.8.3-canary.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @stackflow/react@1.2.0-canary.0
+
 ## 1.8.2
 
 ### Patch Changes
