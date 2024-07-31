@@ -17,10 +17,11 @@
     "@stackflow/plugin-renderer-basic": "1.1.11-canary.0",
     "@stackflow/plugin-renderer-web": "1.1.11-canary.0",
     "@stackflow/plugin-stack-depth-change": "1.1.4",
-    "@stackflow/react": "1.2.0-canary.2",
+    "@stackflow/react": "1.2.0-canary.3",
     "@stackflow/esbuild-config": "1.0.3"
   },
   "changesets": [
+    "famous-eyes-share",
     "funny-pears-fold",
     "hungry-buses-do",
     "plenty-birds-learn",

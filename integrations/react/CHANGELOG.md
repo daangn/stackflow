@@ -1,5 +1,11 @@
 # @stackflow/react
 
+## 1.2.0-canary.4
+
+### Minor Changes
+
+- change extension esm package .mjs to .js
+
 ## 1.2.0-canary.3
 
 ### Minor Changes
