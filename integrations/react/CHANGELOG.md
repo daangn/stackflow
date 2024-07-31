@@ -1,5 +1,11 @@
 # @stackflow/react
 
+## 1.2.1
+
+### Patch Changes
+
+- fc2061a: Change `stack()` to `stackflow()` in Future API
+
 ## 1.2.0
 
 ### Minor Changes
