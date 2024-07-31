@@ -1,5 +1,11 @@
 # @stackflow/react
 
+## 1.2.0-canary.3
+
+### Minor Changes
+
+- support esm, cjs both
+
 ## 1.2.0-canary.2
 
 ### Minor Changes
