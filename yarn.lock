@@ -2621,6 +2621,7 @@ __metadata:
     "@stackflow/esbuild-config": "npm:^1.0.3"
     "@types/react": "npm:^18.3.3"
     esbuild: "npm:^0.23.0"
+    esbuild-plugin-file-path-extensions: "npm:^2.1.2"
     history: "npm:^5.3.0"
     react: "npm:^18.3.1"
     react-fast-compare: "npm:^3.2.2"
@@ -4756,6 +4757,13 @@ __metadata:
   dependencies:
     is-arrayish: "npm:^0.2.1"
   checksum: 10/d547740aa29c34e753fb6fed2c5de81802438529c12b3673bd37b6bb1fe49b9b7abdc3c11e6062fe625d8a296b3cf769a80f878865e25e685f787763eede3ffb
+  languageName: node
+  linkType: hard
+
+"esbuild-plugin-file-path-extensions@npm:^2.1.2":
+  version: 2.1.2
+  resolution: "esbuild-plugin-file-path-extensions@npm:2.1.2"
+  checksum: 10/01e00d5bb35d719ebe9d1b2526278923e5790f7c3d78c9b0af05af17408be076c914135eef43a3e6021c07f715214d9c848d93c648f4d4cb3fa0605d83d2b55a
   languageName: node
   linkType: hard
 

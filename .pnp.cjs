@@ -3549,6 +3549,7 @@ const RAW_RUNTIME_STATE =
           ["@types/stackflow__config", null],\
           ["@types/stackflow__core", null],\
           ["esbuild", "npm:0.23.0"],\
+          ["esbuild-plugin-file-path-extensions", "npm:2.1.2"],\
           ["history", "npm:5.3.0"],\
           ["react", "npm:18.3.1"],\
           ["react-fast-compare", "npm:3.2.2"],\
@@ -3575,6 +3576,7 @@ const RAW_RUNTIME_STATE =
           ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
           ["@types/react", "npm:18.3.3"],\
           ["esbuild", "npm:0.23.0"],\
+          ["esbuild-plugin-file-path-extensions", "npm:2.1.2"],\
           ["history", "npm:5.3.0"],\
           ["react", "npm:18.3.1"],\
           ["react-fast-compare", "npm:3.2.2"],\
@@ -6216,6 +6218,15 @@ const RAW_RUNTIME_STATE =
           ["@esbuild/win32-arm64", "npm:0.23.0"],\
           ["@esbuild/win32-ia32", "npm:0.23.0"],\
           ["@esbuild/win32-x64", "npm:0.23.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["esbuild-plugin-file-path-extensions", [\
+      ["npm:2.1.2", {\
+        "packageLocation": "./.yarn/cache/esbuild-plugin-file-path-extensions-npm-2.1.2-775aff448b-01e00d5bb3.zip/node_modules/esbuild-plugin-file-path-extensions/",\
+        "packageDependencies": [\
+          ["esbuild-plugin-file-path-extensions", "npm:2.1.2"]\
         ],\
         "linkType": "HARD"\
       }]\

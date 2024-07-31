@@ -7,11 +7,27 @@ Promise.all([
   context({
     ...config({
       entryPoints: ["./src/**/*"],
+      outdir: "dist/cjs",
     }),
     bundle: false,
-    format: "esm",
     sourcemap: false,
     external: undefined,
+    format: "cjs",
+  }).then((ctx) =>
+    watch ? ctx.watch() : ctx.rebuild().then(() => ctx.dispose()),
+  ),
+  context({
+    ...config({
+      entryPoints: ["./src/**/*"],
+      outdir: "dist/esm",
+    }),
+    bundle: false,
+    sourcemap: false,
+    external: undefined,
+    format: "esm",
+    outExtension: {
+      ".js": ".mjs",
+    },
   }).then((ctx) =>
     watch ? ctx.watch() : ctx.rebuild().then(() => ctx.dispose()),
   ),

@@ -1,9 +1,6 @@
-import type {
-  InferActivityParams,
-  RegisteredActivityParamTypes,
-} from "@stackflow/config";
 import type { CoreStore } from "@stackflow/core";
 import { makeActivityId } from "../__internal__/activity";
+import type { Actions } from "./Actions";
 
 function parseActionOptions(options?: { animate?: boolean }) {
   if (!options) {
@@ -18,31 +15,6 @@ function parseActionOptions(options?: { animate?: boolean }) {
 
   return { skipActiveState: !options.animate };
 }
-
-export type Actions = {
-  push<K extends Extract<keyof RegisteredActivityParamTypes, string>>(
-    activityName: K,
-    activityParams: InferActivityParams<K>,
-    options?: {
-      animate?: boolean;
-    },
-  ): {
-    activityId: string;
-  };
-  replace<K extends Extract<keyof RegisteredActivityParamTypes, string>>(
-    activityName: K,
-    activityParams: InferActivityParams<K>,
-    options?: {
-      animate?: boolean;
-      activityId?: string;
-    },
-  ): {
-    activityId: string;
-  };
-  pop(): void;
-  pop(options: { animate?: boolean }): void;
-  pop(count: number, options?: { animate?: boolean }): void;
-};
 
 export function makeActions(
   getCoreActions: () => CoreStore["actions"] | undefined,

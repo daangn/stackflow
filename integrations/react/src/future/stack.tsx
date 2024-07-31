@@ -16,10 +16,12 @@ import { CoreProvider } from "../__internal__/core";
 import { PluginsProvider } from "../__internal__/plugins";
 import { isBrowser, makeRef } from "../__internal__/utils";
 import type { ActivityComponentType, StackflowReactPlugin } from "../stable";
+import type { Actions } from "./Actions";
 import type { StackComponentType } from "./StackComponentType";
+import type { StepActions } from "./StepActions";
 import { loaderPlugin } from "./loader";
-import { type Actions, makeActions } from "./makeActions";
-import { type StepActions, makeStepActions } from "./makeStepActions";
+import { makeActions } from "./makeActions";
+import { makeStepActions } from "./makeStepActions";
 
 export type StackflowPluginsEntry =
   | StackflowReactPlugin<never>
