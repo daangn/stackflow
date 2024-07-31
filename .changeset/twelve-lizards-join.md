@@ -4,4 +4,4 @@
 "@stackflow/config": minor
 ---
 
-Stackflow Config and Loader API (2.0 Candidate API with `/future/` namespace)
+Stackflow Config and Loader API (2.0 Candidate API with `/future` namespace)
