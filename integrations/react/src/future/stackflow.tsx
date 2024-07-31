@@ -27,7 +27,7 @@ export type StackflowPluginsEntry =
   | StackflowReactPlugin<never>
   | StackflowPluginsEntry[];
 
-export type StackInput<
+export type StackflowInput<
   T extends ActivityDefinition<string>,
   R extends {
     [activityName in T["name"]]: ActivityComponentType<any>;
@@ -38,18 +38,18 @@ export type StackInput<
   plugins?: Array<StackflowPluginsEntry>;
 };
 
-export type StackOutput = {
+export type StackflowOutput = {
   Stack: StackComponentType;
   actions: Actions;
   stepActions: StepActions<ActivityBaseParams>;
 };
 
-export function stack<
+export function stackflow<
   T extends ActivityDefinition<string>,
   R extends {
     [activityName in T["name"]]: ActivityComponentType<any>;
   },
->(input: StackInput<T, R>): StackOutput {
+>(input: StackflowInput<T, R>): StackflowOutput {
   const plugins = [
     ...(input.plugins ?? [])
       .flat(Number.POSITIVE_INFINITY as 0)
