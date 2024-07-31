@@ -25,9 +25,6 @@ Promise.all([
     sourcemap: false,
     external: undefined,
     format: "esm",
-    outExtension: {
-      ".js": ".mjs",
-    },
   }).then((ctx) =>
     watch ? ctx.watch() : ctx.rebuild().then(() => ctx.dispose()),
   ),
