@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/react",
-  "version": "1.2.0-canary.4",
+  "version": "1.2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/daangn/stackflow.git",
@@ -46,7 +46,7 @@
     "url-pattern": "^1.0.3"
   },
   "devDependencies": {
-    "@stackflow/config": "^1.0.1-canary.0",
+    "@stackflow/config": "^1.1.0",
     "@stackflow/core": "^1.0.13",
     "@stackflow/esbuild-config": "^1.0.3",
     "@types/react": "^18.3.3",

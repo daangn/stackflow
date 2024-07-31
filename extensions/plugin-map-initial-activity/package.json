@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/plugin-map-initial-activity",
-  "version": "1.0.9-canary.0",
+  "version": "1.0.9",
   "repository": {
     "type": "git",
     "url": "https://github.com/daangn/stackflow.git",
@@ -33,7 +33,7 @@
   "devDependencies": {
     "@stackflow/core": "^1.0.13",
     "@stackflow/esbuild-config": "^1.0.3",
-    "@stackflow/react": "^1.2.0-canary.0",
+    "@stackflow/react": "^1.2.0",
     "esbuild": "^0.23.0",
     "rimraf": "^3.0.2",
     "typescript": "^5.5.3"

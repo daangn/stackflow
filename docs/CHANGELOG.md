@@ -1,5 +1,22 @@
 # @stackflow/docs
 
+## 1.2.25
+
+### Patch Changes
+
+- Updated dependencies [7df613a]
+- Updated dependencies [7df613a]
+- Updated dependencies [7df613a]
+- Updated dependencies [7df613a]
+- Updated dependencies [7df613a]
+- Updated dependencies [e9bb029]
+- Updated dependencies [7df613a]
+  - @stackflow/react@1.2.0
+  - @stackflow/plugin-history-sync@1.6.0
+  - @stackflow/demo@1.3.0
+  - @stackflow/plugin-basic-ui@1.8.3
+  - @stackflow/plugin-renderer-basic@1.1.11
+
 ## 1.2.25-canary.0
 
 ### Patch Changes
