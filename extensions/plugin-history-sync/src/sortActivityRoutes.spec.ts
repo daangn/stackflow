@@ -35,9 +35,9 @@ test("sortActivityRoutes - *이 들어간 경우 해당 라우트를 맨 뒤로 
   ]);
 
   expect(routes).toStrictEqual([
+    { activityName: "C", path: "/:hello/:world/:foo/:bar" },
     { activityName: "A", path: "/detailed/*" },
     { activityName: "B", path: "/:hello/:world" },
-    { activityName: "C", path: "/:hello/:world/:foo/:bar" },
     { activityName: "A", path: "*" },
   ]);
 });
