@@ -1,0 +1,88 @@
+diff --git a/dist/vanilla-extract-vite-plugin.cjs.d.ts b/dist/vanilla-extract-vite-plugin.cjs.d.ts
+index 894123b02572365e9179a39fad2f896de87e383d..c18d10bc97270a768999a91d3b17b27f4eda14fa 100644
+--- a/dist/vanilla-extract-vite-plugin.cjs.d.ts
++++ b/dist/vanilla-extract-vite-plugin.cjs.d.ts
+@@ -1,9 +1,10 @@
+-import { Plugin } from 'vite';
++import { UserConfig, Plugin } from 'vite';
+ import { IdentifierOption } from '@vanilla-extract/integration';
+ 
+ interface Options {
+     identifiers?: IdentifierOption;
+     unstable_mode?: 'transform' | 'emitCss';
++    viteConfigOverrides?: Partial<UserConfig>;
+ }
+ declare function vanillaExtractPlugin({ identifiers, unstable_mode: mode, }?: Options): Plugin;
+ 
+diff --git a/dist/vanilla-extract-vite-plugin.cjs.dev.js b/dist/vanilla-extract-vite-plugin.cjs.dev.js
+index de4b386d46daa7b6a8f8d3760ce84d0817ba2be9..718e09874b971002ed03f4640a18a230896716e4 100644
+--- a/dist/vanilla-extract-vite-plugin.cjs.dev.js
++++ b/dist/vanilla-extract-vite-plugin.cjs.dev.js
+@@ -27,7 +27,8 @@ plugin.name !== 'vanilla-extract' &&
+ !plugin.name.startsWith('remix');
+ function vanillaExtractPlugin({
+   identifiers,
+-  unstable_mode: mode = 'emitCss'
++  unstable_mode: mode = 'emitCss',
++  viteConfigOverrides,
+ } = {}) {
+   let config;
+   let configEnv;
+@@ -116,7 +117,8 @@ function vanillaExtractPlugin({
+         }
+         const viteConfig = {
+           ...configForViteCompiler,
+-          plugins: (_configForViteCompile = configForViteCompiler) === null || _configForViteCompile === void 0 || (_configForViteCompile = _configForViteCompile.plugins) === null || _configForViteCompile === void 0 ? void 0 : _configForViteCompile.flat().filter(removeIncompatiblePlugins)
++          plugins: (_configForViteCompile = configForViteCompiler) === null || _configForViteCompile === void 0 || (_configForViteCompile = _configForViteCompile.plugins) === null || _configForViteCompile === void 0 ? void 0 : _configForViteCompile.flat().filter(removeIncompatiblePlugins),
++          ...viteConfigOverrides
+         };
+         compiler = integration.createCompiler({
+           root: config.root,
+diff --git a/dist/vanilla-extract-vite-plugin.cjs.prod.js b/dist/vanilla-extract-vite-plugin.cjs.prod.js
+index de4b386d46daa7b6a8f8d3760ce84d0817ba2be9..718e09874b971002ed03f4640a18a230896716e4 100644
+--- a/dist/vanilla-extract-vite-plugin.cjs.prod.js
++++ b/dist/vanilla-extract-vite-plugin.cjs.prod.js
+@@ -27,7 +27,8 @@ plugin.name !== 'vanilla-extract' &&
+ !plugin.name.startsWith('remix');
+ function vanillaExtractPlugin({
+   identifiers,
+-  unstable_mode: mode = 'emitCss'
++  unstable_mode: mode = 'emitCss',
++  viteConfigOverrides,
+ } = {}) {
+   let config;
+   let configEnv;
+@@ -116,7 +117,8 @@ function vanillaExtractPlugin({
+         }
+         const viteConfig = {
+           ...configForViteCompiler,
+-          plugins: (_configForViteCompile = configForViteCompiler) === null || _configForViteCompile === void 0 || (_configForViteCompile = _configForViteCompile.plugins) === null || _configForViteCompile === void 0 ? void 0 : _configForViteCompile.flat().filter(removeIncompatiblePlugins)
++          plugins: (_configForViteCompile = configForViteCompiler) === null || _configForViteCompile === void 0 || (_configForViteCompile = _configForViteCompile.plugins) === null || _configForViteCompile === void 0 ? void 0 : _configForViteCompile.flat().filter(removeIncompatiblePlugins),
++          ...viteConfigOverrides
+         };
+         compiler = integration.createCompiler({
+           root: config.root,
+diff --git a/dist/vanilla-extract-vite-plugin.esm.js b/dist/vanilla-extract-vite-plugin.esm.js
+index c810206ef529e2c071add16ac4df50cffdf68485..14f314f8b19533b90a94afad47f88ffc4ca36647 100644
+--- a/dist/vanilla-extract-vite-plugin.esm.js
++++ b/dist/vanilla-extract-vite-plugin.esm.js
+@@ -19,7 +19,8 @@ plugin.name !== 'vanilla-extract' &&
+ !plugin.name.startsWith('remix');
+ function vanillaExtractPlugin({
+   identifiers,
+-  unstable_mode: mode = 'emitCss'
++  unstable_mode: mode = 'emitCss',
++  viteConfigOverrides,
+ } = {}) {
+   let config;
+   let configEnv;
+@@ -108,7 +109,8 @@ function vanillaExtractPlugin({
+         }
+         const viteConfig = {
+           ...configForViteCompiler,
+-          plugins: (_configForViteCompile = configForViteCompiler) === null || _configForViteCompile === void 0 || (_configForViteCompile = _configForViteCompile.plugins) === null || _configForViteCompile === void 0 ? void 0 : _configForViteCompile.flat().filter(removeIncompatiblePlugins)
++          plugins: (_configForViteCompile = configForViteCompiler) === null || _configForViteCompile === void 0 || (_configForViteCompile = _configForViteCompile.plugins) === null || _configForViteCompile === void 0 ? void 0 : _configForViteCompile.flat().filter(removeIncompatiblePlugins),
++          ...viteConfigOverrides
+         };
+         compiler = createCompiler({
+           root: config.root,

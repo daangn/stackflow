@@ -33,14 +33,12 @@
   "devDependencies": {
     "@stackflow/core": "^1.0.13",
     "@stackflow/esbuild-config": "^1.0.3",
-    "@stackflow/react": "^1.1.11",
     "esbuild": "^0.23.0",
     "rimraf": "^3.0.2",
     "typescript": "^5.5.3"
   },
   "peerDependencies": {
-    "@stackflow/core": "^1",
-    "@stackflow/react": "^1"
+    "@stackflow/core": "^1"
   },
   "publishConfig": {
     "access": "public"

@@ -56,5 +56,17 @@
       ".ultra.cache.json",
       "package.json"
     ]
-  }
+  },
+  "overrides": [
+    {
+      "include": ["**/solid/**"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "useJsxKeyInIterable": "off"
+          }
+        }
+      }
+    }
+  ]
 }

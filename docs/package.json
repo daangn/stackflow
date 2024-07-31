@@ -4,6 +4,12 @@
   "private": true,
   "description": "Mobile-first stack navigator framework with Composable Plugin System",
   "license": "MIT",
+  "imports": {
+    "#solid-demo-renderer": {
+      "browser": "./components/SolidDemoRenderer.tsx",
+      "default": "./components/SolidDemoRenderer.server.tsx"
+    }
+  },
   "scripts": {
     "build": "yarn generate:plugins-docs && next build",
     "dev": "yarn generate:plugins-docs && next -p 6006",
@@ -13,6 +19,7 @@
     "@mdx-js/react": "^3.0.1",
     "@stackflow/core": "^1.0.13",
     "@stackflow/demo": "^1.2.23",
+    "@stackflow/demo-solid": "^1.2.23",
     "@stackflow/plugin-basic-ui": "^1.8.2",
     "@stackflow/plugin-history-sync": "^1.5.4",
     "@stackflow/plugin-renderer-basic": "^1.1.10",
