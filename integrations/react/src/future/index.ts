@@ -2,6 +2,7 @@ export * from "../__internal__/activity/useActivity";
 export * from "../__internal__/stack/useStack";
 export * from "../__internal__/StackflowReactPlugin";
 export * from "./ActivityComponentType";
+export * from "./StackComponentType";
 export * from "./stack";
 export * from "./makeActions";
 export * from "./makeStepActions";
