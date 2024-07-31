@@ -1,5 +1,7 @@
 # @stackflow/plugin-map-initial-activity
 
+## 1.0.9
+
 ## 1.0.9-canary.0
 
 ### Patch Changes

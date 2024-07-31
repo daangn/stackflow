@@ -1,5 +1,7 @@
 # @stackflow/plugin-basic-ui
 
+## 1.8.3
+
 ## 1.8.3-canary.0
 
 ### Patch Changes

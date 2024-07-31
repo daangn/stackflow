@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/plugin-google-analytics-4",
-  "version": "1.1.13-canary.0",
+  "version": "1.1.13",
   "repository": {
     "type": "git",
     "url": "https://github.com/daangn/stackflow.git",
@@ -37,7 +37,7 @@
   "devDependencies": {
     "@stackflow/core": "^1.0.13",
     "@stackflow/esbuild-config": "^1.0.3",
-    "@stackflow/react": "^1.2.0-canary.0",
+    "@stackflow/react": "^1.2.0",
     "@types/react": "^18.3.3",
     "esbuild": "^0.23.0",
     "react": "^18.3.1",
