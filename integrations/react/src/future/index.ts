@@ -1,7 +1,7 @@
 /**
- * Stack
+ * Main
  */
-export * from "./stack";
+export * from "./stackflow";
 
 /**
  * Types
