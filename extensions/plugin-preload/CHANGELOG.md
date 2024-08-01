@@ -1,5 +1,11 @@
 # @stackflow/plugin-preload
 
+## 1.4.0
+
+### Minor Changes
+
+- 658510f: refactor(plugin-preload): moved a dependency from `dependencies` to `peerDependencies`
+
 ## 1.3.3
 
 ### Patch Changes
