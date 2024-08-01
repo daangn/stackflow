@@ -13,6 +13,7 @@ export const vars = createThemeContract({
     appBar: null,
   },
   appBar: {
+    topMargin: null,
     center: {
       mainWidth: null,
     },
@@ -120,14 +121,23 @@ export const paper = recipe({
         f.borderBox,
         {
           transition: `transform ${vars.transitionDuration}, opacity ${vars.transitionDuration}, margin-top ${globalVars.appBar.heightTransitionDuration}`,
-          marginTop: globalVars.appBar.height,
-          height: `calc(100% - ${globalVars.appBar.height})`,
+          marginTop: vars.appBar.topMargin,
+          height: `calc(100% - ${vars.appBar.topMargin})`,
+          vars: {
+            [vars.appBar.topMargin]: globalVars.appBar.height,
+          },
           "@supports": {
             "(margin-top: constant(safe-area-inset-top))": {
-              marginTop: `calc(${globalVars.appBar.height} + max(${globalVars.appBar.minSafeAreaInsetTop}, constant(safe-area-inset-top)))`,
+              vars: {
+                [vars.appBar
+                  .topMargin]: `calc(${globalVars.appBar.height} + max(${globalVars.appBar.minSafeAreaInsetTop}, constant(safe-area-inset-top)))`,
+              },
             },
             "(margin-top: env(safe-area-inset-top))": {
-              marginTop: `calc(${globalVars.appBar.height} + max(${globalVars.appBar.minSafeAreaInsetTop}, env(safe-area-inset-top)))`,
+              vars: {
+                [vars.appBar
+                  .topMargin]: `calc(${globalVars.appBar.height} + max(${globalVars.appBar.minSafeAreaInsetTop}, env(safe-area-inset-top)))`,
+              },
             },
           },
         },
