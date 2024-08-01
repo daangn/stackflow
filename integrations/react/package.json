@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/react",
-  "version": "1.1.11",
+  "version": "1.2.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/daangn/stackflow.git",
@@ -9,14 +9,24 @@
   "license": "MIT",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "require": "./dist/index.js",
-      "import": "./dist/index.mjs"
+      "types": "./dist/esm/index.d.ts",
+      "require": "./dist/cjs/index.js",
+      "import": "./dist/esm/index.js"
+    },
+    "./stable": {
+      "types": "./dist/esm/stable/index.d.ts",
+      "require": "./dist/cjs/stable/index.js",
+      "import": "./dist/esm/stable/index.js"
+    },
+    "./future": {
+      "types": "./dist/esm/future/index.d.ts",
+      "require": "./dist/cjs/future/index.js",
+      "import": "./dist/esm/future/index.js"
     }
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/esm/index.d.ts",
   "files": [
     "dist",
     "src",
@@ -24,25 +34,30 @@
   ],
   "scripts": {
     "build": "yarn build:js && yarn build:dts",
-    "build:dts": "tsc --emitDeclarationOnly",
+    "build:dts": "tsc --emitDeclarationOnly --outDir dist/esm && tsc --emitDeclarationOnly --outDir dist/cjs",
     "build:js": "node ./esbuild.config.js",
     "clean": "rimraf dist",
     "dev": "yarn build:js --watch && yarn build:dts --watch",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "react-fast-compare": "^3.2.2"
+    "history": "^5.3.0",
+    "react-fast-compare": "^3.2.2",
+    "url-pattern": "^1.0.3"
   },
   "devDependencies": {
+    "@stackflow/config": "^1.1.0",
     "@stackflow/core": "^1.0.13",
     "@stackflow/esbuild-config": "^1.0.3",
     "@types/react": "^18.3.3",
     "esbuild": "^0.23.0",
+    "esbuild-plugin-file-path-extensions": "^2.1.2",
     "react": "^18.3.1",
     "rimraf": "^3.0.2",
     "typescript": "^5.5.3"
   },
   "peerDependencies": {
+    "@stackflow/config": "^1.0.1-canary.0",
     "@stackflow/core": "^1",
     "@types/react": ">=16.8.0",
     "react": ">=16.8.0"

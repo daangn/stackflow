@@ -8,13 +8,14 @@ import type {
 import { makeCoreStore, makeEvent } from "@stackflow/core";
 import { memo, useMemo } from "react";
 
+import type { ActivityComponentType } from "../__internal__/ActivityComponentType";
+import MainRenderer from "../__internal__/MainRenderer";
+import type { StackflowReactPlugin } from "../__internal__/StackflowReactPlugin";
+import { makeActivityId, makeStepId } from "../__internal__/activity";
+import { CoreProvider } from "../__internal__/core";
+import { PluginsProvider } from "../__internal__/plugins";
+import { isBrowser, makeRef } from "../__internal__/utils";
 import type { BaseActivities } from "./BaseActivities";
-import MainRenderer from "./MainRenderer";
-import type { StackflowReactPlugin } from "./StackflowReactPlugin";
-import type { ActivityComponentType } from "./activity";
-import { makeActivityId, makeStepId } from "./activity";
-import { CoreProvider } from "./core";
-import { PluginsProvider } from "./plugins";
 import type { UseActionsOutputType } from "./useActions";
 import { useActions } from "./useActions";
 import type {
@@ -22,7 +23,6 @@ import type {
   UseStepActionsOutputType,
 } from "./useStepActions";
 import { useStepActions } from "./useStepActions";
-import { isBrowser, makeRef } from "./utils";
 
 function parseActionOptions(options?: { animate?: boolean }) {
   if (!options) {

@@ -3,6 +3,7 @@ import type { StackflowReactPlugin } from "@stackflow/react";
 import type { History, Listener } from "history";
 import { createBrowserHistory, createMemoryHistory } from "history";
 
+import type { ActivityDefinition, Config } from "@stackflow/config";
 import { HistoryQueueProvider } from "./HistoryQueueContext";
 import type { RouteLike } from "./RouteLike";
 import { RoutesProvider } from "./RoutesContext";
@@ -22,10 +23,22 @@ import { sortActivityRoutes } from "./sortActivityRoutes";
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
 
-type HistorySyncPluginOptions<T, K extends Extract<keyof T, string>> = {
-  routes: {
-    [key in keyof T]: RouteLike<T[key]>;
-  };
+declare module "@stackflow/config" {
+  interface ActivityDefinition<ActivityName extends string> {
+    path: string;
+  }
+}
+
+type HistorySyncPluginOptions<T, K extends Extract<keyof T, string>> = (
+  | {
+      routes: {
+        [key in keyof T]: RouteLike<T[key]>;
+      };
+    }
+  | {
+      config: Config<ActivityDefinition<string>>;
+    }
+) & {
   fallbackActivity: (args: { initialContext: any }) => K;
   useHash?: boolean;
   history?: History;
@@ -45,9 +58,18 @@ export function historySyncPlugin<
 
   const { location } = history;
 
-  const activityRoutes = sortActivityRoutes(
-    normalizeActivityRouteMap(options.routes),
-  );
+  const routes =
+    "routes" in options
+      ? options.routes
+      : options.config.activities.reduce(
+          (acc, a) => ({
+            ...acc,
+            [a.name]: a.path,
+          }),
+          {},
+        );
+
+  const activityRoutes = sortActivityRoutes(normalizeActivityRouteMap(routes));
 
   return () => {
     let pushFlag = 0;

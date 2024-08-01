@@ -1,10 +1,10 @@
 import { useMemo } from "react";
 
+import type { ActivityComponentType } from "../__internal__/ActivityComponentType";
+import { makeStepId } from "../__internal__/activity";
+import { useCoreActions } from "../__internal__/core";
+import { useTransition } from "../__internal__/shims";
 import type { BaseActivities } from "./BaseActivities";
-import type { ActivityComponentType } from "./activity";
-import { makeStepId } from "./activity";
-import { useCoreActions } from "./core";
-import { useTransition } from "./shims";
 
 export type UseStepActionsOutputType<P> = {
   pending: boolean;

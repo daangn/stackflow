@@ -2272,13 +2272,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@stackflow/compat-await-push@npm:^1.1.10, @stackflow/compat-await-push@workspace:extensions/compat-await-push":
+"@stackflow/compat-await-push@npm:^1.1.11, @stackflow/compat-await-push@workspace:extensions/compat-await-push":
   version: 0.0.0-use.local
   resolution: "@stackflow/compat-await-push@workspace:extensions/compat-await-push"
   dependencies:
     "@stackflow/core": "npm:^1.0.13"
     "@stackflow/esbuild-config": "npm:^1.0.3"
-    "@stackflow/react": "npm:^1.1.11"
+    "@stackflow/react": "npm:^1.2.0"
     "@types/react": "npm:^18.3.3"
     esbuild: "npm:^0.23.0"
     react: "npm:^18.3.1"
@@ -2286,9 +2286,21 @@ __metadata:
     typescript: "npm:^5.5.3"
   peerDependencies:
     "@stackflow/core": ^1
-    "@stackflow/react": ^1
+    "@stackflow/react": ^1.2.0-canary.0
     "@types/react": ">=16.8.0"
     react: ">=16.8.0"
+  languageName: unknown
+  linkType: soft
+
+"@stackflow/config@npm:^1.1.0, @stackflow/config@workspace:config":
+  version: 0.0.0-use.local
+  resolution: "@stackflow/config@workspace:config"
+  dependencies:
+    "@stackflow/esbuild-config": "npm:^1.0.3"
+    esbuild: "npm:^0.23.0"
+    rimraf: "npm:^3.0.2"
+    typescript: "npm:^5.5.3"
+    ultra-runner: "npm:^3.10.5"
   languageName: unknown
   linkType: soft
 
@@ -2310,24 +2322,25 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/demo@npm:^1.2.23, @stackflow/demo@workspace:demo":
+"@stackflow/demo@npm:^1.3.0, @stackflow/demo@workspace:demo":
   version: 0.0.0-use.local
   resolution: "@stackflow/demo@workspace:demo"
   dependencies:
     "@seed-design/design-token": "npm:^1.0.3"
     "@seed-design/stylesheet": "npm:^1.0.4"
-    "@stackflow/compat-await-push": "npm:^1.1.10"
+    "@stackflow/compat-await-push": "npm:^1.1.11"
+    "@stackflow/config": "npm:^1.1.0"
     "@stackflow/core": "npm:^1.0.13"
     "@stackflow/esbuild-config": "npm:^1.0.3"
-    "@stackflow/link": "npm:^1.4.2"
-    "@stackflow/plugin-basic-ui": "npm:^1.8.2"
+    "@stackflow/link": "npm:^1.4.3"
+    "@stackflow/plugin-basic-ui": "npm:^1.8.3"
     "@stackflow/plugin-devtools": "npm:^0.1.10"
-    "@stackflow/plugin-history-sync": "npm:^1.5.4"
-    "@stackflow/plugin-map-initial-activity": "npm:^1.0.8"
-    "@stackflow/plugin-preload": "npm:^1.3.2"
-    "@stackflow/plugin-renderer-basic": "npm:^1.1.10"
+    "@stackflow/plugin-history-sync": "npm:^1.6.0"
+    "@stackflow/plugin-map-initial-activity": "npm:^1.0.9"
+    "@stackflow/plugin-preload": "npm:^1.3.3"
+    "@stackflow/plugin-renderer-basic": "npm:^1.1.11"
     "@stackflow/plugin-stack-depth-change": "npm:^1.1.4"
-    "@stackflow/react": "npm:^1.1.11"
+    "@stackflow/react": "npm:^1.2.0"
     "@types/react": "npm:^18.3.3"
     "@types/react-dom": "npm:^18.3.0"
     "@types/react-lazy-load-image-component": "npm:^1.6.4"
@@ -2345,6 +2358,7 @@ __metadata:
     rimraf: "npm:^3.0.2"
     typescript: "npm:^5.5.3"
     vite: "npm:^5.3.2"
+    zod: "npm:^3.23.8"
   languageName: unknown
   linkType: soft
 
@@ -2355,11 +2369,11 @@ __metadata:
     "@mdx-js/react": "npm:^3.0.1"
     "@seed-design/stylesheet": "npm:^1.0.4"
     "@stackflow/core": "npm:^1.0.13"
-    "@stackflow/demo": "npm:^1.2.23"
-    "@stackflow/plugin-basic-ui": "npm:^1.8.2"
-    "@stackflow/plugin-history-sync": "npm:^1.5.4"
-    "@stackflow/plugin-renderer-basic": "npm:^1.1.10"
-    "@stackflow/react": "npm:^1.1.11"
+    "@stackflow/demo": "npm:^1.3.0"
+    "@stackflow/plugin-basic-ui": "npm:^1.8.3"
+    "@stackflow/plugin-history-sync": "npm:^1.6.0"
+    "@stackflow/plugin-renderer-basic": "npm:^1.1.11"
+    "@stackflow/react": "npm:^1.2.0"
     "@types/react": "npm:^18.3.3"
     next: "npm:^14.2.4"
     nextra: "npm:^2.13.4"
@@ -2379,15 +2393,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/link@npm:^1.4.2, @stackflow/link@workspace:extensions/link":
+"@stackflow/link@npm:^1.4.3, @stackflow/link@workspace:extensions/link":
   version: 0.0.0-use.local
   resolution: "@stackflow/link@workspace:extensions/link"
   dependencies:
     "@stackflow/core": "npm:^1.0.13"
     "@stackflow/esbuild-config": "npm:^1.0.3"
-    "@stackflow/plugin-history-sync": "npm:^1.5.4"
-    "@stackflow/plugin-preload": "npm:^1.3.2"
-    "@stackflow/react": "npm:^1.1.11"
+    "@stackflow/plugin-history-sync": "npm:^1.6.0"
+    "@stackflow/plugin-preload": "npm:^1.3.3"
+    "@stackflow/react": "npm:^1.2.0"
     "@types/react": "npm:^18.3.3"
     esbuild: "npm:^0.23.0"
     react: "npm:^18.3.1"
@@ -2395,9 +2409,9 @@ __metadata:
     typescript: "npm:^5.5.3"
   peerDependencies:
     "@stackflow/core": ^1
-    "@stackflow/plugin-history-sync": ^1
-    "@stackflow/plugin-preload": ^1
-    "@stackflow/react": ^1
+    "@stackflow/plugin-history-sync": ^1.6.0-canary.0
+    "@stackflow/plugin-preload": ^1.3.3-canary.0
+    "@stackflow/react": ^1.2.0-canary.0
     "@types/react": ">=16.8.0"
     react: ">=16.8.0"
   languageName: unknown
@@ -2417,13 +2431,13 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/plugin-basic-ui@npm:^1.8.2, @stackflow/plugin-basic-ui@workspace:extensions/plugin-basic-ui":
+"@stackflow/plugin-basic-ui@npm:^1.8.3, @stackflow/plugin-basic-ui@workspace:extensions/plugin-basic-ui":
   version: 0.0.0-use.local
   resolution: "@stackflow/plugin-basic-ui@workspace:extensions/plugin-basic-ui"
   dependencies:
     "@stackflow/core": "npm:^1.0.13"
     "@stackflow/esbuild-config": "npm:^1.0.3"
-    "@stackflow/react": "npm:^1.1.11"
+    "@stackflow/react": "npm:^1.2.0"
     "@types/react": "npm:^18.3.3"
     "@vanilla-extract/css": "npm:^1.15.3"
     "@vanilla-extract/dynamic": "npm:^2.1.1"
@@ -2435,7 +2449,7 @@ __metadata:
     typescript: "npm:^5.5.3"
   peerDependencies:
     "@stackflow/core": ^1
-    "@stackflow/react": ^1
+    "@stackflow/react": ^1.2.0-canary.0
     "@types/react": ">=16.8.0"
     react: ">=16.8.0"
   languageName: unknown
@@ -2462,7 +2476,7 @@ __metadata:
   dependencies:
     "@stackflow/core": "npm:^1.0.13"
     "@stackflow/esbuild-config": "npm:^1.0.3"
-    "@stackflow/react": "npm:^1.1.11"
+    "@stackflow/react": "npm:^1.2.0"
     "@types/react": "npm:^18.3.3"
     esbuild: "npm:^0.23.0"
     react: "npm:^18.3.1"
@@ -2471,19 +2485,20 @@ __metadata:
     typescript: "npm:^5.5.3"
   peerDependencies:
     "@stackflow/core": ^1
-    "@stackflow/react": ^1
+    "@stackflow/react": ^1.2.0-canary.0
     "@types/react": ">=16.8.0"
     react: ">=16.8.0"
   languageName: unknown
   linkType: soft
 
-"@stackflow/plugin-history-sync@npm:^1.5.4, @stackflow/plugin-history-sync@workspace:extensions/plugin-history-sync":
+"@stackflow/plugin-history-sync@npm:^1.6.0, @stackflow/plugin-history-sync@workspace:extensions/plugin-history-sync":
   version: 0.0.0-use.local
   resolution: "@stackflow/plugin-history-sync@workspace:extensions/plugin-history-sync"
   dependencies:
+    "@stackflow/config": "npm:^1.1.0"
     "@stackflow/core": "npm:^1.0.13"
     "@stackflow/esbuild-config": "npm:^1.0.3"
-    "@stackflow/react": "npm:^1.1.11"
+    "@stackflow/react": "npm:^1.2.0"
     "@swc/core": "npm:^1.6.6"
     "@swc/jest": "npm:^0.2.36"
     "@types/jest": "npm:^29.5.12"
@@ -2497,37 +2512,38 @@ __metadata:
     typescript: "npm:^5.5.3"
     url-pattern: "npm:^1.0.3"
   peerDependencies:
+    "@stackflow/config": ^1.0.1-canary.0
     "@stackflow/core": ^1
-    "@stackflow/react": ^1
+    "@stackflow/react": ^1.2.0-canary.0
     "@types/react": ">=16.8.0"
     react: ">=16.8.0"
   languageName: unknown
   linkType: soft
 
-"@stackflow/plugin-map-initial-activity@npm:^1.0.8, @stackflow/plugin-map-initial-activity@workspace:extensions/plugin-map-initial-activity":
+"@stackflow/plugin-map-initial-activity@npm:^1.0.9, @stackflow/plugin-map-initial-activity@workspace:extensions/plugin-map-initial-activity":
   version: 0.0.0-use.local
   resolution: "@stackflow/plugin-map-initial-activity@workspace:extensions/plugin-map-initial-activity"
   dependencies:
     "@stackflow/core": "npm:^1.0.13"
     "@stackflow/esbuild-config": "npm:^1.0.3"
-    "@stackflow/react": "npm:^1.1.11"
+    "@stackflow/react": "npm:^1.2.0"
     esbuild: "npm:^0.23.0"
     rimraf: "npm:^3.0.2"
     typescript: "npm:^5.5.3"
   peerDependencies:
     "@stackflow/core": ^1
-    "@stackflow/react": ^1
+    "@stackflow/react": ^1.2.0-canary.0
   languageName: unknown
   linkType: soft
 
-"@stackflow/plugin-preload@npm:^1.3.2, @stackflow/plugin-preload@workspace:extensions/plugin-preload":
+"@stackflow/plugin-preload@npm:^1.3.3, @stackflow/plugin-preload@workspace:extensions/plugin-preload":
   version: 0.0.0-use.local
   resolution: "@stackflow/plugin-preload@workspace:extensions/plugin-preload"
   dependencies:
     "@stackflow/core": "npm:^1.0.13"
     "@stackflow/esbuild-config": "npm:^1.0.3"
-    "@stackflow/plugin-history-sync": "npm:^1.5.4"
-    "@stackflow/react": "npm:^1.1.11"
+    "@stackflow/plugin-history-sync": "npm:^1.6.0"
+    "@stackflow/react": "npm:^1.2.0"
     "@types/react": "npm:^18.3.3"
     esbuild: "npm:^0.23.0"
     react: "npm:^18.3.1"
@@ -2536,19 +2552,19 @@ __metadata:
   peerDependencies:
     "@stackflow/core": ^1
     "@stackflow/plugin-history-sync": ^1
-    "@stackflow/react": ^1
+    "@stackflow/react": ^1.2.0-canary.0
     "@types/react": ">=16.8.0"
     react: ">=16.8.0"
   languageName: unknown
   linkType: soft
 
-"@stackflow/plugin-renderer-basic@npm:^1.1.10, @stackflow/plugin-renderer-basic@workspace:extensions/plugin-renderer-basic":
+"@stackflow/plugin-renderer-basic@npm:^1.1.11, @stackflow/plugin-renderer-basic@workspace:extensions/plugin-renderer-basic":
   version: 0.0.0-use.local
   resolution: "@stackflow/plugin-renderer-basic@workspace:extensions/plugin-renderer-basic"
   dependencies:
     "@stackflow/core": "npm:^1.0.13"
     "@stackflow/esbuild-config": "npm:^1.0.3"
-    "@stackflow/react": "npm:^1.1.11"
+    "@stackflow/react": "npm:^1.2.0"
     "@types/react": "npm:^18.3.3"
     esbuild: "npm:^0.23.0"
     react: "npm:^18.3.1"
@@ -2556,7 +2572,7 @@ __metadata:
     typescript: "npm:^5.5.3"
   peerDependencies:
     "@stackflow/core": ^1
-    "@stackflow/react": ^1
+    "@stackflow/react": ^1.2.0-canary.0
     "@types/react": ">=16.8.0"
     react: ">=16.8.0"
   languageName: unknown
@@ -2568,7 +2584,7 @@ __metadata:
   dependencies:
     "@stackflow/core": "npm:^1.0.13"
     "@stackflow/esbuild-config": "npm:^1.0.3"
-    "@stackflow/react": "npm:^1.1.11"
+    "@stackflow/react": "npm:^1.2.0"
     "@types/react": "npm:^18.3.3"
     esbuild: "npm:^0.23.0"
     react: "npm:^18.3.1"
@@ -2576,7 +2592,7 @@ __metadata:
     typescript: "npm:^5.5.3"
   peerDependencies:
     "@stackflow/core": ^1
-    "@stackflow/react": ^1
+    "@stackflow/react": ^1.2.0-canary.0
     "@types/react": ">=16.8.0"
     react: ">=16.8.0"
   languageName: unknown
@@ -2597,19 +2613,24 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/react@npm:^1.1.11, @stackflow/react@workspace:integrations/react":
+"@stackflow/react@npm:^1.2.0, @stackflow/react@workspace:integrations/react":
   version: 0.0.0-use.local
   resolution: "@stackflow/react@workspace:integrations/react"
   dependencies:
+    "@stackflow/config": "npm:^1.1.0"
     "@stackflow/core": "npm:^1.0.13"
     "@stackflow/esbuild-config": "npm:^1.0.3"
     "@types/react": "npm:^18.3.3"
     esbuild: "npm:^0.23.0"
+    esbuild-plugin-file-path-extensions: "npm:^2.1.2"
+    history: "npm:^5.3.0"
     react: "npm:^18.3.1"
     react-fast-compare: "npm:^3.2.2"
     rimraf: "npm:^3.0.2"
     typescript: "npm:^5.5.3"
+    url-pattern: "npm:^1.0.3"
   peerDependencies:
+    "@stackflow/config": ^1.0.1-canary.0
     "@stackflow/core": ^1
     "@types/react": ">=16.8.0"
     react: ">=16.8.0"
@@ -4737,6 +4758,13 @@ __metadata:
   dependencies:
     is-arrayish: "npm:^0.2.1"
   checksum: 10/d547740aa29c34e753fb6fed2c5de81802438529c12b3673bd37b6bb1fe49b9b7abdc3c11e6062fe625d8a296b3cf769a80f878865e25e685f787763eede3ffb
+  languageName: node
+  linkType: hard
+
+"esbuild-plugin-file-path-extensions@npm:^2.1.2":
+  version: 2.1.2
+  resolution: "esbuild-plugin-file-path-extensions@npm:2.1.2"
+  checksum: 10/01e00d5bb35d719ebe9d1b2526278923e5790f7c3d78c9b0af05af17408be076c914135eef43a3e6021c07f715214d9c848d93c648f4d4cb3fa0605d83d2b55a
   languageName: node
   linkType: hard
 
@@ -10387,7 +10415,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:^3.22.3":
+"zod@npm:^3.22.3, zod@npm:^3.23.8":
   version: 3.23.8
   resolution: "zod@npm:3.23.8"
   checksum: 10/846fd73e1af0def79c19d510ea9e4a795544a67d5b34b7e1c4d0425bf6bfd1c719446d94cdfa1721c1987d891321d61f779e8236fde517dc0e524aa851a6eff1

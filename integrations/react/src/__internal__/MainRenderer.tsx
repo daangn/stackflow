@@ -1,14 +1,14 @@
 import { useEffect } from "react";
 
+import type { ActivityComponentType } from "./ActivityComponentType";
 import PluginRenderer from "./PluginRenderer";
-import type { ActivityComponentType } from "./activity";
 import { useCoreState } from "./core";
 import { usePlugins } from "./plugins";
 import type { WithRequired } from "./utils";
 
 interface MainRendererProps {
   activityComponentMap: {
-    [key: string]: ActivityComponentType;
+    [key: string]: any;
   };
   initialContext: any;
 }

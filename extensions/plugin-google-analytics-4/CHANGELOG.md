@@ -1,5 +1,14 @@
 # @stackflow/plugin-google-analytics-4
 
+## 1.1.13
+
+## 1.1.13-canary.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @stackflow/react@1.2.0-canary.0
+
 ## 1.1.12
 
 ### Patch Changes

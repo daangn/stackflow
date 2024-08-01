@@ -1,76 +1,27 @@
-import type { ActivityComponentType } from "@stackflow/react";
-import { useActivityParams } from "@stackflow/react";
+import {
+  type ActivityComponentType,
+  useActivityParams,
+} from "@stackflow/react/future";
+import { useLoaderData } from "@stackflow/react/future";
 import { LazyLoadImage } from "react-lazy-load-image-component";
-
 import ArticleCard from "../components/ArticleCard";
 import ArticleProfile from "../components/ArticleProfile";
 import Layout from "../components/Layout";
 import * as css from "./Article.css";
+import type { articleLoader } from "./Article.loader";
 
-const recommenderCard = [
-  {
-    articleId: "25140667",
-    price: 41,
-    title: "Ran",
-  },
-  {
-    articleId: "60547101",
-    price: 24,
-    title: "Rest",
-  },
-  {
-    articleId: "34751776",
-    price: 42,
-    title: "Those",
-  },
-  {
-    articleId: "04114554",
-    price: 12,
-    title: "Beauty",
-  },
-  {
-    articleId: "81339443",
-    price: 3,
-    title: "Mighty",
-  },
-  {
-    articleId: "44738871",
-    price: 1,
-    title: "Afternoon",
-  },
-  {
-    articleId: "57388513",
-    price: 31,
-    title: "Brown",
-  },
-  {
-    articleId: "60883443",
-    price: 49,
-    title: "Musical",
-  },
-  {
-    articleId: "00932094",
-    price: 26,
-    title: "Occasionally",
-  },
-  {
-    articleId: "10749683",
-    price: 35,
-    title: "Having",
-  },
-];
-
-export interface ArticleParams {
-  articleId: string;
-  title: string;
+declare module "@stackflow/config" {
+  interface Register {
+    Article: {
+      articleId: string;
+      title?: string;
+    };
+  }
 }
 
-const Article: ActivityComponentType<ArticleParams> = () => {
-  const { articleId, title } = useActivityParams<{
-    articleId: string;
-    title: string;
-  }>();
-  const imageUrl = `https://picsum.photos/800/800/?id=${articleId}`;
+const Article: ActivityComponentType<"Article"> = ({ params }) => {
+  const { title } = useActivityParams<"Article">();
+  const { imageUrl, recommenderCards } = useLoaderData<typeof articleLoader>();
 
   return (
     <Layout appBar={{}}>
@@ -99,7 +50,7 @@ const Article: ActivityComponentType<ArticleParams> = () => {
         <div className={css.section}>
           <div className={css.sectionTitle}>Other Items by Emila </div>
           <div className={css.recommenderGrid}>
-            {recommenderCard.map((card) => (
+            {recommenderCards.map((card) => (
               <ArticleCard key={card.articleId} {...card} />
             ))}
           </div>

@@ -2,7 +2,8 @@
   "compilerOptions": {
     "target": "ESNext",
     "jsx": "react-jsx",
-    "module": "commonjs",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "declaration": true,
     "declarationMap": true,
     "esModuleInterop": true,

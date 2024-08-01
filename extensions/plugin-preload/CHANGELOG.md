@@ -1,5 +1,22 @@
 # @stackflow/plugin-preload
 
+## 1.3.3
+
+### Patch Changes
+
+- Updated dependencies [7df613a]
+- Updated dependencies [e9bb029]
+- Updated dependencies [7df613a]
+  - @stackflow/plugin-history-sync@1.6.0
+
+## 1.3.3-canary.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @stackflow/plugin-history-sync@1.6.0-canary.0
+  - @stackflow/react@1.2.0-canary.0
+
 ## 1.3.2
 
 ### Patch Changes

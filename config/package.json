@@ -1,0 +1,49 @@
+{
+  "name": "@stackflow/config",
+  "version": "1.1.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/daangn/stackflow.git",
+    "directory": "config"
+  },
+  "license": "MIT",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "yarn build:js && yarn build:dts",
+    "build:dts": "tsc --emitDeclarationOnly",
+    "build:js": "node ./esbuild.config.js",
+    "clean": "rimraf dist",
+    "dev": "yarn build:js --watch && yarn build:dts --watch",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@stackflow/esbuild-config": "^1.0.3",
+    "esbuild": "^0.23.0",
+    "rimraf": "^3.0.2",
+    "typescript": "^5.5.3",
+    "ultra-runner": "^3.10.5"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "ultra": {
+    "concurrent": [
+      "dev",
+      "build"
+    ]
+  }
+}

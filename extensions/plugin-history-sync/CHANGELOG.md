@@ -1,5 +1,25 @@
 # @stackflow/plugin-history-sync
 
+## 1.6.0
+
+### Minor Changes
+
+- 7df613a: Future API
+- e9bb029: feat(plugin-history-sync): sort routes by computed score
+- 7df613a: Stackflow Config and Loader API (2.0 Candidate API with `/future` namespace)
+
+## 1.6.0-canary.0
+
+### Minor Changes
+
+- Future API
+
+### Patch Changes
+
+- Updated dependencies
+  - @stackflow/react@1.2.0-canary.0
+  - @stackflow/config@1.0.1-canary.0
+
 ## 1.5.4
 
 ### Patch Changes
