@@ -2551,6 +2551,7 @@ __metadata:
     typescript: "npm:^5.5.3"
   peerDependencies:
     "@stackflow/core": ^1
+    "@stackflow/plugin-history-sync": ^1
     "@stackflow/react": ^1.2.0-canary.0
     "@types/react": ">=16.8.0"
     react: ">=16.8.0"
