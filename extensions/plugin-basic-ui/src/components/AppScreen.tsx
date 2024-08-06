@@ -73,7 +73,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
       ? ANDROID_ONLY_activityEnterStyle
       : undefined;
 
-  const swipeBackPrevented =
+  const isSwipeBackPrevented =
     preventSwipeBack || modalPresentationStyle === "fullScreen";
 
   const hasAppBar = !!appBar;
@@ -111,7 +111,6 @@ const AppScreen: React.FC<AppScreenProps> = ({
 
   useStyleEffectHide({
     refs: [appScreenRef],
-    hasEffect: true,
   });
   useStyleEffectOffset({
     refs:
@@ -138,12 +137,13 @@ const AppScreen: React.FC<AppScreenProps> = ({
     hasEffect: modalPresentationStyle !== "fullScreen",
   });
   useStyleEffectSwipeBack({
-    enable: globalOptions.theme === "cupertino" && !swipeBackPrevented,
     dimRef,
     edgeRef,
     paperRef,
     offset: OFFSET_PX_CUPERTINO,
     transitionDuration: globalVars.transitionDuration,
+    preventSwipeBack:
+      isSwipeBackPrevented || globalOptions.theme !== "cupertino",
     getActivityTransitionState() {
       const $paper = paperRef.current;
       const $appScreen = $paper?.parentElement;
@@ -170,7 +170,6 @@ const AppScreen: React.FC<AppScreenProps> = ({
     onSwiped() {
       pop();
     },
-    hasEffect: true,
   });
 
   const onAppBarTopClick: React.MouseEventHandler = (e) => {
@@ -255,7 +254,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
         </div>
         {!activity?.isRoot &&
           globalOptions.theme === "cupertino" &&
-          !swipeBackPrevented && (
+          !isSwipeBackPrevented && (
             <div className={css.edge({ hasAppBar })} ref={edgeRef} />
           )}
       </div>
