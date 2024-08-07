@@ -3,11 +3,9 @@ import { useMemo } from "react";
 import type { ActivityComponentType } from "../__internal__/ActivityComponentType";
 import { makeStepId } from "../__internal__/activity";
 import { useCoreActions } from "../__internal__/core";
-import { useTransition } from "../__internal__/shims";
 import type { BaseActivities } from "./BaseActivities";
 
 export type UseStepActionsOutputType<P> = {
-  pending: boolean;
   stepPush: (params: P, options?: {}) => void;
   stepReplace: (params: P, options?: {}) => void;
   stepPop: (options?: {}) => void;
@@ -27,11 +25,9 @@ export type UseStepActions<T extends BaseActivities = {}> = <
 
 export const useStepActions: UseStepActions = () => {
   const coreActions = useCoreActions();
-  const [pending] = useTransition();
 
   return useMemo(
     () => ({
-      pending,
       stepPush(params) {
         const stepId = makeStepId();
 
@@ -52,11 +48,6 @@ export const useStepActions: UseStepActions = () => {
         coreActions?.stepPop({});
       },
     }),
-    [
-      coreActions?.stepPush,
-      coreActions?.stepReplace,
-      coreActions?.stepPop,
-      pending,
-    ],
+    [coreActions?.stepPush, coreActions?.stepReplace, coreActions?.stepPop],
   );
 };
