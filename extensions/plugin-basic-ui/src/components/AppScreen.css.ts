@@ -129,14 +129,14 @@ export const paper = recipe({
           "@supports": {
             "(margin-top: constant(safe-area-inset-top))": {
               vars: {
-                [vars.appBar
-                  .topMargin]: `calc(${globalVars.appBar.height} + max(${globalVars.appBar.minSafeAreaInsetTop}, constant(safe-area-inset-top)))`,
+                [vars.appBar.topMargin]:
+                  `calc(${globalVars.appBar.height} + max(${globalVars.appBar.minSafeAreaInsetTop}, constant(safe-area-inset-top)))`,
               },
             },
             "(margin-top: env(safe-area-inset-top))": {
               vars: {
-                [vars.appBar
-                  .topMargin]: `calc(${globalVars.appBar.height} + max(${globalVars.appBar.minSafeAreaInsetTop}, env(safe-area-inset-top)))`,
+                [vars.appBar.topMargin]:
+                  `calc(${globalVars.appBar.height} + max(${globalVars.appBar.minSafeAreaInsetTop}, env(safe-area-inset-top)))`,
               },
             },
           },

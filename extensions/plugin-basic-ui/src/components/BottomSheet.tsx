@@ -2,14 +2,14 @@ import { useActions } from "@stackflow/react";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
 import { useRef } from "react";
 
-import type { GlobalVars } from "../basicUIPlugin.css";
-import { globalVars } from "../basicUIPlugin.css";
 import {
   useLazy,
   useNullableActivity,
   useStyleEffect,
   useZIndexBase,
-} from "../hooks";
+} from "@stackflow/react-ui-core";
+import type { GlobalVars } from "../basicUIPlugin.css";
+import { globalVars } from "../basicUIPlugin.css";
 import { compactMap } from "../utils";
 import * as css from "./BottomSheet.css";
 

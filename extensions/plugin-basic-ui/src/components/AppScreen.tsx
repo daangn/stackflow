@@ -2,9 +2,6 @@ import { useActions } from "@stackflow/react";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
 import { createContext, useContext, useMemo, useRef } from "react";
 
-import { useGlobalOptions } from "../basicUIPlugin";
-import type { GlobalVars } from "../basicUIPlugin.css";
-import { globalVars } from "../basicUIPlugin.css";
 import {
   useLazy,
   useMounted,
@@ -13,11 +10,17 @@ import {
   useStyleEffectOffset,
   useStyleEffectSwipeBack,
   useZIndexBase,
-} from "../hooks";
+} from "@stackflow/react-ui-core";
+import { useGlobalOptions } from "../basicUIPlugin";
+import type { GlobalVars } from "../basicUIPlugin.css";
+import { globalVars } from "../basicUIPlugin.css";
 import type { PropOf } from "../utils";
 import { compactMap } from "../utils";
 import AppBar from "./AppBar";
 import * as css from "./AppScreen.css";
+
+export const OFFSET_PX_ANDROID = 32;
+export const OFFSET_PX_CUPERTINO = 80;
 
 export type AppScreenContext = {
   scroll: (args: { top: number }) => void;
@@ -70,7 +73,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
       ? ANDROID_ONLY_activityEnterStyle
       : undefined;
 
-  const swipeBackPrevented =
+  const isSwipeBackPrevented =
     preventSwipeBack || modalPresentationStyle === "fullScreen";
 
   const hasAppBar = !!appBar;
@@ -108,7 +111,6 @@ const AppScreen: React.FC<AppScreenProps> = ({
 
   useStyleEffectHide({
     refs: [appScreenRef],
-    hasEffect: true,
   });
   useStyleEffectOffset({
     refs:
@@ -116,20 +118,58 @@ const AppScreen: React.FC<AppScreenProps> = ({
       activityEnterStyle === "slideInLeft"
         ? [paperRef]
         : [paperRef, appBarRef],
-    theme: globalOptions.theme,
-    activityEnterStyle,
+    offsetStyles:
+      globalOptions.theme === "cupertino"
+        ? {
+            transform: `translate3d(-${OFFSET_PX_CUPERTINO / 16}rem, 0, 0)`,
+            opacity: "1",
+          }
+        : activityEnterStyle === "slideInLeft"
+          ? {
+              transform: "translate3d(-50%, 0, 0)",
+              opacity: "0",
+            }
+          : {
+              transform: `translate3d(0, -${OFFSET_PX_ANDROID / 16}rem, 0)`,
+              opacity: "1",
+            },
+    transitionDuration: globalVars.computedTransitionDuration,
     hasEffect: modalPresentationStyle !== "fullScreen",
   });
   useStyleEffectSwipeBack({
     dimRef,
     edgeRef,
     paperRef,
-    theme: globalOptions.theme,
-    prevented: swipeBackPrevented,
+    offset: OFFSET_PX_CUPERTINO,
+    transitionDuration: globalVars.transitionDuration,
+    preventSwipeBack:
+      isSwipeBackPrevented || globalOptions.theme !== "cupertino",
+    getActivityTransitionState() {
+      const $paper = paperRef.current;
+      const $appScreen = $paper?.parentElement;
+
+      if (!$appScreen) {
+        return null;
+      }
+
+      if ($appScreen.classList.contains(css.enterActive)) {
+        return "enter-active";
+      }
+      if ($appScreen.classList.contains(css.enterDone)) {
+        return "enter-done";
+      }
+      if ($appScreen.classList.contains(css.exitActive)) {
+        return "exit-active";
+      }
+      if ($appScreen.classList.contains(css.exitDone)) {
+        return "exit-done";
+      }
+
+      return null;
+    },
     onSwiped() {
       pop();
     },
-    hasEffect: true,
   });
 
   const onAppBarTopClick: React.MouseEventHandler = (e) => {
@@ -214,14 +254,12 @@ const AppScreen: React.FC<AppScreenProps> = ({
         </div>
         {!activity?.isRoot &&
           globalOptions.theme === "cupertino" &&
-          !swipeBackPrevented && (
+          !isSwipeBackPrevented && (
             <div className={css.edge({ hasAppBar })} ref={edgeRef} />
           )}
       </div>
     </Context.Provider>
   );
 };
-
-AppScreen.displayName = "AppScreen";
 
 export default AppScreen;
