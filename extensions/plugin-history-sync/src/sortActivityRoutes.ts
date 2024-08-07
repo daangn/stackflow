@@ -25,8 +25,8 @@ function computeScore(path: string): number {
         (paramRe.test(segment)
           ? dynamicSegmentValue
           : segment === ""
-          ? emptySegmentValue
-          : staticSegmentValue),
+            ? emptySegmentValue
+            : staticSegmentValue),
       initialScore,
     );
 }
