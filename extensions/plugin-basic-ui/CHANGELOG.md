@@ -1,5 +1,16 @@
 # @stackflow/plugin-basic-ui
 
+## 1.9.0
+
+### Minor Changes
+
+- e3dbaac: Extract core react hooks as a "@stackflow/react-ui-core" package
+
+### Patch Changes
+
+- Updated dependencies [e3dbaac]
+  - @stackflow/react-ui-core@1.1.0
+
 ## 1.8.4
 
 ### Patch Changes

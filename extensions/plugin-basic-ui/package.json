@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/plugin-basic-ui",
-  "version": "1.8.4",
+  "version": "1.9.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/daangn/stackflow.git",
@@ -32,7 +32,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@stackflow/react-ui-core": "^1.0.0",
+    "@stackflow/react-ui-core": "^1.1.0",
     "@vanilla-extract/css": "^1.15.3",
     "@vanilla-extract/dynamic": "^2.1.1",
     "@vanilla-extract/private": "^1.0.5",
@@ -41,7 +41,7 @@
   "devDependencies": {
     "@stackflow/core": "^1.0.13",
     "@stackflow/esbuild-config": "^1.0.3",
-    "@stackflow/react": "^1.2.0",
+    "@stackflow/react": "^1.2.2",
     "@types/react": "^18.3.3",
     "esbuild": "^0.23.0",
     "react": "^18.3.1",

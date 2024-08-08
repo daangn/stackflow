@@ -1,5 +1,11 @@
 # @stackflow/react
 
+## 1.2.2
+
+### Patch Changes
+
+- 5ac2798: [Future API] wrap loader return value with use() in useLoaderData()
+
 ## 1.2.1
 
 ### Patch Changes
