@@ -31,7 +31,7 @@ export function safeParseState(state: unknown): State | null {
     typeof _state._TAG === "string" &&
     _state._TAG === STATE_TAG
   ) {
-    return retrocycle(state) as State;
+    return retrocycle<State>(state);
   }
 
   return null;
