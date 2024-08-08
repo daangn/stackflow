@@ -2508,6 +2508,7 @@ __metadata:
     esbuild: "npm:^0.23.0"
     history: "npm:^5.3.0"
     jest: "npm:^29.7.0"
+    json-cycle: "npm:^1.5.0"
     react: "npm:^18.3.1"
     rimraf: "npm:^3.0.2"
     typescript: "npm:^5.5.3"
@@ -6704,6 +6705,13 @@ __metadata:
   bin:
     jsesc: bin/jsesc
   checksum: 10/d2096abdcdec56969764b40ffc91d4a23408aa2f351b4d1c13f736f25476643238c43fdbaf38a191c26b1b78fd856d965f5d4d0dde7b89459cd94025190cdf13
+  languageName: node
+  linkType: hard
+
+"json-cycle@npm:^1.5.0":
+  version: 1.5.0
+  resolution: "json-cycle@npm:1.5.0"
+  checksum: 10/4ce7594eb8f42e820c708ceaed12759168c4d29f91e0f8e213909331f7fd12b765a3b9c4a5e8f0e72bc25d5ed2a380211ff3ec95c3ba1cbb2cb5c68ea396ae9f
   languageName: node
   linkType: hard
 

@@ -1,5 +1,6 @@
 import type { Activity, ActivityStep } from "@stackflow/core";
 import type { History } from "history";
+import { decycle, retrocycle } from "json-cycle";
 
 const STATE_TAG = "@stackflow/plugin-history-sync";
 
@@ -12,24 +13,12 @@ interface SerializedState extends State {
   _TAG: typeof STATE_TAG;
 }
 
-function clone<T>(input: T): T {
-  return JSON.parse(JSON.stringify(input));
-}
-
-function serializeStep(step: ActivityStep): ActivityStep {
-  return clone(step);
-}
-
-function serializeActivity(activity: Activity): Activity {
-  return clone(activity);
-}
-
 function serializeState(state: State): SerializedState {
-  return {
+  return decycle({
     _TAG: STATE_TAG,
-    activity: serializeActivity(state.activity),
-    step: state.step ? serializeStep(state.step) : undefined,
-  };
+    activity: state.activity,
+    step: state.step,
+  });
 }
 
 export function safeParseState(state: unknown): State | null {
@@ -42,7 +31,7 @@ export function safeParseState(state: unknown): State | null {
     typeof _state._TAG === "string" &&
     _state._TAG === STATE_TAG
   ) {
-    return state as State;
+    return retrocycle<State>(state);
   }
 
   return null;
