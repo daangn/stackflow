@@ -77,11 +77,10 @@
     "src": "./src",
     "schema": "./src/fixtures/swapi/schema.graphql",
     "language": "typescript",
-    "artifactDirectory": "./src/__relay__",
+    "artifactDirectory": "./src/fixtures/swapi/__generated__",
     "exclude": [
       "**/node_modules/**",
-      "**/__generated__/**",
-      "**/__relay__/**"
+      "**/__generated__/**"
     ],
     "eagerEsModules": true
   },

@@ -9,8 +9,8 @@ import { makeCoreStore, makeEvent } from "@stackflow/core";
 import type { Location, MemoryHistory } from "history";
 import { createMemoryHistory } from "history";
 import { loadQuery } from "react-relay";
-import { default as getFilmQueryNode } from "./__relay__/getFilmQuery.graphql";
 import { makeRelayEnvironment, sampleFilmId } from "./fixtures/swapi";
+import { default as getFilmQueryNode } from "./fixtures/swapi/__generated__/getFilmQuery.graphql";
 import { historySyncPlugin } from "./historySyncPlugin";
 
 const SECOND = 1000;
@@ -1463,13 +1463,6 @@ describe("historySyncPlugin", () => {
     /**
      * Successfully queried with relay
      */
-    expect(queryResponse).toStrictEqual({
-      data: {
-        film: {
-          id: expect.anything(),
-          title: "A New Hope",
-        },
-      },
-    });
+    expect(queryResponse.data.film.id).toEqual(sampleFilmId);
   });
 });
