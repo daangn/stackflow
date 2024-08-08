@@ -1,5 +1,11 @@
 # @stackflow/core
 
+## 1.0.14
+
+### Patch Changes
+
+- 96ff22d: fix: enable cyclic dependency and fix promise return in loader
+
 ## 1.0.13
 
 ### Patch Changes

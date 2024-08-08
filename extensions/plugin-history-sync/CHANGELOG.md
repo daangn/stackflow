@@ -1,5 +1,11 @@
 # @stackflow/plugin-history-sync
 
+## 1.6.1
+
+### Patch Changes
+
+- 96ff22d: fix: enable cyclic dependency and fix promise return in loader
+
 ## 1.6.0
 
 ### Minor Changes
