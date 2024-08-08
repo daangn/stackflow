@@ -3,7 +3,6 @@ import { useMemo } from "react";
 import type { ActivityComponentType } from "../__internal__/ActivityComponentType";
 import { makeActivityId } from "../__internal__/activity";
 import { useCoreActions } from "../__internal__/core";
-import { useTransition } from "../__internal__/shims";
 import type { BaseActivities } from "./BaseActivities";
 
 function parseActionOptions(options?: { animate?: boolean }) {
@@ -21,11 +20,6 @@ function parseActionOptions(options?: { animate?: boolean }) {
 }
 
 export type UseActionsOutputType<T extends BaseActivities> = {
-  /**
-   * Is transition pending
-   */
-  pending: boolean;
-
   /**
    * Push new activity
    */
@@ -73,11 +67,9 @@ export function useActions<
   T extends BaseActivities,
 >(): UseActionsOutputType<T> {
   const coreActions = useCoreActions();
-  const [pending] = useTransition();
 
   return useMemo(
     () => ({
-      pending,
       push(activityName, activityParams, options) {
         const activityId = makeActivityId();
 
@@ -135,6 +127,6 @@ export function useActions<
         }
       },
     }),
-    [coreActions?.push, coreActions?.replace, coreActions?.pop, pending],
+    [coreActions?.push, coreActions?.replace, coreActions?.pop],
   );
 }
