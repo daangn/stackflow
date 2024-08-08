@@ -3331,6 +3331,7 @@ const RAW_RUNTIME_STATE =
           ["esbuild", "npm:0.23.0"],\
           ["history", "npm:5.3.0"],\
           ["jest", "virtual:b327d7e228fba669b88a8bb23bcf526374e46fa67e617b1e6848e8a205357fee5ce94b47c49b5a570fd9e8a44fa218a13cd00e2eca327c99114cbd21d72ecf9c#npm:29.7.0"],\
+          ["json-cycle", "npm:1.5.0"],\
           ["react", "npm:18.3.1"],\
           ["rimraf", "npm:3.0.2"],\
           ["typescript", "patch:typescript@npm%3A5.5.3#optional!builtin<compat/typescript>::version=5.5.3&hash=379a07"],\
@@ -3364,6 +3365,7 @@ const RAW_RUNTIME_STATE =
           ["esbuild", "npm:0.23.0"],\
           ["history", "npm:5.3.0"],\
           ["jest", "virtual:b327d7e228fba669b88a8bb23bcf526374e46fa67e617b1e6848e8a205357fee5ce94b47c49b5a570fd9e8a44fa218a13cd00e2eca327c99114cbd21d72ecf9c#npm:29.7.0"],\
+          ["json-cycle", "npm:1.5.0"],\
           ["react", "npm:18.3.1"],\
           ["rimraf", "npm:3.0.2"],\
           ["typescript", "patch:typescript@npm%3A5.5.3#optional!builtin<compat/typescript>::version=5.5.3&hash=379a07"],\
@@ -8265,6 +8267,15 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/jsesc-npm-2.5.2-c5acb78804-d2096abdcd.zip/node_modules/jsesc/",\
         "packageDependencies": [\
           ["jsesc", "npm:2.5.2"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["json-cycle", [\
+      ["npm:1.5.0", {\
+        "packageLocation": "./.yarn/cache/json-cycle-npm-1.5.0-4c80b4d041-4ce7594eb8.zip/node_modules/json-cycle/",\
+        "packageDependencies": [\
+          ["json-cycle", "npm:1.5.0"]\
         ],\
         "linkType": "HARD"\
       }]\

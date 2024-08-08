@@ -1324,4 +1324,49 @@ describe("historySyncPlugin", () => {
     expect(activeActivity(stack)?.params.bar).toEqual("2");
     expect(path(history.location)).toEqual("/home/?foo=1&bar=2");
   });
+
+  test("historySyncPlugin - activity.context에 cyclic dependency가 있어도 정상적으로 로드됩니다", async () => {
+    history = createMemoryHistory({
+      initialEntries: ["/home"],
+    });
+
+    const coreStore = stackflow({
+      activityNames: ["Home", "Article"],
+      plugins: [
+        historySyncPlugin({
+          history,
+          routes: {
+            Home: "/home",
+            Article: "/articles/:articleId",
+          },
+          fallbackActivity: () => "Home",
+        }),
+      ],
+    });
+
+    actions = makeActionsProxy({
+      actions: coreStore.actions,
+    });
+
+    const cyclic: any = {};
+    cyclic.self = cyclic;
+
+    await actions.push({
+      activityId: "a1",
+      activityName: "Article",
+      activityParams: {
+        articleId: "1",
+      },
+      activityContext: {
+        cyclic,
+      },
+    });
+
+    const stack = await actions.getStack();
+
+    expect(
+      (stack.activities[1].context as any).cyclic ===
+        (stack.activities[1].context as any).cyclic.self,
+    ).toEqual(true);
+  });
 });
