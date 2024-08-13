@@ -1,5 +1,12 @@
 # @stackflow/plugin-stack-depth-change
 
+## 1.1.5-canary.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @stackflow/core@1.1.0-canary.0
+
 ## 1.1.4
 
 ### Patch Changes
