@@ -7,5 +7,6 @@ export type StepPushedEvent = BaseDomainEvent<
     stepParams: {
       [key: string]: string | undefined;
     };
+    targetActivityId?: string;
   }
 >;

@@ -1,3 +1,8 @@
 import type { BaseDomainEvent } from "./_base";
 
-export type StepPoppedEvent = BaseDomainEvent<"StepPopped", {}>;
+export type StepPoppedEvent = BaseDomainEvent<
+  "StepPopped",
+  {
+    targetActivityId?: string;
+  }
+>;

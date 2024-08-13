@@ -74,6 +74,12 @@ export default function findTargetActivityIndexes(
       const latestActivity = findLatestActiveActivity(activities);
 
       if (latestActivity) {
+        if (
+          event.targetActivityId &&
+          event.targetActivityId !== latestActivity.id
+        ) {
+          break;
+        }
         targetActivities.push(activities.indexOf(latestActivity));
       }
       break;
@@ -82,6 +88,12 @@ export default function findTargetActivityIndexes(
       const latestActivity = findLatestActiveActivity(activities);
 
       if (latestActivity && latestActivity.steps.length > 1) {
+        if (
+          event.targetActivityId &&
+          event.targetActivityId !== latestActivity.id
+        ) {
+          break;
+        }
         targetActivities.push(activities.indexOf(latestActivity));
       }
 

@@ -32,24 +32,40 @@ export const useStepActions: UseStepActions = () => {
   return useMemo(
     () => ({
       pending,
-      stepPush(params) {
+      stepPush(
+        params,
+        options?: {
+          targetActivityId?: string;
+        },
+      ) {
         const stepId = makeStepId();
 
         coreActions?.stepPush({
           stepId,
           stepParams: params,
+          targetActivityId: options?.targetActivityId,
         });
       },
-      stepReplace(params) {
+      stepReplace(
+        params,
+        options?: {
+          targetActivityId?: string;
+        },
+      ) {
         const stepId = makeStepId();
 
         coreActions?.stepReplace({
           stepId,
           stepParams: params,
+          targetActivityId: options?.targetActivityId,
         });
       },
-      stepPop() {
-        coreActions?.stepPop({});
+      stepPop(options?: {
+        targetActivityId?: string;
+      }) {
+        coreActions?.stepPop({
+          targetActivityId: options?.targetActivityId,
+        });
       },
     }),
     [
