@@ -1,5 +1,11 @@
 # @stackflow/react
 
+## 1.3.0-canary.1
+
+### Patch Changes
+
+- feat(react): add `targetActivityId` param for future api
+
 ## 1.3.0-canary.0
 
 ### Minor Changes

@@ -3,25 +3,26 @@
   "tag": "canary",
   "initialVersions": {
     "@stackflow/config": "1.1.0",
-    "@stackflow/core": "1.0.14",
-    "@stackflow/demo": "1.3.0",
-    "@stackflow/docs": "1.2.25",
-    "@stackflow/compat-await-push": "1.1.11",
-    "@stackflow/link": "1.4.3",
-    "@stackflow/plugin-basic-ui": "1.9.0",
-    "@stackflow/plugin-devtools": "0.1.10",
-    "@stackflow/plugin-google-analytics-4": "1.1.13",
-    "@stackflow/plugin-history-sync": "1.6.1",
-    "@stackflow/plugin-map-initial-activity": "1.0.9",
-    "@stackflow/plugin-preload": "1.4.0",
-    "@stackflow/plugin-renderer-basic": "1.1.11",
-    "@stackflow/plugin-renderer-web": "1.1.11",
-    "@stackflow/plugin-stack-depth-change": "1.1.4",
-    "@stackflow/react-ui-core": "1.1.0",
-    "@stackflow/react": "1.2.2",
+    "@stackflow/core": "1.1.0-canary.0",
+    "@stackflow/demo": "1.3.1-canary.0",
+    "@stackflow/docs": "1.2.26-canary.0",
+    "@stackflow/compat-await-push": "1.1.12-canary.0",
+    "@stackflow/link": "1.4.4-canary.0",
+    "@stackflow/plugin-basic-ui": "1.9.1-canary.0",
+    "@stackflow/plugin-devtools": "0.1.11-canary.0",
+    "@stackflow/plugin-google-analytics-4": "1.1.14-canary.0",
+    "@stackflow/plugin-history-sync": "1.6.2-canary.0",
+    "@stackflow/plugin-map-initial-activity": "1.0.10-canary.0",
+    "@stackflow/plugin-preload": "1.4.1-canary.0",
+    "@stackflow/plugin-renderer-basic": "1.1.12-canary.0",
+    "@stackflow/plugin-renderer-web": "1.1.12-canary.0",
+    "@stackflow/plugin-stack-depth-change": "1.1.5-canary.0",
+    "@stackflow/react-ui-core": "1.1.1-canary.0",
+    "@stackflow/react": "1.3.0-canary.0",
     "@stackflow/esbuild-config": "1.0.3"
   },
   "changesets": [
-    "light-dragons-bow"
+    "light-dragons-bow",
+    "silly-doors-eat"
   ]
 }
