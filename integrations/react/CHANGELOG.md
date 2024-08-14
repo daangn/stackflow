@@ -1,5 +1,11 @@
 # @stackflow/react
 
+## 1.3.1
+
+### Patch Changes
+
+- 1fc97b4: fix(react): specify .mjs extension for esm exports
+
 ## 1.3.0
 
 ### Minor Changes
