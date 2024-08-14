@@ -9,24 +9,24 @@
   "license": "MIT",
   "exports": {
     ".": {
-      "types": "./dist/esm/index.d.ts",
-      "require": "./dist/cjs/index.js",
-      "import": "./dist/esm/index.js"
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
     },
     "./stable": {
-      "types": "./dist/esm/stable/index.d.ts",
-      "require": "./dist/cjs/stable/index.js",
-      "import": "./dist/esm/stable/index.js"
+      "types": "./dist/stable/index.d.ts",
+      "require": "./dist/stable/index.js",
+      "import": "./dist/stable/index.mjs"
     },
     "./future": {
-      "types": "./dist/esm/future/index.d.ts",
-      "require": "./dist/cjs/future/index.js",
-      "import": "./dist/esm/future/index.js"
+      "types": "./dist/future/index.d.ts",
+      "require": "./dist/future/index.js",
+      "import": "./dist/future/index.mjs"
     }
   },
-  "main": "./dist/cjs/index.js",
-  "module": "./dist/esm/index.js",
-  "types": "./dist/esm/index.d.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
   "files": [
     "dist",
     "src",
@@ -34,7 +34,7 @@
   ],
   "scripts": {
     "build": "yarn build:js && yarn build:dts",
-    "build:dts": "tsc --emitDeclarationOnly --outDir dist/esm && tsc --emitDeclarationOnly --outDir dist/cjs",
+    "build:dts": "tsc --emitDeclarationOnly --outDir dist",
     "build:js": "node ./esbuild.config.js",
     "clean": "rimraf dist",
     "dev": "yarn build:js --watch && yarn build:dts --watch",
