@@ -1,7 +1,7 @@
 import { style } from "@vanilla-extract/css";
 import { recipe } from "@vanilla-extract/recipes";
 
-import { android, cupertino, globalVars } from "../basicUIPlugin.css";
+import { globalVars } from "../basicUIPlugin.css";
 import { f } from "../styles";
 import {
   background,
@@ -40,17 +40,18 @@ export const appBar = recipe({
       zIndex: vars.zIndexes.appBar,
       transition: transitions(appBarCommonTransition),
       selectors: {
-        [`${cupertino} &`]: {
+        ":root[data-stackflow-plugin-basic-ui-theme=cupertino] &": {
           position: "absolute",
         },
-        [`${cupertino} ${exitActive} &`]: {
-          transform: "translate3d(100%, 0, 0)",
-          transition: transitions({
-            ...appBarCommonTransition,
-            transform: "0s",
-          }),
-        },
-        [`${android} &`]: {
+        [`:root[data-stackflow-plugin-basic-ui-theme=cupertino] ${exitActive} &`]:
+          {
+            transform: "translate3d(100%, 0, 0)",
+            transition: transitions({
+              ...appBarCommonTransition,
+              transform: "0s",
+            }),
+          },
+        ":root[data-stackflow-plugin-basic-ui-theme=android] &": {
           opacity: 0,
           transform: "translate3d(0, 10rem, 0)",
           transition: transitions({
@@ -60,8 +61,8 @@ export const appBar = recipe({
           }),
         },
         [`
-          ${android} ${enterActive} &,
-          ${android} ${enterDone} &
+          :root[data-stackflow-plugin-basic-ui-theme=android] ${enterActive} &,
+          :root[data-stackflow-plugin-basic-ui-theme=android] ${enterDone} &
         `]: {
           opacity: 1,
           transform: "translate3d(0, 0, 0)",
@@ -78,7 +79,7 @@ export const appBar = recipe({
     modalPresentationStyle: {
       fullScreen: {
         selectors: {
-          [`${cupertino} &`]: {
+          ":root[data-stackflow-plugin-basic-ui-theme=cupertino] &": {
             transform: "translate3d(0, 100vh, 0)",
             transition: transitions({
               ...appBarCommonTransition,
@@ -87,36 +88,38 @@ export const appBar = recipe({
             }),
           },
           [`
-            ${cupertino} ${enterActive} &,
-            ${cupertino} ${enterDone} &
+            :root[data-stackflow-plugin-basic-ui-theme=cupertino] ${enterActive} &,
+            :root[data-stackflow-plugin-basic-ui-theme=cupertino] ${enterDone} &
           `]: {
             transform: "translate3d(0, 0, 0)",
           },
-          [`${cupertino} ${exitActive} &`]: {
-            transform: "translate3d(0, 100vh, 0)",
-            transition: transitions({
-              ...appBarCommonTransition,
-              transform: vars.transitionDuration,
-              opacity: vars.transitionDuration,
-            }),
-          },
+          [`:root[data-stackflow-plugin-basic-ui-theme=cupertino] ${exitActive} &`]:
+            {
+              transform: "translate3d(0, 100vh, 0)",
+              transition: transitions({
+                ...appBarCommonTransition,
+                transform: vars.transitionDuration,
+                opacity: vars.transitionDuration,
+              }),
+            },
         },
       },
     },
     activityEnterStyle: {
       slideInLeft: {
         selectors: {
-          [`${android} &`]: {
+          ":root[data-stackflow-plugin-basic-ui-theme=android] &": {
             opacity: 1,
             transform: "translate3d(0, 0, 0)",
           },
-          [`${android} ${exitActive} &`]: {
-            transform: "translate3d(100%, 0, 0)",
-            transition: transitions({
-              ...appBarCommonTransition,
-              transform: "0s",
-            }),
-          },
+          [`:root[data-stackflow-plugin-basic-ui-theme=android] ${exitActive} &`]:
+            {
+              transform: "translate3d(100%, 0, 0)",
+              transition: transitions({
+                ...appBarCommonTransition,
+                transform: "0s",
+              }),
+            },
         },
       },
     },
@@ -189,7 +192,7 @@ export const centerMain = recipe({
       color: globalVars.appBar.textColorTransitionDuration,
     }),
     selectors: {
-      [`${android} &`]: {
+      ":root[data-stackflow-plugin-basic-ui-theme=android] &": {
         width: "100%",
         justifyContent: "flex-start",
         paddingLeft: "1rem",
@@ -198,7 +201,7 @@ export const centerMain = recipe({
         fontWeight: "bold",
         boxSizing: "border-box",
       },
-      [`${cupertino} &`]: {
+      ":root[data-stackflow-plugin-basic-ui-theme=cupertino] &": {
         position: "absolute",
         display: "flex",
         alignItems: "center",
@@ -221,7 +224,7 @@ export const centerMain = recipe({
     hasLeft: {
       true: {
         selectors: {
-          [`${android} &`]: {
+          ":root[data-stackflow-plugin-basic-ui-theme=android] &": {
             paddingLeft: "0.375rem",
           },
         },
@@ -243,7 +246,7 @@ export const centerMainEdge = style([
     display: "none",
     width: vars.appBar.center.mainWidth,
     selectors: {
-      [`${cupertino} &`]: {
+      ":root[data-stackflow-plugin-basic-ui-theme=cupertino] &": {
         display: "block",
       },
     },
@@ -273,7 +276,7 @@ export const right = style([
       display: "none",
     },
     selectors: {
-      [`${android} &`]: {
+      ":root[data-stackflow-plugin-basic-ui-theme=android] &": {
         padding: "0 0.5rem 0 0",
       },
     },

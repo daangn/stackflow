@@ -1,7 +1,7 @@
 import { createThemeContract, style } from "@vanilla-extract/css";
 import { recipe } from "@vanilla-extract/recipes";
 
-import { android, cupertino, globalVars } from "../basicUIPlugin.css";
+import { globalVars } from "../basicUIPlugin.css";
 import { f } from "../styles";
 
 export const vars = createThemeContract({
@@ -59,7 +59,7 @@ export const dim = style([
     opacity: 0,
     zIndex: vars.zIndexes.dim,
     selectors: {
-      [`${android} &`]: {
+      ":root[data-stackflow-plugin-basic-ui-theme=android] &": {
         height: "10rem",
         background: `linear-gradient(${globalVars.dimBackgroundColor}, rgba(0, 0, 0, 0))`,
       },
@@ -92,22 +92,22 @@ export const paper = recipe({
       },
       zIndex: vars.zIndexes.paper,
       selectors: {
-        [`${cupertino} &`]: {
+        ":root[data-stackflow-plugin-basic-ui-theme=cupertino] &": {
           transform: "translate3d(100%, 0, 0)",
         },
         [`
-          ${cupertino} ${enterActive} &,
-          ${cupertino} ${enterDone} &
+          :root[data-stackflow-plugin-basic-ui-theme=cupertino] ${enterActive} &,
+          :root[data-stackflow-plugin-basic-ui-theme=cupertino] ${enterDone} &
         `]: {
           transform: "translate3d(0, 0, 0)",
         },
-        [`${android} &`]: {
+        ":root[data-stackflow-plugin-basic-ui-theme=android] &": {
           opacity: 0,
           transform: "translate3d(0, 10rem, 0)",
         },
         [`
-          ${android} ${enterActive} &,
-          ${android} ${enterDone} &
+          :root[data-stackflow-plugin-basic-ui-theme=android] ${enterActive} &,
+          :root[data-stackflow-plugin-basic-ui-theme=android] ${enterDone} &
         `]: {
           opacity: 1,
           transform: "translate3d(0, 0, 0)",
@@ -146,7 +146,7 @@ export const paper = recipe({
     modalPresentationStyle: {
       fullScreen: {
         selectors: {
-          [`${cupertino} &`]: {
+          ":root[data-stackflow-plugin-basic-ui-theme=cupertino] &": {
             transform: "translate3d(0, 100%, 0)",
           },
         },
@@ -155,7 +155,7 @@ export const paper = recipe({
     activityEnterStyle: {
       slideInLeft: {
         selectors: {
-          [`${android} &`]: {
+          ":root[data-stackflow-plugin-basic-ui-theme=android] &": {
             transform: "translate3d(50%, 0, 0)",
           },
         },

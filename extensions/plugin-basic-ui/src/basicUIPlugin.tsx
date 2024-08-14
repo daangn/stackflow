@@ -3,8 +3,9 @@ import { assignInlineVars } from "@vanilla-extract/dynamic";
 import { createContext, useContext } from "react";
 
 import * as css from "./basicUIPlugin.css";
+import { RootStyles } from "./components/RootStyles";
 import type { RecursivePartial } from "./utils";
-import { compact, compactMap, isBrowser } from "./utils";
+import { compactMap } from "./utils";
 
 type BasicUIPluginOptions = RecursivePartial<css.GlobalVars> & {
   theme: "android" | "cupertino";
@@ -50,6 +51,37 @@ export const basicUIPlugin: (
     const _options =
       typeof options === "function" ? options({ initialContext }) : options;
 
+    /**
+     * Assign CSS Variables
+     */
+    const styles: { [key: string]: string | undefined } = assignInlineVars(
+      compactMap({
+        [css.globalVars.backgroundColor]: _options.backgroundColor,
+        [css.globalVars.dimBackgroundColor]: _options.dimBackgroundColor,
+        [css.globalVars.transitionDuration]: `${stack.transitionDuration}ms`,
+        [css.globalVars.computedTransitionDuration]:
+          stack.globalTransitionState === "loading"
+            ? `${stack.transitionDuration}ms`
+            : "0ms",
+        [css.globalVars.appBar.borderColor]: _options.appBar?.borderColor,
+        [css.globalVars.appBar.borderSize]: _options.appBar?.borderSize,
+        [css.globalVars.appBar.height]: _options.appBar?.height,
+        [css.globalVars.appBar.iconColor]: _options.appBar?.iconColor,
+        [css.globalVars.appBar.textColor]: _options.appBar?.textColor,
+        [css.globalVars.appBar.minSafeAreaInsetTop]:
+          _options.appBar?.minSafeAreaInsetTop,
+        [css.globalVars.bottomSheet.borderRadius]:
+          _options.bottomSheet?.borderRadius,
+        [css.globalVars.modal.borderRadius]: _options.modal?.borderRadius,
+      }),
+    );
+
+    /**
+     * Prevent pointer events when transitioning
+     */
+    styles["pointer-events"] =
+      stack.globalTransitionState === "loading" ? "none" : "auto";
+
     return (
       <GlobalOptionsProvider
         value={{
@@ -57,39 +89,8 @@ export const basicUIPlugin: (
           theme: initialContext?.theme ?? _options.theme,
         }}
       >
-        <div
-          className={compact([
-            css.stackWrapper({
-              theme: initialContext?.theme ?? _options.theme,
-              loading: stack.globalTransitionState === "loading",
-            }),
-            _options.rootClassName,
-          ]).join(" ")}
-          style={assignInlineVars(
-            compactMap({
-              [css.globalVars.backgroundColor]: _options.backgroundColor,
-              [css.globalVars.dimBackgroundColor]: _options.dimBackgroundColor,
-              [css.globalVars.transitionDuration]:
-                `${stack.transitionDuration}ms`,
-              [css.globalVars.computedTransitionDuration]:
-                stack.globalTransitionState === "loading"
-                  ? `${stack.transitionDuration}ms`
-                  : "0ms",
-              [css.globalVars.appBar.borderColor]: _options.appBar?.borderColor,
-              [css.globalVars.appBar.borderSize]: _options.appBar?.borderSize,
-              [css.globalVars.appBar.height]: _options.appBar?.height,
-              [css.globalVars.appBar.iconColor]: _options.appBar?.iconColor,
-              [css.globalVars.appBar.textColor]: _options.appBar?.textColor,
-              [css.globalVars.appBar.minSafeAreaInsetTop]:
-                _options.appBar?.minSafeAreaInsetTop,
-              [css.globalVars.bottomSheet.borderRadius]:
-                _options.bottomSheet?.borderRadius,
-              [css.globalVars.modal.borderRadius]: _options.modal?.borderRadius,
-            }),
-          )}
-        >
-          {stack.render()}
-        </div>
+        <RootStyles theme={_options.theme} styles={styles} />
+        {stack.render()}
       </GlobalOptionsProvider>
     );
   },
