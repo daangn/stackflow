@@ -1,5 +1,23 @@
 # @stackflow/demo
 
+## 1.3.1
+
+### Patch Changes
+
+- Updated dependencies [667570b]
+- Updated dependencies [667570b]
+  - @stackflow/react@1.3.0
+  - @stackflow/core@1.1.0
+  - @stackflow/compat-await-push@1.1.12
+  - @stackflow/link@1.4.4
+  - @stackflow/plugin-basic-ui@1.9.1
+  - @stackflow/plugin-devtools@0.1.11
+  - @stackflow/plugin-history-sync@1.6.2
+  - @stackflow/plugin-map-initial-activity@1.0.10
+  - @stackflow/plugin-preload@1.4.1
+  - @stackflow/plugin-renderer-basic@1.1.12
+  - @stackflow/plugin-stack-depth-change@1.1.5
+
 ## 1.3.1-canary.0
 
 ### Patch Changes

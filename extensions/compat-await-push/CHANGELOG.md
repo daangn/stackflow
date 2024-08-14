@@ -1,5 +1,7 @@
 # @stackflow/compat-await-push
 
+## 1.1.12
+
 ## 1.1.12-canary.0
 
 ### Patch Changes

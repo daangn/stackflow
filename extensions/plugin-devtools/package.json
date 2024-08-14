@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/plugin-devtools",
-  "version": "0.1.11-canary.0",
+  "version": "0.1.11",
   "repository": {
     "type": "git",
     "url": "https://github.com/daangn/stackflow.git",
@@ -30,7 +30,7 @@
     "dev": "yarn build:js --watch && yarn build:dts --watch"
   },
   "devDependencies": {
-    "@stackflow/core": "^1.1.0-canary.0",
+    "@stackflow/core": "^1.1.0",
     "@stackflow/esbuild-config": "^1.0.3",
     "@types/node": "^20.14.9",
     "esbuild": "^0.23.0",

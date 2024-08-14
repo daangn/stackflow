@@ -1,5 +1,11 @@
 # @stackflow/core
 
+## 1.1.0
+
+### Minor Changes
+
+- 667570b: feat(core,react): add `targetActivityId` option
+
 ## 1.1.0-canary.0
 
 ### Minor Changes

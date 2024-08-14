@@ -1,5 +1,7 @@
 # @stackflow/plugin-devtools
 
+## 0.1.11
+
 ## 0.1.11-canary.0
 
 ### Patch Changes

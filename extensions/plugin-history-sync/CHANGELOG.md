@@ -1,5 +1,7 @@
 # @stackflow/plugin-history-sync
 
+## 1.6.2
+
 ## 1.6.2-canary.0
 
 ### Patch Changes
