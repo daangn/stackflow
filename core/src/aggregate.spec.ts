@@ -3846,3 +3846,88 @@ test("aggregate - After Push > Push > Pop > Replace, first pushed activity shoul
     globalTransitionState: "idle",
   });
 });
+
+test("aggregate - StepPushedEvent must be ignored when top activity is not target activity", () => {
+  const t = nowTime();
+
+  let pushedEvent1: PushedEvent;
+  let pushedEvent2: PushedEvent;
+  let stepPushedEvent: StepPushedEvent;
+
+  const events = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+    registeredEvent({
+      activityName: "sample",
+    }),
+    (pushedEvent1 = makeEvent("Pushed", {
+      activityId: "A",
+      activityName: "sample",
+      activityParams: {},
+      eventDate: enoughPastTime(),
+    })),
+    (pushedEvent2 = makeEvent("Pushed", {
+      activityId: "B",
+      activityName: "sample",
+      activityParams: {},
+      eventDate: enoughPastTime(),
+    })),
+    (stepPushedEvent = makeEvent("StepPushed", {
+      stepId: "s1",
+      stepParams: {},
+      targetActivityId: pushedEvent1.activityId,
+      eventDate: enoughPastTime(),
+    })),
+  ];
+
+  const output = aggregate(events, t + 300);
+
+  expect(output).toStrictEqual({
+    activities: [
+      activity({
+        id: "A",
+        name: "sample",
+        transitionState: "enter-done",
+        params: {},
+        steps: [
+          {
+            id: "A",
+            params: {},
+            enteredBy: pushedEvent1,
+          },
+        ],
+        enteredBy: pushedEvent1,
+        isActive: false,
+        isTop: false,
+        isRoot: true,
+        zIndex: 0,
+      }),
+      activity({
+        id: "B",
+        name: "sample",
+        transitionState: "enter-done",
+        params: {},
+        steps: [
+          {
+            id: "B",
+            params: {},
+            enteredBy: pushedEvent2,
+          },
+        ],
+        enteredBy: pushedEvent2,
+        isActive: true,
+        isTop: true,
+        isRoot: false,
+        zIndex: 1,
+      }),
+    ],
+    registeredActivities: [
+      {
+        name: "sample",
+      },
+    ],
+    transitionDuration: 300,
+    globalTransitionState: "idle",
+  });
+});

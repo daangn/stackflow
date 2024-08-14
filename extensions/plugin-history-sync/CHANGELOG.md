@@ -1,5 +1,13 @@
 # @stackflow/plugin-history-sync
 
+## 1.6.2-canary.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @stackflow/react@1.3.0-canary.0
+  - @stackflow/core@1.1.0-canary.0
+
 ## 1.6.1
 
 ### Patch Changes

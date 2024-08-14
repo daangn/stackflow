@@ -1,5 +1,14 @@
 # @stackflow/plugin-basic-ui
 
+## 1.9.1-canary.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @stackflow/react@1.3.0-canary.0
+  - @stackflow/core@1.1.0-canary.0
+  - @stackflow/react-ui-core@1.1.1-canary.0
+
 ## 1.9.0
 
 ### Minor Changes

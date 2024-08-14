@@ -1,5 +1,17 @@
 # @stackflow/docs
 
+## 1.2.26-canary.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @stackflow/react@1.3.0-canary.0
+  - @stackflow/core@1.1.0-canary.0
+  - @stackflow/demo@1.3.1-canary.0
+  - @stackflow/plugin-basic-ui@1.9.1-canary.0
+  - @stackflow/plugin-history-sync@1.6.2-canary.0
+  - @stackflow/plugin-renderer-basic@1.1.12-canary.0
+
 ## 1.2.25
 
 ### Patch Changes

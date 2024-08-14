@@ -7,5 +7,6 @@ export type StepReplacedEvent = BaseDomainEvent<
     stepParams: {
       [key: string]: string | undefined;
     };
+    targetActivityId?: string;
   }
 >;
