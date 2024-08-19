@@ -1,5 +1,12 @@
 # @stackflow/plugin-map-initial-activity
 
+## 1.0.11-canary.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @stackflow/react@1.3.2-canary.0
+
 ## 1.0.10
 
 ## 1.0.10-canary.0

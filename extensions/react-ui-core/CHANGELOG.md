@@ -1,5 +1,12 @@
 # @stackflow/react-ui-core
 
+## 1.1.2-canary.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @stackflow/react@1.3.2-canary.0
+
 ## 1.1.1
 
 ## 1.1.1-canary.0
