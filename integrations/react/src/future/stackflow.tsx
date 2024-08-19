@@ -83,6 +83,18 @@ export function stackflow<
   const [getCoreStore, setCoreStore] = makeRef<CoreStore>();
 
   const Stack: StackComponentType = React.memo((props) => {
+    const initialContext = useMemo(
+      () => ({
+        ...props.initialContext,
+        ...(props.initialLoaderData
+          ? {
+              initialLoaderData: props.initialLoaderData,
+            }
+          : null),
+      }),
+      [],
+    );
+
     const coreStore = useMemo(() => {
       const prevCoreStore = getCoreStore();
 
@@ -111,14 +123,7 @@ export function stackflow<
           ...staticCoreStore.pullEvents(),
           ...initialPushedEventsByOption,
         ],
-        initialContext: {
-          ...props.initialContext,
-          ...(props.initialLoaderData
-            ? {
-                initialLoaderData: props.initialLoaderData,
-              }
-            : null),
-        },
+        initialContext,
         plugins,
         handlers: {
           onInitialActivityIgnored: (initialPushedEvents) => {
@@ -153,9 +158,7 @@ export function stackflow<
         <CoreProvider coreStore={coreStore}>
           <MainRenderer
             activityComponentMap={input.components}
-            initialContext={{
-              initialLoaderData: props.initialLoaderData,
-            }}
+            initialContext={initialContext}
           />
         </CoreProvider>
       </PluginsProvider>
