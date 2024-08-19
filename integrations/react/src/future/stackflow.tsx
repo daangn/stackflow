@@ -112,7 +112,12 @@ export function stackflow<
           ...initialPushedEventsByOption,
         ],
         initialContext: {
-          initialLoaderData: props.initialLoaderData,
+          ...props.initialContext,
+          ...(props.initialLoaderData
+            ? {
+                initialLoaderData: props.initialLoaderData,
+              }
+            : null),
         },
         plugins,
         handlers: {

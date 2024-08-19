@@ -89,9 +89,6 @@ export function historySyncPlugin<
         );
       },
       overrideInitialEvents({ initialContext }) {
-        const currentContext =
-          initialContext?.initialLoaderData ?? initialContext;
-
         const initialHistoryState = safeParseState(
           getCurrentState({ history }),
         );
@@ -116,10 +113,10 @@ export function historySyncPlugin<
 
         function resolveCurrentPath() {
           if (
-            currentContext?.req?.path &&
-            typeof currentContext.req.path === "string"
+            initialContext?.req?.path &&
+            typeof initialContext.req.path === "string"
           ) {
-            return currentContext.req.path as string;
+            return initialContext.req.path as string;
           }
 
           if (options.useHash) {
