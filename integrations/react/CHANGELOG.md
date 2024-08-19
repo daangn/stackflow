@@ -1,5 +1,11 @@
 # @stackflow/react
 
+## 1.3.2-canary.1
+
+### Patch Changes
+
+- fix: pass initial context to `<MainRenderer />`
+
 ## 1.3.2-canary.0
 
 ### Patch Changes
