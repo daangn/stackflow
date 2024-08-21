@@ -14,11 +14,15 @@ interface SerializedState extends State {
 }
 
 function serializeState(state: State): SerializedState {
-  return decycle({
-    _TAG: STATE_TAG,
-    activity: state.activity,
-    step: state.step,
-  });
+  return JSON.parse(
+    JSON.stringify(
+      decycle({
+        _TAG: STATE_TAG,
+        activity: state.activity,
+        step: state.step,
+      }),
+    ),
+  );
 }
 
 export function safeParseState(state: unknown): State | null {
