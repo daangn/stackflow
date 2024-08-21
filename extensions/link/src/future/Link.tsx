@@ -41,7 +41,7 @@ export function Link<
       typeof match.path !== "string" ||
       !config["@stackflow/plugin-history-sync"]
     ) {
-      return "#";
+      return undefined;
     }
 
     const { makeTemplate, options } = config["@stackflow/plugin-history-sync"];
