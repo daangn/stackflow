@@ -1,5 +1,11 @@
 # @stackflow/plugin-history-sync
 
+## 1.6.3
+
+### Patch Changes
+
+- 31dc20f: fix(plugin-history-sync): serialize state before pushState, replaceState
+
 ## 1.6.2
 
 ## 1.6.2-canary.0
