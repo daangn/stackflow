@@ -1,3 +1,4 @@
+import { Link } from "@stackflow/react/future";
 import { useFlow } from "@stackflow/react/future";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import * as css from "./ArticleCard.css";
@@ -24,7 +25,11 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
   };
 
   return (
-    <button type="button" className={css.container} onClick={onClick}>
+    <Link
+      activityName="Article"
+      activityParams={{ articleId: String(articleId), title }}
+      className={css.container}
+    >
       <div className={css.thumbnail}>
         <div className={css.innerImage}>
           <LazyLoadImage
@@ -37,7 +42,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
       </div>
       <div className={css.title}>{title}</div>
       <div className={css.price}>£{price}.00</div>
-    </button>
+    </Link>
   );
 };
 

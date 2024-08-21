@@ -1,9 +1,8 @@
+import type { ActivityDefinition, Config } from "@stackflow/config";
 import { id, makeEvent } from "@stackflow/core";
 import type { StackflowReactPlugin } from "@stackflow/react";
 import type { History, Listener } from "history";
 import { createBrowserHistory, createMemoryHistory } from "history";
-
-import type { ActivityDefinition, Config } from "@stackflow/config";
 import { HistoryQueueProvider } from "./HistoryQueueContext";
 import type { RouteLike } from "./RouteLike";
 import { RoutesProvider } from "./RoutesContext";
@@ -21,6 +20,16 @@ const MINUTE = 60 * SECOND;
 declare module "@stackflow/config" {
   interface ActivityDefinition<ActivityName extends string> {
     path: string;
+  }
+
+  interface Config<T extends ActivityDefinition<string>> {
+    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
+    ["@stackflow/plugin-history-sync"]?: {
+      makeTemplate: typeof makeTemplate;
+      options: {
+        urlPatternOptions?: UrlPatternOptions;
+      };
+    };
   }
 }
 
@@ -43,6 +52,15 @@ export function historySyncPlugin<
   T extends { [activityName: string]: unknown },
   K extends Extract<keyof T, string>,
 >(options: HistorySyncPluginOptions<T, K>): StackflowReactPlugin<T> {
+  if ("config" in options) {
+    options.config["@stackflow/plugin-history-sync"] = {
+      makeTemplate,
+      options: {
+        urlPatternOptions: options.urlPatternOptions,
+      },
+    };
+  }
+
   const history =
     options.history ??
     (typeof window === "undefined"

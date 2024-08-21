@@ -73,6 +73,11 @@ export const resetButton = style({
   textAlign: "left",
 });
 
+export const resetAnchor = style({
+  color: vars.$scale.color.gray900,
+  textDecoration: "none",
+});
+
 export const cursorPointer = style({
   cursor: "pointer",
   WebkitTapHighlightColor: "transparent",
