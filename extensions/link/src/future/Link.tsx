@@ -4,10 +4,9 @@ import type {
   InferActivityParams,
   RegisteredActivityParamTypes,
 } from "@stackflow/config";
+import { useConfig, useFlow } from "@stackflow/react/future";
 import { useMemo } from "react";
 import { omit } from "./omit";
-import { useConfig } from "./useConfig";
-import { useFlow } from "./useFlow";
 
 type AnchorProps = Omit<
   React.DetailedHTMLProps<

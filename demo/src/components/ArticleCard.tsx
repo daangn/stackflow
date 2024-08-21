@@ -1,4 +1,4 @@
-import { Link } from "@stackflow/react/future";
+import { Link } from "@stackflow/link/future";
 import { useFlow } from "@stackflow/react/future";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import * as css from "./ArticleCard.css";
