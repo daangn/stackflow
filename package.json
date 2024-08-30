@@ -7,6 +7,7 @@
     "config",
     "core",
     "demo",
+    "demo-solid",
     "integrations/*",
     "packages/*",
     "extensions/*"
@@ -28,7 +29,9 @@
   "resolutions": {
     "@mdx-js/react": "3.0.1",
     "@types/react": "18.3.3",
-    "@changesets/assemble-release-plan@npm:^6.0.3": "patch:@changesets/assemble-release-plan@npm%3A6.0.3#~/.yarn/patches/@changesets-assemble-release-plan-npm-6.0.3-29726de363.patch"
+    "@changesets/assemble-release-plan@npm:^6.0.3": "patch:@changesets/assemble-release-plan@npm%3A6.0.3#~/.yarn/patches/@changesets-assemble-release-plan-npm-6.0.3-29726de363.patch",
+    "@vanilla-extract/vite-plugin@npm:^4.0.12": "patch:@vanilla-extract/vite-plugin@npm%3A4.0.12#~/.yarn/patches/@vanilla-extract-vite-plugin-npm-4.0.12-ed14a9ba3b.patch",
+    "esbuild-plugin-solid@npm:^0.6.0": "patch:esbuild-plugin-solid@npm%3A0.6.0#~/.yarn/patches/esbuild-plugin-solid-npm-0.6.0-49835b85dc.patch"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.8.3",
