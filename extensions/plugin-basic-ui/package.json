@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/plugin-basic-ui",
-  "version": "1.9.1",
+  "version": "1.9.2-canary.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/daangn/stackflow.git",
@@ -32,7 +32,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@stackflow/react-ui-core": "^1.1.1",
+    "@stackflow/react-ui-core": "^1.1.2-canary.0",
     "@vanilla-extract/css": "^1.15.3",
     "@vanilla-extract/dynamic": "^2.1.1",
     "@vanilla-extract/private": "^1.0.5",
@@ -41,7 +41,7 @@
   "devDependencies": {
     "@stackflow/core": "^1.1.0",
     "@stackflow/esbuild-config": "^1.0.3",
-    "@stackflow/react": "^1.3.0",
+    "@stackflow/react": "^1.3.2-canary.0",
     "@types/react": "^18.3.3",
     "esbuild": "^0.23.0",
     "react": "^18.3.1",
@@ -50,7 +50,7 @@
   },
   "peerDependencies": {
     "@stackflow/core": "^1.1.0-canary.0",
-    "@stackflow/react": "^1.3.0-canary.0",
+    "@stackflow/react": "^1.3.2-canary.0",
     "@types/react": ">=16.8.0",
     "react": ">=16.8.0"
   },

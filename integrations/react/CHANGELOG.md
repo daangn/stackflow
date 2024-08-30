@@ -1,5 +1,17 @@
 # @stackflow/react
 
+## 1.3.2-canary.1
+
+### Patch Changes
+
+- fix: pass initial context to `<MainRenderer />`
+
+## 1.3.2-canary.0
+
+### Patch Changes
+
+- fix(plugin-history-sync): create `initialContext` props in `<Stack />` component for SSR support
+
 ## 1.3.1
 
 ### Patch Changes
