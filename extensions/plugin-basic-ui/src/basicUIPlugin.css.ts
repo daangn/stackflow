@@ -1,9 +1,7 @@
 import {
   createGlobalTheme,
   createGlobalThemeContract,
-  createTheme,
 } from "@vanilla-extract/css";
-import { recipe } from "@vanilla-extract/recipes";
 
 const GLOBAL_VARS = {
   backgroundColor: "background-color",
@@ -81,13 +79,6 @@ const cupertinoValues: GlobalVars = {
   },
 };
 
-export const android = createTheme(globalVars, {
-  ...androidValues,
-});
-export const cupertino = createTheme(globalVars, {
-  ...cupertinoValues,
-});
-
 createGlobalTheme(
   ":root[data-stackflow-plugin-basic-ui-theme=cupertino]",
   globalVars,
@@ -98,18 +89,3 @@ createGlobalTheme(
   globalVars,
   androidValues,
 );
-
-export const stackWrapper = recipe({
-  base: {},
-  variants: {
-    theme: {
-      android,
-      cupertino,
-    },
-    loading: {
-      true: {
-        pointerEvents: "none",
-      },
-    },
-  },
-});

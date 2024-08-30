@@ -7,6 +7,7 @@
 - Updated dependencies
   - @stackflow/react@1.3.2-canary.0
   - @stackflow/react-ui-core@1.1.2-canary.0
+- feat(plugin-basic-ui): remove div wrapper in plugin-basic-ui
 
 ## 1.9.1
 
