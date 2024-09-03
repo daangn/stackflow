@@ -1,5 +1,7 @@
 # @stackflow/plugin-preload
 
+## 1.4.2
+
 ## 1.4.2-canary.0
 
 ### Patch Changes

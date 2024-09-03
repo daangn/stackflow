@@ -1,5 +1,7 @@
 # @stackflow/link
 
+## 1.4.5
+
 ## 1.4.5-canary.0
 
 ### Patch Changes
