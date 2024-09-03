@@ -1,5 +1,13 @@
 # @stackflow/react
 
+## 1.3.2
+
+### Patch Changes
+
+- 95f2ae8: chore(react): add typing for step action parameter
+- 46ac359: fix: pass initial context to `<MainRenderer />`
+- 46ac359: fix: create `initialContext` props in `<Stack />` component for SSR support
+
 ## 1.3.2-canary.1
 
 ### Patch Changes

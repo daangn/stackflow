@@ -1,5 +1,17 @@
 # @stackflow/docs
 
+## 1.2.27
+
+### Patch Changes
+
+- Updated dependencies [95f2ae8]
+- Updated dependencies [46ac359]
+- Updated dependencies [46ac359]
+  - @stackflow/react@1.3.2
+  - @stackflow/demo@1.3.2
+  - @stackflow/plugin-basic-ui@1.9.2
+  - @stackflow/plugin-renderer-basic@1.1.13
+
 ## 1.2.27-canary.0
 
 ### Patch Changes

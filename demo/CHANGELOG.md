@@ -1,5 +1,20 @@
 # @stackflow/demo
 
+## 1.3.2
+
+### Patch Changes
+
+- Updated dependencies [95f2ae8]
+- Updated dependencies [46ac359]
+- Updated dependencies [46ac359]
+  - @stackflow/react@1.3.2
+  - @stackflow/compat-await-push@1.1.13
+  - @stackflow/link@1.4.5
+  - @stackflow/plugin-basic-ui@1.9.2
+  - @stackflow/plugin-map-initial-activity@1.0.11
+  - @stackflow/plugin-preload@1.4.2
+  - @stackflow/plugin-renderer-basic@1.1.13
+
 ## 1.3.2-canary.0
 
 ### Patch Changes

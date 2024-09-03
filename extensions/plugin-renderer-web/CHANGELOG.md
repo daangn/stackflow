@@ -1,5 +1,7 @@
 # @stackflow/plugin-renderer-web
 
+## 1.1.13
+
 ## 1.1.13-canary.0
 
 ### Patch Changes
