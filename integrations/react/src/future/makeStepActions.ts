@@ -7,12 +7,7 @@ export function makeStepActions(
   getCoreActions: () => CoreStore["actions"] | undefined,
 ): StepActions<ActivityBaseParams> {
   return {
-    pushStep(
-      stepParams,
-      options?: {
-        targetActivityId?: string;
-      },
-    ) {
+    pushStep(stepParams, options) {
       const stepId = makeStepId();
 
       getCoreActions()?.stepPush({
@@ -21,12 +16,7 @@ export function makeStepActions(
         targetActivityId: options?.targetActivityId,
       });
     },
-    replaceStep(
-      stepParams,
-      options?: {
-        targetActivityId?: string;
-      },
-    ) {
+    replaceStep(stepParams, options) {
       const stepId = makeStepId();
 
       getCoreActions()?.stepReplace({
@@ -35,9 +25,7 @@ export function makeStepActions(
         targetActivityId: options?.targetActivityId,
       });
     },
-    popStep(options?: {
-      targetActivityId?: string;
-    }) {
+    popStep(options) {
       getCoreActions()?.stepPop({
         targetActivityId: options?.targetActivityId,
       });
