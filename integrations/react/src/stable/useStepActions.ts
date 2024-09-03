@@ -8,9 +8,19 @@ import type { BaseActivities } from "./BaseActivities";
 
 export type UseStepActionsOutputType<P> = {
   pending: boolean;
-  stepPush: (params: P, options?: {}) => void;
-  stepReplace: (params: P, options?: {}) => void;
-  stepPop: (options?: {}) => void;
+  stepPush: (
+    params: P,
+    options?: {
+      targetActivityId?: string;
+    },
+  ) => void;
+  stepReplace: (
+    params: P,
+    options?: {
+      targetActivityId?: string;
+    },
+  ) => void;
+  stepPop: (options?: { targetActivityId?: string }) => void;
 };
 
 export type UseStepActions<T extends BaseActivities = {}> = <
@@ -32,12 +42,7 @@ export const useStepActions: UseStepActions = () => {
   return useMemo(
     () => ({
       pending,
-      stepPush(
-        params,
-        options?: {
-          targetActivityId?: string;
-        },
-      ) {
+      stepPush(params, options) {
         const stepId = makeStepId();
 
         coreActions?.stepPush({
@@ -46,12 +51,7 @@ export const useStepActions: UseStepActions = () => {
           targetActivityId: options?.targetActivityId,
         });
       },
-      stepReplace(
-        params,
-        options?: {
-          targetActivityId?: string;
-        },
-      ) {
+      stepReplace(params, options) {
         const stepId = makeStepId();
 
         coreActions?.stepReplace({
@@ -60,9 +60,7 @@ export const useStepActions: UseStepActions = () => {
           targetActivityId: options?.targetActivityId,
         });
       },
-      stepPop(options?: {
-        targetActivityId?: string;
-      }) {
+      stepPop(options) {
         coreActions?.stepPop({
           targetActivityId: options?.targetActivityId,
         });
