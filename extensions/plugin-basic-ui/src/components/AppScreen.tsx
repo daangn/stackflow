@@ -131,14 +131,14 @@ const AppScreen: React.FC<AppScreenProps> = ({
             opacity: "1",
           }
         : activityEnterStyle === "slideInLeft"
-        ? {
-            transform: "translate3d(-50%, 0, 0)",
-            opacity: "0",
-          }
-        : {
-            transform: `translate3d(0, -${OFFSET_PX_ANDROID / 16}rem, 0)`,
-            opacity: "1",
-          },
+          ? {
+              transform: "translate3d(-50%, 0, 0)",
+              opacity: "0",
+            }
+          : {
+              transform: `translate3d(0, -${OFFSET_PX_ANDROID / 16}rem, 0)`,
+              opacity: "1",
+            },
     transitionDuration: globalVars.computedTransitionDuration,
     hasEffect: modalPresentationStyle !== "fullScreen",
   });
