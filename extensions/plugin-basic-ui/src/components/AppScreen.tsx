@@ -24,6 +24,12 @@ export const OFFSET_PX_CUPERTINO = 80;
 
 export type AppScreenContext = {
   scroll: (args: { top: number }) => void;
+  zIndices: {
+    dim: number;
+    paper: number;
+    edge: number;
+    appBar: number;
+  };
 };
 const Context = createContext<AppScreenContext>(null as any);
 
@@ -193,8 +199,14 @@ const AppScreen: React.FC<AppScreenProps> = ({
               behavior: "smooth",
             });
           },
+          zIndices: {
+            dim: zIndexDim,
+            paper: zIndexPaper,
+            edge: zIndexEdge,
+            appBar: zIndexAppBar,
+          },
         }),
-        [paperRef],
+        [paperRef, zIndexDim, zIndexPaper, zIndexEdge, zIndexAppBar],
       )}
     >
       <div
