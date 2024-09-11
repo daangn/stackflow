@@ -1,5 +1,11 @@
 # @stackflow/plugin-basic-ui
 
+## 1.10.0
+
+### Minor Changes
+
+- 5b1865e: feat(plugin-basic-ui): add interface to access z-index about AppScreen
+
 ## 1.9.2
 
 ### Patch Changes
