@@ -24,6 +24,12 @@ export const OFFSET_PX_CUPERTINO = 80;
 
 export type AppScreenContext = {
   scroll: (args: { top: number }) => void;
+  zIndices: {
+    dim: number;
+    paper: number;
+    edge: number;
+    appBar: number;
+  };
 };
 const Context = createContext<AppScreenContext>(null as any);
 
@@ -125,14 +131,14 @@ const AppScreen: React.FC<AppScreenProps> = ({
             opacity: "1",
           }
         : activityEnterStyle === "slideInLeft"
-          ? {
-              transform: "translate3d(-50%, 0, 0)",
-              opacity: "0",
-            }
-          : {
-              transform: `translate3d(0, -${OFFSET_PX_ANDROID / 16}rem, 0)`,
-              opacity: "1",
-            },
+        ? {
+            transform: "translate3d(-50%, 0, 0)",
+            opacity: "0",
+          }
+        : {
+            transform: `translate3d(0, -${OFFSET_PX_ANDROID / 16}rem, 0)`,
+            opacity: "1",
+          },
     transitionDuration: globalVars.computedTransitionDuration,
     hasEffect: modalPresentationStyle !== "fullScreen",
   });
@@ -193,8 +199,14 @@ const AppScreen: React.FC<AppScreenProps> = ({
               behavior: "smooth",
             });
           },
+          zIndices: {
+            dim: zIndexDim,
+            paper: zIndexPaper,
+            edge: zIndexEdge,
+            appBar: zIndexAppBar,
+          },
         }),
-        [paperRef],
+        [paperRef, zIndexDim, zIndexPaper, zIndexEdge, zIndexAppBar],
       )}
     >
       <div
