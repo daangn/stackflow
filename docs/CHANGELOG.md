@@ -1,5 +1,13 @@
 # @stackflow/docs
 
+## 1.2.28-canary.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @stackflow/plugin-history-sync@1.6.4-canary.0
+  - @stackflow/demo@1.3.3-canary.0
+
 ## 1.2.27
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @stackflow/plugin-history-sync
 
+## 1.6.4-canary.0
+
+### Patch Changes
+
+- fix(plugin-history-sync): replace json-cycle with flatted
+
 ## 1.6.3
 
 ### Patch Changes
