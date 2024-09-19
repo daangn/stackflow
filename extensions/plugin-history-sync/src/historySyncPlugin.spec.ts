@@ -8,7 +8,9 @@ import type {
 import { makeCoreStore, makeEvent } from "@stackflow/core";
 import type { Location, MemoryHistory } from "history";
 import { createMemoryHistory } from "history";
-
+import { loadQuery } from "react-relay";
+import { makeRelayEnvironment } from "./fixtures/graphql";
+import { default as getHelloQueryNode } from "./fixtures/graphql/__generated__/getHelloQuery.graphql";
 import { historySyncPlugin } from "./historySyncPlugin";
 
 const SECOND = 1000;
@@ -1363,10 +1365,102 @@ describe("historySyncPlugin", () => {
     });
 
     const stack = await actions.getStack();
+    const topActivity = stack.activities[1];
 
     expect(
-      (stack.activities[1].context as any).cyclic ===
-        (stack.activities[1].context as any).cyclic.self,
+      (topActivity.context as any).cyclic ===
+        (topActivity.context as any).cyclic.self,
     ).toEqual(true);
+  });
+
+  test("historySyncPlugin - activity.context에 Promise가 있어도 정상적으로 로드됩니다", async () => {
+    history = createMemoryHistory({
+      initialEntries: ["/home"],
+    });
+
+    const coreStore = stackflow({
+      activityNames: ["Home", "Article"],
+      plugins: [
+        historySyncPlugin({
+          history,
+          routes: {
+            Home: "/home",
+            Article: "/articles/:articleId",
+          },
+          fallbackActivity: () => "Home",
+        }),
+      ],
+    });
+
+    actions = makeActionsProxy({
+      actions: coreStore.actions,
+    });
+
+    await actions.push({
+      activityId: "a1",
+      activityName: "Article",
+      activityParams: {
+        articleId: "1",
+      },
+      activityContext: {
+        promise: new Promise<void>((resolve, reject) => resolve()),
+      },
+    });
+
+    const stack = await actions.getStack();
+    const topActivity = stack.activities[1];
+
+    expect((topActivity.context as any).promise).toBeInstanceOf(Promise);
+  });
+
+  test("historySyncPlugin - activity.context에 relay loadRef가 있어도 정상적으로 로드됩니다", async () => {
+    const environment = makeRelayEnvironment();
+
+    const loadRef = loadQuery(environment, getHelloQueryNode, {});
+
+    history = createMemoryHistory({
+      initialEntries: ["/home"],
+    });
+
+    const coreStore = stackflow({
+      activityNames: ["Home", "Article"],
+      plugins: [
+        historySyncPlugin({
+          history,
+          routes: {
+            Home: "/home",
+            Article: "/articles/:articleId",
+          },
+          fallbackActivity: () => "Home",
+        }),
+      ],
+    });
+
+    actions = makeActionsProxy({
+      actions: coreStore.actions,
+    });
+
+    await actions.push({
+      activityId: "a1",
+      activityName: "Article",
+      activityParams: {
+        articleId: "1",
+      },
+      activityContext: {
+        loadRef,
+      },
+    });
+
+    const stack = await actions.getStack();
+    const topActivity = stack.activities[1];
+
+    const queryResponse = await (
+      topActivity.context as any
+    ).loadRef?.source?.toPromise();
+
+    /**
+     * Successfully queried with relay
+     */
+    expect(queryResponse.data.hello).toEqual("world");
   });
 });
