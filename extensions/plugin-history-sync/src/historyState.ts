@@ -11,37 +11,37 @@ interface State {
 
 interface SerializedState {
   _TAG: typeof STATE_TAG;
-  encoded: string;
+  flattedState: string;
 }
 
 function serializeState(state: State): SerializedState {
   return {
     _TAG: STATE_TAG,
-    encoded: stringify({
+    flattedState: stringify({
       activity: state.activity,
       step: state.step,
     }),
   };
 }
 
-export function safeParseState(state: unknown): State | null {
-  if (
-    typeof state === "object" &&
-    state !== null &&
-    "_TAG" in state &&
-    "encoded" in state &&
-    typeof state._TAG === "string" &&
-    state._TAG === STATE_TAG &&
-    typeof state.encoded === "string"
-  ) {
-    return parse(state.encoded);
-  }
-
-  return null;
+function isSerializedState(input: unknown): input is SerializedState {
+  return (
+    typeof input === "object" &&
+    input !== null &&
+    "_TAG" in input &&
+    "flattedState" in input &&
+    typeof input._TAG === "string" &&
+    input._TAG === STATE_TAG &&
+    typeof input.flattedState === "string"
+  );
 }
 
-export function getCurrentState({ history }: { history: History }): unknown {
-  return history.location.state;
+export function parseState(input: unknown): State | null {
+  try {
+    return isSerializedState(input) ? parse(input.flattedState) : null;
+  } catch {
+    return null;
+  }
 }
 
 export function pushState({

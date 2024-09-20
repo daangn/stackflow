@@ -7,12 +7,7 @@ import type { ActivityDefinition, Config } from "@stackflow/config";
 import { HistoryQueueProvider } from "./HistoryQueueContext";
 import type { RouteLike } from "./RouteLike";
 import { RoutesProvider } from "./RoutesContext";
-import {
-  getCurrentState,
-  pushState,
-  replaceState,
-  safeParseState,
-} from "./historyState";
+import { parseState, pushState, replaceState } from "./historyState";
 import { last } from "./last";
 import { makeHistoryTaskQueue } from "./makeHistoryTaskQueue";
 import type { UrlPatternOptions } from "./makeTemplate";
@@ -89,21 +84,19 @@ export function historySyncPlugin<
         );
       },
       overrideInitialEvents({ initialContext }) {
-        const initialHistoryState = safeParseState(
-          getCurrentState({ history }),
-        );
+        const initialState = parseState(history.location.state);
 
-        if (initialHistoryState) {
+        if (initialState) {
           return [
             {
-              ...initialHistoryState.activity.enteredBy,
+              ...initialState.activity.enteredBy,
               name: "Pushed",
             },
-            ...(initialHistoryState.step?.enteredBy.name === "StepPushed" ||
-            initialHistoryState.step?.enteredBy.name === "StepReplaced"
+            ...(initialState.step?.enteredBy.name === "StepPushed" ||
+            initialState.step?.enteredBy.name === "StepReplaced"
               ? [
                   {
-                    ...initialHistoryState.step.enteredBy,
+                    ...initialState.step.enteredBy,
                     name: "StepPushed" as const,
                   },
                 ]
@@ -210,15 +203,15 @@ export function historySyncPlugin<
             return;
           }
 
-          const historyState = safeParseState(e.location.state);
+          const state = parseState(e.location.state);
 
-          if (!historyState) {
+          if (!state) {
             return;
           }
 
-          const targetActivity = historyState.activity;
-          const targetActivityId = historyState.activity.id;
-          const targetStep = historyState.step;
+          const targetActivity = state.activity;
+          const targetActivityId = state.activity.id;
+          const targetStep = state.step;
 
           const { activities } = getStack();
           const currentActivity = activities.find(
@@ -476,7 +469,7 @@ export function historySyncPlugin<
         if (previousActivity) {
           for (let i = 0; i < previousActivity.steps.length - 1; i += 1) {
             requestHistoryTick((resolve) => {
-              if (!safeParseState(getCurrentState({ history }))) {
+              if (!parseState(history.location.state)) {
                 silentFlag = true;
                 history.back();
               } else {
@@ -517,7 +510,7 @@ export function historySyncPlugin<
 
           for (let i = 0; i < popCount; i += 1) {
             requestHistoryTick((resolve) => {
-              if (!safeParseState(getCurrentState({ history }))) {
+              if (!parseState(history.location.state)) {
                 silentFlag = true;
                 history.back();
               } else {
