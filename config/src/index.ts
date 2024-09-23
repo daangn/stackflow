@@ -6,4 +6,5 @@ export * from "./ActivityLoaderArgs";
 export * from "./Config";
 export * from "./InferActivityParams";
 export * from "./Register";
+export * from "./RegisterActivityLoaderArgs"
 export * from "./RegisteredActivityParamTypes";

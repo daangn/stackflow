@@ -1,8 +1,9 @@
 import type { InferActivityParams } from "./InferActivityParams";
 import type { RegisteredActivityParamTypes } from "./RegisteredActivityParamTypes";
+import type { RegisterActivityLoaderArgs } from "./RegisterActivityLoaderArgs"
 
-export type ActivityLoaderArgs<
+export interface ActivityLoaderArgs<
   ActivityName extends Extract<keyof RegisteredActivityParamTypes, string>,
-> = {
-  params: InferActivityParams<ActivityName>;
+> extends RegisterActivityLoaderArgs {
+  params?: InferActivityParams<ActivityName>;
 };
