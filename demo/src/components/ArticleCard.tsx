@@ -1,5 +1,4 @@
 import { Link } from "@stackflow/link/future";
-import { useFlow } from "@stackflow/react/future";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import * as css from "./ArticleCard.css";
 
@@ -13,16 +12,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
   title,
   price,
 }) => {
-  const { push } = useFlow();
-
   const imageUrl = `https://picsum.photos/800/800/?id=${articleId}`;
-
-  const onClick = () => {
-    push("Article", {
-      articleId: String(articleId),
-      title,
-    });
-  };
 
   return (
     <Link
