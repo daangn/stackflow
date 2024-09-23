@@ -3438,10 +3438,10 @@ const RAW_RUNTIME_STATE =
           ["@types/stackflow__core", null],\
           ["@types/stackflow__react", null],\
           ["esbuild", "npm:0.23.0"],\
+          ["flatted", "npm:3.3.1"],\
           ["graphql", "npm:16.9.0"],\
           ["history", "npm:5.3.0"],\
           ["jest", "virtual:b327d7e228fba669b88a8bb23bcf526374e46fa67e617b1e6848e8a205357fee5ce94b47c49b5a570fd9e8a44fa218a13cd00e2eca327c99114cbd21d72ecf9c#npm:29.7.0"],\
-          ["json-cycle", "npm:1.5.0"],\
           ["react", "npm:18.3.1"],\
           ["react-relay", "virtual:991015ceb8acca106af7e64cf676369bf8fb98370003b1af0559fb22931c330c3a09d064107412d6cc26ef286f0afdd26340443bd43177eeda3558644ba5f206#npm:17.0.0"],\
           ["relay-compiler", "npm:17.0.0"],\
@@ -3479,10 +3479,10 @@ const RAW_RUNTIME_STATE =
           ["@types/react-relay", "npm:16.0.6"],\
           ["@types/relay-runtime", "npm:17.0.4"],\
           ["esbuild", "npm:0.23.0"],\
+          ["flatted", "npm:3.3.1"],\
           ["graphql", "npm:16.9.0"],\
           ["history", "npm:5.3.0"],\
           ["jest", "virtual:b327d7e228fba669b88a8bb23bcf526374e46fa67e617b1e6848e8a205357fee5ce94b47c49b5a570fd9e8a44fa218a13cd00e2eca327c99114cbd21d72ecf9c#npm:29.7.0"],\
-          ["json-cycle", "npm:1.5.0"],\
           ["react", "npm:18.3.1"],\
           ["react-relay", "virtual:991015ceb8acca106af7e64cf676369bf8fb98370003b1af0559fb22931c330c3a09d064107412d6cc26ef286f0afdd26340443bd43177eeda3558644ba5f206#npm:17.0.0"],\
           ["relay-compiler", "npm:17.0.0"],\
@@ -6811,6 +6811,15 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["flatted", [\
+      ["npm:3.3.1", {\
+        "packageLocation": "./.yarn/cache/flatted-npm-3.3.1-458870f59b-7b8376061d.zip/node_modules/flatted/",\
+        "packageDependencies": [\
+          ["flatted", "npm:3.3.1"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["flexsearch", [\
       ["npm:0.7.43", {\
         "packageLocation": "./.yarn/cache/flexsearch-npm-0.7.43-8de73390d5-79c0bceee4.zip/node_modules/flexsearch/",\
@@ -8489,15 +8498,6 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/jsesc-npm-2.5.2-c5acb78804-d2096abdcd.zip/node_modules/jsesc/",\
         "packageDependencies": [\
           ["jsesc", "npm:2.5.2"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["json-cycle", [\
-      ["npm:1.5.0", {\
-        "packageLocation": "./.yarn/cache/json-cycle-npm-1.5.0-4c80b4d041-4ce7594eb8.zip/node_modules/json-cycle/",\
-        "packageDependencies": [\
-          ["json-cycle", "npm:1.5.0"]\
         ],\
         "linkType": "HARD"\
       }]\

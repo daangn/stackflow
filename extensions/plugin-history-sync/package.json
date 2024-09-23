@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/plugin-history-sync",
-  "version": "1.6.3",
+  "version": "1.6.4-canary.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/daangn/stackflow.git",
@@ -41,6 +41,7 @@
     }
   },
   "dependencies": {
+    "flatted": "^3.3.1",
     "history": "^5.3.0",
     "url-pattern": "^1.0.3"
   },
@@ -60,7 +61,6 @@
     "esbuild": "^0.23.0",
     "graphql": "^16.9.0",
     "jest": "^29.7.0",
-    "json-cycle": "^1.5.0",
     "react": "^18.3.1",
     "react-relay": "^17.0.0",
     "relay-compiler": "^17.0.0",

@@ -1,5 +1,13 @@
 # @stackflow/link
 
+## 1.4.6-canary.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @stackflow/plugin-history-sync@1.6.4-canary.0
+  - @stackflow/plugin-preload@1.4.3-canary.0
+
 ## 1.4.5
 
 ## 1.4.5-canary.0

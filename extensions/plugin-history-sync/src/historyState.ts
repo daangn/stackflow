@@ -1,6 +1,6 @@
 import type { Activity, ActivityStep } from "@stackflow/core";
+import { parse, stringify } from "flatted";
 import type { History } from "history";
-import { decycle, retrocycle } from "json-cycle";
 
 const STATE_TAG = "@stackflow/plugin-history-sync";
 
@@ -9,40 +9,39 @@ interface State {
   step?: ActivityStep;
 }
 
-interface SerializedState extends State {
+interface SerializedState {
   _TAG: typeof STATE_TAG;
+  flattedState: string;
 }
 
 function serializeState(state: State): SerializedState {
-  return JSON.parse(
-    JSON.stringify(
-      decycle({
-        _TAG: STATE_TAG,
-        activity: state.activity,
-        step: state.step,
-      }),
-    ),
+  return {
+    _TAG: STATE_TAG,
+    flattedState: stringify({
+      activity: state.activity,
+      step: state.step,
+    }),
+  };
+}
+
+function isSerializedState(input: unknown): input is SerializedState {
+  return (
+    typeof input === "object" &&
+    input !== null &&
+    "_TAG" in input &&
+    "flattedState" in input &&
+    typeof input._TAG === "string" &&
+    input._TAG === STATE_TAG &&
+    typeof input.flattedState === "string"
   );
 }
 
-export function safeParseState(state: unknown): State | null {
-  const _state: any = state;
-
-  if (
-    typeof _state === "object" &&
-    _state !== null &&
-    "_TAG" in _state &&
-    typeof _state._TAG === "string" &&
-    _state._TAG === STATE_TAG
-  ) {
-    return retrocycle<State>(state);
+export function parseState(input: unknown): State | null {
+  try {
+    return isSerializedState(input) ? parse(input.flattedState) : null;
+  } catch {
+    return null;
   }
-
-  return null;
-}
-
-export function getCurrentState({ history }: { history: History }): unknown {
-  return history.location.state;
 }
 
 export function pushState({

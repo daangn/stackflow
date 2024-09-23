@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/link",
-  "version": "1.4.5",
+  "version": "1.4.6-canary.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/daangn/stackflow.git",
@@ -33,8 +33,8 @@
   "devDependencies": {
     "@stackflow/core": "^1.1.0",
     "@stackflow/esbuild-config": "^1.0.3",
-    "@stackflow/plugin-history-sync": "^1.6.3-canary.0",
-    "@stackflow/plugin-preload": "^1.4.2",
+    "@stackflow/plugin-history-sync": "^1.6.4-canary.0",
+    "@stackflow/plugin-preload": "^1.4.3-canary.0",
     "@stackflow/react": "^1.3.2",
     "@types/react": "^18.3.3",
     "esbuild": "^0.23.0",
@@ -44,8 +44,8 @@
   },
   "peerDependencies": {
     "@stackflow/core": "^1.1.0-canary.0",
-    "@stackflow/plugin-history-sync": "^1.6.3-canary.0",
-    "@stackflow/plugin-preload": "^1.4.2-canary.0",
+    "@stackflow/plugin-history-sync": "^1.6.4-canary.0",
+    "@stackflow/plugin-preload": "^1.4.3-canary.0",
     "@stackflow/react": "^1.3.2-canary.0",
     "@types/react": ">=16.8.0",
     "react": ">=16.8.0"
