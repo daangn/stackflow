@@ -39,20 +39,17 @@ export function Link<
       !match ||
       !match.path ||
       typeof match.path !== "string" ||
-      !config["@stackflow/plugin-history-sync"]
+      !config.historySync
     ) {
       return undefined;
     }
 
-    const { makeTemplate, options } = config["@stackflow/plugin-history-sync"];
+    const { path } = match;
+    const { makeTemplate, urlPatternOptions } = config.historySync;
 
-    const template = makeTemplate(
-      { path: match.path },
-      options.urlPatternOptions,
-    );
-    const path = template.fill(props.activityParams);
+    const template = makeTemplate({ path }, urlPatternOptions);
 
-    return path;
+    return template.fill(props.activityParams);
   }, [config, props.activityName, props.activityParams]);
 
   const anchorProps = omit(props, [

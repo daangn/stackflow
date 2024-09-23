@@ -17,19 +17,18 @@ import { sortActivityRoutes } from "./sortActivityRoutes";
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
 
+type ConfigHistorySync = {
+  makeTemplate: typeof makeTemplate;
+  urlPatternOptions?: UrlPatternOptions;
+};
+
 declare module "@stackflow/config" {
   interface ActivityDefinition<ActivityName extends string> {
     path: string;
   }
 
   interface Config<T extends ActivityDefinition<string>> {
-    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
-    ["@stackflow/plugin-history-sync"]?: {
-      makeTemplate: typeof makeTemplate;
-      options: {
-        urlPatternOptions?: UrlPatternOptions;
-      };
-    };
+    historySync?: ConfigHistorySync;
   }
 }
 
@@ -53,12 +52,10 @@ export function historySyncPlugin<
   K extends Extract<keyof T, string>,
 >(options: HistorySyncPluginOptions<T, K>): StackflowReactPlugin<T> {
   if ("config" in options) {
-    options.config["@stackflow/plugin-history-sync"] = {
+    options.config.decorate("historySync", {
       makeTemplate,
-      options: {
-        urlPatternOptions: options.urlPatternOptions,
-      },
-    };
+      urlPatternOptions: options.urlPatternOptions,
+    });
   }
 
   const history =
