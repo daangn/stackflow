@@ -37,8 +37,14 @@ export function loaderPlugin(
           return event;
         }
 
+        const activityLoaderArgs =
+          "activityLoaderArgs" in config
+            ? (config.activityLoaderArgs as object)
+            : {};
+
         const loaderData = loader({
           params: activityParams,
+          ...activityLoaderArgs,
         });
 
         return {
@@ -61,8 +67,14 @@ export function loaderPlugin(
         return;
       }
 
+      const activityLoaderArgs =
+        "activityLoaderArgs" in config
+          ? (config.activityLoaderArgs as object)
+          : {};
+
       const loaderData = loader({
         params: activityParams,
+        ...activityLoaderArgs,
       });
 
       overrideActionParams({
@@ -84,8 +96,14 @@ export function loaderPlugin(
         return;
       }
 
+      const activityLoaderArgs =
+        "activityLoaderArgs" in config
+          ? (config.activityLoaderArgs as object)
+          : {};
+
       const loaderData = loader({
         params: activityParams,
+        ...activityLoaderArgs,
       });
 
       overrideActionParams({
