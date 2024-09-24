@@ -12,6 +12,16 @@
       "types": "./dist/index.d.ts",
       "require": "./dist/index.js",
       "import": "./dist/index.mjs"
+    },
+    "./stable": {
+      "types": "./dist/stable/index.d.ts",
+      "require": "./dist/stable/index.js",
+      "import": "./dist/stable/index.mjs"
+    },
+    "./future": {
+      "types": "./dist/future/index.d.ts",
+      "require": "./dist/future/index.js",
+      "import": "./dist/future/index.mjs"
     }
   },
   "main": "./dist/index.js",
@@ -31,6 +41,7 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
+    "@stackflow/config": "^1.1.0",
     "@stackflow/core": "^1.1.0",
     "@stackflow/esbuild-config": "^1.0.3",
     "@stackflow/plugin-history-sync": "^1.6.4-canary.0",
@@ -38,6 +49,7 @@
     "@stackflow/react": "^1.3.2",
     "@types/react": "^18.3.3",
     "esbuild": "^0.23.0",
+    "esbuild-plugin-file-path-extensions": "^2.1.3",
     "react": "^18.3.1",
     "rimraf": "^3.0.2",
     "typescript": "^5.5.3"

@@ -1,5 +1,8 @@
 const { context } = require("esbuild");
 const config = require("@stackflow/esbuild-config");
+const {
+  esbuildPluginFilePathExtensions,
+} = require("esbuild-plugin-file-path-extensions");
 const pkg = require("./package.json");
 
 const watch = process.argv.includes("--watch");
@@ -10,19 +13,33 @@ const external = Object.keys({
 
 Promise.all([
   context({
-    ...config({}),
+    ...config({
+      entryPoints: ["./src/**/*"],
+      outdir: "dist",
+    }),
+    bundle: false,
+    sourcemap: false,
+    external: undefined,
     format: "cjs",
-    external,
   }).then((ctx) =>
     watch ? ctx.watch() : ctx.rebuild().then(() => ctx.dispose()),
   ),
   context({
-    ...config({}),
+    ...config({
+      entryPoints: ["./src/**/*"],
+      outdir: "dist",
+    }),
+    bundle: true,
+    sourcemap: false,
+    external,
     format: "esm",
     outExtension: {
       ".js": ".mjs",
     },
-    external,
+    plugins: [esbuildPluginFilePathExtensions()],
+
+    // https://github.com/favware/esbuild-plugin-file-path-extensions/blob/b8efeff0489c1b02540109f6ea8c39fcd90f9dfc/src/index.ts#L202
+    platform: "node",
   }).then((ctx) =>
     watch ? ctx.watch() : ctx.rebuild().then(() => ctx.dispose()),
   ),

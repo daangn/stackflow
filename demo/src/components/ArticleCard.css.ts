@@ -3,7 +3,7 @@ import { style } from "@vanilla-extract/css";
 
 import { f } from "../styles";
 
-export const container = style([f.resetButton, f.cursorPointer]);
+export const container = style([f.resetAnchor, f.cursorPointer]);
 
 export const thumbnail = style([
   f.posRel,

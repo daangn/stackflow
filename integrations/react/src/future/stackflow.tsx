@@ -17,6 +17,7 @@ import { PluginsProvider } from "../__internal__/plugins";
 import { isBrowser, makeRef } from "../__internal__/utils";
 import type { ActivityComponentType, StackflowReactPlugin } from "../stable";
 import type { Actions } from "./Actions";
+import { ConfigProvider } from "./ConfigProvider";
 import type { StackComponentType } from "./StackComponentType";
 import type { StepActions } from "./StepActions";
 import { loaderPlugin } from "./loader";
@@ -154,14 +155,16 @@ export function stackflow<
     }, []);
 
     return (
-      <PluginsProvider value={coreStore.pluginInstances}>
-        <CoreProvider coreStore={coreStore}>
-          <MainRenderer
-            activityComponentMap={input.components}
-            initialContext={initialContext}
-          />
-        </CoreProvider>
-      </PluginsProvider>
+      <ConfigProvider value={input.config}>
+        <PluginsProvider value={coreStore.pluginInstances}>
+          <CoreProvider coreStore={coreStore}>
+            <MainRenderer
+              activityComponentMap={input.components}
+              initialContext={initialContext}
+            />
+          </CoreProvider>
+        </PluginsProvider>
+      </ConfigProvider>
     );
   });
 

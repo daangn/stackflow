@@ -1,2 +1,1 @@
-export * from "./createLinkComponent";
-export * from "./Link";
+export * from "./stable";
