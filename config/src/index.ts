@@ -3,6 +3,7 @@ export * from "./ActivityBaseParams";
 export * from "./ActivityDefinition";
 export * from "./ActivityLoader";
 export * from "./ActivityLoaderArgs";
+export * from "./AllActivityName";
 export * from "./Config";
 export * from "./InferActivityParams";
 export * from "./Register";

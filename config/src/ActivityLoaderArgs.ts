@@ -1,13 +1,9 @@
 import type { ActivityDefinition } from "./ActivityDefinition";
+import type { AllActivityName } from "./AllActivityName";
 import type { Config } from "./Config";
 import type { InferActivityParams } from "./InferActivityParams";
-import type { RegisteredActivityParamTypes } from "./RegisteredActivityParamTypes";
 
-export type ActivityLoaderArgs<
-  ActivityName extends Extract<keyof RegisteredActivityParamTypes, string>,
-> = {
+export interface ActivityLoaderArgs<ActivityName extends AllActivityName> {
   params: InferActivityParams<ActivityName>;
-  config: Config<
-    ActivityDefinition<Extract<keyof RegisteredActivityParamTypes, string>>
-  >;
-};
+  config: Config<ActivityDefinition<AllActivityName>>;
+}
