@@ -6,4 +6,4 @@
 "@stackflow/demo": minor
 ---
 
-feat: Support <Link /> in Future API
+feat: Support `<Link />` in Future API
