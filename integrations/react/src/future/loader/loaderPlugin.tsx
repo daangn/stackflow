@@ -39,6 +39,7 @@ export function loaderPlugin(
 
         const loaderData = loader({
           params: activityParams,
+          config,
         });
 
         return {
@@ -63,6 +64,7 @@ export function loaderPlugin(
 
       const loaderData = loader({
         params: activityParams,
+        config,
       });
 
       overrideActionParams({
@@ -86,6 +88,7 @@ export function loaderPlugin(
 
       const loaderData = loader({
         params: activityParams,
+        config,
       });
 
       overrideActionParams({
