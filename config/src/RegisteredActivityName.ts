@@ -1,6 +1,6 @@
 import type { RegisteredActivityParamTypes } from "./RegisteredActivityParamTypes";
 
-export type AllActivityName = Extract<
+export type RegisteredActivityName = Extract<
   keyof RegisteredActivityParamTypes,
   string
 >;

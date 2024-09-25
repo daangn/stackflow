@@ -1,7 +1,10 @@
-import type { AllActivityName, InferActivityParams } from "@stackflow/config";
+import type {
+  InferActivityParams,
+  RegisteredActivityName,
+} from "@stackflow/config";
 
 export type Actions = {
-  push<K extends AllActivityName>(
+  push<K extends RegisteredActivityName>(
     activityName: K,
     activityParams: InferActivityParams<K>,
     options?: {
@@ -10,7 +13,7 @@ export type Actions = {
   ): {
     activityId: string;
   };
-  replace<K extends AllActivityName>(
+  replace<K extends RegisteredActivityName>(
     activityName: K,
     activityParams: InferActivityParams<K>,
     options?: {

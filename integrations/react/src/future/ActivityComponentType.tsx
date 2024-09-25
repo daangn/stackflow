@@ -1,5 +1,8 @@
-import type { AllActivityName, InferActivityParams } from "@stackflow/config";
+import type {
+  InferActivityParams,
+  RegisteredActivityName,
+} from "@stackflow/config";
 import type React from "react";
 
-export type ActivityComponentType<ActivityName extends AllActivityName> =
+export type ActivityComponentType<ActivityName extends RegisteredActivityName> =
   React.ComponentType<{ params: InferActivityParams<ActivityName> }>;

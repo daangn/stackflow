@@ -1,6 +1,9 @@
 /// <reference types="@stackflow/plugin-history-sync" />
 
-import type { AllActivityName, InferActivityParams } from "@stackflow/config";
+import type {
+  InferActivityParams,
+  RegisteredActivityName,
+} from "@stackflow/config";
 import { useConfig, useFlow } from "@stackflow/react/future";
 import { useMemo } from "react";
 import { omit } from "./omit";
@@ -13,7 +16,8 @@ type AnchorProps = Omit<
   "ref" | "href"
 >;
 
-export interface LinkProps<K extends AllActivityName> extends AnchorProps {
+export interface LinkProps<K extends RegisteredActivityName>
+  extends AnchorProps {
   ref?: React.RefObject<HTMLAnchorElement>;
   activityName: K;
   activityParams: InferActivityParams<K>;
@@ -21,7 +25,7 @@ export interface LinkProps<K extends AllActivityName> extends AnchorProps {
   replace?: boolean;
 }
 
-export function Link<K extends AllActivityName>(props: LinkProps<K>) {
+export function Link<K extends RegisteredActivityName>(props: LinkProps<K>) {
   const config = useConfig();
   const { push, replace } = useFlow();
 
