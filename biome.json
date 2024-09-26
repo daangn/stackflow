@@ -53,6 +53,7 @@
       ".vscode/**",
       ".yarn/**",
       ".next/**",
+      "__generated__/**",
       ".ultra.cache.json",
       "package.json"
     ]

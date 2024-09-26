@@ -1,6 +1,6 @@
 import type { ActivityLoaderArgs } from "./ActivityLoaderArgs";
-import type { RegisteredActivityParamTypes } from "./RegisteredActivityParamTypes";
+import type { RegisteredActivityName } from "./RegisteredActivityName";
 
-export type ActivityLoader<
-  ActivityName extends Extract<keyof RegisteredActivityParamTypes, string>,
-> = (args: ActivityLoaderArgs<ActivityName>) => any;
+export type ActivityLoader<ActivityName extends RegisteredActivityName> = (
+  args: ActivityLoaderArgs<ActivityName>,
+) => any;

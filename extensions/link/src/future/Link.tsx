@@ -2,7 +2,7 @@
 
 import type {
   InferActivityParams,
-  RegisteredActivityParamTypes,
+  RegisteredActivityName,
 } from "@stackflow/config";
 import { useConfig, useFlow } from "@stackflow/react/future";
 import { useMemo } from "react";
@@ -16,9 +16,8 @@ type AnchorProps = Omit<
   "ref" | "href"
 >;
 
-export interface LinkProps<
-  K extends Extract<keyof RegisteredActivityParamTypes, string>,
-> extends AnchorProps {
+export interface LinkProps<K extends RegisteredActivityName>
+  extends AnchorProps {
   ref?: React.RefObject<HTMLAnchorElement>;
   activityName: K;
   activityParams: InferActivityParams<K>;
@@ -26,9 +25,7 @@ export interface LinkProps<
   replace?: boolean;
 }
 
-export function Link<
-  K extends Extract<keyof RegisteredActivityParamTypes, string>,
->(props: LinkProps<K>) {
+export function Link<K extends RegisteredActivityName>(props: LinkProps<K>) {
   const config = useConfig();
   const { push, replace } = useFlow();
 
