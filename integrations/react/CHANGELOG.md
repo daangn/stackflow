@@ -1,5 +1,12 @@
 # @stackflow/react
 
+## 1.4.0
+
+### Minor Changes
+
+- 7b1780f: feat: Support `<Link />` in Future API
+- 412de46: add `config` property in loader args
+
 ## 1.3.2
 
 ### Patch Changes

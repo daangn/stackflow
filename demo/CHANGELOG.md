@@ -1,5 +1,22 @@
 # @stackflow/demo
 
+## 1.4.0
+
+### Minor Changes
+
+- 7b1780f: feat: Support `<Link />` in Future API
+
+### Patch Changes
+
+- Updated dependencies [dc26742]
+- Updated dependencies [7b1780f]
+- Updated dependencies [412de46]
+  - @stackflow/plugin-history-sync@1.7.0
+  - @stackflow/react@1.4.0
+  - @stackflow/link@1.5.0
+  - @stackflow/config@1.2.0
+  - @stackflow/plugin-preload@1.4.3
+
 ## 1.3.3-canary.0
 
 ### Patch Changes

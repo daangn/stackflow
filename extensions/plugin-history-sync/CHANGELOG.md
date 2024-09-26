@@ -1,5 +1,15 @@
 # @stackflow/plugin-history-sync
 
+## 1.7.0
+
+### Minor Changes
+
+- 7b1780f: feat: Support `<Link />` in Future API
+
+### Patch Changes
+
+- dc26742: fix(plugin-history-sync): replace json-cycle with flatted
+
 ## 1.6.4-canary.0
 
 ### Patch Changes

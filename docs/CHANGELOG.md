@@ -1,5 +1,16 @@
 # @stackflow/docs
 
+## 1.2.28
+
+### Patch Changes
+
+- Updated dependencies [dc26742]
+- Updated dependencies [7b1780f]
+- Updated dependencies [412de46]
+  - @stackflow/plugin-history-sync@1.7.0
+  - @stackflow/react@1.4.0
+  - @stackflow/demo@1.4.0
+
 ## 1.2.28-canary.0
 
 ### Patch Changes
