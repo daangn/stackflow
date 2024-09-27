@@ -1,5 +1,11 @@
 # @stackflow/plugin-basic-ui
 
+## 1.10.1-canary.0
+
+### Patch Changes
+
+- export `<AppBar />` component
+
 ## 1.10.0
 
 ### Minor Changes

@@ -1,5 +1,12 @@
 # @stackflow/demo
 
+## 1.4.1-canary.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @stackflow/plugin-basic-ui@1.10.1-canary.0
+
 ## 1.4.0
 
 ### Minor Changes
