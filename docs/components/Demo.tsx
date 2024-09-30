@@ -3,8 +3,9 @@ import { useSimpleReveal } from "simple-reveal";
 
 const Demo: React.FC = () => {
   const { cn, ref, style } = useSimpleReveal({
-    delay: 200,
-    initialTransform: "scale(0.95)",
+    delay: 300,
+    initialTransform: "translate3d(0, 1rem, 1rem);",
+    duration: 1000,
   });
   return (
     <div
@@ -22,8 +23,8 @@ const Demo: React.FC = () => {
       <div
         style={{
           width: "100%",
-          maxWidth: "360px",
-          height: "640px",
+          maxWidth: "375px",
+          height: "667px",
           position: "relative",
           borderRadius: ".5rem",
           overflow: "hidden",
