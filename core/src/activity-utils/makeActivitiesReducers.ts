@@ -24,14 +24,14 @@ export const makeActivitiesReducers = (isTransitionDone: boolean) =>
      */
     Initialized: (
       activities: Activity[],
-      event: InitializedEvent,
+      event: InitializedEvent
     ): Activity[] => activities,
     /**
      * noop
      */
     ActivityRegistered: (
       activities: Activity[],
-      event: ActivityRegisteredEvent,
+      event: ActivityRegisteredEvent
     ): Activity[] => activities,
     /**
      * Push new activity to activities
@@ -68,10 +68,11 @@ export const makeActivitiesReducers = (isTransitionDone: boolean) =>
       ];
     },
     /**
-     * noop
+     * Pop the last activity from activities
      */
-    Popped: (activities: Activity[], event: PoppedEvent): Activity[] =>
-      activities,
+    Popped: (activities: Activity[], event: PoppedEvent): Activity[] => {
+      return activities.slice(0, activities.length - 1);
+    },
     /**
      * noop
      */
@@ -82,7 +83,7 @@ export const makeActivitiesReducers = (isTransitionDone: boolean) =>
      */
     StepReplaced: (
       activities: Activity[],
-      event: StepReplacedEvent,
+      event: StepReplacedEvent
     ): Activity[] => activities,
     /**
      * noop
