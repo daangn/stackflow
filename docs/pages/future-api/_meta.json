@@ -1,6 +1,6 @@
 {
-  "introduction": "Future API 소개",
-  "config": "Config",
+  "introduction": "시작하기",
+  "config": "@stackflow/config",
   "changes": "API 변경사항",
   "loader-api": "Loader API",
   "api-pipelining": "API 파이프라이닝"

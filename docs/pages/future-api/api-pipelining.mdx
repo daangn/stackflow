@@ -1,6 +1,8 @@
 # API 파이프라이닝
 
-이 모든 변화들이 모여서 API 파이프라이닝을 깔끔한 방법으로 구현할 수 있게 됩니다. 아래와 같이 엔트리 파일에서 리액트 앱 초기화와 API 요청을 동시에 수행해 초기 렌더링까지 걸리는 시간을 단축할 수 있습니다.
+![](./api-pipelining-diagram-1.png)
+
+아래와 같이 엔트리 파일에서 리액트 앱 초기화와 API 요청을 동시에 수행해 초기 렌더링까지 걸리는 시간을 단축할 수 있습니다. Stackflow Future API를 활용하면 API 파이프라이닝을 깔끔한 방법으로 구현할 수 있습니다.
 
 ```typescript
 /**
@@ -43,15 +45,15 @@ export function renderApp({ initialLoaderData }: { initialLoaderData: any }) {
   const root = ReactDOM.createRoot(document.getElementById("root")!);
 
   root.render(
-    // 에러와 로딩 처리는 React에서 가능
-		<ErrorBoundary>
-			<Suspense>
-				{/**
-				  * Stack에 initialLoaderData를 넘겨주면
-				  * 첫번째 loader를 실행시키는 대신 받은 loaderData로 결과를 덮어씁니다
-				  */}
-		    <Stack initialLoaderData={initialLoaderData} />,
-	    </Suspense>
+    // 에러와 로딩 처리는 React에서 가능합니다
+    <ErrorBoundary>
+      <Suspense>
+        {/**
+          * Stack에 initialLoaderData를 넘겨주면
+          * 첫번째 loader를 실행시키는 대신 받은 loaderData로 결과를 덮어씁니다
+          */}
+        <Stack initialLoaderData={initialLoaderData} />,
+      </Suspense>
     </ErrorBoundary>
   );
 }
