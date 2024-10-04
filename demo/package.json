@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/demo",
-  "version": "1.4.0",
+  "version": "1.4.1-canary.0",
   "private": true,
   "license": "MIT",
   "type": "module",
@@ -36,7 +36,7 @@
     "@stackflow/config": "^1.2.0",
     "@stackflow/core": "^1.1.0",
     "@stackflow/link": "^1.5.0",
-    "@stackflow/plugin-basic-ui": "^1.9.2",
+    "@stackflow/plugin-basic-ui": "^1.10.1-canary.0",
     "@stackflow/plugin-devtools": "^0.1.11",
     "@stackflow/plugin-history-sync": "^1.7.0",
     "@stackflow/plugin-map-initial-activity": "^1.0.11",
