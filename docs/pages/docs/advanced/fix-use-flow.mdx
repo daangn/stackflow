@@ -2,6 +2,10 @@ import { Callout } from "nextra-theme-docs";
 
 # useFlow 순환참조 해결하기
 
+<Callout type="info" emoji="💡">
+  [Future API](/future-api/introduction)를 사용하면 `useFlow()` 순환참조 문제를 쉽게 해결할 수 있어요. [Future API](/future-api/introduction) 사용을 권장해요. 
+</Callout>
+
 `stackflow()` 함수가 반환하는 `useFlow()` 함수는 선언된 액티비티 타입을 활용해요. 따라서 `useFlow()`와 액티비티 컴포넌트는 서로 맞물리면서 순환 참조(Circular Dependency)를 일으켜요.
 `useActions()` 훅을 사용하고 타입을 따로 `import` 받으면 이러한 순환 참조를 제거할 수 있어요.
 
