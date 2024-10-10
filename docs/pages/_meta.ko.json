@@ -1,0 +1,5 @@
+{
+  "index": { "title": "Stackflow", "type": "page" },
+  "docs": { "title": "Docs", "type": "page" },
+  "api": { "title": "API", "type": "page" }
+}

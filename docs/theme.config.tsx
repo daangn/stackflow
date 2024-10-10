@@ -1,4 +1,4 @@
-import { useTheme } from "nextra-theme-docs";
+import { type DocsThemeConfig, useTheme } from "nextra-theme-docs";
 import Favicon from "./assets/favicon.png";
 
 const Logo = () => {
@@ -64,7 +64,11 @@ const Logo = () => {
 const SEED_SCALE_COLOR_SCRIPT = `(()=>{var e=document.documentElement,d=window.matchMedia("(prefers-color-scheme: dark)"),a=()=>{e.dataset.seed="",e.dataset.seedScaleColor=d.matches?"dark":"light"};"addEventListener"in d?d.addEventListener("change",a):"addListener"in d&&d.addListener(a),a()})();`;
 const NEXTRA_THEME_SCRIPT = `(()=>{var e=document.documentElement,d=window.matchMedia("(prefers-color-scheme: dark)"),s=()=>{e.classList.remove("light"),e.classList.remove("dark"),d.matches?e.classList.add("dark"):e.classList.add("light")};"addEventListener"in d?d.addEventListener("change",s):"addListener"in d&&d.addListener(s),s()})();`;
 
-export default {
+const themeConfig: DocsThemeConfig = {
+  i18n: [
+    {'locale': 'ko', text: '한국어'},
+    {'locale': 'en', text: 'English'},
+  ],
   project: {
     link: "https://github.com/daangn/stackflow",
   },
@@ -103,3 +107,5 @@ export default {
     </>
   ),
 };
+
+export default themeConfig;

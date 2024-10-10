@@ -21,7 +21,7 @@ fs.readdir(extensionsFolderPath, (err, files) => {
 
   // -> write to docs/pages/plugins/meta.ko.json
   fs.writeFileSync(
-    path.resolve(pluginsFolderPath, "_meta.json"),
+    path.resolve(pluginsFolderPath, "_meta.en.json"),
     `{\n${files.map((file) => `  "${file}": "${file}"`).join(",\n")}\n}\n`,
   );
 
@@ -37,7 +37,7 @@ fs.readdir(extensionsFolderPath, (err, files) => {
 
         // -> write to docs/pages/plugins/${file}.ko.mdx
         fs.writeFileSync(
-          path.resolve(pluginsFolderPath, `${file}.mdx`),
+          path.resolve(pluginsFolderPath, `${file}.en.mdx`),
           `${data}\n- [plugin github link](${extensionsPathUrl}/${file})\n`,
         );
       });
