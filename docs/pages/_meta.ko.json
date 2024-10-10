@@ -1,5 +1,11 @@
 {
-  "index": { "title": "Stackflow", "type": "page" },
+  "index": {
+    "title": "Stackflow",
+    "type": "page",
+    "theme": {
+      "layout": "full"
+    }
+  },
   "docs": { "title": "Docs", "type": "page" },
   "api-references": { "title": "API", "type": "page" }
 }

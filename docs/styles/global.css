@@ -2,6 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  :root {
+    --primary: 24 100% 53%;
+    --primary-foreground: 0 0% 100%;
+    
+    --secondary: 24 88% 94%;
+    --secondary-foreground: 24 100% 53%;
+    
+    --muted: 220 23.08% 97.45%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    
+    --accent: 225 18.18% 95.69%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+  }
+}
+
 html {
   word-break: keep-all;
 }

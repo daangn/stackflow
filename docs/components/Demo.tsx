@@ -7,6 +7,7 @@ const Demo: React.FC = () => {
     initialTransform: "translate3d(0, 1rem, 1rem);",
     duration: 1000,
   });
+
   return (
     <div
       ref={ref}
@@ -14,6 +15,7 @@ const Demo: React.FC = () => {
       style={{
         position: "relative",
         width: "100%",
+        maxWidth: 390,
         display: "flex",
         justifyContent: "center",
         margin: "3rem 0",
@@ -23,8 +25,8 @@ const Demo: React.FC = () => {
       <div
         style={{
           width: "100%",
-          maxWidth: "375px",
-          height: "667px",
+          display: "flex",
+          justifyContent: "center",
           position: "relative",
           borderRadius: ".5rem",
           boxShadow: "0 .25rem 1rem 0 rgba(0, 0, 0, .1)",
@@ -33,8 +35,8 @@ const Demo: React.FC = () => {
         <div
           style={{
             width: "100%",
-            maxWidth: "360px",
-            height: "640px",
+            maxWidth: 390,
+            height: 844,
             position: "relative",
             borderRadius: ".5rem",
             overflow: "hidden",

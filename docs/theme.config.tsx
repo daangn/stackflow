@@ -93,6 +93,11 @@ const themeConfig: DocsThemeConfig = {
     placeholder: "Search",
   },
   logo: <Logo />,
+  gitTimestamp: ({ timestamp }) =>
+    Intl.DateTimeFormat("ko-KR", {
+      dateStyle: "medium",
+      timeStyle: "short",
+    }).format(timestamp),
   head: (
     <>
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
