@@ -2119,6 +2119,7 @@ __metadata:
   dependencies:
     "@mdx-js/react": "npm:^3.0.1"
     "@radix-ui/react-slot": "npm:^1.1.0"
+    "@seed-design/design-token": "npm:^1.0.3"
     "@seed-design/stylesheet": "npm:^1.0.4"
     "@stackflow/core": "npm:^1.1.0"
     "@stackflow/demo": "npm:^1.4.0"

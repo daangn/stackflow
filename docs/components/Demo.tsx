@@ -28,22 +28,30 @@ const Demo: React.FC = () => {
           display: "flex",
           justifyContent: "center",
           position: "relative",
-          borderRadius: ".5rem",
-          boxShadow: "0 .25rem 1rem 0 rgba(0, 0, 0, .1)",
         }}
       >
         <div
           style={{
             width: "100%",
-            maxWidth: 390,
-            height: 844,
+            maxWidth: 450,
+            height: 900,
             position: "relative",
-            borderRadius: ".5rem",
+            borderRadius: "1rem",
             overflow: "hidden",
             transform: "translate3d(0, 0, 0)",
             maskImage: "-webkit-radial-gradient(white, black)",
           }}
         >
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              background:
+                "linear-gradient(0deg, rgba(17,17,17,1) 10%, rgba(255,255,255,0) 100%)",
+              zIndex: 50,
+              pointerEvents: "none",
+            }}
+          />
           <Stack
             initialContext={{
               theme: "cupertino",
