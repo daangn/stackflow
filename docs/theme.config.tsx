@@ -66,8 +66,8 @@ const NEXTRA_THEME_SCRIPT = `(()=>{var e=document.documentElement,d=window.match
 
 const themeConfig: DocsThemeConfig = {
   i18n: [
-    {'locale': 'ko', text: '한국어'},
-    {'locale': 'en', text: 'English'},
+    { locale: "ko", text: "한국어" },
+    { locale: "en", text: "English" },
   ],
   project: {
     link: "https://github.com/daangn/stackflow",
@@ -90,7 +90,7 @@ const themeConfig: DocsThemeConfig = {
     text: <span>MIT {new Date().getFullYear()} © Stackflow</span>,
   },
   search: {
-    placeholder: "검색어를 입력하세요...",
+    placeholder: "Search",
   },
   logo: <Logo />,
   head: (

@@ -1,0 +1,164 @@
+import { Callout } from "nextra-theme-docs";
+
+# 미리 API 호출하기
+
+<Callout type="info" emoji="💡">
+  [Future API](/future-api/introduction)를 사용하면 빌트인 Loader API를 활용해 프리로딩을 더 깔끔하게 구현할 수 있어요. [Future API](/future-api/introduction) 사용을 권장해요.
+</Callout>
+
+## Preload 플러그인
+
+Preload 플러그인을 통해 미리 액티비티에 필요한 데이터를 가져올 수 있어요.
+
+다음 명령어를 통해 `@stackflow/plugin-preload`를 설치해요.
+
+```bash
+$ yarn add @stackflow/plugin-preload
+```
+
+설치가 완료되면 다음과 같이 `stackflow()` 함수의 `plugins` 필드에 플러그인을 등록해요.
+
+```typescript
+/**
+ * stackflow.ts
+ */
+import { stackflow } from "@stackflow/react";
+import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
+import { preloadPlugin } from "@stackflow/plugin-preload";
+import MyActivity from "./MyActivity";
+import Article from "./Article";
+
+const { Stack, useFlow, activities } = stackflow({
+  transitionDuration: 350,
+  activities: {
+    MyActivity,
+    Article,
+  },
+  plugins: [
+    basicRendererPlugin(),
+    basicUIPlugin({
+      theme: "cupertino",
+    }),
+    preloadPlugin({
+      loaders: {
+        MyActivity({ activityName, activityParams }) {
+          // 액티비티 이름과 파라미터를 통해 해당 액티비티에 필요한 데이터를 가져와요.
+          // 해당 데이터에 접근 할 수 있는 reference 값을 반환하면,
+          // 해당 reference 값을 `useActivityPreloadRef` 훅을 통해 가져올 수 있어요.
+          return preloadRef;
+        },
+      },
+    }),
+  ],
+});
+
+export type TypeActivities = typeof activities;
+```
+
+이후 각 액티비티 내에서 `useActivityPreloadRef()` 훅을 통해 해당 `preloadRef` 값을 가져올 수 있어요.
+
+```tsx
+/**
+ * MyActivity.tsx
+ */
+import { ActivityComponentType } from "@stackflow/react";
+import { useActivityPreloadRef } from "@stackflow/plugin-preload";
+
+const MyActivity: ActivityComponentType = () => {
+  const preloadRef = useActivityPreloadRef();
+
+  // Suspense for Data Fetching을 통해서 직접 구현해요.
+  // https://ko.reactjs.org/docs/concurrent-mode-suspense.html
+  const data = readData({ preloadRef });
+
+  return <div>{/* ... */}</div>;
+};
+```
+
+만약 특정 시점에 다음 화면의 API를 미리 가져오고 싶다면, `@stackflow/plugin-preload`에서 제공하는 `usePreloader()` 훅을 통해 `preload` 함수를 사용할 수 있어요.
+
+`createPreloader()` 함수를 통해 Type-safe한 `usePreloader()` 훅을 만들어요.
+
+```typescript
+/**
+ * usePreloader.ts
+ */
+import { createPreloader } from "@stackflow/plugin-preload";
+import type { TypeActivities } from "./stackflow";
+
+// 등록된 액티비티의 전체 타입을 제네릭으로 전달해, Type-safe하게 usePreloader() 훅을 사용해요
+export const { usePreloader } = createPreloader<TypeActivities>();
+```
+
+```tsx
+/**
+ * MyActivity.tsx
+ */
+import { ActivityComponentType } from "@stackflow/react";
+import { usePreloader } from "./usePreloader";
+
+const MyActivity:  = () => {
+  const { preload } = usePreloader();
+
+  useEffect(() => {
+    // `MyActivity` 컴포넌트를 렌더링할 때 `Article` 컴포넌트가 필요로하는 데이터를 가져와요.
+    preload("Article", {
+      /* ... */
+    });
+  }, []);
+
+  return <div>{/* ... */}</div>;
+};
+```
+
+## `<Link />` 컴포넌트
+
+만약 프로젝트에서 Preload 플러그인과 History Sync 플러그인을 모두 사용하고 있다면, `<Link />` 컴포넌트를 활용할 수 있어요.
+
+다음 명령어를 통해 `@stackflow/link`를 설치해요.
+
+```bash
+$ yarn add @stackflow/link
+```
+
+`createLinkComponent()` 함수를 통해 Type-safe한 Link 컴포넌트를 만들어요.
+
+```typescript
+/**
+ * Link.ts
+ */
+import { createLinkComponent } from "@stackflow/link";
+import type { TypeActivities } from "./stackflow";
+
+// 마찬가지로 액티비티의 전체 타입을 제네릭으로 전달해, Type-safe하게 <Link /> 컴포넌트를 사용해요
+export const { Link } = createLinkComponent<TypeActivities>();
+```
+
+이후 다음과 같이 `activityName`과 `activityParams`를 Props로 갖는 `<Link />` 컴포넌트를 사용해요.
+
+```tsx
+/**
+ * MyComponent.ts
+ */
+import { Link } from './Link'
+
+const MyComponent = () => {
+  return (
+    <div>
+      <Link
+        className={...}
+        activityName="MyActivity"
+        activityParams={{}}
+      >
+        {/* ... */}
+      </Link>
+    </div>
+  )
+}
+```
+
+<Callout emoji="⚡️">
+  `<Link />` 컴포넌트는 내부적으로 `usePreloader()` 훅을 사용해, 사용자의 뷰포트
+  안에 해당 컴포넌트가 노출되었을때 미리 데이터를 가져와요. 따라서, 사용자에게
+  로딩이 없는 탐험 경험을 제공할 수 있어요.
+</Callout>

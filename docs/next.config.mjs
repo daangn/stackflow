@@ -12,5 +12,6 @@ export default withNextra({
   i18n: {
     locales: ["en", "ko"],
     defaultLocale: "en",
+    localeDetection: false,
   },
 });
