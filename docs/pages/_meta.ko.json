@@ -1,5 +1,5 @@
 {
   "index": { "title": "Stackflow", "type": "page" },
   "docs": { "title": "Docs", "type": "page" },
-  "asdf": { "title": "API", "type": "page" }
+  "api-references": { "title": "API", "type": "page" }
 }
