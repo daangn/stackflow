@@ -149,7 +149,10 @@ export function stackflow<
     return (
       <ConfigProvider value={input.config}>
         <PluginsProvider value={coreStore.pluginInstances}>
-          <CoreProvider coreStore={coreStore}>
+          <CoreProvider
+            coreStore={coreStore}
+            transition={props.transition ?? true}
+          >
             <MainRenderer
               activityComponentMap={input.components}
               initialContext={initialContext()}

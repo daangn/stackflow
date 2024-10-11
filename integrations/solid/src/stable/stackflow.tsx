@@ -25,6 +25,7 @@ import { useStepActions } from "./useStepActions";
 
 export type StackComponentType = Component<{
   initialContext?: any;
+  transition?: boolean;
 }>;
 
 type StackflowPluginsEntry<T extends BaseActivities> =
@@ -197,7 +198,10 @@ export function stackflow<T extends BaseActivities>(
 
     return (
       <PluginsProvider value={coreStore.pluginInstances}>
-        <CoreProvider coreStore={coreStore}>
+        <CoreProvider
+          coreStore={coreStore}
+          transition={props.transition ?? true}
+        >
           <MainRenderer
             activityComponentMap={activityComponentMap}
             initialContext={props.initialContext}
