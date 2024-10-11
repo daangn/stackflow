@@ -1,7 +1,7 @@
 import { Stack } from "@stackflow/demo";
 import { useSimpleReveal } from "simple-reveal";
 
-const Demo: React.FC = () => {
+const Demo: React.FC = ({ children }: React.PropsWithChildren) => {
   const { cn, ref, style } = useSimpleReveal({
     delay: 300,
     initialTransform: "translate3d(0, 1rem, 1rem);",
@@ -42,16 +42,7 @@ const Demo: React.FC = () => {
             maskImage: "-webkit-radial-gradient(white, black)",
           }}
         >
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              background:
-                "linear-gradient(0deg, rgba(17,17,17,1) 10%, rgba(255,255,255,0) 100%)",
-              zIndex: 50,
-              pointerEvents: "none",
-            }}
-          />
+          {children}
           <Stack
             initialContext={{
               theme: "cupertino",
