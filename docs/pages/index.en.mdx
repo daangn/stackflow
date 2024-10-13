@@ -1,14 +1,13 @@
 import Demo from "../components/Demo.tsx";
-import Logo from "../assets/logo.png";
+import Ellipse from "../assets/gradient-ellipse.png";
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from "../components/Button.tsx";
 import { ChevronRight } from "lucide-react";
 
-<section className="w-full grid lg:grid-cols-2 place-items-center lg:mt-12">
+<section className="relative w-full grid lg:grid-cols-2 place-items-center lg:mt-20">
   <div className="flex flex-col items-center gap-4 lg:ml-8 lg:gap-8 lg:items-start">
     <div className="flex items-center gap-4 mt-14 lg:mt-0">
-      <Image className="size-8 lg:size-12" src={Logo} alt="logo" width={512} height={512} />
       <h1 className="text-5xl lg:text-7xl font-bold">
         Stackflow
       </h1>
@@ -27,10 +26,4 @@ import { ChevronRight } from "lucide-react";
   </Demo>
 </section>
 
-<section className="w-full grid lg:grid-cols-5 gap-4">
-  <div className="flex items-center justify-center w-full aspect-square bg-gray50 text-gray950 rounded-xl">Headless Architecture</div>
-  <div className="flex items-center justify-center w-full aspect-square bg-gray50 text-gray950 rounded-xl">Plugin-Driven Extensibility</div>
-  <div className="flex items-center justify-center w-full aspect-square bg-gray50 text-gray950 rounded-xl">Framework Agnostic</div>
-  <div className="flex items-center justify-center w-full aspect-square bg-gray50 text-gray950 rounded-xl">Cross-Platform Rendering</div>
-  <div className="flex items-center justify-center w-full aspect-square bg-gray50 text-gray950 rounded-xl">TypeScript & Server-Side Rendering Support</div>
-</section>
+<Image src={Ellipse} width={1000} height={500} className="absolute w-full -z-10 top-20 left-0 right-0 opacity-40" />

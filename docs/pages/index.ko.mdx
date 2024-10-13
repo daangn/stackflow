@@ -1,24 +1,29 @@
 import Demo from "../components/Demo.tsx";
-import Logo from "../assets/logo.png";
+import Ellipse from "../assets/gradient-ellipse.png";
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from "../components/Button.tsx";
 import { ChevronRight } from "lucide-react";
 
-<section className="w-full grid lg:grid-cols-2 place-items-center lg:mt-12">
+<section className="relative w-full grid lg:grid-cols-2 place-items-center lg:mt-20">
   <div className="flex flex-col items-center gap-4 lg:ml-8 lg:gap-8 lg:items-start">
     <div className="flex items-center gap-4 mt-14 lg:mt-0">
-      <Image className="size-8 lg:size-12" src={Logo} alt="logo" width={512} height={512} />
       <h1 className="text-5xl lg:text-7xl font-bold">
         Stackflow
       </h1>
     </div>
     
-    <p className="text-center text-sm lg:text-start lg:text-xl">JavaScript와 TypeScript를 위한 가장 간편한 스택 네비게이션 라이브러리.</p>
+    <p className="text-sm lg:text-xl">JavaScript와 TypeScript를 위한 가장 간편한 스택 네비게이션 라이브러리.</p>
     <div className="flex items-center gap-1 lg:gap-2 w-full lg:w-auto">
-      <Button asChild variant="default" className="flex gap-2 pr-2 w-full lg:w-auto"><Link href="/docs/introduction">시작하기 <ChevronRight className="size-6" /></Link></Button>
+      <Button asChild variant="default" className="flex gap-2 pr-2"><Link href="/docs/introduction">시작하기 <ChevronRight className="size-6" /></Link></Button>
     </div>
   </div>
 
-  <Demo />
+  <Demo>          
+    <div
+      className="absolute inset-0 bg-gradient-to-t from-10% from-[rgb(255,255,255)] dark:from-[rgb(17,17,17)] to-[rgba(255,255,255,0)] z-50 pointer-events-none"
+    />
+  </Demo>
 </section>
+
+<Image src={Ellipse} width={1000} height={500} className="absolute w-full -z-10 top-20 left-0 right-0 opacity-40" />
