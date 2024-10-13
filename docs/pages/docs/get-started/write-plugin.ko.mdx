@@ -1,5 +1,5 @@
 import { Callout } from "nextra-theme-docs";
-import DiagramEffectHook from "../../components/DiagramEffectHook.tsx";
+import { EffectHookDiagram } from "@components/diagrams/EffectHookDiagram";
 
 # 플러그인 작성하기
 
@@ -205,7 +205,7 @@ stackflow({
 
 스택 상태는 유저의 행동으로 인해, push, replace, pop이 호출됐을때 변화하기 시작해요. 해당 시점부터 스택 상태가 변화하기 전(Pre-effect)과 변화한 뒤 UI까지 반영된 이후 (Post-effect)에 특정 동작을 수행할 수 있어요.
 
-<DiagramEffectHook />
+<EffectHookDiagram />
 
 ### Post-effects
 
