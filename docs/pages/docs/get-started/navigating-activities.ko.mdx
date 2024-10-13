@@ -1,7 +1,12 @@
+---
+title: 액티비티 탐색하기
+---
+
 import { Callout } from "nextra-theme-docs";
 import { StepDiagram } from "@components/diagrams/StepDiagram";
+import { APITable } from "@components/APITable";
 
-# 탐색하기
+# 액티비티 탐색하기
 
 성공적으로 액티비티를 등록했다면, 이제 액티비티 사이를 이동해볼 차례에요. **Stackflow**에서는 `useFlow()`를 통해 액티비티를 쌓거나, 교체하거나, 삭제할 수 있도록 지원하고 있어요. 한번 알아볼까요?
 
@@ -9,10 +14,7 @@ import { StepDiagram } from "@components/diagrams/StepDiagram";
 
 `stackflow.ts`에서 생성했던 `useFlow()` 훅을 사용해요. 해당 훅 내에 `push()` 함수를 통해 다음과 같이 새 액티비티를 쌓을 수 있어요.
 
-```tsx
-/**
- * MyActivity.tsx
- */
+```tsx filename="MyActivity.tsx" copy
 import { ActivityComponentType } from "@stackflow/react";
 import { AppScreen } from "@stackflow/plugin-basic-ui";
 import { useFlow } from "./stackflow";
@@ -60,9 +62,11 @@ push(
 
 `push()` 함수의 세번째 파라미터인 추가 옵션에는 다음과 같은 값이 있어요.
 
-| 옵션명    | 역할                     | 타입    | 기본값 |
-| --------- | ------------------------ | ------- | ------ |
-| `animate` | 애니메이션을 켜거나 꺼요 | Boolean | `true` |
+<APITable hasDefaultValue>
+|         |           |                   |      |
+| ------- | --------- | ----------------- | ---- |
+| animate | `boolean` | 애니메이션을 켜거나 꺼요 | true |
+</APITable>
 
 <Callout emoji="💡">
   TypeScript를 활용하면, 액티비티 이름과 액티비티 파라미터가 엄격하게 타이핑
@@ -74,10 +78,7 @@ push(
 
 다음으로 스택에 새로운 액티비티를 추가하지 않고 현재 액티비티를 교체하는 방법에 대해서 살펴봐요. `stackflow.ts`에서 생성했던 `useFlow()` 훅의 `replace()` 함수를 통해 다음과 같이 현재 액티비티를 교체할 수 있어요.
 
-```tsx
-/**
- * MyActivity.tsx
- */
+```tsx filename="MyActivity.tsx" copy
 import { ActivityComponentType } from "@stackflow/react";
 import { AppScreen } from "@stackflow/plugin-basic-ui";
 import { useFlow } from "./stackflow";
@@ -125,9 +126,11 @@ replace(
 
 `replace()` 함수의 세번째 파라미터인 추가 옵션에는 다음과 같은 값이 있어요.
 
-| 옵션명    | 역할                     | 타입    | 기본값 |
-| --------- | ------------------------ | ------- | ------ |
-| `animate` | 애니메이션을 켜거나 꺼요 | Boolean | `true` |
+<APITable hasDefaultValue>
+|         |           |                   |      |
+| ------- | --------- | ----------------- | ---- |
+| animate | `boolean` | 애니메이션을 켜거나 꺼요 | true |
+</APITable>
 
 ## 현재 액티비티 삭제하기
 
@@ -144,6 +147,7 @@ import { useFlow } from "./stackflow";
 type ArticleParams = {
   title: string;
 };
+
 const Article: ActivityComponentType<ArticleParams> = ({ params }) => {
   const { pop } = useFlow();
 
@@ -177,148 +181,12 @@ pop({
 
 `pop()` 함수의 첫번째 파라미터인 추가 옵션에는 다음과 같은 값이 있어요.
 
-| 옵션명    | 역할                     | 타입    | 기본값 |
-| --------- | ------------------------ | ------- | ------ |
-| `animate` | 애니메이션을 켜거나 꺼요 | Boolean | `true` |
+<APITable hasDefaultValue>
+|         |           |                    |      |
+| ------- | --------- | ------------------ | ---- |
+| animate | `boolean` | 애니메이션을 켜거나 꺼요 | true |
+</APITable>
 
 ---
 
-## 스텝
-
-<StepDiagram />
-
-1개의 액티비티 내부에서 가상의 스택 상태를 가지고 싶을때 스텝을 사용할 수 있어요. 스텝은 기본적으로 액티비티의 파라미터를 바꾸는 식으로 동작해요.
-
-<Callout emoji="💡">
-  `@stackflow/plugin-history-sync`는 스텝을 지원해요. 만약 모바일에서 특정 상태
-  조작과 함께 안드로이드 백버튼 지원이 필요한 경우 `history.pushState()`보다
-  스텝 기능을 활용하시면 더 좋아요.
-</Callout>
-
-## 새 스텝 쌓기
-
-`stackflow.ts`에서 생성할 수 있는 `useStepFlow()` 훅을 사용해요. 해당 훅 내에 `stepPush()` 함수를 통해 다음과 같이 새 스텝을 쌓을 수 있어요.
-
-```tsx
-/**
- * Article.tsx
- */
-import { ActivityComponentType } from "@stackflow/react";
-import { AppScreen } from "@stackflow/plugin-basic-ui";
-import { useStepFlow } from "./stackflow";
-
-type ArticleParams = {
-  title: string;
-};
-const Article: ActivityComponentType<ArticleParams> = ({ params }) => {
-  // 타입 안정성을 위해 현재 액티비티의 이름을 넣어줘요
-  const { stepPush } = useStepFlow("Article");
-
-  const onNextClick = () => {
-    // `stepPush()`을 호출하면 params.title이 변경돼요.
-    stepPush({
-      title: "Next Title",
-    });
-  };
-
-  return (
-    <AppScreen appBar={{ title: "Article" }}>
-      <div>
-        <h1>{params.title}</h1>
-        <button onClick={onNextClick}>next</button>
-      </div>
-    </AppScreen>
-  );
-};
-
-export default Article;
-```
-
-## 스텝 교체하기
-
-`useStepFlow()`의 `stepReplace()` 함수를 활용하면 현재 스텝을 교체할 수 있어요.
-
-```tsx
-/**
- * Article.tsx
- */
-import { ActivityComponentType } from "@stackflow/react";
-import { AppScreen } from "@stackflow/plugin-basic-ui";
-import { useStepFlow } from "./stackflow";
-
-type ArticleParams = {
-  title: string;
-};
-const Article: ActivityComponentType<ArticleParams> = ({ params }) => {
-  // 타입 안정성을 위해 현재 액티비티의 이름을 넣어줘요
-  const { stepReplace } = useStepFlow("Article");
-
-  const onChangeClick = () => {
-    // `stepReplace()`을 호출하면 params.title이 변경돼요
-    stepReplace({
-      title: "Next Title",
-    });
-  };
-
-  return (
-    <AppScreen appBar={{ title: "Article" }}>
-      <div>
-        <h1>{params.title}</h1>
-        <button onClick={onChangeClick}>change</button>
-      </div>
-    </AppScreen>
-  );
-};
-
-export default Article;
-```
-
-## 스텝 삭제하기
-
-`useStepFlow()`의 `stepPop()` 함수를 활용하면 현재 스텝을 삭제할 수 있어요.
-
-```tsx
-/**
- * Article.tsx
- */
-import { ActivityComponentType } from "@stackflow/react";
-import { AppScreen } from "@stackflow/plugin-basic-ui";
-import { useStepFlow } from "./stackflow";
-
-type ArticleParams = {
-  title: string;
-};
-const Article: ActivityComponentType<ArticleParams> = ({ params }) => {
-  // 타입 안정성을 위해 현재 액티비티의 이름을 넣어줘요
-  const { stepPop } = useStepFlow("Article");
-
-  const onPrevClick = () => {
-    // `stepPop()`을 호출하면 이전 params.title로 돌아가요
-    stepPop();
-  };
-
-  return (
-    <AppScreen appBar={{ title: "Article" }}>
-      <div>
-        <h1>{params.title}</h1>
-        <button onClick={onPrevClick}>prev</button>
-      </div>
-    </AppScreen>
-  );
-};
-
-export default Article;
-```
-
-<Callout emoji="💡">
-  만약 삭제할 스텝이 없는 상태라면, 아무것도 일어나지 않아요.
-</Callout>
-
-<Callout emoji="💡">
-  여러개의 스텝이 푸시된 상태에서 `useFlow().pop()`을 활용하면 액티비티 내부에
-  쌓여져있는 모든 스텝들이 한번에 없어져요.
-</Callout>
-
----
-
-여기까지 기본적인 **Stackflow**의 활용법을 알아봤는데요. 이제 활용하는 것을 넘어서서 스택 상태의 내부 구조와 이를 이용한 구체적인 응용 방법에 대해 알아볼께요.
+액티비티를 쌓고, 교체하고, 삭제하는 방법에 대해서 알아봤어요. 이제 액티비티 내의 가상의 스택을 만들 수 있는 방법에 대해 알아봐요.

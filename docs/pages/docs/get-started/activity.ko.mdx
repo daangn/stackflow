@@ -20,7 +20,7 @@ import { APITable } from "@components/APITable.tsx";
 
 액티비티를 실제로 사용하기 위해서는 사용하기 전 `stackflow()` 함수에 등록이 필요해요. 액티비티는 `ActivityComponentType`이라는 타입으로 선언되는 리액트 컴포넌트에요.
 
-```tsx filename="MyActivity.tsx" copy
+```tsx showLineNumbers filename="MyActivity.tsx" copy
 import { ActivityComponentType } from "@stackflow/react";
 import { AppScreen } from "@stackflow/plugin-basic-ui";
 
@@ -47,7 +47,7 @@ export default MyActivity;
 
 액티비티를 잘 선언했다면, 다음과 같이 `stackflow()` 함수의 `activities` 필드에 등록해요.
 
-```tsx filename="stackflow.ts" copy
+```tsx showLineNumbers filename="stackflow.ts" copy
 import { stackflow } from "@stackflow/react";
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
 import MyActivity from "./MyActivity";
@@ -70,7 +70,7 @@ export const { Stack, useFlow } = stackflow({
 
 액티비티를 성공적으로 등록하셨나요? 하지만 이전에 초기화해놓은 `<Stack />` 컴포넌트에는 아무것도 렌더링되고 있지 않을거에요. 왜냐하면, 초기 액티비티를 설정해주지 않았으니까요. 초기에 특정 액티비티를 로드하고 싶다면, 다음과 같이 옵션에 `initialActicity`를 추가해주세요.
 
-```typescript {16} filename="stackflow.ts" copy
+```typescript showLineNumbers {16} filename="stackflow.ts" copy
 import { stackflow } from "@stackflow/react";
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
 import MyActivity from "./MyActivity";
@@ -102,7 +102,7 @@ export const { Stack, useFlow } = stackflow({
 
 해당 액티비티가 사용될 때, 특정 파라미터가 필요한 경우가 있어요. 이런 경우 다음과 같이 액티비티의 Props로 해당 파라미터를 선언해요.
 
-```tsx filename="Article.tsx" copy
+```tsx showLineNumbers filename="Article.tsx" copy
 import { ActivityComponentType } from "@stackflow/react";
 import { AppScreen } from "@stackflow/plugin-basic-ui";
 
@@ -125,7 +125,7 @@ export default Article;
 
 또는,
 
-```tsx filename="Article.tsx" copy
+```tsx showLineNumbers filename="Article.tsx" copy
 import { AppScreen } from "@stackflow/plugin-basic-ui";
 
 type ArticleParams = {

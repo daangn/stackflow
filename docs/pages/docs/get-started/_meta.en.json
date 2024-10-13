@@ -1,7 +1,8 @@
 {
   "installation": "Installation",
   "activity": "Activity",
-  "navigating": "Navigating",
+  "navigating-activities": "Navigating Activities",
+  "navigating-step": "Navigating Step",
   "state": "State",
   "customize-ui": "Customize UI",
   "write-plugin": "Write Your Own Plugin"

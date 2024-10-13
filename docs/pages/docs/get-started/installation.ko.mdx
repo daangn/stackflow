@@ -7,8 +7,8 @@ import { Steps } from "nextra/components";
 ### 설치하기
 React 프로젝트 내에서 다음 명령어로 **Stackflow**를 설치해요.
 
-```bash
-$ yarn add @stackflow/core @stackflow/react
+```sh npm2yarn
+npm install @stackflow/core @stackflow/react
 ```
 
 ### Stackflow 초기화하기
@@ -16,7 +16,7 @@ $ yarn add @stackflow/core @stackflow/react
 
 그리고 다른 컴포넌트에서 `<Stack />`과 `useFlow()`를 활용할 수 있도록 `export ...` 해줘요.
 
-```typescript
+```typescript showLineNumbers filename="stackflow.ts" copy
 import { stackflow } from "@stackflow/react";
 
 export const { Stack, useFlow } = stackflow({
@@ -33,22 +33,15 @@ export const { Stack, useFlow } = stackflow({
 ### 설치하기
 **Stackflow**는 기본적으로 UI(DOM과 CSS) 구현을 포함하지 않아요. 원하는 렌더링 결과를 얻기 위해서는 플러그인 추가가 필요해요. 다음 명령어로 `@stackflow/plugin-renderer-basic` 플러그인과 `@stackflow/plugin-basic-ui` 확장을 설치해요.
 
-```bash
-# 앞서 설치한 스택 상태 관리 패키지
-$ yarn add @stackflow/core @stackflow/react
-
-# 기본적인 UI 구현을 위한 패키지
-$ yarn add @stackflow/plugin-renderer-basic @stackflow/plugin-basic-ui
+```sh npm2yarn
+npm install @stackflow/plugin-renderer-basic @stackflow/plugin-basic-ui
 ```
 
 ### UI 플러그인 초기화하기
 
 다음과 같이 `stackflow()` 함수의 `plugins` 필드에 `@stackflow/plugin-renderer-basic`에 들어있는 `basicRendererPlugin()` 플러그인과 `@stackflow/plugin-basic-ui`의 `basicUIPlugin()` 플러그인을 초기화해줘요.
 
-```typescript
-/**
- * stackflow.ts
- */
+```typescript showLineNumbers filename="stackflow.ts" copy {8-13}
 import { stackflow } from "@stackflow/react";
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
 import { basicUIPlugin } from "@stackflow/plugin-basic-ui";
@@ -69,17 +62,14 @@ export const { Stack, useFlow } = stackflow({
 
 `@stackflow/plugin-basic-ui`에서 제공하는 CSS도 내 코드 어딘가에 삽입해요.
 
-```typescript
+```typescript copy
 import "@stackflow/plugin-basic-ui/index.css";
 ```
 
 ### `<Stack />` 컴포넌트 렌더링하기
 원하는 렌더링 위치에 다음과 같이 `<Stack />` 컴포넌트를 초기화 해줘요.
 
-```tsx
-/**
- * App.tsx
- */
+```tsx showLineNumbers filename="App.tsx" copy
 import { Stack } from "./stackflow";
 
 const App = () => {

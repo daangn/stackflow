@@ -1,0 +1,135 @@
+---
+title: Navigating Step
+---
+
+import { StepDiagram } from "@components/diagrams/StepDiagram";
+import { Callout, Link } from "nextra-theme-docs";
+
+# Navigating Step
+
+<StepDiagram />
+
+You can use steps when you want to have a virtual stack state within a single activity. Steps work by changing the parameters of the activity.
+
+<Callout emoji="💡">
+  <Link href="/api-references/plugins/plugin-history-sync">`@stackflow/plugin-history-sync`</Link> supports steps. If you need to handle specific state manipulations along with Android back button support on mobile, using the step feature is better than `history.pushState()`.
+</Callout>
+
+## Stacking a New Step
+
+Use the `useStepFlow()` hook created in `stackflow.ts`. Through the `stepPush()` function within this hook, you can stack a new step as follows.
+
+```tsx showLineNumbers filename="Article.tsx" copy /stepPush/
+import { ActivityComponentType } from "@stackflow/react";
+import { AppScreen } from "@stackflow/plugin-basic-ui";
+import { useStepFlow } from "./stackflow";
+
+type ArticleParams = {
+  title: string;
+};
+
+const Article: ActivityComponentType<ArticleParams> = ({ params }) => {
+  // For type safety, put the name of the current activity
+  const { stepPush } = useStepFlow("Article");
+
+  const onNextClick = () => {
+    // When you call `stepPush()`, `params.title` changes.
+    stepPush({
+      title: "Next Title",
+    });
+  };
+
+  return (
+    <AppScreen appBar={{ title: "Article" }}>
+      <div>
+        <h1>{params.title}</h1>
+        <button onClick={onNextClick}>next</button>
+      </div>
+    </AppScreen>
+  );
+};
+
+export default Article;
+```
+
+## Replacing a Step
+
+You can replace the current step using the `stepReplace()` function in `useStepFlow()`.
+
+```tsx showLineNumbers filename="Article.tsx" copy /stepReplace/
+import { ActivityComponentType } from "@stackflow/react";
+import { AppScreen } from "@stackflow/plugin-basic-ui";
+import { useStepFlow } from "./stackflow";
+
+type ArticleParams = {
+  title: string;
+};
+const Article: ActivityComponentType<ArticleParams> = ({ params }) => {
+  // For type safety, put the name of the current activity
+  const { stepReplace } = useStepFlow("Article");
+
+  const onChangeClick = () => {
+    // When you call `stepReplace()`, the title changes to "Next Title".
+    stepReplace({
+      title: "Next Title",
+    });
+  };
+
+  return (
+    <AppScreen appBar={{ title: "Article" }}>
+      <div>
+        <h1>{params.title}</h1>
+        <button onClick={onChangeClick}>change</button>
+      </div>
+    </AppScreen>
+  );
+};
+
+export default Article;
+```
+
+## Deleting a Step
+
+You can delete the current step using the `stepPop()` function in `useStepFlow()`.
+
+```tsx showLineNumbers filename="Article.tsx" copy /stepPop/
+import { ActivityComponentType } from "@stackflow/react";
+import { AppScreen } from "@stackflow/plugin-basic-ui";
+import { useStepFlow } from "./stackflow";
+
+type ArticleParams = {
+  title: string;
+};
+const Article: ActivityComponentType<ArticleParams> = ({ params }) => {
+  // For type safety, put the name of the current activity
+  const { stepPop } = useStepFlow("Article");
+
+  const onPrevClick = () => {
+    // When you call `stepPop()`, the current step is deleted.
+    stepPop();
+  };
+
+  return (
+    <AppScreen appBar={{ title: "Article" }}>
+      <div>
+        <h1>{params.title}</h1>
+        <button onClick={onPrevClick}>prev</button>
+      </div>
+    </AppScreen>
+  );
+};
+
+export default Article;
+```
+
+<Callout emoji="💡">
+  If there's no step to delete, nothing happens when you call `stepPop()`.
+</Callout>
+
+<Callout emoji="💡">
+  If you use `useFlow().pop()` in a state where multiple steps have been pushed, all the steps stacked inside the activity are deleted at once.
+</Callout>
+
+---
+
+You've learned the basics of using **Stackflow**. Now, let's go beyond using it and learn about the internal structure of the stack state and specific application methods using it.
