@@ -1,7 +1,7 @@
 import { Stack } from "@stackflow/demo";
 import { useSimpleReveal } from "simple-reveal";
 
-const Demo: React.FC = ({ children }: React.PropsWithChildren) => {
+const Demo = ({ children }: React.PropsWithChildren) => {
   const { cn, ref, style } = useSimpleReveal({
     delay: 300,
     initialTransform: "translate3d(0, 1rem, 1rem);",

@@ -2,8 +2,9 @@
   "index": {
     "title": "Stackflow",
     "type": "page",
+    "display": "hidden",
     "theme": {
-      "layout": "full"
+      "layout": "raw"
     }
   },
   "docs": { "title": "Docs", "type": "page" },

@@ -1,10 +1,11 @@
 import { vars } from "@seed-design/design-token";
 import type { Config } from "tailwindcss";
 
-const config: Config = {
+const config = {
   content: [
     "./pages/**/*.{js,jsx,ts,tsx,md,mdx}",
     "./components/**/*.{js,jsx,ts,tsx,md,mdx}",
+    "theme.config.tsx",
   ],
   theme: {
     extend: {},
@@ -28,6 +29,6 @@ const config: Config = {
     },
   },
   plugins: [],
-};
+} satisfies Config;
 
 export default config;

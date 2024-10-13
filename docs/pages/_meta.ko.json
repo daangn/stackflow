@@ -1,9 +1,10 @@
 {
   "index": {
     "title": "Stackflow",
+    "display": "hidden",
     "type": "page",
     "theme": {
-      "layout": "full"
+      "layout": "raw"
     }
   },
   "docs": { "title": "Docs", "type": "page" },
