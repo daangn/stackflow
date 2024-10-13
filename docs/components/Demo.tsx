@@ -1,48 +1,11 @@
 import { Stack } from "@stackflow/demo";
-import { useSimpleReveal } from "simple-reveal";
+import { type ComponentPropsWithoutRef, forwardRef } from "react";
 
-const Demo = ({ children }: React.PropsWithChildren) => {
-  const { cn, ref, style } = useSimpleReveal({
-    delay: 300,
-    initialTransform: "translate3d(0, 1rem, 1rem);",
-    duration: 1000,
-  });
-
+export function Demo() {
   return (
-    <div
-      ref={ref}
-      className={cn()}
-      style={{
-        position: "relative",
-        width: "100%",
-        maxWidth: 390,
-        display: "flex",
-        justifyContent: "center",
-        margin: "3rem 0",
-        ...style,
-      }}
-    >
-      <div
-        style={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          position: "relative",
-        }}
-      >
-        <div
-          style={{
-            width: "100%",
-            maxWidth: 450,
-            height: 900,
-            position: "relative",
-            borderRadius: "1rem",
-            overflow: "hidden",
-            transform: "translate3d(0, 0, 0)",
-            maskImage: "-webkit-radial-gradient(white, black)",
-          }}
-        >
-          {children}
+    <div className="relative w-full h-full flex justify-center">
+      <div className="w-full h-full relative rounded-lg overflow-hidden">
+        <div className="w-full h-full relative rounded-lg overflow-hidden transform translate3d(0, 0, 0) mask-image(-webkit-radial-gradient(white, black))">
           <Stack
             initialContext={{
               theme: "cupertino",
@@ -52,6 +15,4 @@ const Demo = ({ children }: React.PropsWithChildren) => {
       </div>
     </div>
   );
-};
-
-export default Demo;
+}
