@@ -8,17 +8,12 @@ import { APITable } from "@components/APITable.tsx";
 
 **Activity** is a single screen that gets stacked one by one. Activities have the following properties and can be accessed using the `useActivity()` hook if needed.
 
-
-
 <APITable>
-{/* |               |                                                |                                                      |
-| ----------------- | -------------------------------------------------- | -------------------------------------------------------- |
-| `id`              | Unique ID value for each activated activity screen | String                                                   |
-| `name`            | Registerd activity name                             | String                                                   |
-| `transitionState` | Transition state of current activity                          | `enter-active`, `enter-done`, `exit-active`, `exit-done` | */}
-|                    |          |                                     |
-| ------------------ | -------- | ----------------------------------- |
-| docsRepositoryBase | `string` | URL of the documentation repository |
+|                 |                                                          |                                                          |
+| --------------- | -------------------------------------------------------- | -------------------------------------------------------- |
+| id              | `string`                                                 | Unique ID value for each activated activity screen       |
+| name            | `string`                                                 | Registerd activity name                                  |
+| transitionState | `enter-active`, `enter-done`, `exit-active`, `exit-done` | Transition state of current activity |
 </APITable>
 
 ## Registering an Activity

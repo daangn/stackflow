@@ -1,31 +1,15 @@
-import { Children, type PropsWithChildren } from "react";
-
-export function APITable({ children }: PropsWithChildren) {
-  const data = Children.toArray(children);
+export function APITable({ children }) {
   return (
-    <table className="w-full !table text-sm">
+    <table className="w-full border-collapse text-sm my-4">
       <thead>
-        <tr>
-          <th align="left">Option</th>
-          <th align="left">Type</th>
-          <th align="left">Description</th>
+        <tr className="border-b py-4 text-left dark:border-neutral-700">
+          <th className="py-2 px-4 font-semibold">Option</th>
+          <th className="py-2 px-4 font-semibold">Type</th>
+          <th className="py-2 px-4 font-semibold">Description</th>
         </tr>
       </thead>
-      <tbody className="break-all first:[&_td]:font-semibold first:[&_td]:text-carrot600 [&_tr]:!bg-transparent">
+      <tbody className="first:[&_td]:font-semibold first:[&_td]:text-carrot600 [&_tr]:!bg-transparent [&_td]:!border-none break-keep">
         {children.props.children[1].props.children}
-        {/* {data.map((child, index) => {
-          return (
-            <tr key={index} className="!bg-transparent">
-              {child.props.children.map((td, index) => {
-                return (
-                  <td key={index} className="!border-t border-gray-200 !p-2">
-                    {td}
-                  </td>
-                );
-              })}
-            </tr>
-          );
-        })} */}
       </tbody>
     </table>
   );

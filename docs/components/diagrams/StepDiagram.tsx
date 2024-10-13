@@ -1,5 +1,5 @@
 export const StepDiagram = () => (
-  <div className="w-full flex justify-center p-[2rem_0_1rem] max-w-[20rem]">
+  <div className="w-full flex justify-center p-[2rem_0_1rem] max-w-[20rem] mx-auto">
     <svg
       width="335"
       height="346"
