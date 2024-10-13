@@ -3,7 +3,5 @@
   "activity": "Activity",
   "navigating-activities": "Navigating Activities",
   "navigating-step": "Navigating Step",
-  "getting-state": "Getting State",
-  "customize-ui": "Customize UI",
-  "write-plugin": "Write Your Own Plugin"
+  "getting-state": "Getting State"
 }
