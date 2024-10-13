@@ -1,0 +1,24 @@
+import { Callout } from "nextra-theme-docs";
+import Demo from "../../../components/Demo.tsx";
+
+# What is Stackflow?
+
+**Stackflow** is a project that implements Stack Navigation UX, commonly used in mobile devices (iOS/Android, etc.), in a JavaScript environment, making it easier to develop hybrid apps and webviews.
+
+- Stacks screens and maintains scroll position.
+- Supports transition effects for stacking screens and disappearing screens when navigating back.
+- Supports iOS-style swipe-back gestures for navigating back.
+- Passes necessary parameters to the transitioning screen.
+
+So, what advantages does **Stackflow** have compared to existing navigation libraries?
+
+- You can use the stack and transition state without any UI, allowing you to customize the UI as you like.
+- You can inject desired extensions into the lifecycle through the plugin interface.
+- The core logic and integration layer are separated, allowing integration with various frontend frameworks.
+- You can inject render logic and UI externally, enabling simultaneous development of mobile webviews and desktop applications from a single codebase.
+- Supports Server-Side Rendering. (`ReactDOMServer.renderToString`)
+
+<Callout emoji="💡">
+  As of October 2024, it supports React and React DOM as references.
+</Callout>
+
