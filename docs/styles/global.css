@@ -3,24 +3,6 @@
 @tailwind utilities;
 
 @layer base {
-  @font-face {
-    font-family: Karrot Sans;
-    font-weight: 400;
-    src: url(../assets/fonts/KarrotSans-Regular.woff2) format("woff");
-  }
-  @font-face {
-    font-family: Karrot Sans;
-    font-weight: 700;
-    src: url(../assets/fonts/KarrotSans-Bold.woff2) format("woff");
-  }
-  @font-face {
-    font-family: Karrot Sans;
-    font-weight: 800;
-    src: url(../assets/fonts/KarrotSans-Heavy.woff2) format("woff");
-  }
-}
-
-@layer base {
   :root {
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
