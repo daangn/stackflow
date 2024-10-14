@@ -1,5 +1,6 @@
 import { Callout } from "nextra-theme-docs";
 import { EffectHookDiagram } from "@components/diagrams/EffectHookDiagram";
+import { APITable } from "@components/APITable";
 
 # 플러그인 작성하기
 
@@ -9,7 +10,7 @@ import { EffectHookDiagram } from "@components/diagrams/EffectHookDiagram";
 
 **Stackflow** 플러그인을 출판하는 가장 쉬운 방법은 다른 사람이 만든 플러그인들을 조합해서 프리셋으로 제공하는 것이에요. 다음과 같이 여러 플러그인을 Array로 묶어서 나만의 프리셋을 만들 수 있어요.
 
-```typescript
+```typescript showLineNumbers filename="stackflow.ts" copy
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
 import { historySyncPlugin } from "@stackflow/plugin-history-sync";
 import { stackflow } from "@stackflow/react";
@@ -29,15 +30,15 @@ stackflow({
 
 플러그인은 함수의 형태로 아래와 같은 값을 필수로 반환해야해요.
 
-### 반환 값
-
-| 필드 | 설명                                                                                            | 타입   |
-| ---- | ----------------------------------------------------------------------------------------------- | ------ |
-| key  | 플러그인이 배열 형태로 리액트 트리 내에 렌더링 될때 `key` 값으로 부여할 고유한 문자열 값이에요. | String |
+<APITable>
+|      |          |                                                                          |
+| ---- | -------- | ------------------------------------------------------------------------ |
+| key  | `string` | 플러그인이 배열 형태로 리액트 트리 내에 렌더링 될때 `key` 값으로 부여할 고유한 문자열 값이에요. |
+</APITable>
 
 내 앱에 나만의 첫 플러그인 개발을 시도해보려면 다음과 같이 inline 함수로 시작해보세요. (어렵지 않아요!)
 
-```typescript
+```typescript showLineNumbers filename="stackflow.ts" copy
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
 import { stackflow } from "@stackflow/react";
 
@@ -57,11 +58,11 @@ stackflow({
 });
 ```
 
-## 렌더링 추가하기
+### 렌더링 추가하기
 
 렌더링을 새로 추가하고 싶다면, `render` API를 사용할 수 있어요. Stack 상태를 이용해 어떻게 DOM을 최적화할지 결정하고 싶거나, 때에 따라 새로 얹을 새로운 DOM 트리가 필요하다면 `render` API를 활용하세요.
 
-```tsx
+```tsx showLineNumbers filename="stackflow.ts" copy copy
 stackflow({
   // ...
   plugins: [
@@ -87,7 +88,7 @@ stackflow({
 
 다음과 같이 UI에 전달되는 스택 상태를 덮어 쓸 수도 있어요.
 
-```tsx
+```tsx showLineNumbers filename="stackflow.ts" copy {12,17}
 stackflow({
   // ...
   plugins: [
@@ -122,11 +123,11 @@ stackflow({
   `useStack()`, `useActivity()`에만 적용돼요.
 </Callout>
 
-## 스택 감싸기
+### 스택 감싸기
 
 최상단에 Context API Provider를 추가하고 싶거나, 최상단을 특정 DOM으로 감싸고 싶다면 `wrapStack` 인터페이스를 활용하세요.
 
-```tsx
+```tsx showLineNumbers filename="stackflow.ts" copy {8}
 stackflow({
   // ...
   plugins: [
@@ -148,11 +149,11 @@ stackflow({
   이펙트가 생길 수 있으니 주의해서 사용해요.
 </Callout>
 
-## 액티비티 감싸기
+### 액티비티 감싸기
 
 각 액티비티를 Context API Provider를 추가하고 싶거나, 특정 DOM으로 감싸고 싶다면 `wrapActivity` 인터페이스를 활용하세요.
 
-```tsx
+```tsx showLineNumbers filename="stackflow.ts" copy {8}
 stackflow({
   // ...
   plugins: [
@@ -174,11 +175,11 @@ stackflow({
   사이드 이펙트가 생길 수 있으니 주의해서 사용해요.
 </Callout>
 
-## 초기화 시점에 동작 주입하기
+### 초기화 시점에 동작 주입하기
 
 `<Stack />` 컴포넌트가 최초로 초기화 될 때 로직을 호출하고 싶다면 `onInit` 훅을 사용해요.
 
-```tsx
+```tsx showLineNumbers filename="stackflow.ts" copy {7-9}
 stackflow({
   // ...
   plugins: [
@@ -211,13 +212,15 @@ stackflow({
 
 Post-effect 훅에는 `onPushed`, `onReplaced`, `onPopped`, `onChanged`가 있어요. Post-effect 훅은 UI까지 모두 반영된 이후에 호출되기 때문에, 해당 변화를 다시 돌이키거나 취소할 수 없어요. Post-effect 훅은 다음과 같은 인자를 사용할 수 있어요.
 
-| 필드                      | 설명                                                                                                              |
-| ------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `actions.getStack()`      | 현재 스택의 상태를 가져올 수 있어요                                                                               |
-| `actions.dispatchEvent()` | 코어에 새 이벤트를 추가해요 (이벤트에 대한 자세한 설명은 [설계와 원칙](/architectures) 문서에서 확인할 수 있어요) |
-| `effect`                  | 해당 이펙트 훅을 촉발시킨 이펙트를 가져올 수 있어요                                                               |
+<APITable>
+|                       |            |                             |
+| --------------------- | ---------- | --------------------------- |
+| actions.getStack      | `function` | 현재 스택의 상태를 가져올 수 있어요. |
+| actions.dispatchEvent | `function` | 코어에 새 이벤트를 추가해요.       |
+| effect                | `object`   | 해당 이펙트 훅을 촉발시킨 이펙트에요. |
+</APITable>
 
-```tsx
+```tsx showLineNumbers filename="stackflow.ts" copy
 stackflow({
   // ...
   plugins: [
@@ -252,18 +255,20 @@ stackflow({
 
 Pre-effect 훅에는 `onBeforePush`, `onBeforeReplace`, `onBeforePop`이 있어요. Pre-effect 훅은 아직 Core에 해당 이벤트가 전달되기 전에 호출되기 때문에, 해당 이벤트를 취소할 수 있어요. Pre-effect 훅은 다음과 같은 인자를 사용할 수 있어요.
 
-| 필드                       | 설명                                                                                                              |
-| -------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `actions.preventDefault()` | (추가) 기본 동작을 취소해요.                                                                                      |
-| `actions.getStack()`       | 현재 스택의 상태를 가져올 수 있어요                                                                               |
-| `actions.dispatchEvent()`  | 코어에 새 이벤트를 추가해요 (이벤트에 대한 자세한 설명은 [설계와 원칙](/architectures) 문서에서 확인할 수 있어요) |
-| `effect`                   | 해당 이펙트 훅을 촉발시킨 이펙트를 가져올 수 있어요                                                               |
+<APITable>
+|                        |            |                               |
+| ---------------------- | ---------- | ----------------------------- |
+| actions.preventDefault | `function` | (추가) 기본 동작을 취소해요.         |
+| actions.getStack       | `function` | G현재 스택의 상태를 가져올 수 있어요.  |
+| actions.dispatchEvent  | `function` | 코어에 새 이벤트를 추가해요.         |
+| effect                 | `object`   | 해당 이펙트 훅을 촉발시킨 이펙트에요.   |
+</APITable>
 
 ## 첫 액티비티 결정하기
 
-`initialPushedEvent` API를 통해 기존에 존재하는 `initialActivity` 동작을 덮어쓸 수 있어요. (이벤트에 대한 자세한 설명은 원칙과 설계 문서를 참고하세요)
+`initialPushedEvent` API를 통해 기존에 존재하는 `initialActivity` 동작을 덮어쓸 수 있어요.
 
-```tsx
+```tsx showLineNumbers filename="stackflow.ts" copy {1, 9-13}
 import { makeEvent } from "@stackflow/core";
 
 stackflow({
@@ -283,6 +288,3 @@ stackflow({
 });
 ```
 
----
-
-여기까지 전부 이해하셨다면, **Stackflow**에 대한 기본적인 내용은 잘 숙지하셨을거에요. 만약 추가적인 정보가 필요하시거나, 이슈 제보 또는 도움이 필요하시다면 GitHub Issues를 활용해주세요.

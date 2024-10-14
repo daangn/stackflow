@@ -1,15 +1,16 @@
 import { Callout } from "nextra-theme-docs";
 import { EffectHookDiagram } from "@components/diagrams/EffectHookDiagram";
+import { APITable } from "@components/APITable";
 
-# 플러그인 작성하기
+# Write Your Own Plugin
 
-**Stackflow**는 플러그인 인터페이스를 통해 다른 사람이 작성한 확장 로직을 쉽게 내 어플리케이션과 연동할 수 있도록 도와요. 플러그인을 통해 나의 문제를 해결하고, 이를 예쁘게 감싸서 다른 사람과 공유해보세요.
+**Stackflow** helps you easily integrate extension logic written by others into your application through the plugin interface. Solve your problems with plugins and wrap them nicely to share with others.
 
-## 프리셋 만들기
+## Making a Preset
 
-**Stackflow** 플러그인을 출판하는 가장 쉬운 방법은 다른 사람이 만든 플러그인들을 조합해서 프리셋으로 제공하는 것이에요. 다음과 같이 여러 플러그인을 Array로 묶어서 나만의 프리셋을 만들 수 있어요.
+The easiest way to publish a **Stackflow** plugin is to provide it as a preset by combining plugins made by others. You can create your own preset by grouping multiple plugins into an array as shown below.
 
-```typescript
+```typescript showLineNumbers filename="stackflow.ts" copy
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
 import { historySyncPlugin } from "@stackflow/plugin-history-sync";
 import { stackflow } from "@stackflow/react";
@@ -25,19 +26,19 @@ stackflow({
 });
 ```
 
-## 기본 인터페이스
+## Basic Interface
 
-플러그인은 함수의 형태로 아래와 같은 값을 필수로 반환해야해요.
+Plugin must return the following values as a function.
 
-### 반환 값
+<APITable>
+|      |          |                                                                                                            |
+| ---- | -------- | ---------------------------------------------------------------------------------------------------------- |
+| key  | `string` | A unique string value assigned as the `key` when the plugin is rendered within the React tree as an array. |
+</APITable>
 
-| 필드 | 설명                                                                                            | 타입   |
-| ---- | ----------------------------------------------------------------------------------------------- | ------ |
-| key  | 플러그인이 배열 형태로 리액트 트리 내에 렌더링 될때 `key` 값으로 부여할 고유한 문자열 값이에요. | String |
+To try developing your first plugin for your app, start with an inline function as shown below.
 
-내 앱에 나만의 첫 플러그인 개발을 시도해보려면 다음과 같이 inline 함수로 시작해보세요. (어렵지 않아요!)
-
-```typescript
+```typescript showLineNumbers filename="stackflow.ts" copy
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
 import { stackflow } from "@stackflow/react";
 
@@ -57,11 +58,11 @@ stackflow({
 });
 ```
 
-## 렌더링 추가하기
+### Adding a render method
 
-렌더링을 새로 추가하고 싶다면, `render` API를 사용할 수 있어요. Stack 상태를 이용해 어떻게 DOM을 최적화할지 결정하고 싶거나, 때에 따라 새로 얹을 새로운 DOM 트리가 필요하다면 `render` API를 활용하세요.
+If you want to add a new rendering, you can use the `render` API. Utilize the stack state to decide how to optimize the DOM or, if necessary, overlay a new DOM tree using the `render` API.
 
-```tsx
+```tsx showLineNumbers filename="stackflow.ts" copy
 stackflow({
   // ...
   plugins: [
@@ -85,9 +86,9 @@ stackflow({
 });
 ```
 
-다음과 같이 UI에 전달되는 스택 상태를 덮어 쓸 수도 있어요.
+You can also override the stack state passed to the UI as shown below.
 
-```tsx
+```tsx showLineNumbers filename="stackflow.ts" copy {12,17}
 stackflow({
   // ...
   plugins: [
@@ -99,12 +100,12 @@ stackflow({
             <div className="my-rendering">
               {stack
                 .render({
-                  // 여기서 stack 상태를 덮어쓸 수 있어요.
+                  // You can override the stack state here.
                 })
                 .activities.map((activity) => (
                   <div className="my-activity" key={activity.id}>
                     {activity.render({
-                      // 여기서 activity 상태를 덮어쓸 수 있어요.
+                      // You can override the activity state here.
                     })}
                   </div>
                 ))}
@@ -118,15 +119,14 @@ stackflow({
 ```
 
 <Callout emoji="💡">
-  덮어써진 상태값은 메인 스택에는 영향을 주지 않고, 해당 렌더링 하위의 React 의
-  `useStack()`, `useActivity()`에만 적용돼요.
+  The overridden state value does not affect the main stack, but only applies to the `useStack()` and `useActivity()` within the rendering subtree of React.
 </Callout>
 
-## 스택 감싸기
+### Wrapping Stack
 
-최상단에 Context API Provider를 추가하고 싶거나, 최상단을 특정 DOM으로 감싸고 싶다면 `wrapStack` 인터페이스를 활용하세요.
+If you want to add a Context API Provider at the top level or wrap the top level with a specific DOM, use the `wrapStack` interface.
 
-```tsx
+```tsx showLineNumbers filename="stackflow.ts" copy {8}
 stackflow({
   // ...
   plugins: [
@@ -134,7 +134,7 @@ stackflow({
       return {
         key: "my-plugin",
         wrapStack({ stack }) {
-          // 여기서 인자로 가져온 stack 정보를 활용할 수 있습니다
+          // you can use the stack information brought in as an argument here
           return <div className="my-plugin">{stack.render()}</div>;
         },
       };
@@ -144,15 +144,14 @@ stackflow({
 ```
 
 <Callout type="warning" emoji="⚠️">
-  **주의** - `wrapStack` API는 모든 렌더링에 함께 적용돼요. 의도치 않은 사이드
-  이펙트가 생길 수 있으니 주의해서 사용해요.
+  **Caution** - The `wrapStack` API is applied to all renderings. Be careful as unintended side effects may occur.
 </Callout>
 
-## 액티비티 감싸기
+### Wrapping Activity
 
-각 액티비티를 Context API Provider를 추가하고 싶거나, 특정 DOM으로 감싸고 싶다면 `wrapActivity` 인터페이스를 활용하세요.
+If you want to add a Context API Provider to each activity or wrap it with a specific DOM, use the `wrapActivity` interface.
 
-```tsx
+```tsx showLineNumbers filename="stackflow.ts" copy {8}
 stackflow({
   // ...
   plugins: [
@@ -160,7 +159,7 @@ stackflow({
       return {
         key: "my-plugin",
         wrapActivity({ activity }) {
-          // 여기서 인자로 가져온 activity 정보를 활용할 수 있습니다
+          // you can use the activity information brought in as an argument here
           return <div className="my-activity">{activity.render()}</div>;
         },
       };
@@ -170,15 +169,14 @@ stackflow({
 ```
 
 <Callout type="warning" emoji="⚠️">
-  **주의** - `wrapActivity` API는 모든 렌더링에 함께 적용돼요. 의도치 않은
-  사이드 이펙트가 생길 수 있으니 주의해서 사용해요.
+  **Caution** - The `wrapActivity` API is applied to all renderings. Be careful as unintended side effects may occur.
 </Callout>
 
-## 초기화 시점에 동작 주입하기
+### Injecting Behavior at Initialization
 
-`<Stack />` 컴포넌트가 최초로 초기화 될 때 로직을 호출하고 싶다면 `onInit` 훅을 사용해요.
+Use the `onInit` hook to call logic when the `<Stack />` component is first initialized.
 
-```tsx
+```tsx showLineNumbers filename="stackflow.ts" copy {7-9}
 stackflow({
   // ...
   plugins: [
@@ -195,29 +193,30 @@ stackflow({
 ```
 
 <Callout type="warning" emoji="⚠️">
-  **주의** - React 18과 `React.StrictMode`에서는 두 번 호출 될 수 있으니, 의도치
-  않은 부수효과가 없도록 신경써주세요.
+  **Caution** - In React 18 and `React.StrictMode`, it may be called twice, so be careful to avoid unintended side effects.
 </Callout>
 
-## 이펙트 훅
+## Effect Hooks
 
-기능을 확장하거나 외부의 상태와 동기화하고 싶으신가요? 스택 상태가 변화할때마다 특정 동작을 하거나, 또는 스택 상태가 변경되기 이전에 함수를 호출할 수 있어요.
+Do you want to extend functionality or synchronize with external states? You can perform specific actions whenever the stack state changes or call functions before the stack state changes.
 
-스택 상태는 유저의 행동으로 인해, push, replace, pop이 호출됐을때 변화하기 시작해요. 해당 시점부터 스택 상태가 변화하기 전(Pre-effect)과 변화한 뒤 UI까지 반영된 이후 (Post-effect)에 특정 동작을 수행할 수 있어요.
+The stack state begins to change when push, replace, or pop is called due to user actions. From that point, you can perform specific actions before the stack state changes (Pre-effect) and after the stack state has changed and the UI has been updated (Post-effect).
 
 <EffectHookDiagram />
 
 ### Post-effects
 
-Post-effect 훅에는 `onPushed`, `onReplaced`, `onPopped`, `onChanged`가 있어요. Post-effect 훅은 UI까지 모두 반영된 이후에 호출되기 때문에, 해당 변화를 다시 돌이키거나 취소할 수 없어요. Post-effect 훅은 다음과 같은 인자를 사용할 수 있어요.
+Post-effect hooks include `onPushed`, `onReplaced`, `onPopped`, and `onChanged`. Post-effect hooks are called after the UI has been fully updated, so you cannot undo or cancel the changes. Post-effect hooks can use the following arguments.
 
-| 필드                      | 설명                                                                                                              |
-| ------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `actions.getStack()`      | 현재 스택의 상태를 가져올 수 있어요                                                                               |
-| `actions.dispatchEvent()` | 코어에 새 이벤트를 추가해요 (이벤트에 대한 자세한 설명은 [설계와 원칙](/architectures) 문서에서 확인할 수 있어요) |
-| `effect`                  | 해당 이펙트 훅을 촉발시킨 이펙트를 가져올 수 있어요                                                               |
+<APITable>
+|                       |            |                                            |
+| --------------------- | ---------- | ------------------------------------------ |
+| actions.getStack      | `function` | Get the current stack state.               |
+| actions.dispatchEvent | `function` | Add a new event to the core.               |
+| effect                | `object`   | The effect that triggered the effect hook. |
+</APITable>
 
-```tsx
+```tsx showLineNumbers filename="stackflow.ts" copy
 stackflow({
   // ...
   plugins: [
@@ -225,9 +224,9 @@ stackflow({
       return {
         key: "my-plugin",
         onPushed(actions, effect) {
+          // you can utilize
           // actions.getStack()
           // actions.dispatchEvent(...)
-          // 를 활용할 수 있어요
           console.log("Pushed!");
           console.log("Effect:", effect);
         },
@@ -238,32 +237,30 @@ stackflow({
 ```
 
 <Callout emoji="💡">
-  `onChanged` 훅은 스택 상태가 변경될때마다 구별없이 모두 호출돼요. 따라서
-  `onPushed`, `onReplaced`, `onPopped`와 함께 사용하면, 두 이펙트 훅 모두
-  호출돼요.
+  The `onChanged` hook is called whenever the stack state changes without distinction. Therefore, if used together with `onPushed`, `onReplaced`, and `onPopped`, both effect hooks will be called.
 </Callout>
 <Callout type="error" emoji="🚫">
-  **경고** - 만약 이펙트 훅 내부에서 해당 이펙트를 촉발하는 이벤트를
-  dispatch하는 경우 이펙트 훅과 맞물려서 무한 루프가 돌 수 있어요.
-  `actions.dispatchEvent()`를 활용하는 경우 주의해서 사용하세요.
+  **Caution** - If you dispatch an event that triggers the effect within the effect hook, it can cause an infinite loop. Use `actions.dispatchEvent()` with caution.
 </Callout>
 
 ### Pre-effects
 
-Pre-effect 훅에는 `onBeforePush`, `onBeforeReplace`, `onBeforePop`이 있어요. Pre-effect 훅은 아직 Core에 해당 이벤트가 전달되기 전에 호출되기 때문에, 해당 이벤트를 취소할 수 있어요. Pre-effect 훅은 다음과 같은 인자를 사용할 수 있어요.
+Pre-effect hooks include `onBeforePush`, `onBeforeReplace`, and `onBeforePop`. Pre-effect hooks are called before the event is delivered to the Core, allowing you to cancel the event. Pre-effect hooks can use the following arguments.
 
-| 필드                       | 설명                                                                                                              |
-| -------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `actions.preventDefault()` | (추가) 기본 동작을 취소해요.                                                                                      |
-| `actions.getStack()`       | 현재 스택의 상태를 가져올 수 있어요                                                                               |
-| `actions.dispatchEvent()`  | 코어에 새 이벤트를 추가해요 (이벤트에 대한 자세한 설명은 [설계와 원칙](/architectures) 문서에서 확인할 수 있어요) |
-| `effect`                   | 해당 이펙트 훅을 촉발시킨 이펙트를 가져올 수 있어요                                                               |
+<APITable>
+|                        |            |                                            |
+| ---------------------- | ---------- | ------------------------------------------ |
+| actions.preventDefault | `function` | Cancel the default behavior.               |
+| actions.getStack       | `function` | Get the current stack state.               |
+| actions.dispatchEvent  | `function` | Add a new event to the core.               |
+| effect                 | `object`   | The effect that triggered the effect hook. |
+</APITable>
 
-## 첫 액티비티 결정하기
+## Determining initial activity
 
-`initialPushedEvent` API를 통해 기존에 존재하는 `initialActivity` 동작을 덮어쓸 수 있어요. (이벤트에 대한 자세한 설명은 원칙과 설계 문서를 참고하세요)
+You can override the existing `initialActivity` behavior through the `initialPushedEvent` API.
 
-```tsx
+```tsx showLineNumbers filename="stackflow.ts" copy {1, 9-13}
 import { makeEvent } from "@stackflow/core";
 
 stackflow({
@@ -283,6 +280,3 @@ stackflow({
 });
 ```
 
----
-
-여기까지 전부 이해하셨다면, **Stackflow**에 대한 기본적인 내용은 잘 숙지하셨을거에요. 만약 추가적인 정보가 필요하시거나, 이슈 제보 또는 도움이 필요하시다면 GitHub Issues를 활용해주세요.
