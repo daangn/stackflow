@@ -27,6 +27,9 @@ const config = {
         destructive: "hsl(var(--destructive))",
         "destructive-foreground": "hsl(var(--destructive-foreground))",
       },
+      fontFamily: {
+        KarrotSans: ["Karrot Sans", "sans-serif"],
+      },
     },
   },
   plugins: [],

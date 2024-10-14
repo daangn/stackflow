@@ -1,8 +1,8 @@
+import Ellipse from "@assets/gradient-ellipse.webp";
 import { ChevronRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSimpleReveal } from "simple-reveal";
-import Ellipse from "../../assets/gradient-ellipse.png";
 import { Button } from "../Button";
 import { Demo } from "../Demo";
 
@@ -15,18 +15,16 @@ export function IndexPage({ lang = "ko" }: { lang: "ko" | "en" }) {
 
   return (
     <>
-      <section className="relative w-full min-h-[1000px] grid lg:grid-cols-2 place-items-center lg:mt-20">
-        <div className="flex flex-col items-center gap-4 lg:ml-8 lg:gap-8 lg:items-start">
-          <div className="flex items-center gap-4 mt-14 lg:mt-0">
-            <h1 className="text-5xl lg:text-8xl font-bold">Stackflow</h1>
-          </div>
+      <section className="relative w-full lg:min-h-[1000px] grid lg:grid-cols-2 place-items-center">
+        <div className="flex flex-col items-center gap-2 my-8 lg:ml-8 lg:items-start lg:gap-0 lg:m-0">
+          <h1 className="text-5xl lg:text-8xl font-extrabold">Stackflow</h1>
 
-          <p className="text-sm lg:text-xl">
+          <p className="text-sm lg:text-xl text-center">
             {lang === "ko"
               ? "JavaScript와 TypeScript를 위한 가장 간편한 스택 네비게이션 라이브러리."
               : "The Simplest Stack Navigation for JavaScript and TypeScript."}
           </p>
-          <div className="flex items-center gap-1 lg:gap-2 w-full lg:w-auto">
+          <div className="flex items-center justify-center gap-1 lg:gap-2 w-full lg:w-auto lg:mt-4">
             <Button asChild variant="default" className="flex gap-2 pr-2">
               <Link href="/docs/introduction/what-is-stackflow">
                 {lang === "ko" ? "시작하기" : "Get Started"}{" "}
@@ -38,7 +36,9 @@ export function IndexPage({ lang = "ko" }: { lang: "ko" | "en" }) {
 
         <div
           ref={ref}
-          className={cn("w-full max-w-[450px] h-[900px] relative flex")}
+          className={cn(
+            "w-full max-w-[350px] h-[650px] lg:max-w-[450px] lg:h-[900px] relative flex",
+          )}
           style={style}
         >
           <Demo />
