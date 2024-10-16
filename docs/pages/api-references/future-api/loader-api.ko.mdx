@@ -1,11 +1,8 @@
 # Loader API
 
-Loader API가 기본으로 빌트인됩니다. 아래와 같이 사용하세요.
+Loader API가 기본으로 빌트인됩니다. 아래와 같이 사용해요.
 
-```typescript
-/**
- * HomeActivity.loader.ts
- */
+```typescript showLineNumbers filename="HomeActivity.loader.ts" copy
 import { ActivityLoaderArgs, useLoaderData } from "@stackflow/react/future";
 
 export function homeActivityLoader({ params }: ActivityLoaderArgs<"HomeActivity">) {
@@ -15,22 +12,17 @@ export function homeActivityLoader({ params }: ActivityLoaderArgs<"HomeActivity"
 }
 ```
 
-```typescript
-/**
- * HomeActivity.tsx
- */
+자동으로 타입이 채워져요.
+```typescript showLineNumbers filename="HomeActivity.tsx" copy {4}
 import { homeActivityLoader } from "./HomeActivity.loader";
 
 export const HomeActivity: ActivityComponentType<"HomeActivity"> = () => {
-  // 자동으로 타입이 채워집니다
   const loaderData = useLoaderData<typeof homeActivityLoader>();
 }
 ```
 
-```typescript
-/**
- * stackflow.config.ts
- */
+`stackflow.config.ts` 파일에 생성한 로더를 삽입해요
+```typescript showLineNumbers filename="stackflow.config.ts" copy {9}
 import { defineConfig } from "@stackflow/config";
 import { homeActivityLoader } from "../components/HomeActivity.loader";
 
@@ -39,8 +31,6 @@ export const config = defineConfig({
     {
       name: "HomeActivity",
       path: "/",
-      
-      // 만들어준 로더를 넣어줍니다
       loader: homeActivityLoader,
     },
     {
