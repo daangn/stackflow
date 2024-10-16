@@ -1,5 +1,6 @@
 import { Callout } from "nextra-theme-docs";
-import Demo from "../../../components/Demo.tsx";
+import Demo from "@components/Demo.tsx";
+import { CurrentDate } from "@components/CurrentDate.tsx";
 
 # Stackflow란?
 
@@ -19,5 +20,5 @@ import Demo from "../../../components/Demo.tsx";
 - Server-Side Rendering을 지원해요. (`ReactDOMServer.renderToString`)
 
 <Callout emoji="💡">
-  2024년 10월 시점에서는 React와 React DOM까지 레퍼런스로 지원하고 있어요.
+  <CurrentDate locale="ko" /> 시점에서는 React와 React DOM까지 레퍼런스로 지원하고 있어요.
 </Callout>
