@@ -1,16 +1,16 @@
 import { Callout } from "nextra-theme-docs";
+import { APITable } from "@components/APITable";
 
-# Config
+# `@stackflow/config`
 
-- Stackflow에 `Config` 라는 개념을 새롭게 도입합니다.
-- 액티비티 선언을 리액트 의존성 없이 정적으로 할 수 있어요.
+### Config
 
-다음과 같이 작성할 수 있습니다.
+- Introduce the concept of `Config` in Stackflow.
+- Allows static declaration of activities without React dependency.
 
-```typescript
-/**
- * stackflow.config.ts
- */
+You can write as follows.
+
+```typescript showLineNumbers filename="stackflow.config.ts" copy
 import { defineConfig } from "@stackflow/config";
 
 export const config = defineConfig({
@@ -27,12 +27,12 @@ export const config = defineConfig({
 ```
 
 <Callout emoji="💡">
-  이제 플러그인에서 필요한 추가적인 설정이 있을때, 플러그인 함수의 파라미터 뿐 아니라 `@stackflow/config`를 확장하여 플러그인 구동에 필요한 정보를 받을 수도 있습니다.
+  Now, when additional configuration is needed in a plugin, you can extend `@stackflow/config` to receive the necessary information for the plugin's operation, not just through the plugin function's parameters.
 </Callout>
 
-## `decorate` API
+### `decorate` API
 
-다음과 같이 Config 타입을 확장해서 `config`에 접근할 수 있는 다양한 장소에 활용할 수 있습니다.
+You can extend the `Config` type as follows to utilize `config` in various places.
 
 ```typescript
 declare module "@stackflow/config" {
@@ -43,3 +43,13 @@ declare module "@stackflow/config" {
 
 config.decorate("relayEnvironment", myRelayEnvironment);
 ```
+
+### API
+
+<APITable>
+|                    |                   |                                                    |
+| ------------------ | ----------------- | -------------------------------------------------- |
+| activities         | `ActivityDefinition<string>[]`             | An array of activities.                            |
+| transitionDuration | `number`          | Duration of the transition animation.              |
+| initialActivity    | `() => ActivityDefinition<string>["name"]` | The initial activity. |
+</APITable>
