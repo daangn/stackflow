@@ -1,6 +1,6 @@
 {
   "write-plugin": "Writing Your Own Plugin",
   "history-sync": "Synchronizing with History",
-  "resolve-circular-reference": "Resolving Circular Reference in useFlow",
+  "resolving-circular-reference": "Resolving Circular Reference in useFlow",
   "preloading": "Preloading"
 }
