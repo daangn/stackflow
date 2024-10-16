@@ -3,7 +3,7 @@ import { Callout } from "nextra-theme-docs";
 # 미리 API 호출하기
 
 <Callout type="info" emoji="💡">
-  [Future API](/future-api/introduction)를 사용하면 빌트인 Loader API를 활용해 프리로딩을 더 깔끔하게 구현할 수 있어요. [Future API](/future-api/introduction) 사용을 권장해요.
+  [Future API](/api-references/future-api/introduction)를 사용하면 빌트인 Loader API를 활용해 프리로딩을 더 깔끔하게 구현할 수 있어요. [Future API](/api-references/future-api/introduction) 사용을 권장해요.
 </Callout>
 
 ## Preload 플러그인
@@ -12,16 +12,13 @@ Preload 플러그인을 통해 미리 액티비티에 필요한 데이터를 가
 
 다음 명령어를 통해 `@stackflow/plugin-preload`를 설치해요.
 
-```bash
-$ yarn add @stackflow/plugin-preload
+```bash npm2yarn copy
+npm install @stackflow/plugin-preload
 ```
 
 설치가 완료되면 다음과 같이 `stackflow()` 함수의 `plugins` 필드에 플러그인을 등록해요.
 
-```typescript
-/**
- * stackflow.ts
- */
+```typescript showLineNumbers filename="stackflow.ts" copy
 import { stackflow } from "@stackflow/react";
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
 import { preloadPlugin } from "@stackflow/plugin-preload";
@@ -57,10 +54,7 @@ export type TypeActivities = typeof activities;
 
 이후 각 액티비티 내에서 `useActivityPreloadRef()` 훅을 통해 해당 `preloadRef` 값을 가져올 수 있어요.
 
-```tsx
-/**
- * MyActivity.tsx
- */
+```tsx showLineNumbers filename="MyActivity.ts" copy
 import { ActivityComponentType } from "@stackflow/react";
 import { useActivityPreloadRef } from "@stackflow/plugin-preload";
 
@@ -79,10 +73,7 @@ const MyActivity: ActivityComponentType = () => {
 
 `createPreloader()` 함수를 통해 Type-safe한 `usePreloader()` 훅을 만들어요.
 
-```typescript
-/**
- * usePreloader.ts
- */
+```typescript showLineNumbers filename="usePreloader.ts" copy
 import { createPreloader } from "@stackflow/plugin-preload";
 import type { TypeActivities } from "./stackflow";
 
@@ -90,10 +81,7 @@ import type { TypeActivities } from "./stackflow";
 export const { usePreloader } = createPreloader<TypeActivities>();
 ```
 
-```tsx
-/**
- * MyActivity.tsx
- */
+```tsx showLineNumbers filename="MyActivity.ts" copy
 import { ActivityComponentType } from "@stackflow/react";
 import { usePreloader } from "./usePreloader";
 
@@ -111,22 +99,19 @@ const MyActivity:  = () => {
 };
 ```
 
-## `<Link />` 컴포넌트
+### `<Link />` 컴포넌트
 
 만약 프로젝트에서 Preload 플러그인과 History Sync 플러그인을 모두 사용하고 있다면, `<Link />` 컴포넌트를 활용할 수 있어요.
 
 다음 명령어를 통해 `@stackflow/link`를 설치해요.
 
-```bash
-$ yarn add @stackflow/link
+```bash npm2yarn copy
+npm install @stackflow/link
 ```
 
 `createLinkComponent()` 함수를 통해 Type-safe한 Link 컴포넌트를 만들어요.
 
-```typescript
-/**
- * Link.ts
- */
+```typescript showLineNumbers filename="Link.ts" copy
 import { createLinkComponent } from "@stackflow/link";
 import type { TypeActivities } from "./stackflow";
 
@@ -136,10 +121,7 @@ export const { Link } = createLinkComponent<TypeActivities>();
 
 이후 다음과 같이 `activityName`과 `activityParams`를 Props로 갖는 `<Link />` 컴포넌트를 사용해요.
 
-```tsx
-/**
- * MyComponent.ts
- */
+```tsx showLineNumbers filename="MyComponent.tsx" copy
 import { Link } from './Link'
 
 const MyComponent = () => {
