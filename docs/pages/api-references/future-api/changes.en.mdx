@@ -1,35 +1,32 @@
 import { Callout } from "nextra-theme-docs";
 
-# API 변경사항
+# API Changes
 
 ## Stackflow React Future
 
-- 새 API는 `@stackflow/react/future` 로 접근할 수 있어요.
+- The new API can be accessed via `@stackflow/react/future`.
 
-다음과 같이 사용하세요.
+Use it like this:
 
-```typescript
-/**
- * Stack.tsx
- */
+```typescript showLineNumbers filename="Stack.tsx" copy
 import { stackflow } from "@stackflow/react/future";
 import HomeActivity from "../components/HomeActivity";
 import MyProfileActivity from "../components/MyProfileActivity";
 
-// 만들어준 config를 인자로 받습니다
+// Pass the created config as an argument
 import { config } from "./stackflow.config";
 
 export const { Stack } = stackflow({
   config,
   
-  // Config에서 선언한 이름으로 리액트 컴포넌트를 주입해줍니다
+  // Inject React components with the names declared in Config
   components: {
     HomeActivity,
     MyProfileActivity,
   },
 
-  // 이제 History Sync Plugin에 routes를 따로 선언할 필요가 없습니다  
-  // 아래와 같이 플러그인을 추가하면, stackflow.config.ts에 빨간줄이 생깁니다
+  // You no longer need to declare routes separately for the History Sync Plugin
+  // By adding the plugin as below, a red line will appear in stackflow.config.ts
   plugins: [
     historySyncPlugin({
       config,
@@ -39,10 +36,7 @@ export const { Stack } = stackflow({
 });
 ```
 
-```typescript
-/**
- * stackflow.config.ts
- */
+```typescript showLineNumbers filename="stackflow.config.ts" copy
 import { defineConfig } from "@stackflow/config";
 
 export const config = defineConfig({
@@ -50,7 +44,7 @@ export const config = defineConfig({
     {
       name: "HomeActivity",
       
-      // History Sync Plugin에서 요구하는 설정값을 stackflow.config에 같이 선언할 수 있습니다
+      // You can declare the settings required by the History Sync Plugin in stackflow.config
       path: "/",
     },
     {
@@ -63,16 +57,16 @@ export const config = defineConfig({
 ```
 
 <Callout emoji="❓">
-  **"왜 React 컴포넌트는 Config에 같이 선언하지 않나요?"**
+  **"Why don't we declare React components together in the Config?"**
 
-  Stackflow Config는 프레임워크 의존성이 없는 정적 정보를 담는 그릇이 되는 것이 설계의 핵심이에요. Stackflow Config는 React 의존성이 없어야 하기 때문에, 이 부분을 분리해서 React 의존성(컴포넌트)은 `@stackflow/react` 를 설정하는 부분에 추가하는 식으로 설계되었습니다.
+  The core design of Stackflow Config is to be a container for static information without framework dependencies. Since Stackflow Config should not have React dependencies, it is designed to separate this part and add React dependencies (components) in the `@stackflow/react` configuration section.
 </Callout>
 
-## 타입 안정성
+## Type Safety
 
-기존에는 타입을 React 컴포넌트의 Props 타입을 통해 추론했어요. 이제 Config에서 추론하도록 변경됩니다.
+Previously, types were inferred through the Props type of React components. Now, it is changed to be inferred from the Config.
 
-Config에 액티비티 파라미터 타입을 추가하려면 아래와 같이 선언해요.
+To add activity parameter types to the Config, declare them as follows.
 
 ```typescript
 declare module "@stackflow/config" {
@@ -85,12 +79,9 @@ declare module "@stackflow/config" {
 }
 ```
 
-전역에 해당 액티비티의 타입이 등록되고, 아래와 같이 유틸 타입을 사용할 수 있어요.
+The type of the activity is registered globally, and you can use utility types as shown below.
 
-```typescript
-/**
- * HomeActivity.tsx
- */
+```typescript showLineNumbers filename="HomeActivity.tsx" copy
 import type { ActivityComponentType } from "@stackflow/react/future";
 
 const HomeActivity: ActivityComponentType<"HomeActivity"> = ({ params }) => {
@@ -102,12 +93,9 @@ const HomeActivity: ActivityComponentType<"HomeActivity"> = ({ params }) => {
 }
 ```
 
-또한 해당 선언은 한 장소에 모아두어도 되고, 액티비티 파일 마다 분리해도 되므로(Co-location) 원하시는대로 관리가 가능해요.
+You can also gather these declarations in one place or separate them by activity file (Co-location), so you can manage them as you wish.
 
-```typescript
-/**
- * HomeActivity.tsx
- */
+```typescript showLineNumbers filename="HomeActivity.tsx" copy
 declare module "@stackflow/config" {
   interface Register {
     HomeActivity: {
@@ -116,10 +104,8 @@ declare module "@stackflow/config" {
     }
   }
 }
-
-/**
- * MyProfileActivity.tsx
- */
+```
+```typescript showLineNumbers filename="MyProfileActivity.tsx" copy
 declare module "@stackflow/config" {
   interface Register {
     MyProfileActivity: {
@@ -130,7 +116,7 @@ declare module "@stackflow/config" {
 ```
 
 ## `useFlow()`, `useStepFlow()`
-이제 `flow()` 등의 함수로 `useFlow()`, `useStepFlow()` 등의 훅을 생성할 필요가 없어요. 바로 import해서 쓸 수 있습니다.
+You no longer need to create hooks like `useFlow()` and `useStepFlow()` using functions like `flow()`. You can import them directly.
 
 ```typescript
 import { useFlow, useStepFlow } from "@stackflow/react/future";
@@ -142,18 +128,18 @@ push("...", { ... }) // Typed
 pushStep({ ... })    // Typed
 ```
 
-- 타입 안정성이 자연스럽게 보장됩니다
+Type safety is naturally ensured
 
-#### **파괴적 변환**
+### Destructive Changes
 
-`useStepFlow()`의 함수 이름이 바뀌었습니다.
+The function names of `useStepFlow()` have been changed.
 
-- 기존: `stepPush()`, `stepReplace()`, `stepPop()`
-- **변경: `pushStep()`, `replaceStep()`, `popStep()`**
-- 함수 이름이 동사로 시작하도록 명세를 수정했습니다.
+- Previous: `stepPush()`, `stepReplace()`, `stepPop()`
+- **Changed: `pushStep()`, `replaceStep()`, `popStep()`**
+- The specification has been modified so that the function names start with a verb.
   
 ## `<Link />`
-마찬가지로 `createLinkComponent()` 등의 함수로 `<Link />` 컴포넌트를 생성할 필요가 없습니다. 바로 import 해서 쓸 수 있습니다. 또한 기존에 존재하던 Preload 동작을 삭제했습니다.
+Similarly, there is no need to create the `<Link />` component using functions like `createLinkComponent()`. You can import it directly. Additionally, the existing Preload behavior has been removed.
 
 ```typescript
 import { Link } from "@stackflow/link/future";
@@ -169,5 +155,5 @@ function MyComponent() {
 ```
 
 <Callout emoji="💡">
-  뷰 포트에 `<Link />` 컴포넌트가 드러났을때 API 프리로딩을 하는 동작은 성능 향상에 큰 이점이 있지만 서버 부하를 크게 늘리기 때문에 잘 사용되지 않는 것으로 파악되었습니다. 따라서 기본값으로 있던 기존의 프리로딩 동작을 없애고 추후 `<Link />` 컴포넌트의 props를 통해 프리로딩 정책을 개발자가 세밀하게 제어할 수 있도록 추후 추가 할 예정입니다
+  The behavior of preloading the API when the `<Link />` component appears in the viewport has significant performance benefits but greatly increases server load, so it has been found to be rarely used. Therefore, the existing preloading behavior, which was the default, has been removed. In the future, we plan to add props to the `<Link />` component to allow developers to finely control the preloading policy.
 </Callout>

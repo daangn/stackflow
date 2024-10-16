@@ -8,10 +8,7 @@ import { Callout } from "nextra-theme-docs";
 
 다음과 같이 사용하세요.
 
-```typescript
-/**
- * Stack.tsx
- */
+```typescript showLineNumbers filename="Stack.tsx" copy
 import { stackflow } from "@stackflow/react/future";
 import HomeActivity from "../components/HomeActivity";
 import MyProfileActivity from "../components/MyProfileActivity";
@@ -39,10 +36,7 @@ export const { Stack } = stackflow({
 });
 ```
 
-```typescript
-/**
- * stackflow.config.ts
- */
+```typescript showLineNumbers filename="stackflow.config.ts" copy
 import { defineConfig } from "@stackflow/config";
 
 export const config = defineConfig({
@@ -87,10 +81,7 @@ declare module "@stackflow/config" {
 
 전역에 해당 액티비티의 타입이 등록되고, 아래와 같이 유틸 타입을 사용할 수 있어요.
 
-```typescript
-/**
- * HomeActivity.tsx
- */
+```typescript showLineNumbers filename="HomeActivity.tsx" copy
 import type { ActivityComponentType } from "@stackflow/react/future";
 
 const HomeActivity: ActivityComponentType<"HomeActivity"> = ({ params }) => {
@@ -104,10 +95,7 @@ const HomeActivity: ActivityComponentType<"HomeActivity"> = ({ params }) => {
 
 또한 해당 선언은 한 장소에 모아두어도 되고, 액티비티 파일 마다 분리해도 되므로(Co-location) 원하시는대로 관리가 가능해요.
 
-```typescript
-/**
- * HomeActivity.tsx
- */
+```typescript showLineNumbers filename="HomeActivity.tsx" copy
 declare module "@stackflow/config" {
   interface Register {
     HomeActivity: {
@@ -116,10 +104,8 @@ declare module "@stackflow/config" {
     }
   }
 }
-
-/**
- * MyProfileActivity.tsx
- */
+```
+```typescript showLineNumbers filename="MyProfileActivity.tsx" copy
 declare module "@stackflow/config" {
   interface Register {
     MyProfileActivity: {
@@ -142,9 +128,9 @@ push("...", { ... }) // Typed
 pushStep({ ... })    // Typed
 ```
 
-- 타입 안정성이 자연스럽게 보장됩니다
+타입 안정성이 자연스럽게 보장됩니다
 
-#### **파괴적 변환**
+### 파괴적 변환
 
 `useStepFlow()`의 함수 이름이 바뀌었습니다.
 
