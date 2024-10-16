@@ -1,5 +1,4 @@
 {
-  "compat-await-push": "compat-await-push",
   "link": "link",
   "plugin-basic-ui": "plugin-basic-ui",
   "plugin-devtools": "plugin-devtools",
@@ -9,6 +8,5 @@
   "plugin-preload": "plugin-preload",
   "plugin-renderer-basic": "plugin-renderer-basic",
   "plugin-renderer-web": "plugin-renderer-web",
-  "plugin-stack-depth-change": "plugin-stack-depth-change",
-  "react-ui-core": "react-ui-core"
+  "plugin-stack-depth-change": "plugin-stack-depth-change"
 }
