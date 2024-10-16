@@ -3,7 +3,7 @@ import { Callout } from "nextra-theme-docs";
 # Resolving Circular References with useFlow
 
 <Callout type="info" emoji="💡">
-  You can easily resolve the `useFlow()` circular reference issue by using the [Future API](/future-api/introduction). We recommend using the [Future API](/future-api/introduction).
+  You can easily resolve the `useFlow()` circular reference issue by using the [Future API](/api-references/future-api/introduction). We recommend using the [Future API](/api-references/future-api/introduction).
 </Callout>
 
 The `useFlow()` function returned by the `stackflow()` function utilizes the declared activity types. Therefore, `useFlow()` and activity components interlock, causing a circular dependency. By using the `useActions()` hook and importing the types separately, you can eliminate this circular dependency.
