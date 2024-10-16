@@ -12,10 +12,7 @@ npm install @stackflow/plugin-history-sync
 
 설치가 완료되면 다음과 같이 `stackflow()` 함수의 `plugins` 필드에 플러그인을 등록해요.
 
-```typescript
-/**
- * stackflow.ts
- */
+```typescript showLineNumbers filename="stackflow.ts" copy
 import { stackflow } from "@stackflow/react";
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
 import { historySyncPlugin } from "@stackflow/plugin-history-sync";
@@ -48,9 +45,13 @@ const { Stack, useFlow } = stackflow({
 
 `historySyncPlugin`은 `routes`와 `fallbackActivity` 두 옵션을 받아요.
 
-- `routes` - 액티비티와 URL 템플릿을 연결해요. 액티비티의 파라미터를 Path Parameter로 표현할 수 있어요. 만약 액티비티의 파라미터가 해당 URL 템플릿에 없다면 자동으로 Query Parameter로 표현돼요.
+<APITable>
+|                  |            |                                                                                                                                                 |
+| ---------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------  |
+| routes           | `object`   | 액티비티와 URL 템플릿을 연결해요. 액티비티의 파라미터를 Path Parameter로 표현할 수 있어요. 만약 액티비티의 파라미터가 해당 URL 템플릿에 없다면 자동으로 Query Parameter로 표현돼요. |
+| fallbackActivity | `function` | 첫 진입시에 현재 URL과 매핑되는 URL이 없는 경우 어떤 액티비티로 보낼지 결정해요. 일반적으로 404 페이지를 만들고 여기에 할당해요.                                              |
+</APITable>
 
-- `fallbackActivity` - 첫 진입시에 현재 URL과 매핑되는 URL이 없는 경우 어떤 액티비티로 보낼지 결정해요. 일반적으로 404 페이지를 만들고 여기에 할당해요.
 
 <Callout type="warning" emoji="⚠️">
   **주의** - Activity parameter가 Path parameter와 매핑할때, 넘어갈 수 있는
@@ -62,8 +63,7 @@ const { Stack, useFlow } = stackflow({
   서버사이드 렌더링 환경에서는 `window.location` 값이 없으므로 초기 액티비티를 결정할 수 없어요.
   초기 액티비티를 결정하려면 다음과 같이 Stack의 `initialContext`에 `req.path` 필드에 path 값을 넣어주세요.
 
-```tsx
-<Stack initialContext={{ req: { path: "/..." } }} />
-```
-
+  ```tsx
+  <Stack initialContext={{ req: { path: "/..." } }} />
+  ```
 </Callout>
