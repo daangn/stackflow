@@ -1,6 +1,4 @@
 import { useConfig, useTheme } from "nextra-theme-docs";
-import Favicon from "./assets/favicon.png";
-import Opengraph from "./assets/og-image.png";
 
 const Logo = () => {
   const { theme, systemTheme } = useTheme();
@@ -115,12 +113,12 @@ const themeConfig = {
         <meta name="og:title" content={frontMatter.title || "Stackflow"} />
         <meta
           name="og:description"
-          content={
-            "The Simplest Stack Navigation for JavaScript and TypeScript."
-          }
+          content="The Simplest Stack Navigation for JavaScript and TypeScript."
         />
-        <meta name="og:image" content={Opengraph.src} />
-        <link rel="shortcut icon" type="image/x-icon" href={Favicon.src} />
+        <meta name="og:image" content="https://stackflow.so/og-image.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <link rel="shortcut icon" type="image/x-icon" href="/favicon.png" />
         <script dangerouslySetInnerHTML={{ __html: SEED_SCALE_COLOR_SCRIPT }} />
         <script dangerouslySetInnerHTML={{ __html: NEXTRA_THEME_SCRIPT }} />
       </>
