@@ -1,8 +1,8 @@
-import Ellipse from "@assets/gradient-ellipse.webp";
 import { ChevronRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSimpleReveal } from "simple-reveal";
+import Ellipse from "../../assets/gradient-ellipse.webp";
 import { Demo } from "../Demo";
 
 export function IndexPage({ lang = "ko" }: { lang: "ko" | "en" }) {

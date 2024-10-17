@@ -1,6 +1,6 @@
 import { vars } from "@seed-design/design-token";
-import type { Config } from "tailwindcss";
 
+/** @type {import('tailwindcss').Config} */
 const config = {
   content: [
     "./pages/**/*.{js,jsx,ts,tsx,md,mdx}",
@@ -30,6 +30,6 @@ const config = {
     },
   },
   plugins: [],
-} satisfies Config;
+};
 
 export default config;

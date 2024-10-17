@@ -1,5 +1,4 @@
 import { Stack } from "@stackflow/demo";
-import { type ComponentPropsWithoutRef, forwardRef } from "react";
 
 export function Demo() {
   return (
