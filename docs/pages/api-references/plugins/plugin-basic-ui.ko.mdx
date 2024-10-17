@@ -1,15 +1,16 @@
-# @stackflow/plugin-basic-ui
+# `@stackflow/plugin-basic-ui`
 
-Render the UI within the activity using the global stack state. It provides `cupertino` and `android` themes by default.
+전역 스택 상태를 사용하여 활동 내에서 UI를 렌더링합니다. 기본적으로 `cupertino` 및 `android` 테마를 제공합니다.
 
-- [Documentation](https://stackflow.so)
+## 설치
 
-## Usage
+```bash npm2yarn copy
+npm install @stackflow/plugin-basic-ui
+```
 
-```typescript
-/**
- * stackflow.ts
- */
+## 사용법
+
+```typescript showLineNumbers filename="stackflow.ts" copy
 import { stackflow } from "@stackflow/react";
 import { basicUIPlugin } from "@stackflow/plugin-basic-ui";
 
@@ -24,10 +25,10 @@ const { Stack, useFlow } = stackflow({
 });
 ```
 
-```tsx
+```tsx filename="AppScreen" copy
 import { AppScreen } from "@stackflow/plugin-basic-ui";
 
-const Something: React.FC = () => {
+const Something = () => {
   return (
     <AppScreen appBar={{ title: "Home" }}>
       <div>Hello, World</div>
@@ -36,10 +37,10 @@ const Something: React.FC = () => {
 };
 ```
 
-```tsx
+```tsx filename="Modal" copy
 import { Modal } from "@stackflow/plugin-basic-ui";
 
-const Something: React.FC = () => {
+const Something = () => {
   return (
     <Modal>
       <div>Hello, World</div>
@@ -48,7 +49,7 @@ const Something: React.FC = () => {
 };
 ```
 
-```tsx
+```tsx filename="BottomSheet" copy
 import { BottomSheet } from "@stackflow/plugin-basic-ui";
 
 const Something = () => {
@@ -59,5 +60,3 @@ const Something = () => {
   );
 };
 ```
-
-- [plugin github link](https://github.com/daangn/stackflow/tree/main/extensions/plugin-basic-ui)
