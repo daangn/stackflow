@@ -1,5 +1,6 @@
-import { type DocsThemeConfig, useTheme } from "nextra-theme-docs";
+import { type DocsThemeConfig, useConfig, useTheme } from "nextra-theme-docs";
 import Favicon from "./assets/favicon.png";
+import Opengraph from "./assets/og-image.png";
 
 const Logo = () => {
   const { theme, systemTheme } = useTheme();
@@ -87,7 +88,7 @@ const themeConfig: DocsThemeConfig = {
   },
   darkMode: false,
   footer: {
-    text: <span>MIT {new Date().getFullYear()} © Stackflow</span>,
+    text: <span>MIT {new Date().getFullYear()} &copy; Stackflow</span>,
   },
   search: {
     placeholder: "Search",
@@ -98,19 +99,32 @@ const themeConfig: DocsThemeConfig = {
       dateStyle: "medium",
       timeStyle: "short",
     }).format(timestamp),
-  head: (
-    <>
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <meta
-        name="description"
-        content="Mobile-first stack navigator framework with Composable Plugin System"
-      />
-      <meta name="og:title" content="Stackflow" />
-      <link rel="shortcut icon" type="image/x-icon" href={Favicon.src} />
-      <script dangerouslySetInnerHTML={{ __html: SEED_SCALE_COLOR_SCRIPT }} />
-      <script dangerouslySetInnerHTML={{ __html: NEXTRA_THEME_SCRIPT }} />
-    </>
-  ),
+  head: () => {
+    const { frontMatter } = useConfig();
+
+    return (
+      <>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta
+          name="description"
+          content="The Simplest Stack Navigation for JavaScript and TypeScript."
+        />
+        <meta name="og:type" content="website" />
+        <meta name="og:url" content="https://stackflow.so" />
+        <meta name="og:title" content={frontMatter.title || "Stackflow"} />
+        <meta
+          name="og:description"
+          content={
+            "The Simplest Stack Navigation for JavaScript and TypeScript."
+          }
+        />
+        <meta name="og:image" content={Opengraph.src} />
+        <link rel="shortcut icon" type="image/x-icon" href={Favicon.src} />
+        <script dangerouslySetInnerHTML={{ __html: SEED_SCALE_COLOR_SCRIPT }} />
+        <script dangerouslySetInnerHTML={{ __html: NEXTRA_THEME_SCRIPT }} />
+      </>
+    );
+  },
 };
 
 export default themeConfig;

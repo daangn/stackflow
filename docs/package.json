@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@mdx-js/react": "^3.0.1",
-    "@radix-ui/react-slot": "^1.1.0",
     "@seed-design/design-token": "^1.0.3",
     "@stackflow/core": "^1.1.0",
     "@stackflow/demo": "^1.4.0",
