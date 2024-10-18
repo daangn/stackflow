@@ -1,3 +1,5 @@
+import { APITable } from '../../../components/APITable'
+
 # `@stackflow/link`
 
 It mimics the `<Link />` component behavior provided by [Gatsby](https://www.gatsbyjs.com/docs/reference/built-in-components/gatsby-link/) or [Next.js](https://nextjs.org/docs/app/api-reference/components/link).
@@ -61,3 +63,18 @@ const MyComponent = () => {
   )
 }
 ```
+
+## Reference
+
+<APITable>
+|                   |                                                     |                                                                                                                  |
+| ----------------- | --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| activityName      | `string`                                            | The name of the activity you want to link to. It's used to determine which route to navigate.                    |
+| activityParams    | `object`                                            | Parameters to be passed to the activity. These parameters will be used to fill the route pattern.                |
+| animate           | `boolean` (optional)                                | Indicates whether to animate the transition when navigating. If not provided, it defaults to no animation.       |
+| replace           | `boolean` (optional)                                | If true, replaces the current entry in the history stack instead of pushing a new entry.                         |
+| urlPatternOptions | `UrlPatternOptions` (optional)                      | Options to customize URL pattern matching and filling.                                                           |
+| ref               | `React.ForwardedRef<HTMLAnchorElement>` (optional)  | A reference to the underlying anchor element, allowing direct DOM access if needed.                              |
+| onClick           | `function` (optional)                               | Function to handle the click event on the link. You can use it to perform additional actions on link clicks.     |
+| children          | `React.ReactNode`                                   | The content to be rendered inside the link. This is typically text or other elements the user can interact with. |
+</APITable>

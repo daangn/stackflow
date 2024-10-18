@@ -1,3 +1,5 @@
+import { APITable } from '../../../components/APITable'
+
 # `@stackflow/link`
 
 [Gatsby](https://www.gatsbyjs.com/docs/reference/built-in-components/gatsby-link/)나 [Next.js](https://nextjs.org/docs/app/api-reference/components/link)에서 제공하는 `<Link />` 컴포넌트와 같이 동작합니다.
@@ -61,3 +63,18 @@ const MyComponent = () => {
   )
 }
 ```
+
+## 레퍼런스
+
+<APITable>
+|                       |                                                   |                                                                                              |
+| --------------------- | ------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| activityName          | `string`                                          | 이동할 액티비티의 이름입니다. 이 속성은 어느 경로로 이동할지를 결정하는 데 사용됩니다.         |
+| activityParams        | `object`                                          | 액티비티에 전달될 매개변수입니다. 이 매개변수들은 경로 패턴을 채우는 데 사용됩니다.              |
+| animate               | `boolean` (optional)                             | 내비게이션 시 전환 애니메이션을 사용할지를 결정합니다. 제공되지 않으면 애니메이션이 없습니다.   |
+| replace               | `boolean` (optional)                             | true일 경우, 히스토리 스택에서 현재 항목을 대체하고 새로운 항목을 추가하지 않습니다.           |
+| urlPatternOptions     | `UrlPatternOptions` (optional)                   | URL 패턴 매칭과 채우기를 커스터마이즈할 수 있는 옵션입니다.                                    |
+| ref                   | `React.ForwardedRef<HTMLAnchorElement>` (optional) | DOM에 직접 접근할 수 있도록 하위 앵커 요소에 대한 참조를 제공합니다.                          |
+| onClick               | `function` (optional)                            | 링크의 클릭 이벤트를 처리하는 함수입니다. 링크 클릭 시 추가 작업을 수행하는 데 사용합니다.       |
+| children              | `React.ReactNode`                                | 링크 내부에 렌더링할 콘텐츠입니다. 주로 사용자와 상호작용할 수 있는 텍스트나 다른 요소입니다.   |
+</APITable>
