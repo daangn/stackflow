@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useSimpleReveal } from "simple-reveal";
 import Ellipse from "../../assets/gradient-ellipse.webp";
+import { getLocaleBranch } from "../../utils/locale";
 import { Demo } from "../Demo";
 import { Github } from "./Github";
 import { Tile } from "./Tile";
@@ -13,8 +14,7 @@ export function IndexPage({ lang = "ko" }: { lang: "ko" | "en" }) {
     initialTransform: "translate3d(0, 1rem, 1rem);",
     duration: 1000,
   });
-
-  const getLocaleText = (ko: string, en: string) => (lang === "ko" ? ko : en);
+  const getLocaleText = getLocaleBranch(lang);
 
   return (
     <main className="w-full lg:max-w-[1392px] mx-auto">
@@ -66,7 +66,7 @@ export function IndexPage({ lang = "ko" }: { lang: "ko" | "en" }) {
         <ChevronsDown className="absolute mx-auto bottom-10 size-8 animate-bounce opacity-75" />
       </section>
 
-      <section className="w-full flex flex-col items-center px-6 pb-8 lg:pb-32 gap-16">
+      <section className="w-full flex flex-col items-center px-6 pb-8 gap-16">
         <div className="flex text-xl lg:text-4xl gap-1">
           "
           <h1 className="text-xl text-center lg:text-3xl font-bold">
@@ -120,7 +120,7 @@ export function IndexPage({ lang = "ko" }: { lang: "ko" | "en" }) {
         </div>
       </section>
 
-      <section className="w-full flex flex-col items-center px-6 py-32 gap-16">
+      <section className="w-full flex flex-col items-center px-6 py-40 gap-16">
         <h1 className="text-2xl lg:text-4xl font-bold text-center">
           Driven by the Community
         </h1>
