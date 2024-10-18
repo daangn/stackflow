@@ -1,0 +1,159 @@
+import { Callout } from "nextra-theme-docs";
+
+# API Changes
+
+## Stackflow React Future
+
+- The new API can be accessed via `@stackflow/react/future`.
+
+Use it like this:
+
+```tsx showLineNumbers filename="Stack.tsx" copy
+import { stackflow } from "@stackflow/react/future";
+import HomeActivity from "../components/HomeActivity";
+import MyProfileActivity from "../components/MyProfileActivity";
+
+// Pass the created config as an argument
+import { config } from "./stackflow.config";
+
+export const { Stack } = stackflow({
+  config,
+  
+  // Inject React components with the names declared in Config
+  components: {
+    HomeActivity,
+    MyProfileActivity,
+  },
+
+  // You no longer need to declare routes separately for the History Sync Plugin
+  // By adding the plugin as below, a red line will appear in stackflow.config.ts
+  plugins: [
+    historySyncPlugin({
+      config,
+      fallbackActivity: () => "FeedActivity",
+    }),
+  ],
+});
+```
+
+```tsx showLineNumbers filename="stackflow.config.ts" copy
+import { defineConfig } from "@stackflow/config";
+
+export const config = defineConfig({
+  activities: [
+    {
+      name: "HomeActivity",
+      
+      // You can declare the settings required by the History Sync Plugin in stackflow.config
+      path: "/",
+    },
+    {
+      name: "MyProfileActivity",
+      path: "/my-profile",
+    }
+  ],
+  transitionDuration: 270,
+});
+```
+
+<Callout emoji="❓">
+  **"Why don't we declare React components together in the Config?"**
+
+  The core design of Stackflow Config is to be a container for static information without framework dependencies. Since Stackflow Config should not have React dependencies, it is designed to separate this part and add React dependencies (components) in the `@stackflow/react` configuration section.
+</Callout>
+
+## Type Safety
+
+Previously, types were inferred through the Props type of React components. Now, it is changed to be inferred from the Config.
+
+To add activity parameter types to the Config, declare them as follows.
+
+```typescript
+declare module "@stackflow/config" {
+  interface Register {
+    HomeActivity: {
+      regionId: string;
+      referrer?: string;
+    }
+  }
+}
+```
+
+The type of the activity is registered globally, and you can use utility types as shown below.
+
+```tsx showLineNumbers filename="HomeActivity.tsx" copy
+import type { ActivityComponentType } from "@stackflow/react/future";
+
+const HomeActivity: ActivityComponentType<"HomeActivity"> = ({ params }) => {
+  params.regionId // string
+  
+  return (
+    <div>...</div>
+  )
+}
+```
+
+You can also gather these declarations in one place or separate them by activity file (Co-location), so you can manage them as you wish.
+
+```typescript showLineNumbers filename="HomeActivity.tsx" copy
+declare module "@stackflow/config" {
+  interface Register {
+    HomeActivity: {
+      regionId: string;
+      referrer?: string;
+    }
+  }
+}
+```
+```typescript showLineNumbers filename="MyProfileActivity.tsx" copy
+declare module "@stackflow/config" {
+  interface Register {
+    MyProfileActivity: {
+      userId: string;
+    }
+  }
+}
+```
+
+## `useFlow()`, `useStepFlow()`
+You no longer need to create hooks like `useFlow()` and `useStepFlow()` using functions like `flow()`. You can import them directly.
+
+```tsx showLineNumbers filename="HomeActivity.tsx" copy
+import { useFlow, useStepFlow } from "@stackflow/react/future";
+
+const { push } = useFlow();
+const { pushStep } = useStepFlow<"HomeActivity">()
+
+push("...", { ... }) // Typed
+pushStep({ ... })    // Typed
+```
+
+Type safety is naturally ensured
+
+### Destructive Changes
+
+The function names of `useStepFlow()` have been changed.
+
+- Previous: `stepPush()`, `stepReplace()`, `stepPop()`
+- **Changed: `pushStep()`, `replaceStep()`, `popStep()`**
+- The specification has been modified so that the function names start with a verb.
+  
+## `<Link />`
+Similarly, there is no need to create the `<Link />` component using functions like `createLinkComponent()`. You can import it directly. Additionally, the existing Preload behavior has been removed.
+
+```tsx showLineNumbers filename="MyComponent.tsx" copy
+import { Link } from "@stackflow/link/future";
+
+function MyComponent() {
+  return (
+    <div>
+      {/* ... */}
+      <Link activityName="..." activityParams={{ /* ... */ }} />
+    </div>
+  )
+}
+```
+
+<Callout emoji="💡">
+  The behavior of preloading the API when the `<Link />` component appears in the viewport has significant performance benefits but greatly increases server load, so it has been found to be rarely used. Therefore, the existing preloading behavior, which was the default, has been removed. In the future, we plan to add props to the `<Link />` component to allow developers to finely control the preloading policy.
+</Callout>

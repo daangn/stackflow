@@ -1,0 +1,49 @@
+import { APITable } from '../../../components/APITable';
+
+# `@stackflow/plugin-stack-depth-change`
+
+이 플러그인은 스택의 깊이를 모니터링하고 싶을 때 사용할 수 있어요
+
+## 설치
+
+```bash npm2yarn copy
+npm install @stackflow/plugin-stack-depth-change
+```
+
+## 사용법
+
+```ts showLineNumbers filename="stackflow.ts" copy
+import { stackflow } from "@stackflow/react";
+import { stackDepthChangePlugin } from "@stackflow/plugin-stack-depth-change";
+
+const { Stack, useFlow } = stackflow({
+  activities: {
+    // ...
+  },
+  plugins: [
+    // ...
+    stackDepthChangePlugin({
+      onInit: ({ depth, activities, activeActivities }) => {},
+      onDepthChanged: ({ depth, activities, activeActivities }) => {},
+    }),
+  ],
+});
+```
+
+## 레퍼런스
+### `StackDepthChangePluginOptions`
+<APITable>
+|                 |                                    |                                                                            |
+| --------------- | ---------------------------------- | -------------------------------------------------------------------------- |
+| onInit          | `(args: StackDepthChangePluginArgs) => void` (optional) | 플러그인 초기화 시 현재 스택 깊이와 액티비티 정보와 함께 호출되는 콜백 함수입니다.    |
+| onDepthChanged  | `(args: StackDepthChangePluginArgs) => void` (optional) | 스택 깊이에 변화가 있을 때마다 호출되는 콜백 함수입니다.                        |
+</APITable>
+
+### `StackDepthChangePluginArgs`
+<APITable>
+|                 |                                    |                                                                            |
+| --------------- | ---------------------------------- | -------------------------------------------------------------------------- |
+| depth           | `number`                           | 활성 액티비티 스택의 현재 깊이입니다.                                      |
+| activities      | `Activity[]`                       | 현재 스택에 있는 모든 액티비티의 배열입니다.                               |
+| activeActivities| `Activity[]`                       | 활성 상태("exit-active" 또는 "enter-done")인 액티비티들의 배열입니다.         |
+</APITable>

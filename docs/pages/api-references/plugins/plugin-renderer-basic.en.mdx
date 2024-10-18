@@ -1,0 +1,23 @@
+# `@stackflow/plugin-renderer-basic`
+
+This plugin is used to render the activity that should be rendered by default using the stack state.
+
+## Installation
+
+```bash npm2yarn copy
+npm install @stackflow/plugin-renderer-basic
+```
+
+## Usage
+
+```ts showLineNumbers filename="stackflow.ts" copy
+import { stackflow } from "@stackflow/react";
+import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
+
+const { Stack, useFlow } = stackflow({
+  activities: {
+    // ...
+  },
+  plugins: [basicRendererPlugin()],
+});
+```

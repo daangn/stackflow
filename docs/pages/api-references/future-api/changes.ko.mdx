@@ -1,0 +1,159 @@
+import { Callout } from "nextra-theme-docs";
+
+# API 변경사항
+
+## Stackflow React Future
+
+- 새 API는 `@stackflow/react/future` 로 접근할 수 있어요.
+
+다음과 같이 사용하세요.
+
+```tsx showLineNumbers filename="Stack.tsx" copy
+import { stackflow } from "@stackflow/react/future";
+import HomeActivity from "../components/HomeActivity";
+import MyProfileActivity from "../components/MyProfileActivity";
+
+// 만들어준 config를 인자로 받습니다
+import { config } from "./stackflow.config";
+
+export const { Stack } = stackflow({
+  config,
+  
+  // Config에서 선언한 이름으로 리액트 컴포넌트를 주입해줍니다
+  components: {
+    HomeActivity,
+    MyProfileActivity,
+  },
+
+  // 이제 History Sync Plugin에 routes를 따로 선언할 필요가 없습니다  
+  // 아래와 같이 플러그인을 추가하면, stackflow.config.ts에 빨간줄이 생깁니다
+  plugins: [
+    historySyncPlugin({
+      config,
+      fallbackActivity: () => "FeedActivity",
+    }),
+  ],
+});
+```
+
+```tsx showLineNumbers filename="stackflow.config.ts" copy
+import { defineConfig } from "@stackflow/config";
+
+export const config = defineConfig({
+  activities: [
+    {
+      name: "HomeActivity",
+      
+      // History Sync Plugin에서 요구하는 설정값을 stackflow.config에 같이 선언할 수 있습니다
+      path: "/",
+    },
+    {
+      name: "MyProfileActivity",
+      path: "/my-profile",
+    }
+  ],
+  transitionDuration: 270,
+});
+```
+
+<Callout emoji="❓">
+  **"왜 React 컴포넌트는 Config에 같이 선언하지 않나요?"**
+
+  Stackflow Config는 프레임워크 의존성이 없는 정적 정보를 담는 그릇이 되는 것이 설계의 핵심이에요. Stackflow Config는 React 의존성이 없어야 하기 때문에, 이 부분을 분리해서 React 의존성(컴포넌트)은 `@stackflow/react` 를 설정하는 부분에 추가하는 식으로 설계되었습니다.
+</Callout>
+
+## 타입 안정성
+
+기존에는 타입을 React 컴포넌트의 Props 타입을 통해 추론했어요. 이제 Config에서 추론하도록 변경됩니다.
+
+Config에 액티비티 파라미터 타입을 추가하려면 아래와 같이 선언해요.
+
+```typescript
+declare module "@stackflow/config" {
+  interface Register {
+    HomeActivity: {
+      regionId: string;
+      referrer?: string;
+    }
+  }
+}
+```
+
+전역에 해당 액티비티의 타입이 등록되고, 아래와 같이 유틸 타입을 사용할 수 있어요.
+
+```tsx showLineNumbers filename="HomeActivity.tsx" copy
+import type { ActivityComponentType } from "@stackflow/react/future";
+
+const HomeActivity: ActivityComponentType<"HomeActivity"> = ({ params }) => {
+  params.regionId // string
+  
+  return (
+    <div>...</div>
+  )
+}
+```
+
+또한 해당 선언은 한 장소에 모아두어도 되고, 액티비티 파일 마다 분리해도 되므로(Co-location) 원하시는대로 관리가 가능해요.
+
+```typescript showLineNumbers filename="HomeActivity.tsx" copy
+declare module "@stackflow/config" {
+  interface Register {
+    HomeActivity: {
+      regionId: string;
+      referrer?: string;
+    }
+  }
+}
+```
+```typescript showLineNumbers filename="MyProfileActivity.tsx" copy
+declare module "@stackflow/config" {
+  interface Register {
+    MyProfileActivity: {
+      userId: string;
+    }
+  }
+}
+```
+
+## `useFlow()`, `useStepFlow()`
+이제 `flow()` 등의 함수로 `useFlow()`, `useStepFlow()` 등의 훅을 생성할 필요가 없어요. 바로 import해서 쓸 수 있습니다.
+
+```tsx showLineNumbers filename="HomeActivity.tsx" copy
+import { useFlow, useStepFlow } from "@stackflow/react/future";
+
+const { push } = useFlow();
+const { pushStep } = useStepFlow<"HomeActivity">()
+
+push("...", { ... }) // Typed
+pushStep({ ... })    // Typed
+```
+
+타입 안정성이 자연스럽게 보장됩니다
+
+### 파괴적 변환
+
+`useStepFlow()`의 함수 이름이 바뀌었습니다.
+
+- 기존: `stepPush()`, `stepReplace()`, `stepPop()`
+- **변경: `pushStep()`, `replaceStep()`, `popStep()`**
+- 함수 이름이 동사로 시작하도록 명세를 수정했습니다.
+  
+## `<Link />`
+마찬가지로 `createLinkComponent()` 등의 함수로 `<Link />` 컴포넌트를 생성할 필요가 없습니다. 바로 import 해서 쓸 수 있습니다. 또한 기존에 존재하던 Preload 동작을 삭제했습니다.
+
+```tsx showLineNumbers filename="MyComponent.tsx" copy
+import { Link } from "@stackflow/link/future";
+
+function MyComponent() {
+  return (
+    <div>
+      {/* ... */}
+      <Link activityName="..." activityParams={{ /* ... */ }} />
+    </div>
+  )
+}
+```
+
+<Callout emoji="💡">
+  뷰 포트에 `<Link />` 컴포넌트가 드러났을때 API 프리로딩을 하는 동작은 성능 향상에 큰 이점이 있지만 서버 부하를 크게 늘리기 때문에 잘 사용되지 않는 것으로 파악되었습니다. 따라서 기본값으로 있던 기존의 프리로딩 동작을 없애고 추후 `<Link />` 컴포넌트의 props를 통해 프리로딩 정책을 개발자가 세밀하게 제어할 수 있도록 추후 추가 할 예정입니다
+</Callout>

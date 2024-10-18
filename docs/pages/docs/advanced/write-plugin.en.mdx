@@ -1,0 +1,282 @@
+import { Callout } from "nextra-theme-docs";
+import { EffectHookDiagram } from "../../../components/diagrams/EffectHookDiagram";
+import { APITable } from "../../../components/APITable";
+
+# Write Your Own Plugin
+
+**Stackflow** helps you easily integrate extension logic written by others into your application through the plugin interface. Solve your problems with plugins and wrap them nicely to share with others.
+
+## Making a Preset
+
+The easiest way to publish a **Stackflow** plugin is to provide it as a preset by combining plugins made by others. You can create your own preset by grouping multiple plugins into an array as shown below.
+
+```ts showLineNumbers filename="stackflow.ts" copy
+import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
+import { historySyncPlugin } from "@stackflow/plugin-history-sync";
+import { stackflow } from "@stackflow/react";
+
+const myPlugin = ({ ... }) => [
+  basicRendererPlugin(),
+  historySyncPlugin({ ... }),
+];
+
+stackflow({
+  // ...
+  plugins: [myPlugin()],
+});
+```
+
+## Basic Interface
+
+Plugin must return the following values as a function.
+
+<APITable>
+|      |          |                                                                                                            |
+| ---- | -------- | ---------------------------------------------------------------------------------------------------------- |
+| key  | `string` | A unique string value assigned as the `key` when the plugin is rendered within the React tree as an array. |
+</APITable>
+
+To try developing your first plugin for your app, start with an inline function as shown below.
+
+```ts showLineNumbers filename="stackflow.ts" copy
+import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
+import { stackflow } from "@stackflow/react";
+
+stackflow({
+  // ...
+  plugins: [
+    basicRendererPlugin(),
+    basicUIPlugin({
+      theme: "cupertino",
+    }),
+    () => {
+      return {
+        key: "my-plugin",
+      };
+    },
+  ],
+});
+```
+
+### Adding a render method
+
+If you want to add a new rendering, you can use the `render` API. Utilize the stack state to decide how to optimize the DOM or, if necessary, overlay a new DOM tree using the `render` API.
+
+```tsx showLineNumbers filename="stackflow.ts" copy
+stackflow({
+  // ...
+  plugins: [
+    () => {
+      return {
+        key: "my-plugin",
+        render({ stack }) {
+          return (
+            <div className="my-rendering">
+              {stack.render().activities.map((activity) => (
+                <div className="my-activity" key={activity.id}>
+                  {activity.render()}
+                </div>
+              ))}
+            </div>
+          );
+        },
+      };
+    },
+  ],
+});
+```
+
+You can also override the stack state passed to the UI as shown below.
+
+```ts showLineNumbers filename="stackflow.ts" copy {12,17}
+stackflow({
+  // ...
+  plugins: [
+    () => {
+      return {
+        key: "my-plugin",
+        render({ stack }) {
+          return (
+            <div className="my-rendering">
+              {stack
+                .render({
+                  // You can override the stack state here.
+                })
+                .activities.map((activity) => (
+                  <div className="my-activity" key={activity.id}>
+                    {activity.render({
+                      // You can override the activity state here.
+                    })}
+                  </div>
+                ))}
+            </div>
+          );
+        },
+      };
+    },
+  ],
+});
+```
+
+<Callout emoji="💡">
+  The overridden state value does not affect the main stack, but only applies to the `useStack()` and `useActivity()` within the rendering subtree of React.
+</Callout>
+
+### Wrapping Stack
+
+If you want to add a Context API Provider at the top level or wrap the top level with a specific DOM, use the `wrapStack` interface.
+
+```ts showLineNumbers filename="stackflow.ts" copy {8}
+stackflow({
+  // ...
+  plugins: [
+    () => {
+      return {
+        key: "my-plugin",
+        wrapStack({ stack }) {
+          // you can use the stack information brought in as an argument here
+          return <div className="my-plugin">{stack.render()}</div>;
+        },
+      };
+    },
+  ],
+});
+```
+
+<Callout type="warning" emoji="⚠️">
+  **Caution** - The `wrapStack` API is applied to all renderings. Be careful as unintended side effects may occur.
+</Callout>
+
+### Wrapping Activity
+
+If you want to add a Context API Provider to each activity or wrap it with a specific DOM, use the `wrapActivity` interface.
+
+```ts showLineNumbers filename="stackflow.ts" copy {8}
+stackflow({
+  // ...
+  plugins: [
+    () => {
+      return {
+        key: "my-plugin",
+        wrapActivity({ activity }) {
+          // you can use the activity information brought in as an argument here
+          return <div className="my-activity">{activity.render()}</div>;
+        },
+      };
+    },
+  ],
+});
+```
+
+<Callout type="warning" emoji="⚠️">
+  **Caution** - The `wrapActivity` API is applied to all renderings. Be careful as unintended side effects may occur.
+</Callout>
+
+### Injecting Behavior at Initialization
+
+Use the `onInit` hook to call logic when the `<Stack />` component is first initialized.
+
+```ts showLineNumbers filename="stackflow.ts" copy {7-9}
+stackflow({
+  // ...
+  plugins: [
+    () => {
+      return {
+        key: "my-plugin",
+        onInit() {
+          console.log("Initialized!");
+        },
+      };
+    },
+  ],
+});
+```
+
+<Callout type="warning" emoji="⚠️">
+  **Caution** - In React 18 and `React.StrictMode`, it may be called twice, so be careful to avoid unintended side effects.
+</Callout>
+
+## Effect Hooks
+
+Do you want to extend functionality or synchronize with external states? You can perform specific actions whenever the stack state changes or call functions before the stack state changes.
+
+The stack state begins to change when push, replace, or pop is called due to user actions. From that point, you can perform specific actions before the stack state changes (Pre-effect) and after the stack state has changed and the UI has been updated (Post-effect).
+
+<EffectHookDiagram />
+
+### Post-effects
+
+Post-effect hooks include `onPushed`, `onReplaced`, `onPopped`, and `onChanged`. Post-effect hooks are called after the UI has been fully updated, so you cannot undo or cancel the changes. Post-effect hooks can use the following arguments.
+
+<APITable>
+|                       |            |                                            |
+| --------------------- | ---------- | ------------------------------------------ |
+| actions.getStack      | `function` | Get the current stack state.               |
+| actions.dispatchEvent | `function` | Add a new event to the core.               |
+| effect                | `object`   | The effect that triggered the effect hook. |
+</APITable>
+
+```ts showLineNumbers filename="stackflow.ts" copy
+stackflow({
+  // ...
+  plugins: [
+    () => {
+      return {
+        key: "my-plugin",
+        onPushed(actions, effect) {
+          // you can utilize
+          // actions.getStack()
+          // actions.dispatchEvent(...)
+          console.log("Pushed!");
+          console.log("Effect:", effect);
+        },
+      };
+    },
+  ],
+});
+```
+
+<Callout emoji="💡">
+  The `onChanged` hook is called whenever the stack state changes without distinction. Therefore, if used together with `onPushed`, `onReplaced`, and `onPopped`, both effect hooks will be called.
+</Callout>
+<Callout type="error" emoji="🚫">
+  **Caution** - If you dispatch an event that triggers the effect within the effect hook, it can cause an infinite loop. Use `actions.dispatchEvent()` with caution.
+</Callout>
+
+### Pre-effects
+
+Pre-effect hooks include `onBeforePush`, `onBeforeReplace`, and `onBeforePop`. Pre-effect hooks are called before the event is delivered to the Core, allowing you to cancel the event. Pre-effect hooks can use the following arguments.
+
+<APITable>
+|                        |            |                                            |
+| ---------------------- | ---------- | ------------------------------------------ |
+| actions.preventDefault | `function` | Cancel the default behavior.               |
+| actions.getStack       | `function` | Get the current stack state.               |
+| actions.dispatchEvent  | `function` | Add a new event to the core.               |
+| effect                 | `object`   | The effect that triggered the effect hook. |
+</APITable>
+
+## Determining initial activity
+
+You can override the existing `initialActivity` behavior through the `initialPushedEvent` API.
+
+```ts showLineNumbers filename="stackflow.ts" copy {1, 9-13}
+import { makeEvent } from "@stackflow/core";
+
+stackflow({
+  // ...
+  plugins: [
+    () => {
+      return {
+        key: "my-plugin",
+        initialPushedEvent() {
+          return makeEvent("Pushed", {
+            // ...
+          });
+        },
+      };
+    },
+  ],
+});
+```
+

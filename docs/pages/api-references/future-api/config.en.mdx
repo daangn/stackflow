@@ -1,0 +1,55 @@
+import { Callout } from "nextra-theme-docs";
+import { APITable } from "../../../components/APITable";
+
+# `@stackflow/config`
+
+### Config
+
+- Introduce the concept of `Config` in Stackflow.
+- Allows static declaration of activities without React dependency.
+
+You can write as follows.
+
+```tsx showLineNumbers filename="stackflow.config.ts" copy
+import { defineConfig } from "@stackflow/config";
+
+export const config = defineConfig({
+  activities: [
+    {
+      name: "HomeActivity",
+    },
+    {
+      name: "MyProfileActivity",
+    }
+  ],
+  transitionDuration: 270,
+});
+```
+
+<Callout emoji="💡">
+  Now, when additional configuration is needed in a plugin, you can extend `@stackflow/config` to receive the necessary information for the plugin's operation, not just through the plugin function's parameters.
+</Callout>
+
+### `decorate` API
+
+You can extend the `Config` type as follows to utilize `config` in various places.
+
+```typescript
+declare module "@stackflow/config" {
+  interface Config {
+    relayEnvironment: RelayEnvironment;
+  }
+}
+
+config.decorate("relayEnvironment", myRelayEnvironment);
+```
+
+### API
+
+<APITable>
+|                    |                   |                                                    |
+| ------------------ | ----------------- | -------------------------------------------------- |
+| activities         | `ActivityDefinition<string>[]`             | An array of activities.                            |
+| transitionDuration | `number`          | Duration of the transition animation.              |
+| initialActivity    | `() => ActivityDefinition<string>["name"]` | The initial activity. |
+</APITable>

@@ -1,0 +1,66 @@
+import { Callout } from "nextra-theme-docs";
+import { APITable } from "../../../components/APITable";
+
+# Synchronizing with History
+
+**Stackflow**'s navigation logic does not rely on browser history by default. This is to support environments like React Native and NativeScript where the History API is not available. Therefore, to use browser history for navigation, you need to synchronize the stack state with the browser history. This functionality is provided by `@stackflow/plugin-history-sync`.
+
+Install `@stackflow/plugin-history-sync` using the following command.
+
+```sh npm2yarn copy
+npm install @stackflow/plugin-history-sync
+```
+
+Once the installation is complete, register the plugin in the `plugins` field of the `stackflow()` function as follows.
+
+```tsx showLineNumbers filename="stackflow.ts" copy
+import { stackflow } from "@stackflow/react";
+import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
+import { historySyncPlugin } from "@stackflow/plugin-history-sync";
+import MyActivity from "./MyActivity";
+import Article from "./Article";
+
+const { Stack, useFlow } = stackflow({
+  transitionDuration: 350,
+  activities: {
+    MyActivity,
+    Article,
+  },
+  plugins: [
+    basicRendererPlugin(),
+    basicUIPlugin({
+      theme: "cupertino",
+    }),
+    historySyncPlugin({
+      routes: {
+        MyActivity: "/my-activity",
+        Article: "/articles/:articleId",
+      },
+      fallbackActivity: () => "MyActivity",
+    }),
+  ],
+  // The initialActivity option no longer works because it is overridden by the historySyncPlugin.
+  // initialActivity: () => "MyActivity",
+});
+```
+
+The `historySyncPlugin` accepts two options: `routes` and `fallbackActivity`.
+
+<APITable>
+|                  |            |                                                                                                                                                                                                                     |
+| ---------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| routes           | `object`   | Connects activities with URL templates. You can represent activity parameters as Path Parameters. If an activity's parameter is not in the URL template, it will automatically be represented as a Query Parameter. |
+| fallbackActivity | `function` | Determines which activity to navigate to if there is no matching URL when first entering. Typically, you create a 404 page and assign it here.                                                                      |
+</APITable>
+
+<Callout type="warning" emoji="⚠️">
+  **Warning** - When mapping activity parameters to path parameters, ensure that the parameter values are URL-safe. If special characters that are not URL-safe are used, query parameters may appear duplicated.
+</Callout>
+
+<Callout emoji="⚡️">
+  In a server-side rendering environment, the `window.location` value is not available, so the initial activity cannot be determined. To set the initial activity, add the path value to the `req.path` field in the `initialContext` of the Stack as follows:
+
+  ```tsx
+  <Stack initialContext={{ req: { path: "/..." } }} />
+  ```
+</Callout>

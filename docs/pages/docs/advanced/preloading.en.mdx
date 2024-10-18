@@ -1,0 +1,144 @@
+import { Callout } from "nextra-theme-docs";
+
+# Preloading API Calls
+
+<Callout type="info" emoji="💡">
+  Using the [Future API](/api-references/future-api/introduction) allows you to implement preloading more cleanly by leveraging the built-in Loader API. We recommend using the [Future API](/api-references/future-api/introduction).
+</Callout>
+
+## Preload Plugin
+
+The Preload Plugin allows you to fetch the data required for an activity in advance.
+
+Install `@stackflow/plugin-preload` with the following command:
+
+```bash npm2yarn copy
+npm install @stackflow/plugin-preload
+```
+
+Once the installation is complete, register the plugin in the `plugins` field of the `stackflow()` function as follows.
+
+```tsx showLineNumbers filename="stackflow.ts" copy
+import { stackflow } from "@stackflow/react";
+import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
+import { preloadPlugin } from "@stackflow/plugin-preload";
+import MyActivity from "./MyActivity";
+import Article from "./Article";
+
+const { Stack, useFlow, activities } = stackflow({
+  transitionDuration: 350,
+  activities: {
+    MyActivity,
+    Article,
+  },
+  plugins: [
+    basicRendererPlugin(),
+    basicUIPlugin({
+      theme: "cupertino",
+    }),
+    preloadPlugin({
+      loaders: {
+        MyActivity({ activityName, activityParams }) {
+            // Fetch the data required for the activity using the activity name and parameters.
+            // Return a reference value that allows access to the data,
+            // which can be retrieved using the `useActivityPreloadRef` hook.
+          return preloadRef;
+        },
+      },
+    }),
+  ],
+});
+
+export type TypeActivities = typeof activities;
+```
+
+Afterwards, within each activity, you can retrieve the `preloadRef` value using the `useActivityPreloadRef()` hook.
+
+```tsx showLineNumbers filename="MyActivity.ts" copy
+import { ActivityComponentType } from "@stackflow/react";
+import { useActivityPreloadRef } from "@stackflow/plugin-preload";
+
+const MyActivity: ActivityComponentType = () => {
+  const preloadRef = useActivityPreloadRef();
+
+  // Implement directly using Suspense for Data Fetching.
+  // https://ko.reactjs.org/docs/concurrent-mode-suspense.html
+  const data = readData({ preloadRef });
+
+  return <div>{/* ... */}</div>;
+};
+```
+
+If you want to preload the API for the next screen at a specific point in time, you can use the `preload` function provided by the `usePreloader()` hook from `@stackflow/plugin-preload`.
+
+Create a type-safe `usePreloader()` hook using the `createPreloader()` function.
+
+```tsx showLineNumbers filename="usePreloader.ts" copy
+import { createPreloader } from "@stackflow/plugin-preload";
+import type { TypeActivities } from "./stackflow";
+
+// Pass the entire type of registered activities as a generic to use the usePreloader() hook in a type-safe manner
+export const { usePreloader } = createPreloader<TypeActivities>();
+```
+
+```tsx showLineNumbers filename="MyActivity.ts" copy
+import { ActivityComponentType } from "@stackflow/react";
+import { usePreloader } from "./usePreloader";
+
+const MyActivity:  = () => {
+  const { preload } = usePreloader();
+
+  useEffect(() => {
+    // Fetch the data required by the `Article` component when rendering the `MyActivity` component.
+    preload("Article", {
+      /* ... */
+    });
+  }, []);
+
+  return <div>{/* ... */}</div>;
+};
+```
+
+### The `<Link />` Component
+
+If your project uses both the Preload Plugin and the History Sync Plugin, you can utilize the `<Link />` component.
+
+Install `@stackflow/link` with the following command:
+
+```bash npm2yarn copy
+npm install @stackflow/link
+```
+
+Create a type-safe Link component using the `createLinkComponent()` function.
+
+```tsx showLineNumbers filename="Link.ts" copy
+import { createLinkComponent } from "@stackflow/link";
+import type { TypeActivities } from "./stackflow";
+
+// Similarly, pass the entire type of activities as a generic to use the <Link /> component in a type-safe manner
+export const { Link } = createLinkComponent<TypeActivities>();
+```
+
+Afterwards, use the `<Link />` component with `activityName` and `activityParams` as props as follows.
+
+```tsx showLineNumbers filename="MyComponent.tsx" copy
+import { Link } from './Link'
+
+const MyComponent = () => {
+  return (
+    <div>
+      <Link
+        className={...}
+        activityName="MyActivity"
+        activityParams={{}}
+      >
+        {/* ... */}
+      </Link>
+    </div>
+  )
+}
+```
+
+<Callout emoji="⚡️">
+  The `<Link />` component internally uses the `usePreloader()` hook to fetch data in advance when the component is exposed within the user's viewport. This provides a seamless exploration experience without loading times for the user.
+</Callout>

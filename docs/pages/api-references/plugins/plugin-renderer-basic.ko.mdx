@@ -1,0 +1,23 @@
+# `@stackflow/plugin-renderer-basic`
+
+이 플러그인은 스택 상태를 기반으로 액티비티를 기본적으로 렌더링하는 데 사용됩니다.
+
+## 설치
+
+```bash npm2yarn copy
+npm install @stackflow/plugin-renderer-basic
+```
+
+## 사용법
+
+```ts showLineNumbers filename="stackflow.ts" copy
+import { stackflow } from "@stackflow/react";
+import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
+
+const { Stack, useFlow } = stackflow({
+  activities: {
+    // ...
+  },
+  plugins: [basicRendererPlugin()],
+});
+```

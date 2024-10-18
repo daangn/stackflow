@@ -1,0 +1,86 @@
+import { APITable } from "../../../components/APITable";
+
+# `@stackflow/plugin-preload`
+
+`@stackflow/plugin-preload`는 외부 데이터를 미리 불러올 수 있도록 하는 플러그인이에요.
+
+## 설치 
+```bash npm2yarn copy
+npm install @stackflow/plugin-preload
+```
+
+## 사용법
+
+```ts showLineNumbers filename="stackflow.ts" copy
+import { stackflow } from "@stackflow/react";
+import { preloadPlugin } from "@stackflow/plugin-preload";
+import { MyHome } from "./MyHome";
+import { MyArticle } from "./MyArticle";
+import { NotFoundPage } from "./NotFoundPage";
+
+const { Stack, useFlow, activities } = stackflow({
+  activities: {
+    MyHome,
+    MyArticle,
+    NotFoundPage,
+  },
+  plugins: [
+    // ...
+    preloadPlugin({
+      loaders: {
+        MyHome({ activityParams }) {
+          // implement your own preload function using activity information
+          // when activity pushed, loader is automatically triggered before rendering
+        },
+        MyArticle() {
+          // ...
+        },
+        NotFoundPage() {
+          // ...
+        },
+      },
+    }),
+  ],
+});
+
+export type TypeActivities = typeof activities;
+```
+
+```ts showLineNumbers filename="usePreloader.ts" copy {4}
+import { createPreloader } from "@stackflow/plugin-preload";
+import type { TypeActivities } from "./stackflow";
+
+export const { usePreloader } = createPreloader<TypeActivities>();
+```
+
+```tsx showLineNumbers filename="MyComponent.tsx" copy {8}
+import { usePreloader } from "./usePreloader";
+
+const MyComponent = () => {
+  const { preload } = usePreloader();
+
+  useEffect(() => {
+    // 명시적으로 데이터를 미리 불러와요
+    preload("MyArticle", {
+      /* ... */
+    });
+  }, []);
+
+  return <div>{/* ... */}</div>;
+};
+```
+
+## 레퍼런스
+### `preloadPlugin`
+<APITable>
+|        |                                                           |                                                                                                                            |
+| ------ | --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| loaders| `{ [key]: Loader }`        | 액티비티 이름과 해당 로더 함수의 매핑으로, 액티비티의 데이터나 리소스를 어떻게 사전 로딩할지를 정의합니다.                       |
+</APITable>
+
+### `usePreloader`
+<APITable>
+|                   |                                                              |                                                                                            |
+| ----------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
+| urlPatternOptions | `UrlPatternOptions`                                          | 사전 로딩 함수 내에서 URL 패턴 매칭을 커스터마이즈하는 옵션입니다.                                                                |
+</APITable>

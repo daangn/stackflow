@@ -1,0 +1,6 @@
+{
+  "write-plugin": "플러그인 작성하기",
+  "history-sync": "히스토리와 동기화하기",
+  "resolving-circular-reference": "useFlow 순환참조 해결하기",
+  "preloading": "프리로딩"
+}

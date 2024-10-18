@@ -1,0 +1,26 @@
+import { Callout } from "nextra-theme-docs";
+
+# Stackflow Future API
+
+- We are revamping Stackflow's interface to optimize initial loading performance.
+- Adding support for a Loader API without React dependency.
+
+## Future API?
+
+- The Future API is a preview version of Stackflow 2.0 API.
+- Since it is not a finalized API, your feedback on any inconveniences you encounter while using it is highly appreciated and can contribute to further improvements.
+- The existing API can still be used as the internal workings remain unchanged. However, the existing API will be removed after the 2.0 version update.
+
+### Minimum Package Version
+
+To use the newly added Future API, please update the following packages to the latest version.
+
+- `@stackflow/config`
+- `@stackflow/core`
+- `@stackflow/react`
+- `@stackflow/plugin-history-sync`
+- (Optional) `@stackflow/link`
+
+<Callout type="warning">
+  The Future API may have partial changes in the API. If you find any discrepancies with the documentation while using it, please ensure you are using the latest version.
+</Callout>

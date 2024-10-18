@@ -1,0 +1,62 @@
+import { APITable } from "../../../components/APITable";
+
+# `@stackflow/plugin-history-sync`
+
+Stackflow does not use the browser's history by default. This plugin synchronizes the stack state with the current browser's history.
+
+## Installation
+
+```bash npm2yarn copy
+npm install @stackflow/plugin-history-sync
+```
+
+## Usage
+
+```ts showLineNumbers filename="stackflow.ts" copy
+import { stackflow } from "@stackflow/react";
+import { historySyncPlugin } from "@stackflow/plugin-history-sync";
+import { MyHome } from "./MyHome";
+import { MyArticle } from "./MyArticle";
+import { NotFoundPage } from "./NotFoundPage";
+
+const { Stack, useFlow } = stackflow({
+  activities: {
+    MyHome,
+    MyArticle,
+    NotFoundPage,
+  },
+  plugins: [
+    // ...
+    historySyncPlugin({
+      routes: {
+        /**
+         * You can link the registered activity with the URL template.
+         */
+        MyHome: "/",
+        MyArticle: "/articles/:articleId",
+        NotFoundPage: "/404",
+      },
+      /**
+       * If a URL that does not correspond to the URL template is given, it moves to the `fallbackActivity`.
+       */
+      fallbackActivity: ({ context }) => "NotFoundPage",
+      /**
+       * Uses the hash portion of the URL (i.e. window.location.hash)
+       */
+      useHash: false,
+    }),
+  ],
+});
+```
+
+## Reference
+
+<APITable>
+|                  |            |                                                                                                                                                                                                                     |
+| ---------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| routes           | `object`   | Connects activities with URL templates. You can represent activity parameters as Path Parameters. If an activity's parameter is not in the URL template, it will automatically be represented as a Query Parameter. |
+| fallbackActivity | `(args: { initialContext: any }) => K` | Determines which activity to navigate to if there is no matching URL when first entering. Typically, you create a 404 page and assign it here.                                                                      |
+| useHash           | `boolean` (optional)                                         | Determines if hash-based routing should be used. Defaults to false.                                          |
+| history           | `History` (optional)                                         | A custom history object used for managing navigation state. Defaults to browser or memory history.           |
+| urlPatternOptions | `UrlPatternOptions` (optional)                               | Options for URL pattern matching and generation, affecting how URLs are constructed and parsed.              |
+</APITable>

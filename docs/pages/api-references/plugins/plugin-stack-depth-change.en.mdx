@@ -1,0 +1,49 @@
+import { APITable } from '../../../components/APITable';
+
+# `@stackflow/plugin-stack-depth-change`
+
+This plugin is useful when you want to monitor the depth of the stack.
+
+## Installation
+
+```bash npm2yarn copy
+npm install @stackflow/plugin-stack-depth-change
+```
+
+## Usage
+
+```ts showLineNumbers filename="stackflow.ts" copy
+import { stackflow } from "@stackflow/react";
+import { stackDepthChangePlugin } from "@stackflow/plugin-stack-depth-change";
+
+const { Stack, useFlow } = stackflow({
+  activities: {
+    // ...
+  },
+  plugins: [
+    // ...
+    stackDepthChangePlugin({
+      onInit: ({ depth, activities, activeActivities }) => {},
+      onDepthChanged: ({ depth, activities, activeActivities }) => {},
+    }),
+  ],
+});
+```
+
+## Reference
+### `StackDepthChangePluginOptions`
+<APITable>
+|                 |                                    |                                                                            |
+| --------------- | ---------------------------------- | -------------------------------------------------------------------------- |
+| onInit          | `(args: StackDepthChangePluginArgs) => void` (optional) | Callback function to be invoked during plugin initialization with the current stack depth and activities. |
+| onDepthChanged  | `(args: StackDepthChangePluginArgs) => void` (optional) | Callback function to be triggered whenever there is a change in the stack depth. |
+</APITable>
+
+### `StackDepthChangePluginArgs`
+<APITable>
+|                 |                                    |                                                                            |
+| --------------- | ---------------------------------- | -------------------------------------------------------------------------- |
+| depth           | `number`                           | The current depth of the active activities stack.                          |
+| activities      | `Activity[]`                       | An array of all activities currently in the stack.                         |
+| activeActivities| `Activity[]`                       | An array of activities that are active (either "exit-active" or "enter-done"). |
+</APITable>

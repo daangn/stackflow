@@ -1,0 +1,12 @@
+{
+  "link": "link",
+  "plugin-basic-ui": "plugin-basic-ui",
+  "plugin-devtools": "plugin-devtools",
+  "plugin-google-analytics-4": "plugin-google-analytics-4",
+  "plugin-history-sync": "plugin-history-sync",
+  "plugin-map-initial-activity": "plugin-map-initial-activity",
+  "plugin-preload": "plugin-preload",
+  "plugin-renderer-basic": "plugin-renderer-basic",
+  "plugin-renderer-web": "plugin-renderer-web",
+  "plugin-stack-depth-change": "plugin-stack-depth-change"
+}

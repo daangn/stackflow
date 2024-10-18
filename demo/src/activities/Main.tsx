@@ -4,7 +4,6 @@ import { useLoaderData } from "@stackflow/react/future";
 import IconBell from "../assets/IconBell";
 import IconExpandMore from "../assets/IconExpandMore";
 import IconSearch from "../assets/IconSearch";
-import IconSettings from "../assets/IconSettings";
 import BottomTab from "../components/BottomTab";
 import FeedCard from "../components/FeedCard";
 import Layout from "../components/Layout";
@@ -32,7 +31,6 @@ const Main: ActivityComponentType<"Main"> = () => {
   const appBarRight = () => (
     <div className={css.appBarRight}>
       <IconSearch />
-      <IconSettings />
       <IconBell />
     </div>
   );

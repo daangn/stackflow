@@ -1,0 +1,186 @@
+---
+title: Navigating Activities
+---
+
+import { Callout } from "nextra-theme-docs";
+import { APITable } from "../../../components/APITable";
+
+# Navigating Activities
+
+If you have successfully registered an activity, it's time to navigate between activities. **Stackflow** supports stacking, replacing, and deleting activities through `useFlow()`. Let's take a look!
+
+## Stacking a New Activity
+
+We use the `useFlow()` hook created in `stackflow.ts`. Through the `push()` function within this hook, we can stack a new activity as follows.
+
+```tsx showLineNumbers filename="MyActivity.tsx" copy /push/
+import { ActivityComponentType } from "@stackflow/react";
+import { AppScreen } from "@stackflow/plugin-basic-ui";
+import { useFlow } from "./stackflow";
+
+const MyActivity: ActivityComponentType = () => {
+  const { push } = useFlow();
+
+  const onClick = () => {
+    push("Article", {
+      title: "Hello",
+    });
+  };
+
+  return (
+    <AppScreen appBar={{ title: "My Activity" }}>
+      <div>
+        My Activity
+        <button onClick={onClick}>Go to article page</button>
+      </div>
+    </AppScreen>
+  );
+};
+
+export default MyActivity;
+```
+
+`push()` takes the name of the activity to navigate to as the first parameter, the parameters for the activity as the second parameter, and additional options as the third parameter. The third parameter, additional options, is optional and can be omitted (default values will be used).
+
+```ts
+push("activity_name", {
+  /* activity parameters */
+});
+
+// or
+push(
+  "activity_name",
+  {
+    /* activity parameters */
+  },
+  {
+    /* additional options */
+  },
+);
+```
+
+The third parameter of the `push()` function, additional options, includes the following values.
+
+<APITable hasDefaultValue>
+|         |           |                          |      |
+| ------- | --------- | ------------------------ | ---- |
+| animate | `boolean` | Turn on or off animation | true |
+</APITable>
+
+<Callout emoji="💡">
+  By utilizing TypeScript, you can ensure that activity names and parameters are strictly typed. Use TypeScript to safely and conveniently leverage **Stackflow**.
+</Callout>
+
+## Replacing the Current Activity
+
+Next, let's look at how to replace the current activity without adding a new activity to the stack. Using the `replace()` function from the `useFlow()` hook created in `stackflow.ts`, you can replace the current activity as follows.
+
+```tsx showLineNumbers filename="MyActivity.tsx" copy /replace/
+import { ActivityComponentType } from "@stackflow/react";
+import { AppScreen } from "@stackflow/plugin-basic-ui";
+import { useFlow } from "./stackflow";
+
+const MyActivity: ActivityComponentType = () => {
+  const { replace } = useFlow();
+
+  const onClick = () => {
+    replace("Article", {
+      title: "Hello",
+    });
+  };
+
+  return (
+    <AppScreen appBar={{ title: "My Activity" }}>
+      <div>
+        My Activity
+        <button onClick={onClick}>Go to article page</button>
+      </div>
+    </AppScreen>
+  );
+};
+
+export default MyActivity;
+```
+
+`replace()` has a similar API to `push()`. It takes the name of the activity to navigate to as the first parameter, the parameters for the activity as the second parameter, and additional options as the third parameter. The third parameter, additional options, is optional and can be omitted (default values will be used).
+
+```ts
+replace("activity_name", {
+  /* activity parameters */
+});
+
+// or
+replace(
+  "activity_name",
+  {
+    /* activity parameters */
+  },
+  {
+    /* additional options */
+  },
+);
+```
+
+The third parameter of the `replace()` function, additional options, includes the following values.
+
+<APITable hasDefaultValue>
+|         |           |                          |      |
+| ------- | --------- | ------------------------ | ---- |
+| animate | `boolean` | Turn on or off animation | true |
+</APITable>
+
+## Deleting the Current Activity
+
+Finally, let's look at how to delete the current activity and return to the previous activity. Using the `pop()` function from the `useFlow()` hook created in `stackflow.ts`, you can delete the current activity as follows.
+
+```tsx showLineNumbers filename="Article.tsx" copy /pop/
+import { ActivityComponentType } from "@stackflow/react";
+import { AppScreen } from "@stackflow/plugin-basic-ui";
+import { useFlow } from "./stackflow";
+
+type ArticleParams = {
+  title: string;
+};
+
+const Article: ActivityComponentType<ArticleParams> = ({ params }) => {
+  const { pop } = useFlow();
+
+  const onClick = () => {
+    pop();
+  };
+
+  return (
+    <AppScreen appBar={{ title: "Article" }}>
+      <div>
+        <h1>{params.title}</h1>
+        <button onClick={onClick}>back</button>
+      </div>
+    </AppScreen>
+  );
+};
+
+export default Article;
+```
+
+`pop()` takes an optional first parameter for additional options. This first parameter can be omitted, and default values will be used.
+
+```ts
+pop();
+
+// or
+pop({
+  /* additional option */
+});
+```
+
+The first parameter of the `pop()` function, additional options, includes the following values.
+
+<APITable hasDefaultValue>
+|         |           |                          |      |
+| ------- | --------- | ------------------------ | ---- |
+| animate | `boolean` | Turn on or off animation | true |
+</APITable>
+
+---
+
+We have learned how to stack, replace, and delete activities. Now, let's learn how to create a virtual stack within an activity.

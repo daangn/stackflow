@@ -1,0 +1,125 @@
+---
+title: 상태 가져오기
+---
+
+import { TransitioningStackDiagram } from "../../../components/diagrams/TransitioningStackDiagram";
+import { APITable } from "../../../components/APITable";
+
+# 상태 가져오기
+
+**Stackflow**의 내부 상태는 한마디로 표현하면, **전환 상태**를 가진 **스택** 자료구조에요.
+
+<TransitioningStackDiagram lang="ko" />
+
+`activities` 필드로 접근할 수 있는 액티비티는 기본적인 존재와 관련된 정보 이외에, ID, 이름, 그리고 현재 시점의 전환 상태 등의 상태값들을 가져요. 이러한 상태값들을 이리저리 활용해 `@stackflow/plugin-basic-ui`가 만들어졌답니다. (여러분도 충분히 만들 수 있어요!)
+
+## 스택 상태를 렌더링에 활용하기
+
+스택 상태를 UI 컴포넌트에서 가져오려면, `useStack()` 훅을 활용해요.
+
+```tsx showLineNumbers filename="MyActivity.tsx" copy
+import { ActivityComponentType, useStack } from "@stackflow/react";
+import { AppScreen } from "@stackflow/plugin-basic-ui";
+import { useFlow } from "./stackflow";
+
+const MyActivity: ActivityComponentType = () => {
+  const stack = useStack();
+  const { replace } = useFlow();
+
+  const onClick = () => {
+    replace("Article", {
+      title: "Hello",
+    });
+  };
+
+  useEffect(() => {
+    console.log("현재 쌓여진 액티비티들:", stack.activities);
+    console.log("전체 전환 상태:", stack.globalTransitionState);
+    console.log(
+      "초기에 설정된 Transition Duration 옵션",
+      stack.transitionDuration,
+    );
+  }, [stack]);
+
+  return (
+    <AppScreen appBar={{ title: "My Activity" }}>
+      <div>
+        My Activity
+        <button onClick={onClick}>Go to article page</button>
+      </div>
+    </AppScreen>
+  );
+};
+
+export default MyActivity;
+```
+
+스택 상태에는 다음과 같은 필드들이 존재해요.
+
+<APITable>
+|                       |                   |                                              |
+| --------------------- | ----------------- | -------------------------------------------- |
+| activities            | `Activity[]`      | 액티비티 목록                                    |
+| transitionDuration    | `number`          | `stackflow()`에서 설정한 `transitionDuration` 값 |
+| globalTransitionState | `idle`, `loading` | 액티비티가 현재 움직이고 있는지 여부                   |
+</APITable>
+
+## 액티비티 상태를 렌더링에 활용하기
+
+현재 액티비티의 정보를 가져오기 위해 `useActivity()` 훅을 사용할 수 있어요.
+
+```tsx showLineNumbers filename="MyActivity.tsx" copy
+import { ActivityComponentType, useActivity } from "@stackflow/react";
+import { AppScreen } from "@stackflow/plugin-basic-ui";
+import { useFlow } from "./stackflow";
+
+const MyActivity: ActivityComponentType = () => {
+  const activity = useActivity();
+  const { replace } = useFlow();
+
+  const onClick = () => {
+    replace("Article", {
+      title: "Hello",
+    });
+  };
+
+  useEffect(() => {
+    console.log("현재 액티비티의 전환 상태:", activity.transitionState);
+  }, [activity]);
+
+  return (
+    <AppScreen appBar={{ title: "My Activity" }}>
+      <div>
+        My Activity
+        <button onClick={onClick}>Go to article page</button>
+      </div>
+    </AppScreen>
+  );
+};
+
+export default MyActivity;
+```
+
+액티비티 상태에는 다음과 같은 필드들이 존재해요.
+
+<APITable>
+|                     |                                                          |                                           |
+| ------------------- | -------------------------------------------------------- | ----------------------------------------- |
+| id                  | `string`                                                 | 액티비티 ID                                 |
+| name                | `string`                                                 | 등록된 액티비티 이름                           |
+| transitionState     | `enter-active`, `enter-done`, `exit-active`, `exit-done` | 액티비티의 전환 상태                           |
+| params              | `Object`                                                 | 액티비티에 전달된 파라미터                       |
+| isActive            | `boolean`                                                | 액티비티의 활성 여부 (exit-active 일때 `false`)  |
+| isTop               | `boolean`                                                | 최상단 액티비티 여부 (exit-active 일때 `true`)   |
+| isRoot              | `boolean`                                                | 최하단 액티비티 여부                            |
+</APITable>
+
+## Customize UI
+
+원하는 컴포넌트에서 `useActivity()`, `useStack()` 등의 상태를 이용해서 자유롭게 UI를 커스터마이징해요.
+
+만약 `@stackflow/plugin-basic-ui`에서 제공되는 UI를 활용하고 싶으시다면, 제공되는 `AppScreen` 컴포넌트를 활용해요.
+
+---
+
+혹시 UI 또는 로직을 확장하고 다른 개발자와 함께 공유하고 싶으신가요? 다음으로 넘어가서 플러그인 작성 방법에 대해서 알아봐요.

@@ -1,0 +1,87 @@
+import { APITable } from "../../../components/APITable";
+
+# `@stackflow/plugin-preload`
+
+`@stackflow/plugin-preload` is useful when you need to load remote data before rendering the activity.
+
+## Installation
+
+```bash npm2yarn copy
+npm install @stackflow/plugin-preload
+```
+
+## Usage
+
+```ts showLineNumbers filename="stackflow.ts" copy
+import { stackflow } from "@stackflow/react";
+import { preloadPlugin } from "@stackflow/plugin-preload";
+import { MyHome } from "./MyHome";
+import { MyArticle } from "./MyArticle";
+import { NotFoundPage } from "./NotFoundPage";
+
+const { Stack, useFlow, activities } = stackflow({
+  activities: {
+    MyHome,
+    MyArticle,
+    NotFoundPage,
+  },
+  plugins: [
+    // ...
+    preloadPlugin({
+      loaders: {
+        MyHome({ activityParams }) {
+          // implement your own preload function using activity information
+          // when activity pushed, loader is automatically triggered before rendering
+        },
+        MyArticle() {
+          // ...
+        },
+        NotFoundPage() {
+          // ...
+        },
+      },
+    }),
+  ],
+});
+
+export type TypeActivities = typeof activities;
+```
+
+```ts showLineNumbers filename="usePreloader.ts" copy {4}
+import { createPreloader } from "@stackflow/plugin-preload";
+import type { TypeActivities } from "./stackflow";
+
+export const { usePreloader } = createPreloader<TypeActivities>();
+```
+
+```tsx showLineNumbers filename="MyComponent.tsx" copy {8}
+import { usePreloader } from "./usePreloader";
+
+const MyComponent = () => {
+  const { preload } = usePreloader();
+
+  useEffect(() => {
+    // imperatively preload
+    preload("MyArticle", {
+      /* ... */
+    });
+  }, []);
+
+  return <div>{/* ... */}</div>;
+};
+```
+
+## Reference
+### `preloadPlugin`
+<APITable>
+|        |                                                       |                                                                                                                            |
+| ------ | ----------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| loaders| `{ [key]: Loader }`    | A mapping of activity names to their respective loader functions, defining how to preload the activity's data or resources.  |
+</APITable>
+
+### `usePreloader`
+<APITable>
+|                   |                                                              |                                                                                            |
+| ----------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
+| urlPatternOptions | `UrlPatternOptions`                                        | Options for customizing URL pattern matching within the preloader function.                 |    
+</APITable>

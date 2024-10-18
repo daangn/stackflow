@@ -1,0 +1,12 @@
+{
+  "index": {
+    "title": "Stackflow",
+    "type": "page",
+    "display": "hidden",
+    "theme": {
+      "layout": "raw"
+    }
+  },
+  "docs": { "title": "Docs", "type": "page" },
+  "api-references": { "title": "API", "type": "page" }
+}

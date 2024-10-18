@@ -1,0 +1,26 @@
+# `@stackflow/plugin-devtools`
+
+이 플러그인은 Stackflow Devtools의 데이터 저장 레이어로 사용됩니다.
+
+## 설치
+
+```bash npm2yarn copy
+npm install @stackflow/plugin-devtools
+```
+
+## 사용법
+
+```tsx showLineNumbers filename="stackflow.ts" copy
+import { stackflow } from "@stackflow/react";
+import { devtoolsPlugin } from "@stackflow/plugin-devtools";
+
+const { Stack, useFlow } = stackflow({
+  activities: {
+    // ...
+  },
+  plugins: [
+    devtoolsPlugin(),
+    // ...
+  ],
+});
+```

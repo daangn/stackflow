@@ -1,0 +1,44 @@
+import { APITable } from "../../../components/APITable";
+
+# `@stackflow/plugin-map-initial-activity`
+
+This plugin is used to map the initial activity using the given URL.
+
+## Installation
+
+```bash npm2yarn copy
+npm install @stackflow/plugin-map-initial-activity
+```
+
+## Usage
+
+```ts
+import { stackflow } from "@stackflow/react";
+import { mapInitialActivityPlugin } from "@stackflow/plugin-map-initial-activity";
+
+const { Stack, useFlow } = stackflow({
+  activities: {
+    // ...
+  },
+  plugins: [
+    mapInitialActivityPlugin({
+      mapper(url) {
+        // implement mapping logic using url parameter
+
+        return {
+          activityName: "...",
+          activityParams: {},
+        };
+      },
+    }),
+  ],
+});
+```
+
+## Reference
+### Options
+<APITable>
+|                   |                                                             |                                                                                                              |
+| ----------------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| mapper            | `(url: URL) => { activityName: string; activityParams: {}; } \| null` | A function that takes a URL and returns an object with the activity name and parameters, or null if no match. |
+</APITable>

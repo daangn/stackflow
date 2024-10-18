@@ -1,16 +1,17 @@
 {
   "name": "@stackflow/docs",
-  "version": "1.2.28",
+  "version": "2.0.0",
   "private": true,
   "description": "Mobile-first stack navigator framework with Composable Plugin System",
   "license": "MIT",
   "scripts": {
-    "build": "yarn generate:plugins-docs && next build",
-    "dev": "yarn generate:plugins-docs && next -p 6006",
-    "generate:plugins-docs": "rm -rf ./pages/plugins && node scripts/generate-plugins-docs.js"
+    "build": "next build",
+    "start": "next start",
+    "dev": "next -p 6006"
   },
   "dependencies": {
     "@mdx-js/react": "^3.0.1",
+    "@seed-design/design-token": "^1.0.3",
     "@stackflow/core": "^1.1.0",
     "@stackflow/demo": "^1.4.0",
     "@stackflow/plugin-basic-ui": "^1.9.2",
@@ -18,15 +19,24 @@
     "@stackflow/plugin-renderer-basic": "^1.1.13",
     "@stackflow/react": "^1.4.0",
     "@types/react": "^18.3.3",
+    "autoprefixer": "^10.4.20",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.451.0",
     "next": "^14.2.4",
     "nextra": "^2.13.4",
     "nextra-theme-docs": "^2.13.4",
+    "postcss": "^8.4.47",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "simple-reveal": "^0.8.0"
+    "simple-reveal": "^0.8.0",
+    "tailwind-merge": "^2.5.3",
+    "tailwindcss": "^3.4.13"
   },
   "devDependencies": {
     "@seed-design/stylesheet": "^1.0.4",
-    "react-lazy-load-image-component": "^1.6.2"
+    "@types/node": "^22.7.5",
+    "react-lazy-load-image-component": "^1.6.2",
+    "typescript": "^5.6.3"
   }
 }

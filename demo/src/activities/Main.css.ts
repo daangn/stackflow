@@ -1,4 +1,3 @@
-import { cssVars } from "@stackflow/plugin-basic-ui";
 import { style } from "@vanilla-extract/css";
 
 import { f } from "../styles";
@@ -24,7 +23,7 @@ export const appBarLeftIcon = style([
 export const appBarRight = style([
   {
     display: "grid",
-    gridTemplateColumns: "1.5rem 1.5rem 1.5rem",
+    gridTemplateColumns: "1.5rem 1.5rem",
     gap: "1rem",
     marginRight: ".5rem",
   },

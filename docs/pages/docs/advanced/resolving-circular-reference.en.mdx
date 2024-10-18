@@ -1,0 +1,38 @@
+import { Callout } from "nextra-theme-docs";
+
+# Resolving Circular References with useFlow
+
+<Callout type="info" emoji="💡">
+  You can easily resolve the `useFlow()` circular reference issue by using the [Future API](/api-references/future-api/introduction). We recommend using the [Future API](/api-references/future-api/introduction).
+</Callout>
+
+The `useFlow()` function returned by the `stackflow()` function utilizes the declared activity types. Therefore, `useFlow()` and activity components interlock, causing a circular dependency. By using the `useActions()` hook and importing the types separately, you can eliminate this circular dependency.
+
+```tsx showLineNumbers filename="stackflow.ts" copy
+import { stackflow } from "@stackflow/react";
+
+export const { Stack, activities } = stackflow({
+  activities: {
+    // ...
+  },
+  // ...
+});
+
+// Expose the type of activities like this.
+export type TypeActivities = typeof activities;
+```
+
+```tsx showLineNumbers filename="stackflow.ts" copy
+import { useActions } from "@stackflow/react";
+
+// Only import the exposed activity type.
+import type { TypeActivities } from "./stackflow";
+
+export const useMyFlow = () => {
+  return useActions<TypeActivities>();
+};
+```
+
+<Callout emoji="⚡️">
+  `TypeActivities` will be similarly utilized in future utility components/hooks.
+</Callout>
