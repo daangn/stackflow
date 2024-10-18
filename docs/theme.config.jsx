@@ -76,6 +76,20 @@ const themeConfig = {
   useNextSeoProps() {
     return {
       titleTemplate: "%s - Stackflow",
+      openGraph: {
+        type: "website",
+        url: "https://stackflow.so",
+        title: "Stackflow",
+        siteName: "Stackflow",
+        images: [
+          {
+            url: "/og-image.png",
+            width: 1200,
+            height: 630,
+            alt: "Stackflow",
+          },
+        ],
+      },
     };
   },
   sidebar: {
@@ -115,7 +129,7 @@ const themeConfig = {
           name="og:description"
           content="The Simplest Stack Navigation for JavaScript and TypeScript."
         />
-        <meta name="og:image" content="https://stackflow.so/og-image.png" />
+        <meta name="og:image" content="/og-image.png" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
         <link rel="shortcut icon" type="image/x-icon" href="/favicon.png" />
