@@ -31,7 +31,7 @@ export function IndexPage({ lang = "ko" }: { lang: "ko" | "en" }) {
           <div className="flex items-center justify-center gap-2 lg:gap-2 w-full lg:w-auto lg:mt-4">
             <Link
               className="py-2 flex items-center gap-2 pl-4 pr-2 bg-primary text-primary-foreground hover:bg-primary/90 "
-              href="/docs/introduction/what-is-stackflow"
+              href="/docs/get-started/introduction"
             >
               {getLocaleText("시작하기", "Get started")}{" "}
               <ChevronRight className="size-5" />
