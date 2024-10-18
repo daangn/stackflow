@@ -72,31 +72,15 @@ const MyComponent = () => {
 
 ## 레퍼런스
 ### `preloadPlugin`
-
 <APITable>
 |        |                                                           |                                                                                                                            |
 | ------ | --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| options| `PreloadPluginOptions<T>`                                 | 각 액티비티에 대한 로더를 포함하는 옵션 객체로, 액티비티 이름을 해당 사전 로딩 로직과 매핑합니다.                               |
-| loaders| `{ [key in Extract<keyof T, string>]: Loader<U> }`        | 액티비티 이름과 해당 로더 함수의 매핑으로, 액티비티의 데이터나 리소스를 어떻게 사전 로딩할지를 정의합니다.                       |
-| loader | `(params: { activityParams, activityContext }) => any`    | 사전 로딩 로직을 실행하는 함수로, 사전 로딩된 데이터에 대한 참조(preloadRef)를 반환할 수 있습니다.                             |
-</APITable>
-
-### `createPreloader`
-<APITable>
-|                   |                                                              |                                                                                            |
-| ----------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
-| usePreloader      | `() => { preload: PreloadFunc<T> }`                          | 액티비티를 사전 로딩하기 위한 `preload` 함수를 포함한 객체를 반환하는 훅입니다.                 |
+| loaders| `{ [key]: Loader }`        | 액티비티 이름과 해당 로더 함수의 매핑으로, 액티비티의 데이터나 리소스를 어떻게 사전 로딩할지를 정의합니다.                       |
 </APITable>
 
 ### `usePreloader`
-
 <APITable>
 |                   |                                                              |                                                                                            |
 | ----------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
-| PreloadFunc       | `(activityName, activityParams, options) => any;` | 지정된 액티비티를 위해 데이터나 리소스를 사전 로딩하는 함수로, 액티비티의 이름과 매개변수, 선택적 컨텍스트를 사용합니다. |
-| usePreloaderOptions| `{ urlPatternOptions?: UrlPatternOptions }`                 | 사전 로딩 함수 내에서 URL 패턴 매칭을 커스터마이즈하는 옵션입니다.                                                                |
-| activityName      | `K`, extracted from keys of T                                | 리소스를 사전 로딩할 액티비티의 이름입니다.                                                                                        |
-| activityParams    | `T[K] extends ActivityComponentType<infer U> ? U : {}`       | URL 패턴 채우기 및 로더 함수에서 사용되는 액티비티에 특정한 매개변수입니다.                                                        |
-| options           | `{ activityContext?: {} }` (optional)                        | 액티비티의 리소스를 사전 로딩할 때 로더에 전달되는 선택적 컨텍스트 정보입니다.                                                     |
-| usePreloader      | `Hook function`                                              | `preload` 함수를 반환하는 훅으로, 로더 및 경로 구성에 기반하여 사전 로딩을 용이하게 합니다.                                         |
+| urlPatternOptions | `UrlPatternOptions`                                          | 사전 로딩 함수 내에서 URL 패턴 매칭을 커스터마이즈하는 옵션입니다.                                                                |
 </APITable>

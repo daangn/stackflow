@@ -72,32 +72,16 @@ const MyComponent = () => {
 ```
 
 ## Reference
-
 ### `preloadPlugin`
-
 <APITable>
 |        |                                                       |                                                                                                                            |
 | ------ | ----------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| options| `PreloadPluginOptions<T>`                             | Options object containing loaders for each activity, mapping activity names to their respective preloading logic.            |
-| loaders| `{ [key in Extract<keyof T, string>]: Loader<U> }`    | A mapping of activity names to their respective loader functions, defining how to preload the activity's data or resources.  |
-| loader | `(params: { activityParams, activityContext }) => any`| A function that executes preloading logic, potentially returning a reference (preloadRef) to the preloaded data.             |
-</APITable>
-
-### `createPreloader`
-<APITable>
-|                   |                                                              |                                                                                            |
-| ----------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
-| usePreloader      | `() => { preload: PreloadFunc<T> }`                          | A hook that returns an object containing a `preload` function for preloading activities.    |
+| loaders| `{ [key]: Loader }`    | A mapping of activity names to their respective loader functions, defining how to preload the activity's data or resources.  |
 </APITable>
 
 ### `usePreloader`
-
 <APITable>
 |                   |                                                              |                                                                                            |
 | ----------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
-| PreloadFunc       | `(activityName, activityParams, options) => any;` | Function that preloads data or resources for a specified activity, given its name and parameters, with optional context. |
-| usePreloaderOptions| `{ urlPatternOptions?: UrlPatternOptions }`                 | Options for customizing URL pattern matching within the preloader function.                 |
-| activityName      | `K`, extracted from keys of T                                | The name of the activity for which to preload resources.                                    |
-| activityParams    | `T[K] extends ActivityComponentType<infer U> ? U : {}`       | Parameters specific to the activity, used for URL pattern filling and in the loader function. |
-| options           | `{ activityContext?: {} }` (optional)                        | Optional context information to be passed to the loader when preloading resources for the activity. |
+| urlPatternOptions | `UrlPatternOptions`                                        | Options for customizing URL pattern matching within the preloader function.                 |    
 </APITable>
