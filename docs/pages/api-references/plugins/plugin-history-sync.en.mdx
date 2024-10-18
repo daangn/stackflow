@@ -1,12 +1,18 @@
-# @stackflow/plugin-history-sync
+import { APITable } from "../../../components/APITable";
 
-Synchronizes the stack state with the current browser's history
+# `@stackflow/plugin-history-sync`
 
-- [Documentation](https://stackflow.so)
+Stackflow does not use the browser's history by default. This plugin synchronizes the stack state with the current browser's history.
+
+## Installation
+
+```bash npm2yarn copy
+npm install @stackflow/plugin-history-sync
+```
 
 ## Usage
 
-```ts
+```ts showLineNumbers filename="stackflow.ts" copy
 import { stackflow } from "@stackflow/react";
 import { historySyncPlugin } from "@stackflow/plugin-history-sync";
 import { MyHome } from "./MyHome";
@@ -43,4 +49,15 @@ const { Stack, useFlow } = stackflow({
 });
 ```
 
-- [plugin github link](https://github.com/daangn/stackflow/tree/main/extensions/plugin-history-sync)
+## Reference
+
+<APITable>
+|                   |                                                               |                                                                                                            |
+| ----------------- | ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| routes            | `{ [key in keyof T]: RouteLike<T[key]>; }` (optional)        | A mapping of activities to their route definitions. Used to define the routes if not using a config object. |
+| config            | `Config<ActivityDefinition<string>>` (optional)              | A config object that includes activity definitions with paths.                                               |
+| fallbackActivity  | `(args: { initialContext: any }) => K`                      | A function that determines the fallback activity to be used when no matching route is found.                 |
+| useHash           | `boolean` (optional)                                         | Determines if hash-based routing should be used. Defaults to false.                                          |
+| history           | `History` (optional)                                         | A custom history object used for managing navigation state. Defaults to browser or memory history.           |
+| urlPatternOptions | `UrlPatternOptions` (optional)                               | Options for URL pattern matching and generation, affecting how URLs are constructed and parsed.              |
+</APITable>

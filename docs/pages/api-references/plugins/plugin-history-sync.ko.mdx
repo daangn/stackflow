@@ -1,12 +1,19 @@
-# @stackflow/plugin-history-sync
+import { APITable } from "../../../components/APITable";
 
-Synchronizes the stack state with the current browser's history
+# `@stackflow/plugin-history-sync`
 
-- [Documentation](https://stackflow.so)
+stackflow는 기본적으로 브라우저의 히스토리를 사용하지 않아요. 이 플러그인은 stackflow의 상태를 브라우저 히스토리와 동기화합니다.
 
-## Usage
+## 설치
 
-```ts
+```bash npm2yarn copy
+npm install @stackflow/plugin-history-sync
+```
+
+
+## 사용법
+
+```ts showLineNumbers filename="stackflow.ts" copy
 import { stackflow } from "@stackflow/react";
 import { historySyncPlugin } from "@stackflow/plugin-history-sync";
 import { MyHome } from "./MyHome";
@@ -43,4 +50,15 @@ const { Stack, useFlow } = stackflow({
 });
 ```
 
-- [plugin github link](https://github.com/daangn/stackflow/tree/main/extensions/plugin-history-sync)
+## 레퍼런스
+
+<APITable>
+|                   |                                                             |                                                                                                       |
+| ----------------- | ----------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| routes            | `{ [key in keyof T]: RouteLike<T[key]>; }` (optional)       | 액티비티와 그에 해당하는 경로 정의의 매핑입니다. config 객체를 사용하지 않는 경우 경로를 정의하는 데 사용됩니다. |
+| config            | `Config<ActivityDefinition<string>>` (optional)             | 경로가 포함된 액티비티 정의를 포함하는 구성 객체입니다.                                                 |
+| fallbackActivity  | `(args: { initialContext: any }) => K`                      | 일치하는 경로가 없을 때 사용할 기본 액티비티를 결정하는 함수입니다.                                      |
+| useHash           | `boolean` (optional)                                        | 해시 기반 라우팅을 사용할지를 결정합니다. 기본값은 false입니다.                                         |
+| history           | `History` (optional)                                        | 네비게이션 상태를 관리하는 데 사용되는 사용자 정의 히스토리 객체입니다. 기본적으로 브라우저나 메모리 히스토리입니다. |
+| urlPatternOptions | `UrlPatternOptions` (optional)                              | URL 패턴 매칭 및 생성과 관련된 옵션으로, URL이 어떻게 구성되고 해석되는지에 영향을 줍니다.                |
+</APITable>
