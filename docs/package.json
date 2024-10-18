@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/docs",
-  "version": "1.2.28",
+  "version": "2.0.0",
   "private": true,
   "description": "Mobile-first stack navigator framework with Composable Plugin System",
   "license": "MIT",

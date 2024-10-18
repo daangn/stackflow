@@ -1,5 +1,11 @@
 # @stackflow/docs
 
+## 2.0.0
+
+### Major Changes
+
+- Document v2
+
 ## 1.2.28
 
 ### Patch Changes
