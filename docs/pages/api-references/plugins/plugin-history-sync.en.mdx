@@ -52,11 +52,10 @@ const { Stack, useFlow } = stackflow({
 ## Reference
 
 <APITable>
-|                   |                                                               |                                                                                                            |
-| ----------------- | ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| routes            | `{ [key in keyof T]: RouteLike<T[key]>; }` (optional)        | A mapping of activities to their route definitions. Used to define the routes if not using a config object. |
-| config            | `Config<ActivityDefinition<string>>` (optional)              | A config object that includes activity definitions with paths.                                               |
-| fallbackActivity  | `(args: { initialContext: any }) => K`                      | A function that determines the fallback activity to be used when no matching route is found.                 |
+|                  |            |                                                                                                                                                                                                                     |
+| ---------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| routes           | `object`   | Connects activities with URL templates. You can represent activity parameters as Path Parameters. If an activity's parameter is not in the URL template, it will automatically be represented as a Query Parameter. |
+| fallbackActivity | `(args: { initialContext: any }) => K` | Determines which activity to navigate to if there is no matching URL when first entering. Typically, you create a 404 page and assign it here.                                                                      |
 | useHash           | `boolean` (optional)                                         | Determines if hash-based routing should be used. Defaults to false.                                          |
 | history           | `History` (optional)                                         | A custom history object used for managing navigation state. Defaults to browser or memory history.           |
 | urlPatternOptions | `UrlPatternOptions` (optional)                               | Options for URL pattern matching and generation, affecting how URLs are constructed and parsed.              |
