@@ -1,12 +1,18 @@
-# @stackflow/plugin-stack-depth-change
+import { APITable } from '../../../components/APITable';
 
-Monitors a depth change in the stack.
+# `@stackflow/plugin-stack-depth-change`
 
-- [Documentation](https://stackflow.so)
+This plugin is useful when you want to monitor the depth of the stack.
+
+## Installation
+
+```bash npm2yarn copy
+npm install @stackflow/plugin-stack-depth-change
+```
 
 ## Usage
 
-```ts
+```ts showLineNumbers filename="stackflow.ts" copy
 import { stackflow } from "@stackflow/react";
 import { stackDepthChangePlugin } from "@stackflow/plugin-stack-depth-change";
 
@@ -17,23 +23,27 @@ const { Stack, useFlow } = stackflow({
   plugins: [
     // ...
     stackDepthChangePlugin({
-      /**
-       * Initial loading
-       * @param depth
-       * @param activeActivities
-       * @param activities
-       */
       onInit: ({ depth, activities, activeActivities }) => {},
-      /**
-       * When the depth changes
-       * @param depth
-       * @param activeActivities
-       * @param activities
-       */
       onDepthChanged: ({ depth, activities, activeActivities }) => {},
     }),
   ],
 });
 ```
 
-- [plugin github link](https://github.com/daangn/stackflow/tree/main/extensions/plugin-stack-depth-change)
+## Reference
+### `StackDepthChangePluginOptions`
+<APITable>
+|                 |                                    |                                                                            |
+| --------------- | ---------------------------------- | -------------------------------------------------------------------------- |
+| onInit          | `(args: StackDepthChangePluginArgs) => void` (optional) | Callback function to be invoked during plugin initialization with the current stack depth and activities. |
+| onDepthChanged  | `(args: StackDepthChangePluginArgs) => void` (optional) | Callback function to be triggered whenever there is a change in the stack depth. |
+</APITable>
+
+### `StackDepthChangePluginArgs`
+<APITable>
+|                 |                                    |                                                                            |
+| --------------- | ---------------------------------- | -------------------------------------------------------------------------- |
+| depth           | `number`                           | The current depth of the active activities stack.                          |
+| activities      | `Activity[]`                       | An array of all activities currently in the stack.                         |
+| activeActivities| `Activity[]`                       | An array of activities that are active (either "exit-active" or "enter-done"). |
+</APITable>
