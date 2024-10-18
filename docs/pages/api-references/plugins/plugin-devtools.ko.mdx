@@ -1,12 +1,16 @@
-# @stackflow/plugin-devtools
+# `@stackflow/plugin-devtools`
 
-Enables Stackflow Devtools (Chrome extension)
+이 플러그인은 Stackflow Devtools의 데이터 저장 레이어로 사용됩니다.
 
-- [Documentation](https://stackflow.so)
+## 설치
 
-## Usage
+```bash npm2yarn copy
+npm install @stackflow/plugin-devtools
+```
 
-```typescript
+## 사용법
+
+```typescript showLineNumbers filename="stackflow.ts" copy
 import { stackflow } from "@stackflow/react";
 import { devtoolsPlugin } from "@stackflow/plugin-devtools";
 
@@ -20,5 +24,3 @@ const { Stack, useFlow } = stackflow({
   ],
 });
 ```
-
-- [plugin github link](https://github.com/daangn/stackflow/tree/main/extensions/plugin-devtools)

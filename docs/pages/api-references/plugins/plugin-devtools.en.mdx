@@ -1,12 +1,17 @@
-# @stackflow/plugin-devtools
+# `@stackflow/plugin-devtools`
 
-Enables Stackflow Devtools (Chrome extension)
+This plugin is used as a data storage layer for the Stackflow Devtools.
 
-- [Documentation](https://stackflow.so)
+## Installation
+
+```bash npm2yarn copy
+npm install @stackflow/plugin-devtools
+```
 
 ## Usage
 
-```typescript
+To utilize the plugin, integrate it within your Stackflow setup as shown:
+```typescript showLineNumbers filename="stackflow.ts" copy
 import { stackflow } from "@stackflow/react";
 import { devtoolsPlugin } from "@stackflow/plugin-devtools";
 
@@ -21,4 +26,3 @@ const { Stack, useFlow } = stackflow({
 });
 ```
 
-- [plugin github link](https://github.com/daangn/stackflow/tree/main/extensions/plugin-devtools)
