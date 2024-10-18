@@ -1,4 +1,4 @@
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, ChevronsDown } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSimpleReveal } from "simple-reveal";
@@ -63,6 +63,7 @@ export function IndexPage({ lang = "ko" }: { lang: "ko" | "en" }) {
           height={500}
           className="absolute w-full -z-10 top-20 left-0 opacity-40"
         />
+        <ChevronsDown className="absolute mx-auto bottom-10 size-8 animate-bounce opacity-75" />
       </section>
 
       <section className="w-full flex flex-col items-center px-6 pb-8 lg:pb-32 gap-16">
