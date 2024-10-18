@@ -6,7 +6,7 @@ import { APIPipeLiningDiagram } from "../../../components/diagrams/APIPipeLining
 
 As shown above, you can reduce the time taken for initial rendering by simultaneously initializing the React app and making API requests in the entry file. By utilizing the Stackflow Future API, you can implement API pipelining in a clean manner.
 
-```typescript showLineNumbers filename="entry.ts" copy
+```tsx showLineNumbers filename="entry.ts" copy
 import { makeTemplate } from "@stackflow/plugin-history-sync";
 import { config } from "./stackflow/stackflow.config";
 
@@ -37,7 +37,7 @@ main();
 ```
 
 By passing initialLoaderData to Stack, it overrides the result with the received loaderData instead of executing the first loader.
-```typescript showLineNumbers filename="renderApp.ts" copy
+```tsx showLineNumbers filename="renderApp.ts" copy
 export function renderApp({ initialLoaderData }: { initialLoaderData: any }) {
   const root = ReactDOM.createRoot(document.getElementById("root")!);
 

@@ -8,7 +8,7 @@ import { Callout } from "nextra-theme-docs";
 
 Use it like this:
 
-```typescript showLineNumbers filename="Stack.tsx" copy
+```tsx showLineNumbers filename="Stack.tsx" copy
 import { stackflow } from "@stackflow/react/future";
 import HomeActivity from "../components/HomeActivity";
 import MyProfileActivity from "../components/MyProfileActivity";
@@ -36,7 +36,7 @@ export const { Stack } = stackflow({
 });
 ```
 
-```typescript showLineNumbers filename="stackflow.config.ts" copy
+```tsx showLineNumbers filename="stackflow.config.ts" copy
 import { defineConfig } from "@stackflow/config";
 
 export const config = defineConfig({
@@ -81,7 +81,7 @@ declare module "@stackflow/config" {
 
 The type of the activity is registered globally, and you can use utility types as shown below.
 
-```typescript showLineNumbers filename="HomeActivity.tsx" copy
+```tsx showLineNumbers filename="HomeActivity.tsx" copy
 import type { ActivityComponentType } from "@stackflow/react/future";
 
 const HomeActivity: ActivityComponentType<"HomeActivity"> = ({ params }) => {
@@ -118,7 +118,7 @@ declare module "@stackflow/config" {
 ## `useFlow()`, `useStepFlow()`
 You no longer need to create hooks like `useFlow()` and `useStepFlow()` using functions like `flow()`. You can import them directly.
 
-```typescript
+```tsx showLineNumbers filename="HomeActivity.tsx" copy
 import { useFlow, useStepFlow } from "@stackflow/react/future";
 
 const { push } = useFlow();
@@ -141,7 +141,7 @@ The function names of `useStepFlow()` have been changed.
 ## `<Link />`
 Similarly, there is no need to create the `<Link />` component using functions like `createLinkComponent()`. You can import it directly. Additionally, the existing Preload behavior has been removed.
 
-```typescript
+```tsx showLineNumbers filename="MyComponent.tsx" copy
 import { Link } from "@stackflow/link/future";
 
 function MyComponent() {

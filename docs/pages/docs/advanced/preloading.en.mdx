@@ -18,7 +18,7 @@ npm install @stackflow/plugin-preload
 
 Once the installation is complete, register the plugin in the `plugins` field of the `stackflow()` function as follows.
 
-```typescript showLineNumbers filename="stackflow.ts" copy
+```tsx showLineNumbers filename="stackflow.ts" copy
 import { stackflow } from "@stackflow/react";
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
 import { preloadPlugin } from "@stackflow/plugin-preload";
@@ -73,7 +73,7 @@ If you want to preload the API for the next screen at a specific point in time, 
 
 Create a type-safe `usePreloader()` hook using the `createPreloader()` function.
 
-```typescript showLineNumbers filename="usePreloader.ts" copy
+```tsx showLineNumbers filename="usePreloader.ts" copy
 import { createPreloader } from "@stackflow/plugin-preload";
 import type { TypeActivities } from "./stackflow";
 
@@ -111,7 +111,7 @@ npm install @stackflow/link
 
 Create a type-safe Link component using the `createLinkComponent()` function.
 
-```typescript showLineNumbers filename="Link.ts" copy
+```tsx showLineNumbers filename="Link.ts" copy
 import { createLinkComponent } from "@stackflow/link";
 import type { TypeActivities } from "./stackflow";
 

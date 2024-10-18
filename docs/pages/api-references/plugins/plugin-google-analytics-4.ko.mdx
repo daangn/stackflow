@@ -1,18 +1,17 @@
-# @stackflow/plugin-google-analytics-4
+# `@stackflow/plugin-google-analytics-4`
 
-Add Google analytics 4 script to current service.
+구글 애널리틱스 4를 스택플로우와 통합하는 데 사용되는 플러그인입니다.
 
-## Usage
+## 설치
 
-### Inatallation
-
-```bash
-yarn add @stackflow/plugin-google-analytics-4
+```bash npm2yarn copy
+npm install @stackflow/plugin-google-analytics-4
 ```
 
-### Initialize
+## 사용법
+### 초기화
 
-```typescript
+```tsx showLineNumbers filename="stackflow.ts" copy
 import { stackflow } from "@stackflow/react";
 import { googleAnalyticsPlugin } from "@stackflow/plugin-google-analytics-4";
 
@@ -38,9 +37,9 @@ const { Stack, useFlow } = stackflow({
 });
 ```
 
-### Set config
+### config 세팅
 
-```typescript
+```tsx showLineNumbers filename="App.tsx" copy
 import { useGoogleAnalyticsContext } from "@stackflow/plugin-google-analytics-4";
 
 const App = () => {
@@ -62,13 +61,13 @@ const App = () => {
 };
 ```
 
-### send event
+### 이벤트 보내기
 
-Every stack has wrapped as a context, you can use `useGoogleAnalyticsContext` hook to send event.
+모든 스택은 컨텍스트로 래핑되어 있으므로 이벤트를 보내려면 `useGoogleAnalyticsContext` 훅을 사용할 수 있어요.
 
-```typescript
+```tsx showLineNumbers filename="AdCreateButton.tsx" copy
 import { useGoogleAnalyticsContext } from "@stackflow/plugin-google-analytics-4";
-
+// ...
 const { sendEvent } = useGoogleAnalyticsContext();
 
 return (
@@ -86,20 +85,19 @@ return (
 );
 ```
 
-Here's an example capture of custom GA4 event sent from the above code.
+상단 코드에서 보낸 사용자 정의 GA4 이벤트의 예시입니다.
 
-Note that the second parameter object is sent as a custom event parameter.
+두번째 매개변수 객체는 사용자 정의 이벤트 매개변수로 전송됩니다.
 
 ![image](https://user-images.githubusercontent.com/29659112/206271251-91f63efa-0583-4846-b4d5-79ed2ff0a881.png)
 
 ## FAQ
 
-> ### Pageview event is triggered twice.
+> ### Pageview event가 두 번씩 발생하는 이슈가 있어요.
 
-Unckeck "Page changes based on browser history events" in GA4 settings (**_Web Stream>Enhanced Measurement>Pageviews>Advanced_**)
+GA4 설정에서 "Page changes based on browser history events"를 해제하세요. (**_Web Stream>Enhanced Measurement>Pageviews>Advanced_**)
 
-This plugin trigger pageview event manually using stackflow's "[Effect Hook](https://stackflow.so/guided-tour/write-plugin#%EC%9D%B4%ED%8E%99%ED%8A%B8-%ED%9B%85)". You don't have to trigger it again.
+이 플러그인은 스택플로우의 "[Effect Hook](https://stackflow.so/guided-tour/write-plugin#%EC%9D%B4%ED%8E%99%ED%8A%B8-%ED%9B%85)"을 사용하여 페이지뷰 이벤트를 수동으로 트리거합니다. 다시 트리거할 필요가 없습니다.
 
 ![image](https://user-images.githubusercontent.com/29659112/206275171-57270f54-ac1c-4e0d-b58c-916a842c99b8.png)
 
-- [plugin github link](https://github.com/daangn/stackflow/tree/main/extensions/plugin-google-analytics-4)

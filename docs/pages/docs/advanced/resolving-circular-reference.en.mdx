@@ -8,7 +8,7 @@ import { Callout } from "nextra-theme-docs";
 
 The `useFlow()` function returned by the `stackflow()` function utilizes the declared activity types. Therefore, `useFlow()` and activity components interlock, causing a circular dependency. By using the `useActions()` hook and importing the types separately, you can eliminate this circular dependency.
 
-```typescript showLineNumbers filename="stackflow.ts" copy
+```tsx showLineNumbers filename="stackflow.ts" copy
 import { stackflow } from "@stackflow/react";
 
 export const { Stack, activities } = stackflow({
@@ -22,7 +22,7 @@ export const { Stack, activities } = stackflow({
 export type TypeActivities = typeof activities;
 ```
 
-```typescript showLineNumbers filename="stackflow.ts" copy
+```tsx showLineNumbers filename="stackflow.ts" copy
 import { useActions } from "@stackflow/react";
 
 // Only import the exposed activity type.

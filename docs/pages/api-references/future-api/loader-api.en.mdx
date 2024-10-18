@@ -2,7 +2,7 @@
 
 The Loader API is built-in by default. Use it as shown below.
 
-```typescript showLineNumbers filename="HomeActivity.loader.ts" copy
+```tsx showLineNumbers filename="HomeActivity.loader.ts" copy
 import { ActivityLoaderArgs, useLoaderData } from "@stackflow/react/future";
 
 export function homeActivityLoader({ params }: ActivityLoaderArgs<"HomeActivity">) {
@@ -13,7 +13,7 @@ export function homeActivityLoader({ params }: ActivityLoaderArgs<"HomeActivity"
 ```
 
 Automatically filled with types.
-```typescript showLineNumbers filename="HomeActivity.tsx" copy {4}
+```tsx showLineNumbers filename="HomeActivity.tsx" copy {4}
 import { homeActivityLoader } from "./HomeActivity.loader";
 
 export const HomeActivity: ActivityComponentType<"HomeActivity"> = () => {
@@ -22,7 +22,7 @@ export const HomeActivity: ActivityComponentType<"HomeActivity"> = () => {
 ```
 
 In the `stackflow.config.ts` file, insert the created loader.
-```typescript showLineNumbers filename="stackflow.config.ts" copy {9}
+```tsx showLineNumbers filename="stackflow.config.ts" copy {9}
 import { defineConfig } from "@stackflow/config";
 import { homeActivityLoader } from "../components/HomeActivity.loader";
 

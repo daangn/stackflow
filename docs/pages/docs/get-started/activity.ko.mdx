@@ -70,7 +70,7 @@ export const { Stack, useFlow } = stackflow({
 
 액티비티를 성공적으로 등록하셨나요? 하지만 이전에 초기화해놓은 `<Stack />` 컴포넌트에는 아무것도 렌더링되고 있지 않을거에요. 왜냐하면, 초기 액티비티를 설정해주지 않았으니까요. 초기에 특정 액티비티를 로드하고 싶다면, 다음과 같이 옵션에 `initialActicity`를 추가해주세요.
 
-```typescript showLineNumbers {16} filename="stackflow.ts" copy
+```ts showLineNumbers {16} filename="stackflow.ts" copy
 import { stackflow } from "@stackflow/react";
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
 import MyActivity from "./MyActivity";

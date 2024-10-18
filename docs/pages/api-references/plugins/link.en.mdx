@@ -16,7 +16,7 @@ npm install @stackflow/link
 
 ## Usage
 
-```typescript showLineNumbers filename="stackflow.ts" copy
+```tsx showLineNumbers filename="stackflow.ts" copy
 import { stackflow } from "@stackflow/react";
 import { historySyncPlugin } from "@stackflow/plugin-history-sync";
 import { preloadPlugin } from "@stackflow/plugin-preload";
@@ -39,7 +39,7 @@ const { Stack, useFlow, activities } = stackflow({
 export type TypeActivities = typeof activities;
 ```
 
-```typescript showLineNumbers filename="Link.tsx" copy
+```tsx showLineNumbers filename="Link.tsx" copy
 import { createLinkComponent } from "@stackflow/link";
 import type { TypeActivities } from "./stackflow";
 

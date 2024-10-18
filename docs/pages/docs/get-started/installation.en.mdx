@@ -16,7 +16,7 @@ Create a JavaScript (or TypeScript) file in your project and call the `stackflow
 
 And export them so that `<Stack />` and `useFlow()` can be used in other components.
 
-```typescript showLineNumbers filename="stackflow.ts" copy
+```ts showLineNumbers filename="stackflow.ts" copy
 import { stackflow } from "@stackflow/react";
 
 export const { Stack, useFlow } = stackflow({
@@ -40,7 +40,7 @@ npm install @stackflow/plugin-renderer-basic @stackflow/plugin-basic-ui
 ### Initialize UI Plugins
 Initialize the `basicRendererPlugin()` from `@stackflow/plugin-renderer-basic` and the `basicUIPlugin()` from `@stackflow/plugin-basic-ui` in the `plugins` field of the `stackflow()` function as follows.
 
-```typescript showLineNumbers filename="stackflow.ts" copy {8-13}
+```ts showLineNumbers filename="stackflow.ts" copy {8-13}
 import { stackflow } from "@stackflow/react";
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
 import { basicUIPlugin } from "@stackflow/plugin-basic-ui";
@@ -60,7 +60,7 @@ export const { Stack, useFlow } = stackflow({
 ### Include CSS
 Also, include the CSS provided by `@stackflow/plugin-basic-ui` somewhere in your code.
 
-```typescript copy
+```ts copy
 import "@stackflow/plugin-basic-ui/index.css";
 ```
 

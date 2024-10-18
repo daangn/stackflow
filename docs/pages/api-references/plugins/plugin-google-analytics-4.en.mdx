@@ -1,18 +1,17 @@
-# @stackflow/plugin-google-analytics-4
+# `@stackflow/plugin-google-analytics-4`
 
-Add Google analytics 4 script to current service.
+This plugin is used to integrate Google Analytics 4 with Stackflow.
 
-## Usage
+## Inatallation
 
-### Inatallation
-
-```bash
-yarn add @stackflow/plugin-google-analytics-4
+```bash npm2yarn copy
+npm install @stackflow/plugin-google-analytics-4
 ```
 
+## Usage
 ### Initialize
 
-```typescript
+```tsx showLineNumbers filename="stackflow.ts" copy
 import { stackflow } from "@stackflow/react";
 import { googleAnalyticsPlugin } from "@stackflow/plugin-google-analytics-4";
 
@@ -40,7 +39,7 @@ const { Stack, useFlow } = stackflow({
 
 ### Set config
 
-```typescript
+```tsx showLineNumbers filename="App.tsx" copy
 import { useGoogleAnalyticsContext } from "@stackflow/plugin-google-analytics-4";
 
 const App = () => {
@@ -66,9 +65,9 @@ const App = () => {
 
 Every stack has wrapped as a context, you can use `useGoogleAnalyticsContext` hook to send event.
 
-```typescript
+```tsx showLineNumbers filename="AdCreateButton.tsx" copy
 import { useGoogleAnalyticsContext } from "@stackflow/plugin-google-analytics-4";
-
+// ...
 const { sendEvent } = useGoogleAnalyticsContext();
 
 return (
@@ -102,4 +101,3 @@ This plugin trigger pageview event manually using stackflow's "[Effect Hook](htt
 
 ![image](https://user-images.githubusercontent.com/29659112/206275171-57270f54-ac1c-4e0d-b58c-916a842c99b8.png)
 
-- [plugin github link](https://github.com/daangn/stackflow/tree/main/extensions/plugin-google-analytics-4)

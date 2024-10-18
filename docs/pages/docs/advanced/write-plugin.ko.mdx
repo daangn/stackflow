@@ -10,7 +10,7 @@ import { APITable } from "../../../components/APITable";
 
 **Stackflow** 플러그인을 출판하는 가장 쉬운 방법은 다른 사람이 만든 플러그인들을 조합해서 프리셋으로 제공하는 것이에요. 다음과 같이 여러 플러그인을 Array로 묶어서 나만의 프리셋을 만들 수 있어요.
 
-```typescript showLineNumbers filename="stackflow.ts" copy
+```ts showLineNumbers filename="stackflow.ts" copy
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
 import { historySyncPlugin } from "@stackflow/plugin-history-sync";
 import { stackflow } from "@stackflow/react";
@@ -38,7 +38,7 @@ stackflow({
 
 내 앱에 나만의 첫 플러그인 개발을 시도해보려면 다음과 같이 inline 함수로 시작해보세요. (어렵지 않아요!)
 
-```typescript showLineNumbers filename="stackflow.ts" copy
+```ts showLineNumbers filename="stackflow.ts" copy
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
 import { stackflow } from "@stackflow/react";
 

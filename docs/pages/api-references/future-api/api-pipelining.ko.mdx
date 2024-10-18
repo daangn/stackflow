@@ -6,7 +6,7 @@ import { APIPipeLiningDiagram } from "../../../components/diagrams/APIPipeLining
 
 위와 같이 엔트리 파일에서 리액트 앱 초기화와 API 요청을 동시에 수행해 초기 렌더링까지 걸리는 시간을 단축할 수 있습니다. Stackflow Future API를 활용하면 API 파이프라이닝을 깔끔한 방법으로 구현할 수 있습니다.
 
-```typescript showLineNumbers filename="entry.ts" copy
+```tsx showLineNumbers filename="entry.ts" copy
 import { makeTemplate } from "@stackflow/plugin-history-sync";
 import { config } from "./stackflow/stackflow.config";
 
@@ -37,7 +37,7 @@ main();
 ```
 
 Stack에 initialLoaderData를 전달하면 첫번째 loader를 실행시키는 대신 받은 loaderData로 결과를 덮어씁니다.
-```typescript showLineNumbers filename="renderApp.ts" copy
+```tsx showLineNumbers filename="renderApp.ts" copy
 export function renderApp({ initialLoaderData }: { initialLoaderData: any }) {
   const root = ReactDOM.createRoot(document.getElementById("root")!);
 

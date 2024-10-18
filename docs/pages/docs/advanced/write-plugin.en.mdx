@@ -10,7 +10,7 @@ import { APITable } from "../../../components/APITable";
 
 The easiest way to publish a **Stackflow** plugin is to provide it as a preset by combining plugins made by others. You can create your own preset by grouping multiple plugins into an array as shown below.
 
-```typescript showLineNumbers filename="stackflow.ts" copy
+```ts showLineNumbers filename="stackflow.ts" copy
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
 import { historySyncPlugin } from "@stackflow/plugin-history-sync";
 import { stackflow } from "@stackflow/react";
@@ -38,7 +38,7 @@ Plugin must return the following values as a function.
 
 To try developing your first plugin for your app, start with an inline function as shown below.
 
-```typescript showLineNumbers filename="stackflow.ts" copy
+```ts showLineNumbers filename="stackflow.ts" copy
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
 import { stackflow } from "@stackflow/react";
 
@@ -88,7 +88,7 @@ stackflow({
 
 You can also override the stack state passed to the UI as shown below.
 
-```tsx showLineNumbers filename="stackflow.ts" copy {12,17}
+```ts showLineNumbers filename="stackflow.ts" copy {12,17}
 stackflow({
   // ...
   plugins: [
@@ -126,7 +126,7 @@ stackflow({
 
 If you want to add a Context API Provider at the top level or wrap the top level with a specific DOM, use the `wrapStack` interface.
 
-```tsx showLineNumbers filename="stackflow.ts" copy {8}
+```ts showLineNumbers filename="stackflow.ts" copy {8}
 stackflow({
   // ...
   plugins: [
@@ -151,7 +151,7 @@ stackflow({
 
 If you want to add a Context API Provider to each activity or wrap it with a specific DOM, use the `wrapActivity` interface.
 
-```tsx showLineNumbers filename="stackflow.ts" copy {8}
+```ts showLineNumbers filename="stackflow.ts" copy {8}
 stackflow({
   // ...
   plugins: [
@@ -176,7 +176,7 @@ stackflow({
 
 Use the `onInit` hook to call logic when the `<Stack />` component is first initialized.
 
-```tsx showLineNumbers filename="stackflow.ts" copy {7-9}
+```ts showLineNumbers filename="stackflow.ts" copy {7-9}
 stackflow({
   // ...
   plugins: [
@@ -216,7 +216,7 @@ Post-effect hooks include `onPushed`, `onReplaced`, `onPopped`, and `onChanged`.
 | effect                | `object`   | The effect that triggered the effect hook. |
 </APITable>
 
-```tsx showLineNumbers filename="stackflow.ts" copy
+```ts showLineNumbers filename="stackflow.ts" copy
 stackflow({
   // ...
   plugins: [
@@ -260,7 +260,7 @@ Pre-effect hooks include `onBeforePush`, `onBeforeReplace`, and `onBeforePop`. P
 
 You can override the existing `initialActivity` behavior through the `initialPushedEvent` API.
 
-```tsx showLineNumbers filename="stackflow.ts" copy {1, 9-13}
+```ts showLineNumbers filename="stackflow.ts" copy {1, 9-13}
 import { makeEvent } from "@stackflow/core";
 
 stackflow({
