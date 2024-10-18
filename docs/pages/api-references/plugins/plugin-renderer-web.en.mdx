@@ -1,12 +1,16 @@
-# @stackflow/plugin-renderer-web
+# `@stackflow/plugin-renderer-web`
 
 Render active activity only using the stack state. this plugins can be used for web application to be served on the web browser
 
-- [Documentation](https://stackflow.so)
+## Installation
+
+```bash npm2yarn copy
+npm install @stackflow/plugin-renderer-web
+```
 
 ## Usage
 
-```ts
+```ts showLineNumbers filename="stackflow.ts" copy
 import { stackflow } from "@stackflow/react";
 import { webRendererPlugin } from "@stackflow/plugin-renderer-web";
 
@@ -17,5 +21,3 @@ const { Stack, useFlow } = stackflow({
   plugins: [webRendererPlugin()],
 });
 ```
-
-- [plugin github link](https://github.com/daangn/stackflow/tree/main/extensions/plugin-renderer-web)

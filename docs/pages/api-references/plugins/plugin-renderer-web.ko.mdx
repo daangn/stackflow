@@ -1,12 +1,16 @@
-# @stackflow/plugin-renderer-web
+# `@stackflow/plugin-renderer-web`
 
-Render active activity only using the stack state. this plugins can be used for web application to be served on the web browser
+활성화 된 액티비티만 스택 상태를 기반으로 렌더링해요. 이 플러그인은 웹 브라우저에서 제공되는 웹 애플리케이션에 사용할 수 있어요.
 
-- [Documentation](https://stackflow.so)
+## 설치
 
-## Usage
+```bash npm2yarn copy
+npm install @stackflow/plugin-renderer-web
+```
 
-```ts
+## 사용법
+
+```ts showLineNumbers filename="stackflow.ts" copy
 import { stackflow } from "@stackflow/react";
 import { webRendererPlugin } from "@stackflow/plugin-renderer-web";
 
@@ -18,4 +22,3 @@ const { Stack, useFlow } = stackflow({
 });
 ```
 
-- [plugin github link](https://github.com/daangn/stackflow/tree/main/extensions/plugin-renderer-web)
