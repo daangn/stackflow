@@ -36,10 +36,9 @@ const { Stack, useFlow } = stackflow({
 ```
 
 ## Reference
-
+### Options
 <APITable>
 |                   |                                                             |                                                                                                              |
 | ----------------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| options           | `MapInitialActivityPluginOptions`                           | Options object that includes a `mapper` function which maps a URL to an activity name and parameters.        |
 | mapper            | `(url: URL) => { activityName: string; activityParams: {}; } \| null` | A function that takes a URL and returns an object with the activity name and parameters, or null if no match. |
 </APITable>
