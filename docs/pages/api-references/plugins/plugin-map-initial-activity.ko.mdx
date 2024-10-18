@@ -1,12 +1,18 @@
-# @stackflow/plugin-map-initial-activity
+import { APITable } from "../../../components/APITable";
 
-Map initial activity using given URL
+# `@stackflow/plugin-map-initial-activity`
 
-- [Documentation](https://stackflow.so)
+주어진 URL을 사용하여 초기 액티비티를 매핑하는 데 사용되는 플러그인입니다.
 
-## Usage
+## 설치
 
-```ts
+```bash npm2yarn copy
+npm install @stackflow/plugin-map-initial-activity
+```
+
+## 사용법
+
+```ts showLineNumbers filename="stackflow.ts" copy
 import { stackflow } from "@stackflow/react";
 import { mapInitialActivityPlugin } from "@stackflow/plugin-map-initial-activity";
 
@@ -29,4 +35,11 @@ const { Stack, useFlow } = stackflow({
 });
 ```
 
-- [plugin github link](https://github.com/daangn/stackflow/tree/main/extensions/plugin-map-initial-activity)
+## 레퍼런스
+
+<APITable>
+|         |                                                                       |                                                                                                        |
+| ------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| options | `MapInitialActivityPluginOptions`                                     | URL을 액티비티 이름과 매개변수로 매핑하는 `mapper` 함수를 포함하는 옵션 객체입니다.                   |
+| mapper  | `(url: URL) => { activityName: string; activityParams: {}; } \| null` | URL을 받아서 액티비티 이름과 매개변수가 포함된 객체를 반환하거나, 일치하는 것이 없으면 null을 반환하는 함수입니다. |
+</APITable>
