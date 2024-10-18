@@ -1,3 +1,5 @@
+import { Callout } from "nextra-theme-docs";
+
 # `@stackflow/plugin-google-analytics-4`
 
 This plugin is used to integrate Google Analytics 4 with Stackflow.
@@ -91,13 +93,12 @@ Note that the second parameter object is sent as a custom event parameter.
 
 ![image](https://user-images.githubusercontent.com/29659112/206271251-91f63efa-0583-4846-b4d5-79ed2ff0a881.png)
 
-## FAQ
-
-> ### Pageview event is triggered twice.
+<Callout>
+FAQ: **Pageview event is triggered twice.**
 
 Unckeck "Page changes based on browser history events" in GA4 settings (**_Web Stream>Enhanced Measurement>Pageviews>Advanced_**)
 
-This plugin trigger pageview event manually using stackflow's "[Effect Hook](https://stackflow.so/guided-tour/write-plugin#%EC%9D%B4%ED%8E%99%ED%8A%B8-%ED%9B%85)". You don't have to trigger it again.
+This plugin trigger pageview event manually using stackflow's "[Effect Hook](/docs/advanced/write-plugin#effect-hooks)". You don't have to trigger it again.
 
 ![image](https://user-images.githubusercontent.com/29659112/206275171-57270f54-ac1c-4e0d-b58c-916a842c99b8.png)
-
+</Callout>
