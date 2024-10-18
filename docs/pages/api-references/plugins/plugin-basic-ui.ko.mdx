@@ -1,6 +1,8 @@
+import { APITabel } from "../../../components/APITable";
+
 # `@stackflow/plugin-basic-ui`
 
-전역 스택 상태를 사용하여 활동 내에서 UI를 렌더링합니다. 기본적으로 `cupertino` 및 `android` 테마를 제공합니다.
+전역 스택 상태를 사용하여 활동 내에서 UI를 렌더링합니다. 기본적으로 `cupertino` 및 `android` 테마를 제공해요
 
 ## 설치
 
@@ -10,6 +12,7 @@ npm install @stackflow/plugin-basic-ui
 
 ## 사용법
 
+어플리케이션 앱바 형태의 컴포넌트를 제공해요.
 ```tsx showLineNumbers filename="stackflow.ts" copy
 import { stackflow } from "@stackflow/react";
 import { basicUIPlugin } from "@stackflow/plugin-basic-ui";
@@ -24,6 +27,14 @@ const { Stack, useFlow } = stackflow({
   ],
 });
 ```
+### `basicUIPlugin` 옵션
+<APITabel>
+| ---- | ---- | ---- |
+|      |      |      | 
+| theme | `cupertino` \| `android` | 테마를 설정합니다. |
+| rootClassName | `string`(optional) | 루트 클래스 이름을 설정합니다. |
+| appBar | `AppBar`(optional) | 앱 바를 설정합니다. |
+</APITabel>
 
 ```tsx filename="AppScreen" copy
 import { AppScreen } from "@stackflow/plugin-basic-ui";
@@ -36,7 +47,15 @@ const Something = () => {
   );
 };
 ```
+### `appBar`
+<APITabel>
+| ---- | ---- | ---- |
+|      |      |      | 
+| backButton | `{ renderIcon?: () => ReactNode; ariaLabel?: string }` \| `{ render?: () => ReactNode }` | 뒤로가기 버튼을 설정합니다. |
+| closeButton | `{ renderIcon?: () => ReactNode; ariaLabel?; string, onClick: (e) => void; }` \| `{ render?: () => ReactNode }` | 닫기 버튼을 설정합니다. |
+</APITabel>
 
+모달 및 바텀시트 컴포넌트도 제공해요.
 ```tsx filename="Modal" copy
 import { Modal } from "@stackflow/plugin-basic-ui";
 
