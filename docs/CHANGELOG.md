@@ -1,5 +1,11 @@
 # @stackflow/docs
 
+## 2.0.1
+
+### Patch Changes
+
+- Fix style in mobile view
+
 ## 2.0.0
 
 ### Major Changes
