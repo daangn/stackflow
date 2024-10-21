@@ -22,7 +22,7 @@ export function IndexPage({ lang = "ko" }: { lang: "ko" | "en" }) {
         <div className="flex flex-col items-center gap-4 my-8 lg:ml-8 lg:items-start lg:gap-1 lg:m-0">
           <h1 className="text-5xl lg:text-8xl font-extrabold">Stackflow</h1>
 
-          <p className="text-sm lg:text-xl text-center">
+          <p className="text-sm px-4 lg:px-0 lg:text-xl text-center">
             {getLocaleText(
               "JavaScript와 TypeScript를 위한 가장 간편한 스택 네비게이션 프레임워크.",
               "The Simplest Stack Navigation for JavaScript and TypeScript.",
@@ -63,7 +63,7 @@ export function IndexPage({ lang = "ko" }: { lang: "ko" | "en" }) {
           height={500}
           className="absolute w-full -z-10 top-20 left-0 opacity-40"
         />
-        <ChevronsDown className="absolute mx-auto bottom-10 size-8 animate-bounce opacity-75" />
+        <ChevronsDown className="absolute lg:mx-auto bottom-10 size-8 animate-bounce opacity-75" />
       </section>
 
       <section className="w-full flex flex-col items-center px-6 pb-8 gap-16">
@@ -74,7 +74,7 @@ export function IndexPage({ lang = "ko" }: { lang: "ko" | "en" }) {
           </h1>
           "
         </div>
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid lg:grid-cols-3 gap-6 lg:gap-8">
           <Tile
             title="Headless Architecture"
             content={getLocaleText(
