@@ -3,7 +3,6 @@ import type { StackflowReactPlugin } from "./StackflowReactPlugin";
 import { ActivityProvider } from "./activity";
 import { useCoreState } from "./core";
 import { usePlugins } from "./plugins";
-import { StackProvider } from "./stack";
 import type { WithRequired } from "./utils";
 
 interface PluginRendererProps {
@@ -53,17 +52,15 @@ const PluginRenderer: React.FC<PluginRendererProps> = ({
               });
 
               return (
-                <StackProvider value={stack}>
-                  <ActivityProvider
-                    key={activity.id}
-                    value={{
-                      ...activity,
-                      ...overrideActivity,
-                    }}
-                  >
-                    {output}
-                  </ActivityProvider>
-                </StackProvider>
+                <ActivityProvider
+                  key={activity.id}
+                  value={{
+                    ...activity,
+                    ...overrideActivity,
+                  }}
+                >
+                  {output}
+                </ActivityProvider>
               );
             },
           })),
