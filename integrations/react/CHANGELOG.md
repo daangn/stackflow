@@ -1,5 +1,11 @@
 # @stackflow/react
 
+## 1.4.1
+
+### Patch Changes
+
+- a4a7366: move `<StackProvider />` up so that `useStack()` can be used in `Plugin.wrapStack`
+
 ## 1.4.0
 
 ### Minor Changes
