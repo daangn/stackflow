@@ -1,9 +1,8 @@
 import { useEffect } from "react";
-
-import type { ActivityComponentType } from "./ActivityComponentType";
 import PluginRenderer from "./PluginRenderer";
 import { useCoreState } from "./core";
 import { usePlugins } from "./plugins";
+import { StackProvider } from "./stack";
 import type { WithRequired } from "./utils";
 
 interface MainRendererProps {
@@ -61,7 +60,7 @@ const MainRenderer: React.FC<MainRendererProps> = ({
       }) ?? output;
   });
 
-  return output;
+  return <StackProvider value={coreState}>{output}</StackProvider>;
 };
 
 MainRenderer.displayName = "MainRenderer";
