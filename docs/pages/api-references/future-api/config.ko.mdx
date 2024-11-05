@@ -36,7 +36,7 @@ export const config = defineConfig({
 
 ```typescript
 declare module "@stackflow/config" {
-  interface Config {
+  interface Config<T extends ActivityDefinition<string>> {
     relayEnvironment: RelayEnvironment;
   }
 }
