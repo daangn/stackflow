@@ -1,5 +1,11 @@
 # @stackflow/link
 
+## 1.6.0
+
+### Minor Changes
+
+- db2aa80: feat(link): disable long press behavior in iOS
+
 ## 1.5.0
 
 ### Minor Changes
