@@ -100,7 +100,13 @@ export function Link<K extends RegisteredActivityName>(props: LinkProps<K>) {
   };
 
   return (
-    <a ref={props.ref} href={href} onClick={onClick} {...anchorProps}>
+    <a
+      ref={props.ref}
+      href={href}
+      onClick={onClick}
+      draggable="false" // Disable long press behavior by default in iOS
+      {...anchorProps}
+    >
       {props.children}
     </a>
   );
