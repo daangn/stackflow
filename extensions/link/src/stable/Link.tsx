@@ -134,6 +134,7 @@ export const Link: TypeLink = forwardRef(
         ref={mergeRefs(ref, anchorRef)}
         href={href}
         onClick={onClick}
+        draggable="false" // Disable long press behavior by default in iOS
         {...anchorProps}
       >
         {props.children}
