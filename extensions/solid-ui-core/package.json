@@ -1,0 +1,58 @@
+{
+	"name": "@stackflow/solid-ui-core",
+	"version": "1.1.2",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/daangn/stackflow.git",
+		"directory": "extensions/solid-ui-core"
+	},
+	"license": "MIT",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"require": "./dist/index.js",
+			"import": "./dist/index.mjs"
+		},
+		"./index.css": "./dist/index.css"
+	},
+	"main": "./dist/index.js",
+	"module": "./dist/index.mjs",
+	"types": "./dist/index.d.ts",
+	"files": [
+		"dist",
+		"src",
+		"README.md"
+	],
+	"scripts": {
+		"build": "yarn build:js && yarn build:dts",
+		"build:dts": "tsc --emitDeclarationOnly",
+		"build:js": "node ./esbuild.config.js",
+		"clean": "rimraf dist",
+		"dev": "yarn build:js --watch && yarn build:dts --watch",
+		"typecheck": "tsc --noEmit"
+	},
+	"devDependencies": {
+		"@stackflow/core": "^1.1.0",
+		"@stackflow/esbuild-config": "^1.0.2",
+		"@stackflow/solid": "^1.3.0",
+		"esbuild": "^0.23.0",
+		"esbuild-plugin-solid": "patch:esbuild-plugin-solid@npm%3A0.6.0#~/.yarn/patches/esbuild-plugin-solid-npm-0.6.0-49835b85dc.patch",
+		"rimraf": "^3.0.2",
+		"solid-js": "^1.8.18",
+		"typescript": "^5.5.3"
+	},
+	"peerDependencies": {
+		"@stackflow/core": "^1.1.0-canary.0",
+		"@stackflow/solid": "^1.3.0-canary.0",
+		"solid-js": ">=1.4.0"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"ultra": {
+		"concurrent": [
+			"dev",
+			"build"
+		]
+	}
+}

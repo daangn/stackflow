@@ -1,0 +1,86 @@
+{
+	"name": "@stackflow/solid",
+	"version": "1.4.0",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/daangn/stackflow.git",
+		"directory": "integrations/solid"
+	},
+	"license": "MIT",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"require": {
+				"solid": "./dist/index.jsx",
+				"default": "./dist/index.js"
+			},
+			"import": {
+				"solid": "./dist/index.mjsx",
+				"default": "./dist/index.mjs"
+			}
+		},
+		"./stable": {
+			"types": "./dist/stable/index.d.ts",
+			"require": {
+				"solid": "./dist/stable/index.jsx",
+				"default": "./dist/stable/index.js"
+			},
+			"import": {
+				"solid": "./dist/stable/index.mjsx",
+				"default": "./dist/stable/index.mjs"
+			}
+		},
+		"./future": {
+			"types": "./dist/future/index.d.ts",
+			"require": {
+				"solid": "./dist/future/index.jsx",
+				"default": "./dist/future/index.js"
+			},
+			"import": {
+				"solid": "./dist/future/index.mjsx",
+				"default": "./dist/future/index.mjs"
+			}
+		}
+	},
+	"main": "./dist/index.js",
+	"module": "./dist/index.mjs",
+	"types": "./dist/index.d.ts",
+	"files": [
+		"dist",
+		"src",
+		"README.md"
+	],
+	"scripts": {
+		"build": "yarn build:js && yarn build:dts",
+		"build:dts": "tsc --emitDeclarationOnly",
+		"build:js": "node ./esbuild.config.js",
+		"clean": "rimraf dist",
+		"dev": "yarn build:js --watch && yarn build:dts --watch",
+		"typecheck": "tsc --noEmit"
+	},
+	"devDependencies": {
+		"@stackflow/config": "^1.1.0",
+		"@stackflow/core": "^1.1.0",
+		"@stackflow/esbuild-config": "^1.0.3",
+		"esbuild": "^0.23.0",
+		"esbuild-plugin-file-path-extensions": "^2.1.2",
+		"esbuild-plugin-solid": "patch:esbuild-plugin-solid@npm%3A0.6.0#~/.yarn/patches/esbuild-plugin-solid-npm-0.6.0-49835b85dc.patch",
+		"rimraf": "^3.0.2",
+		"solid-js": "^1.8.18",
+		"typescript": "^5.5.3"
+	},
+	"peerDependencies": {
+		"@stackflow/config": "^1.0.1-canary.0",
+		"@stackflow/core": "^1.1.0-canary.0",
+		"solid-js": ">=1.4.0"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"ultra": {
+		"concurrent": [
+			"dev",
+			"build"
+		]
+	}
+}
