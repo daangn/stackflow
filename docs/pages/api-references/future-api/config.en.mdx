@@ -36,7 +36,7 @@ You can extend the `Config` type as follows to utilize `config` in various place
 
 ```typescript
 declare module "@stackflow/config" {
-  interface Config {
+  interface Config<T extends ActivityDefinition<string>> {
     relayEnvironment: RelayEnvironment;
   }
 }
