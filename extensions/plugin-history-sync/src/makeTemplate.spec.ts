@@ -76,3 +76,37 @@ test("makeTemplate - parse with given decode function", () => {
     articleId: 1234,
   });
 });
+
+test("makeTemplate - fill with given encode function", () => {
+  const template = makeTemplate({
+    path: "/articles/:articleId",
+    encode: ({ id }) => ({
+      articleId: String(id),
+    }),
+  });
+
+  expect(template.fill({ id: 1234 as unknown as string })).toEqual(
+    "/articles/1234/",
+  );
+});
+
+test("makeTemplate - roundtrip with given encode and decode function", () => {
+  const template = makeTemplate({
+    path: "/articles/:articleId",
+    encode: ({ id }) => ({
+      articleId: String(id),
+    }),
+    decode: ({ articleId }) => ({
+      id: Number(articleId),
+    }),
+  });
+
+  expect(template.fill(template.parse("/articles/1234/") ?? {})).toStrictEqual(
+    "/articles/1234/",
+  );
+  expect(
+    template.parse(template.fill({ id: 1234 as unknown as string })),
+  ).toStrictEqual({
+    id: 1234,
+  });
+});
