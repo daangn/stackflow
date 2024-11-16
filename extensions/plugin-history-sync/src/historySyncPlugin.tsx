@@ -25,6 +25,7 @@ type ConfigHistorySync = {
 declare module "@stackflow/config" {
   interface ActivityDefinition<ActivityName extends string> {
     path: string;
+    routePriority?: number;
   }
 
   interface Config<T extends ActivityDefinition<string>> {
@@ -74,7 +75,10 @@ export function historySyncPlugin<
       : options.config.activities.reduce(
           (acc, a) => ({
             ...acc,
-            [a.name]: a.path,
+            [a.name]: {
+              path: a.path,
+              priority: a.routePriority
+            }
           }),
           {},
         );
