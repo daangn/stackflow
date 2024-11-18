@@ -32,6 +32,7 @@ const GLOBAL_VARS = {
   },
   modal: {
     borderRadius: "bottom-sheet-border-radius",
+    maxWidth: "max-width",
   },
 };
 
@@ -68,6 +69,7 @@ const androidValues: GlobalVars = {
   },
   modal: {
     borderRadius: "1rem",
+    maxWidth: "100%",
   },
 };
 

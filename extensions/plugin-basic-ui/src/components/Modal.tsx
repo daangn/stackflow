@@ -24,6 +24,7 @@ const Modal: React.FC<ModalProps> = ({
   backgroundColor,
   dimBackgroundColor,
   borderRadius = "1rem",
+  maxWidth,
   onOutsideClick,
   children,
 }) => {
@@ -78,9 +79,10 @@ const Modal: React.FC<ModalProps> = ({
       ref={containerRef}
       style={assignInlineVars(
         compactMap({
-          [globalVars.bottomSheet.borderRadius]: borderRadius,
           [globalVars.backgroundColor]: backgroundColor,
           [globalVars.dimBackgroundColor]: dimBackgroundColor,
+          [globalVars.modal.borderRadius]: borderRadius,
+          [globalVars.modal.maxWidth]: maxWidth,
           [css.vars.zIndexes.dim]: `${zIndexBase}`,
           [css.vars.zIndexes.paper]: `${zIndexPaper}`,
           [css.vars.transitionDuration]:
