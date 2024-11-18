@@ -31,8 +31,8 @@ const GLOBAL_VARS = {
     borderRadius: "bottom-sheet-border-radius",
   },
   modal: {
-    borderRadius: "bottom-sheet-border-radius",
-    maxWidth: "max-width",
+    borderRadius: "modal-border-radius",
+    maxWidth: "modal-max-width",
   },
 };
 
