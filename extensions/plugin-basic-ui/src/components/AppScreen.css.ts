@@ -126,14 +126,21 @@ export const paper = recipe({
           vars: {
             [vars.appBar.topMargin]: globalVars.appBar.height,
           },
+          /**
+           * When `max()` and `env()` (or `constant()`) supported
+           *
+           * - https://caniuse.com/css-env-function
+           * - https://caniuse.com/css-math-functions
+           */
           "@supports": {
-            "(margin-top: constant(safe-area-inset-top))": {
-              vars: {
-                [vars.appBar.topMargin]:
-                  `calc(${globalVars.appBar.height} + max(${globalVars.appBar.minSafeAreaInsetTop}, constant(safe-area-inset-top)))`,
+            "(padding: max(0px)) and (padding: constant(safe-area-inset-top))":
+              {
+                vars: {
+                  [vars.appBar.topMargin]:
+                    `calc(${globalVars.appBar.height} + max(${globalVars.appBar.minSafeAreaInsetTop}, constant(safe-area-inset-top)))`,
+                },
               },
-            },
-            "(margin-top: env(safe-area-inset-top))": {
+            "(padding: max(0px)) and (padding: env(safe-area-inset-top))": {
               vars: {
                 [vars.appBar.topMargin]:
                   `calc(${globalVars.appBar.height} + max(${globalVars.appBar.minSafeAreaInsetTop}, env(safe-area-inset-top)))`,
