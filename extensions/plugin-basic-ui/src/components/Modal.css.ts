@@ -62,6 +62,7 @@ export const paper = style([
   {
     backgroundColor: globalVars.backgroundColor,
     width: "100%",
+    maxWidth: globalVars.modal.maxWidth,
     margin: "0 2.5rem",
     boxShadow:
       "0px 0.625rem 2.375rem rgba(0, 0, 0, 0.15), 0px .5625rem 2.875rem rgba(0, 0, 0, 0.12), 0px .3125rem .9375rem rgba(0, 0, 0, 0.1)",
