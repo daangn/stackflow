@@ -1,5 +1,12 @@
 # @stackflow/plugin-basic-ui
 
+## 1.10.1
+
+### Patch Changes
+
+- eb9ed7c: fix(plugin-basic-ui): add `max()` in support query
+- eb4578f: fix(plugin-basic-ui): add `maxWidth` option in <Modal />
+
 ## 1.10.0
 
 ### Minor Changes
