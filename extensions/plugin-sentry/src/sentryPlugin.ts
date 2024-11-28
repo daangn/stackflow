@@ -1,10 +1,11 @@
 import * as Sentry from "@sentry/browser";
+import type { BrowserOptions} from "@sentry/browser";
 import {
   SEMANTIC_ATTRIBUTE_SENTRY_OP,
   SEMANTIC_ATTRIBUTE_SENTRY_ORIGIN,
   SEMANTIC_ATTRIBUTE_SENTRY_SOURCE,
-  getClient,
 } from "@sentry/core";
+import { Integration } from "@sentry/types";
 import type {
   DomainEvent,
   Effect,
@@ -13,36 +14,22 @@ import type {
   StackflowPlugin,
 } from "@stackflow/core";
 
-import type { Integration } from "@sentry/types";
 import { stackflowBrowserTracingIntegration } from "./integration";
 
-export function sentryPlugin(): StackflowPlugin {
+export function sentryPlugin(options: BrowserOptions): StackflowPlugin {
   return () => ({
     key: "plugin-sentry",
     onInit() {
       Sentry.init({
-        dsn: "https://de8235db42e3f12757ff2ab2e5f5b75f@o4508278402187264.ingest.us.sentry.io/4508279653728256",
+        ...options,
         integrations: [
-          /**
-           * make integration
-           */
           stackflowBrowserTracingIntegration(),
-          Sentry.replayIntegration(),
+          ...(options.integrations as Integration[]),
         ],
-        // Tracing
-        tracesSampleRate: 1.0, //  Capture 100% of the transactions
-        // Set 'tracePropagationTargets' to control for which URLs distributed tracing should be enabled
-        tracePropagationTargets: [
-          "localhost",
-          /^https:\/\/yourserver\.io\/api/,
-        ],
-        // Session Replay
-        replaysSessionSampleRate: 0.1, // This sets the sample rate at 10%. You may want to change it to 100% while in development and then sample at a lower rate in production.
-        replaysOnErrorSampleRate: 1.0, // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
       });
     },
     onPushed({ effect }) {
-      const client = getClient();
+      const client = Sentry.getClient();
       if (!client) return;
       Sentry.startBrowserTracingNavigationSpan(client, {
         name: `push ${effect.activity.name}`,
@@ -54,7 +41,7 @@ export function sentryPlugin(): StackflowPlugin {
       });
     },
     onPopped({ effect }) {
-      const client = getClient();
+      const client = Sentry.getClient();
       if (!client) return;
       Sentry.startBrowserTracingNavigationSpan(client, {
         name: `pop ${effect.activity.name}`,
@@ -66,7 +53,7 @@ export function sentryPlugin(): StackflowPlugin {
       });
     },
     onReplaced({ effect }) {
-      const client = getClient();
+      const client = Sentry.getClient();
       if (!client) return;
       Sentry.startBrowserTracingNavigationSpan(client, {
         name: `replace ${effect.activity.name}`,
