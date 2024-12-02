@@ -1,8 +1,6 @@
 const { context } = require("esbuild");
 const config = require("@stackflow/esbuild-config");
-const {
-  esbuildPluginFilePathExtensions,
-} = require("esbuild-plugin-file-path-extensions");
+const { solidPlugin } = require("esbuild-plugin-solid");
 const pkg = require("./package.json");
 
 const watch = process.argv.includes("--watch");
@@ -11,36 +9,48 @@ const external = Object.keys({
   ...pkg.peerDependencies,
 });
 
-Promise.all([
-  context({
-    ...config({
-      entryPoints: ["./src/**/*"],
-      outdir: "dist",
-    }),
-    bundle: false,
-    sourcemap: false,
-    external: undefined,
-    format: "cjs",
-  }).then((ctx) =>
-    watch ? ctx.watch() : ctx.rebuild().then(() => ctx.dispose()),
-  ),
-  context({
-    ...config({
-      entryPoints: ["./src/**/*"],
-      outdir: "dist",
-    }),
-    bundle: true,
-    sourcemap: false,
-    external,
-    format: "esm",
-    outExtension: {
-      ".js": ".mjs",
-    },
-    plugins: [esbuildPluginFilePathExtensions()],
+const solidEntryPoints = [
+  "./src/stable/solid/index.ts",
+  "./src/future/solid/index.ts",
+];
+const allEntryPoints = [
+  "./src/stable/react/index.ts",
+  "./src/future/react/index.ts",
+  ...solidEntryPoints,
+];
 
-    // https://github.com/favware/esbuild-plugin-file-path-extensions/blob/b8efeff0489c1b02540109f6ea8c39fcd90f9dfc/src/index.ts#L202
-    platform: "node",
-  }).then((ctx) =>
-    watch ? ctx.watch() : ctx.rebuild().then(() => ctx.dispose()),
+Promise.all(
+  [
+    { jsx: true, browser: false, entryPoints: solidEntryPoints },
+    { jsx: false, browser: true, entryPoints: solidEntryPoints },
+    { jsx: false, browser: false, entryPoints: allEntryPoints },
+  ].flatMap(({ jsx, browser, entryPoints }) =>
+    [
+      { format: "cjs", extPrefix: "" },
+      { format: "esm", extPrefix: "m" },
+    ].map(({ format, extPrefix }) =>
+      context({
+        ...config({
+          entryPoints,
+          plugins: !jsx
+            ? [
+                solidPlugin({
+                  filter: /\.solid\.[cm]?[jt]sx$/,
+                  solid: { generate: browser ? "dom" : "ssr" },
+                }),
+              ]
+            : [],
+        }),
+        outbase: "src",
+        format,
+        outExtension: jsx
+          ? { ".js": `${browser ? ".browser" : ""}.${extPrefix}jsx` }
+          : { ".js": `${browser ? ".browser" : ""}.${extPrefix}js` },
+        jsx: jsx ? "preserve" : undefined,
+        external,
+      }).then((ctx) =>
+        watch ? ctx.watch() : ctx.rebuild().then(() => ctx.dispose()),
+      ),
+    ),
   ),
-]).catch(() => process.exit(1));
+).catch(() => process.exit(1));

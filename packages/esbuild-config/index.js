@@ -3,6 +3,7 @@ const { vanillaExtractPlugin } = require("@vanilla-extract/esbuild-plugin");
 const config = ({
   entryPoints = ["./src/index.ts"],
   outdir = "dist",
+  plugins = [],
   vanillaExtractExternal = [],
   vanillaExtractIdentifiers = "short",
 }) => ({
@@ -20,6 +21,7 @@ const config = ({
         external: ["@stackflow", ...vanillaExtractExternal],
       },
     }),
+    ...plugins,
   ],
 });
 
