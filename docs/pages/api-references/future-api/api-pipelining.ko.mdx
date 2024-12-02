@@ -11,7 +11,7 @@ import { makeTemplate } from "@stackflow/plugin-history-sync";
 import { config } from "./stackflow/stackflow.config";
 
 async function main() {
-  let initialLoaderData: any | null = null;
+  let initialLoaderData: unknown | null = null;
 
   for (const activity of config.activities) {
     const t = makeTemplate({ path: activity.path });
@@ -38,7 +38,7 @@ main();
 
 Stack에 initialLoaderData를 전달하면 첫번째 loader를 실행시키는 대신 받은 loaderData로 결과를 덮어씁니다.
 ```tsx showLineNumbers filename="renderApp.ts" copy
-export function renderApp({ initialLoaderData }: { initialLoaderData: any }) {
+export function renderApp({ initialLoaderData }: { initialLoaderData: unknown }) {
   const root = ReactDOM.createRoot(document.getElementById("root")!);
 
   root.render(
