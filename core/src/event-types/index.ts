@@ -29,3 +29,5 @@ export * from "./ReplacedEvent";
 export * from "./StepPoppedEvent";
 export * from "./StepPushedEvent";
 export * from "./StepReplacedEvent";
+export * from "./PausedEvent";
+export * from "./ResumedEvent";

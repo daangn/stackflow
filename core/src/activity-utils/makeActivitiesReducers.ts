@@ -1,13 +1,13 @@
-import type { PausedEvent } from "event-types/PausedEvent";
-import type { ResumedEvent } from "event-types/ResumedEvent";
 import type { Activity, ActivityTransitionState } from "../Stack";
 import type {
   ActivityRegisteredEvent,
   DomainEvent,
   InitializedEvent,
+  PausedEvent,
   PoppedEvent,
   PushedEvent,
   ReplacedEvent,
+  ResumedEvent,
   StepPoppedEvent,
   StepPushedEvent,
   StepReplacedEvent,

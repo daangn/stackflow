@@ -1,4 +1,3 @@
-import type { PausedEvent } from "event-types/PausedEvent";
 import type { Activity, ActivityTransitionState } from "../Stack";
 import type {
   ActivityRegisteredEvent,
