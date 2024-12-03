@@ -3960,8 +3960,6 @@ test("aggregate - Pause되면 이벤트가 반영되지 않습니다", () => {
     })),
   ];
 
-  console.log(pushedEvent2.eventDate);
-
   const output = aggregate(events, nowTime());
 
   expect(output).toStrictEqual({
