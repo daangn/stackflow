@@ -6,19 +6,68 @@ import type { DomainEvent } from "./event-types";
 import { filterEvents, validateEvents } from "./event-utils";
 import { compareBy, uniqBy } from "./utils";
 
-export function aggregate(events: DomainEvent[], now: number): Stack {
+export function aggregate(inputEvents: DomainEvent[], now: number): Stack {
+  /**
+   * 1. Sorting by event ID (K-Sortable)
+   *
+   * The backward action may cause past events to be put behind, so when those events are dispatched, move them forward.
+   */
   const sortedEvents = uniqBy(
-    [...events].sort((a, b) => compareBy(a, b, (e) => e.id)),
+    [...inputEvents].sort((a, b) => compareBy(a, b, (e) => e.id)),
     (e) => e.id,
   );
 
-  validateEvents(sortedEvents);
+  /**
+   * 2. Handle `PausedEvent` and `ResumedEvent`
+   *
+   * 2-1. If a `PausedEvent` is fired, handle it so that all events after the pause are deleted
+   * (Transitions of events that have already happened will ensure normal behavior)
+   * 2-2. If a `ResumedEvent` is fired, handle it by delaying the `eventCreatedAt` of events
+   * after the pause by that much (`dt`)
+   */
+  const pauseAndResumeHandledEvents: DomainEvent[] = [];
+  const eventBufferAfterPaused: DomainEvent[] = [];
 
-  const initEvent = filterEvents(sortedEvents, "Initialized")[0];
-  const activityRegisteredEvents = filterEvents(events, "ActivityRegistered");
+  let pausedAt: number | null = null;
+
+  for (const event of sortedEvents) {
+    if (event.name === "Paused") {
+      pausedAt = event.eventDate;
+      continue;
+    }
+    if (event.name === "Resumed" && pausedAt) {
+      const dt = event.eventDate - pausedAt;
+
+      for (const pausedEvent of eventBufferAfterPaused) {
+        pauseAndResumeHandledEvents.push({
+          ...pausedEvent,
+          eventDate: pausedEvent.eventDate + dt,
+        });
+      }
+
+      pausedAt = null;
+      continue;
+    }
+
+    if (pausedAt) {
+      eventBufferAfterPaused.push(event);
+    } else {
+      pauseAndResumeHandledEvents.push(event);
+    }
+  }
+
+  const events = pauseAndResumeHandledEvents;
+
+  validateEvents(events);
+
+  const initEvent = filterEvents(events, "Initialized")[0];
+  const activityRegisteredEvents = filterEvents(
+    inputEvents,
+    "ActivityRegistered",
+  );
   const { transitionDuration } = initEvent;
 
-  const activities = sortedEvents.reduce(
+  const activities = events.reduce(
     (activities: Activity[], event: DomainEvent) => {
       const isTransitionDone = now - event.eventDate >= transitionDuration;
 

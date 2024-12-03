@@ -1,3 +1,4 @@
+import type { PausedEvent } from "event-types/PausedEvent";
 import type { Activity, ActivityTransitionState } from "../Stack";
 import type {
   ActivityRegisteredEvent,
@@ -116,4 +117,14 @@ export const makeActivityReducers = (isTransitionDone: boolean) =>
         params: beforeActivityParams ?? activity.params,
       };
     },
+
+    /**
+     * noop
+     */
+    Paused: (activity: Activity) => activity,
+
+    /**
+     * noop
+     */
+    Resumed: (activity: Activity) => activity,
   } as const);

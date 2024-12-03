@@ -1,3 +1,5 @@
+import type { PausedEvent } from "event-types/PausedEvent";
+import type { ResumedEvent } from "event-types/ResumedEvent";
 import type { Activity, ActivityTransitionState } from "../Stack";
 import type {
   ActivityRegisteredEvent,
@@ -89,4 +91,14 @@ export const makeActivitiesReducers = (isTransitionDone: boolean) =>
      */
     StepPopped: (activities: Activity[], event: StepPoppedEvent): Activity[] =>
       activities,
+
+    /**
+     * noop
+     */
+    Paused: (activities: Activity[], event: PausedEvent) => activities,
+
+    /**
+     * noop
+     */
+    Resumed: (activities: Activity[], event: ResumedEvent) => activities,
   });
