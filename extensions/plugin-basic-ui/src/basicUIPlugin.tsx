@@ -61,7 +61,7 @@ export const basicUIPlugin: (
           className={compact([
             css.stackWrapper({
               theme: initialContext?.theme ?? _options.theme,
-              loading: stack.globalTransitionState === "loading",
+              globalTransitionState: stack.globalTransitionState,
             }),
             _options.rootClassName,
           ]).join(" ")}
