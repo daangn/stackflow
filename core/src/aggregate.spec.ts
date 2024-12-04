@@ -3932,7 +3932,7 @@ test("aggregate - StepPushedEvent must be ignored when top activity is not targe
   });
 });
 
-test("aggregate - Pause되면 이벤트가 반영되지 않습니다", () => {
+test("aggregate - Pause되면 이벤트가 반영되지 않고, globalTransitionState를 paused으로 바꿉니다", () => {
   let pushedEvent1: PushedEvent;
   let pushedEvent2: PushedEvent;
 
@@ -3992,7 +3992,7 @@ test("aggregate - Pause되면 이벤트가 반영되지 않습니다", () => {
       },
     ],
     transitionDuration: 300,
-    globalTransitionState: "idle",
+    globalTransitionState: "paused",
   });
 });
 

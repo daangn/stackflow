@@ -26,7 +26,7 @@ export function aggregate(inputEvents: DomainEvent[], now: number): Stack {
    * after the pause by that much (`dt`)
    */
   const pauseAndResumeHandledEvents: DomainEvent[] = [];
-  const eventBufferAfterPaused: DomainEvent[] = [];
+  let eventBufferAfterPaused: DomainEvent[] = [];
 
   let pausedAt: number | null = null;
 
@@ -46,6 +46,7 @@ export function aggregate(inputEvents: DomainEvent[], now: number): Stack {
       }
 
       pausedAt = null;
+      eventBufferAfterPaused = [];
       continue;
     }
 
@@ -112,13 +113,15 @@ export function aggregate(inputEvents: DomainEvent[], now: number): Stack {
   const lastVisibleActivity = visibleActivities[visibleActivities.length - 1];
   const lastEnteredActivity = enteredActivities[enteredActivities.length - 1];
 
-  const globalTransitionState = activities.find(
-    (activity) =>
-      activity.transitionState === "enter-active" ||
-      activity.transitionState === "exit-active",
-  )
-    ? "loading"
-    : "idle";
+  const globalTransitionState = pausedAt
+    ? "paused"
+    : activities.find(
+          (activity) =>
+            activity.transitionState === "enter-active" ||
+            activity.transitionState === "exit-active",
+        )
+      ? "loading"
+      : "idle";
 
   const output: Stack = {
     activities: uniqActivities

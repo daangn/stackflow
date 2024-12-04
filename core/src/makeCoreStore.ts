@@ -8,7 +8,7 @@ import type { BaseDomainEvent } from "./event-types/_base";
 import { makeEvent } from "./event-utils";
 import type { StackflowActions, StackflowPlugin } from "./interfaces";
 import { produceEffects } from "./produceEffects";
-import { divideBy, once } from "./utils";
+import { divideBy, id, once, time } from "./utils";
 
 const SECOND = 1000;
 
@@ -307,7 +307,11 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
         return;
       }
 
-      dispatchEvent("Pushed", overriddenParams);
+      dispatchEvent("Pushed", {
+        ...overriddenParams,
+        id: id(),
+        eventDate: time(),
+      });
     },
     replace(params) {
       const { isPrevented, overriddenParams } = triggerPreEffectHooks(
@@ -319,7 +323,11 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
         return;
       }
 
-      dispatchEvent("Replaced", overriddenParams);
+      dispatchEvent("Replaced", {
+        ...overriddenParams,
+        id: id(),
+        eventDate: time(),
+      });
     },
     pop(params) {
       const { isPrevented, overriddenParams } = triggerPreEffectHooks(

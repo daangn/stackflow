@@ -1,8 +1,9 @@
 import { vars } from "@seed-design/design-token";
+import type { RegisteredActivityName } from "@stackflow/config";
 import { basicUIPlugin } from "@stackflow/plugin-basic-ui";
 import { historySyncPlugin } from "@stackflow/plugin-history-sync";
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
-import { stackflow } from "@stackflow/react/future";
+import { type ActivityComponentType, stackflow } from "@stackflow/react/future";
 import Article from "../activities/Article";
 import Main from "../activities/Main";
 import { config } from "./stackflow.config";
@@ -33,6 +34,12 @@ export const { Stack, actions } = stackflow({
     historySyncPlugin({
       config,
       fallbackActivity: () => "Main",
+    }),
+    () => ({
+      key: "stack",
+      onChanged({ actions }) {
+        console.log(actions.getStack());
+      },
     }),
   ],
 });

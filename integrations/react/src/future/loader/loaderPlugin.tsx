@@ -55,7 +55,10 @@ export function loaderPlugin(
         };
       });
     },
-    onBeforePush({ actionParams, actions: { overrideActionParams } }) {
+    onBeforePush({
+      actionParams,
+      actions: { overrideActionParams, dispatchEvent },
+    }) {
       const { activityName, activityParams, activityContext } = actionParams;
 
       const loader = config.activities.find(
@@ -70,6 +73,17 @@ export function loaderPlugin(
         params: activityParams,
         config,
       });
+
+      console.log(loaderData);
+
+      if (loaderData instanceof Promise) {
+        console.log("paused?");
+        dispatchEvent("Paused", {});
+
+        loaderData.finally(() => {
+          dispatchEvent("Resumed", {});
+        });
+      }
 
       overrideActionParams({
         ...actionParams,
@@ -79,7 +93,10 @@ export function loaderPlugin(
         },
       });
     },
-    onBeforeReplace({ actionParams, actions: { overrideActionParams } }) {
+    onBeforeReplace({
+      actionParams,
+      actions: { overrideActionParams, dispatchEvent },
+    }) {
       const { activityName, activityParams, activityContext } = actionParams;
 
       const loader = config.activities.find(
@@ -94,6 +111,14 @@ export function loaderPlugin(
         params: activityParams,
         config,
       });
+
+      if (loaderData instanceof Promise) {
+        dispatchEvent("Paused", {});
+
+        loaderData.finally(() => {
+          dispatchEvent("Resumed", {});
+        });
+      }
 
       overrideActionParams({
         ...actionParams,
