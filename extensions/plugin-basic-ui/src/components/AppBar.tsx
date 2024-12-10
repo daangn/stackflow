@@ -308,11 +308,7 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
             {renderLeft?.()}
           </div>
           <div ref={centerRef} className={css.center}>
-            <div
-              className={css.centerMain({
-                hasLeft,
-              })}
-            >
+            <div className={css.centerMain}>
               {typeof title === "string" ? (
                 <div className={css.centerText}>{title}</div>
               ) : (
