@@ -1,5 +1,4 @@
 import type React from "react";
-import { useRef } from "react";
 import type { ActivityComponentType } from "./ActivityComponentType";
 import type { StackflowReactPlugin } from "./StackflowReactPlugin";
 import { ActivityProvider } from "./activity";
@@ -14,9 +13,6 @@ interface PluginRendererProps {
   plugin: WithRequired<ReturnType<StackflowReactPlugin>, "render">;
   initialContext: any;
 }
-const activityCache: {
-  [activityName: string]: ActivityComponentType;
-} = {};
 const PluginRenderer: React.FC<PluginRendererProps> = ({
   activityComponentMap,
   plugin,
