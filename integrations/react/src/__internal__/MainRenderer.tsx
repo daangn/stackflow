@@ -8,9 +8,7 @@ import type { WithRequired } from "./utils";
 
 interface MainRendererProps {
   activityComponentMap: {
-    [key: string]:
-      | ActivityComponentType
-      | { load: () => Promise<{ default: ActivityComponentType }> };
+    [key: string]: ActivityComponentType;
   };
   initialContext: any;
 }

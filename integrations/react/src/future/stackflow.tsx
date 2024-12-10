@@ -160,12 +160,39 @@ export function stackflow<
       return store;
     }, []);
 
+    const activityComponentMap: {
+      [activityName: string]: ActivityComponentType;
+    } = useMemo(() => {
+      const activityComponentEntries: Array<
+        [
+          string,
+          (
+            | ActivityComponentType
+            | { load: () => Promise<{ default: ActivityComponentType }> }
+          ),
+        ]
+      > = Object.entries(input.components);
+
+      return activityComponentEntries.reduce(
+        (acc, [activityName, activityComponentDef]) => ({
+          ...acc,
+          [activityName]:
+            "load" in activityComponentDef
+              ? React.lazy(activityComponentDef.load)
+              : activityComponentDef,
+        }),
+        {} as {
+          [activityName: string]: ActivityComponentType;
+        },
+      );
+    }, []);
+
     return (
       <ConfigProvider value={input.config}>
         <PluginsProvider value={coreStore.pluginInstances}>
           <CoreProvider coreStore={coreStore}>
             <MainRenderer
-              activityComponentMap={input.components}
+              activityComponentMap={activityComponentMap}
               initialContext={initialContext}
             />
           </CoreProvider>
