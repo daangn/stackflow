@@ -36,12 +36,6 @@ export const { Stack, actions } = stackflow({
       config,
       fallbackActivity: () => "Main",
     }),
-    () => ({
-      key: "stack",
-      onChanged({ actions }) {
-        console.log(actions.getStack());
-      },
-    }),
   ],
 });
 
