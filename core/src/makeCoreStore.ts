@@ -8,7 +8,7 @@ import type { BaseDomainEvent } from "./event-types/_base";
 import { makeEvent } from "./event-utils";
 import type { StackflowActions, StackflowPlugin } from "./interfaces";
 import { produceEffects } from "./produceEffects";
-import { divideBy, id, once, time } from "./utils";
+import { divideBy, once } from "./utils";
 
 const SECOND = 1000;
 
@@ -119,128 +119,260 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
     }, INTERVAL_MS);
   };
 
-  function triggerPreEffectHooks<T extends DomainEvent>(
-    event: T,
-    plugins: ReturnType<StackflowPlugin>[],
+  type TriggerPreEffectHooksInput<K extends DomainEvent["name"]> =
+    K extends DomainEvent["name"]
+      ? {
+          actionName: K;
+          actionParams: Omit<
+            Extract<DomainEvent, { name: K }>,
+            keyof BaseDomainEvent
+          >;
+          pluginInstances: ReturnType<StackflowPlugin>[];
+        }
+      : unknown;
+
+  function triggerPreEffectHooks(
+    input: TriggerPreEffectHooksInput<DomainEvent["name"]>,
   ): {
     isPrevented: boolean;
-    overriddenParams: Omit<T, keyof BaseDomainEvent>;
+    nextActionParams: (typeof input)["actionParams"];
   } {
-    let isPrevented = false;
-    let nextEvent: T = {
-      ...event,
-    };
+    switch (input.actionName) {
+      case "Pushed": {
+        let isPrevented = false;
 
-    function toParams(event: T): Omit<T, keyof BaseDomainEvent> {
-      const params: Partial<BaseDomainEvent> & Omit<T, keyof BaseDomainEvent> =
-        { ...event };
+        let nextActionParams = {
+          ...input.actionParams,
+        };
 
-      // delete params.id;
-      // delete params.eventDate;
-      params.name = undefined;
+        const preventDefault = () => {
+          isPrevented = true;
+        };
 
-      return params;
-    }
+        const overrideActionParams = (
+          partialActionParams: typeof input.actionParams,
+        ) => {
+          nextActionParams = {
+            ...nextActionParams,
+            ...partialActionParams,
+          };
+        };
 
-    const preventDefault = () => {
-      isPrevented = true;
-    };
-    const overrideActionParams = (nextActionParams: any) => {
-      nextEvent = {
-        ...nextEvent,
-        ...nextActionParams,
-      };
-    };
+        for (const pluginInstance of input.pluginInstances) {
+          pluginInstance.onBeforePush?.({
+            actionParams: {
+              ...nextActionParams,
+            },
+            actions: {
+              ...actions,
+              preventDefault,
+              overrideActionParams,
+            },
+          });
+        }
 
-    plugins.forEach((plugin) => {
-      switch (nextEvent.name) {
-        case "Pushed": {
-          plugin.onBeforePush?.({
-            actionParams: {
-              ...nextEvent,
-            },
-            actions: {
-              ...actions,
-              preventDefault,
-              overrideActionParams,
-            },
-          });
-          break;
-        }
-        case "Replaced": {
-          plugin.onBeforeReplace?.({
-            actionParams: {
-              ...nextEvent,
-            },
-            actions: {
-              ...actions,
-              preventDefault,
-              overrideActionParams,
-            },
-          });
-          break;
-        }
-        case "Popped": {
-          plugin.onBeforePop?.({
-            actionParams: {
-              ...nextEvent,
-            },
-            actions: {
-              ...actions,
-              preventDefault,
-              overrideActionParams,
-            },
-          });
-          break;
-        }
-        case "StepPushed": {
-          plugin.onBeforeStepPush?.({
-            actionParams: {
-              ...nextEvent,
-            },
-            actions: {
-              ...actions,
-              preventDefault,
-              overrideActionParams,
-            },
-          });
-          break;
-        }
-        case "StepReplaced": {
-          plugin.onBeforeStepReplace?.({
-            actionParams: {
-              ...nextEvent,
-            },
-            actions: {
-              ...actions,
-              preventDefault,
-              overrideActionParams,
-            },
-          });
-          break;
-        }
-        case "StepPopped": {
-          plugin.onBeforeStepPop?.({
-            actionParams: {
-              ...nextEvent,
-            },
-            actions: {
-              ...actions,
-              preventDefault,
-              overrideActionParams,
-            },
-          });
-          break;
-        }
-        default:
-          break;
+        return {
+          isPrevented,
+          nextActionParams,
+        };
       }
-    });
+      case "Replaced": {
+        let isPrevented = false;
 
-    return {
-      isPrevented,
-      overriddenParams: toParams(nextEvent),
-    };
+        let nextActionParams = {
+          ...input.actionParams,
+        };
+
+        const preventDefault = () => {
+          isPrevented = true;
+        };
+
+        const overrideActionParams = (
+          partialActionParams: typeof input.actionParams,
+        ) => {
+          nextActionParams = {
+            ...nextActionParams,
+            ...partialActionParams,
+          };
+        };
+
+        for (const pluginInstance of input.pluginInstances) {
+          pluginInstance.onBeforeReplace?.({
+            actionParams: {
+              ...nextActionParams,
+            },
+            actions: {
+              ...actions,
+              preventDefault,
+              overrideActionParams,
+            },
+          });
+        }
+
+        return {
+          isPrevented,
+          nextActionParams,
+        };
+      }
+      case "Popped": {
+        let isPrevented = false;
+
+        let nextActionParams = {
+          ...input.actionParams,
+        };
+
+        const preventDefault = () => {
+          isPrevented = true;
+        };
+
+        const overrideActionParams = (
+          partialActionParams: typeof input.actionParams,
+        ) => {
+          nextActionParams = {
+            ...nextActionParams,
+            ...partialActionParams,
+          };
+        };
+
+        for (const pluginInstance of input.pluginInstances) {
+          pluginInstance.onBeforePop?.({
+            actionParams: {
+              ...nextActionParams,
+            },
+            actions: {
+              ...actions,
+              preventDefault,
+              overrideActionParams,
+            },
+          });
+        }
+
+        return {
+          isPrevented,
+          nextActionParams,
+        };
+      }
+      case "StepPushed": {
+        let isPrevented = false;
+
+        let nextActionParams = {
+          ...input.actionParams,
+        };
+
+        const preventDefault = () => {
+          isPrevented = true;
+        };
+
+        const overrideActionParams = (
+          partialActionParams: typeof input.actionParams,
+        ) => {
+          nextActionParams = {
+            ...nextActionParams,
+            ...partialActionParams,
+          };
+        };
+
+        for (const pluginInstance of input.pluginInstances) {
+          pluginInstance.onBeforeStepPush?.({
+            actionParams: {
+              ...nextActionParams,
+            },
+            actions: {
+              ...actions,
+              preventDefault,
+              overrideActionParams,
+            },
+          });
+        }
+
+        return {
+          isPrevented,
+          nextActionParams,
+        };
+      }
+      case "StepReplaced": {
+        let isPrevented = false;
+
+        let nextActionParams = {
+          ...input.actionParams,
+        };
+
+        const preventDefault = () => {
+          isPrevented = true;
+        };
+
+        const overrideActionParams = (
+          partialActionParams: typeof input.actionParams,
+        ) => {
+          nextActionParams = {
+            ...nextActionParams,
+            ...partialActionParams,
+          };
+        };
+
+        for (const pluginInstance of input.pluginInstances) {
+          pluginInstance.onBeforeStepReplace?.({
+            actionParams: {
+              ...nextActionParams,
+            },
+            actions: {
+              ...actions,
+              preventDefault,
+              overrideActionParams,
+            },
+          });
+        }
+
+        return {
+          isPrevented,
+          nextActionParams,
+        };
+      }
+      case "StepPopped": {
+        let isPrevented = false;
+
+        let nextActionParams = {
+          ...input.actionParams,
+        };
+
+        const preventDefault = () => {
+          isPrevented = true;
+        };
+
+        const overrideActionParams = (
+          partialActionParams: typeof input.actionParams,
+        ) => {
+          nextActionParams = {
+            ...nextActionParams,
+            ...partialActionParams,
+          };
+        };
+
+        for (const pluginInstance of input.pluginInstances) {
+          pluginInstance.onBeforeStepPop?.({
+            actionParams: {
+              ...nextActionParams,
+            },
+            actions: {
+              ...actions,
+              preventDefault,
+              overrideActionParams,
+            },
+          });
+        }
+
+        return {
+          isPrevented,
+          nextActionParams,
+        };
+      }
+      default: {
+        return {
+          isPrevented: false,
+          nextActionParams: input.actionParams,
+        };
+      }
+    }
   }
 
   function triggerPostEffectHooks(
@@ -298,84 +430,82 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
     },
     dispatchEvent,
     push(params) {
-      const { isPrevented, overriddenParams } = triggerPreEffectHooks(
-        makeEvent("Pushed", params),
+      const { isPrevented, nextActionParams } = triggerPreEffectHooks({
+        actionName: "Pushed",
+        actionParams: params,
         pluginInstances,
-      );
+      });
 
       if (isPrevented) {
         return;
       }
 
-      dispatchEvent("Pushed", {
-        ...overriddenParams,
-        id: id(),
-        eventDate: time(),
-      });
+      dispatchEvent("Pushed", nextActionParams);
     },
     replace(params) {
-      const { isPrevented, overriddenParams } = triggerPreEffectHooks(
-        makeEvent("Replaced", params),
+      const { isPrevented, nextActionParams } = triggerPreEffectHooks({
+        actionName: "Replaced",
+        actionParams: params,
         pluginInstances,
-      );
+      });
 
       if (isPrevented) {
         return;
       }
 
-      dispatchEvent("Replaced", {
-        ...overriddenParams,
-        id: id(),
-        eventDate: time(),
-      });
+      dispatchEvent("Replaced", nextActionParams);
     },
     pop(params) {
-      const { isPrevented, overriddenParams } = triggerPreEffectHooks(
-        makeEvent("Popped", params ?? {}),
+      const { isPrevented, nextActionParams } = triggerPreEffectHooks({
+        actionName: "Popped",
+        actionParams: params ?? {},
         pluginInstances,
-      );
+      });
 
       if (isPrevented) {
         return;
       }
 
-      dispatchEvent("Popped", overriddenParams);
+      dispatchEvent("Popped", nextActionParams);
     },
     stepPush(params) {
-      const { isPrevented, overriddenParams } = triggerPreEffectHooks(
-        makeEvent("StepPushed", params ?? {}),
+      const { isPrevented, nextActionParams } = triggerPreEffectHooks({
+        actionName: "StepPushed",
+        actionParams: params,
         pluginInstances,
-      );
+      });
 
       if (isPrevented) {
         return;
       }
 
-      dispatchEvent("StepPushed", overriddenParams);
+      dispatchEvent("StepPushed", nextActionParams);
     },
     stepReplace(params) {
-      const { isPrevented, overriddenParams } = triggerPreEffectHooks(
-        makeEvent("StepReplaced", params ?? {}),
+      const { isPrevented, nextActionParams } = triggerPreEffectHooks({
+        actionName: "StepReplaced",
+        actionParams: params,
         pluginInstances,
-      );
+      });
 
       if (isPrevented) {
         return;
       }
 
-      dispatchEvent("StepReplaced", overriddenParams);
+      dispatchEvent("StepReplaced", nextActionParams);
     },
     stepPop(params) {
-      const { isPrevented, overriddenParams } = triggerPreEffectHooks(
-        makeEvent("StepPopped", params ?? {}),
+      const { isPrevented, nextActionParams } = triggerPreEffectHooks({
+        actionName: "StepPopped",
+        actionParams: params ?? {},
         pluginInstances,
-      );
+      });
 
       if (isPrevented) {
         return;
       }
 
-      dispatchEvent("StepPopped", overriddenParams);
+      dispatchEvent("StepPopped", nextActionParams);
     },
   };
 
