@@ -1,3 +1,4 @@
+import React from "react";
 import type { ActivityComponentType } from "./ActivityComponentType";
 import type { StackflowReactPlugin } from "./StackflowReactPlugin";
 import { ActivityProvider } from "./activity";
@@ -7,7 +8,9 @@ import type { WithRequired } from "./utils";
 
 interface PluginRendererProps {
   activityComponentMap: {
-    [key: string]: ActivityComponentType;
+    [key: string]:
+      | ActivityComponentType
+      | { load: () => Promise<{ default: ActivityComponentType }> };
   };
   plugin: WithRequired<ReturnType<StackflowReactPlugin>, "render">;
   initialContext: any;
@@ -34,7 +37,16 @@ const PluginRenderer: React.FC<PluginRendererProps> = ({
             ...activity,
             key: activity.id,
             render(overrideActivity) {
-              const Activity = activityComponentMap[activity.name];
+              const activityComponentDefinition =
+                activityComponentMap[activity.name];
+
+              let Activity: ActivityComponentType;
+
+              if ("load" in activityComponentDefinition) {
+                Activity = React.lazy(activityComponentDefinition.load);
+              } else {
+                Activity = activityComponentDefinition;
+              }
 
               let output: React.ReactNode = (
                 <Activity params={activity.params} />

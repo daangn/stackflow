@@ -3,11 +3,18 @@ import type {
   Config,
   RegisteredActivityName,
 } from "@stackflow/config";
+import type { ActivityComponentType } from "../../__internal__/ActivityComponentType";
 import type { StackflowReactPlugin } from "../../__internal__/StackflowReactPlugin";
+import type { StackflowInput } from "../stackflow";
 
-export function loaderPlugin(
-  config: Config<ActivityDefinition<RegisteredActivityName>>,
-): StackflowReactPlugin {
+export function loaderPlugin<
+  T extends ActivityDefinition<RegisteredActivityName>,
+  R extends {
+    [activityName in T["name"]]:
+      | ActivityComponentType<any>
+      | { load: () => Promise<{ default: ActivityComponentType<any> }> };
+  },
+>(input: StackflowInput<T, R>): StackflowReactPlugin {
   return () => ({
     key: "plugin-loader",
     overrideInitialEvents({ initialEvents, initialContext }) {
@@ -32,9 +39,10 @@ export function loaderPlugin(
 
         const { activityName, activityParams } = event;
 
-        const matchActivity = config.activities.find(
+        const matchActivity = input.config.activities.find(
           (activity) => activity.name === activityName,
         );
+
         const loader = matchActivity?.loader;
 
         if (!loader) {
@@ -43,7 +51,7 @@ export function loaderPlugin(
 
         const loaderData = loader({
           params: activityParams,
-          config,
+          config: input.config,
         });
 
         return {
@@ -61,26 +69,36 @@ export function loaderPlugin(
     }) {
       const { activityName, activityParams, activityContext } = actionParams;
 
-      const loader = config.activities.find(
+      const matchActivity = input.config.activities.find(
         (activity) => activity.name === activityName,
-      )?.loader;
+      );
+      const matchActivityComponent =
+        input.components[activityName as T["name"]];
 
-      if (!loader) {
+      const loader = matchActivity?.loader;
+
+      if (!loader || !matchActivityComponent) {
         return;
       }
 
       const loaderData = loader({
         params: activityParams,
-        config,
+        config: input.config,
       });
 
-      console.log(loaderData);
-
-      if (loaderData instanceof Promise) {
-        console.log("paused?");
+      if (loaderData instanceof Promise || "load" in matchActivityComponent) {
         dispatchEvent("Paused", {});
 
-        loaderData.finally(() => {
+        const promises: Array<Promise<any>> = [];
+
+        if (loaderData instanceof Promise) {
+          promises.push(loaderData);
+        }
+        if ("load" in matchActivityComponent) {
+          promises.push(matchActivityComponent.load());
+        }
+
+        Promise.all(promises).finally(() => {
           dispatchEvent("Resumed", {});
         });
       }
@@ -99,7 +117,7 @@ export function loaderPlugin(
     }) {
       const { activityName, activityParams, activityContext } = actionParams;
 
-      const loader = config.activities.find(
+      const loader = input.config.activities.find(
         (activity) => activity.name === activityName,
       )?.loader;
 
@@ -109,7 +127,7 @@ export function loaderPlugin(
 
       const loaderData = loader({
         params: activityParams,
-        config,
+        config: input.config,
       });
 
       if (loaderData instanceof Promise) {

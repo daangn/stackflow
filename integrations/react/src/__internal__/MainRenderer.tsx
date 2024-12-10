@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import type { ActivityComponentType } from "./ActivityComponentType";
 import PluginRenderer from "./PluginRenderer";
 import { useCoreState } from "./core";
 import { usePlugins } from "./plugins";
@@ -7,7 +8,9 @@ import type { WithRequired } from "./utils";
 
 interface MainRendererProps {
   activityComponentMap: {
-    [key: string]: any;
+    [key: string]:
+      | ActivityComponentType
+      | { load: () => Promise<{ default: ActivityComponentType }> };
   };
   initialContext: any;
 }
