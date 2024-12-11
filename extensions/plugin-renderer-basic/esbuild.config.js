@@ -1,5 +1,6 @@
 const { context } = require("esbuild");
 const config = require("@stackflow/esbuild-config");
+const { solidPlugin } = require("esbuild-plugin-solid");
 const pkg = require("./package.json");
 
 const watch = process.argv.includes("--watch");
@@ -8,22 +9,41 @@ const external = Object.keys({
   ...pkg.peerDependencies,
 });
 
-Promise.all([
-  context({
-    ...config({}),
-    format: "cjs",
-    external,
-  }).then((ctx) =>
-    watch ? ctx.watch() : ctx.rebuild().then(() => ctx.dispose()),
+const solidEntryPoints = ["./src/solid.tsx"];
+const allEntryPoints = ["./src/react.tsx", ...solidEntryPoints];
+
+Promise.all(
+  [
+    { jsx: true, browser: false, entryPoints: solidEntryPoints },
+    { jsx: false, browser: true, entryPoints: solidEntryPoints },
+    { jsx: false, browser: false, entryPoints: allEntryPoints },
+  ].flatMap(({ jsx, browser, entryPoints }) =>
+    [
+      { format: "cjs", extPrefix: "" },
+      { format: "esm", extPrefix: "m" },
+    ].map(({ format, extPrefix }) =>
+      context({
+        ...config({
+          entryPoints,
+          plugins: !jsx
+            ? [
+                solidPlugin({
+                  filter: /(?:^|\/)solid\.tsx$/,
+                  solid: { generate: browser ? "dom" : "ssr" },
+                }),
+              ]
+            : [],
+        }),
+        outbase: "src",
+        format,
+        outExtension: jsx
+          ? { ".js": `${browser ? ".browser" : ""}.${extPrefix}jsx` }
+          : { ".js": `${browser ? ".browser" : ""}.${extPrefix}js` },
+        jsx: jsx ? "preserve" : undefined,
+        external,
+      }).then((ctx) =>
+        watch ? ctx.watch() : ctx.rebuild().then(() => ctx.dispose()),
+      ),
+    ),
   ),
-  context({
-    ...config({}),
-    format: "esm",
-    outExtension: {
-      ".js": ".mjs",
-    },
-    external,
-  }).then((ctx) =>
-    watch ? ctx.watch() : ctx.rebuild().then(() => ctx.dispose()),
-  ),
-]).catch(() => process.exit(1));
+).catch(() => process.exit(1));
