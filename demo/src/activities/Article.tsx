@@ -24,7 +24,7 @@ const Article: ActivityComponentType<"Article"> = ({ params }) => {
   const { imageUrl, recommenderCards } = useLoaderData<typeof articleLoader>();
 
   return (
-    <Layout appBar={{}}>
+    <Layout appBar={{ title }}>
       <div className={css.container}>
         <div className={css.image}>
           <div className={css.imageInner}>

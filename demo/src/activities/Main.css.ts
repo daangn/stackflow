@@ -9,7 +9,6 @@ export const appBarLeft = style([
   {
     fontSize: "1.125rem",
     fontWeight: 700,
-    marginLeft: ".5rem",
   },
 ]);
 
@@ -25,7 +24,6 @@ export const appBarRight = style([
     display: "grid",
     gridTemplateColumns: "1.5rem 1.5rem",
     gap: "1rem",
-    marginRight: ".5rem",
   },
 ]);
 
