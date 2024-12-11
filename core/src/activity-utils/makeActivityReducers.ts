@@ -116,4 +116,14 @@ export const makeActivityReducers = (isTransitionDone: boolean) =>
         params: beforeActivityParams ?? activity.params,
       };
     },
+
+    /**
+     * noop
+     */
+    Paused: (activity: Activity) => activity,
+
+    /**
+     * noop
+     */
+    Resumed: (activity: Activity) => activity,
   } as const);

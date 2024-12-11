@@ -3,7 +3,6 @@ import { basicUIPlugin } from "@stackflow/plugin-basic-ui";
 import { historySyncPlugin } from "@stackflow/plugin-history-sync";
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
 import { stackflow } from "@stackflow/react/future";
-import Article from "../activities/Article";
 import Main from "../activities/Main";
 import { config } from "./stackflow.config";
 
@@ -11,7 +10,9 @@ export const { Stack, actions } = stackflow({
   config,
   components: {
     Main,
-    Article,
+    Article: {
+      lazy: () => import("../activities/Article"),
+    },
   },
   plugins: [
     basicRendererPlugin(),
