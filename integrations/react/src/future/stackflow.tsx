@@ -35,7 +35,7 @@ export type StackflowInput<
   R extends {
     [activityName in T["name"]]:
       | ActivityComponentType<any>
-      | { load: () => Promise<{ default: ActivityComponentType<any> }> };
+      | { lazy: () => Promise<{ default: ActivityComponentType<any> }> };
   },
 > = {
   config: Config<T>;
@@ -54,7 +54,7 @@ export function stackflow<
   R extends {
     [activityName in T["name"]]:
       | ActivityComponentType<any>
-      | { load: () => Promise<{ default: ActivityComponentType<any> }> };
+      | { lazy: () => Promise<{ default: ActivityComponentType<any> }> };
   },
 >(input: StackflowInput<T, R>): StackflowOutput {
   const plugins = [
@@ -168,7 +168,7 @@ export function stackflow<
           string,
           (
             | ActivityComponentType
-            | { load: () => Promise<{ default: ActivityComponentType }> }
+            | { lazy: () => Promise<{ default: ActivityComponentType }> }
           ),
         ]
       > = Object.entries(input.components);
@@ -177,8 +177,8 @@ export function stackflow<
         (acc, [activityName, activityComponentDef]) => ({
           ...acc,
           [activityName]:
-            "load" in activityComponentDef
-              ? React.lazy(activityComponentDef.load)
+            "lazy" in activityComponentDef
+              ? React.lazy(activityComponentDef.lazy)
               : activityComponentDef,
         }),
         {} as {
