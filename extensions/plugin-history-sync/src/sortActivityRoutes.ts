@@ -34,7 +34,15 @@ function computeScore(path: string): number {
 export function sortActivityRoutes<T>(
   routes: ActivityRoute<T>[],
 ): ActivityRoute<T>[] {
-  return [...routes].sort(
-    (a, b) => computeScore(b.path) - computeScore(a.path),
-  );
+  const routesByPriority = routes.reduce((acc, route) => {
+    const array = acc.get(route.priority ?? 0);
+    if (array) array.push(route)
+    else acc.set(route.priority ?? 0, [route]);
+    return acc;
+  }, new Map<number, ActivityRoute<T>[]>());
+  return [...routesByPriority.entries()].sort(
+    ([priorityA], [priorityB]) => priorityB - priorityA,
+  ).flatMap(([_, routes]) =>
+    routes.sort((a, b) => computeScore(b.path) - computeScore(a.path)),
+  )
 }
