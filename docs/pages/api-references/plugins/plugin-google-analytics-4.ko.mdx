@@ -67,7 +67,8 @@ const App = () => {
 
 모든 스택은 컨텍스트로 래핑되어 있으므로 이벤트를 보내려면 `useGoogleAnalyticsContext` 훅을 사용할 수 있어요.
 
-```tsx showLineNumbers filename="AdCreateButton.tsx" copy
+```tsx showLineNumbers
+filename="AdCreateButton.tsx" copy
 import { useGoogleAnalyticsContext } from "@stackflow/plugin-google-analytics-4";
 // ...
 const { sendEvent } = useGoogleAnalyticsContext();
@@ -87,9 +88,9 @@ return (
 );
 ```
 
-상단 코드에서 보낸 사용자 정의 GA4 이벤트의 예시에요.
+상단 코드에서 보낸 사용자 정의 GA4 이벤트의 예시예요.
 
-두번째 매개변수 객체는 사용자 정의 이벤트 매개변수로 전송되요.
+두번째 매개변수 객체는 사용자 정의 이벤트 매개변수로 전송돼요.
 
 ![image](https://user-images.githubusercontent.com/29659112/206271251-91f63efa-0583-4846-b4d5-79ed2ff0a881.png)
 

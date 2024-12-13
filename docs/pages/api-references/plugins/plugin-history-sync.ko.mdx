@@ -57,7 +57,7 @@ const { Stack, useFlow } = stackflow({
 | ---------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------  |
 | routes           | `object`   | 액티비티와 URL 템플릿을 연결해요. 액티비티의 파라미터를 Path Parameter로 표현할 수 있어요. 만약 액티비티의 파라미터가 해당 URL 템플릿에 없다면 자동으로 Query Parameter로 표현돼요. |
 | fallbackActivity | `(args: { initialContext: any }) => K` | 첫 진입시에 현재 URL과 매핑되는 URL이 없는 경우 어떤 액티비티로 보낼지 결정해요. 일반적으로 404 페이지를 만들고 여기에 할당해요.                                              |
-| useHash           | `boolean` (optional)                                        | 해시 기반 라우팅을 사용할지를 결정해요. 기본값은 false에요.                                         |
-| history           | `History` (optional)                                        | 네비게이션 상태를 관리하는 데 사용되는 사용자 정의 히스토리 객체에요. 기본적으로 브라우저나 메모리 히스토리에요. |
+| useHash           | `boolean` (optional)                                        | 해시 기반 라우팅을 사용할지를 결정해요. 기본값은 false예요.                                         |
+| history           | `History` (optional)                                        | 네비게이션 상태를 관리하는 데 사용되는 사용자 정의 히스토리 객체예요. 기본적으로 브라우저나 메모리 히스토리예요. |
 | urlPatternOptions | `UrlPatternOptions` (optional)                              | URL 패턴 매칭 및 생성과 관련된 옵션으로, URL이 어떻게 구성되고 해석되는지에 영향을 줘요.                |
 </APITable>
