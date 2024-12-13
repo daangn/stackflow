@@ -4,6 +4,7 @@ import type {
   RegisteredActivityName,
 } from "@stackflow/config";
 import type { ActivityComponentType } from "../../__internal__/ActivityComponentType";
+import type { LazyActivityComponentType } from "../../__internal__/LazyActivityComponentType";
 import type { StackflowReactPlugin } from "../../__internal__/StackflowReactPlugin";
 import type { StackflowInput } from "../stackflow";
 
@@ -12,7 +13,7 @@ export function loaderPlugin<
   R extends {
     [activityName in T["name"]]:
       | ActivityComponentType<any>
-      | { lazy: () => Promise<{ default: ActivityComponentType<any> }> };
+      | LazyActivityComponentType<any>;
   },
 >(input: StackflowInput<T, R>): StackflowReactPlugin {
   return () => ({
@@ -86,22 +87,28 @@ export function loaderPlugin<
         config: input.config,
       });
 
-      if (loaderData instanceof Promise || "load" in matchActivityComponent) {
+      if (
+        loaderData instanceof Promise ||
+        "_stackflow" in matchActivityComponent
+      ) {
         dispatchEvent("Paused", {});
-
-        const promises: Array<Promise<any>> = [];
-
-        if (loaderData instanceof Promise) {
-          promises.push(loaderData);
-        }
-        if ("lazy" in matchActivityComponent) {
-          promises.push(matchActivityComponent.lazy());
-        }
-
-        Promise.all(promises).finally(() => {
-          dispatchEvent("Resumed", {});
-        });
       }
+
+      const promises: Array<Promise<any>> = [];
+
+      if (loaderData instanceof Promise) {
+        promises.push(loaderData);
+      }
+      if (
+        "_stackflow" in matchActivityComponent &&
+        matchActivityComponent._stackflow?.type === "lazy"
+      ) {
+        promises.push(matchActivityComponent._stackflow.load());
+      }
+
+      Promise.all(promises).finally(() => {
+        dispatchEvent("Resumed", {});
+      });
 
       overrideActionParams({
         ...actionParams,
@@ -134,22 +141,28 @@ export function loaderPlugin<
         config: input.config,
       });
 
-      if (loaderData instanceof Promise || "load" in matchActivityComponent) {
+      if (
+        loaderData instanceof Promise ||
+        "_stackflow" in matchActivityComponent
+      ) {
         dispatchEvent("Paused", {});
-
-        const promises: Array<Promise<any>> = [];
-
-        if (loaderData instanceof Promise) {
-          promises.push(loaderData);
-        }
-        if ("lazy" in matchActivityComponent) {
-          promises.push(matchActivityComponent.lazy());
-        }
-
-        Promise.all(promises).finally(() => {
-          dispatchEvent("Resumed", {});
-        });
       }
+
+      const promises: Array<Promise<any>> = [];
+
+      if (loaderData instanceof Promise) {
+        promises.push(loaderData);
+      }
+      if (
+        "_stackflow" in matchActivityComponent &&
+        matchActivityComponent._stackflow?.type === "lazy"
+      ) {
+        promises.push(matchActivityComponent._stackflow.load());
+      }
+
+      Promise.all(promises).finally(() => {
+        dispatchEvent("Resumed", {});
+      });
 
       overrideActionParams({
         ...actionParams,

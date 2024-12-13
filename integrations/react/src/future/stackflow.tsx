@@ -12,6 +12,7 @@ import {
 } from "@stackflow/core";
 import React, { useMemo } from "react";
 import type { ActivityComponentType } from "../__internal__/ActivityComponentType";
+import type { LazyActivityComponentType } from "../__internal__/LazyActivityComponentType";
 import MainRenderer from "../__internal__/MainRenderer";
 import { makeActivityId } from "../__internal__/activity";
 import { CoreProvider } from "../__internal__/core";
@@ -35,7 +36,7 @@ export type StackflowInput<
   R extends {
     [activityName in T["name"]]:
       | ActivityComponentType<any>
-      | { lazy: () => Promise<{ default: ActivityComponentType<any> }> };
+      | LazyActivityComponentType<any>;
   },
 > = {
   config: Config<T>;
@@ -54,7 +55,7 @@ export function stackflow<
   R extends {
     [activityName in T["name"]]:
       | ActivityComponentType<any>
-      | { lazy: () => Promise<{ default: ActivityComponentType<any> }> };
+      | LazyActivityComponentType<any>;
   },
 >(input: StackflowInput<T, R>): StackflowOutput {
   const plugins = [
@@ -160,39 +161,12 @@ export function stackflow<
       return store;
     }, []);
 
-    const activityComponentMap: {
-      [activityName: string]: ActivityComponentType;
-    } = useMemo(() => {
-      const activityComponentEntries: Array<
-        [
-          string,
-          (
-            | ActivityComponentType
-            | { lazy: () => Promise<{ default: ActivityComponentType }> }
-          ),
-        ]
-      > = Object.entries(input.components);
-
-      return activityComponentEntries.reduce(
-        (acc, [activityName, activityComponentDef]) => ({
-          ...acc,
-          [activityName]:
-            "lazy" in activityComponentDef
-              ? React.lazy(activityComponentDef.lazy)
-              : activityComponentDef,
-        }),
-        {} as {
-          [activityName: string]: ActivityComponentType;
-        },
-      );
-    }, []);
-
     return (
       <ConfigProvider value={input.config}>
         <PluginsProvider value={coreStore.pluginInstances}>
           <CoreProvider coreStore={coreStore}>
             <MainRenderer
-              activityComponentMap={activityComponentMap}
+              activityComponentMap={input.components}
               initialContext={initialContext}
             />
           </CoreProvider>
@@ -200,8 +174,6 @@ export function stackflow<
       </ConfigProvider>
     );
   });
-
-  Stack.displayName = "Stack";
 
   return {
     Stack,

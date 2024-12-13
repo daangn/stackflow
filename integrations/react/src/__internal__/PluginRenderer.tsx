@@ -1,5 +1,6 @@
 import type React from "react";
 import type { ActivityComponentType } from "./ActivityComponentType";
+import type { LazyActivityComponentType } from "./LazyActivityComponentType";
 import type { StackflowReactPlugin } from "./StackflowReactPlugin";
 import { ActivityProvider } from "./activity";
 import { useCoreState } from "./core";
@@ -8,7 +9,7 @@ import type { WithRequired } from "./utils";
 
 interface PluginRendererProps {
   activityComponentMap: {
-    [key: string]: ActivityComponentType;
+    [key: string]: ActivityComponentType | LazyActivityComponentType;
   };
   plugin: WithRequired<ReturnType<StackflowReactPlugin>, "render">;
   initialContext: any;
