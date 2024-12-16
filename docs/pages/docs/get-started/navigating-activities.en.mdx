@@ -145,15 +145,22 @@ type ArticleParams = {
 const Article: ActivityComponentType<ArticleParams> = ({ params }) => {
   const { pop } = useFlow();
 
-  const onClick = () => {
+  const goBack = () => {
+    // Pop a single activity
     pop();
+  };
+
+  const goBackMultiple = () => {
+    // Pop multiple activities
+    pop(3);
   };
 
   return (
     <AppScreen appBar={{ title: "Article" }}>
       <div>
         <h1>{params.title}</h1>
-        <button onClick={onClick}>back</button>
+        <button onClick={goBack}>Back</button>
+        <button onClick={goBackMultiple}>Back 3 Steps</button>
       </div>
     </AppScreen>
   );
@@ -162,18 +169,25 @@ const Article: ActivityComponentType<ArticleParams> = ({ params }) => {
 export default Article;
 ```
 
-`pop()` takes an optional first parameter for additional options. This first parameter can be omitted, and default values will be used.
+`pop()` takes optional parameters for the number of stacks to pop and additional options. These parameters can be omitted, and default values will be used.
 
 ```ts
-pop();
+pop(); // pop a single stack
 
-// or
+pop(3); // pop multiple stacks
+
 pop({
   /* additional option */
-});
+}); // pop a single stack with additional options
+
+pop(3, {
+  /* additional option */
+}); // pop multiple stacks with additional options
 ```
 
-The first parameter of the `pop()` function, additional options, includes the following values.
+The first parameter of the pop() function can specify the number of stacks to pop or define additional options. If the first parameter is used for the number of stacks, the second parameter can then be used to provide additional options.
+
+The additional options include the following values.
 
 <APITable hasDefaultValue>
 |         |           |                          |      |
