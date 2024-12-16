@@ -124,7 +124,6 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@biomejs/biome", "npm:1.8.3"],\
           ["@changesets/cli", "npm:2.27.7"],\
-          ["@sentry/browser", "npm:8.41.0"],\
           ["@types/jest", "npm:29.5.12"],\
           ["@types/node", "npm:20.14.9"],\
           ["@types/react", "npm:18.3.3"],\
@@ -2762,15 +2761,6 @@ const RAW_RUNTIME_STATE =
           ["@sentry/types", "npm:8.40.0"]\
         ],\
         "linkType": "HARD"\
-      }],\
-      ["npm:8.41.0", {\
-        "packageLocation": "./.yarn/cache/@sentry-internal-browser-utils-npm-8.41.0-14f985e7e9-118f594bc0.zip/node_modules/@sentry-internal/browser-utils/",\
-        "packageDependencies": [\
-          ["@sentry-internal/browser-utils", "npm:8.41.0"],\
-          ["@sentry/core", "npm:8.41.0"],\
-          ["@sentry/types", "npm:8.41.0"]\
-        ],\
-        "linkType": "HARD"\
       }]\
     ]],\
     ["@sentry-internal/feedback", [\
@@ -2780,15 +2770,6 @@ const RAW_RUNTIME_STATE =
           ["@sentry-internal/feedback", "npm:8.40.0"],\
           ["@sentry/core", "npm:8.40.0"],\
           ["@sentry/types", "npm:8.40.0"]\
-        ],\
-        "linkType": "HARD"\
-      }],\
-      ["npm:8.41.0", {\
-        "packageLocation": "./.yarn/cache/@sentry-internal-feedback-npm-8.41.0-acee7dee44-0d546a0d8a.zip/node_modules/@sentry-internal/feedback/",\
-        "packageDependencies": [\
-          ["@sentry-internal/feedback", "npm:8.41.0"],\
-          ["@sentry/core", "npm:8.41.0"],\
-          ["@sentry/types", "npm:8.41.0"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -2803,16 +2784,6 @@ const RAW_RUNTIME_STATE =
           ["@sentry/types", "npm:8.40.0"]\
         ],\
         "linkType": "HARD"\
-      }],\
-      ["npm:8.41.0", {\
-        "packageLocation": "./.yarn/cache/@sentry-internal-replay-npm-8.41.0-b033a0308d-046b0b5d55.zip/node_modules/@sentry-internal/replay/",\
-        "packageDependencies": [\
-          ["@sentry-internal/replay", "npm:8.41.0"],\
-          ["@sentry-internal/browser-utils", "npm:8.41.0"],\
-          ["@sentry/core", "npm:8.41.0"],\
-          ["@sentry/types", "npm:8.41.0"]\
-        ],\
-        "linkType": "HARD"\
       }]\
     ]],\
     ["@sentry-internal/replay-canvas", [\
@@ -2823,16 +2794,6 @@ const RAW_RUNTIME_STATE =
           ["@sentry-internal/replay", "npm:8.40.0"],\
           ["@sentry/core", "npm:8.40.0"],\
           ["@sentry/types", "npm:8.40.0"]\
-        ],\
-        "linkType": "HARD"\
-      }],\
-      ["npm:8.41.0", {\
-        "packageLocation": "./.yarn/cache/@sentry-internal-replay-canvas-npm-8.41.0-448144ec6b-e9898d37ea.zip/node_modules/@sentry-internal/replay-canvas/",\
-        "packageDependencies": [\
-          ["@sentry-internal/replay-canvas", "npm:8.41.0"],\
-          ["@sentry-internal/replay", "npm:8.41.0"],\
-          ["@sentry/core", "npm:8.41.0"],\
-          ["@sentry/types", "npm:8.41.0"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -2850,19 +2811,6 @@ const RAW_RUNTIME_STATE =
           ["@sentry/types", "npm:8.40.0"]\
         ],\
         "linkType": "HARD"\
-      }],\
-      ["npm:8.41.0", {\
-        "packageLocation": "./.yarn/cache/@sentry-browser-npm-8.41.0-2d393d4c10-c5cf890b3f.zip/node_modules/@sentry/browser/",\
-        "packageDependencies": [\
-          ["@sentry/browser", "npm:8.41.0"],\
-          ["@sentry-internal/browser-utils", "npm:8.41.0"],\
-          ["@sentry-internal/feedback", "npm:8.41.0"],\
-          ["@sentry-internal/replay", "npm:8.41.0"],\
-          ["@sentry-internal/replay-canvas", "npm:8.41.0"],\
-          ["@sentry/core", "npm:8.41.0"],\
-          ["@sentry/types", "npm:8.41.0"]\
-        ],\
-        "linkType": "HARD"\
       }]\
     ]],\
     ["@sentry/core", [\
@@ -2873,14 +2821,6 @@ const RAW_RUNTIME_STATE =
           ["@sentry/types", "npm:8.40.0"]\
         ],\
         "linkType": "HARD"\
-      }],\
-      ["npm:8.41.0", {\
-        "packageLocation": "./.yarn/cache/@sentry-core-npm-8.41.0-26db961fb9-76dceda22e.zip/node_modules/@sentry/core/",\
-        "packageDependencies": [\
-          ["@sentry/core", "npm:8.41.0"],\
-          ["@sentry/types", "npm:8.41.0"]\
-        ],\
-        "linkType": "HARD"\
       }]\
     ]],\
     ["@sentry/types", [\
@@ -2888,13 +2828,6 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@sentry-types-npm-8.40.0-f6513bfb87-6fba146cbd.zip/node_modules/@sentry/types/",\
         "packageDependencies": [\
           ["@sentry/types", "npm:8.40.0"]\
-        ],\
-        "linkType": "HARD"\
-      }],\
-      ["npm:8.41.0", {\
-        "packageLocation": "./.yarn/cache/@sentry-types-npm-8.41.0-2e415d7dfe-50e1a938be.zip/node_modules/@sentry/types/",\
-        "packageDependencies": [\
-          ["@sentry/types", "npm:8.41.0"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -3011,7 +2944,6 @@ const RAW_RUNTIME_STATE =
           ["@stackflow/demo", "workspace:demo"],\
           ["@seed-design/design-token", "npm:1.0.3"],\
           ["@seed-design/stylesheet", "npm:1.0.4"],\
-          ["@sentry/browser", "npm:8.41.0"],\
           ["@stackflow/compat-await-push", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/compat-await-push"],\
           ["@stackflow/config", "workspace:config"],\
           ["@stackflow/core", "workspace:core"],\
@@ -3155,7 +3087,6 @@ const RAW_RUNTIME_STATE =
           ["@stackflow/monorepo", "workspace:."],\
           ["@biomejs/biome", "npm:1.8.3"],\
           ["@changesets/cli", "npm:2.27.7"],\
-          ["@sentry/browser", "npm:8.41.0"],\
           ["@types/jest", "npm:29.5.12"],\
           ["@types/node", "npm:20.14.9"],\
           ["@types/react", "npm:18.3.3"],\
