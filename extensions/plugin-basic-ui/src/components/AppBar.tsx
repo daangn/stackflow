@@ -1,11 +1,10 @@
 import { useActions } from "@stackflow/react";
-import { assignInlineVars } from "@vanilla-extract/dynamic";
-import { forwardRef, useRef } from "react";
-
 import {
   useAppBarTitleMaxWidth,
   useNullableActivity,
 } from "@stackflow/react-ui-core";
+import { assignInlineVars } from "@vanilla-extract/dynamic";
+import { forwardRef, useRef } from "react";
 import { IconBack, IconClose } from "../assets";
 import { useGlobalOptions } from "../basicUIPlugin";
 import type { GlobalVars } from "../basicUIPlugin.css";
@@ -261,12 +260,6 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
         </button>
       );
     };
-
-    const hasLeft = !!(
-      (closeButtonLocation === "left" && closeButton) ||
-      backButton ||
-      renderLeft
-    );
 
     return (
       <div
