@@ -67,8 +67,7 @@ const App = () => {
 
 모든 스택은 컨텍스트로 래핑되어 있으므로 이벤트를 보내려면 `useGoogleAnalyticsContext` 훅을 사용할 수 있어요.
 
-```tsx showLineNumbers
-filename="AdCreateButton.tsx" copy
+```tsx showLineNumbers filename="AdCreateButton.tsx" copy
 import { useGoogleAnalyticsContext } from "@stackflow/plugin-google-analytics-4";
 // ...
 const { sendEvent } = useGoogleAnalyticsContext();
