@@ -138,6 +138,11 @@ export const container = style([
     transition: transitions({
       height: globalVars.appBar.heightTransitionDuration,
     }),
+    selectors: {
+      [`${android} &`]: {
+        padding: "0 1rem",
+      },
+    },
   },
 ]);
 
@@ -146,9 +151,17 @@ export const left = style([
   f.fullHeight,
   appBarMinHeight,
   {
-    padding: "0 0.5rem",
     ":empty": {
       display: "none",
+    },
+    selectors: {
+      [`${android} &`]: {
+        paddingRight: "1rem",
+      },
+      [`${cupertino} &`]: {
+        paddingLeft: "1rem",
+        paddingRight: "1rem",
+      },
     },
   },
 ]);
@@ -164,8 +177,8 @@ export const backButton = style([
       opacity: "300ms",
       color: globalVars.appBar.iconColorTransitionDuration,
     }),
-    width: "2.25rem",
-    height: "2.75rem",
+    padding: ".5rem",
+    margin: "-.5rem",
     ":active": {
       opacity: "0.2",
       transition: transitions({
@@ -180,52 +193,38 @@ export const closeButton = style([backButton]);
 
 export const center = style([f.flexAlignCenter, f.flex1, appBarMinHeight]);
 
-export const centerMain = recipe({
-  base: {
-    width: vars.appBar.center.mainWidth,
-    color: globalVars.appBar.textColor,
-    transition: transitions({
-      height: globalVars.appBar.heightTransitionDuration,
-      color: globalVars.appBar.textColorTransitionDuration,
-    }),
-    selectors: {
-      [`${android} &`]: {
-        width: "100%",
-        justifyContent: "flex-start",
-        paddingLeft: "1rem",
-        fontSize: "1.1875rem",
-        lineHeight: "1.5",
-        fontWeight: "bold",
-        boxSizing: "border-box",
-      },
-      [`${cupertino} &`]: {
-        position: "absolute",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        textAlign: "center",
-        fontFamily: "-apple-system, BlinkMacSystemFont",
-        fontWeight: 600,
-        fontSize: "1rem",
-        left: "50%",
-        transform: "translate(-50%)",
-        height: globalVars.appBar.height,
-        top: [
-          `max(${globalVars.appBar.minSafeAreaInsetTop}, constant(safe-area-inset-top))`,
-          `max(${globalVars.appBar.minSafeAreaInsetTop}, env(safe-area-inset-top))`,
-        ],
-      },
+export const centerMain = style({
+  width: vars.appBar.center.mainWidth,
+  color: globalVars.appBar.textColor,
+  transition: transitions({
+    height: globalVars.appBar.heightTransitionDuration,
+    color: globalVars.appBar.textColorTransitionDuration,
+  }),
+  selectors: {
+    [`${android} &`]: {
+      width: "100%",
+      justifyContent: "flex-start",
+      fontSize: "1.125rem",
+      lineHeight: "1.5",
+      fontWeight: "bold",
+      boxSizing: "border-box",
     },
-  },
-  variants: {
-    hasLeft: {
-      true: {
-        selectors: {
-          [`${android} &`]: {
-            paddingLeft: "0.375rem",
-          },
-        },
-      },
+    [`${cupertino} &`]: {
+      position: "absolute",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      textAlign: "center",
+      fontFamily: "-apple-system, BlinkMacSystemFont",
+      fontWeight: "bold",
+      fontSize: "1.125rem",
+      left: "50%",
+      transform: "translate(-50%)",
+      height: globalVars.appBar.height,
+      top: [
+        `max(${globalVars.appBar.minSafeAreaInsetTop}, constant(safe-area-inset-top))`,
+        `max(${globalVars.appBar.minSafeAreaInsetTop}, env(safe-area-inset-top))`,
+      ],
     },
   },
 });
@@ -267,14 +266,17 @@ export const right = style([
   f.posRel,
   appBarMinHeight,
   {
-    padding: "0 0.5rem",
     marginLeft: "auto",
     ":empty": {
       display: "none",
     },
     selectors: {
       [`${android} &`]: {
-        padding: "0 0.5rem 0 0",
+        paddingLeft: "1rem",
+      },
+      [`${cupertino} &`]: {
+        paddingLeft: "1rem",
+        paddingRight: "1rem",
       },
     },
   },
