@@ -181,7 +181,7 @@ export function useStyleEffectSwipeBack({
                 );
               });
 
-              onTransitionEnd?.({ swiped: _swiped });
+              onTransitionEnd?.({ swiped });
             });
           });
         });
