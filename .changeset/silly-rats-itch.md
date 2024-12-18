@@ -3,4 +3,4 @@
 "@stackflow/react-ui-core": minor
 ---
 
-feat(react-ui-core): add `onSwipe*` hooks and add `--stackflow-swipe-back-ratio` css var
+feat(react-ui-core, plugin-basic-ui): add `onSwipe*` hooks and add data attributes and css variables
