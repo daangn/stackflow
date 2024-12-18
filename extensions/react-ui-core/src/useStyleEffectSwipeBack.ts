@@ -235,10 +235,11 @@ export function useStyleEffectSwipeBack({
         const v = (x - x0) / (t - t0);
         const swiped = v > 1 || x / $paper.clientWidth > 0.4;
 
+        onSwipeEnd?.({ swiped });
+
         Promise.resolve()
           .then(() => resetPaper({ swiped }))
-          .then(() => resetState())
-          .then(() => onSwipeEnd?.({ swiped }));
+          .then(() => resetState());
       };
 
       $edge.addEventListener("touchstart", onTouchStart, { passive: true });
