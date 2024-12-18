@@ -1,5 +1,11 @@
 # @stackflow/react-ui-core
 
+## 1.2.0
+
+### Minor Changes
+
+- dc35bfc: feat(react-ui-core, plugin-basic-ui): add `onSwipe*` hooks and add data attributes and css variables
+
 ## 1.1.2
 
 ## 1.1.2-canary.0
