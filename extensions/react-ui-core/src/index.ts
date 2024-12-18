@@ -7,3 +7,4 @@ export * from "./useStyleEffectHide";
 export * from "./useStyleEffectOffset";
 export * from "./useStyleEffectSwipeBack";
 export * from "./useZIndexBase";
+export * from "./useActivityDataAttributes";

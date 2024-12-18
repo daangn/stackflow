@@ -1,9 +1,10 @@
-import type { Activity } from "@stackflow/core";
+import { useMounted } from "./useMounted";
+import { useNullableActivity } from "./useNullableActivity";
 
-export function activityDataAttributes({
-  activity,
-  mounted,
-}: { activity?: Activity | null; mounted?: boolean }) {
+export function useActivityDataAttributes() {
+  const activity = useNullableActivity();
+  const mounted = useMounted();
+
   return {
     /**
      * should be rendered in client-side only to avoid hydration mismatch warning

@@ -1,5 +1,6 @@
 import { useActions } from "@stackflow/react";
 import {
+  useActivityDataAttributes,
   useAppBarTitleMaxWidth,
   useMounted,
   useNullableActivity,
@@ -10,7 +11,7 @@ import { IconBack, IconClose } from "../assets";
 import { useGlobalOptions } from "../basicUIPlugin";
 import type { GlobalVars } from "../basicUIPlugin.css";
 import { globalVars } from "../basicUIPlugin.css";
-import { activityDataAttributes, compactMap } from "../utils";
+import { compactMap } from "../utils";
 import * as css from "./AppBar.css";
 import * as appScreenCss from "./AppScreen.css";
 
@@ -88,6 +89,7 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
   ) => {
     const actions = useActions();
     const activity = useNullableActivity();
+    const activityDataAttributes = useActivityDataAttributes();
 
     const mounted = useMounted();
 
@@ -300,8 +302,8 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
             [appScreenCss.vars.appBar.center.mainWidth]: `${maxWidth}px`,
           }),
         )}
-        data-stackflow-component-name="AppScreen--appBar"
-        {...activityDataAttributes({ activity, mounted })}
+        data-part="appBar"
+        {...activityDataAttributes}
       >
         <div className={css.safeArea} />
         <div className={css.container}>

@@ -1,5 +1,6 @@
 import { useActions } from "@stackflow/react";
 import {
+  useActivityDataAttributes,
   useLazy,
   useMounted,
   useNullableActivity,
@@ -14,7 +15,7 @@ import { useGlobalOptions } from "../basicUIPlugin";
 import type { GlobalVars } from "../basicUIPlugin.css";
 import { globalVars } from "../basicUIPlugin.css";
 import type { PropOf } from "../utils";
-import { activityDataAttributes, compactMap } from "../utils";
+import { compactMap } from "../utils";
 import AppBar from "./AppBar";
 import * as css from "./AppScreen.css";
 
@@ -59,6 +60,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
 }) => {
   const globalOptions = useGlobalOptions();
   const activity = useNullableActivity();
+  const activityDataAttributes = useActivityDataAttributes();
   const mounted = useMounted();
 
   const { pop } = useActions();
@@ -238,14 +240,14 @@ const AppScreen: React.FC<AppScreenProps> = ({
           }),
         )}
         data-stackflow-component-name="AppScreen"
-        {...activityDataAttributes({ activity, mounted })}
+        {...activityDataAttributes}
       >
         {activityEnterStyle !== "slideInLeft" && (
           <div
             ref={dimRef}
             className={css.dim}
-            data-stackflow-component-name="AppScreen--dim"
-            {...activityDataAttributes({ activity, mounted })}
+            data-part="dim"
+            {...activityDataAttributes}
           />
         )}
         {appBar && (
@@ -265,8 +267,8 @@ const AppScreen: React.FC<AppScreenProps> = ({
             modalPresentationStyle,
             activityEnterStyle,
           })}
-          data-stackflow-component-name="AppScreen--paper"
-          {...activityDataAttributes({ activity, mounted })}
+          data-part="paper"
+          {...activityDataAttributes}
         >
           {children}
         </div>
@@ -276,8 +278,8 @@ const AppScreen: React.FC<AppScreenProps> = ({
             <div
               ref={edgeRef}
               className={css.edge({ hasAppBar })}
-              data-stackflow-component-name="AppScreen--edge"
-              {...activityDataAttributes({ activity, mounted })}
+              data-part="edge"
+              {...activityDataAttributes}
             />
           )}
       </div>
