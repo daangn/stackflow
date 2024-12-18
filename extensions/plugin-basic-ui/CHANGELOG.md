@@ -1,5 +1,11 @@
 # @stackflow/plugin-basic-ui
 
+## 1.11.1
+
+### Patch Changes
+
+- 151631b: chore(plugin-basic-ui): update react-ui-core dependency
+
 ## 1.11.0
 
 ### Minor Changes
