@@ -1,7 +1,4 @@
 import { useActions } from "@stackflow/react";
-import { assignInlineVars } from "@vanilla-extract/dynamic";
-import { createContext, useContext, useMemo, useRef } from "react";
-
 import {
   useLazy,
   useMounted,
@@ -11,6 +8,8 @@ import {
   useStyleEffectSwipeBack,
   useZIndexBase,
 } from "@stackflow/react-ui-core";
+import { assignInlineVars } from "@vanilla-extract/dynamic";
+import { createContext, useContext, useMemo, useRef } from "react";
 import { useGlobalOptions } from "../basicUIPlugin";
 import type { GlobalVars } from "../basicUIPlugin.css";
 import { globalVars } from "../basicUIPlugin.css";
@@ -146,6 +145,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
     dimRef,
     edgeRef,
     paperRef,
+    appBarRef,
     offset: OFFSET_PX_CUPERTINO,
     transitionDuration: globalVars.transitionDuration,
     preventSwipeBack:
@@ -173,8 +173,10 @@ const AppScreen: React.FC<AppScreenProps> = ({
 
       return null;
     },
-    onSwiped() {
-      pop();
+    onSwipeEnd({ swiped }) {
+      if (swiped) {
+        pop();
+      }
     },
   });
 
