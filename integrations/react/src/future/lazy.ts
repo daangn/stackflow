@@ -5,8 +5,18 @@ import type { LazyActivityComponentType } from "../__internal__/LazyActivityComp
 export function lazy<T extends { [K in keyof T]: any } = {}>(
   load: () => Promise<{ default: ActivityComponentType<T> }>,
 ): LazyActivityComponentType<T> {
-  const DynamicComponent: LazyActivityComponentType<T> = React.lazy(load);
-  DynamicComponent._stackflow = { type: "lazy", load };
+  let cachedValue: { default: ActivityComponentType<T> } | null = null;
+
+  const cachedLoad = async () => {
+    if (!cachedValue) {
+      const value = await load();
+      cachedValue = value;
+    }
+    return cachedValue;
+  };
+
+  const DynamicComponent: LazyActivityComponentType<T> = React.lazy(cachedLoad);
+  DynamicComponent._stackflow = { type: "lazy", load: cachedLoad };
 
   return DynamicComponent;
 }
