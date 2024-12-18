@@ -1,12 +1,6 @@
 import type { ActivityLoaderArgs } from "@stackflow/config";
 
-function delay(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
 export async function articleLoader({ params }: ActivityLoaderArgs<"Article">) {
-  await delay(1000);
-
   const imageUrl = `https://picsum.photos/800/800/?id=${params.articleId}`;
 
   const recommenderCards = [
