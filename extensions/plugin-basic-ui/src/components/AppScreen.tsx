@@ -1,8 +1,6 @@
 import { useActions } from "@stackflow/react";
-import { assignInlineVars } from "@vanilla-extract/dynamic";
-import { createContext, useContext, useMemo, useRef } from "react";
-
 import {
+  useActivityDataAttributes,
   useLazy,
   useMounted,
   useNullableActivity,
@@ -11,6 +9,8 @@ import {
   useStyleEffectSwipeBack,
   useZIndexBase,
 } from "@stackflow/react-ui-core";
+import { assignInlineVars } from "@vanilla-extract/dynamic";
+import { createContext, useContext, useMemo, useRef } from "react";
 import { useGlobalOptions } from "../basicUIPlugin";
 import type { GlobalVars } from "../basicUIPlugin.css";
 import { globalVars } from "../basicUIPlugin.css";
@@ -60,6 +60,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
 }) => {
   const globalOptions = useGlobalOptions();
   const activity = useNullableActivity();
+  const activityDataAttributes = useActivityDataAttributes();
   const mounted = useMounted();
 
   const { pop } = useActions();
@@ -146,6 +147,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
     dimRef,
     edgeRef,
     paperRef,
+    appBarRef,
     offset: OFFSET_PX_CUPERTINO,
     transitionDuration: globalVars.transitionDuration,
     preventSwipeBack:
@@ -173,8 +175,10 @@ const AppScreen: React.FC<AppScreenProps> = ({
 
       return null;
     },
-    onSwiped() {
-      pop();
+    onSwipeEnd({ swiped }) {
+      if (swiped) {
+        pop();
+      }
     },
   });
 
@@ -236,13 +240,15 @@ const AppScreen: React.FC<AppScreenProps> = ({
           }),
         )}
         data-stackflow-component-name="AppScreen"
-        data-stackflow-activity-id={mounted ? activity?.id : undefined}
-        data-stackflow-activity-is-active={
-          mounted ? activity?.isActive : undefined
-        }
+        {...activityDataAttributes}
       >
         {activityEnterStyle !== "slideInLeft" && (
-          <div className={css.dim} ref={dimRef} />
+          <div
+            ref={dimRef}
+            className={css.dim}
+            data-part="dim"
+            {...activityDataAttributes}
+          />
         )}
         {appBar && (
           <AppBar
@@ -255,19 +261,26 @@ const AppScreen: React.FC<AppScreenProps> = ({
         )}
         <div
           key={activity?.id}
+          ref={paperRef}
           className={css.paper({
             hasAppBar,
             modalPresentationStyle,
             activityEnterStyle,
           })}
-          ref={paperRef}
+          data-part="paper"
+          {...activityDataAttributes}
         >
           {children}
         </div>
         {!activity?.isRoot &&
           globalOptions.theme === "cupertino" &&
           !isSwipeBackPrevented && (
-            <div className={css.edge({ hasAppBar })} ref={edgeRef} />
+            <div
+              ref={edgeRef}
+              className={css.edge({ hasAppBar })}
+              data-part="edge"
+              {...activityDataAttributes}
+            />
           )}
       </div>
     </Context.Provider>

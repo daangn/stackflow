@@ -1,6 +1,8 @@
 import { useActions } from "@stackflow/react";
 import {
+  useActivityDataAttributes,
   useAppBarTitleMaxWidth,
+  useMounted,
   useNullableActivity,
 } from "@stackflow/react-ui-core";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
@@ -9,7 +11,6 @@ import { IconBack, IconClose } from "../assets";
 import { useGlobalOptions } from "../basicUIPlugin";
 import type { GlobalVars } from "../basicUIPlugin.css";
 import { globalVars } from "../basicUIPlugin.css";
-
 import { compactMap } from "../utils";
 import * as css from "./AppBar.css";
 import * as appScreenCss from "./AppScreen.css";
@@ -88,6 +89,9 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
   ) => {
     const actions = useActions();
     const activity = useNullableActivity();
+    const activityDataAttributes = useActivityDataAttributes();
+
+    const mounted = useMounted();
 
     const globalOptions = useGlobalOptions();
     const globalCloseButton = globalOptions.appBar?.closeButton;
@@ -292,6 +296,8 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
             [appScreenCss.vars.appBar.center.mainWidth]: `${maxWidth}px`,
           }),
         )}
+        data-part="appBar"
+        {...activityDataAttributes}
       >
         <div className={css.safeArea} />
         <div className={css.container}>
