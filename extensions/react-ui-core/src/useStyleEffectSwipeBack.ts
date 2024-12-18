@@ -16,6 +16,7 @@ export function useStyleEffectSwipeBack({
   onSwipeStart,
   onSwipeMove,
   onSwipeEnd,
+  onTransitionEnd,
 }: {
   dimRef: React.RefObject<HTMLDivElement>;
   edgeRef: React.RefObject<HTMLDivElement>;
@@ -28,6 +29,7 @@ export function useStyleEffectSwipeBack({
   onSwipeStart?: () => void;
   onSwipeMove?: (args: { dx: number; ratio: number }) => void;
   onSwipeEnd?: (args: { swiped: boolean }) => void;
+  onTransitionEnd?: (args: { swiped: boolean }) => void;
 }) {
   useStyleEffect({
     styleName: "swipe-back",
@@ -101,6 +103,11 @@ export function useStyleEffectSwipeBack({
               if (ref.current.parentElement?.style.display === "none") {
                 ref.current.parentElement.style.display = "block";
               }
+
+              ref.current.parentElement?.style.setProperty(
+                SWIPE_BACK_RATIO_CSS_VAR_NAME,
+                String(ratio),
+              );
             });
 
             _rAFLock = false;
@@ -118,8 +125,6 @@ export function useStyleEffectSwipeBack({
             $paper.style.transform = `translateX(${swiped ? "100%" : "0"})`;
             $paper.style.transition = transitionDuration;
 
-            $appBarRef?.style.removeProperty(SWIPE_BACK_RATIO_CSS_VAR_NAME);
-
             refs.forEach((ref) => {
               if (!ref.current) {
                 return;
@@ -135,7 +140,7 @@ export function useStyleEffectSwipeBack({
 
             resolve();
 
-            listenOnce($paper, "transitionend", () => {
+            listenOnce($paper, ["transitionend", "transitioncancel"], () => {
               const _swiped =
                 swiped ||
                 getActivityTransitionState() === "exit-active" ||
@@ -144,6 +149,8 @@ export function useStyleEffectSwipeBack({
               $dim.style.opacity = "";
               $paper.style.overflowY = "";
               $paper.style.transform = "";
+
+              $appBarRef?.style.removeProperty(SWIPE_BACK_RATIO_CSS_VAR_NAME);
 
               refs.forEach((ref, i) => {
                 if (!ref.current) {
@@ -168,7 +175,13 @@ export function useStyleEffectSwipeBack({
                       _cachedRef.parentElement.style.display;
                   }
                 }
+
+                ref.current.parentElement?.style.removeProperty(
+                  SWIPE_BACK_RATIO_CSS_VAR_NAME,
+                );
               });
+
+              onTransitionEnd?.({ swiped });
             });
           });
         });
