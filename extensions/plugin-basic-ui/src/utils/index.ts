@@ -1,3 +1,4 @@
+export * from "./activityDataAttributes";
 export * from "./compact";
 export * from "./compactMap";
 export * from "./isBrowser";

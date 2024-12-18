@@ -14,7 +14,7 @@ import { useGlobalOptions } from "../basicUIPlugin";
 import type { GlobalVars } from "../basicUIPlugin.css";
 import { globalVars } from "../basicUIPlugin.css";
 import type { PropOf } from "../utils";
-import { compactMap } from "../utils";
+import { activityDataAttributes, compactMap } from "../utils";
 import AppBar from "./AppBar";
 import * as css from "./AppScreen.css";
 
@@ -238,13 +238,15 @@ const AppScreen: React.FC<AppScreenProps> = ({
           }),
         )}
         data-stackflow-component-name="AppScreen"
-        data-stackflow-activity-id={mounted ? activity?.id : undefined}
-        data-stackflow-activity-is-active={
-          mounted ? activity?.isActive : undefined
-        }
+        {...activityDataAttributes({ activity, mounted })}
       >
         {activityEnterStyle !== "slideInLeft" && (
-          <div className={css.dim} ref={dimRef} />
+          <div
+            ref={dimRef}
+            className={css.dim}
+            data-stackflow-component-name="AppScreen--dim"
+            {...activityDataAttributes({ activity, mounted })}
+          />
         )}
         {appBar && (
           <AppBar
@@ -257,19 +259,26 @@ const AppScreen: React.FC<AppScreenProps> = ({
         )}
         <div
           key={activity?.id}
+          ref={paperRef}
           className={css.paper({
             hasAppBar,
             modalPresentationStyle,
             activityEnterStyle,
           })}
-          ref={paperRef}
+          data-stackflow-component-name="AppScreen--paper"
+          {...activityDataAttributes({ activity, mounted })}
         >
           {children}
         </div>
         {!activity?.isRoot &&
           globalOptions.theme === "cupertino" &&
           !isSwipeBackPrevented && (
-            <div className={css.edge({ hasAppBar })} ref={edgeRef} />
+            <div
+              ref={edgeRef}
+              className={css.edge({ hasAppBar })}
+              data-stackflow-component-name="AppScreen--edge"
+              {...activityDataAttributes({ activity, mounted })}
+            />
           )}
       </div>
     </Context.Provider>
