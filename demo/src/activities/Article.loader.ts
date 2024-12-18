@@ -1,6 +1,6 @@
 import type { ActivityLoaderArgs } from "@stackflow/config";
 
-export function articleLoader({ params }: ActivityLoaderArgs<"Article">) {
+export async function articleLoader({ params }: ActivityLoaderArgs<"Article">) {
   const imageUrl = `https://picsum.photos/800/800/?id=${params.articleId}`;
 
   const recommenderCards = [

@@ -3,9 +3,11 @@ import type {
   ActivityRegisteredEvent,
   DomainEvent,
   InitializedEvent,
+  PausedEvent,
   PoppedEvent,
   PushedEvent,
   ReplacedEvent,
+  ResumedEvent,
   StepPoppedEvent,
   StepPushedEvent,
   StepReplacedEvent,
@@ -89,4 +91,14 @@ export const makeActivitiesReducers = (isTransitionDone: boolean) =>
      */
     StepPopped: (activities: Activity[], event: StepPoppedEvent): Activity[] =>
       activities,
+
+    /**
+     * noop
+     */
+    Paused: (activities: Activity[], event: PausedEvent) => activities,
+
+    /**
+     * noop
+     */
+    Resumed: (activities: Activity[], event: ResumedEvent) => activities,
   });
