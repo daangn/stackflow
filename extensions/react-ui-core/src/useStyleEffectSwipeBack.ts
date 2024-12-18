@@ -16,6 +16,7 @@ export function useStyleEffectSwipeBack({
   onSwipeStart,
   onSwipeMove,
   onSwipeEnd,
+  onTransitionEnd,
 }: {
   dimRef: React.RefObject<HTMLDivElement>;
   edgeRef: React.RefObject<HTMLDivElement>;
@@ -28,6 +29,7 @@ export function useStyleEffectSwipeBack({
   onSwipeStart?: () => void;
   onSwipeMove?: (args: { dx: number; ratio: number }) => void;
   onSwipeEnd?: (args: { swiped: boolean }) => void;
+  onTransitionEnd?: () => void;
 }) {
   useStyleEffect({
     styleName: "swipe-back",
@@ -118,8 +120,6 @@ export function useStyleEffectSwipeBack({
             $paper.style.transform = `translateX(${swiped ? "100%" : "0"})`;
             $paper.style.transition = transitionDuration;
 
-            $appBarRef?.style.removeProperty(SWIPE_BACK_RATIO_CSS_VAR_NAME);
-
             refs.forEach((ref) => {
               if (!ref.current) {
                 return;
@@ -145,6 +145,8 @@ export function useStyleEffectSwipeBack({
               $paper.style.overflowY = "";
               $paper.style.transform = "";
 
+              $appBarRef?.style.removeProperty(SWIPE_BACK_RATIO_CSS_VAR_NAME);
+
               refs.forEach((ref, i) => {
                 if (!ref.current) {
                   return;
@@ -169,6 +171,8 @@ export function useStyleEffectSwipeBack({
                   }
                 }
               });
+
+              onTransitionEnd?.();
             });
           });
         });
