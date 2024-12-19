@@ -71,6 +71,10 @@ const RAW_RUNTIME_STATE =
       "reference": "workspace:extensions/plugin-renderer-web"\
     },\
     {\
+      "name": "@stackflow/plugin-sentry",\
+      "reference": "workspace:extensions/plugin-sentry"\
+    },\
+    {\
       "name": "@stackflow/plugin-stack-depth-change",\
       "reference": "workspace:extensions/plugin-stack-depth-change"\
     },\
@@ -106,6 +110,7 @@ const RAW_RUNTIME_STATE =
     ["@stackflow/plugin-preload", ["virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-preload", "workspace:extensions/plugin-preload"]],\
     ["@stackflow/plugin-renderer-basic", ["virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-renderer-basic", "workspace:extensions/plugin-renderer-basic"]],\
     ["@stackflow/plugin-renderer-web", ["workspace:extensions/plugin-renderer-web"]],\
+    ["@stackflow/plugin-sentry", ["workspace:extensions/plugin-sentry"]],\
     ["@stackflow/plugin-stack-depth-change", ["virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-stack-depth-change", "workspace:extensions/plugin-stack-depth-change"]],\
     ["@stackflow/react", ["virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:integrations/react", "workspace:integrations/react"]],\
     ["@stackflow/react-ui-core", ["virtual:669046a185e83900af978519e5adddf8e8f1f8fed824849248ba56cf8fcd4e4208872f27e14c3c844d3b769f42be1ba6e0aa90f12df9fa6c38a55aedee211f53#workspace:extensions/react-ui-core", "workspace:extensions/react-ui-core"]]\
@@ -2747,6 +2752,86 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["@sentry-internal/browser-utils", [\
+      ["npm:8.40.0", {\
+        "packageLocation": "./.yarn/cache/@sentry-internal-browser-utils-npm-8.40.0-0cb16ce8b5-b5f3bd4a8c.zip/node_modules/@sentry-internal/browser-utils/",\
+        "packageDependencies": [\
+          ["@sentry-internal/browser-utils", "npm:8.40.0"],\
+          ["@sentry/core", "npm:8.40.0"],\
+          ["@sentry/types", "npm:8.40.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@sentry-internal/feedback", [\
+      ["npm:8.40.0", {\
+        "packageLocation": "./.yarn/cache/@sentry-internal-feedback-npm-8.40.0-5547bafbc9-98e16aead7.zip/node_modules/@sentry-internal/feedback/",\
+        "packageDependencies": [\
+          ["@sentry-internal/feedback", "npm:8.40.0"],\
+          ["@sentry/core", "npm:8.40.0"],\
+          ["@sentry/types", "npm:8.40.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@sentry-internal/replay", [\
+      ["npm:8.40.0", {\
+        "packageLocation": "./.yarn/cache/@sentry-internal-replay-npm-8.40.0-bbc525e042-c2edb588f8.zip/node_modules/@sentry-internal/replay/",\
+        "packageDependencies": [\
+          ["@sentry-internal/replay", "npm:8.40.0"],\
+          ["@sentry-internal/browser-utils", "npm:8.40.0"],\
+          ["@sentry/core", "npm:8.40.0"],\
+          ["@sentry/types", "npm:8.40.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@sentry-internal/replay-canvas", [\
+      ["npm:8.40.0", {\
+        "packageLocation": "./.yarn/cache/@sentry-internal-replay-canvas-npm-8.40.0-26450868fb-b219783f8b.zip/node_modules/@sentry-internal/replay-canvas/",\
+        "packageDependencies": [\
+          ["@sentry-internal/replay-canvas", "npm:8.40.0"],\
+          ["@sentry-internal/replay", "npm:8.40.0"],\
+          ["@sentry/core", "npm:8.40.0"],\
+          ["@sentry/types", "npm:8.40.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@sentry/browser", [\
+      ["npm:8.40.0", {\
+        "packageLocation": "./.yarn/cache/@sentry-browser-npm-8.40.0-500840aa49-fe0bf8a598.zip/node_modules/@sentry/browser/",\
+        "packageDependencies": [\
+          ["@sentry/browser", "npm:8.40.0"],\
+          ["@sentry-internal/browser-utils", "npm:8.40.0"],\
+          ["@sentry-internal/feedback", "npm:8.40.0"],\
+          ["@sentry-internal/replay", "npm:8.40.0"],\
+          ["@sentry-internal/replay-canvas", "npm:8.40.0"],\
+          ["@sentry/core", "npm:8.40.0"],\
+          ["@sentry/types", "npm:8.40.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@sentry/core", [\
+      ["npm:8.40.0", {\
+        "packageLocation": "./.yarn/cache/@sentry-core-npm-8.40.0-389ff0edb3-450e2d3514.zip/node_modules/@sentry/core/",\
+        "packageDependencies": [\
+          ["@sentry/core", "npm:8.40.0"],\
+          ["@sentry/types", "npm:8.40.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@sentry/types", [\
+      ["npm:8.40.0", {\
+        "packageLocation": "./.yarn/cache/@sentry-types-npm-8.40.0-f6513bfb87-6fba146cbd.zip/node_modules/@sentry/types/",\
+        "packageDependencies": [\
+          ["@sentry/types", "npm:8.40.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["@sinclair/typebox", [\
       ["npm:0.27.8", {\
         "packageLocation": "./.yarn/cache/@sinclair-typebox-npm-0.27.8-23e206d653-297f95ff77.zip/node_modules/@sinclair/typebox/",\
@@ -3328,6 +3413,22 @@ const RAW_RUNTIME_STATE =
           ["esbuild", "npm:0.23.0"],\
           ["react", "npm:18.3.1"],\
           ["rimraf", "npm:3.0.2"],\
+          ["typescript", "patch:typescript@npm%3A5.5.3#optional!builtin<compat/typescript>::version=5.5.3&hash=379a07"]\
+        ],\
+        "linkType": "SOFT"\
+      }]\
+    ]],\
+    ["@stackflow/plugin-sentry", [\
+      ["workspace:extensions/plugin-sentry", {\
+        "packageLocation": "./extensions/plugin-sentry/",\
+        "packageDependencies": [\
+          ["@stackflow/plugin-sentry", "workspace:extensions/plugin-sentry"],\
+          ["@sentry/browser", "npm:8.40.0"],\
+          ["@sentry/core", "npm:8.40.0"],\
+          ["@sentry/types", "npm:8.40.0"],\
+          ["@stackflow/core", "workspace:core"],\
+          ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
+          ["esbuild", "npm:0.23.0"],\
           ["typescript", "patch:typescript@npm%3A5.5.3#optional!builtin<compat/typescript>::version=5.5.3&hash=379a07"]\
         ],\
         "linkType": "SOFT"\
