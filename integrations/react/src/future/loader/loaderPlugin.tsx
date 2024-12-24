@@ -62,7 +62,7 @@ export function loaderPlugin<
     },
     onBeforePush({
       actionParams,
-      actions: { overrideActionParams, dispatchEvent },
+      actions: { overrideActionParams, dispatchEvent, pause, resume },
     }) {
       const { activityName, activityParams, activityContext } = actionParams;
 
@@ -87,7 +87,7 @@ export function loaderPlugin<
         loaderData instanceof Promise ||
         "_stackflow" in matchActivityComponent
       ) {
-        dispatchEvent("Paused", {});
+        pause();
       }
 
       const promises: Array<Promise<any>> = [];
@@ -103,7 +103,7 @@ export function loaderPlugin<
       }
 
       Promise.all(promises).finally(() => {
-        dispatchEvent("Resumed", {});
+        resume();
       });
 
       overrideActionParams({
@@ -116,7 +116,7 @@ export function loaderPlugin<
     },
     onBeforeReplace({
       actionParams,
-      actions: { overrideActionParams, dispatchEvent },
+      actions: { overrideActionParams, dispatchEvent, pause, resume },
     }) {
       const { activityName, activityParams, activityContext } = actionParams;
 
@@ -141,7 +141,7 @@ export function loaderPlugin<
         loaderData instanceof Promise ||
         "_stackflow" in matchActivityComponent
       ) {
-        dispatchEvent("Paused", {});
+        pause();
       }
 
       const promises: Array<Promise<any>> = [];
@@ -157,7 +157,7 @@ export function loaderPlugin<
       }
 
       Promise.all(promises).finally(() => {
-        dispatchEvent("Resumed", {});
+        resume();
       });
 
       overrideActionParams({

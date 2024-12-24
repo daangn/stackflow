@@ -2006,3 +2006,103 @@ test("productEffects - Popped가 작동해 steps가 모두 삭제되면, POPPED 
     },
   ]);
 });
+
+test("produceEffects - Paused가 작동해, globalTransitionState가 paused로 변하면 PAUSED 이펙트가 일어납니다", () => {
+  expect(
+    produceEffects(
+      {
+        activities: [],
+        globalTransitionState: "idle",
+        registeredActivities: [],
+        transitionDuration: 270,
+      },
+      {
+        activities: [],
+        globalTransitionState: "paused",
+        registeredActivities: [],
+        transitionDuration: 270,
+      },
+    ),
+  ).toEqual([
+    {
+      _TAG: "%SOMETHING_CHANGED%",
+    },
+    {
+      _TAG: "PAUSED",
+    },
+  ]);
+
+  expect(
+    produceEffects(
+      {
+        activities: [],
+        globalTransitionState: "loading",
+        registeredActivities: [],
+        transitionDuration: 270,
+      },
+      {
+        activities: [],
+        globalTransitionState: "paused",
+        registeredActivities: [],
+        transitionDuration: 270,
+      },
+    ),
+  ).toEqual([
+    {
+      _TAG: "%SOMETHING_CHANGED%",
+    },
+    {
+      _TAG: "PAUSED",
+    },
+  ]);
+});
+
+test("produceEffects - Resumed가 작동해, globalTransitionState가 paused에서 idle|loading으로 변하면 RESUMED 이펙트가 일어납니다", () => {
+  expect(
+    produceEffects(
+      {
+        activities: [],
+        globalTransitionState: "paused",
+        registeredActivities: [],
+        transitionDuration: 270,
+      },
+      {
+        activities: [],
+        globalTransitionState: "idle",
+        registeredActivities: [],
+        transitionDuration: 270,
+      },
+    ),
+  ).toEqual([
+    {
+      _TAG: "%SOMETHING_CHANGED%",
+    },
+    {
+      _TAG: "RESUMED",
+    },
+  ]);
+
+  expect(
+    produceEffects(
+      {
+        activities: [],
+        globalTransitionState: "paused",
+        registeredActivities: [],
+        transitionDuration: 270,
+      },
+      {
+        activities: [],
+        globalTransitionState: "loading",
+        registeredActivities: [],
+        transitionDuration: 270,
+      },
+    ),
+  ).toEqual([
+    {
+      _TAG: "%SOMETHING_CHANGED%",
+    },
+    {
+      _TAG: "RESUMED",
+    },
+  ]);
+});
