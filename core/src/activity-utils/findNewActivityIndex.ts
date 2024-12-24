@@ -2,7 +2,7 @@ import type { Activity } from "../Stack";
 import type { PushedEvent, ReplacedEvent } from "../event-types";
 import { findIndices, last } from "../utils";
 
-export default function findNewActivityIndex(
+export function findNewActivityIndex(
   event: PushedEvent | ReplacedEvent,
   activities: Activity[],
 ) {

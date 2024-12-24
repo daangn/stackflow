@@ -47,5 +47,6 @@ export type Stack = {
   activities: Activity[];
   registeredActivities: RegisteredActivity[];
   transitionDuration: number;
-  globalTransitionState: "idle" | "loading" | "paused";
+  globalTransitionState: "idle" | "loading";
+  // pausedAt: string | null;
 };
