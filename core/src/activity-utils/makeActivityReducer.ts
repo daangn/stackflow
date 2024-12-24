@@ -16,7 +16,7 @@ import { createReducer } from "./createReducer";
 /**
  * Create activity reducers for each event type (Activity + Event => Activity)
  */
-export const makeActivityReducers = (isTransitionDone: boolean) =>
+export const makeActivityReducer = (isTransitionDone: boolean) =>
   createReducer({
     /**
      * noop

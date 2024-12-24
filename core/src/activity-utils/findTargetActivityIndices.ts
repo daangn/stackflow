@@ -16,11 +16,15 @@ function findLatestActiveActivity(activities: Activity[]) {
     .sort(compareActivitiesByEventDate)[0];
 }
 
-export default function findTargetActivityIndexes(
-  activities: Activity[],
-  event: DomainEvent,
-  isTransitionDone: boolean,
-): number[] {
+export function findTargetActivityIndices({
+  activities,
+  event,
+  isTransitionDone,
+}: {
+  activities: Activity[];
+  event: DomainEvent;
+  isTransitionDone: boolean;
+}): number[] {
   const targetActivities: number[] = [];
 
   switch (event.name) {

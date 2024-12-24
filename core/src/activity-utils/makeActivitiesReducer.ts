@@ -14,12 +14,12 @@ import type {
 } from "../event-types";
 import { createActivityFromEvent } from "./createActivityFromEvent";
 import { createReducer } from "./createReducer";
-import findNewActivityIndex from "./findNewActivityIndex";
+import { findNewActivityIndex } from "./findNewActivityIndex";
 
 /**
  * Create activity list reducers for each event type (Activity[] + Event => Activity[])
  */
-export const makeActivitiesReducers = (isTransitionDone: boolean) =>
+export const makeActivitiesReducer = (isTransitionDone: boolean) =>
   createReducer({
     /**
      * noop
