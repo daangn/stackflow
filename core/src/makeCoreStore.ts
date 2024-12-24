@@ -366,6 +366,82 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
           nextActionParams,
         };
       }
+      case "Paused": {
+        let isPrevented = false;
+
+        let nextActionParams = {
+          ...input.actionParams,
+        };
+
+        const preventDefault = () => {
+          isPrevented = true;
+        };
+
+        const overrideActionParams = (
+          partialActionParams: typeof input.actionParams,
+        ) => {
+          nextActionParams = {
+            ...nextActionParams,
+            ...partialActionParams,
+          };
+        };
+
+        for (const pluginInstance of input.pluginInstances) {
+          pluginInstance.onBeforePause?.({
+            actionParams: {
+              ...nextActionParams,
+            },
+            actions: {
+              ...actions,
+              preventDefault,
+              overrideActionParams,
+            },
+          });
+        }
+
+        return {
+          isPrevented,
+          nextActionParams,
+        };
+      }
+      case "Resumed": {
+        let isPrevented = false;
+
+        let nextActionParams = {
+          ...input.actionParams,
+        };
+
+        const preventDefault = () => {
+          isPrevented = true;
+        };
+
+        const overrideActionParams = (
+          partialActionParams: typeof input.actionParams,
+        ) => {
+          nextActionParams = {
+            ...nextActionParams,
+            ...partialActionParams,
+          };
+        };
+
+        for (const pluginInstance of input.pluginInstances) {
+          pluginInstance.onBeforeResume?.({
+            actionParams: {
+              ...nextActionParams,
+            },
+            actions: {
+              ...actions,
+              preventDefault,
+              overrideActionParams,
+            },
+          });
+        }
+
+        return {
+          isPrevented,
+          nextActionParams,
+        };
+      }
       default: {
         return {
           isPrevented: false,
@@ -409,6 +485,16 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
             });
           case "STEP_POPPED":
             return plugin.onStepPopped?.({
+              actions,
+              effect,
+            });
+          case "PAUSED":
+            return plugin.onPaused?.({
+              actions,
+              effect,
+            });
+          case "RESUMED":
+            return plugin.onResumed?.({
               actions,
               effect,
             });
@@ -506,6 +592,32 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
       }
 
       dispatchEvent("StepPopped", nextActionParams);
+    },
+    pause(params) {
+      const { isPrevented, nextActionParams } = triggerPreEffectHooks({
+        actionName: "Paused",
+        actionParams: params ?? {},
+        pluginInstances,
+      });
+
+      if (isPrevented) {
+        return;
+      }
+
+      dispatchEvent("Paused", nextActionParams);
+    },
+    resume(params) {
+      const { isPrevented, nextActionParams } = triggerPreEffectHooks({
+        actionName: "Resumed",
+        actionParams: params ?? {},
+        pluginInstances,
+      });
+
+      if (isPrevented) {
+        return;
+      }
+
+      dispatchEvent("Resumed", nextActionParams);
     },
   };
 

@@ -15,6 +15,24 @@ export function produceEffects(prevOutput: Stack, nextOutput: Stack): Effect[] {
     });
   }
 
+  const isPaused =
+    prevOutput.globalTransitionState !== "paused" &&
+    nextOutput.globalTransitionState === "paused";
+  const isResumed =
+    prevOutput.globalTransitionState === "paused" &&
+    nextOutput.globalTransitionState !== "paused";
+
+  if (isPaused) {
+    output.push({
+      _TAG: "PAUSED",
+    });
+  }
+  if (isResumed) {
+    output.push({
+      _TAG: "RESUMED",
+    });
+  }
+
   for (
     let i = 0;
     i < Math.max(prevOutput.activities.length, nextOutput.activities.length);
