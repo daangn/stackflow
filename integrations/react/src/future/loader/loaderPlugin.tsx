@@ -1,9 +1,17 @@
-import type { ActivityDefinition, Config } from "@stackflow/config";
+import type { ActivityDefinition } from "@stackflow/config";
+import type { ActivityComponentType } from "../../__internal__/ActivityComponentType";
+import type { LazyActivityComponentType } from "../../__internal__/LazyActivityComponentType";
 import type { StackflowReactPlugin } from "../../__internal__/StackflowReactPlugin";
+import type { StackflowInput } from "../stackflow";
 
-export function loaderPlugin(
-  config: Config<ActivityDefinition<string>>,
-): StackflowReactPlugin {
+export function loaderPlugin<
+  T extends ActivityDefinition<string>,
+  R extends {
+    [activityName in T["name"]]:
+      | ActivityComponentType<any>
+      | LazyActivityComponentType<any>;
+  },
+>(input: StackflowInput<T, R>): StackflowReactPlugin {
   return () => ({
     key: "plugin-loader",
     overrideInitialEvents({ initialEvents, initialContext }) {
@@ -28,9 +36,10 @@ export function loaderPlugin(
 
         const { activityName, activityParams } = event;
 
-        const matchActivity = config.activities.find(
+        const matchActivity = input.config.activities.find(
           (activity) => activity.name === activityName,
         );
+
         const loader = matchActivity?.loader;
 
         if (!loader) {
@@ -39,7 +48,7 @@ export function loaderPlugin(
 
         const loaderData = loader({
           params: activityParams,
-          config,
+          config: input.config,
         });
 
         return {
@@ -51,20 +60,50 @@ export function loaderPlugin(
         };
       });
     },
-    onBeforePush({ actionParams, actions: { overrideActionParams } }) {
+    onBeforePush({
+      actionParams,
+      actions: { overrideActionParams, dispatchEvent, pause, resume },
+    }) {
       const { activityName, activityParams, activityContext } = actionParams;
 
-      const loader = config.activities.find(
+      const matchActivity = input.config.activities.find(
         (activity) => activity.name === activityName,
-      )?.loader;
+      );
+      const matchActivityComponent =
+        input.components[activityName as T["name"]];
 
-      if (!loader) {
+      const loader = matchActivity?.loader;
+
+      if (!loader || !matchActivityComponent) {
         return;
       }
 
       const loaderData = loader({
         params: activityParams,
-        config,
+        config: input.config,
+      });
+
+      if (
+        loaderData instanceof Promise ||
+        "_stackflow" in matchActivityComponent
+      ) {
+        pause();
+      }
+
+      const promises: Array<Promise<any>> = [];
+
+      if (loaderData instanceof Promise) {
+        promises.push(loaderData);
+      }
+      if (
+        "_stackflow" in matchActivityComponent &&
+        matchActivityComponent._stackflow?.type === "lazy"
+      ) {
+        promises.push(matchActivityComponent._stackflow.load());
+      }
+
+      Promise.all(promises).finally(() => {
+        resume();
       });
 
       overrideActionParams({
@@ -75,20 +114,50 @@ export function loaderPlugin(
         },
       });
     },
-    onBeforeReplace({ actionParams, actions: { overrideActionParams } }) {
+    onBeforeReplace({
+      actionParams,
+      actions: { overrideActionParams, dispatchEvent, pause, resume },
+    }) {
       const { activityName, activityParams, activityContext } = actionParams;
 
-      const loader = config.activities.find(
+      const matchActivity = input.config.activities.find(
         (activity) => activity.name === activityName,
-      )?.loader;
+      );
+      const matchActivityComponent =
+        input.components[activityName as T["name"]];
 
-      if (!loader) {
+      const loader = matchActivity?.loader;
+
+      if (!loader || !matchActivityComponent) {
         return;
       }
 
       const loaderData = loader({
         params: activityParams,
-        config,
+        config: input.config,
+      });
+
+      if (
+        loaderData instanceof Promise ||
+        "_stackflow" in matchActivityComponent
+      ) {
+        pause();
+      }
+
+      const promises: Array<Promise<any>> = [];
+
+      if (loaderData instanceof Promise) {
+        promises.push(loaderData);
+      }
+      if (
+        "_stackflow" in matchActivityComponent &&
+        matchActivityComponent._stackflow?.type === "lazy"
+      ) {
+        promises.push(matchActivityComponent._stackflow.load());
+      }
+
+      Promise.all(promises).finally(() => {
+        resume();
       });
 
       overrideActionParams({
