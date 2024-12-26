@@ -8,7 +8,7 @@ import type {
   StepReplacedEvent,
 } from "../event-types";
 import { last } from "../utils";
-import { createReducer } from "./createReducer";
+import { makeReducer } from "./makeReducer";
 
 function noop(activity: Activity) {
   return activity;
@@ -21,7 +21,7 @@ export function makeActivityReducer(context: {
   transitionDuration: number;
   now: number;
 }) {
-  return createReducer({
+  return makeReducer({
     /**
      * Change transition state to exit-done
      */
