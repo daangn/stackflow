@@ -97,3 +97,8 @@ jobs:
         run: |
           yarn typecheck
         shell: bash
+
+      - name: Check the status of Changesets
+        run: |
+          yarn changeset status
+        shell: bash
