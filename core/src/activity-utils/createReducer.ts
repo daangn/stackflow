@@ -1,4 +1,4 @@
-import type { Activity, DomainEvent } from "..";
+import type { DomainEvent } from "../event-types";
 
 type Reducer<T> = (state: T, event: DomainEvent) => T;
 

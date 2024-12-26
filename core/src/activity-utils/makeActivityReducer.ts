@@ -1,10 +1,7 @@
 import type { Activity, ActivityTransitionState } from "../Stack";
 import type {
-  ActivityRegisteredEvent,
   DomainEvent,
-  InitializedEvent,
   PoppedEvent,
-  PushedEvent,
   ReplacedEvent,
   StepPoppedEvent,
   StepPushedEvent,
@@ -13,27 +10,15 @@ import type {
 import { last } from "../utils";
 import { createReducer } from "./createReducer";
 
+function noop(activity: Activity) {
+  return activity;
+}
+
 /**
  * Create activity reducers for each event type (Activity + Event => Activity)
  */
-export const makeActivityReducer = (isTransitionDone: boolean) =>
-  createReducer({
-    /**
-     * noop
-     */
-    Initialized: (activity: Activity, event: InitializedEvent): Activity =>
-      activity,
-    /**
-     * noop
-     */
-    ActivityRegistered: (
-      activity: Activity,
-      event: ActivityRegisteredEvent,
-    ): Activity => activity,
-    /**
-     * noop
-     */
-    Pushed: (activity: Activity, event: PushedEvent): Activity => activity,
+export function makeActivityReducer(context: { isTransitionDone: boolean }) {
+  return createReducer({
     /**
      * Change transition state to exit-done
      */
@@ -42,12 +27,13 @@ export const makeActivityReducer = (isTransitionDone: boolean) =>
       exitedBy: event,
       transitionState: "exit-done",
     }),
+
     /**
      * Change transition state to exit-done or exit-active depending on skipExitActiveState
      */
     Popped: (activity: Activity, event: PoppedEvent): Activity => {
       const transitionState: ActivityTransitionState =
-        event.skipExitActiveState || isTransitionDone
+        event.skipExitActiveState || context.isTransitionDone
           ? "exit-done"
           : "exit-active";
 
@@ -65,6 +51,7 @@ export const makeActivityReducer = (isTransitionDone: boolean) =>
             : activity.steps,
       };
     },
+
     /**
      * Replace step params
      * Push new step
@@ -82,6 +69,7 @@ export const makeActivityReducer = (isTransitionDone: boolean) =>
         steps: [...activity.steps, newRoute],
       };
     },
+
     /**
      * Replace step params
      * Replace the last step
@@ -102,6 +90,7 @@ export const makeActivityReducer = (isTransitionDone: boolean) =>
         ],
       };
     },
+
     /**
      * Pop the last step
      * If there are params in the previous step, set them as the new params
@@ -120,10 +109,10 @@ export const makeActivityReducer = (isTransitionDone: boolean) =>
     /**
      * noop
      */
-    Paused: (activity: Activity) => activity,
-
-    /**
-     * noop
-     */
-    Resumed: (activity: Activity) => activity,
+    Initialized: noop,
+    ActivityRegistered: noop,
+    Pushed: noop,
+    Paused: noop,
+    Resumed: noop,
   } as const);
+}

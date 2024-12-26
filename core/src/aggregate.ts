@@ -1,10 +1,7 @@
-import type { Activity, Stack } from "./Stack";
-import { findTargetActivityIndices } from "./activity-utils/findTargetActivityIndices";
-import { makeActivitiesReducer } from "./activity-utils/makeActivitiesReducer";
-import { makeActivityReducer } from "./activity-utils/makeActivityReducer";
+import type { Stack } from "./Stack";
 import { makeStackReducer } from "./activity-utils/makeStackReducer";
 import type { DomainEvent } from "./event-types";
-import { filterEvents, validateEvents } from "./event-utils";
+import { validateEvents } from "./event-utils";
 import { compareBy, uniqBy } from "./utils";
 
 export function aggregate(inputEvents: DomainEvent[], now: number): Stack {
@@ -24,14 +21,14 @@ export function aggregate(inputEvents: DomainEvent[], now: number): Stack {
   /**
    * 3. Run reducer
    */
-  const baseStack: Stack = {
+  const initialStackState: Stack = {
     activities: [],
     globalTransitionState: "idle",
     registeredActivities: [],
     transitionDuration: 0,
   };
-  const stackReducer = makeStackReducer(now);
-  const stack = events.reduce(stackReducer, baseStack);
+  const stackReducer = makeStackReducer({ now });
+  const stack = events.reduce(stackReducer, initialStackState);
 
   /**
    * 4. Post-process

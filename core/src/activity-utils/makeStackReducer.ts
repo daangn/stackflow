@@ -5,9 +5,10 @@ import { findTargetActivityIndices } from "./findTargetActivityIndices";
 import { makeActivitiesReducer } from "./makeActivitiesReducer";
 import { makeActivityReducer } from "./makeActivityReducer";
 
-export function makeStackReducer(now: number) {
+export function makeStackReducer(context: { now: number }) {
   return (stack: Stack, event: DomainEvent): Stack => {
-    const isTransitionDone = now - event.eventDate >= stack.transitionDuration;
+    const isTransitionDone =
+      context.now - event.eventDate >= stack.transitionDuration;
 
     const activitiesReducer = makeActivitiesReducer(isTransitionDone);
 
@@ -17,13 +18,15 @@ export function makeStackReducer(now: number) {
       (activity) => activity.id,
     );
 
-    const targetActivityIndices = findTargetActivityIndices({
-      activities: prevActivities,
+    const targetActivityIndices = findTargetActivityIndices(
+      prevActivities,
       event,
-      isTransitionDone,
-    });
+      {
+        isTransitionDone,
+      },
+    );
 
-    const activityReducer = makeActivityReducer(isTransitionDone);
+    const activityReducer = makeActivityReducer({ isTransitionDone });
 
     targetActivityIndices.forEach((targetIdx) => {
       nextActivities[targetIdx] = activityReducer(
