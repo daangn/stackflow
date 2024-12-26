@@ -14,6 +14,8 @@ export function makeStackReducer(context: {
     now: context.now,
   });
 
+  let _isPaused = false;
+
   return (stack: Stack, event: DomainEvent): Stack => {
     switch (event.name) {
       case "Initialized": {
@@ -39,8 +41,11 @@ export function makeStackReducer(context: {
         };
       }
       default: {
-        if (!activitiesReducer) {
-          throw new Error("Initialized event not found");
+        if (event.name === "Paused") {
+          _isPaused = true;
+        }
+        if (event.name === "Resumed") {
+          _isPaused = false;
         }
 
         const prevActivities = stack.activities;
@@ -70,13 +75,15 @@ export function makeStackReducer(context: {
           );
         });
 
-        const globalTransitionState = nextActivities.find(
-          (activity) =>
-            activity.transitionState === "enter-active" ||
-            activity.transitionState === "exit-active",
-        )
-          ? "loading"
-          : "idle";
+        const globalTransitionState = _isPaused
+          ? "paused"
+          : nextActivities.find(
+                (activity) =>
+                  activity.transitionState === "enter-active" ||
+                  activity.transitionState === "exit-active",
+              )
+            ? "loading"
+            : "idle";
 
         return {
           ...stack,
