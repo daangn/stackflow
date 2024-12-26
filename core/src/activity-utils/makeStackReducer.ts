@@ -9,11 +9,6 @@ export function makeStackReducer(now: number) {
   return (stack: Stack, event: DomainEvent): Stack => {
     const isTransitionDone = now - event.eventDate >= stack.transitionDuration;
 
-    const globalTransitionState: Stack["globalTransitionState"] =
-      stack.globalTransitionState === "loading" || !isTransitionDone
-        ? "loading"
-        : "idle";
-
     const activitiesReducer = makeActivitiesReducer(isTransitionDone);
     const activities = uniqBy(
       activitiesReducer(stack.activities, event),
@@ -30,6 +25,14 @@ export function makeStackReducer(now: number) {
     targetActivityIndices.forEach((targetIdx) => {
       activities[targetIdx] = activityReducer(activities[targetIdx], event);
     });
+
+    const globalTransitionState = activities.find(
+      (activity) =>
+        activity.transitionState === "enter-active" ||
+        activity.transitionState === "exit-active",
+    )
+      ? "loading"
+      : "idle";
 
     switch (event.name) {
       case "Initialized": {
@@ -54,18 +57,6 @@ export function makeStackReducer(now: number) {
                 : null),
             },
           ],
-        };
-      }
-      case "Paused": {
-        return {
-          ...stack,
-          activities,
-        };
-      }
-      case "Resumed": {
-        return {
-          ...stack,
-          activities,
         };
       }
       default: {
