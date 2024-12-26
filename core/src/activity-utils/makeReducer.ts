@@ -2,7 +2,7 @@ import type { DomainEvent } from "../event-types";
 
 type Reducer<T> = (state: T, event: DomainEvent) => T;
 
-export function createReducer<T>(
+export function makeReducer<T>(
   reducerMap: {
     [key in DomainEvent["name"]]: (
       state: T,

@@ -1,8 +1,8 @@
 import type { Activity, ActivityTransitionState } from "../Stack";
 import type { DomainEvent, PushedEvent, ReplacedEvent } from "../event-types";
-import { createActivityFromEvent } from "./createActivityFromEvent";
-import { createReducer } from "./createReducer";
 import { findNewActivityIndex } from "./findNewActivityIndex";
+import { makeActivityFromEvent } from "./makeActivityFromEvent";
+import { makeReducer } from "./makeReducer";
 
 function noop(activities: Activity[]) {
   return activities;
@@ -18,7 +18,7 @@ export function makeActivitiesReducer(context: {
   let _pausedAt: number | null = null;
   let _pausedEvents: Array<PushedEvent | ReplacedEvent> = [];
 
-  return createReducer({
+  return makeReducer({
     /**
      * Push new activity to activities
      */
@@ -40,7 +40,7 @@ export function makeActivitiesReducer(context: {
 
       return [
         ...activities.slice(0, reservedIndex),
-        createActivityFromEvent(event, transitionState),
+        makeActivityFromEvent(event, transitionState),
         ...activities.slice(reservedIndex + 1),
       ];
     },
@@ -68,7 +68,7 @@ export function makeActivitiesReducer(context: {
 
       return [
         ...activities.slice(0, reservedIndex),
-        createActivityFromEvent(event, transitionState),
+        makeActivityFromEvent(event, transitionState),
         ...activities.slice(reservedIndex + 1),
       ];
     },
