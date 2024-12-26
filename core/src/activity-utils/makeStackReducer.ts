@@ -10,23 +10,29 @@ export function makeStackReducer(now: number) {
     const isTransitionDone = now - event.eventDate >= stack.transitionDuration;
 
     const activitiesReducer = makeActivitiesReducer(isTransitionDone);
-    const activities = uniqBy(
-      activitiesReducer(stack.activities, event),
+
+    const prevActivities = stack.activities;
+    const nextActivities = uniqBy(
+      activitiesReducer(prevActivities, event),
       (activity) => activity.id,
     );
 
     const targetActivityIndices = findTargetActivityIndices({
-      activities,
+      activities: prevActivities,
       event,
       isTransitionDone,
     });
+
     const activityReducer = makeActivityReducer(isTransitionDone);
 
     targetActivityIndices.forEach((targetIdx) => {
-      activities[targetIdx] = activityReducer(activities[targetIdx], event);
+      nextActivities[targetIdx] = activityReducer(
+        nextActivities[targetIdx],
+        event,
+      );
     });
 
-    const globalTransitionState = activities.find(
+    const globalTransitionState = nextActivities.find(
       (activity) =>
         activity.transitionState === "enter-active" ||
         activity.transitionState === "exit-active",
@@ -38,14 +44,14 @@ export function makeStackReducer(now: number) {
       case "Initialized": {
         return {
           ...stack,
-          activities,
+          activities: nextActivities,
           transitionDuration: event.transitionDuration,
         };
       }
       case "ActivityRegistered": {
         return {
           ...stack,
-          activities,
+          activities: nextActivities,
           registeredActivities: [
             ...stack.registeredActivities,
             {
@@ -62,7 +68,7 @@ export function makeStackReducer(now: number) {
       default: {
         return {
           ...stack,
-          activities,
+          activities: nextActivities,
           globalTransitionState,
         };
       }
