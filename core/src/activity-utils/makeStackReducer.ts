@@ -13,6 +13,10 @@ export function makeStackReducer(context: {
     transitionDuration: context.initializedEvent.transitionDuration,
     now: context.now,
   });
+  const activityReducer = makeActivityReducer({
+    transitionDuration: context.initializedEvent.transitionDuration,
+    now: context.now,
+  });
 
   let _isPaused = false;
 
@@ -48,46 +52,36 @@ export function makeStackReducer(context: {
           _isPaused = false;
         }
 
-        const prevActivities = stack.activities;
-        const nextActivities = uniqBy(
-          activitiesReducer(prevActivities, event),
-          (activity) => activity.id,
-        );
-
+        const activities = activitiesReducer(stack.activities, event);
         const targetActivityIndices = findTargetActivityIndices(
-          prevActivities,
+          stack.activities,
           event,
-          {
-            transitionDuration: stack.transitionDuration,
-            now: context.now,
-          },
+          { transitionDuration: stack.transitionDuration, now: context.now },
         );
 
-        const activityReducer = makeActivityReducer({
-          transitionDuration: stack.transitionDuration,
-          now: context.now,
-        });
-
-        targetActivityIndices.forEach((targetIdx) => {
-          nextActivities[targetIdx] = activityReducer(
-            nextActivities[targetIdx],
+        for (const targetActivityIndex of targetActivityIndices) {
+          activities[targetActivityIndex] = activityReducer(
+            activities[targetActivityIndex],
             event,
           );
-        });
+        }
 
-        const globalTransitionState = _isPaused
+        const isPaused = _isPaused;
+        const isLoading = activities.find(
+          (activity) =>
+            activity.transitionState === "enter-active" ||
+            activity.transitionState === "exit-active",
+        );
+
+        const globalTransitionState = isPaused
           ? "paused"
-          : nextActivities.find(
-                (activity) =>
-                  activity.transitionState === "enter-active" ||
-                  activity.transitionState === "exit-active",
-              )
+          : isLoading
             ? "loading"
             : "idle";
 
         return {
           ...stack,
-          activities: nextActivities,
+          activities: uniqBy(activities, (activity) => activity.id),
           globalTransitionState,
         };
       }
