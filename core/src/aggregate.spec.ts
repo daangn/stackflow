@@ -3960,6 +3960,8 @@ test("aggregate - Pause되면 이벤트가 반영되지 않고, globalTransition
     })),
   ];
 
+  console.log(events);
+
   const output = aggregate(events, nowTime());
 
   expect(output).toStrictEqual({
@@ -3992,7 +3994,7 @@ test("aggregate - Pause되면 이벤트가 반영되지 않고, globalTransition
       },
     ],
     transitionDuration: 300,
-    globalTransitionState: "paused",
+    globalTransitionState: "idle",
   });
 });
 

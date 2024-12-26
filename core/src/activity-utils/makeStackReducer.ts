@@ -5,13 +5,16 @@ import { findTargetActivityIndices } from "./findTargetActivityIndices";
 import { makeActivitiesReducer } from "./makeActivitiesReducer";
 import { makeActivityReducer } from "./makeActivityReducer";
 
-export function makeStackReducer(context: { now: number }) {
+export function makeStackReducer(context: {
+  transitionDuration: number;
+  now: number;
+}) {
+  const activitiesReducer = makeActivitiesReducer({
+    transitionDuration: context.transitionDuration,
+    now: context.now,
+  });
+
   return (stack: Stack, event: DomainEvent): Stack => {
-    const isTransitionDone =
-      context.now - event.eventDate >= stack.transitionDuration;
-
-    const activitiesReducer = makeActivitiesReducer(isTransitionDone);
-
     const prevActivities = stack.activities;
     const nextActivities = uniqBy(
       activitiesReducer(prevActivities, event),
@@ -22,11 +25,15 @@ export function makeStackReducer(context: { now: number }) {
       prevActivities,
       event,
       {
-        isTransitionDone,
+        transitionDuration: stack.transitionDuration,
+        now: context.now,
       },
     );
 
-    const activityReducer = makeActivityReducer({ isTransitionDone });
+    const activityReducer = makeActivityReducer({
+      transitionDuration: stack.transitionDuration,
+      now: context.now,
+    });
 
     targetActivityIndices.forEach((targetIdx) => {
       nextActivities[targetIdx] = activityReducer(

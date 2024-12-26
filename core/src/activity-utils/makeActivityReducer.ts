@@ -17,7 +17,10 @@ function noop(activity: Activity) {
 /**
  * Create activity reducers for each event type (Activity + Event => Activity)
  */
-export function makeActivityReducer(context: { isTransitionDone: boolean }) {
+export function makeActivityReducer(context: {
+  transitionDuration: number;
+  now: number;
+}) {
   return createReducer({
     /**
      * Change transition state to exit-done
@@ -32,8 +35,11 @@ export function makeActivityReducer(context: { isTransitionDone: boolean }) {
      * Change transition state to exit-done or exit-active depending on skipExitActiveState
      */
     Popped: (activity: Activity, event: PoppedEvent): Activity => {
+      const isTransitionDone =
+        context.now - event.eventDate >= context.transitionDuration;
+
       const transitionState: ActivityTransitionState =
-        event.skipExitActiveState || context.isTransitionDone
+        event.skipExitActiveState || isTransitionDone
           ? "exit-done"
           : "exit-active";
 

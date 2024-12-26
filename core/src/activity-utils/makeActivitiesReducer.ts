@@ -11,17 +11,35 @@ function noop(activities: Activity[]) {
 /**
  * Create activity list reducers for each event type (Activity[] + Event => Activity[])
  */
-export function makeActivitiesReducer(isTransitionDone: boolean) {
+export function makeActivitiesReducer(context: {
+  transitionDuration: number;
+  now: number;
+}) {
+  console.log("???");
+  let pausedAt: number | null = null;
+  const pausedEvents: Array<PushedEvent | ReplacedEvent> = [];
+
   return createReducer({
     /**
      * Push new activity to activities
      */
-    Pushed: (activities: Activity[], event: PushedEvent): Activity[] => {
+    Pushed(activities: Activity[], event: PushedEvent): Activity[] {
+      if (pausedAt) {
+        console.log(pausedAt);
+        pausedEvents.push(event);
+        return activities;
+      }
+
+      const isTransitionDone =
+        context.now - event.eventDate >= context.transitionDuration;
+
       const transitionState: ActivityTransitionState =
         event.skipEnterActiveState || isTransitionDone
           ? "enter-done"
           : "enter-active";
+
       const reservedIndex = findNewActivityIndex(activities, event);
+
       return [
         ...activities.slice(0, reservedIndex),
         createActivityFromEvent(event, transitionState),
@@ -32,7 +50,15 @@ export function makeActivitiesReducer(isTransitionDone: boolean) {
     /**
      * Replace activity at reservedIndex with new activity
      */
-    Replaced: (activities: Activity[], event: ReplacedEvent): Activity[] => {
+    Replaced(activities: Activity[], event: ReplacedEvent): Activity[] {
+      if (pausedAt) {
+        pausedEvents.push(event);
+        return activities;
+      }
+
+      const isTransitionDone =
+        context.now - event.eventDate >= context.transitionDuration;
+
       const reservedIndex = findNewActivityIndex(activities, event);
 
       // reuse state of alreadyExistingActivity
@@ -49,6 +75,54 @@ export function makeActivitiesReducer(isTransitionDone: boolean) {
       ];
     },
 
+    Paused(activities, event) {
+      console.log("PPPPPP");
+      pausedAt = event.eventDate;
+      return activities;
+    },
+
+    Resumed(activities, event) {
+      if (!pausedAt) {
+        return activities;
+      }
+
+      let outputActivities = activities;
+
+      for (const pausedEvent of pausedEvents) {
+        if (pausedEvent.name === "Pushed") {
+          outputActivities = this.Pushed(activities, pausedEvent);
+        }
+        if (pausedEvent.name === "Replaced") {
+          outputActivities = this.Replaced(activities, pausedEvent);
+        }
+      }
+
+      const _pausedAt = pausedAt;
+      const _resumedAt = event.eventDate;
+
+      return outputActivities.map((activity) => {
+        const isTargetActivity =
+          activity.enteredBy.eventDate > _pausedAt &&
+          activity.enteredBy.eventDate <= _resumedAt;
+
+        if (!isTargetActivity) {
+          return activity;
+        }
+
+        const isTransitionDone =
+          context.now - _resumedAt >= context.transitionDuration;
+
+        const transitionState: ActivityTransitionState = isTransitionDone
+          ? "enter-done"
+          : "enter-active";
+
+        return {
+          ...activity,
+          transitionState,
+        };
+      });
+    },
+
     /**
      * noop
      */
@@ -58,7 +132,5 @@ export function makeActivitiesReducer(isTransitionDone: boolean) {
     StepPushed: noop,
     StepReplaced: noop,
     StepPopped: noop,
-    Paused: noop,
-    Resumed: noop,
   });
 }
