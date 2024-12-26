@@ -3,8 +3,8 @@ import type { PushedEvent, ReplacedEvent } from "../event-types";
 import { findIndices, last } from "../utils";
 
 export function findNewActivityIndex(
-  event: PushedEvent | ReplacedEvent,
   activities: Activity[],
+  event: PushedEvent | ReplacedEvent,
 ) {
   switch (event.name) {
     case "Pushed":

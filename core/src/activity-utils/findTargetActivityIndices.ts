@@ -16,15 +16,11 @@ function findLatestActiveActivity(activities: Activity[]) {
     .sort(compareActivitiesByEventDate)[0];
 }
 
-export function findTargetActivityIndices({
-  activities,
-  event,
-  isTransitionDone,
-}: {
-  activities: Activity[];
-  event: DomainEvent;
-  isTransitionDone: boolean;
-}): number[] {
+export function findTargetActivityIndices(
+  activities: Activity[],
+  event: DomainEvent,
+  context: { isTransitionDone: boolean },
+): number[] {
   const targetActivities: number[] = [];
 
   switch (event.name) {
@@ -43,7 +39,7 @@ export function findTargetActivityIndices({
         .filter(isActivityNotExited);
 
       const transitionState: ActivityTransitionState =
-        event.skipEnterActiveState || isTransitionDone
+        event.skipEnterActiveState || context.isTransitionDone
           ? "enter-done"
           : "enter-active";
 
