@@ -73,11 +73,19 @@ export function makeActivitiesReducer(context: {
       ];
     },
 
+    /**
+     * Write an internal flag indicating that it has been paused,
+     * and use this to store events after the pause in an internal array.
+     */
     Paused(activities, event) {
       _pausedAt = event.eventDate;
       return activities;
     },
 
+    /**
+     * Unpause and load previously saved paused events and play them again.
+     * Then adjust the activity's transition state appropriately.
+     */
     Resumed(activities, event) {
       if (!_pausedAt) {
         return activities;

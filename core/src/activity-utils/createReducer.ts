@@ -11,7 +11,7 @@ export function createReducer<T>(
   },
 ) {
   return (activity: T, event: DomainEvent) => {
-    const reducer = reducerMap[event.name] as Reducer<T>;
+    const reducer = (reducerMap[event.name] as Reducer<T>).bind(reducerMap);
     if (reducer) {
       return reducer(activity, event);
     }
