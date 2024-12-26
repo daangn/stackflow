@@ -15,18 +15,16 @@ export function makeActivitiesReducer(context: {
   transitionDuration: number;
   now: number;
 }) {
-  console.log("???");
-  let pausedAt: number | null = null;
-  const pausedEvents: Array<PushedEvent | ReplacedEvent> = [];
+  let _pausedAt: number | null = null;
+  let _pausedEvents: Array<PushedEvent | ReplacedEvent> = [];
 
   return createReducer({
     /**
      * Push new activity to activities
      */
     Pushed(activities: Activity[], event: PushedEvent): Activity[] {
-      if (pausedAt) {
-        console.log(pausedAt);
-        pausedEvents.push(event);
+      if (_pausedAt) {
+        _pausedEvents.push(event);
         return activities;
       }
 
@@ -51,8 +49,8 @@ export function makeActivitiesReducer(context: {
      * Replace activity at reservedIndex with new activity
      */
     Replaced(activities: Activity[], event: ReplacedEvent): Activity[] {
-      if (pausedAt) {
-        pausedEvents.push(event);
+      if (_pausedAt) {
+        _pausedEvents.push(event);
         return activities;
       }
 
@@ -76,15 +74,21 @@ export function makeActivitiesReducer(context: {
     },
 
     Paused(activities, event) {
-      console.log("PPPPPP");
-      pausedAt = event.eventDate;
+      _pausedAt = event.eventDate;
       return activities;
     },
 
     Resumed(activities, event) {
-      if (!pausedAt) {
+      if (!_pausedAt) {
         return activities;
       }
+
+      const pausedAt = _pausedAt;
+      const pausedEvents = _pausedEvents;
+      const resumedAt = event.eventDate;
+
+      _pausedAt = null;
+      _pausedEvents = [];
 
       let outputActivities = activities;
 
@@ -97,20 +101,17 @@ export function makeActivitiesReducer(context: {
         }
       }
 
-      const _pausedAt = pausedAt;
-      const _resumedAt = event.eventDate;
-
       return outputActivities.map((activity) => {
         const isTargetActivity =
-          activity.enteredBy.eventDate > _pausedAt &&
-          activity.enteredBy.eventDate <= _resumedAt;
+          activity.enteredBy.eventDate > pausedAt &&
+          activity.enteredBy.eventDate <= resumedAt;
 
         if (!isTargetActivity) {
           return activity;
         }
 
         const isTransitionDone =
-          context.now - _resumedAt >= context.transitionDuration;
+          context.now - resumedAt >= context.transitionDuration;
 
         const transitionState: ActivityTransitionState = isTransitionDone
           ? "enter-done"

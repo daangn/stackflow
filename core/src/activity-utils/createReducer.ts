@@ -13,7 +13,6 @@ export function createReducer<T>(
   return (activity: T, event: DomainEvent) => {
     const reducer = reducerMap[event.name] as Reducer<T>;
     if (reducer) {
-      console.log(event.name);
       return reducer(activity, event);
     }
     throw new Error(`No reducer for event ${JSON.stringify(event)}`);
