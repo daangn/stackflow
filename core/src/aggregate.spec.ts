@@ -3992,7 +3992,7 @@ test("aggregate - Pause되면 이벤트가 반영되지 않고, globalTransition
       },
     ],
     transitionDuration: 300,
-    globalTransitionState: "idle",
+    globalTransitionState: "paused",
   });
 });
 
