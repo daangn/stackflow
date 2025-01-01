@@ -17,19 +17,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v4
         with:
           node-version: "20"
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v4
         with:
           path: |
             .yarn/unplugged/
-            .yarn/build-state.yml
             .yarn/install-state.gz
-            node_modules
           key: ${{ runner.os }}-yarn-v1-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-v1
@@ -39,71 +37,28 @@ jobs:
           yarn install --immutable
         shell: bash
 
-      - uses: actions/cache/restore@v3
+      - uses: actions/cache/restore@v4
         with:
           path: |
-            core/dist/
-            core/.ultra.cache.json
-            demo/build/
-            demo/dist/
-            demo/.ultra.cache.json
-            docs/.next/
-            docs/.ultra.cache.json
-            extensions/compat-await-push/dist/
-            extensions/compat-await-push/.ultra.cache.json
-            extensions/link/dist/
-            extensions/link/.ultra.cache.json
-            extensions/plugin-basic-ui/dist/
-            extensions/plugin-basic-ui/.ultra.cache.json
-            extensions/plugin-history-sync/dist/
-            extensions/plugin-history-sync/.ultra.cache.json
-            extensions/plugin-preload/dist/
-            extensions/plugin-preload/.ultra.cache.json
-            extensions/plugin-renderer-basic/dist/
-            extensions/plugin-renderer-basic/.ultra.cache.json
-            extensions/plugin-renderer-web/dist/
-            extensions/plugin-renderer-web/.ultra.cache.json
-            extensions/plugin-stack-depth-change/dist/
-            extensions/plugin-stack-depth-change/.ultra.cache.json
-            integrations/react/dist/
-            integrations/react/.ultra.cache.json
-            packages/esbuild-config/.ultra.cache.json
-          key: ultra-cache-main-v2
+            **/dist/
+            **/build/
+            **/.next/
+            **/.ultra.cache.json
+          key: ${{ runner.os }}-ultra-v1-${{ github.head_ref || github.ref_name }}-${{ github.sha }}
           restore-keys: |
-            ultra-cache-main-v2
+            ${{ runner.os }}-ultra-v1-${{ github.head_ref || github.ref_name }}-
+            ${{ runner.os }}-ultra-v1-main-
 
       - name: Build the entire monorepo
         run: |
           yarn build
 
-      - uses: actions/cache/save@v3
+      - uses: actions/cache/save@v4
         if: github.event_name == 'push'
         with:
           path: |
-            core/dist/
-            core/.ultra.cache.json
-            demo/build/
-            demo/dist/
-            demo/.ultra.cache.json
-            docs/.next/
-            docs/.ultra.cache.json
-            extensions/compat-await-push/dist/
-            extensions/compat-await-push/.ultra.cache.json
-            extensions/link/dist/
-            extensions/link/.ultra.cache.json
-            extensions/plugin-basic-ui/dist/
-            extensions/plugin-basic-ui/.ultra.cache.json
-            extensions/plugin-history-sync/dist/
-            extensions/plugin-history-sync/.ultra.cache.json
-            extensions/plugin-preload/dist/
-            extensions/plugin-preload/.ultra.cache.json
-            extensions/plugin-renderer-basic/dist/
-            extensions/plugin-renderer-basic/.ultra.cache.json
-            extensions/plugin-renderer-web/dist/
-            extensions/plugin-renderer-web/.ultra.cache.json
-            extensions/plugin-stack-depth-change/dist/
-            extensions/plugin-stack-depth-change/.ultra.cache.json
-            integrations/react/dist/
-            integrations/react/.ultra.cache.json
-            packages/esbuild-config/.ultra.cache.json
-          key: ultra-cache-main-v2
+            **/dist/
+            **/build/
+            **/.next/
+            **/.ultra.cache.json
+          key: ${{ runner.os }}-ultra-v1-${{ github.head_ref || github.ref_name }}-${{ github.sha }}
