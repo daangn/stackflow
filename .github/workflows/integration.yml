@@ -125,5 +125,5 @@ jobs:
 
       - name: Check the status of Changesets
         run: |
-          yarn changeset status
+          yarn changeset status --since=main
         shell: bash
