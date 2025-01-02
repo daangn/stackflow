@@ -41,3 +41,35 @@ test("sortActivityRoutes - *이 들어간 경우 해당 라우트를 맨 뒤로 
     { activityName: "A", path: "*" },
   ]);
 });
+
+test("sortActivityRoutes - priority가 있는 경우 priority가 동일한 라우트들 간에 정렬됩니다", () => {
+  const routes = sortActivityRoutes([
+    { activityName: "A", path: "*" },
+    { activityName: "A", path: "/detailed/*" },
+    { activityName: "B", path: "/:hello/:world" },
+    { activityName: "C", path: "/:hello/:world/:foo/:bar" },
+    { activityName: "A", priority: 1, path: "*" },
+    { activityName: "A", priority: 1, path: "/detailed/*" },
+    { activityName: "B", priority: 1, path: "/:hello/:world" },
+    { activityName: "C", priority: 1, path: "/:hello/:world/:foo/:bar" },
+    { activityName: "A", priority: -1, path: "*" },
+    { activityName: "A", priority: -1, path: "/detailed/*" },
+    { activityName: "B", priority: -1, path: "/:hello/:world" },
+    { activityName: "C", priority: -1, path: "/:hello/:world/:foo/:bar" },
+  ]);
+
+  expect(routes).toStrictEqual([
+    { activityName: "C", priority: 1, path: "/:hello/:world/:foo/:bar" },
+    { activityName: "A", priority: 1, path: "/detailed/*" },
+    { activityName: "B", priority: 1, path: "/:hello/:world" },
+    { activityName: "A", priority: 1, path: "*" },
+    { activityName: "C", path: "/:hello/:world/:foo/:bar" },
+    { activityName: "A", path: "/detailed/*" },
+    { activityName: "B", path: "/:hello/:world" },
+    { activityName: "A", path: "*" },
+    { activityName: "C", priority: -1, path: "/:hello/:world/:foo/:bar" },
+    { activityName: "A", priority: -1, path: "/detailed/*" },
+    { activityName: "B", priority: -1, path: "/:hello/:world" },
+    { activityName: "A", priority: -1, path: "*" },
+  ]);
+});
