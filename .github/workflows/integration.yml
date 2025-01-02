@@ -103,6 +103,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # https://github.com/changesets/changesets/issues/1055#issuecomment-1602572294
+          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
