@@ -98,6 +98,31 @@ jobs:
           yarn typecheck
         shell: bash
 
+  changeset:
+    name: Check the status of Changesets
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - uses: actions/cache@v4
+        id: yarn-unplugged-cache
+        with:
+          path: |
+            .yarn/unplugged/
+            .yarn/install-state.gz
+          key: ${{ runner.os }}-yarn-v1-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-v1-
+
+      - name: Install the unplugged dependencies and check that the Yarn files do not change during the installation process. If an error occurs, run "yarn install" and commit and push.
+        run: |
+          yarn install --immutable
+        shell: bash
+
       - name: Check the status of Changesets
         run: |
           yarn changeset status
