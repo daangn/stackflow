@@ -10,12 +10,14 @@ import {
   makeEvent,
 } from "@stackflow/core";
 import React, { useMemo } from "react";
+import type { ActivityComponentType } from "../__internal__/ActivityComponentType";
+import type { LazyActivityComponentType } from "../__internal__/LazyActivityComponentType";
 import MainRenderer from "../__internal__/MainRenderer";
 import { makeActivityId } from "../__internal__/activity";
 import { CoreProvider } from "../__internal__/core";
 import { PluginsProvider } from "../__internal__/plugins";
 import { isBrowser, makeRef } from "../__internal__/utils";
-import type { ActivityComponentType, StackflowReactPlugin } from "../stable";
+import type { StackflowReactPlugin } from "../stable";
 import type { Actions } from "./Actions";
 import { ConfigProvider } from "./ConfigProvider";
 import type { StackComponentType } from "./StackComponentType";
@@ -31,7 +33,9 @@ export type StackflowPluginsEntry =
 export type StackflowInput<
   T extends ActivityDefinition<string>,
   R extends {
-    [activityName in T["name"]]: ActivityComponentType<any>;
+    [activityName in T["name"]]:
+      | ActivityComponentType<any>
+      | LazyActivityComponentType<any>;
   },
 > = {
   config: Config<T>;
@@ -48,7 +52,9 @@ export type StackflowOutput = {
 export function stackflow<
   T extends ActivityDefinition<string>,
   R extends {
-    [activityName in T["name"]]: ActivityComponentType<any>;
+    [activityName in T["name"]]:
+      | ActivityComponentType<any>
+      | LazyActivityComponentType<any>;
   },
 >(input: StackflowInput<T, R>): StackflowOutput {
   const plugins = [
@@ -59,7 +65,7 @@ export function stackflow<
     /**
      * `loaderPlugin()` must be placed after `historySyncPlugin()`
      */
-    loaderPlugin(input.config),
+    loaderPlugin(input),
   ];
 
   const enoughPastTime = () =>
@@ -167,8 +173,6 @@ export function stackflow<
       </ConfigProvider>
     );
   });
-
-  Stack.displayName = "Stack";
 
   return {
     Stack,

@@ -2,9 +2,9 @@ import type { Activity } from "../Stack";
 import type { PushedEvent, ReplacedEvent } from "../event-types";
 import { findIndices, last } from "../utils";
 
-export default function findNewActivityIndex(
-  event: PushedEvent | ReplacedEvent,
+export function findNewActivityIndex(
   activities: Activity[],
+  event: PushedEvent | ReplacedEvent,
 ) {
   switch (event.name) {
     case "Pushed":

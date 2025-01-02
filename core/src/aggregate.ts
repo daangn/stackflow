@@ -1,54 +1,40 @@
-import type { Activity, Stack } from "./Stack";
-import findTargetActivityIndexes from "./activity-utils/findTargetActivityIndexes";
-import { makeActivitiesReducers } from "./activity-utils/makeActivitiesReducers";
-import { makeActivityReducers } from "./activity-utils/makeActivityReducers";
+import type { Stack } from "./Stack";
+import { makeStackReducer } from "./activity-utils/makeStackReducer";
 import type { DomainEvent } from "./event-types";
 import { filterEvents, validateEvents } from "./event-utils";
 import { compareBy, uniqBy } from "./utils";
 
-export function aggregate(events: DomainEvent[], now: number): Stack {
-  const sortedEvents = uniqBy(
-    [...events].sort((a, b) => compareBy(a, b, (e) => e.id)),
+export function aggregate(inputEvents: DomainEvent[], now: number): Stack {
+  /**
+   * 1. Pre-process
+   */
+  const events = uniqBy(
+    [...inputEvents].sort((a, b) => compareBy(a, b, (e) => e.id)),
     (e) => e.id,
   );
 
-  validateEvents(sortedEvents);
+  /**
+   * 2. Validate events
+   */
+  validateEvents(events);
 
-  const initEvent = filterEvents(sortedEvents, "Initialized")[0];
-  const activityRegisteredEvents = filterEvents(events, "ActivityRegistered");
-  const { transitionDuration } = initEvent;
+  /**
+   * 3. Run reducer
+   */
+  const initializedEvent = filterEvents(events, "Initialized")[0];
+  const initialStackState: Stack = {
+    activities: [],
+    globalTransitionState: "idle",
+    registeredActivities: [],
+    transitionDuration: 0,
+  };
+  const stackReducer = makeStackReducer({ now, initializedEvent });
+  const stack = events.reduce(stackReducer, initialStackState);
 
-  const activities = sortedEvents.reduce(
-    (activities: Activity[], event: DomainEvent) => {
-      const isTransitionDone = now - event.eventDate >= transitionDuration;
-
-      const targets = findTargetActivityIndexes(
-        activities,
-        event,
-        isTransitionDone,
-      );
-
-      const activityReducer = makeActivityReducers(isTransitionDone);
-
-      const activitiesReducer = makeActivitiesReducers(isTransitionDone);
-
-      const newActivities = activitiesReducer(activities, event);
-
-      targets.forEach((targetIdx) => {
-        newActivities[targetIdx] = activityReducer(
-          newActivities[targetIdx],
-          event,
-        );
-      });
-
-      return newActivities;
-    },
-    [],
-  );
-
-  const uniqActivities = uniqBy(activities, (activity) => activity.id);
-
-  const visibleActivities = uniqActivities.filter(
+  /**
+   * 4. Post-process
+   */
+  const visibleActivities = stack.activities.filter(
     (activity) =>
       activity.transitionState === "enter-active" ||
       activity.transitionState === "enter-done" ||
@@ -63,16 +49,9 @@ export function aggregate(events: DomainEvent[], now: number): Stack {
   const lastVisibleActivity = visibleActivities[visibleActivities.length - 1];
   const lastEnteredActivity = enteredActivities[enteredActivities.length - 1];
 
-  const globalTransitionState = activities.find(
-    (activity) =>
-      activity.transitionState === "enter-active" ||
-      activity.transitionState === "exit-active",
-  )
-    ? "loading"
-    : "idle";
-
   const output: Stack = {
-    activities: uniqActivities
+    ...stack,
+    activities: stack.activities
       .map((activity) => {
         const zIndex = visibleActivities.findIndex(
           ({ id }) => id === activity.id,
@@ -85,11 +64,7 @@ export function aggregate(events: DomainEvent[], now: number): Stack {
           params: activity.params,
           steps: activity.steps,
           enteredBy: activity.enteredBy,
-          ...(activity.exitedBy
-            ? {
-                exitedBy: activity.exitedBy,
-              }
-            : null),
+          zIndex,
           isTop: lastVisibleActivity?.id === activity.id,
           isActive: lastEnteredActivity?.id === activity.id,
           isRoot:
@@ -97,7 +72,11 @@ export function aggregate(events: DomainEvent[], now: number): Stack {
             (zIndex === 1 &&
               activity.transitionState === "enter-active" &&
               activity.enteredBy.name === "Replaced"),
-          zIndex,
+          ...(activity.exitedBy
+            ? {
+                exitedBy: activity.exitedBy,
+              }
+            : null),
           ...(activity.context
             ? {
                 context: activity.context,
@@ -106,16 +85,6 @@ export function aggregate(events: DomainEvent[], now: number): Stack {
         };
       })
       .sort((a, b) => compareBy(a, b, (activity) => activity.id)),
-    registeredActivities: activityRegisteredEvents.map((event) => ({
-      name: event.activityName,
-      ...(event.activityParamsSchema
-        ? {
-            paramsSchema: event.activityParamsSchema,
-          }
-        : null),
-    })),
-    transitionDuration,
-    globalTransitionState,
   };
 
   return output;

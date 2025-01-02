@@ -3931,3 +3931,155 @@ test("aggregate - StepPushedEvent must be ignored when top activity is not targe
     globalTransitionState: "idle",
   });
 });
+
+test("aggregate - Pause되면 이벤트가 반영되지 않고, globalTransitionState를 paused으로 바꿉니다", () => {
+  let pushedEvent1: PushedEvent;
+  let pushedEvent2: PushedEvent;
+
+  const events = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+    registeredEvent({
+      activityName: "a",
+    }),
+    registeredEvent({
+      activityName: "b",
+    }),
+    (pushedEvent1 = makeEvent("Pushed", {
+      activityId: "activity-1",
+      activityName: "a",
+      eventDate: enoughPastTime(),
+      activityParams: {},
+    })),
+    makeEvent("Paused", {}),
+    (pushedEvent2 = makeEvent("Pushed", {
+      activityId: "activity-2",
+      activityName: "b",
+      activityParams: {},
+    })),
+  ];
+
+  const output = aggregate(events, nowTime());
+
+  expect(output).toStrictEqual({
+    activities: [
+      activity({
+        id: "activity-1",
+        name: "a",
+        transitionState: "enter-done",
+        params: {},
+        steps: [
+          {
+            id: "activity-1",
+            params: {},
+            enteredBy: pushedEvent1,
+          },
+        ],
+        enteredBy: pushedEvent1,
+        isActive: true,
+        isTop: true,
+        isRoot: true,
+        zIndex: 0,
+      }),
+    ],
+    registeredActivities: [
+      {
+        name: "a",
+      },
+      {
+        name: "b",
+      },
+    ],
+    transitionDuration: 300,
+    globalTransitionState: "paused",
+  });
+});
+
+test("aggregate - Resumed 되면 해당 시간 이후로 Transition이 정상작동합니다", () => {
+  let pushedEvent1: PushedEvent;
+  let pushedEvent2: PushedEvent;
+
+  const events = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+    registeredEvent({
+      activityName: "a",
+    }),
+    registeredEvent({
+      activityName: "b",
+    }),
+    (pushedEvent1 = makeEvent("Pushed", {
+      activityId: "activity-1",
+      activityName: "a",
+      eventDate: enoughPastTime(),
+      activityParams: {},
+    })),
+    makeEvent("Paused", {
+      eventDate: enoughPastTime(),
+    }),
+    (pushedEvent2 = makeEvent("Pushed", {
+      activityId: "activity-2",
+      activityName: "b",
+      eventDate: enoughPastTime(),
+      activityParams: {},
+    })),
+    makeEvent("Resumed", {
+      eventDate: nowTime() - 150,
+    }),
+  ];
+
+  const output = aggregate(events, nowTime());
+
+  expect(output).toStrictEqual({
+    activities: [
+      activity({
+        id: "activity-1",
+        name: "a",
+        transitionState: "enter-done",
+        params: {},
+        steps: [
+          {
+            id: "activity-1",
+            params: {},
+            enteredBy: expect.anything(),
+          },
+        ],
+        enteredBy: expect.anything(),
+        isActive: false,
+        isTop: false,
+        isRoot: true,
+        zIndex: 0,
+      }),
+      activity({
+        id: "activity-2",
+        name: "b",
+        transitionState: "enter-active",
+        params: {},
+        steps: [
+          {
+            id: "activity-2",
+            params: {},
+            enteredBy: expect.anything(),
+          },
+        ],
+        enteredBy: expect.anything(),
+        isActive: true,
+        isTop: true,
+        isRoot: false,
+        zIndex: 1,
+      }),
+    ],
+    registeredActivities: [
+      {
+        name: "a",
+      },
+      {
+        name: "b",
+      },
+    ],
+    transitionDuration: 300,
+    globalTransitionState: "loading",
+  });
+});
