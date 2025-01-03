@@ -14,6 +14,7 @@ import type { StackflowReactPlugin } from "../__internal__/StackflowReactPlugin"
 import { makeActivityId, makeStepId } from "../__internal__/activity";
 import { CoreProvider } from "../__internal__/core";
 import { PluginsProvider } from "../__internal__/plugins";
+import { useDeferredValue, useSyncExternalStore } from "../__internal__/shims";
 import { isBrowser, makeRef } from "../__internal__/utils";
 import type { BaseActivities } from "./BaseActivities";
 import type { UseActionsOutputType } from "./useActions";
@@ -69,6 +70,12 @@ export type StackflowOptions<T extends BaseActivities> = {
    * Inject stackflow plugins
    */
   plugins?: Array<StackflowPluginsEntry<NoInfer<T>>>;
+
+  /**
+   * Render stack state with `useDeferredValue()` (concurrent rendering)
+   * https://react.dev/reference/react/useDeferredValue
+   */
+  useDeferredStack?: boolean;
 };
 
 export type StackflowOutput<T extends BaseActivities> = {
@@ -134,6 +141,8 @@ export function stackflow<T extends BaseActivities>(
       [key: string]: ActivityComponentType;
     },
   );
+
+  const useDeferredStack = options.useDeferredStack ?? true;
 
   const enoughPastTime = () =>
     new Date().getTime() - options.transitionDuration * 2;
@@ -218,9 +227,20 @@ export function stackflow<T extends BaseActivities>(
       return store;
     }, []);
 
+    const coreState = useSyncExternalStore(
+      coreStore.subscribe,
+      coreStore.actions.getStack,
+      coreStore.actions.getStack,
+    );
+
+    const deferredCoreState = useDeferredValue(coreState);
+
     return (
       <PluginsProvider value={coreStore.pluginInstances}>
-        <CoreProvider coreStore={coreStore}>
+        <CoreProvider
+          coreStore={coreStore}
+          coreState={useDeferredStack ? deferredCoreState : coreState}
+        >
           <MainRenderer
             activityComponentMap={activityComponentMap}
             initialContext={props.initialContext}
