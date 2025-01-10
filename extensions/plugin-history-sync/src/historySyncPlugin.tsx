@@ -24,7 +24,7 @@ type ConfigHistorySync = {
 
 declare module "@stackflow/config" {
   interface ActivityDefinition<ActivityName extends string> {
-    path: string;
+    path: string | string[];
   }
 
   interface Config<T extends ActivityDefinition<string>> {
