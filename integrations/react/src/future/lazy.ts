@@ -16,7 +16,7 @@ export function lazy<T extends { [K in keyof T]: any } = {}>(
   };
 
   const LazyComponent: LazyActivityComponentType<T> = React.lazy(cachedLoad);
-  LazyComponent._stackflow = { type: "lazy", load: cachedLoad };
+  LazyComponent._load = cachedLoad;
 
   return LazyComponent;
 }

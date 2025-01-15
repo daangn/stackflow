@@ -84,10 +84,7 @@ export function loaderPlugin<
         config: input.config,
       });
 
-      if (
-        loaderData instanceof Promise ||
-        "_stackflow" in matchActivityComponent
-      ) {
+      if (loaderData instanceof Promise || "_load" in matchActivityComponent) {
         pause();
       }
 
@@ -96,11 +93,8 @@ export function loaderPlugin<
       if (loaderData instanceof Promise) {
         promises.push(loaderData);
       }
-      if (
-        "_stackflow" in matchActivityComponent &&
-        matchActivityComponent._stackflow?.type === "lazy"
-      ) {
-        promises.push(matchActivityComponent._stackflow.load());
+      if ("_load" in matchActivityComponent && matchActivityComponent._load) {
+        promises.push(matchActivityComponent._load());
       }
 
       Promise.all(promises).finally(() => {
@@ -117,7 +111,7 @@ export function loaderPlugin<
     },
     onBeforeReplace({
       actionParams,
-      actions: { overrideActionParams, dispatchEvent, pause, resume },
+      actions: { overrideActionParams, pause, resume },
     }) {
       const { activityName, activityParams, activityContext } = actionParams;
 
@@ -138,10 +132,7 @@ export function loaderPlugin<
         config: input.config,
       });
 
-      if (
-        loaderData instanceof Promise ||
-        "_stackflow" in matchActivityComponent
-      ) {
+      if (loaderData instanceof Promise || "_load" in matchActivityComponent) {
         pause();
       }
 
@@ -150,11 +141,8 @@ export function loaderPlugin<
       if (loaderData instanceof Promise) {
         promises.push(loaderData);
       }
-      if (
-        "_stackflow" in matchActivityComponent &&
-        matchActivityComponent._stackflow?.type === "lazy"
-      ) {
-        promises.push(matchActivityComponent._stackflow.load());
+      if ("_load" in matchActivityComponent && matchActivityComponent._load) {
+        promises.push(matchActivityComponent._load());
       }
 
       Promise.all(promises).finally(() => {
