@@ -61,101 +61,63 @@ export function loaderPlugin<
         };
       });
     },
-    onBeforePush({
-      actionParams,
-      actions: { overrideActionParams, pause, resume },
-    }) {
-      const { activityName, activityParams, activityContext } = actionParams;
-
-      const matchActivity = input.config.activities.find(
-        (activity) => activity.name === activityName,
-      );
-      const matchActivityComponent =
-        input.components[activityName as T["name"]];
-
-      const loader = matchActivity?.loader;
-
-      if (!loader || !matchActivityComponent) {
-        return;
-      }
-
-      const loaderData = loader({
-        params: activityParams,
-        config: input.config,
-      });
-
-      if (loaderData instanceof Promise || "_load" in matchActivityComponent) {
-        pause();
-      }
-
-      const promises: Array<Promise<any>> = [];
-
-      if (loaderData instanceof Promise) {
-        promises.push(loaderData);
-      }
-      if ("_load" in matchActivityComponent && matchActivityComponent._load) {
-        promises.push(matchActivityComponent._load());
-      }
-
-      Promise.all(promises).finally(() => {
-        resume();
-      });
-
-      overrideActionParams({
-        ...actionParams,
-        activityContext: {
-          ...activityContext,
-          loaderData,
-        },
-      });
-    },
-    onBeforeReplace({
-      actionParams,
-      actions: { overrideActionParams, pause, resume },
-    }) {
-      const { activityName, activityParams, activityContext } = actionParams;
-
-      const matchActivity = input.config.activities.find(
-        (activity) => activity.name === activityName,
-      );
-      const matchActivityComponent =
-        input.components[activityName as T["name"]];
-
-      const loader = matchActivity?.loader;
-
-      if (!loader || !matchActivityComponent) {
-        return;
-      }
-
-      const loaderData = loader({
-        params: activityParams,
-        config: input.config,
-      });
-
-      if (loaderData instanceof Promise || "_load" in matchActivityComponent) {
-        pause();
-      }
-
-      const promises: Array<Promise<any>> = [];
-
-      if (loaderData instanceof Promise) {
-        promises.push(loaderData);
-      }
-      if ("_load" in matchActivityComponent && matchActivityComponent._load) {
-        promises.push(matchActivityComponent._load());
-      }
-
-      Promise.all(promises).finally(() => {
-        resume();
-      });
-
-      overrideActionParams({
-        ...actionParams,
-        activityContext: {
-          ...activityContext,
-          loaderData,
-        },
-      });
-    },
+    onBeforePush: createBeforeRouteHandler(input),
+    onBeforeReplace: createBeforeRouteHandler(input),
   });
+}
+
+type OnBeforeRoute = NonNullable<
+  | ReturnType<StackflowReactPlugin>["onBeforePush"]
+  | ReturnType<StackflowReactPlugin>["onBeforeReplace"]
+>;
+function createBeforeRouteHandler<
+  T extends ActivityDefinition<string>,
+  R extends {
+    [activityName in T["name"]]: ActivityComponentType<any>;
+  },
+>(input: StackflowInput<T, R>): OnBeforeRoute {
+  return ({
+    actionParams,
+    actions: { overrideActionParams, pause, resume },
+  }) => {
+    const { activityName, activityParams, activityContext } = actionParams;
+
+    const matchActivity = input.config.activities.find(
+      (activity) => activity.name === activityName,
+    );
+    const matchActivityComponent = input.components[activityName as T["name"]];
+
+    const loader = matchActivity?.loader;
+
+    if (!loader || !matchActivityComponent) {
+      return;
+    }
+
+    const loaderData = loader({
+      params: activityParams,
+      config: input.config,
+    });
+
+    const loaderDataPromise =
+      loaderData instanceof Promise ? loaderData : undefined;
+    const lazyComponentPromise =
+      "_load" in matchActivityComponent
+        ? matchActivityComponent._load?.()
+        : undefined;
+
+    if (loaderDataPromise || lazyComponentPromise) {
+      pause();
+    }
+    Promise.all([loaderDataPromise, lazyComponentPromise]).finally(() => {
+      resume();
+    });
+
+    overrideActionParams({
+      ...actionParams,
+      activityContext: {
+        ...activityContext,
+        loaderData,
+      },
+    });
+  };
 }
