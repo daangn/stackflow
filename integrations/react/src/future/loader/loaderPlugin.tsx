@@ -4,16 +4,13 @@ import type {
   RegisteredActivityName,
 } from "@stackflow/config";
 import type { ActivityComponentType } from "../../__internal__/ActivityComponentType";
-import type { LazyActivityComponentType } from "../../__internal__/LazyActivityComponentType";
 import type { StackflowReactPlugin } from "../../__internal__/StackflowReactPlugin";
 import type { StackflowInput } from "../stackflow";
 
 export function loaderPlugin<
   T extends ActivityDefinition<RegisteredActivityName>,
   R extends {
-    [activityName in T["name"]]:
-      | ActivityComponentType<any>
-      | LazyActivityComponentType<any>;
+    [activityName in T["name"]]: ActivityComponentType<any>;
   },
 >(input: StackflowInput<T, R>): StackflowReactPlugin {
   return () => ({
@@ -66,7 +63,7 @@ export function loaderPlugin<
     },
     onBeforePush({
       actionParams,
-      actions: { overrideActionParams, dispatchEvent, pause, resume },
+      actions: { overrideActionParams, pause, resume },
     }) {
       const { activityName, activityParams, activityContext } = actionParams;
 

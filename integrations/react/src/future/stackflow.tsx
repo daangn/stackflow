@@ -12,7 +12,6 @@ import {
 } from "@stackflow/core";
 import React, { useMemo } from "react";
 import type { ActivityComponentType } from "../__internal__/ActivityComponentType";
-import type { LazyActivityComponentType } from "../__internal__/LazyActivityComponentType";
 import MainRenderer from "../__internal__/MainRenderer";
 import { makeActivityId } from "../__internal__/activity";
 import { CoreProvider } from "../__internal__/core";
@@ -34,9 +33,7 @@ export type StackflowPluginsEntry =
 export type StackflowInput<
   T extends ActivityDefinition<RegisteredActivityName>,
   R extends {
-    [activityName in T["name"]]:
-      | ActivityComponentType<any>
-      | LazyActivityComponentType<any>;
+    [activityName in T["name"]]: ActivityComponentType<any>;
   },
 > = {
   config: Config<T>;
@@ -53,9 +50,7 @@ export type StackflowOutput = {
 export function stackflow<
   T extends ActivityDefinition<RegisteredActivityName>,
   R extends {
-    [activityName in T["name"]]:
-      | ActivityComponentType<any>
-      | LazyActivityComponentType<any>;
+    [activityName in T["name"]]: ActivityComponentType<any>;
   },
 >(input: StackflowInput<T, R>): StackflowOutput {
   const plugins = [

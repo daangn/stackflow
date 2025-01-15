@@ -1,4 +1,6 @@
-import type React from "react";
+import type { LazyActivityComponentType } from "./LazyActivityComponentType";
+import type { StaticActivityComponentType } from "./StaticActivityComponentType";
 
 export type ActivityComponentType<T extends { [K in keyof T]: any } = {}> =
-  React.ComponentType<{ params: T }>;
+  | StaticActivityComponentType<T>
+  | LazyActivityComponentType<T>;

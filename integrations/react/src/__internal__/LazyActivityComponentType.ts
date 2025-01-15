@@ -1,9 +1,9 @@
-import type { ActivityComponentType } from "./ActivityComponentType";
+import type { StaticActivityComponentType } from "./StaticActivityComponentType";
 
 export type LazyActivityComponentType<T extends { [K in keyof T]: any } = {}> =
-  React.LazyExoticComponent<ActivityComponentType<T>> & {
+  React.LazyExoticComponent<StaticActivityComponentType<T>> & {
     _stackflow?: {
       type: "lazy";
-      load: () => Promise<{ default: ActivityComponentType<T> }>;
+      load: () => Promise<{ default: StaticActivityComponentType<T> }>;
     };
   };
