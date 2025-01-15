@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  pull_request:
 
 name: Release
 
@@ -11,6 +12,7 @@ jobs:
   release:
     name: Create PR or release packages
     runs-on: ubuntu-latest
+    if: github.event_name == 'push'
     steps:
       - uses: actions/checkout@v4
 
@@ -67,3 +69,55 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
           GITHUB_TOKEN: ${{ github.token }}
+  continuous-release:
+    name: Continuous release via pkg.pr.new
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+
+      - uses: actions/cache@v4
+        id: yarn-unplugged-cache
+        with:
+          path: |
+            .yarn/unplugged/
+            .yarn/install-state.gz
+          key: ${{ runner.os }}-yarn-v1-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-v1-
+
+      - name: Install the unplugged dependencies and check that the Yarn files do not change during the installation process. If an error occurs, run "yarn install" and commit and push.
+        run: |
+          yarn install --immutable
+        shell: bash
+
+      - uses: actions/cache/restore@v4
+        with:
+          path: |
+            **/dist/
+            **/build/
+            **/.next/
+            **/.ultra.cache.json
+          key: ${{ runner.os }}-ultra-v1-${{ github.head_ref || github.ref_name }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-ultra-v1-${{ github.head_ref || github.ref_name }}-
+            ${{ runner.os }}-ultra-v1-main-
+
+      - name: Build the entire monorepo
+        run: |
+          yarn build
+
+      - uses: actions/cache/save@v4
+        with:
+          path: |
+            **/dist/
+            **/build/
+            **/.next/
+            **/.ultra.cache.json
+          key: ${{ runner.os }}-ultra-v1-${{ github.head_ref || github.ref_name }}-${{ github.sha }}
+
+      - name: Continuous release via pkg.pr.new
+        run: yarn dlx pkg-pr-new publish --compact --template './demo'
