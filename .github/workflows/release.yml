@@ -72,4 +72,4 @@ jobs:
 
       - name: Continuous release via pkg.pr.new
         if: github.event_name == 'pull_request'
-        run: yarn dlx pkg-pr-new publish --compact './**/*' --template './demo' --packageManager yarn
+        run: ./scripts/publish-preview-packages.sh ${{ github.event.pull_request.base.ref }}
