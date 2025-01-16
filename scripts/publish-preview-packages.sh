@@ -8,7 +8,8 @@ fi
 BASE_BRANCH=$1
 
 # ensure we have the latest changes from the remote
-git fetch origin
+git fetch origin $BASE_BRANCH --depth=1
+git fetch origin HEAD --depth=1
 
 if ! git show-ref --verify --quiet refs/remotes/origin/"$BASE_BRANCH"; then
   echo "Error: Base branch '$BASE_BRANCH' not found in the remote repository."
