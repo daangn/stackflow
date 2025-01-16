@@ -12,5 +12,3 @@
 > If you need integration with other front-end frameworks such as Vue.js, Svelte, etc., you can contribute using this core module.
 
 - [Documentation](https://stackflow.so)
-
-<!-- bar -->

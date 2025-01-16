@@ -8,5 +8,3 @@ export * from "./InferActivityParams";
 export * from "./Register";
 export * from "./RegisteredActivityName";
 export * from "./RegisteredActivityParamTypes";
-
-// foo
