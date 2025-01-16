@@ -67,3 +67,5 @@ const MyComponent = () => {
   )
 }
 ```
+
+<!-- baz -->
