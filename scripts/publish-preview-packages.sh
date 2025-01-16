@@ -51,7 +51,7 @@ PUBLISH_PATHS="${PUBLISH_PATHS% }"
 
 if [ -n "$PUBLISH_PATHS" ]; then
   echo "Publishing changed packages: $PUBLISH_PATHS"
-  yarn dlx pkg-pr-new publish --compact $PUBLISH_PATHS --packageManager yarn
+  yarn dlx pkg-pr-new publish --compact $PUBLISH_PATHS --packageManager yarn --template './'
 else
   echo "No publishable packages found."
   exit 0
