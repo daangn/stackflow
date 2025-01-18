@@ -1,5 +1,17 @@
 # @stackflow/react-ui-core
 
+## 1.2.1
+
+### Patch Changes
+
+- 48693e7: feat(react-ui-core): add swipe back ratio css var in other activity roots and add `transitionend` state in `useStyleEffectSwipeBack()`
+
+## 1.2.0
+
+### Minor Changes
+
+- dc35bfc: feat(react-ui-core, plugin-basic-ui): add `onSwipe*` hooks and add data attributes and css variables
+
 ## 1.1.2
 
 ## 1.1.2-canary.0

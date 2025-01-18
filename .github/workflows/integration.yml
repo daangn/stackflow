@@ -13,20 +13,18 @@ jobs:
     name: Check whether the written test passes normally
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v4
         with:
           node-version: "20"
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v4
         id: yarn-unplugged-cache
         with:
           path: |
-            '.yarn/unplugged/'
-            '.yarn/build-state.yml'
-            '.yarn/install-state.gz'
-            node_modules
+            .yarn/unplugged/
+            .yarn/install-state.gz
           key: ${{ runner.os }}-yarn-v1-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-v1-
@@ -36,38 +34,17 @@ jobs:
           yarn install --immutable
         shell: bash
 
-      - uses: actions/cache/restore@v3
+      - uses: actions/cache/restore@v4
         with:
           path: |
-            core/dist/
-            core/.ultra.cache.json
-            demo/build/
-            demo/dist/
-            demo/.ultra.cache.json
-            docs/.next/
-            docs/.ultra.cache.json
-            extensions/compat-await-push/dist/
-            extensions/compat-await-push/.ultra.cache.json
-            extensions/link/dist/
-            extensions/link/.ultra.cache.json
-            extensions/plugin-basic-ui/dist/
-            extensions/plugin-basic-ui/.ultra.cache.json
-            extensions/plugin-history-sync/dist/
-            extensions/plugin-history-sync/.ultra.cache.json
-            extensions/plugin-preload/dist/
-            extensions/plugin-preload/.ultra.cache.json
-            extensions/plugin-renderer-basic/dist/
-            extensions/plugin-renderer-basic/.ultra.cache.json
-            extensions/plugin-renderer-web/dist/
-            extensions/plugin-renderer-web/.ultra.cache.json
-            extensions/plugin-stack-depth-change/dist/
-            extensions/plugin-stack-depth-change/.ultra.cache.json
-            integrations/react/dist/
-            integrations/react/.ultra.cache.json
-            packages/esbuild-config/.ultra.cache.json
-          key: ultra-cache-main-v2
+            **/dist/
+            **/build/
+            **/.next/
+            **/.ultra.cache.json
+          key: ${{ runner.os }}-ultra-v1-${{ github.head_ref || github.ref_name }}-${{ github.sha }}
           restore-keys: |
-            ultra-cache-main-v2
+            ${{ runner.os }}-ultra-v1-${{ github.head_ref || github.ref_name }}-
+            ${{ runner.os }}-ultra-v1-main-
 
       - name: Check whether all tests written in the monorepo pass normally
         run: |
@@ -78,20 +55,18 @@ jobs:
     name: Check the TypeScript typings
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v4
         with:
           node-version: "20"
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v4
         id: yarn-unplugged-cache
         with:
           path: |
-            '.yarn/unplugged/'
-            '.yarn/build-state.yml'
-            '.yarn/install-state.gz'
-            node_modules
+            .yarn/unplugged/
+            .yarn/install-state.gz
           key: ${{ runner.os }}-yarn-v1-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-v1-
@@ -101,38 +76,17 @@ jobs:
           yarn install --immutable
         shell: bash
 
-      - uses: actions/cache/restore@v3
+      - uses: actions/cache/restore@v4
         with:
           path: |
-            core/dist/
-            core/.ultra.cache.json
-            demo/build/
-            demo/dist/
-            demo/.ultra.cache.json
-            docs/.next/
-            docs/.ultra.cache.json
-            extensions/compat-await-push/dist/
-            extensions/compat-await-push/.ultra.cache.json
-            extensions/link/dist/
-            extensions/link/.ultra.cache.json
-            extensions/plugin-basic-ui/dist/
-            extensions/plugin-basic-ui/.ultra.cache.json
-            extensions/plugin-history-sync/dist/
-            extensions/plugin-history-sync/.ultra.cache.json
-            extensions/plugin-preload/dist/
-            extensions/plugin-preload/.ultra.cache.json
-            extensions/plugin-renderer-basic/dist/
-            extensions/plugin-renderer-basic/.ultra.cache.json
-            extensions/plugin-renderer-web/dist/
-            extensions/plugin-renderer-web/.ultra.cache.json
-            extensions/plugin-stack-depth-change/dist/
-            extensions/plugin-stack-depth-change/.ultra.cache.json
-            integrations/react/dist/
-            integrations/react/.ultra.cache.json
-            packages/esbuild-config/.ultra.cache.json
-          key: ultra-cache-main-v2
+            **/dist/
+            **/build/
+            **/.next/
+            **/.ultra.cache.json
+          key: ${{ runner.os }}-ultra-v1-${{ github.head_ref || github.ref_name }}-${{ github.sha }}
           restore-keys: |
-            ultra-cache-main-v2
+            ${{ runner.os }}-ultra-v1-${{ github.head_ref || github.ref_name }}-
+            ${{ runner.os }}-ultra-v1-main-
 
       - name: Build all .d.ts of packages
         run: |
@@ -142,4 +96,37 @@ jobs:
       - name: Check the TypeScript typings of the entire monorepo
         run: |
           yarn typecheck
+        shell: bash
+
+  changeset:
+    name: Check the status of Changesets
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # https://github.com/changesets/changesets/issues/1055#issuecomment-1602572294
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - uses: actions/cache@v4
+        id: yarn-unplugged-cache
+        with:
+          path: |
+            .yarn/unplugged/
+            .yarn/install-state.gz
+          key: ${{ runner.os }}-yarn-v1-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-v1-
+
+      - name: Install the unplugged dependencies and check that the Yarn files do not change during the installation process. If an error occurs, run "yarn install" and commit and push.
+        run: |
+          yarn install --immutable
+        shell: bash
+
+      - name: Check the status of Changesets
+        run: |
+          yarn changeset status --since=origin/main
         shell: bash

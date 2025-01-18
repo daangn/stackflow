@@ -1,5 +1,23 @@
 # @stackflow/plugin-basic-ui
 
+## 1.11.1
+
+### Patch Changes
+
+- 151631b: chore(plugin-basic-ui): update react-ui-core dependency
+
+## 1.11.0
+
+### Minor Changes
+
+- f9f1399: Change to the latest AppBar style
+- dc35bfc: feat(react-ui-core, plugin-basic-ui): add `onSwipe*` hooks and add data attributes and css variables
+
+### Patch Changes
+
+- Updated dependencies [dc35bfc]
+  - @stackflow/react-ui-core@1.2.0
+
 ## 1.10.1
 
 ### Patch Changes

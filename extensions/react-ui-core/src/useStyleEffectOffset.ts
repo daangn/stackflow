@@ -32,7 +32,7 @@ export function useStyleEffectOffset({
                 $el.style.transform = "";
                 $el.style.opacity = "";
 
-                listenOnce($el, "transitionend", () => {
+                listenOnce($el, ["transitionend", "transitioncancel"], () => {
                   $el.style.transition = "";
                 });
               });

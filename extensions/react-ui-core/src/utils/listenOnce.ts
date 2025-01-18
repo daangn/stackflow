@@ -1,12 +1,16 @@
 export function listenOnce<T extends HTMLElement>(
   el: T,
-  type: keyof HTMLElementEventMap,
+  types: Array<keyof HTMLElementEventMap>,
   cb: () => void,
 ) {
   const listener = () => {
-    el.removeEventListener(type, listener);
+    types.forEach((type) => {
+      el.removeEventListener(type, listener);
+    });
     cb();
   };
 
-  el.addEventListener(type, listener);
+  types.forEach((type) => {
+    el.addEventListener(type, listener);
+  });
 }
