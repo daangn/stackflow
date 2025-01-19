@@ -52,7 +52,7 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
 
   const [initialPushedEventsByOption, initialRemainingEvents] = divideBy(
     options.initialEvents,
-    (e: DomainEvent): e is PushedEvent | StepPushedEvent => e.name === "Pushed" || e.name === "StepPushed",
+    (e): e is PushedEvent | StepPushedEvent => e.name === "Pushed" || e.name === "StepPushed",
   );
 
   const initialPushedEvents = pluginInstances.reduce(
