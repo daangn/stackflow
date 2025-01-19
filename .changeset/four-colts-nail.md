@@ -2,4 +2,4 @@
 "@stackflow/core": patch
 ---
 
-Type inference friendly `divideBy`
+Made `divideBy` to be friendly to type inference.
