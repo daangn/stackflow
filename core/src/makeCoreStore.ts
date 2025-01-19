@@ -52,7 +52,7 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
 
   const [initialPushedEventsByOption, initialRemainingEvents] = divideBy(
     options.initialEvents,
-    (e) => e.name === "Pushed" || e.name === "StepPushed",
+    (e: DomainEvent): e is PushedEvent | StepPushedEvent => e.name === "Pushed" || e.name === "StepPushed",
   );
 
   const initialPushedEvents = pluginInstances.reduce(
@@ -61,7 +61,7 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
         initialEvents,
         initialContext: options.initialContext ?? {},
       }) ?? initialEvents,
-    initialPushedEventsByOption as (PushedEvent | StepPushedEvent)[],
+    initialPushedEventsByOption,
   );
 
   const isInitialActivityIgnored =
