@@ -61,7 +61,7 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
         initialEvents,
         initialContext: options.initialContext ?? {},
       }) ?? initialEvents,
-    initialPushedEventsByOption as (PushedEvent | StepPushedEvent)[],
+    initialPushedEventsByOption,
   );
 
   const isInitialActivityIgnored =
