@@ -9,7 +9,7 @@ import {
   makeCoreStore,
   makeEvent,
 } from "@stackflow/core";
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useReducer } from "react";
 import MainRenderer from "../__internal__/MainRenderer";
 import { makeActivityId } from "../__internal__/activity";
 import { CoreProvider } from "../__internal__/core";
@@ -155,21 +155,22 @@ export function stackflow<
       return store;
     }, []);
 
-    const [activityComponentMap, setActivityComponentMap] = useState(
-      () => input.components,
+    const [activityComponentMap, setActivityComponentMap] = useReducer<
+      React.Reducer<
+        { [activityName: string]: ActivityComponentType<any> },
+        { activityName: string; Component: ActivityComponentType<any> }
+      >
+    >(
+      (map, { activityName, Component }) => ({
+        ...map,
+        [activityName]: Component,
+      }),
+      input.components,
     );
 
     return (
       <ActivityComponentMapProvider
-        value={{
-          activityComponentMap,
-          set(key, value) {
-            setActivityComponentMap((map) => ({
-              ...map,
-              [key]: value,
-            }));
-          },
-        }}
+        value={{ activityComponentMap, setActivityComponentMap }}
       >
         <ConfigProvider value={input.config}>
           <PluginsProvider value={coreStore.pluginInstances}>

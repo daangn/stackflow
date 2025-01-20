@@ -2,8 +2,11 @@ import { createContext } from "react";
 import type { ActivityComponentType } from "../stable";
 
 type Value = {
-  activityComponentMap: { [key: string]: ActivityComponentType<any> };
-  set: (key: string, value: ActivityComponentType<any>) => void;
+  activityComponentMap: { [activityName: string]: ActivityComponentType<any> };
+  setActivityComponentMap: (args: {
+    activityName: string;
+    Component: ActivityComponentType<any>;
+  }) => void;
 };
 
 export const UNSAFE_ActivityComponentMapContext = createContext<Value>(
