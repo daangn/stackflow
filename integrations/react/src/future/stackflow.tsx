@@ -66,20 +66,6 @@ export function stackflow<
     loaderPlugin(input.config),
   ];
 
-  const [activityComponentMap, setActivityComponentMap] = useState(
-    () => input.components,
-  );
-
-  const registerActivityComponent = useCallback<RegisterActivityComponentFn>(
-    ({ activityName, Component }) => {
-      setActivityComponentMap((prevState) => ({
-        ...prevState,
-        [activityName]: Component,
-      }));
-    },
-    [],
-  );
-
   const enoughPastTime = () =>
     new Date().getTime() - input.config.transitionDuration * 2;
 
@@ -111,6 +97,20 @@ export function stackflow<
             }
           : null),
       }),
+      [],
+    );
+
+    const [activityComponentMap, setActivityComponentMap] = useState(
+      () => input.components,
+    );
+
+    const registerActivityComponent = useCallback<RegisterActivityComponentFn>(
+      ({ activityName, Component }) => {
+        setActivityComponentMap((prevState) => ({
+          ...prevState,
+          [activityName]: Component,
+        }));
+      },
       [],
     );
 
