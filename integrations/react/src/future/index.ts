@@ -30,4 +30,4 @@ export {
   UNSAFE_CoreActionsContext,
   UNSAFE_CoreStateContext,
 } from "../__internal__/core/CoreProvider";
-export { UNSAFE_RegisterActivityComponentContext } from "./RegisterActivityComponentProvider";
+export { UNSAFE_ActivityComponentMapContext } from "./ActivityComponentMapProvider";

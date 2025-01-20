@@ -9,7 +9,7 @@ import {
   makeCoreStore,
   makeEvent,
 } from "@stackflow/core";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import MainRenderer from "../__internal__/MainRenderer";
 import { makeActivityId } from "../__internal__/activity";
 import { CoreProvider } from "../__internal__/core";
@@ -17,11 +17,8 @@ import { PluginsProvider } from "../__internal__/plugins";
 import { isBrowser, makeRef } from "../__internal__/utils";
 import type { ActivityComponentType, StackflowReactPlugin } from "../stable";
 import type { Actions } from "./Actions";
+import { ActivityComponentMapProvider } from "./ActivityComponentMapProvider";
 import { ConfigProvider } from "./ConfigProvider";
-import {
-  type RegisterActivityComponentFn,
-  RegisterActivityComponentProvider,
-} from "./RegisterActivityComponentProvider";
 import type { StackComponentType } from "./StackComponentType";
 import type { StepActions } from "./StepActions";
 import { loaderPlugin } from "./loader";
@@ -100,20 +97,6 @@ export function stackflow<
       [],
     );
 
-    const [activityComponentMap, setActivityComponentMap] = useState(
-      () => input.components,
-    );
-
-    const registerActivityComponent = useCallback<RegisterActivityComponentFn>(
-      ({ activityName, Component }) => {
-        setActivityComponentMap((prevState) => ({
-          ...prevState,
-          [activityName]: Component,
-        }));
-      },
-      [],
-    );
-
     const coreStore = useMemo(() => {
       const prevCoreStore = getCoreStore();
 
@@ -172,8 +155,22 @@ export function stackflow<
       return store;
     }, []);
 
+    const [activityComponentMap, setActivityComponentMap] = useState(
+      () => input.components,
+    );
+
     return (
-      <RegisterActivityComponentProvider value={registerActivityComponent}>
+      <ActivityComponentMapProvider
+        value={{
+          activityComponentMap,
+          set(key, value) {
+            setActivityComponentMap((map) => ({
+              ...map,
+              [key]: value,
+            }));
+          },
+        }}
+      >
         <ConfigProvider value={input.config}>
           <PluginsProvider value={coreStore.pluginInstances}>
             <CoreProvider coreStore={coreStore}>
@@ -184,7 +181,7 @@ export function stackflow<
             </CoreProvider>
           </PluginsProvider>
         </ConfigProvider>
-      </RegisterActivityComponentProvider>
+      </ActivityComponentMapProvider>
     );
   });
 
