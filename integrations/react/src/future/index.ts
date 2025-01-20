@@ -22,3 +22,12 @@ export * from "./loader/useLoaderData";
 export * from "./useFlow";
 export * from "./useStepFlow";
 export * from "./useConfig";
+
+/**
+ * Unsafe API
+ */
+export {
+  UNSAFE_CoreActionsContext,
+  UNSAFE_CoreStateContext,
+} from "../__internal__/core/CoreProvider";
+export { UNSAFE_RegisterActivityComponentContext } from "./RegisterActivityComponentProvider";

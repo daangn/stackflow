@@ -9,7 +9,7 @@ import {
   makeCoreStore,
   makeEvent,
 } from "@stackflow/core";
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import MainRenderer from "../__internal__/MainRenderer";
 import { makeActivityId } from "../__internal__/activity";
 import { CoreProvider } from "../__internal__/core";
@@ -18,6 +18,10 @@ import { isBrowser, makeRef } from "../__internal__/utils";
 import type { ActivityComponentType, StackflowReactPlugin } from "../stable";
 import type { Actions } from "./Actions";
 import { ConfigProvider } from "./ConfigProvider";
+import {
+  type RegisterActivityComponentFn,
+  RegisterActivityComponentProvider,
+} from "./RegisterActivityComponentProvider";
 import type { StackComponentType } from "./StackComponentType";
 import type { StepActions } from "./StepActions";
 import { loaderPlugin } from "./loader";
@@ -61,6 +65,20 @@ export function stackflow<
      */
     loaderPlugin(input.config),
   ];
+
+  const [activityComponentMap, setActivityComponentMap] = useState(
+    () => input.components,
+  );
+
+  const registerActivityComponent = useCallback<RegisterActivityComponentFn>(
+    ({ activityName, Component }) => {
+      setActivityComponentMap((prevState) => ({
+        ...prevState,
+        [activityName]: Component,
+      }));
+    },
+    [],
+  );
 
   const enoughPastTime = () =>
     new Date().getTime() - input.config.transitionDuration * 2;
@@ -155,16 +173,18 @@ export function stackflow<
     }, []);
 
     return (
-      <ConfigProvider value={input.config}>
-        <PluginsProvider value={coreStore.pluginInstances}>
-          <CoreProvider coreStore={coreStore}>
-            <MainRenderer
-              activityComponentMap={input.components}
-              initialContext={initialContext}
-            />
-          </CoreProvider>
-        </PluginsProvider>
-      </ConfigProvider>
+      <RegisterActivityComponentProvider value={registerActivityComponent}>
+        <ConfigProvider value={input.config}>
+          <PluginsProvider value={coreStore.pluginInstances}>
+            <CoreProvider coreStore={coreStore}>
+              <MainRenderer
+                activityComponentMap={activityComponentMap}
+                initialContext={initialContext}
+              />
+            </CoreProvider>
+          </PluginsProvider>
+        </ConfigProvider>
+      </RegisterActivityComponentProvider>
     );
   });
 

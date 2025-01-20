@@ -1,5 +1,5 @@
 import { useContext } from "react";
 
-import { CoreActionsContext } from "./CoreProvider";
+import { UNSAFE_CoreActionsContext } from "./CoreProvider";
 
-export const useCoreActions = () => useContext(CoreActionsContext);
+export const useCoreActions = () => useContext(UNSAFE_CoreActionsContext);
