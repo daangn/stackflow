@@ -1,6 +1,5 @@
 import UrlPattern from "url-pattern";
-
-import type { Route } from "./RouteLike";
+import type { ActivityRoute } from "./ActivityRoute";
 
 export function pathToUrl(path: string) {
   return new URL(path, "file://");
@@ -46,9 +45,11 @@ export interface UrlPatternOptions {
 }
 
 export function makeTemplate<T>(
-  { path, decode }: Route<T>,
+  route: { activityName: string } & Partial<ActivityRoute<T>>,
   urlPatternOptions?: UrlPatternOptions,
 ) {
+  const path =
+    route.path ?? `/.activities/${encodeURIComponent(route.activityName)}`;
   const pattern = new UrlPattern(`${path}(/)`, urlPatternOptions);
 
   const onlyAsterisk = path === "*" || path === "/*";
@@ -103,7 +104,7 @@ export function makeTemplate<T>(
         ...pathParams,
       };
 
-      return decode ? decode(params) : params;
+      return route.decode ? route.decode(params) : params;
     },
     variableCount,
   };

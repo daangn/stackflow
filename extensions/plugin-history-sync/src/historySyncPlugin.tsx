@@ -81,6 +81,14 @@ export function historySyncPlugin<
 
   const activityRoutes = sortActivityRoutes(normalizeActivityRouteMap(routes));
 
+  function matchActivityRoute(activityName: string) {
+    return (
+      activityRoutes.find((r) => r.activityName === activityName) ?? {
+        activityName,
+      }
+    );
+  }
+
   return () => {
     let pushFlag = 0;
     let silentFlag = false;
@@ -193,9 +201,7 @@ export function historySyncPlugin<
       onInit({ actions: { getStack, dispatchEvent, push, stepPush } }) {
         const rootActivity = getStack().activities[0];
 
-        const match = activityRoutes.find(
-          (r) => r.activityName === rootActivity.name,
-        )!;
+        const match = matchActivityRoute(rootActivity.name);
         const template = makeTemplate(match, options.urlPatternOptions);
 
         const lastStep = last(rootActivity.steps);
@@ -347,10 +353,7 @@ export function historySyncPlugin<
           return;
         }
 
-        const match = activityRoutes.find(
-          (r) => r.activityName === activity.name,
-        )!;
-
+        const match = matchActivityRoute(activity.name);
         const template = makeTemplate(match, options.urlPatternOptions);
 
         requestHistoryTick(() => {
@@ -371,10 +374,7 @@ export function historySyncPlugin<
           return;
         }
 
-        const match = activityRoutes.find(
-          (r) => r.activityName === activity.name,
-        )!;
-
+        const match = matchActivityRoute(activity.name);
         const template = makeTemplate(match, options.urlPatternOptions);
 
         requestHistoryTick(() => {
@@ -395,10 +395,7 @@ export function historySyncPlugin<
           return;
         }
 
-        const match = activityRoutes.find(
-          (r) => r.activityName === activity.name,
-        )!;
-
+        const match = matchActivityRoute(activity.name);
         const template = makeTemplate(match, options.urlPatternOptions);
 
         requestHistoryTick(() => {
@@ -418,10 +415,7 @@ export function historySyncPlugin<
           return;
         }
 
-        const match = activityRoutes.find(
-          (r) => r.activityName === activity.name,
-        )!;
-
+        const match = matchActivityRoute(activity.name);
         const template = makeTemplate(match, options.urlPatternOptions);
 
         requestHistoryTick(() => {
@@ -438,9 +432,7 @@ export function historySyncPlugin<
         });
       },
       onBeforePush({ actionParams, actions: { overrideActionParams } }) {
-        const match = activityRoutes.find(
-          (r) => r.activityName === actionParams.activityName,
-        )!;
+        const match = matchActivityRoute(actionParams.activityName);
         const template = makeTemplate(match, options.urlPatternOptions);
         const path = template.fill(actionParams.activityParams);
 
@@ -456,9 +448,7 @@ export function historySyncPlugin<
         actionParams,
         actions: { overrideActionParams, getStack },
       }) {
-        const match = activityRoutes.find(
-          (r) => r.activityName === actionParams.activityName,
-        )!;
+        const match = matchActivityRoute(actionParams.activityName);
         const template = makeTemplate(match, options.urlPatternOptions);
         const path = template.fill(actionParams.activityParams);
 

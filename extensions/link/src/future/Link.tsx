@@ -44,7 +44,10 @@ export function Link<K extends RegisteredActivityName>(props: LinkProps<K>) {
     const { path } = match;
     const { makeTemplate, urlPatternOptions } = config.historySync;
 
-    const template = makeTemplate({ path }, urlPatternOptions);
+    const template = makeTemplate(
+      { activityName: props.activityName, path },
+      urlPatternOptions,
+    );
 
     return template.fill(props.activityParams);
   }, [config, props.activityName, props.activityParams]);
