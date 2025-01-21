@@ -5,4 +5,4 @@
 "@stackflow/config": patch
 ---
 
-fix(plugin-history-sync): add decode interface to Config and support path: string[]
+fix: add `decode()` interface to `Config` and support `path: string[]`
