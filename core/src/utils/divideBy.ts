@@ -1,8 +1,8 @@
-export const divideBy = <T>(
+export const divideBy = <T, U extends T>(
   arr: T[],
-  predicate: (t: T) => boolean,
-): [T[], T[]] => {
-  const satisfied: T[] = [];
+  predicate: (t: T) => t is U,
+): [U[], T[]] => {
+  const satisfied: U[] = [];
   const unsatisfied: T[] = [];
 
   arr.forEach((element) => {

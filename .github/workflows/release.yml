@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  pull_request:
 
 name: Release
 
@@ -13,6 +14,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
@@ -60,6 +63,7 @@ jobs:
           key: ${{ runner.os }}-ultra-v1-${{ github.head_ref || github.ref_name }}-${{ github.sha }}
 
       - name: Create PR or release packages
+        if: github.event_name == 'push'
         uses: changesets/action@v1
         with:
           publish: yarn changeset publish
@@ -67,3 +71,7 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
           GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Continuous release via pkg.pr.new
+        if: github.event_name == 'pull_request'
+        run: ./scripts/publish-preview-packages.sh ${{ github.event.pull_request.base.ref }}
