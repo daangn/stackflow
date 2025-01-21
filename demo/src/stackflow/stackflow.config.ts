@@ -13,14 +13,6 @@ export const config = defineConfig({
       name: "Article",
       path: "/articles/:articleId",
       loader: articleLoader,
-      decode(params) {
-        const articleId = params.articleId;
-        const title = `${params.title}wow`;
-        return {
-          articleId,
-          title,
-        };
-      },
     },
   ],
   transitionDuration: 270,
