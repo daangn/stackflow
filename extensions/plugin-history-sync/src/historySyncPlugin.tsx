@@ -1,4 +1,9 @@
-import type { ActivityDefinition, Config } from "@stackflow/config";
+import type {
+  ActivityDefinition,
+  Config,
+  InferActivityParams,
+  RegisteredActivityName,
+} from "@stackflow/config";
 import { id, makeEvent } from "@stackflow/core";
 import type { StackflowReactPlugin } from "@stackflow/react";
 import type { History, Listener } from "history";
@@ -23,11 +28,14 @@ type ConfigHistorySync = {
 };
 
 declare module "@stackflow/config" {
-  interface ActivityDefinition<ActivityName extends string> {
-    path: string;
+  interface ActivityDefinition<ActivityName extends RegisteredActivityName> {
+    path: string | string[];
+    decode?: (
+      params: Record<string, string>,
+    ) => InferActivityParams<ActivityName>;
   }
 
-  interface Config<T extends ActivityDefinition<string>> {
+  interface Config<T extends ActivityDefinition<RegisteredActivityName>> {
     historySync?: ConfigHistorySync;
   }
 }
@@ -39,7 +47,7 @@ type HistorySyncPluginOptions<T, K extends Extract<keyof T, string>> = (
       };
     }
   | {
-      config: Config<ActivityDefinition<string>>;
+      config: Config<ActivityDefinition<RegisteredActivityName>>;
     }
 ) & {
   fallbackActivity: (args: { initialContext: any }) => K;
@@ -71,13 +79,29 @@ export function historySyncPlugin<
   const routes =
     "routes" in options
       ? options.routes
-      : options.config.activities.reduce(
-          (acc, a) => ({
+      : options.config.activities.reduce((acc, a) => {
+          if (Array.isArray(a.path)) {
+            const routes: RouteLike<unknown> = a.path.map((path) => ({
+              path,
+              decode: a.decode,
+            }));
+
+            return {
+              ...acc,
+              [a.name]: routes,
+            };
+          }
+
+          const route: RouteLike<unknown> = {
+            path: a.path,
+            decode: a.decode,
+          };
+
+          return {
             ...acc,
-            [a.name]: a.path,
-          }),
-          {},
-        );
+            [a.name]: route,
+          };
+        }, {});
 
   const activityRoutes = sortActivityRoutes(normalizeActivityRouteMap(routes));
 
