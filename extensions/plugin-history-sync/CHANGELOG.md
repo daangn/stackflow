@@ -1,5 +1,11 @@
 # @stackflow/plugin-history-sync
 
+## 1.7.1
+
+### Patch Changes
+
+- e323ce3: fix: add `decode()` interface to `Config` and support `path: string[]`
+
 ## 1.7.0
 
 ### Minor Changes
