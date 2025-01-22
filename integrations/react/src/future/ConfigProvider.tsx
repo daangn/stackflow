@@ -6,10 +6,6 @@ import type {
 import type React from "react";
 import { createContext } from "react";
 
-declare module "@stackflow/config" {
-  interface Register {}
-}
-
 export const ConfigContext = createContext<
   Config<ActivityDefinition<RegisteredActivityName>>
 >(null as any);
