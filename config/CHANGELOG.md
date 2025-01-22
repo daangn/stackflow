@@ -1,5 +1,11 @@
 # @stackflow/config
 
+## 1.2.1
+
+### Patch Changes
+
+- e323ce3: fix: add `decode()` interface to `Config` and support `path: string[]`
+
 ## 1.2.0
 
 ### Minor Changes

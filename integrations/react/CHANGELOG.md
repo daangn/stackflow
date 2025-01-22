@@ -1,5 +1,11 @@
 # @stackflow/react
 
+## 1.4.2
+
+### Patch Changes
+
+- e323ce3: fix: add `decode()` interface to `Config` and support `path: string[]`
+
 ## 1.4.1
 
 ### Patch Changes

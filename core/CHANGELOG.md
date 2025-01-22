@@ -1,5 +1,11 @@
 # @stackflow/core
 
+## 1.1.1
+
+### Patch Changes
+
+- 5fc54cb: Made `divideBy` to be friendly to type inference.
+
 ## 1.1.0
 
 ### Minor Changes
