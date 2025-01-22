@@ -1,11 +1,11 @@
 import type {
   ActivityDefinition,
   Config,
-  InferActivityParams,
   RegisteredActivityName,
 } from "@stackflow/config";
 import { id, makeEvent } from "@stackflow/core";
 import type { StackflowReactPlugin } from "@stackflow/react";
+import type { ActivityComponentType } from "@stackflow/react/future";
 import type { History, Listener } from "history";
 import { createBrowserHistory, createMemoryHistory } from "history";
 import { HistoryQueueProvider } from "./HistoryQueueContext";
@@ -29,10 +29,7 @@ type ConfigHistorySync = {
 
 declare module "@stackflow/config" {
   interface ActivityDefinition<ActivityName extends RegisteredActivityName> {
-    path: string | string[];
-    decode?: (
-      params: Record<string, string>,
-    ) => InferActivityParams<ActivityName>;
+    route: RouteLike<ActivityComponentType<ActivityName>>;
   }
 
   interface Config<T extends ActivityDefinition<RegisteredActivityName>> {
@@ -79,29 +76,10 @@ export function historySyncPlugin<
   const routes =
     "routes" in options
       ? options.routes
-      : options.config.activities.reduce((acc, a) => {
-          if (Array.isArray(a.path)) {
-            const routes: RouteLike<unknown> = a.path.map((path) => ({
-              path,
-              decode: a.decode,
-            }));
-
-            return {
-              ...acc,
-              [a.name]: routes,
-            };
-          }
-
-          const route: RouteLike<unknown> = {
-            path: a.path,
-            decode: a.decode,
-          };
-
-          return {
-            ...acc,
-            [a.name]: route,
-          };
-        }, {});
+      : options.config.activities.reduce(
+          (acc, a) => ({ ...acc, [a.name]: a.route }),
+          {},
+        );
 
   const activityRoutes = sortActivityRoutes(normalizeActivityRouteMap(routes));
 
