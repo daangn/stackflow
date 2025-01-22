@@ -2,6 +2,7 @@ import type {
   ActivityBaseParams,
   ActivityDefinition,
   Config,
+  RegisteredActivityName,
 } from "@stackflow/config";
 import {
   type CoreStore,
@@ -29,7 +30,7 @@ export type StackflowPluginsEntry =
   | StackflowPluginsEntry[];
 
 export type StackflowInput<
-  T extends ActivityDefinition<string>,
+  T extends ActivityDefinition<RegisteredActivityName>,
   R extends {
     [activityName in T["name"]]: ActivityComponentType<any>;
   },
@@ -46,7 +47,7 @@ export type StackflowOutput = {
 };
 
 export function stackflow<
-  T extends ActivityDefinition<string>,
+  T extends ActivityDefinition<RegisteredActivityName>,
   R extends {
     [activityName in T["name"]]: ActivityComponentType<any>;
   },

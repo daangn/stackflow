@@ -6,12 +6,18 @@ export const config = defineConfig({
   activities: [
     {
       name: "Main",
-      path: "/",
+      route: "/",
       loader: mainLoader,
     },
     {
       name: "Article",
-      path: "/articles/:articleId",
+      route: {
+        path: "/articles/:articleId",
+        decode: (params) => ({
+          articleId: Number(params.articleId),
+          title: params.title,
+        }),
+      },
       loader: articleLoader,
     },
   ],

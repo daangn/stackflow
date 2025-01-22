@@ -1,10 +1,14 @@
 import type { ActivityComponentType } from "@stackflow/react";
 
-export type Route<K> = {
+export type Route<ComponentType> = {
   path: string;
   decode?: (
     params: Record<string, string>,
-  ) => K extends ActivityComponentType<infer U> ? U : {};
+  ) => ComponentType extends ActivityComponentType<infer U> ? U : {};
 };
 
-export type RouteLike<T> = string | string[] | Route<T> | Route<T>[];
+export type RouteLike<ComponentType> =
+  | string
+  | string[]
+  | Route<ComponentType>
+  | Route<ComponentType>[];

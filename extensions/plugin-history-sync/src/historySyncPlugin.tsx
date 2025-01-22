@@ -1,6 +1,11 @@
-import type { ActivityDefinition, Config } from "@stackflow/config";
+import type {
+  ActivityDefinition,
+  Config,
+  RegisteredActivityName,
+} from "@stackflow/config";
 import { id, makeEvent } from "@stackflow/core";
 import type { StackflowReactPlugin } from "@stackflow/react";
+import type { ActivityComponentType } from "@stackflow/react/future";
 import type { History, Listener } from "history";
 import { createBrowserHistory, createMemoryHistory } from "history";
 import { HistoryQueueProvider } from "./HistoryQueueContext";
@@ -23,11 +28,11 @@ type ConfigHistorySync = {
 };
 
 declare module "@stackflow/config" {
-  interface ActivityDefinition<ActivityName extends string> {
-    path: string;
+  interface ActivityDefinition<ActivityName extends RegisteredActivityName> {
+    route: RouteLike<ActivityComponentType<RegisteredActivityName>>;
   }
 
-  interface Config<T extends ActivityDefinition<string>> {
+  interface Config<T extends ActivityDefinition<RegisteredActivityName>> {
     historySync?: ConfigHistorySync;
   }
 }
@@ -39,7 +44,7 @@ type HistorySyncPluginOptions<T, K extends Extract<keyof T, string>> = (
       };
     }
   | {
-      config: Config<ActivityDefinition<string>>;
+      config: Config<ActivityDefinition<RegisteredActivityName>>;
     }
 ) & {
   fallbackActivity: (args: { initialContext: any }) => K;
@@ -72,10 +77,7 @@ export function historySyncPlugin<
     "routes" in options
       ? options.routes
       : options.config.activities.reduce(
-          (acc, a) => ({
-            ...acc,
-            [a.name]: a.path,
-          }),
+          (acc, a) => ({ ...acc, [a.name]: a.route }),
           {},
         );
 

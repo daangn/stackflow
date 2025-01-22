@@ -1,8 +1,12 @@
-import type { ActivityDefinition, Config } from "@stackflow/config";
+import type {
+  ActivityDefinition,
+  Config,
+  RegisteredActivityName,
+} from "@stackflow/config";
 import type { StackflowReactPlugin } from "../../__internal__/StackflowReactPlugin";
 
 export function loaderPlugin(
-  config: Config<ActivityDefinition<string>>,
+  config: Config<ActivityDefinition<RegisteredActivityName>>,
 ): StackflowReactPlugin {
   return () => ({
     key: "plugin-loader",
