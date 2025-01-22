@@ -11,7 +11,13 @@ export const config = defineConfig({
     },
     {
       name: "Article",
-      route: "/articles/:articleId",
+      route: {
+        path: "/articles/:articleId",
+        decode: (params) => ({
+          articleId: Number(params.articleId),
+          title: params.title,
+        }),
+      },
       loader: articleLoader,
     },
   ],

@@ -13,7 +13,7 @@ import type { articleLoader } from "./Article.loader";
 declare module "@stackflow/config" {
   interface Register {
     Article: {
-      articleId: string;
+      articleId: number;
       title?: string;
     };
   }

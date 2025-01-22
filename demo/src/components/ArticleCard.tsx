@@ -3,7 +3,7 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import * as css from "./ArticleCard.css";
 
 interface ArticleCardProps {
-  articleId: string;
+  articleId: number;
   title: string;
   price: number;
 }
@@ -17,7 +17,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
   return (
     <Link
       activityName="Article"
-      activityParams={{ articleId: String(articleId), title }}
+      activityParams={{ articleId, title }}
       className={css.container}
     >
       <div className={css.thumbnail}>
