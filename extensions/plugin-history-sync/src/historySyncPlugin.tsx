@@ -29,7 +29,7 @@ type ConfigHistorySync = {
 
 declare module "@stackflow/config" {
   interface ActivityDefinition<ActivityName extends RegisteredActivityName> {
-    route: RouteLike<ActivityComponentType<ActivityName>>;
+    route: RouteLike<ActivityComponentType<RegisteredActivityName>>;
   }
 
   interface Config<T extends ActivityDefinition<RegisteredActivityName>> {
