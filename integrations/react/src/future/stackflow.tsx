@@ -50,7 +50,7 @@ export type StackflowOutput = {
 export function stackflow<
   T extends ActivityDefinition<RegisteredActivityName>,
   R extends {
-    [activityName in T["name"]]: ActivityComponentType<any>;
+    [activityName in RegisteredActivityName]: ActivityComponentType<any>;
   },
 >(input: StackflowInput<T, R>): StackflowOutput {
   const plugins = [
