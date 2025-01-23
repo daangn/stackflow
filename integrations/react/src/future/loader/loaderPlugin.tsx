@@ -70,9 +70,9 @@ type OnBeforeRoute = NonNullable<
   | ReturnType<StackflowReactPlugin>["onBeforeReplace"]
 >;
 function createBeforeRouteHandler<
-  T extends ActivityDefinition<string>,
+  T extends ActivityDefinition<RegisteredActivityName>,
   R extends {
-    [activityName in T["name"]]: ActivityComponentType<any>;
+    [activityName in RegisteredActivityName]: ActivityComponentType<any>;
   },
 >(input: StackflowInput<T, R>): OnBeforeRoute {
   return ({
