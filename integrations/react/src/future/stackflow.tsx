@@ -33,7 +33,7 @@ export type StackflowPluginsEntry =
 export type StackflowInput<
   T extends ActivityDefinition<RegisteredActivityName>,
   R extends {
-    [activityName in T["name"]]: ActivityComponentType<any>;
+    [activityName in RegisteredActivityName]: ActivityComponentType<any>;
   },
 > = {
   config: Config<T>;

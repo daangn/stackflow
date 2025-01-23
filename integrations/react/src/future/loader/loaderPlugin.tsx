@@ -9,7 +9,7 @@ import type { StackflowInput } from "../stackflow";
 export function loaderPlugin<
   T extends ActivityDefinition<RegisteredActivityName>,
   R extends {
-    [activityName in T["name"]]: ActivityComponentType<any>;
+    [activityName in RegisteredActivityName]: ActivityComponentType<any>;
   },
 >(input: StackflowInput<T, R>): StackflowReactPlugin {
   return () => ({
