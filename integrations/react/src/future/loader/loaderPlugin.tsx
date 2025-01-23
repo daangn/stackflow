@@ -1,6 +1,5 @@
 import type {
   ActivityDefinition,
-  Config,
   RegisteredActivityName,
 } from "@stackflow/config";
 import type { ActivityComponentType } from "../../__internal__/ActivityComponentType";
