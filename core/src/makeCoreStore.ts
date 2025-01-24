@@ -1,14 +1,14 @@
 import isEqual from "react-fast-compare";
 
-import type { Effect } from "./Effect";
 import type { Stack } from "./Stack";
 import { aggregate } from "./aggregate";
 import type { DomainEvent, PushedEvent, StepPushedEvent } from "./event-types";
-import type { BaseDomainEvent } from "./event-types/_base";
 import { makeEvent } from "./event-utils";
 import type { StackflowActions, StackflowPlugin } from "./interfaces";
 import { produceEffects } from "./produceEffects";
 import { divideBy, once } from "./utils";
+import { makeActions } from "./utils/makeActions";
+import { triggerPostEffectHooks } from "./utils/triggerPostEffectHooks";
 
 const SECOND = 1000;
 
@@ -77,9 +77,7 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
     options.handlers?.onInitialActivityNotFound?.();
   }
 
-  const events: {
-    value: DomainEvent[];
-  } = {
+  const events: { value: DomainEvent[] } = {
     value: [...initialRemainingEvents, ...initialPushedEvents],
   };
 
@@ -87,539 +85,57 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
     value: aggregate(events.value, new Date().getTime()),
   };
 
-  const setStackValue = (nextStackValue: Stack) => {
-    const effects = produceEffects(stack.value, nextStackValue);
-
-    stack.value = nextStackValue;
-
-    triggerPostEffectHooks(effects, pluginInstances);
-  };
-
-  const dispatchEvent: StackflowActions["dispatchEvent"] = (name, params) => {
-    const newEvent = makeEvent(name, params);
-
-    const nextStackValue = aggregate(
-      [...events.value, newEvent],
-      new Date().getTime(),
-    );
-
-    events.value.push(newEvent);
-    setStackValue(nextStackValue);
-
-    const interval = setInterval(() => {
-      const nextStackValue = aggregate(events.value, new Date().getTime());
-
-      if (!isEqual(stack.value, nextStackValue)) {
-        setStackValue(nextStackValue);
-      }
-
-      if (nextStackValue.globalTransitionState === "idle") {
-        clearInterval(interval);
-      }
-    }, INTERVAL_MS);
-  };
-
-  type TriggerPreEffectHooksInput<K extends DomainEvent["name"]> =
-    K extends DomainEvent["name"]
-      ? {
-          actionName: K;
-          actionParams: Omit<
-            Extract<DomainEvent, { name: K }>,
-            keyof BaseDomainEvent
-          >;
-          pluginInstances: ReturnType<StackflowPlugin>[];
-        }
-      : unknown;
-
-  function triggerPreEffectHooks(
-    input: TriggerPreEffectHooksInput<DomainEvent["name"]>,
-  ): {
-    isPrevented: boolean;
-    nextActionParams: (typeof input)["actionParams"];
-  } {
-    switch (input.actionName) {
-      case "Pushed": {
-        let isPrevented = false;
-
-        let nextActionParams = {
-          ...input.actionParams,
-        };
-
-        const preventDefault = () => {
-          isPrevented = true;
-        };
-
-        const overrideActionParams = (
-          partialActionParams: typeof input.actionParams,
-        ) => {
-          nextActionParams = {
-            ...nextActionParams,
-            ...partialActionParams,
-          };
-        };
-
-        for (const pluginInstance of input.pluginInstances) {
-          pluginInstance.onBeforePush?.({
-            actionParams: {
-              ...nextActionParams,
-            },
-            actions: {
-              ...actions,
-              preventDefault,
-              overrideActionParams,
-            },
-          });
-        }
-
-        return {
-          isPrevented,
-          nextActionParams,
-        };
-      }
-      case "Replaced": {
-        let isPrevented = false;
-
-        let nextActionParams = {
-          ...input.actionParams,
-        };
-
-        const preventDefault = () => {
-          isPrevented = true;
-        };
-
-        const overrideActionParams = (
-          partialActionParams: typeof input.actionParams,
-        ) => {
-          nextActionParams = {
-            ...nextActionParams,
-            ...partialActionParams,
-          };
-        };
-
-        for (const pluginInstance of input.pluginInstances) {
-          pluginInstance.onBeforeReplace?.({
-            actionParams: {
-              ...nextActionParams,
-            },
-            actions: {
-              ...actions,
-              preventDefault,
-              overrideActionParams,
-            },
-          });
-        }
-
-        return {
-          isPrevented,
-          nextActionParams,
-        };
-      }
-      case "Popped": {
-        let isPrevented = false;
-
-        let nextActionParams = {
-          ...input.actionParams,
-        };
-
-        const preventDefault = () => {
-          isPrevented = true;
-        };
-
-        const overrideActionParams = (
-          partialActionParams: typeof input.actionParams,
-        ) => {
-          nextActionParams = {
-            ...nextActionParams,
-            ...partialActionParams,
-          };
-        };
-
-        for (const pluginInstance of input.pluginInstances) {
-          pluginInstance.onBeforePop?.({
-            actionParams: {
-              ...nextActionParams,
-            },
-            actions: {
-              ...actions,
-              preventDefault,
-              overrideActionParams,
-            },
-          });
-        }
-
-        return {
-          isPrevented,
-          nextActionParams,
-        };
-      }
-      case "StepPushed": {
-        let isPrevented = false;
-
-        let nextActionParams = {
-          ...input.actionParams,
-        };
-
-        const preventDefault = () => {
-          isPrevented = true;
-        };
-
-        const overrideActionParams = (
-          partialActionParams: typeof input.actionParams,
-        ) => {
-          nextActionParams = {
-            ...nextActionParams,
-            ...partialActionParams,
-          };
-        };
-
-        for (const pluginInstance of input.pluginInstances) {
-          pluginInstance.onBeforeStepPush?.({
-            actionParams: {
-              ...nextActionParams,
-            },
-            actions: {
-              ...actions,
-              preventDefault,
-              overrideActionParams,
-            },
-          });
-        }
-
-        return {
-          isPrevented,
-          nextActionParams,
-        };
-      }
-      case "StepReplaced": {
-        let isPrevented = false;
-
-        let nextActionParams = {
-          ...input.actionParams,
-        };
-
-        const preventDefault = () => {
-          isPrevented = true;
-        };
-
-        const overrideActionParams = (
-          partialActionParams: typeof input.actionParams,
-        ) => {
-          nextActionParams = {
-            ...nextActionParams,
-            ...partialActionParams,
-          };
-        };
-
-        for (const pluginInstance of input.pluginInstances) {
-          pluginInstance.onBeforeStepReplace?.({
-            actionParams: {
-              ...nextActionParams,
-            },
-            actions: {
-              ...actions,
-              preventDefault,
-              overrideActionParams,
-            },
-          });
-        }
-
-        return {
-          isPrevented,
-          nextActionParams,
-        };
-      }
-      case "StepPopped": {
-        let isPrevented = false;
-
-        let nextActionParams = {
-          ...input.actionParams,
-        };
-
-        const preventDefault = () => {
-          isPrevented = true;
-        };
-
-        const overrideActionParams = (
-          partialActionParams: typeof input.actionParams,
-        ) => {
-          nextActionParams = {
-            ...nextActionParams,
-            ...partialActionParams,
-          };
-        };
-
-        for (const pluginInstance of input.pluginInstances) {
-          pluginInstance.onBeforeStepPop?.({
-            actionParams: {
-              ...nextActionParams,
-            },
-            actions: {
-              ...actions,
-              preventDefault,
-              overrideActionParams,
-            },
-          });
-        }
-
-        return {
-          isPrevented,
-          nextActionParams,
-        };
-      }
-      case "Paused": {
-        let isPrevented = false;
-
-        let nextActionParams = {
-          ...input.actionParams,
-        };
-
-        const preventDefault = () => {
-          isPrevented = true;
-        };
-
-        const overrideActionParams = (
-          partialActionParams: typeof input.actionParams,
-        ) => {
-          nextActionParams = {
-            ...nextActionParams,
-            ...partialActionParams,
-          };
-        };
-
-        for (const pluginInstance of input.pluginInstances) {
-          pluginInstance.onBeforePause?.({
-            actionParams: {
-              ...nextActionParams,
-            },
-            actions: {
-              ...actions,
-              preventDefault,
-              overrideActionParams,
-            },
-          });
-        }
-
-        return {
-          isPrevented,
-          nextActionParams,
-        };
-      }
-      case "Resumed": {
-        let isPrevented = false;
-
-        let nextActionParams = {
-          ...input.actionParams,
-        };
-
-        const preventDefault = () => {
-          isPrevented = true;
-        };
-
-        const overrideActionParams = (
-          partialActionParams: typeof input.actionParams,
-        ) => {
-          nextActionParams = {
-            ...nextActionParams,
-            ...partialActionParams,
-          };
-        };
-
-        for (const pluginInstance of input.pluginInstances) {
-          pluginInstance.onBeforeResume?.({
-            actionParams: {
-              ...nextActionParams,
-            },
-            actions: {
-              ...actions,
-              preventDefault,
-              overrideActionParams,
-            },
-          });
-        }
-
-        return {
-          isPrevented,
-          nextActionParams,
-        };
-      }
-      default: {
-        return {
-          isPrevented: false,
-          nextActionParams: input.actionParams,
-        };
-      }
-    }
-  }
-
-  function triggerPostEffectHooks(
-    effects: Effect[],
-    plugins: ReturnType<StackflowPlugin>[],
-  ) {
-    effects.forEach((effect) => {
-      plugins.forEach((plugin) => {
-        switch (effect._TAG) {
-          case "PUSHED":
-            return plugin.onPushed?.({
-              actions,
-              effect,
-            });
-          case "REPLACED":
-            return plugin.onReplaced?.({
-              actions,
-              effect,
-            });
-          case "POPPED":
-            return plugin.onPopped?.({
-              actions,
-              effect,
-            });
-          case "STEP_PUSHED":
-            return plugin.onStepPushed?.({
-              actions,
-              effect,
-            });
-          case "STEP_REPLACED":
-            return plugin.onStepReplaced?.({
-              actions,
-              effect,
-            });
-          case "STEP_POPPED":
-            return plugin.onStepPopped?.({
-              actions,
-              effect,
-            });
-          case "PAUSED":
-            return plugin.onPaused?.({
-              actions,
-              effect,
-            });
-          case "RESUMED":
-            return plugin.onResumed?.({
-              actions,
-              effect,
-            });
-          case "%SOMETHING_CHANGED%":
-            return plugin.onChanged?.({
-              actions,
-              effect,
-            });
-          default:
-            return undefined;
-        }
-      });
-    });
-  }
-
   const actions: StackflowActions = {
     getStack() {
       return stack.value;
     },
-    dispatchEvent,
-    push(params) {
-      const { isPrevented, nextActionParams } = triggerPreEffectHooks({
-        actionName: "Pushed",
-        actionParams: params,
-        pluginInstances,
-      });
+    dispatchEvent(name, params) {
+      const newEvent = makeEvent(name, params);
+      const nextStackValue = aggregate(
+        [...events.value, newEvent],
+        new Date().getTime(),
+      );
 
-      if (isPrevented) {
-        return;
-      }
+      events.value.push(newEvent);
+      setStackValue(nextStackValue);
 
-      dispatchEvent("Pushed", nextActionParams);
+      const interval = setInterval(() => {
+        const nextStackValue = aggregate(events.value, new Date().getTime());
+
+        if (!isEqual(stack.value, nextStackValue)) {
+          setStackValue(nextStackValue);
+        }
+
+        if (nextStackValue.globalTransitionState === "idle") {
+          clearInterval(interval);
+        }
+      }, INTERVAL_MS);
     },
-    replace(params) {
-      const { isPrevented, nextActionParams } = triggerPreEffectHooks({
-        actionName: "Replaced",
-        actionParams: params,
-        pluginInstances,
-      });
-
-      if (isPrevented) {
-        return;
-      }
-
-      dispatchEvent("Replaced", nextActionParams);
-    },
-    pop(params) {
-      const { isPrevented, nextActionParams } = triggerPreEffectHooks({
-        actionName: "Popped",
-        actionParams: params ?? {},
-        pluginInstances,
-      });
-
-      if (isPrevented) {
-        return;
-      }
-
-      dispatchEvent("Popped", nextActionParams);
-    },
-    stepPush(params) {
-      const { isPrevented, nextActionParams } = triggerPreEffectHooks({
-        actionName: "StepPushed",
-        actionParams: params,
-        pluginInstances,
-      });
-
-      if (isPrevented) {
-        return;
-      }
-
-      dispatchEvent("StepPushed", nextActionParams);
-    },
-    stepReplace(params) {
-      const { isPrevented, nextActionParams } = triggerPreEffectHooks({
-        actionName: "StepReplaced",
-        actionParams: params,
-        pluginInstances,
-      });
-
-      if (isPrevented) {
-        return;
-      }
-
-      dispatchEvent("StepReplaced", nextActionParams);
-    },
-    stepPop(params) {
-      const { isPrevented, nextActionParams } = triggerPreEffectHooks({
-        actionName: "StepPopped",
-        actionParams: params ?? {},
-        pluginInstances,
-      });
-
-      if (isPrevented) {
-        return;
-      }
-
-      dispatchEvent("StepPopped", nextActionParams);
-    },
-    pause(params) {
-      const { isPrevented, nextActionParams } = triggerPreEffectHooks({
-        actionName: "Paused",
-        actionParams: params ?? {},
-        pluginInstances,
-      });
-
-      if (isPrevented) {
-        return;
-      }
-
-      dispatchEvent("Paused", nextActionParams);
-    },
-    resume(params) {
-      const { isPrevented, nextActionParams } = triggerPreEffectHooks({
-        actionName: "Resumed",
-        actionParams: params ?? {},
-        pluginInstances,
-      });
-
-      if (isPrevented) {
-        return;
-      }
-
-      dispatchEvent("Resumed", nextActionParams);
-    },
+    push: () => {},
+    replace: () => {},
+    pop: () => {},
+    stepPush: () => {},
+    stepReplace: () => {},
+    stepPop: () => {},
+    pause: () => {},
+    resume: () => {},
   };
+
+  const setStackValue = (nextStackValue: Stack) => {
+    const effects = produceEffects(stack.value, nextStackValue);
+    stack.value = nextStackValue;
+    triggerPostEffectHooks(effects, pluginInstances, actions);
+  };
+
+  // Initialize action methods after actions object is fully created
+  Object.assign(
+    actions,
+    makeActions({
+      dispatchEvent: actions.dispatchEvent,
+      pluginInstances,
+      actions,
+    }),
+  );
 
   return {
     actions,
