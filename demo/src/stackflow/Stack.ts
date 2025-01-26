@@ -36,6 +36,7 @@ export const { Stack, actions } = stackflow({
       config,
       fallbackActivity: () => "Main",
     }),
+    devtoolsPlugin(),
   ],
 });
 

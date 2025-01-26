@@ -1,11 +1,10 @@
 {
-  "name": "@stackflow/devtools",
+  "name": "@stackflow/devtools-old",
   "private": true,
   "version": "0.1.6",
   "type": "module",
   "scripts": {
     "dev": "yarn workspace @stackflow/core build && vite",
-    "build": "yarn tsc && yarn vite build",
     "preview": "vite preview",
     "test": "yarn jest",
     "typecheck": "tsc --noEmit"
