@@ -31,12 +31,11 @@ export type StackflowPluginsEntry =
 
 export type StackflowInput<
   T extends ActivityDefinition<RegisteredActivityName>,
-  R extends {
-    [activityName in T["name"]]: ActivityComponentType<any>;
-  },
 > = {
   config: Config<T>;
-  components: R;
+  components: {
+    [activityName in T["name"]]: ActivityComponentType<any>;
+  } & Record<string, unknown>;
   plugins?: Array<StackflowPluginsEntry>;
 };
 
@@ -47,11 +46,14 @@ export type StackflowOutput = {
 };
 
 export function stackflow<
-  T extends ActivityDefinition<RegisteredActivityName>,
-  R extends {
-    [activityName in T["name"]]: ActivityComponentType<any>;
-  },
->(input: StackflowInput<T, R>): StackflowOutput {
+  T extends Config<ActivityDefinition<RegisteredActivityName>>,
+>(input: {
+  config: T;
+  components: {
+    [K in T["activities"][number]["name"]]: ActivityComponentType<any>;
+  };
+  plugins?: Array<StackflowPluginsEntry>;
+}): StackflowOutput {
   const plugins = [
     ...(input.plugins ?? [])
       .flat(Number.POSITIVE_INFINITY as 0)
