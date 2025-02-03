@@ -23,19 +23,9 @@ export type UseStepActionsOutputType<P> = {
   stepPop: (options?: { targetActivityId?: string }) => void;
 };
 
-export type UseStepActions<T extends BaseActivities = {}> = <
-  K extends Extract<keyof T, string>,
->(
-  activityName: K,
-) => UseStepActionsOutputType<
-  T[K] extends
-    | ActivityComponentType<infer U>
-    | { component: ActivityComponentType<infer U> }
-    ? U
-    : {}
->;
-
-export const useStepActions: UseStepActions = () => {
+export const useStepActions = <
+  P extends Record<string, string | undefined>,
+>(): UseStepActionsOutputType<P> => {
   const coreActions = useCoreActions();
   const [pending] = useTransition();
 

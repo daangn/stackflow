@@ -18,10 +18,7 @@ import { isBrowser, makeRef } from "../__internal__/utils";
 import type { BaseActivities } from "./BaseActivities";
 import type { UseActionsOutputType } from "./useActions";
 import { useActions } from "./useActions";
-import type {
-  UseStepActions,
-  UseStepActionsOutputType,
-} from "./useStepActions";
+import type { UseStepActionsOutputType } from "./useStepActions";
 import { useStepActions } from "./useStepActions";
 
 function parseActionOptions(options?: { animate?: boolean }) {
@@ -90,7 +87,15 @@ export type StackflowOutput<T extends BaseActivities> = {
   /**
    * Created `useStepFlow()` hooks
    */
-  useStepFlow: UseStepActions<T>;
+  useStepFlow: <K extends Extract<keyof T, string>>(
+    activityName: K,
+  ) => UseStepActionsOutputType<
+    T[K] extends
+      | ActivityComponentType<infer U>
+      | { component: ActivityComponentType<infer U> }
+      ? U
+      : {}
+  >;
 
   /**
    * Add activity imperatively
