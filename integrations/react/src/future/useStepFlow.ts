@@ -2,8 +2,8 @@ import type {
   InferActivityParams,
   RegisteredActivityName,
 } from "@stackflow/config";
-import { ActivityContext } from "__internal__/activity";
 import { useContext } from "react";
+import { ActivityContext } from "../__internal__/activity";
 import { useCoreActions } from "../__internal__/core";
 import type { StepActions } from "./StepActions";
 import { makeStepActions } from "./makeStepActions";

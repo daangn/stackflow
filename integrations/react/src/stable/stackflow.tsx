@@ -7,11 +7,11 @@ import type {
 import { makeCoreStore, makeEvent } from "@stackflow/core";
 import { memo, useMemo } from "react";
 
-import { findLatestActiveActivity } from "__internal__/activity/findLatestActiveActivity";
 import type { ActivityComponentType } from "../__internal__/ActivityComponentType";
 import MainRenderer from "../__internal__/MainRenderer";
 import type { StackflowReactPlugin } from "../__internal__/StackflowReactPlugin";
 import { makeActivityId, makeStepId } from "../__internal__/activity";
+import { findLatestActiveActivity } from "../__internal__/activity/findLatestActiveActivity";
 import { CoreProvider } from "../__internal__/core";
 import { PluginsProvider } from "../__internal__/plugins";
 import { isBrowser, makeRef } from "../__internal__/utils";
