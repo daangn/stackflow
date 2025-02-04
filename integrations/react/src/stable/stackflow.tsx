@@ -3,11 +3,11 @@ import type {
   CoreStore,
   PushedEvent,
   StackflowActions,
-  StepPushedEvent,
 } from "@stackflow/core";
 import { makeCoreStore, makeEvent } from "@stackflow/core";
 import { memo, useMemo } from "react";
 
+import { findLatestActiveActivity } from "__internal__/activity/findLatestActiveActivity";
 import type { ActivityComponentType } from "../__internal__/ActivityComponentType";
 import MainRenderer from "../__internal__/MainRenderer";
 import type { StackflowReactPlugin } from "../__internal__/StackflowReactPlugin";
@@ -344,11 +344,21 @@ export function stackflow<T extends BaseActivities>(
         }
       },
       stepPush(params) {
+        const activities = getCoreStore()?.actions.getStack().activities;
+        const targetActivity =
+          activities && findLatestActiveActivity(activities);
+
+        if (!targetActivity)
+          throw new Error("There is no activity to push step");
+
+        const previousParams = targetActivity.params;
+        const nextParams =
+          typeof params === "function" ? params(previousParams) : params;
         const stepId = makeStepId();
 
         return getCoreStore()?.actions.stepPush({
           stepId,
-          stepParams: params,
+          stepParams: nextParams,
         });
       },
       stepReplace(params) {

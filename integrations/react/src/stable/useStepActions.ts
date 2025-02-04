@@ -1,13 +1,13 @@
 import { useMemo } from "react";
 
-import { makeStepId } from "../__internal__/activity";
+import { makeStepId, useActivity } from "../__internal__/activity";
 import { useCoreActions } from "../__internal__/core";
 import { useTransition } from "../__internal__/shims";
 
 export type UseStepActionsOutputType<P> = {
   pending: boolean;
   stepPush: (
-    params: P,
+    params: P | ((previousParams: P) => P),
     options?: {
       targetActivityId?: string;
     },
@@ -25,17 +25,29 @@ export const useStepActions = <
   P extends Record<string, string | undefined>,
 >(): UseStepActionsOutputType<P> => {
   const coreActions = useCoreActions();
+  const { id } = useActivity();
   const [pending] = useTransition();
 
   return useMemo(
     () => ({
       pending,
       stepPush(params, options) {
+        const targetActivityId = options?.targetActivityId ?? id;
+        const targetActivity = coreActions
+          ?.getStack()
+          .activities.find(({ id }) => id === targetActivityId);
+
+        if (!targetActivity)
+          throw new Error("Cannot push step. Target activity not found.");
+
+        const previousParams = targetActivity.params as P;
+        const nextParams =
+          typeof params === "function" ? params(previousParams) : params;
         const stepId = makeStepId();
 
         coreActions?.stepPush({
           stepId,
-          stepParams: params,
+          stepParams: nextParams,
           targetActivityId: options?.targetActivityId,
         });
       },
@@ -59,6 +71,7 @@ export const useStepActions = <
       coreActions?.stepReplace,
       coreActions?.stepPop,
       pending,
+      id,
     ],
   );
 };
