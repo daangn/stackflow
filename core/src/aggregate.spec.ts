@@ -3088,6 +3088,7 @@ test("aggregate - StepPushedEvent가 발생하면, 최상단 액티비티의 파
             },
             enteredBy: stepPushedEvent,
             zIndex: 0,
+            hasZIndex: false,
           },
         ],
         isActive: true,
@@ -3373,6 +3374,7 @@ test("aggregate - StepPushedEvent가 쌓인 상태에서, PoppedEvent가 들어�
             },
             enteredBy: stepPushedEvent,
             zIndex: 1,
+            hasZIndex: false,
           },
         ],
         enteredBy: pushedEvent2,
@@ -3443,6 +3445,7 @@ test("aggregate - StepReplacedEvent가 발생하면, 최상단 액티비티의 �
             },
             enteredBy: stepReplacedEvent,
             zIndex: 0,
+            hasZIndex: false,
           },
         ],
         isActive: true,
@@ -3514,6 +3517,7 @@ test("aggregate - 만약 StepPoppedEvent를 통해 제거할 수 있는 영역�
             },
             enteredBy: stepReplacedEvent,
             zIndex: 0,
+            hasZIndex: false,
           },
         ],
         isActive: true,
@@ -4171,5 +4175,115 @@ test("aggregate - Resumed 되면 해당 시간 이후로 Transition이 정상작
     ],
     transitionDuration: 300,
     globalTransitionState: "loading",
+  });
+});
+
+test("aggregate - StepPushedEvent에 hasZIndex 필드가 true이면, Step에 zIndex가 할당되고, 다음 액티비티의 zIndex가 해당 zIndex 다음으로 설정됩니다", () => {
+  const t = nowTime();
+
+  let pushedEvent1: PushedEvent;
+  let stepPushedEvent: StepPushedEvent;
+  let pushedEvent2: PushedEvent;
+
+  const events = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+    registeredEvent({
+      activityName: "sample",
+    }),
+    (pushedEvent1 = makeEvent("Pushed", {
+      activityId: "a1",
+      activityName: "sample",
+      activityParams: {
+        hello: "world",
+      },
+      eventDate: enoughPastTime(),
+    })),
+    (stepPushedEvent = makeEvent("StepPushed", {
+      stepId: "s1",
+      stepParams: {
+        hello: "world2",
+      },
+      eventDate: enoughPastTime(),
+      hasZIndex: true,
+    })),
+    (pushedEvent2 = makeEvent("Pushed", {
+      activityId: "a2",
+      activityName: "sample",
+      activityParams: {
+        hello: "world3",
+      },
+      eventDate: enoughPastTime(),
+    })),
+  ];
+
+  const output = aggregate(events, t);
+
+  expect(output).toStrictEqual({
+    activities: [
+      activity({
+        id: "a1",
+        name: "sample",
+        transitionState: "enter-done",
+        params: {
+          hello: "world2",
+        },
+        enteredBy: pushedEvent1,
+        steps: [
+          {
+            id: "a1",
+            params: {
+              hello: "world",
+            },
+            enteredBy: pushedEvent1,
+            zIndex: 0,
+          },
+          {
+            id: "s1",
+            params: {
+              hello: "world2",
+            },
+            enteredBy: stepPushedEvent,
+            zIndex: 1,
+            hasZIndex: true,
+          },
+        ],
+        isActive: false,
+        isTop: false,
+        isRoot: true,
+        zIndex: 0,
+      }),
+      activity({
+        id: "a2",
+        name: "sample",
+        transitionState: "enter-done",
+        params: {
+          hello: "world3",
+        },
+        enteredBy: pushedEvent2,
+        steps: [
+          {
+            id: "a2",
+            params: {
+              hello: "world3",
+            },
+            enteredBy: pushedEvent2,
+            zIndex: 2,
+          },
+        ],
+        isActive: true,
+        isTop: true,
+        isRoot: false,
+        zIndex: 2,
+      }),
+    ],
+    registeredActivities: [
+      {
+        name: "sample",
+      },
+    ],
+    transitionDuration: 300,
+    globalTransitionState: "idle",
   });
 });

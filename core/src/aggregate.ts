@@ -1,8 +1,8 @@
-import type { Stack } from "./Stack";
+import type { ActivityStep, Stack } from "./Stack";
 import { makeStackReducer } from "./activity-utils/makeStackReducer";
 import type { DomainEvent } from "./event-types";
 import { validateEvents } from "./event-utils";
-import { compareBy, uniqBy } from "./utils";
+import { compareBy, last, uniqBy } from "./utils";
 
 export function aggregate(inputEvents: DomainEvent[], now: number): Stack {
   /**
@@ -51,19 +51,39 @@ export function aggregate(inputEvents: DomainEvent[], now: number): Stack {
     ...stack,
     activities: stack.activities
       .map((activity) => {
-        const zIndex = visibleActivities.findIndex(
+        let zIndex = visibleActivities.findIndex(
           ({ id }) => id === activity.id,
         );
+
+        const beforeActivities = visibleActivities.slice(0, zIndex);
+
+        for (const beforeActivity of beforeActivities) {
+          for (const step of beforeActivity.steps) {
+            if (step.hasZIndex) {
+              zIndex += 1;
+            }
+          }
+        }
+
+        const steps = activity.steps.reduce<ActivityStep[]>((acc, step) => {
+          const lastStep = last(acc);
+          const lastStepZIndex = lastStep?.zIndex ?? zIndex;
+
+          return [
+            ...acc,
+            {
+              ...step,
+              zIndex: lastStepZIndex + (step.hasZIndex ? 1 : 0),
+            },
+          ];
+        }, []);
 
         return {
           id: activity.id,
           name: activity.name,
           transitionState: activity.transitionState,
           params: activity.params,
-          steps: activity.steps.map((step) => ({
-            ...step,
-            zIndex,
-          })),
+          steps,
           enteredBy: activity.enteredBy,
           zIndex,
           isTop: lastVisibleActivity?.id === activity.id,

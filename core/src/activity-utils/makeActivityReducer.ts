@@ -70,6 +70,7 @@ export function makeActivityReducer(context: {
         params: event.stepParams,
         enteredBy: event,
         zIndex: activity.zIndex,
+        hasZIndex: event.hasZIndex ?? false,
       };
 
       return {
@@ -89,6 +90,7 @@ export function makeActivityReducer(context: {
         params: event.stepParams,
         enteredBy: event,
         zIndex: activity.zIndex,
+        hasZIndex: event.hasZIndex ?? false,
       };
 
       return {
