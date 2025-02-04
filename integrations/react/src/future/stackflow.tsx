@@ -10,6 +10,7 @@ import {
   makeCoreStore,
   makeEvent,
 } from "@stackflow/core";
+import { findLatestActiveActivity } from "__internal__/activity/findLatestActiveActivity";
 import React, { useMemo } from "react";
 import MainRenderer from "../__internal__/MainRenderer";
 import { makeActivityId } from "../__internal__/activity";
@@ -174,6 +175,9 @@ export function stackflow<
   return {
     Stack,
     actions: makeActions(() => getCoreStore()?.actions),
-    stepActions: makeStepActions(() => getCoreStore()?.actions),
+    stepActions: makeStepActions(
+      () => getCoreStore()?.actions,
+      findLatestActiveActivity,
+    ),
   };
 }
