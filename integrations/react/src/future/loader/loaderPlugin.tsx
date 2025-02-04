@@ -51,6 +51,15 @@ export function loaderPlugin<
           config: input.config,
         });
 
+        if (loaderData instanceof Promise) {
+          Promise.allSettled([loaderData]).then(([loaderDataPromiseResult]) => {
+            printLoaderDataPromiseError({
+              promiseResult: loaderDataPromiseResult,
+              activityName: matchActivity.name,
+            });
+          });
+        }
+
         return {
           ...event,
           activityContext: {
@@ -107,9 +116,20 @@ function createBeforeRouteHandler<
     if (loaderDataPromise || lazyComponentPromise) {
       pause();
     }
-    Promise.all([loaderDataPromise, lazyComponentPromise]).finally(() => {
-      resume();
-    });
+    Promise.allSettled([loaderDataPromise, lazyComponentPromise])
+      .then(([loaderDataPromiseResult, lazyComponentPromiseResult]) => {
+        printLoaderDataPromiseError({
+          promiseResult: loaderDataPromiseResult,
+          activityName: matchActivity.name,
+        });
+        printLazyComponentPromiseError({
+          promiseResult: lazyComponentPromiseResult,
+          activityName: matchActivity.name,
+        });
+      })
+      .finally(() => {
+        resume();
+      });
 
     overrideActionParams({
       ...actionParams,
@@ -119,4 +139,34 @@ function createBeforeRouteHandler<
       },
     });
   };
+}
+
+function printLoaderDataPromiseError({
+  promiseResult,
+  activityName,
+}: {
+  promiseResult: PromiseSettledResult<any>;
+  activityName: string;
+}) {
+  if (promiseResult.status === "rejected") {
+    console.error(promiseResult.reason);
+    console.error(
+      `The above error occurred in the "${activityName}" activity loader`,
+    );
+  }
+}
+
+function printLazyComponentPromiseError({
+  promiseResult,
+  activityName,
+}: {
+  promiseResult: PromiseSettledResult<any>;
+  activityName: string;
+}) {
+  if (promiseResult.status === "rejected") {
+    console.error(promiseResult.reason);
+    console.error(
+      `The above error occurred while loading a lazy react component of the "${activityName}" activity`,
+    );
+  }
 }
