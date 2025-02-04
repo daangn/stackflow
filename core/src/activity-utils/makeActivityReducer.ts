@@ -69,6 +69,7 @@ export function makeActivityReducer(context: {
         id: event.stepId,
         params: event.stepParams,
         enteredBy: event,
+        zIndex: activity.zIndex,
       };
 
       return {
@@ -87,6 +88,7 @@ export function makeActivityReducer(context: {
         id: event.stepId,
         params: event.stepParams,
         enteredBy: event,
+        zIndex: activity.zIndex,
       };
 
       return {

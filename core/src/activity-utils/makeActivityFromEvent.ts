@@ -16,6 +16,7 @@ export function makeActivityFromEvent(
         id: event.activityId,
         params: event.activityParams,
         enteredBy: event,
+        zIndex: -1,
       },
     ],
     enteredBy: event,

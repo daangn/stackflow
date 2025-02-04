@@ -21,6 +21,7 @@ export type ActivityStep = {
   };
   enteredBy: PushedEvent | ReplacedEvent | StepPushedEvent | StepReplacedEvent;
   exitedBy?: ReplacedEvent | PoppedEvent | StepReplacedEvent | StepPoppedEvent;
+  zIndex: number;
 };
 
 export type Activity = {

@@ -60,7 +60,10 @@ export function aggregate(inputEvents: DomainEvent[], now: number): Stack {
           name: activity.name,
           transitionState: activity.transitionState,
           params: activity.params,
-          steps: activity.steps,
+          steps: activity.steps.map((step) => ({
+            ...step,
+            zIndex,
+          })),
           enteredBy: activity.enteredBy,
           zIndex,
           isTop: lastVisibleActivity?.id === activity.id,
