@@ -349,7 +349,7 @@ export function stackflow<T extends BaseActivities>(
           activities && findLatestActiveActivity(activities);
 
         if (!targetActivity)
-          throw new Error("There is no activity to push step");
+          throw new Error("There is no activity to push a step");
 
         const previousParams = targetActivity.params;
         const nextParams =
@@ -362,11 +362,21 @@ export function stackflow<T extends BaseActivities>(
         });
       },
       stepReplace(params) {
+        const activities = getCoreStore()?.actions.getStack().activities;
+        const targetActivity =
+          activities && findLatestActiveActivity(activities);
+
+        if (!targetActivity)
+          throw new Error("There is no activity to replace a step");
+
+        const previousParams = targetActivity.params;
+        const nextParams =
+          typeof params === "function" ? params(previousParams) : params;
         const stepId = makeStepId();
 
         return getCoreStore()?.actions.stepReplace({
           stepId,
-          stepParams: params,
+          stepParams: nextParams,
         });
       },
       stepPop() {

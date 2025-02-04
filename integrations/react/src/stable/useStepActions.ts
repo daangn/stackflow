@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 import { makeStepId, useActivity } from "../__internal__/activity";
 import { useCoreActions } from "../__internal__/core";
@@ -13,7 +13,7 @@ export type UseStepActionsOutputType<P> = {
     },
   ) => void;
   stepReplace: (
-    params: P,
+    params: P | ((previousParams: P) => P),
     options?: {
       targetActivityId?: string;
     },
@@ -27,22 +27,27 @@ export const useStepActions = <
   const coreActions = useCoreActions();
   const { id } = useActivity();
   const [pending] = useTransition();
+  const resolveNextParams = useCallback(
+    (activityId: string, params: P | ((previousParams: P) => P)) => {
+      const targetActivity = coreActions
+        ?.getStack()
+        .activities.find(({ id }) => id === activityId);
+
+      if (!targetActivity) throw new Error("The target activity is not found.");
+
+      const previousParams = targetActivity.params as P;
+
+      return typeof params === "function" ? params(previousParams) : params;
+    },
+    [coreActions],
+  );
 
   return useMemo(
     () => ({
       pending,
       stepPush(params, options) {
         const targetActivityId = options?.targetActivityId ?? id;
-        const targetActivity = coreActions
-          ?.getStack()
-          .activities.find(({ id }) => id === targetActivityId);
-
-        if (!targetActivity)
-          throw new Error("Cannot push step. Target activity not found.");
-
-        const previousParams = targetActivity.params as P;
-        const nextParams =
-          typeof params === "function" ? params(previousParams) : params;
+        const nextParams = resolveNextParams(targetActivityId, params);
         const stepId = makeStepId();
 
         coreActions?.stepPush({
@@ -52,11 +57,13 @@ export const useStepActions = <
         });
       },
       stepReplace(params, options) {
+        const targetActivityId = options?.targetActivityId ?? id;
+        const nextParams = resolveNextParams(targetActivityId, params);
         const stepId = makeStepId();
 
         coreActions?.stepReplace({
           stepId,
-          stepParams: params,
+          stepParams: nextParams,
           targetActivityId: options?.targetActivityId,
         });
       },
