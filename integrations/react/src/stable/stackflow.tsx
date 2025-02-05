@@ -364,6 +364,7 @@ export function stackflow<T extends BaseActivities>(
         return getCoreStore()?.actions.stepPush({
           stepId,
           stepParams,
+          targetActivityId: options?.targetActivityId,
         });
       },
       stepReplace(params, options) {
@@ -383,6 +384,7 @@ export function stackflow<T extends BaseActivities>(
         return getCoreStore()?.actions.stepReplace({
           stepId,
           stepParams,
+          targetActivityId: options?.targetActivityId,
         });
       },
       stepPop() {
