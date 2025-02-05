@@ -28,7 +28,7 @@ export const useStepActions = <
   const { id } = useActivity();
   const [pending] = useTransition();
   const resolveNextParams = useCallback(
-    (activityId: string, params: P | ((previousParams: P) => P)) => {
+    (activityId: string, updator: (previousParams: P) => P): P => {
       const targetActivity = coreActions
         ?.getStack()
         .activities.find(({ id }) => id === activityId);
@@ -37,7 +37,7 @@ export const useStepActions = <
 
       const previousParams = targetActivity.params as P;
 
-      return typeof params === "function" ? params(previousParams) : params;
+      return updator(previousParams);
     },
     [coreActions],
   );
@@ -47,23 +47,29 @@ export const useStepActions = <
       pending,
       stepPush(params, options) {
         const targetActivityId = options?.targetActivityId ?? id;
-        const nextParams = resolveNextParams(targetActivityId, params);
+        const stepParams =
+          typeof params === "function"
+            ? resolveNextParams(targetActivityId, params)
+            : params;
         const stepId = makeStepId();
 
         coreActions?.stepPush({
           stepId,
-          stepParams: nextParams,
+          stepParams,
           targetActivityId: options?.targetActivityId,
         });
       },
       stepReplace(params, options) {
         const targetActivityId = options?.targetActivityId ?? id;
-        const nextParams = resolveNextParams(targetActivityId, params);
+        const stepParams =
+          typeof params === "function"
+            ? resolveNextParams(targetActivityId, params)
+            : params;
         const stepId = makeStepId();
 
         coreActions?.stepReplace({
           stepId,
-          stepParams: nextParams,
+          stepParams,
           targetActivityId: options?.targetActivityId,
         });
       },
