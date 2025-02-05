@@ -1,4 +1,6 @@
+import type { BaseDomainEvent } from "event-types/_base";
 import type {
+  DomainEvent,
   PoppedEvent,
   PushedEvent,
   ReplacedEvent,
@@ -48,4 +50,6 @@ export type Stack = {
   registeredActivities: RegisteredActivity[];
   transitionDuration: number;
   globalTransitionState: "idle" | "loading" | "paused";
+  pausedAt?: number;
+  pausedEvents?: DomainEvent[]; // paused event -> [] -> [push, pop]
 };
