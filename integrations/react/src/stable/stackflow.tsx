@@ -345,38 +345,34 @@ export function stackflow<T extends BaseActivities>(
       },
       stepPush(params) {
         const activities = getCoreStore()?.actions.getStack().activities;
-        const targetActivity =
-          activities && findLatestActiveActivity(activities);
 
-        if (!targetActivity)
+        if (!activities || activities.length === 0)
           throw new Error("There is no activity to push a step");
 
-        const previousParams = targetActivity.params;
-        const nextParams =
-          typeof params === "function" ? params(previousParams) : params;
+        const targetActivity = findLatestActiveActivity(activities);
+        const stepParams =
+          typeof params === "function" ? params(targetActivity.params) : params;
         const stepId = makeStepId();
 
         return getCoreStore()?.actions.stepPush({
           stepId,
-          stepParams: nextParams,
+          stepParams,
         });
       },
       stepReplace(params) {
         const activities = getCoreStore()?.actions.getStack().activities;
-        const targetActivity =
-          activities && findLatestActiveActivity(activities);
 
-        if (!targetActivity)
-          throw new Error("There is no activity to replace a step");
+        if (!activities || activities.length === 0)
+          throw new Error("There is no activity to push a step");
 
-        const previousParams = targetActivity.params;
-        const nextParams =
-          typeof params === "function" ? params(previousParams) : params;
+        const targetActivity = findLatestActiveActivity(activities);
+        const stepParams =
+          typeof params === "function" ? params(targetActivity.params) : params;
         const stepId = makeStepId();
 
         return getCoreStore()?.actions.stepReplace({
           stepId,
-          stepParams: nextParams,
+          stepParams,
         });
       },
       stepPop() {
