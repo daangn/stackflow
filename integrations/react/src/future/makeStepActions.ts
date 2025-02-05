@@ -10,16 +10,8 @@ export function makeStepActions(
   return {
     pushStep(stepParams, options) {
       const coreActions = getCoreActions();
-
-      if (!coreActions) {
-        throw new Error(
-          "Cannot perform any action since no implementation is available.",
-        );
-      }
-
-      const targetActivity = findTargetActivity(
-        coreActions.getStack().activities,
-      );
+      const activities = coreActions?.getStack().activities;
+      const targetActivity = activities && findTargetActivity(activities);
 
       if (!targetActivity) {
         throw new Error(
@@ -41,16 +33,8 @@ export function makeStepActions(
     },
     replaceStep(stepParams, options) {
       const coreActions = getCoreActions();
-
-      if (!coreActions) {
-        throw new Error(
-          "Cannot perform any action since no implementation is available.",
-        );
-      }
-
-      const targetActivity = findTargetActivity(
-        coreActions.getStack().activities,
-      );
+      const activities = coreActions?.getStack().activities;
+      const targetActivity = activities && findTargetActivity(activities);
 
       if (!targetActivity) {
         throw new Error(
