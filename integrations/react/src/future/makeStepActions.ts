@@ -1,6 +1,7 @@
 import type { ActivityBaseParams } from "@stackflow/config";
 import type { CoreStore } from "@stackflow/core";
 import { findActivityById, makeStepId } from "../__internal__/activity";
+import { makeStepId } from "../__internal__/activity";
 import { findLatestActiveActivity } from "../__internal__/activity/findLatestActiveActivity";
 import type { StepActions } from "./StepActions";
 
