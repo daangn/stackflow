@@ -10,8 +10,12 @@ import { memo, useMemo } from "react";
 import type { ActivityComponentType } from "../__internal__/ActivityComponentType";
 import MainRenderer from "../__internal__/MainRenderer";
 import type { StackflowReactPlugin } from "../__internal__/StackflowReactPlugin";
-import { makeActivityId, makeStepId } from "../__internal__/activity";
-import { findLatestActiveActivity } from "../__internal__/activity/findLatestActiveActivity";
+import {
+  findActivityById,
+  findLatestActiveActivity,
+  makeActivityId,
+  makeStepId,
+} from "../__internal__/activity";
 import { CoreProvider } from "../__internal__/core";
 import { PluginsProvider } from "../__internal__/plugins";
 import { isBrowser, makeRef } from "../__internal__/utils";
@@ -343,13 +347,16 @@ export function stackflow<T extends BaseActivities>(
           });
         }
       },
-      stepPush(params) {
+      stepPush(params, options) {
         const activities = getCoreStore()?.actions.getStack().activities;
+        const findTargetActivity = options?.targetActivityId
+          ? findActivityById(options.targetActivityId)
+          : findLatestActiveActivity;
+        const targetActivity = activities && findTargetActivity(activities);
 
-        if (!activities || activities.length === 0)
-          throw new Error("There is no activity to push a step");
+        if (!targetActivity)
+          throw new Error("The target activity is not found.");
 
-        const targetActivity = findLatestActiveActivity(activities);
         const stepParams =
           typeof params === "function" ? params(targetActivity.params) : params;
         const stepId = makeStepId();
@@ -359,13 +366,16 @@ export function stackflow<T extends BaseActivities>(
           stepParams,
         });
       },
-      stepReplace(params) {
+      stepReplace(params, options) {
         const activities = getCoreStore()?.actions.getStack().activities;
+        const findTargetActivity = options?.targetActivityId
+          ? findActivityById(options.targetActivityId)
+          : findLatestActiveActivity;
+        const targetActivity = activities && findTargetActivity(activities);
 
-        if (!activities || activities.length === 0)
-          throw new Error("There is no activity to push a step");
+        if (!targetActivity)
+          throw new Error("The target activity is not found.");
 
-        const targetActivity = findLatestActiveActivity(activities);
         const stepParams =
           typeof params === "function" ? params(targetActivity.params) : params;
         const stepId = makeStepId();

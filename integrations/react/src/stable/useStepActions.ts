@@ -1,8 +1,10 @@
 import { useMemo } from "react";
 
-import type { Activity } from "@stackflow/core";
-import { makeStepId } from "../__internal__/activity";
-import { findLatestActiveActivity } from "../__internal__/activity/findLatestActiveActivity";
+import {
+  findActivityById,
+  findLatestActiveActivity,
+  makeStepId,
+} from "../__internal__/activity";
 import { useCoreActions } from "../__internal__/core";
 import { useTransition } from "../__internal__/shims";
 
@@ -91,8 +93,3 @@ export const useStepActions = <
     ],
   );
 };
-
-const findActivityById =
-  (id: string) =>
-  (activities: Activity[]): Activity | undefined =>
-    activities.find(({ id: activityId }) => activityId === id);
