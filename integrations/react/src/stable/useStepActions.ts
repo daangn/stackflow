@@ -93,8 +93,3 @@ export const useStepActions = <
     ],
   );
 };
-
-const findActivityById =
-  (id: string) =>
-  (activities: Activity[]): Activity | undefined =>
-    activities.find(({ id: activityId }) => activityId === id);
