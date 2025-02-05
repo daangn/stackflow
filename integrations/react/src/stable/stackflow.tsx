@@ -387,8 +387,10 @@ export function stackflow<T extends BaseActivities>(
           targetActivityId: options?.targetActivityId,
         });
       },
-      stepPop() {
-        return getCoreStore()?.actions.stepPop({});
+      stepPop(options) {
+        return getCoreStore()?.actions.stepPop({
+          targetActivityId: options?.targetActivityId,
+        });
       },
     },
   };
