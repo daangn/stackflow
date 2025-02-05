@@ -3,7 +3,6 @@ import type {
   CoreStore,
   PushedEvent,
   StackflowActions,
-  StepPushedEvent,
 } from "@stackflow/core";
 import { makeCoreStore, makeEvent } from "@stackflow/core";
 import { memo, useMemo } from "react";
@@ -12,16 +11,14 @@ import type { ActivityComponentType } from "../__internal__/ActivityComponentTyp
 import MainRenderer from "../__internal__/MainRenderer";
 import type { StackflowReactPlugin } from "../__internal__/StackflowReactPlugin";
 import { makeActivityId, makeStepId } from "../__internal__/activity";
+import { findLatestActiveActivity } from "../__internal__/activity/findLatestActiveActivity";
 import { CoreProvider } from "../__internal__/core";
 import { PluginsProvider } from "../__internal__/plugins";
 import { isBrowser, makeRef } from "../__internal__/utils";
 import type { BaseActivities } from "./BaseActivities";
 import type { UseActionsOutputType } from "./useActions";
 import { useActions } from "./useActions";
-import type {
-  UseStepActions,
-  UseStepActionsOutputType,
-} from "./useStepActions";
+import type { UseStepActionsOutputType } from "./useStepActions";
 import { useStepActions } from "./useStepActions";
 
 function parseActionOptions(options?: { animate?: boolean }) {
@@ -90,7 +87,15 @@ export type StackflowOutput<T extends BaseActivities> = {
   /**
    * Created `useStepFlow()` hooks
    */
-  useStepFlow: UseStepActions<T>;
+  useStepFlow: <K extends Extract<keyof T, string>>(
+    activityName: K,
+  ) => UseStepActionsOutputType<
+    T[K] extends
+      | ActivityComponentType<infer U>
+      | { component: ActivityComponentType<infer U> }
+      ? U
+      : {}
+  >;
 
   /**
    * Add activity imperatively
@@ -339,19 +344,35 @@ export function stackflow<T extends BaseActivities>(
         }
       },
       stepPush(params) {
+        const activities = getCoreStore()?.actions.getStack().activities;
+
+        if (!activities || activities.length === 0)
+          throw new Error("There is no activity to push a step");
+
+        const targetActivity = findLatestActiveActivity(activities);
+        const stepParams =
+          typeof params === "function" ? params(targetActivity.params) : params;
         const stepId = makeStepId();
 
         return getCoreStore()?.actions.stepPush({
           stepId,
-          stepParams: params,
+          stepParams,
         });
       },
       stepReplace(params) {
+        const activities = getCoreStore()?.actions.getStack().activities;
+
+        if (!activities || activities.length === 0)
+          throw new Error("There is no activity to push a step");
+
+        const targetActivity = findLatestActiveActivity(activities);
+        const stepParams =
+          typeof params === "function" ? params(targetActivity.params) : params;
         const stepId = makeStepId();
 
         return getCoreStore()?.actions.stepReplace({
           stepId,
-          stepParams: params,
+          stepParams,
         });
       },
       stepPop() {

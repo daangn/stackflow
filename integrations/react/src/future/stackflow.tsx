@@ -13,6 +13,7 @@ import {
 import React, { useMemo } from "react";
 import MainRenderer from "../__internal__/MainRenderer";
 import { makeActivityId } from "../__internal__/activity";
+import { findLatestActiveActivity } from "../__internal__/activity/findLatestActiveActivity";
 import { CoreProvider } from "../__internal__/core";
 import { PluginsProvider } from "../__internal__/plugins";
 import { isBrowser, makeRef } from "../__internal__/utils";

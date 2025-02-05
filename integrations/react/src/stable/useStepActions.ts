@@ -1,21 +1,21 @@
 import { useMemo } from "react";
 
-import type { ActivityComponentType } from "../__internal__/ActivityComponentType";
+import type { Activity } from "@stackflow/core";
 import { makeStepId } from "../__internal__/activity";
+import { findLatestActiveActivity } from "../__internal__/activity/findLatestActiveActivity";
 import { useCoreActions } from "../__internal__/core";
 import { useTransition } from "../__internal__/shims";
-import type { BaseActivities } from "./BaseActivities";
 
 export type UseStepActionsOutputType<P> = {
   pending: boolean;
   stepPush: (
-    params: P,
+    params: P | ((previousParams: P) => P),
     options?: {
       targetActivityId?: string;
     },
   ) => void;
   stepReplace: (
-    params: P,
+    params: P | ((previousParams: P) => P),
     options?: {
       targetActivityId?: string;
     },
@@ -23,19 +23,9 @@ export type UseStepActionsOutputType<P> = {
   stepPop: (options?: { targetActivityId?: string }) => void;
 };
 
-export type UseStepActions<T extends BaseActivities = {}> = <
-  K extends Extract<keyof T, string>,
->(
-  activityName: K,
-) => UseStepActionsOutputType<
-  T[K] extends
-    | ActivityComponentType<infer U>
-    | { component: ActivityComponentType<infer U> }
-    ? U
-    : {}
->;
-
-export const useStepActions: UseStepActions = () => {
+export const useStepActions = <
+  P extends Record<string, string | undefined>,
+>(): UseStepActionsOutputType<P> => {
   const coreActions = useCoreActions();
   const [pending] = useTransition();
 
@@ -43,20 +33,46 @@ export const useStepActions: UseStepActions = () => {
     () => ({
       pending,
       stepPush(params, options) {
+        const activities = coreActions?.getStack().activities;
+        const findTargetActivity = options?.targetActivityId
+          ? findActivityById(options.targetActivityId)
+          : findLatestActiveActivity;
+        const targetActivity = activities && findTargetActivity(activities);
+
+        if (!targetActivity)
+          throw new Error("The target activity is not found.");
+
+        const stepParams =
+          typeof params === "function"
+            ? params(targetActivity.params as P)
+            : params;
         const stepId = makeStepId();
 
         coreActions?.stepPush({
           stepId,
-          stepParams: params,
+          stepParams,
           targetActivityId: options?.targetActivityId,
         });
       },
       stepReplace(params, options) {
+        const activities = coreActions?.getStack().activities;
+        const findTargetActivity = options?.targetActivityId
+          ? findActivityById(options.targetActivityId)
+          : findLatestActiveActivity;
+        const targetActivity = activities && findTargetActivity(activities);
+
+        if (!targetActivity)
+          throw new Error("The target activity is not found.");
+
+        const stepParams =
+          typeof params === "function"
+            ? params(targetActivity.params as P)
+            : params;
         const stepId = makeStepId();
 
         coreActions?.stepReplace({
           stepId,
-          stepParams: params,
+          stepParams,
           targetActivityId: options?.targetActivityId,
         });
       },
@@ -70,7 +86,13 @@ export const useStepActions: UseStepActions = () => {
       coreActions?.stepPush,
       coreActions?.stepReplace,
       coreActions?.stepPop,
+      coreActions?.getStack,
       pending,
     ],
   );
 };
+
+const findActivityById =
+  (id: string) =>
+  (activities: Activity[]): Activity | undefined =>
+    activities.find(({ id: activityId }) => activityId === id);

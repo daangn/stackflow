@@ -1,12 +1,12 @@
 export type StepActions<ActivityParams> = {
   pushStep: (
-    params: ActivityParams,
+    params: ActivityParams | ((prevParams: ActivityParams) => ActivityParams),
     options?: {
       targetActivityId?: string;
     },
   ) => void;
   replaceStep: (
-    params: ActivityParams,
+    params: ActivityParams | ((prevParams: ActivityParams) => ActivityParams),
     options?: {
       targetActivityId?: string;
     },
