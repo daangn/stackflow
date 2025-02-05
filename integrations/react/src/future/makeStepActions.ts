@@ -1,17 +1,17 @@
 import type { ActivityBaseParams } from "@stackflow/config";
-import type { Activity, CoreStore } from "@stackflow/core";
+import type { CoreStore } from "@stackflow/core";
+import { findLatestActiveActivity } from "__internal__/activity/findLatestActiveActivity";
 import { makeStepId } from "../__internal__/activity";
 import type { StepActions } from "./StepActions";
 
 export function makeStepActions(
   getCoreActions: () => CoreStore["actions"] | undefined,
-  findTargetActivity: (activity: Activity[]) => Activity | undefined,
 ): StepActions<ActivityBaseParams> {
   return {
     pushStep(stepParams, options) {
       const coreActions = getCoreActions();
       const activities = coreActions?.getStack().activities;
-      const targetActivity = activities && findTargetActivity(activities);
+      const targetActivity = activities && findLatestActiveActivity(activities);
 
       if (!targetActivity) {
         throw new Error(
@@ -34,7 +34,7 @@ export function makeStepActions(
     replaceStep(stepParams, options) {
       const coreActions = getCoreActions();
       const activities = coreActions?.getStack().activities;
-      const targetActivity = activities && findTargetActivity(activities);
+      const targetActivity = activities && findLatestActiveActivity(activities);
 
       if (!targetActivity) {
         throw new Error(

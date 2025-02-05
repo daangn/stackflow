@@ -175,9 +175,6 @@ export function stackflow<
   return {
     Stack,
     actions: makeActions(() => getCoreStore()?.actions),
-    stepActions: makeStepActions(
-      () => getCoreStore()?.actions,
-      findLatestActiveActivity,
-    ),
+    stepActions: makeStepActions(() => getCoreStore()?.actions),
   };
 }

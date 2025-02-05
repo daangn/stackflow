@@ -1,6 +1,8 @@
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 
-import { makeStepId, useActivity } from "../__internal__/activity";
+import type { Activity } from "@stackflow/core";
+import { findLatestActiveActivity } from "__internal__/activity/findLatestActiveActivity";
+import { makeStepId } from "../__internal__/activity";
 import { useCoreActions } from "../__internal__/core";
 import { useTransition } from "../__internal__/shims";
 
@@ -25,17 +27,17 @@ export const useStepActions = <
   P extends Record<string, string | undefined>,
 >(): UseStepActionsOutputType<P> => {
   const coreActions = useCoreActions();
-  const { id } = useActivity();
   const [pending] = useTransition();
 
   return useMemo(
     () => ({
       pending,
       stepPush(params, options) {
-        const targetActivityId = options?.targetActivityId ?? id;
-        const targetActivity = coreActions
-          ?.getStack()
-          .activities.find(({ id }) => id === targetActivityId);
+        const activities = coreActions?.getStack().activities;
+        const findTargetActivity = options?.targetActivityId
+          ? findActivityById(options.targetActivityId)
+          : findLatestActiveActivity;
+        const targetActivity = activities && findTargetActivity(activities);
 
         if (!targetActivity)
           throw new Error("The target activity is not found.");
@@ -53,10 +55,11 @@ export const useStepActions = <
         });
       },
       stepReplace(params, options) {
-        const targetActivityId = options?.targetActivityId ?? id;
-        const targetActivity = coreActions
-          ?.getStack()
-          .activities.find(({ id }) => id === targetActivityId);
+        const activities = coreActions?.getStack().activities;
+        const findTargetActivity = options?.targetActivityId
+          ? findActivityById(options.targetActivityId)
+          : findLatestActiveActivity;
+        const targetActivity = activities && findTargetActivity(activities);
 
         if (!targetActivity)
           throw new Error("The target activity is not found.");
@@ -85,7 +88,11 @@ export const useStepActions = <
       coreActions?.stepPop,
       coreActions?.getStack,
       pending,
-      id,
     ],
   );
 };
+
+const findActivityById =
+  (id: string) =>
+  (activities: Activity[]): Activity | undefined =>
+    activities.find(({ id: activityId }) => activityId === id);

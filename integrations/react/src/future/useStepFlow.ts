@@ -14,8 +14,5 @@ export function useStepFlow<ActivityName extends RegisteredActivityName>(
   const coreActions = useCoreActions();
   const { id } = useContext(ActivityContext);
 
-  return makeStepActions(
-    () => coreActions,
-    (activities) => activities.find((activity) => activity.id === id),
-  );
+  return makeStepActions(() => coreActions);
 }
