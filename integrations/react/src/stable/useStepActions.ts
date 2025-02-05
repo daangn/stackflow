@@ -27,29 +27,22 @@ export const useStepActions = <
   const coreActions = useCoreActions();
   const { id } = useActivity();
   const [pending] = useTransition();
-  const resolveNextParams = useCallback(
-    (activityId: string, updator: (previousParams: P) => P): P => {
-      const targetActivity = coreActions
-        ?.getStack()
-        .activities.find(({ id }) => id === activityId);
-
-      if (!targetActivity) throw new Error("The target activity is not found.");
-
-      const previousParams = targetActivity.params as P;
-
-      return updator(previousParams);
-    },
-    [coreActions],
-  );
 
   return useMemo(
     () => ({
       pending,
       stepPush(params, options) {
         const targetActivityId = options?.targetActivityId ?? id;
+        const targetActivity = coreActions
+          ?.getStack()
+          .activities.find(({ id }) => id === targetActivityId);
+
+        if (!targetActivity)
+          throw new Error("The target activity is not found.");
+
         const stepParams =
           typeof params === "function"
-            ? resolveNextParams(targetActivityId, params)
+            ? params(targetActivity.params as P)
             : params;
         const stepId = makeStepId();
 
@@ -61,9 +54,16 @@ export const useStepActions = <
       },
       stepReplace(params, options) {
         const targetActivityId = options?.targetActivityId ?? id;
+        const targetActivity = coreActions
+          ?.getStack()
+          .activities.find(({ id }) => id === targetActivityId);
+
+        if (!targetActivity)
+          throw new Error("The target activity is not found.");
+
         const stepParams =
           typeof params === "function"
-            ? resolveNextParams(targetActivityId, params)
+            ? params(targetActivity.params as P)
             : params;
         const stepId = makeStepId();
 
@@ -83,6 +83,7 @@ export const useStepActions = <
       coreActions?.stepPush,
       coreActions?.stepReplace,
       coreActions?.stepPop,
+      coreActions?.getStack,
       pending,
       id,
     ],
