@@ -51,5 +51,5 @@ export type Stack = {
   transitionDuration: number;
   globalTransitionState: "idle" | "loading" | "paused";
   pausedAt?: number;
-  pausedEvents?: DomainEvent[]; // paused event -> [] -> [push, pop]
+  pausedEvents?: DomainEvent[];
 };
