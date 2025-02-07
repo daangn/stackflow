@@ -10,10 +10,10 @@ export function makeReducer<T>(
     ) => T;
   },
 ) {
-  return (activity: T, event: DomainEvent) => {
+  return (target: T, event: DomainEvent) => {
     const reducer = (reducerMap[event.name] as Reducer<T>).bind(reducerMap);
     if (reducer) {
-      return reducer(activity, event);
+      return reducer(target, event);
     }
     throw new Error(`No reducer for event ${JSON.stringify(event)}`);
   };
