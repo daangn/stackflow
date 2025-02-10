@@ -20,6 +20,7 @@ function noop(activity: Activity) {
 export function makeActivityReducer(context: {
   transitionDuration: number;
   now: number;
+  resumedAt?: number;
 }) {
   return makeReducer({
     /**
@@ -36,7 +37,8 @@ export function makeActivityReducer(context: {
      */
     Popped: (activity: Activity, event: PoppedEvent): Activity => {
       const isTransitionDone =
-        context.now - event.eventDate >= context.transitionDuration;
+        context.now - (context.resumedAt ?? event.eventDate) >=
+        context.transitionDuration;
 
       const transitionState: ActivityTransitionState =
         event.skipExitActiveState || isTransitionDone

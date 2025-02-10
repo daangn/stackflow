@@ -15,7 +15,7 @@ function withPauseReducer<T extends DomainEvent>(
   reducer: (stack: Stack, event: T) => Stack,
 ) {
   return (stack: Stack, event: T) => {
-    if (stack.pausedAt) {
+    if (stack.globalTransitionState === "paused") {
       return {
         ...stack,
         pausedEvents: stack.pausedEvents
@@ -32,17 +32,20 @@ function withActivitiesReducer<T extends DomainEvent>(
   reducer: (stack: Stack, event: T) => Stack,
   context: {
     now: number;
+    resumedAt?: number;
   },
 ) {
   return (stack: Stack, event: T) => {
     const activitiesReducer = makeActivitiesReducer({
       transitionDuration: stack.transitionDuration,
       now: context.now,
+      resumedAt: context.resumedAt,
     });
 
     const activityReducer = makeActivityReducer({
       transitionDuration: stack.transitionDuration,
       now: context.now,
+      resumedAt: context.resumedAt,
     });
 
     const activities = activitiesReducer(stack.activities, event);
@@ -78,6 +81,7 @@ function noop(stack: Stack) {
 
 export function makeStackReducer(context: {
   now: number;
+  resumedAt?: number;
 }) {
   return makeReducer({
     Initialized: withPauseReducer(
@@ -114,28 +118,22 @@ export function makeStackReducer(context: {
         return {
           ...stack,
           globalTransitionState: "paused",
-          pausedAt: event.eventDate,
         };
       }, context),
     ),
     Resumed: withActivitiesReducer(
       (stack: Stack, event: ResumedEvent): Stack => {
-        if (!stack.pausedAt || !stack.pausedEvents) {
+        if (stack.globalTransitionState !== "paused" || !stack.pausedEvents) {
           return stack;
         }
 
-        const pausedAt = stack.pausedAt;
-        const resumedAt = event.eventDate;
-
-        const pausedDuration = resumedAt - pausedAt;
-
         const reducer = makeStackReducer({
-          now: context.now - resumedAt, // TODO
+          now: context.now,
+          resumedAt: event.eventDate,
         });
 
         return stack.pausedEvents.reduce(reducer, {
           ...stack,
-          pausedAt: undefined,
           pausedEvents: undefined,
         });
       },

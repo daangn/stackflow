@@ -14,16 +14,19 @@ function noop(activities: Activity[]) {
 export function makeActivitiesReducer({
   transitionDuration,
   now,
+  resumedAt,
 }: {
   transitionDuration: number;
   now: number;
+  resumedAt?: number;
 }) {
   return makeReducer({
     /**
      * Push new activity to activities
      */
     Pushed(activities: Activity[], event: PushedEvent): Activity[] {
-      const isTransitionDone = now - event.eventDate >= transitionDuration;
+      const isTransitionDone =
+        now - (resumedAt ?? event.eventDate) >= transitionDuration;
 
       const transitionState: ActivityTransitionState =
         event.skipEnterActiveState || isTransitionDone
@@ -43,7 +46,8 @@ export function makeActivitiesReducer({
      * Replace activity at reservedIndex with new activity
      */
     Replaced(activities: Activity[], event: ReplacedEvent): Activity[] {
-      const isTransitionDone = now - event.eventDate >= transitionDuration;
+      const isTransitionDone =
+        now - (resumedAt ?? event.eventDate) >= transitionDuration;
 
       const reservedIndex = findNewActivityIndex(activities, event);
 

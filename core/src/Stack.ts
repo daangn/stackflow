@@ -50,6 +50,5 @@ export type Stack = {
   registeredActivities: RegisteredActivity[];
   transitionDuration: number;
   globalTransitionState: "idle" | "loading" | "paused";
-  pausedAt?: number;
   pausedEvents?: DomainEvent[];
 };
