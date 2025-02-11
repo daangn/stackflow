@@ -69,7 +69,12 @@ function withActivitiesReducer<T extends DomainEvent>(
         activity.transitionState === "exit-active",
     );
 
-    const globalTransitionState = isLoading ? "loading" : "idle";
+    const globalTransitionState =
+      stack.globalTransitionState === "paused"
+        ? "paused"
+        : isLoading
+          ? "loading"
+          : "idle";
 
     return reducer({ ...stack, activities, globalTransitionState }, event);
   };
@@ -132,9 +137,10 @@ export function makeStackReducer(context: {
           resumedAt: event.eventDate,
         });
 
-        return stack.pausedEvents.reduce(reducer, {
-          ...stack,
-          pausedEvents: undefined,
+        const { pausedEvents, ...rest } = stack;
+        return pausedEvents.reduce(reducer, {
+          ...rest,
+          globalTransitionState: "idle",
         });
       },
       context,
