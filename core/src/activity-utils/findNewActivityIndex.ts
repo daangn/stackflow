@@ -8,7 +8,6 @@ export function findNewActivityIndex(
 ) {
   switch (event.name) {
     case "Pushed":
-      return activities.length;
     case "Replaced": {
       const alreadyExistingActivityIndex = last(
         findIndices(activities, (activity) => activity.id === event.activityId),
