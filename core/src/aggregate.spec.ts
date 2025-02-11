@@ -1,5 +1,5 @@
 import type { Activity } from "./Stack";
-import { aggregate } from "./aggregate-my-version";
+import { aggregate } from "./aggregate";
 import type {
   ActivityRegisteredEvent,
   PoppedEvent,
