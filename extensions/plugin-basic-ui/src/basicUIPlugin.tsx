@@ -53,7 +53,7 @@ export const basicUIPlugin: (
     return (
       <GlobalOptionsProvider
         value={{
-          ...options,
+          ..._options,
           theme: initialContext?.theme ?? _options.theme,
         }}
       >
