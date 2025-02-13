@@ -1,0 +1,31 @@
+{
+  "name": "@stackflow/devtools",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "yarn wxt",
+    "dev:firefox": "yarn wxt -b firefox",
+    "build": "yarn wxt build",
+    "build:firefox": "yarn wxt build -b firefox",
+    "zip": "yarn wxt zip",
+    "zip:firefox": "yarn wxt zip -b firefox",
+    "compile": "yarn tsc --noEmit",
+    "postinstall": "yarn wxt prepare"
+  },
+  "dependencies": {
+    "@webext-core/messaging": "^2.2.0",
+    "p-retry": "^6.2.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@stackflow/plugin-devtools": "workspace:^",
+    "@types/chrome": "^0.0.280",
+    "@types/react": "^19.0.1",
+    "@types/react-dom": "^19.0.2",
+    "@wxt-dev/module-react": "^1.1.2",
+    "typescript": "^5.6.3",
+    "wxt": "^0.19.13"
+  }
+}

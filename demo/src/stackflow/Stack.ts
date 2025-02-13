@@ -1,5 +1,6 @@
 import { vars } from "@seed-design/design-token";
 import { basicUIPlugin } from "@stackflow/plugin-basic-ui";
+import { devtoolsPlugin } from "@stackflow/plugin-devtools";
 import { historySyncPlugin } from "@stackflow/plugin-history-sync";
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
 import { lazy, stackflow } from "@stackflow/react/future";
@@ -13,6 +14,7 @@ export const { Stack, actions } = stackflow({
     Article: lazy(() => import("../activities/Article")),
   },
   plugins: [
+    devtoolsPlugin(),
     basicRendererPlugin(),
     basicUIPlugin({
       theme: "cupertino",
@@ -33,6 +35,7 @@ export const { Stack, actions } = stackflow({
       config,
       fallbackActivity: () => "Main",
     }),
+    devtoolsPlugin(),
   ],
 });
 

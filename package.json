@@ -7,6 +7,8 @@
     "config",
     "core",
     "demo",
+    "devtools",
+    "devtools-wxt",
     "integrations/*",
     "packages/*",
     "extensions/*"
@@ -27,7 +29,7 @@
   },
   "resolutions": {
     "@mdx-js/react": "3.0.1",
-    "@types/react": "18.3.3",
+    "@types/react-lazy-load-image-component@npm:1.6.4/@types/react": "18.3.1",
     "@changesets/assemble-release-plan@npm:^6.0.3": "patch:@changesets/assemble-release-plan@npm%3A6.0.3#~/.yarn/patches/@changesets-assemble-release-plan-npm-6.0.3-29726de363.patch"
   },
   "devDependencies": {
