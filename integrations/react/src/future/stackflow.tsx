@@ -170,6 +170,8 @@ export function stackflow<
     );
   });
 
+  Stack.displayName = "Stack";
+
   return {
     Stack,
     actions: makeActions(() => getCoreStore()?.actions),
