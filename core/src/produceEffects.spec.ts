@@ -20,6 +20,7 @@ test("productEffects - 알 수 없는 이유로 두 object가 다르다면, %SOM
                 enteredBy: {
                   name: "Pushed",
                 } as any,
+                zIndex: 0,
               },
             ],
             isActive: true,
@@ -51,6 +52,7 @@ test("productEffects - 알 수 없는 이유로 두 object가 다르다면, %SOM
                 enteredBy: {
                   name: "Pushed",
                 } as any,
+                zIndex: 0,
               },
             ],
             isActive: true,
@@ -94,6 +96,7 @@ test("productEffects - 새로운 액티비티가 추가되었다면, PUSHED 이�
                 enteredBy: {
                   name: "Pushed",
                 } as any,
+                zIndex: 0,
               },
             ],
             enteredBy: {
@@ -128,6 +131,7 @@ test("productEffects - 새로운 액티비티가 추가되었다면, PUSHED 이�
             enteredBy: {
               name: "Pushed",
             } as any,
+            zIndex: 0,
           },
         ],
         enteredBy: {
@@ -165,6 +169,7 @@ test("productEffects - 여러개 액티비티가 추가되었다면, PUSHED 이�
                 enteredBy: {
                   name: "Pushed",
                 } as any,
+                zIndex: 0,
               },
             ],
             enteredBy: {
@@ -187,6 +192,7 @@ test("productEffects - 여러개 액티비티가 추가되었다면, PUSHED 이�
                 enteredBy: {
                   name: "Pushed",
                 } as any,
+                zIndex: 1,
               },
             ],
             enteredBy: {
@@ -221,6 +227,7 @@ test("productEffects - 여러개 액티비티가 추가되었다면, PUSHED 이�
             enteredBy: {
               name: "Pushed",
             } as any,
+            zIndex: 0,
           },
         ],
         enteredBy: {
@@ -246,6 +253,7 @@ test("productEffects - 여러개 액티비티가 추가되었다면, PUSHED 이�
             enteredBy: {
               name: "Pushed",
             } as any,
+            zIndex: 1,
           },
         ],
         enteredBy: {
@@ -277,6 +285,7 @@ test("productEffects - 액티비티 상태가 exit-active로 변한 액티비티
                 enteredBy: {
                   name: "Pushed",
                 } as any,
+                zIndex: 0,
               },
             ],
             enteredBy: {
@@ -299,6 +308,7 @@ test("productEffects - 액티비티 상태가 exit-active로 변한 액티비티
                 enteredBy: {
                   name: "Pushed",
                 } as any,
+                zIndex: 1,
               },
             ],
             enteredBy: {
@@ -328,6 +338,7 @@ test("productEffects - 액티비티 상태가 exit-active로 변한 액티비티
                 enteredBy: {
                   name: "Pushed",
                 } as any,
+                zIndex: 0,
               },
             ],
             enteredBy: {
@@ -350,6 +361,7 @@ test("productEffects - 액티비티 상태가 exit-active로 변한 액티비티
                 enteredBy: {
                   name: "Pushed",
                 } as any,
+                zIndex: 1,
               },
             ],
             enteredBy: {
@@ -384,6 +396,7 @@ test("productEffects - 액티비티 상태가 exit-active로 변한 액티비티
             enteredBy: {
               name: "Pushed",
             } as any,
+            zIndex: 1,
           },
         ],
         enteredBy: {
@@ -415,6 +428,7 @@ test("productEffects - 액티비티 상태가 exit-active로 변한 액티비티
                 enteredBy: {
                   name: "Pushed",
                 } as any,
+                zIndex: 0,
               },
             ],
             enteredBy: {
@@ -437,6 +451,7 @@ test("productEffects - 액티비티 상태가 exit-active로 변한 액티비티
                 enteredBy: {
                   name: "Pushed",
                 } as any,
+                zIndex: 1,
               },
             ],
             enteredBy: {
@@ -466,6 +481,7 @@ test("productEffects - 액티비티 상태가 exit-active로 변한 액티비티
                 enteredBy: {
                   name: "Pushed",
                 } as any,
+                zIndex: 0,
               },
             ],
             enteredBy: {
@@ -488,6 +504,7 @@ test("productEffects - 액티비티 상태가 exit-active로 변한 액티비티
                 enteredBy: {
                   name: "Pushed",
                 } as any,
+                zIndex: 1,
               },
             ],
             enteredBy: {
@@ -522,6 +539,7 @@ test("productEffects - 액티비티 상태가 exit-active로 변한 액티비티
             enteredBy: {
               name: "Pushed",
             } as any,
+            zIndex: 1,
           },
         ],
         enteredBy: {
@@ -547,6 +565,7 @@ test("productEffects - 액티비티 상태가 exit-active로 변한 액티비티
             enteredBy: {
               name: "Pushed",
             } as any,
+            zIndex: 0,
           },
         ],
         enteredBy: {
@@ -578,6 +597,7 @@ test("productEffects - PushedEvent로 인해 액티비티 상태가 enter-active
                 enteredBy: {
                   name: "Pushed",
                 } as any,
+                zIndex: 0,
               },
             ],
             enteredBy: {
@@ -600,6 +620,7 @@ test("productEffects - PushedEvent로 인해 액티비티 상태가 enter-active
                 enteredBy: {
                   name: "Pushed",
                 } as any,
+                zIndex: -1,
               },
             ],
             enteredBy: {
@@ -629,6 +650,7 @@ test("productEffects - PushedEvent로 인해 액티비티 상태가 enter-active
                 enteredBy: {
                   name: "Pushed",
                 } as any,
+                zIndex: 0,
               },
             ],
             enteredBy: {
@@ -651,6 +673,7 @@ test("productEffects - PushedEvent로 인해 액티비티 상태가 enter-active
                 enteredBy: {
                   name: "Pushed",
                 } as any,
+                zIndex: 1,
               },
             ],
             enteredBy: {
@@ -685,6 +708,7 @@ test("productEffects - PushedEvent로 인해 액티비티 상태가 enter-active
             enteredBy: {
               name: "Pushed",
             } as any,
+            zIndex: 1,
           },
         ],
         enteredBy: {
@@ -716,6 +740,7 @@ test("productEffects - Replaced 이벤트로 인해 액티비티 상태가 enter
                 enteredBy: {
                   name: "Pushed",
                 } as any,
+                zIndex: 0,
               },
             ],
             enteredBy: {
@@ -738,6 +763,7 @@ test("productEffects - Replaced 이벤트로 인해 액티비티 상태가 enter
                 enteredBy: {
                   name: "Pushed",
                 } as any,
+                zIndex: -1,
               },
             ],
             enteredBy: {
@@ -767,6 +793,7 @@ test("productEffects - Replaced 이벤트로 인해 액티비티 상태가 enter
                 enteredBy: {
                   name: "Pushed",
                 } as any,
+                zIndex: 0,
               },
             ],
             enteredBy: {
@@ -789,6 +816,7 @@ test("productEffects - Replaced 이벤트로 인해 액티비티 상태가 enter
                 enteredBy: {
                   name: "Pushed",
                 } as any,
+                zIndex: -1,
               },
             ],
             enteredBy: {
@@ -811,6 +839,7 @@ test("productEffects - Replaced 이벤트로 인해 액티비티 상태가 enter
                 enteredBy: {
                   name: "Replaced",
                 } as any,
+                zIndex: 1,
               },
             ],
             enteredBy: {
@@ -845,6 +874,7 @@ test("productEffects - Replaced 이벤트로 인해 액티비티 상태가 enter
             enteredBy: {
               name: "Replaced",
             } as any,
+            zIndex: 1,
           },
         ],
         enteredBy: {
@@ -876,6 +906,7 @@ test("productEffects - Replaced 이벤트로 인해 아래 액티비티 상태�
                 enteredBy: {
                   name: "Pushed",
                 } as any,
+                zIndex: 0,
               },
             ],
             enteredBy: {
@@ -898,6 +929,7 @@ test("productEffects - Replaced 이벤트로 인해 아래 액티비티 상태�
                 enteredBy: {
                   name: "Replaced",
                 } as any,
+                zIndex: 1,
               },
             ],
             enteredBy: {
@@ -927,6 +959,7 @@ test("productEffects - Replaced 이벤트로 인해 아래 액티비티 상태�
                 enteredBy: {
                   name: "Pushed",
                 } as any,
+                zIndex: -1,
               },
             ],
             enteredBy: {
@@ -949,6 +982,7 @@ test("productEffects - Replaced 이벤트로 인해 아래 액티비티 상태�
                 enteredBy: {
                   name: "Replaced",
                 } as any,
+                zIndex: 0,
               },
             ],
             enteredBy: {
@@ -989,6 +1023,7 @@ test("productEffects - 아래 액티비티가 Replaced를 통해 Push된 상태�
                 enteredBy: {
                   name: "Replaced",
                 } as any,
+                zIndex: 0,
               },
             ],
             enteredBy: {
@@ -1011,6 +1046,7 @@ test("productEffects - 아래 액티비티가 Replaced를 통해 Push된 상태�
                 enteredBy: {
                   name: "Replaced",
                 } as any,
+                zIndex: 1,
               },
             ],
             enteredBy: {
@@ -1040,6 +1076,7 @@ test("productEffects - 아래 액티비티가 Replaced를 통해 Push된 상태�
                 enteredBy: {
                   name: "Replaced",
                 } as any,
+                zIndex: -1,
               },
             ],
             enteredBy: {
@@ -1062,6 +1099,7 @@ test("productEffects - 아래 액티비티가 Replaced를 통해 Push된 상태�
                 enteredBy: {
                   name: "Replaced",
                 } as any,
+                zIndex: 0,
               },
             ],
             enteredBy: {
@@ -1102,6 +1140,7 @@ test("productEffects - Replaced 이벤트에 같은 activityId를 넘겨주어 �
                 enteredBy: {
                   name: "Pushed",
                 } as any,
+                zIndex: 0,
               },
             ],
             enteredBy: {
@@ -1124,6 +1163,7 @@ test("productEffects - Replaced 이벤트에 같은 activityId를 넘겨주어 �
                 enteredBy: {
                   name: "Pushed",
                 } as any,
+                zIndex: 1,
               },
             ],
             enteredBy: {
@@ -1153,6 +1193,7 @@ test("productEffects - Replaced 이벤트에 같은 activityId를 넘겨주어 �
                 enteredBy: {
                   name: "Pushed",
                 } as any,
+                zIndex: 0,
               },
             ],
             enteredBy: {
@@ -1175,6 +1216,7 @@ test("productEffects - Replaced 이벤트에 같은 activityId를 넘겨주어 �
                 enteredBy: {
                   name: "Replaced",
                 } as any,
+                zIndex: 1,
               },
             ],
             enteredBy: {
@@ -1209,6 +1251,7 @@ test("productEffects - Replaced 이벤트에 같은 activityId를 넘겨주어 �
             enteredBy: {
               name: "Replaced",
             } as any,
+            zIndex: 1,
           },
         ],
         enteredBy: {
@@ -1240,6 +1283,7 @@ test("productEffects - StepPushed가 작동해 steps가 늘어난 경우, STEP_P
                 enteredBy: {
                   name: "Pushed",
                 } as any,
+                zIndex: 0,
               },
             ],
             enteredBy: {
@@ -1272,6 +1316,7 @@ test("productEffects - StepPushed가 작동해 steps가 늘어난 경우, STEP_P
                 enteredBy: {
                   name: "Pushed",
                 } as any,
+                zIndex: 0,
               },
               {
                 id: "s1",
@@ -1279,6 +1324,7 @@ test("productEffects - StepPushed가 작동해 steps가 늘어난 경우, STEP_P
                 enteredBy: {
                   name: "StepPushed",
                 } as any,
+                zIndex: 0,
               },
               {
                 id: "s2",
@@ -1286,6 +1332,7 @@ test("productEffects - StepPushed가 작동해 steps가 늘어난 경우, STEP_P
                 enteredBy: {
                   name: "StepPushed",
                 } as any,
+                zIndex: 0,
               },
             ],
             isActive: true,
@@ -1320,6 +1367,7 @@ test("productEffects - StepPushed가 작동해 steps가 늘어난 경우, STEP_P
             enteredBy: {
               name: "Pushed",
             } as any,
+            zIndex: 0,
           },
           {
             id: "s1",
@@ -1327,6 +1375,7 @@ test("productEffects - StepPushed가 작동해 steps가 늘어난 경우, STEP_P
             enteredBy: {
               name: "StepPushed",
             } as any,
+            zIndex: 0,
           },
           {
             id: "s2",
@@ -1334,6 +1383,7 @@ test("productEffects - StepPushed가 작동해 steps가 늘어난 경우, STEP_P
             enteredBy: {
               name: "StepPushed",
             } as any,
+            zIndex: 0,
           },
         ],
         isActive: true,
@@ -1347,6 +1397,7 @@ test("productEffects - StepPushed가 작동해 steps가 늘어난 경우, STEP_P
         enteredBy: {
           name: "StepPushed",
         } as any,
+        zIndex: 0,
       } as any,
     },
     {
@@ -1366,6 +1417,7 @@ test("productEffects - StepPushed가 작동해 steps가 늘어난 경우, STEP_P
             enteredBy: {
               name: "Pushed",
             } as any,
+            zIndex: 0,
           },
           {
             id: "s1",
@@ -1373,6 +1425,7 @@ test("productEffects - StepPushed가 작동해 steps가 늘어난 경우, STEP_P
             enteredBy: {
               name: "StepPushed",
             } as any,
+            zIndex: 0,
           },
           {
             id: "s2",
@@ -1380,6 +1433,7 @@ test("productEffects - StepPushed가 작동해 steps가 늘어난 경우, STEP_P
             enteredBy: {
               name: "StepPushed",
             } as any,
+            zIndex: 0,
           },
         ],
         isActive: true,
@@ -1393,6 +1447,7 @@ test("productEffects - StepPushed가 작동해 steps가 늘어난 경우, STEP_P
         enteredBy: {
           name: "StepPushed",
         } as any,
+        zIndex: 0,
       },
     },
   ]);
@@ -1423,6 +1478,7 @@ test("produceEffects - StepPushed after Replaced events produces only STEP_PUSHE
                   },
                   name: "Pushed",
                 },
+                zIndex: -1,
               },
             ],
             enteredBy: {
@@ -1485,6 +1541,7 @@ test("produceEffects - StepPushed after Replaced events produces only STEP_PUSHE
                   },
                   name: "Replaced",
                 },
+                zIndex: 0,
               },
             ],
             enteredBy: {
@@ -1536,6 +1593,7 @@ test("produceEffects - StepPushed after Replaced events produces only STEP_PUSHE
                   },
                   name: "Pushed",
                 },
+                zIndex: -1,
               },
             ],
             enteredBy: {
@@ -1598,6 +1656,7 @@ test("produceEffects - StepPushed after Replaced events produces only STEP_PUSHE
                   },
                   name: "Replaced",
                 },
+                zIndex: 0,
               },
               {
                 id: "5f67812e31e40",
@@ -1613,6 +1672,7 @@ test("produceEffects - StepPushed after Replaced events produces only STEP_PUSHE
                   },
                   name: "StepPushed",
                 },
+                zIndex: 0,
               },
             ],
             enteredBy: {
@@ -1676,6 +1736,7 @@ test("produceEffects - StepPushed after Replaced events produces only STEP_PUSHE
               },
               name: "Replaced",
             },
+            zIndex: 0,
           },
           {
             id: "5f67812e31e40",
@@ -1691,6 +1752,7 @@ test("produceEffects - StepPushed after Replaced events produces only STEP_PUSHE
               },
               name: "StepPushed",
             },
+            zIndex: 0,
           },
         ],
         enteredBy: {
@@ -1729,6 +1791,7 @@ test("produceEffects - StepPushed after Replaced events produces only STEP_PUSHE
           },
           name: "StepPushed",
         },
+        zIndex: 0,
       },
     },
   ]);
@@ -1755,6 +1818,7 @@ test("productEffects - StepReplaced가 작동해 파라미터가 바뀐 경우, 
                 enteredBy: {
                   name: "Pushed",
                 } as any,
+                zIndex: 0,
               },
             ],
             enteredBy: {
@@ -1788,6 +1852,7 @@ test("productEffects - StepReplaced가 작동해 파라미터가 바뀐 경우, 
                 enteredBy: {
                   name: "StepReplaced",
                 } as any,
+                zIndex: 0,
               },
             ],
             enteredBy: {
@@ -1826,6 +1891,7 @@ test("productEffects - StepReplaced가 작동해 파라미터가 바뀐 경우, 
             enteredBy: {
               name: "StepReplaced",
             } as any,
+            zIndex: 0,
           },
         ],
         enteredBy: {
@@ -1844,6 +1910,7 @@ test("productEffects - StepReplaced가 작동해 파라미터가 바뀐 경우, 
         enteredBy: {
           name: "StepReplaced",
         } as any,
+        zIndex: 0,
       },
     },
   ]);
@@ -1869,6 +1936,7 @@ test("productEffects - Popped가 작동해 steps가 모두 삭제되면, POPPED 
                 enteredBy: {
                   name: "Pushed",
                 } as any,
+                zIndex: 0,
               },
               {
                 id: "s1",
@@ -1876,6 +1944,7 @@ test("productEffects - Popped가 작동해 steps가 모두 삭제되면, POPPED 
                 enteredBy: {
                   name: "StepPushed",
                 } as any,
+                zIndex: 0,
               },
               {
                 id: "s2",
@@ -1883,6 +1952,7 @@ test("productEffects - Popped가 작동해 steps가 모두 삭제되면, POPPED 
                 enteredBy: {
                   name: "StepPushed",
                 } as any,
+                zIndex: 0,
               },
             ],
             isActive: true,
@@ -1909,6 +1979,7 @@ test("productEffects - Popped가 작동해 steps가 모두 삭제되면, POPPED 
                 enteredBy: {
                   name: "Pushed",
                 } as any,
+                zIndex: 0,
               },
             ],
             enteredBy: {
@@ -1943,6 +2014,7 @@ test("productEffects - Popped가 작동해 steps가 모두 삭제되면, POPPED 
             enteredBy: {
               name: "Pushed",
             } as any,
+            zIndex: 0,
           },
         ],
         enteredBy: {
@@ -1968,6 +2040,7 @@ test("productEffects - Popped가 작동해 steps가 모두 삭제되면, POPPED 
             enteredBy: {
               name: "Pushed",
             } as any,
+            zIndex: 0,
           },
         ],
         enteredBy: {
@@ -1993,6 +2066,7 @@ test("productEffects - Popped가 작동해 steps가 모두 삭제되면, POPPED 
             enteredBy: {
               name: "Pushed",
             } as any,
+            zIndex: 0,
           },
         ],
         enteredBy: {

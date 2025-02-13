@@ -29,6 +29,7 @@ export function makeStepActions(
         stepId,
         stepParams: nextParams,
         targetActivityId: options?.targetActivityId,
+        hasZIndex: options?.hasZIndex,
       });
     },
     replaceStep(stepParams, options) {
@@ -52,6 +53,7 @@ export function makeStepActions(
         stepId,
         stepParams: nextParams,
         targetActivityId: options?.targetActivityId,
+        hasZIndex: options?.hasZIndex,
       });
     },
     popStep(options) {
