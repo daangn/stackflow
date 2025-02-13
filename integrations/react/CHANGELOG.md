@@ -1,5 +1,14 @@
 # @stackflow/react
 
+## 1.5.0
+
+### Minor Changes
+
+- cfa7af8: Supports dynamic import for activities, and delays transition effects while loading an activity or waiting for a loader response
+- 82b52b0: Add missing logics of considering `targetActivityId` while updating using update functions.
+- cfa7af8: The 'update functions' pattern for step push and replace actions is implemented.
+- cfa7af8: feat(core, react): add `hasZIndex` option in `useStepFlow()`
+
 ## 1.4.2
 
 ### Patch Changes
