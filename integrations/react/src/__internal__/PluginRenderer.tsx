@@ -1,3 +1,4 @@
+import type React from "react";
 import type { ActivityComponentType } from "./ActivityComponentType";
 import type { StackflowReactPlugin } from "./StackflowReactPlugin";
 import { ActivityProvider } from "./activity";

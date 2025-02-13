@@ -1,8 +1,8 @@
-import type { Activity, DomainEvent } from "..";
+import type { DomainEvent } from "../event-types";
 
 type Reducer<T> = (state: T, event: DomainEvent) => T;
 
-export function createReducer<T>(
+export function makeReducer<T>(
   reducerMap: {
     [key in DomainEvent["name"]]: (
       state: T,
@@ -10,10 +10,10 @@ export function createReducer<T>(
     ) => T;
   },
 ) {
-  return (activity: T, event: DomainEvent) => {
-    const reducer = reducerMap[event.name] as Reducer<T>;
+  return (target: T, event: DomainEvent) => {
+    const reducer = (reducerMap[event.name] as Reducer<T>).bind(reducerMap);
     if (reducer) {
-      return reducer(activity, event);
+      return reducer(target, event);
     }
     throw new Error(`No reducer for event ${JSON.stringify(event)}`);
   };
