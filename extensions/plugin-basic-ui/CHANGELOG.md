@@ -1,5 +1,15 @@
 # @stackflow/plugin-basic-ui
 
+## 1.12.0
+
+### Minor Changes
+
+- 2e24b34: Supports dynamic import for activities, and delays transition effects while loading an activity or waiting for a loader response
+
+### Patch Changes
+
+- e5eeca8: fix(plugin-basic-ui): assign normalized values to global option provider
+
 ## 1.11.1
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @stackflow/react
 
+## 1.5.0
+
+### Minor Changes
+
+- 2e24b34: Supports dynamic import for activities, and delays transition effects while loading an activity or waiting for a loader response
+- f8083bc: The 'update functions' pattern for step push and replace actions is implemented.
+- 8bf74af: feat(core, react): add `hasZIndex` option in `useStepFlow()`
+
 ## 1.4.2
 
 ### Patch Changes

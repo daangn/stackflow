@@ -1,5 +1,18 @@
 # @stackflow/docs
 
+## 2.0.2
+
+### Patch Changes
+
+- 7440875: Edit docs to match updated future api spec
+- Updated dependencies [2e24b34]
+- Updated dependencies [e5eeca8]
+- Updated dependencies [f8083bc]
+- Updated dependencies [8bf74af]
+  - @stackflow/plugin-basic-ui@1.12.0
+  - @stackflow/react@1.5.0
+  - @stackflow/core@1.2.0
+
 ## 2.0.1
 
 ### Patch Changes
