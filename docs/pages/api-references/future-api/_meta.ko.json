@@ -3,5 +3,6 @@
   "config": "@stackflow/config",
   "changes": "API 변경사항",
   "loader-api": "Loader API",
+  "code-splitting": "코드 스플리팅",
   "api-pipelining": "API 파이프라이닝"
 }
