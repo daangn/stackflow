@@ -1,5 +1,12 @@
 # @stackflow/core
 
+## 1.2.0
+
+### Minor Changes
+
+- cfa7af8: Supports dynamic import for activities, and delays transition effects while loading an activity or waiting for a loader response
+- cfa7af8: feat(core, react): add `hasZIndex` option in `useStepFlow()`
+
 ## 1.1.1
 
 ### Patch Changes
