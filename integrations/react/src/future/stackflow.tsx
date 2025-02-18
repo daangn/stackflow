@@ -16,6 +16,7 @@ import MainRenderer from "../__internal__/MainRenderer";
 import { makeActivityId } from "../__internal__/activity";
 import { CoreProvider } from "../__internal__/core";
 import { PluginsProvider } from "../__internal__/plugins";
+import { useDeferredValue, useSyncExternalStore } from "../__internal__/shims";
 import { isBrowser, makeRef } from "../__internal__/utils";
 import type { StackflowReactPlugin } from "../stable";
 import type { Actions } from "./Actions";
@@ -39,6 +40,7 @@ export type StackflowInput<
   config: Config<T>;
   components: R;
   plugins?: Array<StackflowPluginsEntry>;
+  useDeferredStack?: boolean;
 };
 
 export type StackflowOutput = {
@@ -63,6 +65,8 @@ export function stackflow<
      */
     loaderPlugin(input),
   ];
+
+  const useDeferredStack = input.useDeferredStack ?? true;
 
   const enoughPastTime = () =>
     new Date().getTime() - input.config.transitionDuration * 2;
@@ -156,10 +160,21 @@ export function stackflow<
       return store;
     }, []);
 
+    const coreState = useSyncExternalStore(
+      coreStore.subscribe,
+      coreStore.actions.getStack,
+      coreStore.actions.getStack,
+    );
+
+    const deferredCoreState = useDeferredValue(coreState);
+
     return (
       <ConfigProvider value={input.config}>
         <PluginsProvider value={coreStore.pluginInstances}>
-          <CoreProvider coreStore={coreStore}>
+          <CoreProvider
+            coreState={useDeferredStack ? deferredCoreState : coreState}
+            coreStore={coreStore}
+          >
             <MainRenderer
               activityComponentMap={input.components}
               initialContext={initialContext}
