@@ -95,13 +95,11 @@ function createBeforeRouteHandler<
     );
     const matchActivityComponent = input.components[activityName as T["name"]];
 
-    const loader = matchActivity?.loader;
-
-    if (!loader || !matchActivityComponent) {
+    if (!matchActivity || !matchActivityComponent) {
       return;
     }
 
-    const loaderData = loader({
+    const loaderData = matchActivity.loader?.({
       params: activityParams,
       config: input.config,
     });
