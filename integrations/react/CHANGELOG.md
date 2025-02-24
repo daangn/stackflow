@@ -1,5 +1,11 @@
 # @stackflow/react
 
+## 1.5.1
+
+### Patch Changes
+
+- 7751e60: fix(react): pause lazy component transition when no loader defined
+
 ## 1.5.0
 
 ### Minor Changes
