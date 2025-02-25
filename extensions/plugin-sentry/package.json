@@ -1,0 +1,43 @@
+{
+  "name": "@stackflow/plugin-sentry",
+  "version": "0,0,0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/daangn/stackflow.git",
+    "directory": "extensions/plugin-sentry"
+  },
+  "license": "MIT",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "yarn build:js && yarn build:dts",
+    "build:dts": "tsc --emitDeclarationOnly",
+    "build:js": "node ./esbuild.config.js",
+    "clean": "rimraf dist",
+    "dev": "yarn build:js --watch && yarn build:dts --watch"
+  },
+  "devDependencies": {
+    "@sentry/types": "^8.37.1",
+    "@stackflow/core": "^1.1.0",
+    "@stackflow/esbuild-config": "^1.0.3",
+    "esbuild": "^0.23.0",
+    "typescript": "^5.5.3"
+  },
+  "dependencies": {
+    "@sentry/browser": "^8.37.1",
+    "@sentry/core": "^8.37.1"
+  }
+}
