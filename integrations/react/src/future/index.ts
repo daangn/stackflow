@@ -26,4 +26,4 @@ export * from "./useConfig";
 /**
  * Utils
  */
-export * from "./lazy";
+export * from "../__internal__/lazy";

@@ -20,6 +20,7 @@ import { CoreProvider } from "../__internal__/core";
 import { PluginsProvider } from "../__internal__/plugins";
 import { isBrowser, makeRef } from "../__internal__/utils";
 import type { BaseActivities } from "./BaseActivities";
+import { lazyLoadPlugin } from "./LazyLoadPlugin";
 import type { UseActionsOutputType } from "./useActions";
 import { useActions } from "./useActions";
 import type { UseStepActionsOutputType } from "./useStepActions";
@@ -129,9 +130,12 @@ export type StackflowOutput<T extends BaseActivities> = {
 export function stackflow<T extends BaseActivities>(
   options: StackflowOptions<T>,
 ): StackflowOutput<T> {
-  const plugins = (options.plugins ?? [])
-    .flat(Number.POSITIVE_INFINITY as 0)
-    .map((p) => p as StackflowReactPlugin);
+  const plugins = [
+    ...(options.plugins ?? [])
+      .flat(Number.POSITIVE_INFINITY as 0)
+      .map((p) => p as StackflowReactPlugin),
+    lazyLoadPlugin(options),
+  ];
 
   const activityComponentMap = Object.entries(options.activities).reduce(
     (acc, [key, Activity]) => ({
