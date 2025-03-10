@@ -105,6 +105,30 @@ export function findTargetActivityIndices(
 
       break;
     }
+    case "Paused": {
+      const affectedActivities = activities.filter(
+        (activity) =>
+          (activity.transitionState === "enter-active" ||
+            activity.transitionState === "enter-done") &&
+          event.eventDate - activity.enteredBy.eventDate <=
+            context.transitionDuration,
+      );
+
+      targetActivities.push(
+        ...affectedActivities.map((activity) => activities.indexOf(activity)),
+      );
+      break;
+    }
+    case "Resumed": {
+      const affectedActivities = activities.filter(
+        (activity) => activity.transitionState === "enter-active",
+      );
+
+      targetActivities.push(
+        ...affectedActivities.map((activity) => activities.indexOf(activity)),
+      );
+      break;
+    }
     default:
       break;
   }
