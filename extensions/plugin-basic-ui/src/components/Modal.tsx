@@ -14,7 +14,7 @@ import { compactMap } from "../utils";
 import * as css from "./Modal.css";
 
 export type ModalProps = Partial<
-  Pick<GlobalVars, "backgroundColor" | "dimBackgroundColor" | "backgroundImage">
+  Pick<GlobalVars, "backgroundColor" | "backgroundImage" | "dimBackgroundColor">
 > &
   Partial<GlobalVars["modal"]> & {
     onOutsideClick?: React.MouseEventHandler;
@@ -22,8 +22,8 @@ export type ModalProps = Partial<
   };
 const Modal: React.FC<ModalProps> = ({
   backgroundColor,
-  dimBackgroundColor,
   backgroundImage,
+  dimBackgroundColor,
   borderRadius = "1rem",
   maxWidth,
   onOutsideClick,

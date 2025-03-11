@@ -38,7 +38,7 @@ export function useAppScreen() {
 }
 
 export type AppScreenProps = Partial<
-  Pick<GlobalVars, "backgroundColor" | "dimBackgroundColor" | "backgroundImage">
+  Pick<GlobalVars, "backgroundColor" | "backgroundImage" | "dimBackgroundColor">
 > & {
   appBar?: Omit<
     PropOf<typeof AppBar>,
@@ -51,8 +51,8 @@ export type AppScreenProps = Partial<
 };
 const AppScreen: React.FC<AppScreenProps> = ({
   backgroundColor,
-  dimBackgroundColor,
   backgroundImage,
+  dimBackgroundColor,
   appBar,
   preventSwipeBack,
   CUPERTINO_ONLY_modalPresentationStyle,
@@ -225,8 +225,8 @@ const AppScreen: React.FC<AppScreenProps> = ({
         style={assignInlineVars(
           compactMap({
             [globalVars.backgroundColor]: backgroundColor,
-            [globalVars.dimBackgroundColor]: dimBackgroundColor,
             [globalVars.backgroundImage]: backgroundImage,
+            [globalVars.dimBackgroundColor]: dimBackgroundColor,
             [globalVars.appBar.height]: appBar?.height,
             [globalVars.appBar.heightTransitionDuration]:
               appBar?.heightTransitionDuration,

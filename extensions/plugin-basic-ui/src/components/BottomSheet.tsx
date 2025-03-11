@@ -14,7 +14,7 @@ import { compactMap } from "../utils";
 import * as css from "./BottomSheet.css";
 
 export type BottomSheetProps = Partial<
-  Pick<GlobalVars, "backgroundColor" | "dimBackgroundColor" | "backgroundImage">
+  Pick<GlobalVars, "backgroundColor" | "backgroundImage" | "dimBackgroundColor">
 > &
   Partial<GlobalVars["bottomSheet"]> & {
     paperRef?: React.Ref<HTMLDivElement>;
