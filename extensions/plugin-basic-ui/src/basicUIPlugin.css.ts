@@ -66,7 +66,7 @@ const androidValues: GlobalVars = {
     textColorTransitionDuration: "0s",
     backgroundColor: "#fff",
     backgroundColorTransitionDuration: "0s",
-    backgroundImage: "unsets",
+    backgroundImage: "unset",
     backgroundImageTransitionDuration: "0s",
     overflow: "hidden",
     minSafeAreaInsetTop: "0px",
