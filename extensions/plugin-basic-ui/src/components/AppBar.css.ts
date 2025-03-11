@@ -26,6 +26,7 @@ function transitions(args: { [cssFieldName: string]: string }) {
 const appBarCommonTransition = {
   "background-color": globalVars.appBar.backgroundColorTransitionDuration,
   "box-shadow": globalVars.appBar.borderColorTransitionDuration,
+  "background-image": globalVars.appBar.backgroundImageTransitionDuration,
 };
 
 export const appBar = recipe({
@@ -37,6 +38,7 @@ export const appBar = recipe({
     appBarOverflow,
     {
       backgroundColor: globalVars.appBar.backgroundColor,
+      backgroundImage: globalVars.appBar.backgroundImage,
       zIndex: vars.zIndexes.appBar,
       transition: transitions(appBarCommonTransition),
       selectors: {

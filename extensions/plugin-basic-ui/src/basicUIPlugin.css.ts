@@ -25,6 +25,9 @@ const GLOBAL_VARS = {
     backgroundColor: "app-bar-background-color",
     backgroundColorTransitionDuration:
       "app-bar-background-color-transition-duration",
+    backgroundImage: "app-bar-background-image",
+    backgroundImageTransitionDuration:
+      "app-bar-background-image-transition-duration",
     overflow: "app-bar-overflow",
     minSafeAreaInsetTop: "app-bar-min-safe-area-inset-top",
   },
@@ -63,6 +66,8 @@ const androidValues: GlobalVars = {
     textColorTransitionDuration: "0s",
     backgroundColor: "#fff",
     backgroundColorTransitionDuration: "0s",
+    backgroundImage: "none",
+    backgroundImageTransitionDuration: "0s",
     overflow: "hidden",
     minSafeAreaInsetTop: "0px",
   },
