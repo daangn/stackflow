@@ -7,6 +7,7 @@ import { recipe } from "@vanilla-extract/recipes";
 
 const GLOBAL_VARS = {
   backgroundColor: "background-color",
+  backgroundImage: "background-image",
   dimBackgroundColor: "dim-background-color",
   transitionDuration: "transition-duration",
   computedTransitionDuration: "computed-transition-duration",
@@ -45,6 +46,7 @@ export type GlobalVars = typeof GLOBAL_VARS;
 
 const androidValues: GlobalVars = {
   backgroundColor: "#fff",
+  backgroundImage: "none",
   dimBackgroundColor: "rgba(0, 0, 0, 0.15)",
   transitionDuration: "0s",
   computedTransitionDuration: "0s",
