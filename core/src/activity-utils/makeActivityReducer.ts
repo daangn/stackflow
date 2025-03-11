@@ -1,10 +1,8 @@
 import type { Activity, ActivityTransitionState } from "../Stack";
 import type {
   DomainEvent,
-  PausedEvent,
   PoppedEvent,
   ReplacedEvent,
-  ResumedEvent,
   StepPoppedEvent,
   StepPushedEvent,
   StepReplacedEvent,
@@ -126,24 +124,7 @@ export function makeActivityReducer(context: {
     Initialized: noop,
     ActivityRegistered: noop,
     Pushed: noop,
-    Paused: (activity: Activity, event: PausedEvent): Activity => {
-      return {
-        ...activity,
-        transitionState: "enter-active",
-      };
-    },
-    Resumed: (activity: Activity, event: ResumedEvent): Activity => {
-      const isTransitionDone =
-        context.now - event.eventDate >= context.transitionDuration;
-
-      const transitionState: ActivityTransitionState = isTransitionDone
-        ? "enter-done"
-        : "enter-active";
-
-      return {
-        ...activity,
-        transitionState,
-      };
-    },
+    Paused: noop,
+    Resumed: noop,
   } as const);
 }

@@ -4092,8 +4092,6 @@ test("aggregate - Resumed 되면 해당 시간 이후로 Transition이 정상작
   let pushedEvent1: PushedEvent;
   let pushedEvent2: PushedEvent;
 
-  const t = nowTime();
-
   const events = [
     initializedEvent({
       transitionDuration: 300,
@@ -4111,112 +4109,20 @@ test("aggregate - Resumed 되면 해당 시간 이후로 Transition이 정상작
       activityParams: {},
     })),
     makeEvent("Paused", {
-      eventDate: t - 500,
+      eventDate: enoughPastTime(),
     }),
     (pushedEvent2 = makeEvent("Pushed", {
       activityId: "activity-2",
       activityName: "b",
-      eventDate: t - 100,
-      activityParams: {},
-    })),
-    makeEvent("Resumed", {
-      eventDate: t,
-    }),
-  ];
-
-  const output = aggregate(events, t);
-
-  expect(output).toStrictEqual({
-    activities: [
-      activity({
-        id: "activity-1",
-        name: "a",
-        transitionState: "enter-done",
-        params: {},
-        steps: [
-          {
-            id: "activity-1",
-            params: {},
-            enteredBy: expect.anything(),
-            zIndex: 0,
-          },
-        ],
-        enteredBy: expect.anything(),
-        isActive: false,
-        isTop: false,
-        isRoot: true,
-        zIndex: 0,
-      }),
-      activity({
-        id: "activity-2",
-        name: "b",
-        transitionState: "enter-active",
-        params: {},
-        steps: [
-          {
-            id: "activity-2",
-            params: {},
-            enteredBy: expect.anything(),
-            zIndex: 1,
-          },
-        ],
-        enteredBy: expect.anything(),
-        isActive: true,
-        isTop: true,
-        isRoot: false,
-        zIndex: 1,
-      }),
-    ],
-    registeredActivities: [
-      {
-        name: "a",
-      },
-      {
-        name: "b",
-      },
-    ],
-    transitionDuration: 300,
-    globalTransitionState: "loading",
-  });
-});
-
-test("aggregate - PausedEvent makes active activities paused", () => {
-  let pushedEvent1: PushedEvent;
-  let pushedEvent2: PushedEvent;
-
-  const t = nowTime();
-
-  const events = [
-    initializedEvent({
-      transitionDuration: 300,
-    }),
-    registeredEvent({
-      activityName: "a",
-    }),
-    registeredEvent({
-      activityName: "b",
-    }),
-    (pushedEvent1 = makeEvent("Pushed", {
-      activityId: "activity-1",
-      activityName: "a",
       eventDate: enoughPastTime(),
       activityParams: {},
     })),
-    (pushedEvent2 = makeEvent("Pushed", {
-      activityId: "activity-2",
-      activityName: "b",
-      eventDate: t - 400,
-      activityParams: {},
-    })),
-    makeEvent("Paused", {
-      eventDate: t - 200,
-    }),
     makeEvent("Resumed", {
-      eventDate: t,
+      eventDate: nowTime() - 150,
     }),
   ];
 
-  const output = aggregate(events, t);
+  const output = aggregate(events, nowTime());
 
   expect(output).toStrictEqual({
     activities: [

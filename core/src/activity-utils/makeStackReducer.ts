@@ -35,7 +35,7 @@ function withActivitiesReducer<T extends DomainEvent>(
     resumedAt?: number;
   },
 ) {
-  return (stack: Stack, event: T): Stack => {
+  return (stack: Stack, event: T) => {
     const activitiesReducer = makeActivitiesReducer({
       transitionDuration: stack.transitionDuration,
       now: context.now,
@@ -63,21 +63,20 @@ function withActivitiesReducer<T extends DomainEvent>(
       );
     }
 
-    const finalizedStack = reducer({ ...stack, activities }, event);
+    const isLoading = activities.find(
+      (activity) =>
+        activity.transitionState === "enter-active" ||
+        activity.transitionState === "exit-active",
+    );
 
-    return {
-      ...finalizedStack,
-      globalTransitionState:
-        finalizedStack.globalTransitionState === "paused"
-          ? "paused"
-          : finalizedStack.activities.find(
-                (activity) =>
-                  activity.transitionState === "enter-active" ||
-                  activity.transitionState === "exit-active",
-              )
-            ? "loading"
-            : "idle",
-    };
+    const globalTransitionState =
+      stack.globalTransitionState === "paused"
+        ? "paused"
+        : isLoading
+          ? "loading"
+          : "idle";
+
+    return reducer({ ...stack, activities, globalTransitionState }, event);
   };
 }
 
