@@ -68,6 +68,7 @@ export const basicUIPlugin: (
           style={assignInlineVars(
             compactMap({
               [css.globalVars.backgroundColor]: _options.backgroundColor,
+              [css.globalVars.backgroundImage]: _options.backgroundImage,
               [css.globalVars.dimBackgroundColor]: _options.dimBackgroundColor,
               [css.globalVars.transitionDuration]:
                 `${stack.transitionDuration}ms`,

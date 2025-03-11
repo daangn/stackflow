@@ -14,7 +14,7 @@ import { compactMap } from "../utils";
 import * as css from "./BottomSheet.css";
 
 export type BottomSheetProps = Partial<
-  Pick<GlobalVars, "backgroundColor" | "dimBackgroundColor">
+  Pick<GlobalVars, "backgroundColor" | "backgroundImage" | "dimBackgroundColor">
 > &
   Partial<GlobalVars["bottomSheet"]> & {
     paperRef?: React.Ref<HTMLDivElement>;
@@ -24,6 +24,7 @@ export type BottomSheetProps = Partial<
 const BottomSheet: React.FC<BottomSheetProps> = ({
   borderRadius = "1rem",
   backgroundColor,
+  backgroundImage,
   dimBackgroundColor,
   paperRef,
   onOutsideClick,
@@ -82,6 +83,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
         compactMap({
           [globalVars.bottomSheet.borderRadius]: borderRadius,
           [globalVars.backgroundColor]: backgroundColor,
+          [globalVars.backgroundImage]: backgroundImage,
           [globalVars.dimBackgroundColor]: dimBackgroundColor,
           [css.vars.zIndexes.dim]: `${zIndexBase}`,
           [css.vars.zIndexes.paper]: `${zIndexPaper}`,
