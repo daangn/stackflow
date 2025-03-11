@@ -11,6 +11,23 @@ import { makeActivitiesReducer } from "./makeActivitiesReducer";
 import { makeActivityReducer } from "./makeActivityReducer";
 import { makeReducer } from "./makeReducer";
 
+function calculateGlobalTransitionState(
+  activities: Activity[],
+  currentState: Stack["globalTransitionState"],
+): Stack["globalTransitionState"] {
+  if (currentState === "paused") {
+    return "paused";
+  }
+
+  const hasActiveTransition = activities.some(
+    (activity) =>
+      activity.transitionState === "enter-active" ||
+      activity.transitionState === "exit-active",
+  );
+
+  return hasActiveTransition ? "loading" : "idle";
+}
+
 function withPauseReducer<T extends DomainEvent>(
   reducer: (stack: Stack, event: T) => Stack,
 ) {
@@ -63,20 +80,25 @@ function withActivitiesReducer<T extends DomainEvent>(
       );
     }
 
-    const isLoading = activities.find(
-      (activity) =>
-        activity.transitionState === "enter-active" ||
-        activity.transitionState === "exit-active",
+    const globalTransitionState = calculateGlobalTransitionState(
+      activities,
+      stack.globalTransitionState,
     );
 
-    const globalTransitionState =
-      stack.globalTransitionState === "paused"
-        ? "paused"
-        : isLoading
-          ? "loading"
-          : "idle";
+    const result = reducer(
+      { ...stack, activities, globalTransitionState },
+      event,
+    );
 
-    return reducer({ ...stack, activities, globalTransitionState }, event);
+    const updatedGlobalTransitionState = calculateGlobalTransitionState(
+      result.activities,
+      result.globalTransitionState,
+    );
+
+    return {
+      ...result,
+      globalTransitionState: updatedGlobalTransitionState,
+    };
   };
 }
 
