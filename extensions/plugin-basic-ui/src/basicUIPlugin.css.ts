@@ -49,7 +49,7 @@ export type GlobalVars = typeof GLOBAL_VARS;
 
 const androidValues: GlobalVars = {
   backgroundColor: "#fff",
-  backgroundImage: "none",
+  backgroundImage: "unset",
   dimBackgroundColor: "rgba(0, 0, 0, 0.15)",
   transitionDuration: "0s",
   computedTransitionDuration: "0s",
@@ -66,7 +66,7 @@ const androidValues: GlobalVars = {
     textColorTransitionDuration: "0s",
     backgroundColor: "#fff",
     backgroundColorTransitionDuration: "0s",
-    backgroundImage: "none",
+    backgroundImage: "unsets",
     backgroundImageTransitionDuration: "0s",
     overflow: "hidden",
     minSafeAreaInsetTop: "0px",

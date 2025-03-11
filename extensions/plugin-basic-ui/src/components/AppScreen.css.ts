@@ -26,6 +26,7 @@ const dimBackgroundColor = style({
 
 export const background = style({
   backgroundColor: globalVars.backgroundColor,
+  backgroundImage: globalVars.backgroundImage,
 });
 
 export const allTransitions = style({
