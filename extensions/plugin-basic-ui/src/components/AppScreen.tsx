@@ -224,8 +224,10 @@ const AppScreen: React.FC<AppScreenProps> = ({
         })}
         style={assignInlineVars(
           compactMap({
-            [globalVars.backgroundColor]: backgroundColor,
-            [globalVars.backgroundImage]: backgroundImage,
+            [globalVars.backgroundColor]:
+              backgroundColor || globalVars.backgroundColor,
+            [globalVars.backgroundImage]:
+              backgroundImage || globalVars.backgroundImage,
             [globalVars.dimBackgroundColor]: dimBackgroundColor,
             [globalVars.appBar.height]: appBar?.height,
             [globalVars.appBar.heightTransitionDuration]:

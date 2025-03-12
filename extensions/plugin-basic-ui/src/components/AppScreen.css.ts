@@ -41,7 +41,7 @@ export const exitDone = style({
 });
 
 export const appScreen = recipe({
-  base: [f.posAbsFull, f.overflowHidden],
+  base: [f.posAbsFull, f.overflowHidden, background],
   variants: {
     transitionState: {
       "enter-active": enterActive,
@@ -83,7 +83,6 @@ export const dim = style([
 export const paper = recipe({
   base: [
     f.posAbsFull,
-    background,
     allTransitions,
     {
       overflowY: "scroll",

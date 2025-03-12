@@ -34,7 +34,6 @@ export const appBar = recipe({
     f.posAbs,
     f.fullWidth,
     f.contentBox,
-    background,
     appBarOverflow,
     {
       backgroundColor: globalVars.appBar.backgroundColor,
