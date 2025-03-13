@@ -41,7 +41,14 @@ export const exitDone = style({
 });
 
 export const appScreen = recipe({
-  base: [f.posAbsFull, f.overflowHidden, background],
+  base: [
+    f.posAbsFull,
+    f.overflowHidden,
+    background,
+    {
+      isolation: "isolate",
+    },
+  ],
   variants: {
     transitionState: {
       "enter-active": enterActive,

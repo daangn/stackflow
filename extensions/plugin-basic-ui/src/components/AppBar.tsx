@@ -6,7 +6,7 @@ import {
   useNullableActivity,
 } from "@stackflow/react-ui-core";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
-import { forwardRef, useRef } from "react";
+import { act, forwardRef, useRef } from "react";
 import { IconBack, IconClose } from "../assets";
 import { useGlobalOptions } from "../basicUIPlugin";
 import type { GlobalVars } from "../basicUIPlugin.css";
@@ -120,14 +120,21 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
     };
 
     const renderBackButton = () => {
+      console.log("renderBackButton");
+      console.log(activity);
+
       if (!activity) {
         return null;
       }
+
+      console.log(activity?.isRoot);
+
       if (activity.isRoot) {
         return null;
       }
 
       if (!backButton && !globalBackButton) {
+        console.log("renderBackButton -default");
         return (
           <button
             type="button"
