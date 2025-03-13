@@ -30,8 +30,6 @@ type AppBarProps = Partial<
     | "textColorTransitionDuration"
     | "backgroundColor"
     | "backgroundColorTransitionDuration"
-    | "backgroundImage"
-    | "backgroundImageTransitionDuration"
   >
 > & {
   title?: React.ReactNode;
@@ -85,8 +83,6 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
       overflow,
       backgroundColor,
       backgroundColorTransitionDuration,
-      backgroundImage,
-      backgroundImageTransitionDuration,
       onTopClick,
     },
     ref,
@@ -297,10 +293,6 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
               backgroundColor || globalVars.backgroundColor,
             [globalVars.appBar.backgroundColorTransitionDuration]:
               backgroundColorTransitionDuration,
-            [globalVars.appBar.backgroundImage]:
-              backgroundImage || globalVars.backgroundImage,
-            [globalVars.appBar.backgroundImageTransitionDuration]:
-              backgroundImageTransitionDuration,
             [appScreenCss.vars.appBar.center.mainWidth]: `${maxWidth}px`,
           }),
         )}

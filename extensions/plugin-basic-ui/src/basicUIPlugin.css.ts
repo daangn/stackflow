@@ -7,7 +7,6 @@ import { recipe } from "@vanilla-extract/recipes";
 
 const GLOBAL_VARS = {
   backgroundColor: "background-color",
-  backgroundImage: "background-image",
   dimBackgroundColor: "dim-background-color",
   transitionDuration: "transition-duration",
   computedTransitionDuration: "computed-transition-duration",
@@ -25,9 +24,6 @@ const GLOBAL_VARS = {
     backgroundColor: "app-bar-background-color",
     backgroundColorTransitionDuration:
       "app-bar-background-color-transition-duration",
-    backgroundImage: "app-bar-background-image",
-    backgroundImageTransitionDuration:
-      "app-bar-background-image-transition-duration",
     overflow: "app-bar-overflow",
     minSafeAreaInsetTop: "app-bar-min-safe-area-inset-top",
   },
@@ -49,7 +45,6 @@ export type GlobalVars = typeof GLOBAL_VARS;
 
 const androidValues: GlobalVars = {
   backgroundColor: "#fff",
-  backgroundImage: "unset",
   dimBackgroundColor: "rgba(0, 0, 0, 0.15)",
   transitionDuration: "0s",
   computedTransitionDuration: "0s",
@@ -66,8 +61,6 @@ const androidValues: GlobalVars = {
     textColorTransitionDuration: "0s",
     backgroundColor: "#fff",
     backgroundColorTransitionDuration: "0s",
-    backgroundImage: "unset",
-    backgroundImageTransitionDuration: "0s",
     overflow: "hidden",
     minSafeAreaInsetTop: "0px",
   },

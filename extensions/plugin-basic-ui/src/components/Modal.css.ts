@@ -61,7 +61,6 @@ export const paper = style([
   allTransitions,
   {
     backgroundColor: globalVars.backgroundColor,
-    backgroundImage: globalVars.backgroundImage,
     width: "100%",
     maxWidth: globalVars.modal.maxWidth,
     margin: "0 2.5rem",

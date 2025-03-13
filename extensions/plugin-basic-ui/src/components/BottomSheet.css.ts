@@ -60,7 +60,6 @@ export const paper = style([
   allTransitions,
   {
     backgroundColor: globalVars.backgroundColor,
-    backgroundImage: globalVars.backgroundImage,
     width: "100%",
     borderRadius: `${globalVars.bottomSheet.borderRadius} ${globalVars.bottomSheet.borderRadius} 0 0`,
     transform: "translate3d(0, 100%, 0)",
