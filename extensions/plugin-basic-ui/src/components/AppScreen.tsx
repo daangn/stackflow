@@ -1,16 +1,17 @@
-import { useActions } from "@stackflow/react";
+import { useActions, useStack } from "@stackflow/react";
 import {
   useActivityDataAttributes,
   useLazy,
   useMounted,
   useNullableActivity,
+  usePreventTouchEvents,
   useStyleEffectHide,
   useStyleEffectOffset,
   useStyleEffectSwipeBack,
   useZIndexBase,
 } from "@stackflow/react-ui-core";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
-import { createContext, useContext, useMemo, useRef } from "react";
+import { createContext, useContext, useEffect, useMemo, useRef } from "react";
 import { useGlobalOptions } from "../basicUIPlugin";
 import type { GlobalVars } from "../basicUIPlugin.css";
 import { globalVars } from "../basicUIPlugin.css";
@@ -193,6 +194,10 @@ const AppScreen: React.FC<AppScreenProps> = ({
       });
     }
   };
+
+  usePreventTouchEvents({
+    appScreenRef,
+  });
 
   return (
     <Context.Provider

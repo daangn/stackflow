@@ -8,3 +8,4 @@ export * from "./useStyleEffectOffset";
 export * from "./useStyleEffectSwipeBack";
 export * from "./useZIndexBase";
 export * from "./useActivityDataAttributes";
+export * from "./usePreventTouchEvents";

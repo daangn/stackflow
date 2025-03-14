@@ -118,10 +118,10 @@ export const stackWrapper = recipe({
     globalTransitionState: {
       idle: {},
       loading: {
-        pointerEvents: "none",
+        // pointerEvents: "none",
       },
       paused: {
-        pointerEvents: "none",
+        // pointerEvents: "none",
       },
     },
   },
