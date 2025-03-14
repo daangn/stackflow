@@ -1,9 +1,10 @@
-import { useActions } from "@stackflow/react";
+import { useActions, useStack } from "@stackflow/react";
 import {
   useActivityDataAttributes,
   useLazy,
   useMounted,
   useNullableActivity,
+  usePreventTouchDuringTransition,
   useStyleEffectHide,
   useStyleEffectOffset,
   useStyleEffectSwipeBack,
@@ -193,6 +194,10 @@ const AppScreen: React.FC<AppScreenProps> = ({
       });
     }
   };
+
+  usePreventTouchDuringTransition({
+    appScreenRef,
+  });
 
   return (
     <Context.Provider
