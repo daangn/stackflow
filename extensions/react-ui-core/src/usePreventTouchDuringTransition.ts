@@ -1,7 +1,7 @@
 import { useStack } from "@stackflow/react";
 import { useEffect } from "react";
 
-export function usePreventTouchEvents({
+export function usePreventTouchDuringTransition({
   appScreenRef,
 }: {
   appScreenRef: React.RefObject<HTMLDivElement>;
