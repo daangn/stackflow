@@ -10,11 +10,7 @@ export function usePreventTouchEvents({
 
   useEffect(() => {
     const $appScreen = appScreenRef.current;
-    if (!$appScreen) {
-      return;
-    }
-
-    if (globalTransitionState === "idle") {
+    if (!$appScreen || globalTransitionState === "idle") {
       return;
     }
 
@@ -22,16 +18,10 @@ export function usePreventTouchEvents({
       e.preventDefault();
     };
 
-    const onTouchEnd = (e: TouchEvent) => {
-      e.preventDefault();
-    };
-
     $appScreen.addEventListener("touchstart", onTouchStart);
-    $appScreen.addEventListener("touchend", onTouchEnd);
 
     return () => {
       $appScreen.removeEventListener("touchstart", onTouchStart);
-      $appScreen.removeEventListener("touchend", onTouchEnd);
     };
   }, [globalTransitionState]);
 }
