@@ -1,5 +1,11 @@
 # @stackflow/react-ui-core
 
+## 1.2.2
+
+### Patch Changes
+
+- 8593b5a: fix(plugin-basic-ui,react-ui-core): prevent touch events while transitioning
+
 ## 1.2.1
 
 ### Patch Changes

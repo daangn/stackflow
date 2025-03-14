@@ -1,5 +1,17 @@
 # @stackflow/plugin-basic-ui
 
+## 1.13.0
+
+### Minor Changes
+
+- 91413b6: To support various background designs, enable users to configure the background-image option in AppScreen, AppBar, BottomSheet and Modal.
+
+### Patch Changes
+
+- 8593b5a: fix(plugin-basic-ui,react-ui-core): prevent touch events while transitioning
+- Updated dependencies [8593b5a]
+  - @stackflow/react-ui-core@1.2.2
+
 ## 1.12.0
 
 ### Minor Changes
