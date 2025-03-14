@@ -37,7 +37,7 @@ export type Activity = {
   context?: {};
   enteredBy: PushedEvent | ReplacedEvent;
   exitedBy?: ReplacedEvent | PoppedEvent;
-  pausedBy?: PausedEvent;
+  resumedBy?: ResumedEvent;
   steps: ActivityStep[];
   isTop: boolean;
   isActive: boolean;

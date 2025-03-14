@@ -127,30 +127,28 @@ export function makeActivityReducer(context: {
     ActivityRegistered: noop,
     Pushed: noop,
     Paused: (activity: Activity, event: PausedEvent): Activity => {
-      if (activity.exitedBy || activity.pausedBy) {
+      if (activity.exitedBy || activity.resumedBy) {
         return activity;
       }
 
       return {
         ...activity,
-        pausedBy: event,
         transitionState: "enter-active",
       };
     },
     Resumed: (activity: Activity, event: ResumedEvent): Activity => {
-      if (activity.exitedBy || activity.pausedBy) {
+      if (activity.exitedBy || activity.resumedBy) {
         return activity;
       }
-
-      const { pausedBy, ...rest } = activity;
 
       const isTransitionDone =
         context.now - (context.resumedAt ?? event.eventDate) >=
         context.transitionDuration;
 
       return {
-        ...rest,
+        ...activity,
         transitionState: isTransitionDone ? "enter-done" : "enter-active",
+        resumedBy: event,
       };
     },
   } as const);

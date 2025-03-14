@@ -4118,7 +4118,7 @@ test("aggregate - PausedEvent inserts source activity entering event into paused
     })),
     makeEvent("Paused", {
       eventDate: t - 150,
-      sourceActivityId: "activity-2",
+      activityId: "activity-2",
     }),
   ];
 
@@ -4181,6 +4181,7 @@ test("aggregate - Resumed 되면 해당 시간 이후로 Transition이 정상작
       activityParams: {},
     })),
     makeEvent("Paused", {
+      activityId: "activity-1",
       eventDate: enoughPastTime(),
     }),
     (pushedEvent2 = makeEvent("Pushed", {
@@ -4190,6 +4191,7 @@ test("aggregate - Resumed 되면 해당 시간 이후로 Transition이 정상작
       activityParams: {},
     })),
     makeEvent("Resumed", {
+      activityId: "activity-1",
       eventDate: nowTime() - 150,
     }),
   ];
