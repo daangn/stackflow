@@ -115,14 +115,5 @@ export const stackWrapper = recipe({
       android,
       cupertino,
     },
-    globalTransitionState: {
-      idle: {},
-      loading: {
-        // pointerEvents: "none",
-      },
-      paused: {
-        // pointerEvents: "none",
-      },
-    },
   },
 });
