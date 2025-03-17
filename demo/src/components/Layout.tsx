@@ -8,8 +8,11 @@ interface LayoutProps {
 }
 const Layout: React.FC<LayoutProps> = ({ appBar, children }) => (
   <AppScreen
-    appBar={appBar}
-    backgroundImage="linear-gradient(to bottom, #1a2a3d, #2c3e50, #34495e, #2c3e50, #1a2a3d)"
+    appBar={{
+      ...appBar,
+      enterStyle: "cover",
+    }}
+    backgroundImage="linear-gradient(to bottom, #4B0082, #663399, #8A2BE2, #9370DB, #BA55D3, #9370DB, #8A2BE2, #663399, #4B0082)"
   >
     {children}
   </AppScreen>

@@ -99,7 +99,11 @@ const AppScreen: React.FC<AppScreenProps> = ({
         zIndexBase + (modalPresentationStyle === "fullScreen" ? 2 : 0);
       zIndexPaper =
         zIndexBase +
-        (hasAppBar && modalPresentationStyle !== "fullScreen" ? 1 : 3);
+        (hasAppBar && modalPresentationStyle !== "fullScreen"
+          ? appBar.enterStyle === "cover"
+            ? 2
+            : 1
+          : 3);
       zIndexEdge = zIndexBase + 4;
       zIndexAppBar = zIndexBase + 7;
       break;
@@ -122,8 +126,9 @@ const AppScreen: React.FC<AppScreenProps> = ({
   });
   useStyleEffectOffset({
     refs:
-      globalOptions.theme === "cupertino" ||
-      activityEnterStyle === "slideInLeft"
+      (globalOptions.theme === "cupertino" ||
+        activityEnterStyle === "slideInLeft") &&
+      appBar?.enterStyle !== "cover"
         ? [paperRef]
         : [paperRef, appBarRef],
     offsetStyles:
@@ -252,40 +257,38 @@ const AppScreen: React.FC<AppScreenProps> = ({
             {...activityDataAttributes}
           />
         )}
-        <div className={css.AppScreenBackground}>
-          {appBar && (
-            <AppBar
-              {...appBar}
-              ref={appBarRef}
-              modalPresentationStyle={modalPresentationStyle}
-              activityEnterStyle={activityEnterStyle}
-              onTopClick={onAppBarTopClick}
+        {appBar && (
+          <AppBar
+            {...appBar}
+            ref={appBarRef}
+            modalPresentationStyle={modalPresentationStyle}
+            activityEnterStyle={activityEnterStyle}
+            onTopClick={onAppBarTopClick}
+          />
+        )}
+        <div
+          key={activity?.id}
+          ref={paperRef}
+          className={css.paper({
+            hasAppBar,
+            modalPresentationStyle,
+            activityEnterStyle,
+          })}
+          data-part="paper"
+          {...activityDataAttributes}
+        >
+          <div className={css.paperContent({ hasAppBar })}>{children}</div>
+        </div>
+        {!activity?.isRoot &&
+          globalOptions.theme === "cupertino" &&
+          !isSwipeBackPrevented && (
+            <div
+              ref={edgeRef}
+              className={css.edge({ hasAppBar })}
+              data-part="edge"
+              {...activityDataAttributes}
             />
           )}
-          <div
-            key={activity?.id}
-            ref={paperRef}
-            className={css.paper({
-              hasAppBar,
-              modalPresentationStyle,
-              activityEnterStyle,
-            })}
-            data-part="paper"
-            {...activityDataAttributes}
-          >
-            {children}
-          </div>
-          {!activity?.isRoot &&
-            globalOptions.theme === "cupertino" &&
-            !isSwipeBackPrevented && (
-              <div
-                ref={edgeRef}
-                className={css.edge({ hasAppBar })}
-                data-part="edge"
-                {...activityDataAttributes}
-              />
-            )}
-        </div>
       </div>
     </Context.Provider>
   );

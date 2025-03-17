@@ -32,6 +32,7 @@ type AppBarProps = Partial<
     | "backgroundColorTransitionDuration"
     | "backgroundImage"
     | "backgroundImageTransitionDuration"
+    | "transitionDuration"
   >
 > & {
   title?: React.ReactNode;
@@ -60,6 +61,7 @@ type AppBarProps = Partial<
   modalPresentationStyle?: "fullScreen";
   activityEnterStyle?: "slideInLeft";
   onTopClick?: (e: React.MouseEvent) => void;
+  enterStyle?: "cover";
 };
 const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
   (
@@ -88,6 +90,8 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
       backgroundImage,
       backgroundImageTransitionDuration,
       onTopClick,
+      enterStyle,
+      transitionDuration,
     },
     ref,
   ) => {
@@ -276,6 +280,7 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
           border,
           modalPresentationStyle,
           activityEnterStyle,
+          enterStyle,
         })}
         style={assignInlineVars(
           compactMap({
@@ -301,6 +306,10 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
             [globalVars.appBar.backgroundImageTransitionDuration]:
               backgroundImageTransitionDuration,
             [appScreenCss.vars.appBar.center.mainWidth]: `${maxWidth}px`,
+            [globalVars.appBar.transitionDuration]:
+              transitionDuration || enterStyle === "cover"
+                ? globalVars.transitionDuration
+                : globalVars.appBar.transitionDuration,
           }),
         )}
         data-part="appBar"

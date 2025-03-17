@@ -4,10 +4,12 @@ import { recipe } from "@vanilla-extract/recipes";
 import { android, cupertino, globalVars } from "../basicUIPlugin.css";
 import { f } from "../styles";
 import {
+  allTransitions,
   background,
   enterActive,
   enterDone,
   exitActive,
+  exitDone,
   vars,
 } from "./AppScreen.css";
 
@@ -48,7 +50,7 @@ export const appBar = recipe({
           transform: "translate3d(100%, 0, 0)",
           transition: transitions({
             ...appBarCommonTransition,
-            transform: "0s",
+            transform: globalVars.appBar.transitionDuration,
           }),
         },
         [`${android} &`]: {
@@ -117,6 +119,26 @@ export const appBar = recipe({
               ...appBarCommonTransition,
               transform: "0s",
             }),
+          },
+        },
+      },
+    },
+    enterStyle: {
+      cover: {
+        transition: transitions({
+          ...appBarCommonTransition,
+          transform: vars.transitionDuration,
+          opacity: vars.transitionDuration,
+        }),
+        selectors: {
+          [`${cupertino} &`]: {
+            transform: "translate3d(100%, 0, 0)",
+          },
+          [`
+            ${cupertino} ${enterActive} &,
+            ${cupertino} ${enterDone} &
+          `]: {
+            transform: "translate3d(0, 0, 0)",
           },
         },
       },

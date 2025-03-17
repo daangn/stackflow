@@ -30,6 +30,7 @@ const GLOBAL_VARS = {
       "app-bar-background-image-transition-duration",
     overflow: "app-bar-overflow",
     minSafeAreaInsetTop: "app-bar-min-safe-area-inset-top",
+    transitionDuration: "app-bar-transition-duration",
   },
   bottomSheet: {
     borderRadius: "bottom-sheet-border-radius",
@@ -70,6 +71,7 @@ const androidValues: GlobalVars = {
     backgroundImageTransitionDuration: "0s",
     overflow: "hidden",
     minSafeAreaInsetTop: "0px",
+    transitionDuration: "0s",
   },
   bottomSheet: {
     borderRadius: "1rem",
