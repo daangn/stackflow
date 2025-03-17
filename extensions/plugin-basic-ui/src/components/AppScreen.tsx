@@ -252,38 +252,40 @@ const AppScreen: React.FC<AppScreenProps> = ({
             {...activityDataAttributes}
           />
         )}
-        {appBar && (
-          <AppBar
-            {...appBar}
-            ref={appBarRef}
-            modalPresentationStyle={modalPresentationStyle}
-            activityEnterStyle={activityEnterStyle}
-            onTopClick={onAppBarTopClick}
-          />
-        )}
-        <div
-          key={activity?.id}
-          ref={paperRef}
-          className={css.paper({
-            hasAppBar,
-            modalPresentationStyle,
-            activityEnterStyle,
-          })}
-          data-part="paper"
-          {...activityDataAttributes}
-        >
-          {children}
-        </div>
-        {!activity?.isRoot &&
-          globalOptions.theme === "cupertino" &&
-          !isSwipeBackPrevented && (
-            <div
-              ref={edgeRef}
-              className={css.edge({ hasAppBar })}
-              data-part="edge"
-              {...activityDataAttributes}
+        <div className={css.AppScreenBackground}>
+          {appBar && (
+            <AppBar
+              {...appBar}
+              ref={appBarRef}
+              modalPresentationStyle={modalPresentationStyle}
+              activityEnterStyle={activityEnterStyle}
+              onTopClick={onAppBarTopClick}
             />
           )}
+          <div
+            key={activity?.id}
+            ref={paperRef}
+            className={css.paper({
+              hasAppBar,
+              modalPresentationStyle,
+              activityEnterStyle,
+            })}
+            data-part="paper"
+            {...activityDataAttributes}
+          >
+            {children}
+          </div>
+          {!activity?.isRoot &&
+            globalOptions.theme === "cupertino" &&
+            !isSwipeBackPrevented && (
+              <div
+                ref={edgeRef}
+                className={css.edge({ hasAppBar })}
+                data-part="edge"
+                {...activityDataAttributes}
+              />
+            )}
+        </div>
       </div>
     </Context.Provider>
   );

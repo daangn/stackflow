@@ -192,3 +192,11 @@ export const edge = recipe({
     },
   },
 });
+
+export const AppScreenBackground = style([
+  background,
+  {
+    height: "100%",
+    width: "100%",
+  },
+]);
