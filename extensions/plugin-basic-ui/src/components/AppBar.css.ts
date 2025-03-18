@@ -3,15 +3,7 @@ import { recipe } from "@vanilla-extract/recipes";
 
 import { android, cupertino, globalVars } from "../basicUIPlugin.css";
 import { f } from "../styles";
-import {
-  allTransitions,
-  background,
-  enterActive,
-  enterDone,
-  exitActive,
-  exitDone,
-  vars,
-} from "./AppScreen.css";
+import { enterActive, enterDone, exitActive, vars } from "./AppScreen.css";
 
 const appBarMinHeight = style({
   minHeight: globalVars.appBar.minHeight,
@@ -50,7 +42,7 @@ export const appBar = recipe({
           transform: "translate3d(100%, 0, 0)",
           transition: transitions({
             ...appBarCommonTransition,
-            transform: globalVars.appBar.transitionDuration,
+            transform: "0s",
           }),
         },
         [`${android} &`]: {
@@ -73,6 +65,42 @@ export const appBar = recipe({
     },
   ],
   variants: {
+    activityEnterStyle: {
+      slideInLeft: {
+        selectors: {
+          [`${android} &`]: {
+            opacity: 1,
+            transform: "translate3d(0, 0, 0)",
+          },
+          [`${android} ${exitActive} &`]: {
+            transform: "translate3d(100%, 0, 0)",
+            transition: transitions({
+              ...appBarCommonTransition,
+              transform: "0s",
+            }),
+          },
+        },
+      },
+    },
+    enterStyle: {
+      cover: {
+        transition: transitions({
+          ...appBarCommonTransition,
+          transform: vars.transitionDuration,
+        }),
+        selectors: {
+          [`${cupertino} &`]: {
+            transform: "translate3d(100%, 0, 0)",
+          },
+          [`
+            ${cupertino} ${enterActive} &,
+            ${cupertino} ${enterDone} &
+          `]: {
+            transform: "translate3d(0, 0, 0)",
+          },
+        },
+      },
+    },
     border: {
       true: {
         boxShadow: `inset 0px calc(-1 * ${globalVars.appBar.borderSize}) 0 ${globalVars.appBar.borderColor}`,
@@ -102,43 +130,6 @@ export const appBar = recipe({
               transform: vars.transitionDuration,
               opacity: vars.transitionDuration,
             }),
-          },
-        },
-      },
-    },
-    activityEnterStyle: {
-      slideInLeft: {
-        selectors: {
-          [`${android} &`]: {
-            opacity: 1,
-            transform: "translate3d(0, 0, 0)",
-          },
-          [`${android} ${exitActive} &`]: {
-            transform: "translate3d(100%, 0, 0)",
-            transition: transitions({
-              ...appBarCommonTransition,
-              transform: "0s",
-            }),
-          },
-        },
-      },
-    },
-    enterStyle: {
-      cover: {
-        transition: transitions({
-          ...appBarCommonTransition,
-          transform: vars.transitionDuration,
-          opacity: vars.transitionDuration,
-        }),
-        selectors: {
-          [`${cupertino} &`]: {
-            transform: "translate3d(100%, 0, 0)",
-          },
-          [`
-            ${cupertino} ${enterActive} &,
-            ${cupertino} ${enterDone} &
-          `]: {
-            transform: "translate3d(0, 0, 0)",
           },
         },
       },

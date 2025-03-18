@@ -21,6 +21,6 @@ export const config = defineConfig({
       loader: articleLoader,
     },
   ],
-  transitionDuration: 1500,
+  transitionDuration: 270,
   initialActivity: () => "Main",
 });

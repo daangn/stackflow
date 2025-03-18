@@ -32,7 +32,6 @@ type AppBarProps = Partial<
     | "backgroundColorTransitionDuration"
     | "backgroundImage"
     | "backgroundImageTransitionDuration"
-    | "transitionDuration"
   >
 > & {
   title?: React.ReactNode;
@@ -91,7 +90,6 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
       backgroundImageTransitionDuration,
       onTopClick,
       enterStyle,
-      transitionDuration,
     },
     ref,
   ) => {
@@ -299,17 +297,26 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
               heightTransitionDuration,
             [globalVars.appBar.overflow]: overflow,
             [globalVars.appBar.backgroundColor]:
-              backgroundColor || "transparent",
+              backgroundColor ||
+              (((globalOptions.theme === "cupertino" &&
+                modalPresentationStyle !== "fullScreen") ||
+                activityEnterStyle === "slideInLeft") &&
+                enterStyle !== "cover")
+                ? globalVars.backgroundColor
+                : "transparent",
             [globalVars.appBar.backgroundColorTransitionDuration]:
               backgroundColorTransitionDuration,
-            [globalVars.appBar.backgroundImage]: backgroundImage || "none",
+            [globalVars.appBar.backgroundImage]:
+              backgroundImage ||
+              (((globalOptions.theme === "cupertino" &&
+                modalPresentationStyle !== "fullScreen") ||
+                activityEnterStyle === "slideInLeft") &&
+                enterStyle !== "cover")
+                ? globalVars.appBar.backgroundImage
+                : "none",
             [globalVars.appBar.backgroundImageTransitionDuration]:
               backgroundImageTransitionDuration,
             [appScreenCss.vars.appBar.center.mainWidth]: `${maxWidth}px`,
-            [globalVars.appBar.transitionDuration]:
-              transitionDuration || enterStyle === "cover"
-                ? globalVars.transitionDuration
-                : globalVars.appBar.transitionDuration,
           }),
         )}
         data-part="appBar"
