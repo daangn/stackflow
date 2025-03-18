@@ -7,15 +7,7 @@ interface LayoutProps {
   children: React.ReactNode;
 }
 const Layout: React.FC<LayoutProps> = ({ appBar, children }) => (
-  <AppScreen
-    appBar={{
-      ...appBar,
-      enterStyle: "cover",
-    }}
-    backgroundImage="linear-gradient(to bottom, #4B0082, #663399, #8A2BE2, #9370DB, #BA55D3, #9370DB, #8A2BE2, #663399, #4B0082)"
-  >
-    {children}
-  </AppScreen>
+  <AppScreen appBar={appBar}>{children}</AppScreen>
 );
 
 Layout.displayName = "Layout";

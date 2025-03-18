@@ -15,7 +15,7 @@ export const { Stack, actions } = stackflow({
   plugins: [
     basicRendererPlugin(),
     basicUIPlugin({
-      theme: "android",
+      theme: "cupertino",
       backgroundColor: vars.$semantic.color.paperDefault,
       appBar: {
         textColor: vars.$scale.color.gray900,
