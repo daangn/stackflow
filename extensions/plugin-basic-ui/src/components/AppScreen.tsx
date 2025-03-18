@@ -100,7 +100,11 @@ const AppScreen: React.FC<AppScreenProps> = ({
         zIndexBase + (modalPresentationStyle === "fullScreen" ? 2 : 0);
       zIndexPaper =
         zIndexBase +
-        (hasAppBar && modalPresentationStyle !== "fullScreen" ? 1 : 3);
+        (hasAppBar && modalPresentationStyle !== "fullScreen"
+          ? appBar.enterStyle === "cover"
+            ? 2
+            : 1
+          : 3);
       zIndexEdge = zIndexBase + 4;
       zIndexAppBar = zIndexBase + 7;
       break;
@@ -123,7 +127,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
   });
   useStyleEffectOffset({
     refs:
-      globalOptions.theme === "cupertino" ||
+      (globalOptions.theme === "cupertino" && appBar?.enterStyle !== "cover") ||
       activityEnterStyle === "slideInLeft"
         ? [paperRef]
         : [paperRef, appBarRef],
@@ -277,7 +281,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
           data-part="paper"
           {...activityDataAttributes}
         >
-          {children}
+          <div className={css.paperContent({ hasAppBar })}>{children}</div>
         </div>
         {!activity?.isRoot &&
           globalOptions.theme === "cupertino" &&
