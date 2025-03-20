@@ -71,6 +71,7 @@ Have you successfully registered the activity? However, the `<Stack />` componen
 ```ts showLineNumbers {16} filename="stackflow.ts" copy
 import { stackflow } from "@stackflow/react";
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
+import { basicUIPlugin } from "@stackflow/plugin-basic-ui";
 import MyActivity from "./MyActivity";
 
 export const { Stack, useFlow } = stackflow({
