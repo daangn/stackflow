@@ -8,15 +8,13 @@ export function usePreventTouchDuringTransition({
 }) {
   const stack = useNullableStack();
 
-  if (!stack) {
-    return;
-  }
-
-  const { globalTransitionState } = stack;
-
   useEffect(() => {
+    if (!stack) {
+      return;
+    }
+
     const $appScreen = appScreenRef.current;
-    if (!$appScreen || globalTransitionState === "idle") {
+    if (!$appScreen || stack.globalTransitionState === "idle") {
       return;
     }
 
@@ -29,5 +27,5 @@ export function usePreventTouchDuringTransition({
     return () => {
       $appScreen.removeEventListener("touchstart", onTouchStart);
     };
-  }, [globalTransitionState]);
+  }, [stack?.globalTransitionState]);
 }
