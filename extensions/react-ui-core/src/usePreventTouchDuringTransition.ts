@@ -1,16 +1,20 @@
-import { useStack } from "@stackflow/react";
 import { useEffect } from "react";
+import { useNullableStack } from "./useNullableStack";
 
 export function usePreventTouchDuringTransition({
   appScreenRef,
 }: {
   appScreenRef: React.RefObject<HTMLDivElement>;
 }) {
-  const { globalTransitionState } = useStack();
+  const stack = useNullableStack();
 
   useEffect(() => {
+    if (!stack) {
+      return;
+    }
+
     const $appScreen = appScreenRef.current;
-    if (!$appScreen || globalTransitionState === "idle") {
+    if (!$appScreen || stack.globalTransitionState === "idle") {
       return;
     }
 
@@ -23,5 +27,5 @@ export function usePreventTouchDuringTransition({
     return () => {
       $appScreen.removeEventListener("touchstart", onTouchStart);
     };
-  }, [globalTransitionState]);
+  }, [stack?.globalTransitionState]);
 }
