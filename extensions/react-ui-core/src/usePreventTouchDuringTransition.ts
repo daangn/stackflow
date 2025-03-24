@@ -1,12 +1,18 @@
-import { useStack } from "@stackflow/react";
 import { useEffect } from "react";
+import { useNullableStack } from "./useNullableStack";
 
 export function usePreventTouchDuringTransition({
   appScreenRef,
 }: {
   appScreenRef: React.RefObject<HTMLDivElement>;
 }) {
-  const { globalTransitionState } = useStack();
+  const stack = useNullableStack();
+
+  if (!stack) {
+    return;
+  }
+
+  const { globalTransitionState } = stack;
 
   useEffect(() => {
     const $appScreen = appScreenRef.current;
