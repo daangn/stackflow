@@ -118,7 +118,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./",\
         "packageDependencies": [\
           ["@biomejs/biome", "npm:1.8.3"],\
-          ["@changesets/cli", "npm:2.27.7"],\
+          ["@changesets/cli", "npm:2.28.1"],\
           ["@types/jest", "npm:29.5.12"],\
           ["@types/node", "npm:20.14.9"],\
           ["@types/react", "npm:18.3.3"],\
@@ -1076,16 +1076,15 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@changesets/apply-release-plan", [\
-      ["npm:7.0.4", {\
-        "packageLocation": "./.yarn/cache/@changesets-apply-release-plan-npm-7.0.4-2d261c00c8-793ea2bbe5.zip/node_modules/@changesets/apply-release-plan/",\
+      ["npm:7.0.10", {\
+        "packageLocation": "./.yarn/cache/@changesets-apply-release-plan-npm-7.0.10-e2570993de-8d37aa245d.zip/node_modules/@changesets/apply-release-plan/",\
         "packageDependencies": [\
-          ["@changesets/apply-release-plan", "npm:7.0.4"],\
-          ["@babel/runtime", "npm:7.25.0"],\
-          ["@changesets/config", "npm:3.0.2"],\
+          ["@changesets/apply-release-plan", "npm:7.0.10"],\
+          ["@changesets/config", "npm:3.1.1"],\
           ["@changesets/get-version-range-type", "npm:0.4.0"],\
-          ["@changesets/git", "npm:3.0.0"],\
-          ["@changesets/should-skip-package", "npm:0.1.0"],\
-          ["@changesets/types", "npm:6.0.0"],\
+          ["@changesets/git", "npm:3.0.2"],\
+          ["@changesets/should-skip-package", "npm:0.1.2"],\
+          ["@changesets/types", "npm:6.1.0"],\
           ["@manypkg/get-packages", "npm:1.1.3"],\
           ["detect-indent", "npm:6.1.0"],\
           ["fs-extra", "npm:7.0.1"],\
@@ -1099,15 +1098,14 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@changesets/assemble-release-plan", [\
-      ["patch:@changesets/assemble-release-plan@npm%3A6.0.3#~/.yarn/patches/@changesets-assemble-release-plan-npm-6.0.3-29726de363.patch::version=6.0.3&hash=57a3c2", {\
-        "packageLocation": "./.yarn/cache/@changesets-assemble-release-plan-patch-cc6b0b0fef-8671fb777b.zip/node_modules/@changesets/assemble-release-plan/",\
+      ["npm:6.0.6", {\
+        "packageLocation": "./.yarn/cache/@changesets-assemble-release-plan-npm-6.0.6-b2f6e7679e-b6c7ce7231.zip/node_modules/@changesets/assemble-release-plan/",\
         "packageDependencies": [\
-          ["@changesets/assemble-release-plan", "patch:@changesets/assemble-release-plan@npm%3A6.0.3#~/.yarn/patches/@changesets-assemble-release-plan-npm-6.0.3-29726de363.patch::version=6.0.3&hash=57a3c2"],\
-          ["@babel/runtime", "npm:7.25.0"],\
+          ["@changesets/assemble-release-plan", "npm:6.0.6"],\
           ["@changesets/errors", "npm:0.2.0"],\
-          ["@changesets/get-dependents-graph", "npm:2.1.1"],\
-          ["@changesets/should-skip-package", "npm:0.1.0"],\
-          ["@changesets/types", "npm:6.0.0"],\
+          ["@changesets/get-dependents-graph", "npm:2.1.3"],\
+          ["@changesets/should-skip-package", "npm:0.1.2"],\
+          ["@changesets/types", "npm:6.1.0"],\
           ["@manypkg/get-packages", "npm:1.1.3"],\
           ["semver", "npm:7.6.2"]\
         ],\
@@ -1115,68 +1113,64 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@changesets/changelog-git", [\
-      ["npm:0.2.0", {\
-        "packageLocation": "./.yarn/cache/@changesets-changelog-git-npm-0.2.0-9b2795d69d-631fcb73ca.zip/node_modules/@changesets/changelog-git/",\
+      ["npm:0.2.1", {\
+        "packageLocation": "./.yarn/cache/@changesets-changelog-git-npm-0.2.1-2d750fee18-c22f3c0baf.zip/node_modules/@changesets/changelog-git/",\
         "packageDependencies": [\
-          ["@changesets/changelog-git", "npm:0.2.0"],\
-          ["@changesets/types", "npm:6.0.0"]\
+          ["@changesets/changelog-git", "npm:0.2.1"],\
+          ["@changesets/types", "npm:6.1.0"]\
         ],\
         "linkType": "HARD"\
       }]\
     ]],\
     ["@changesets/cli", [\
-      ["npm:2.27.7", {\
-        "packageLocation": "./.yarn/cache/@changesets-cli-npm-2.27.7-1c109a185d-1799897270.zip/node_modules/@changesets/cli/",\
+      ["npm:2.28.1", {\
+        "packageLocation": "./.yarn/cache/@changesets-cli-npm-2.28.1-cea38e0e18-c2cb4063bf.zip/node_modules/@changesets/cli/",\
         "packageDependencies": [\
-          ["@changesets/cli", "npm:2.27.7"],\
-          ["@babel/runtime", "npm:7.25.0"],\
-          ["@changesets/apply-release-plan", "npm:7.0.4"],\
-          ["@changesets/assemble-release-plan", "patch:@changesets/assemble-release-plan@npm%3A6.0.3#~/.yarn/patches/@changesets-assemble-release-plan-npm-6.0.3-29726de363.patch::version=6.0.3&hash=57a3c2"],\
-          ["@changesets/changelog-git", "npm:0.2.0"],\
-          ["@changesets/config", "npm:3.0.2"],\
+          ["@changesets/cli", "npm:2.28.1"],\
+          ["@changesets/apply-release-plan", "npm:7.0.10"],\
+          ["@changesets/assemble-release-plan", "npm:6.0.6"],\
+          ["@changesets/changelog-git", "npm:0.2.1"],\
+          ["@changesets/config", "npm:3.1.1"],\
           ["@changesets/errors", "npm:0.2.0"],\
-          ["@changesets/get-dependents-graph", "npm:2.1.1"],\
-          ["@changesets/get-release-plan", "npm:4.0.3"],\
-          ["@changesets/git", "npm:3.0.0"],\
-          ["@changesets/logger", "npm:0.1.0"],\
-          ["@changesets/pre", "npm:2.0.0"],\
-          ["@changesets/read", "npm:0.6.0"],\
-          ["@changesets/should-skip-package", "npm:0.1.0"],\
-          ["@changesets/types", "npm:6.0.0"],\
-          ["@changesets/write", "npm:0.3.1"],\
+          ["@changesets/get-dependents-graph", "npm:2.1.3"],\
+          ["@changesets/get-release-plan", "npm:4.0.8"],\
+          ["@changesets/git", "npm:3.0.2"],\
+          ["@changesets/logger", "npm:0.1.1"],\
+          ["@changesets/pre", "npm:2.0.2"],\
+          ["@changesets/read", "npm:0.6.3"],\
+          ["@changesets/should-skip-package", "npm:0.1.2"],\
+          ["@changesets/types", "npm:6.1.0"],\
+          ["@changesets/write", "npm:0.4.0"],\
           ["@manypkg/get-packages", "npm:1.1.3"],\
-          ["@types/semver", "npm:7.5.6"],\
           ["ansi-colors", "npm:4.1.3"],\
-          ["chalk", "npm:2.4.2"],\
           ["ci-info", "npm:3.9.0"],\
           ["enquirer", "npm:2.4.1"],\
           ["external-editor", "npm:3.1.0"],\
           ["fs-extra", "npm:7.0.1"],\
-          ["human-id", "npm:1.0.2"],\
           ["mri", "npm:1.2.0"],\
-          ["outdent", "npm:0.5.0"],\
           ["p-limit", "npm:2.3.0"],\
-          ["preferred-pm", "npm:3.1.2"],\
+          ["package-manager-detector", "npm:0.2.11"],\
+          ["picocolors", "npm:1.1.0"],\
           ["resolve-from", "npm:5.0.0"],\
           ["semver", "npm:7.6.2"],\
-          ["spawndamnit", "npm:2.0.0"],\
+          ["spawndamnit", "npm:3.0.1"],\
           ["term-size", "npm:2.2.1"]\
         ],\
         "linkType": "HARD"\
       }]\
     ]],\
     ["@changesets/config", [\
-      ["npm:3.0.2", {\
-        "packageLocation": "./.yarn/cache/@changesets-config-npm-3.0.2-11367a7708-f341b3f13b.zip/node_modules/@changesets/config/",\
+      ["npm:3.1.1", {\
+        "packageLocation": "./.yarn/cache/@changesets-config-npm-3.1.1-a98dadf748-9500e02b68.zip/node_modules/@changesets/config/",\
         "packageDependencies": [\
-          ["@changesets/config", "npm:3.0.2"],\
+          ["@changesets/config", "npm:3.1.1"],\
           ["@changesets/errors", "npm:0.2.0"],\
-          ["@changesets/get-dependents-graph", "npm:2.1.1"],\
-          ["@changesets/logger", "npm:0.1.0"],\
-          ["@changesets/types", "npm:6.0.0"],\
+          ["@changesets/get-dependents-graph", "npm:2.1.3"],\
+          ["@changesets/logger", "npm:0.1.1"],\
+          ["@changesets/types", "npm:6.1.0"],\
           ["@manypkg/get-packages", "npm:1.1.3"],\
           ["fs-extra", "npm:7.0.1"],\
-          ["micromatch", "npm:4.0.5"]\
+          ["micromatch", "npm:4.0.8"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -1192,30 +1186,28 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@changesets/get-dependents-graph", [\
-      ["npm:2.1.1", {\
-        "packageLocation": "./.yarn/cache/@changesets-get-dependents-graph-npm-2.1.1-4fe331dfef-abe99b47f6.zip/node_modules/@changesets/get-dependents-graph/",\
+      ["npm:2.1.3", {\
+        "packageLocation": "./.yarn/cache/@changesets-get-dependents-graph-npm-2.1.3-06e733067f-33f2bb5dc8.zip/node_modules/@changesets/get-dependents-graph/",\
         "packageDependencies": [\
-          ["@changesets/get-dependents-graph", "npm:2.1.1"],\
-          ["@changesets/types", "npm:6.0.0"],\
+          ["@changesets/get-dependents-graph", "npm:2.1.3"],\
+          ["@changesets/types", "npm:6.1.0"],\
           ["@manypkg/get-packages", "npm:1.1.3"],\
-          ["chalk", "npm:2.4.2"],\
-          ["fs-extra", "npm:7.0.1"],\
+          ["picocolors", "npm:1.1.0"],\
           ["semver", "npm:7.6.2"]\
         ],\
         "linkType": "HARD"\
       }]\
     ]],\
     ["@changesets/get-release-plan", [\
-      ["npm:4.0.3", {\
-        "packageLocation": "./.yarn/cache/@changesets-get-release-plan-npm-4.0.3-4c293e8903-b85c3e873b.zip/node_modules/@changesets/get-release-plan/",\
+      ["npm:4.0.8", {\
+        "packageLocation": "./.yarn/cache/@changesets-get-release-plan-npm-4.0.8-cd2af5bcca-9d61bc348d.zip/node_modules/@changesets/get-release-plan/",\
         "packageDependencies": [\
-          ["@changesets/get-release-plan", "npm:4.0.3"],\
-          ["@babel/runtime", "npm:7.25.0"],\
-          ["@changesets/assemble-release-plan", "patch:@changesets/assemble-release-plan@npm%3A6.0.3#~/.yarn/patches/@changesets-assemble-release-plan-npm-6.0.3-29726de363.patch::version=6.0.3&hash=57a3c2"],\
-          ["@changesets/config", "npm:3.0.2"],\
-          ["@changesets/pre", "npm:2.0.0"],\
-          ["@changesets/read", "npm:0.6.0"],\
-          ["@changesets/types", "npm:6.0.0"],\
+          ["@changesets/get-release-plan", "npm:4.0.8"],\
+          ["@changesets/assemble-release-plan", "npm:6.0.6"],\
+          ["@changesets/config", "npm:3.1.1"],\
+          ["@changesets/pre", "npm:2.0.2"],\
+          ["@changesets/read", "npm:0.6.3"],\
+          ["@changesets/types", "npm:6.1.0"],\
           ["@manypkg/get-packages", "npm:1.1.3"]\
         ],\
         "linkType": "HARD"\
@@ -1231,50 +1223,47 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@changesets/git", [\
-      ["npm:3.0.0", {\
-        "packageLocation": "./.yarn/cache/@changesets-git-npm-3.0.0-a69bfb3b4f-483beda952.zip/node_modules/@changesets/git/",\
+      ["npm:3.0.2", {\
+        "packageLocation": "./.yarn/cache/@changesets-git-npm-3.0.2-07684e89c1-de63573fec.zip/node_modules/@changesets/git/",\
         "packageDependencies": [\
-          ["@changesets/git", "npm:3.0.0"],\
-          ["@babel/runtime", "npm:7.25.0"],\
+          ["@changesets/git", "npm:3.0.2"],\
           ["@changesets/errors", "npm:0.2.0"],\
-          ["@changesets/types", "npm:6.0.0"],\
           ["@manypkg/get-packages", "npm:1.1.3"],\
           ["is-subdir", "npm:1.2.0"],\
-          ["micromatch", "npm:4.0.5"],\
-          ["spawndamnit", "npm:2.0.0"]\
+          ["micromatch", "npm:4.0.8"],\
+          ["spawndamnit", "npm:3.0.1"]\
         ],\
         "linkType": "HARD"\
       }]\
     ]],\
     ["@changesets/logger", [\
-      ["npm:0.1.0", {\
-        "packageLocation": "./.yarn/cache/@changesets-logger-npm-0.1.0-6dd218e4bb-88a54c3a75.zip/node_modules/@changesets/logger/",\
+      ["npm:0.1.1", {\
+        "packageLocation": "./.yarn/cache/@changesets-logger-npm-0.1.1-bf84b05104-bbfc050ddd.zip/node_modules/@changesets/logger/",\
         "packageDependencies": [\
-          ["@changesets/logger", "npm:0.1.0"],\
-          ["chalk", "npm:2.4.2"]\
+          ["@changesets/logger", "npm:0.1.1"],\
+          ["picocolors", "npm:1.1.0"]\
         ],\
         "linkType": "HARD"\
       }]\
     ]],\
     ["@changesets/parse", [\
-      ["npm:0.4.0", {\
-        "packageLocation": "./.yarn/cache/@changesets-parse-npm-0.4.0-d135883a21-0a82458230.zip/node_modules/@changesets/parse/",\
+      ["npm:0.4.1", {\
+        "packageLocation": "./.yarn/cache/@changesets-parse-npm-0.4.1-89a52ed25b-2973ab8f38.zip/node_modules/@changesets/parse/",\
         "packageDependencies": [\
-          ["@changesets/parse", "npm:0.4.0"],\
-          ["@changesets/types", "npm:6.0.0"],\
+          ["@changesets/parse", "npm:0.4.1"],\
+          ["@changesets/types", "npm:6.1.0"],\
           ["js-yaml", "npm:3.14.1"]\
         ],\
         "linkType": "HARD"\
       }]\
     ]],\
     ["@changesets/pre", [\
-      ["npm:2.0.0", {\
-        "packageLocation": "./.yarn/cache/@changesets-pre-npm-2.0.0-b19a2dd054-210158d93e.zip/node_modules/@changesets/pre/",\
+      ["npm:2.0.2", {\
+        "packageLocation": "./.yarn/cache/@changesets-pre-npm-2.0.2-992284eb0f-daaedd2747.zip/node_modules/@changesets/pre/",\
         "packageDependencies": [\
-          ["@changesets/pre", "npm:2.0.0"],\
-          ["@babel/runtime", "npm:7.25.0"],\
+          ["@changesets/pre", "npm:2.0.2"],\
           ["@changesets/errors", "npm:0.2.0"],\
-          ["@changesets/types", "npm:6.0.0"],\
+          ["@changesets/types", "npm:6.1.0"],\
           ["@manypkg/get-packages", "npm:1.1.3"],\
           ["fs-extra", "npm:7.0.1"]\
         ],\
@@ -1282,29 +1271,27 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@changesets/read", [\
-      ["npm:0.6.0", {\
-        "packageLocation": "./.yarn/cache/@changesets-read-npm-0.6.0-52a4bb4b10-665b52499c.zip/node_modules/@changesets/read/",\
+      ["npm:0.6.3", {\
+        "packageLocation": "./.yarn/cache/@changesets-read-npm-0.6.3-856af22f4c-27f54da242.zip/node_modules/@changesets/read/",\
         "packageDependencies": [\
-          ["@changesets/read", "npm:0.6.0"],\
-          ["@babel/runtime", "npm:7.25.0"],\
-          ["@changesets/git", "npm:3.0.0"],\
-          ["@changesets/logger", "npm:0.1.0"],\
-          ["@changesets/parse", "npm:0.4.0"],\
-          ["@changesets/types", "npm:6.0.0"],\
-          ["chalk", "npm:2.4.2"],\
+          ["@changesets/read", "npm:0.6.3"],\
+          ["@changesets/git", "npm:3.0.2"],\
+          ["@changesets/logger", "npm:0.1.1"],\
+          ["@changesets/parse", "npm:0.4.1"],\
+          ["@changesets/types", "npm:6.1.0"],\
           ["fs-extra", "npm:7.0.1"],\
-          ["p-filter", "npm:2.1.0"]\
+          ["p-filter", "npm:2.1.0"],\
+          ["picocolors", "npm:1.1.0"]\
         ],\
         "linkType": "HARD"\
       }]\
     ]],\
     ["@changesets/should-skip-package", [\
-      ["npm:0.1.0", {\
-        "packageLocation": "./.yarn/cache/@changesets-should-skip-package-npm-0.1.0-36472dd0fe-3c966feae0.zip/node_modules/@changesets/should-skip-package/",\
+      ["npm:0.1.2", {\
+        "packageLocation": "./.yarn/cache/@changesets-should-skip-package-npm-0.1.2-c32b326b34-d09fcf1200.zip/node_modules/@changesets/should-skip-package/",\
         "packageDependencies": [\
-          ["@changesets/should-skip-package", "npm:0.1.0"],\
-          ["@babel/runtime", "npm:7.25.0"],\
-          ["@changesets/types", "npm:6.0.0"],\
+          ["@changesets/should-skip-package", "npm:0.1.2"],\
+          ["@changesets/types", "npm:6.1.0"],\
           ["@manypkg/get-packages", "npm:1.1.3"]\
         ],\
         "linkType": "HARD"\
@@ -1318,23 +1305,22 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "HARD"\
       }],\
-      ["npm:6.0.0", {\
-        "packageLocation": "./.yarn/cache/@changesets-types-npm-6.0.0-2ff6c4e1b6-214c58ff3e.zip/node_modules/@changesets/types/",\
+      ["npm:6.1.0", {\
+        "packageLocation": "./.yarn/cache/@changesets-types-npm-6.1.0-d358876ea4-2dcd00712c.zip/node_modules/@changesets/types/",\
         "packageDependencies": [\
-          ["@changesets/types", "npm:6.0.0"]\
+          ["@changesets/types", "npm:6.1.0"]\
         ],\
         "linkType": "HARD"\
       }]\
     ]],\
     ["@changesets/write", [\
-      ["npm:0.3.1", {\
-        "packageLocation": "./.yarn/cache/@changesets-write-npm-0.3.1-8daee7e46a-13b9284e8c.zip/node_modules/@changesets/write/",\
+      ["npm:0.4.0", {\
+        "packageLocation": "./.yarn/cache/@changesets-write-npm-0.4.0-da2e74c687-bcea8431a0.zip/node_modules/@changesets/write/",\
         "packageDependencies": [\
-          ["@changesets/write", "npm:0.3.1"],\
-          ["@babel/runtime", "npm:7.25.0"],\
-          ["@changesets/types", "npm:6.0.0"],\
+          ["@changesets/write", "npm:0.4.0"],\
+          ["@changesets/types", "npm:6.1.0"],\
           ["fs-extra", "npm:7.0.1"],\
-          ["human-id", "npm:1.0.2"],\
+          ["human-id", "npm:4.1.1"],\
           ["prettier", "npm:2.8.8"]\
         ],\
         "linkType": "HARD"\
@@ -3001,7 +2987,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@stackflow/monorepo", "workspace:."],\
           ["@biomejs/biome", "npm:1.8.3"],\
-          ["@changesets/cli", "npm:2.27.7"],\
+          ["@changesets/cli", "npm:2.28.1"],\
           ["@types/jest", "npm:29.5.12"],\
           ["@types/node", "npm:20.14.9"],\
           ["@types/react", "npm:18.3.3"],\
@@ -4080,15 +4066,6 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-relay-runtime-npm-17.0.4-263b833e4a-c163e6d145.zip/node_modules/@types/relay-runtime/",\
         "packageDependencies": [\
           ["@types/relay-runtime", "npm:17.0.4"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["@types/semver", [\
-      ["npm:7.5.6", {\
-        "packageLocation": "./.yarn/cache/@types-semver-npm-7.5.6-9d2637fc95-e77282b17f.zip/node_modules/@types/semver/",\
-        "packageDependencies": [\
-          ["@types/semver", "npm:7.5.6"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -5407,6 +5384,16 @@ const RAW_RUNTIME_STATE =
           ["which", "npm:2.0.2"]\
         ],\
         "linkType": "HARD"\
+      }],\
+      ["npm:7.0.6", {\
+        "packageLocation": "./.yarn/cache/cross-spawn-npm-7.0.6-264bddf921-0d52657d7a.zip/node_modules/cross-spawn/",\
+        "packageDependencies": [\
+          ["cross-spawn", "npm:7.0.6"],\
+          ["path-key", "npm:3.1.1"],\
+          ["shebang-command", "npm:2.0.0"],\
+          ["which", "npm:2.0.2"]\
+        ],\
+        "linkType": "HARD"\
       }]\
     ]],\
     ["css-what", [\
@@ -6620,17 +6607,6 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
-    ["find-yarn-workspace-root2", [\
-      ["npm:1.2.16", {\
-        "packageLocation": "./.yarn/cache/find-yarn-workspace-root2-npm-1.2.16-0d4f3213bd-398aa473ac.zip/node_modules/find-yarn-workspace-root2/",\
-        "packageDependencies": [\
-          ["find-yarn-workspace-root2", "npm:1.2.16"],\
-          ["micromatch", "npm:4.0.5"],\
-          ["pkg-dir", "npm:4.2.0"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
     ["flatted", [\
       ["npm:3.3.1", {\
         "packageLocation": "./.yarn/cache/flatted-npm-3.3.1-458870f59b-7b8376061d.zip/node_modules/flatted/",\
@@ -7278,10 +7254,10 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["human-id", [\
-      ["npm:1.0.2", {\
-        "packageLocation": "./.yarn/cache/human-id-npm-1.0.2-27e57df6a3-16b116ef68.zip/node_modules/human-id/",\
+      ["npm:4.1.1", {\
+        "packageLocation": "./.yarn/cache/human-id-npm-4.1.1-7078fe4166-84fef1edd4.zip/node_modules/human-id/",\
         "packageDependencies": [\
-          ["human-id", "npm:1.0.2"]\
+          ["human-id", "npm:4.1.1"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -8473,19 +8449,6 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/lines-and-columns-npm-1.2.4-d6c7cc5799-0c37f9f7fa.zip/node_modules/lines-and-columns/",\
         "packageDependencies": [\
           ["lines-and-columns", "npm:1.2.4"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["load-yaml-file", [\
-      ["npm:0.2.0", {\
-        "packageLocation": "./.yarn/cache/load-yaml-file-npm-0.2.0-0369385ceb-b1bfa7e801.zip/node_modules/load-yaml-file/",\
-        "packageDependencies": [\
-          ["load-yaml-file", "npm:0.2.0"],\
-          ["graceful-fs", "npm:4.2.11"],\
-          ["js-yaml", "npm:3.14.1"],\
-          ["pify", "npm:4.0.1"],\
-          ["strip-bom", "npm:3.0.0"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -10364,6 +10327,16 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["package-manager-detector", [\
+      ["npm:0.2.11", {\
+        "packageLocation": "./.yarn/cache/package-manager-detector-npm-0.2.11-9697867b16-2c1a8da0e5.zip/node_modules/package-manager-detector/",\
+        "packageDependencies": [\
+          ["package-manager-detector", "npm:0.2.11"],\
+          ["quansync", "npm:0.2.10"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["parse-entities", [\
       ["npm:4.0.0", {\
         "packageLocation": "./.yarn/cache/parse-entities-npm-4.0.0-fd521e2809-967d74ef0e.zip/node_modules/parse-entities/",\
@@ -10765,19 +10738,6 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
-    ["preferred-pm", [\
-      ["npm:3.1.2", {\
-        "packageLocation": "./.yarn/cache/preferred-pm-npm-3.1.2-239436324c-d66019f367.zip/node_modules/preferred-pm/",\
-        "packageDependencies": [\
-          ["preferred-pm", "npm:3.1.2"],\
-          ["find-up", "npm:5.0.0"],\
-          ["find-yarn-workspace-root2", "npm:1.2.16"],\
-          ["path-exists", "npm:4.0.0"],\
-          ["which-pm", "npm:2.0.0"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
     ["prettier", [\
       ["npm:2.8.8", {\
         "packageLocation": "./.yarn/cache/prettier-npm-2.8.8-430828a36c-00cdb6ab02.zip/node_modules/prettier/",\
@@ -10894,6 +10854,15 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/pure-rand-npm-6.1.0-497ea3fc37-256aa4bcaf.zip/node_modules/pure-rand/",\
         "packageDependencies": [\
           ["pure-rand", "npm:6.1.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["quansync", [\
+      ["npm:0.2.10", {\
+        "packageLocation": "./.yarn/cache/quansync-npm-0.2.10-f84635960e-b54d955de8.zip/node_modules/quansync/",\
+        "packageDependencies": [\
+          ["quansync", "npm:0.2.10"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -11717,12 +11686,12 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["spawndamnit", [\
-      ["npm:2.0.0", {\
-        "packageLocation": "./.yarn/cache/spawndamnit-npm-2.0.0-fbea5414ee-c74b5e264e.zip/node_modules/spawndamnit/",\
+      ["npm:3.0.1", {\
+        "packageLocation": "./.yarn/cache/spawndamnit-npm-3.0.1-26cfe44353-47d88a7f1e.zip/node_modules/spawndamnit/",\
         "packageDependencies": [\
-          ["spawndamnit", "npm:2.0.0"],\
-          ["cross-spawn", "npm:5.1.0"],\
-          ["signal-exit", "npm:3.0.7"]\
+          ["spawndamnit", "npm:3.0.1"],\
+          ["cross-spawn", "npm:7.0.6"],\
+          ["signal-exit", "npm:4.1.0"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -12872,17 +12841,6 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["which", "npm:2.0.2"],\
           ["isexe", "npm:2.0.0"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["which-pm", [\
-      ["npm:2.0.0", {\
-        "packageLocation": "./.yarn/cache/which-pm-npm-2.0.0-b9f68562bc-8f9dc47ab1.zip/node_modules/which-pm/",\
-        "packageDependencies": [\
-          ["which-pm", "npm:2.0.0"],\
-          ["load-yaml-file", "npm:0.2.0"],\
-          ["path-exists", "npm:4.0.0"]\
         ],\
         "linkType": "HARD"\
       }]\
