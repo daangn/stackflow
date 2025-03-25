@@ -1098,10 +1098,10 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@changesets/assemble-release-plan", [\
-      ["npm:6.0.6", {\
-        "packageLocation": "./.yarn/cache/@changesets-assemble-release-plan-npm-6.0.6-b2f6e7679e-b6c7ce7231.zip/node_modules/@changesets/assemble-release-plan/",\
+      ["patch:@changesets/assemble-release-plan@npm%3A6.0.6#~/.yarn/patches/@changesets-assemble-release-plan-npm-6.0.6-b2f6e7679e.patch::version=6.0.6&hash=bbfe33", {\
+        "packageLocation": "./.yarn/cache/@changesets-assemble-release-plan-patch-6d6eb789dc-35c195cba9.zip/node_modules/@changesets/assemble-release-plan/",\
         "packageDependencies": [\
-          ["@changesets/assemble-release-plan", "npm:6.0.6"],\
+          ["@changesets/assemble-release-plan", "patch:@changesets/assemble-release-plan@npm%3A6.0.6#~/.yarn/patches/@changesets-assemble-release-plan-npm-6.0.6-b2f6e7679e.patch::version=6.0.6&hash=bbfe33"],\
           ["@changesets/errors", "npm:0.2.0"],\
           ["@changesets/get-dependents-graph", "npm:2.1.3"],\
           ["@changesets/should-skip-package", "npm:0.1.2"],\
@@ -1128,7 +1128,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@changesets/cli", "npm:2.28.1"],\
           ["@changesets/apply-release-plan", "npm:7.0.10"],\
-          ["@changesets/assemble-release-plan", "npm:6.0.6"],\
+          ["@changesets/assemble-release-plan", "patch:@changesets/assemble-release-plan@npm%3A6.0.6#~/.yarn/patches/@changesets-assemble-release-plan-npm-6.0.6-b2f6e7679e.patch::version=6.0.6&hash=bbfe33"],\
           ["@changesets/changelog-git", "npm:0.2.1"],\
           ["@changesets/config", "npm:3.1.1"],\
           ["@changesets/errors", "npm:0.2.0"],\
@@ -1203,7 +1203,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@changesets-get-release-plan-npm-4.0.8-cd2af5bcca-9d61bc348d.zip/node_modules/@changesets/get-release-plan/",\
         "packageDependencies": [\
           ["@changesets/get-release-plan", "npm:4.0.8"],\
-          ["@changesets/assemble-release-plan", "npm:6.0.6"],\
+          ["@changesets/assemble-release-plan", "patch:@changesets/assemble-release-plan@npm%3A6.0.6#~/.yarn/patches/@changesets-assemble-release-plan-npm-6.0.6-b2f6e7679e.patch::version=6.0.6&hash=bbfe33"],\
           ["@changesets/config", "npm:3.1.1"],\
           ["@changesets/pre", "npm:2.0.2"],\
           ["@changesets/read", "npm:0.6.3"],\

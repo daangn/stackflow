@@ -27,7 +27,8 @@
   },
   "resolutions": {
     "@mdx-js/react": "3.0.1",
-    "@types/react": "18.3.3"
+    "@types/react": "18.3.3",
+    "@changesets/assemble-release-plan@npm:^6.0.6": "patch:@changesets/assemble-release-plan@npm%3A6.0.6#~/.yarn/patches/@changesets-assemble-release-plan-npm-6.0.6-b2f6e7679e.patch"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.8.3",
