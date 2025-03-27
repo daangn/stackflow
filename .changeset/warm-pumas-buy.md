@@ -1,4 +1,5 @@
 ---
+"@stackflow/plugin-basic-ui": patch
 "@stackflow/react-ui-core": patch
 ---
 
