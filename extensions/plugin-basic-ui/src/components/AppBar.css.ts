@@ -92,6 +92,12 @@ export const appBar = recipe({
           [`${cupertino} &`]: {
             transform: "translate3d(100%, 0, 0)",
           },
+          [`${cupertino} ${exitActive} &`]: {
+            transition: transitions({
+              ...appBarCommonTransition,
+              transform: vars.transitionDuration,
+            }),
+          },
           [`
             ${cupertino} ${enterActive} &,
             ${cupertino} ${enterDone} &
