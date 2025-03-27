@@ -1,5 +1,13 @@
 # @stackflow/docs
 
+## 2.0.3
+
+### Patch Changes
+
+- 517b750: fix: add import basicUiPlugin in `get-started -> activity` page
+- Updated dependencies [5c4b96c]
+  - @stackflow/plugin-basic-ui@1.13.1
+
 ## 2.0.2
 
 ### Patch Changes

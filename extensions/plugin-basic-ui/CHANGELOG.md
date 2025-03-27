@@ -1,5 +1,13 @@
 # @stackflow/plugin-basic-ui
 
+## 1.13.1
+
+### Patch Changes
+
+- 5c4b96c: fix(react-ui-core): consider nullable stack
+- Updated dependencies [5c4b96c]
+  - @stackflow/react-ui-core@1.2.3
+
 ## 1.13.0
 
 ### Minor Changes
