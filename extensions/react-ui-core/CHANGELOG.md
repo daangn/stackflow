@@ -1,5 +1,11 @@
 # @stackflow/react-ui-core
 
+## 1.2.3
+
+### Patch Changes
+
+- 5c4b96c: fix(react-ui-core): consider nullable stack
+
 ## 1.2.2
 
 ### Patch Changes
