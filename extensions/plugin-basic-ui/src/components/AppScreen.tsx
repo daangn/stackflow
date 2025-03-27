@@ -130,8 +130,9 @@ const AppScreen: React.FC<AppScreenProps> = ({
   });
   useStyleEffectOffset({
     refs:
-      (globalOptions.theme === "cupertino" && appBar?.enterStyle !== "cover") ||
-      activityEnterStyle === "slideInLeft"
+      (globalOptions.theme === "cupertino" ||
+        activityEnterStyle === "slideInLeft") &&
+      appBar?.enterStyle !== "cover"
         ? [paperRef]
         : [paperRef, appBarRef],
     offsetStyles:
