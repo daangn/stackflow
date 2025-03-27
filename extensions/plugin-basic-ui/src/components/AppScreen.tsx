@@ -155,6 +155,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
     appBarRef,
     offset: OFFSET_PX_CUPERTINO,
     transitionDuration: globalVars.transitionDuration,
+    moveAppBarTogether: appBar?.enterStyle === "cover",
     preventSwipeBack:
       isSwipeBackPrevented || globalOptions.theme !== "cupertino",
     getActivityTransitionState() {

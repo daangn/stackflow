@@ -12,6 +12,7 @@ export function useStyleEffectSwipeBack({
   offset,
   transitionDuration,
   preventSwipeBack,
+  moveAppBarTogether,
   getActivityTransitionState,
   onSwipeStart,
   onSwipeMove,
@@ -25,6 +26,7 @@ export function useStyleEffectSwipeBack({
   offset: number;
   transitionDuration: string;
   preventSwipeBack: boolean;
+  moveAppBarTogether: boolean;
   getActivityTransitionState: () => ActivityTransitionState | null;
   onSwipeStart?: () => void;
   onSwipeMove?: (args: { dx: number; ratio: number }) => void;
@@ -33,7 +35,7 @@ export function useStyleEffectSwipeBack({
 }) {
   useStyleEffect({
     styleName: "swipe-back",
-    refs: [paperRef],
+    refs: moveAppBarTogether && appBarRef ? [paperRef, appBarRef] : [paperRef],
     effect: ({ refs }) => {
       if (preventSwipeBack) {
         return noop;
@@ -73,7 +75,7 @@ export function useStyleEffectSwipeBack({
 
       let _rAFLock = false;
 
-      function movePaper({ dx, ratio }: { dx: number; ratio: number }) {
+      function moveActivity({ dx, ratio }: { dx: number; ratio: number }) {
         if (!_rAFLock) {
           _rAFLock = true;
 
@@ -84,6 +86,12 @@ export function useStyleEffectSwipeBack({
             $paper.style.overflowY = "hidden";
             $paper.style.transform = `translate3d(${dx}px, 0, 0)`;
             $paper.style.transition = "0s";
+
+            if (moveAppBarTogether && $appBarRef) {
+              $appBarRef.style.overflowY = "hidden";
+              $appBarRef.style.transform = `translate3d(${dx}px, 0, 0)`;
+              $appBarRef.style.transition = "0s";
+            }
 
             $appBarRef?.style.setProperty(
               SWIPE_BACK_RATIO_CSS_VAR_NAME,
@@ -115,7 +123,7 @@ export function useStyleEffectSwipeBack({
         }
       }
 
-      function resetPaper({ swiped }: { swiped: boolean }): Promise<void> {
+      function resetActivity({ swiped }: { swiped: boolean }): Promise<void> {
         return new Promise((resolve) => {
           requestAnimationFrame(() => {
             $dim.style.opacity = `${swiped ? 0 : 1}`;
@@ -124,6 +132,12 @@ export function useStyleEffectSwipeBack({
             $paper.style.overflowY = "hidden";
             $paper.style.transform = `translateX(${swiped ? "100%" : "0"})`;
             $paper.style.transition = transitionDuration;
+
+            if (moveAppBarTogether && $appBarRef) {
+              $appBarRef.style.overflowY = "hidden";
+              $appBarRef.style.transform = `translateX(${swiped ? "100%" : "0"})`;
+              $appBarRef.style.transition = transitionDuration;
+            }
 
             refs.forEach((ref) => {
               if (!ref.current) {
@@ -234,7 +248,7 @@ export function useStyleEffectSwipeBack({
         const dx = x - x0;
         const ratio = dx / $paper.clientWidth;
 
-        movePaper({ dx, ratio });
+        moveActivity({ dx, ratio });
         onSwipeMove?.({ dx, ratio });
       };
 
@@ -251,7 +265,7 @@ export function useStyleEffectSwipeBack({
         onSwipeEnd?.({ swiped });
 
         Promise.resolve()
-          .then(() => resetPaper({ swiped }))
+          .then(() => resetActivity({ swiped }))
           .then(() => resetState());
       };
 
