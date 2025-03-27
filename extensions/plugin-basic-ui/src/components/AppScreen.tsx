@@ -110,7 +110,11 @@ const AppScreen: React.FC<AppScreenProps> = ({
     }
     default: {
       zIndexDim = zIndexBase;
-      zIndexPaper = zIndexBase + (activityEnterStyle === "slideInLeft" ? 1 : 3);
+      zIndexPaper =
+        zIndexBase +
+        (activityEnterStyle === "slideInLeft" && appBar?.enterStyle !== "cover"
+          ? 1
+          : 3);
       zIndexEdge = zIndexBase + 4;
       zIndexAppBar =
         zIndexBase + (activityEnterStyle === "slideInLeft" ? 7 : 4);

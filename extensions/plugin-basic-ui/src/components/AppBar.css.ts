@@ -3,7 +3,13 @@ import { recipe } from "@vanilla-extract/recipes";
 
 import { android, cupertino, globalVars } from "../basicUIPlugin.css";
 import { f } from "../styles";
-import { enterActive, enterDone, exitActive, vars } from "./AppScreen.css";
+import {
+  enterActive,
+  enterDone,
+  exitActive,
+  exitDone,
+  vars,
+} from "./AppScreen.css";
 
 const appBarMinHeight = style({
   minHeight: globalVars.appBar.minHeight,
@@ -84,10 +90,6 @@ export const appBar = recipe({
     },
     enterStyle: {
       cover: {
-        transition: transitions({
-          ...appBarCommonTransition,
-          transform: vars.transitionDuration,
-        }),
         selectors: {
           [`${cupertino} &`]: {
             transform: "translate3d(100%, 0, 0)",
@@ -103,6 +105,40 @@ export const appBar = recipe({
             ${cupertino} ${enterDone} &
           `]: {
             transform: "translate3d(0, 0, 0)",
+            transition: transitions({
+              ...appBarCommonTransition,
+              transform: vars.transitionDuration,
+            }),
+          },
+          [`${android} &`]: {
+            opacity: 0,
+            transform: "translate3d(50%, 0, 0)",
+            transition: transitions({
+              ...appBarCommonTransition,
+              transform: vars.transitionDuration,
+              opacity: vars.transitionDuration,
+            }),
+          },
+          [`${android} ${exitActive} &`]: {
+            opacity: 0,
+            transform: "translate3d(50%, 0, 0)",
+            transition: transitions({
+              ...appBarCommonTransition,
+              transform: vars.transitionDuration,
+              opacity: vars.transitionDuration,
+            }),
+          },
+          [`
+            ${android} ${enterActive} &,
+            ${android} ${enterDone} &
+          `]: {
+            opacity: 1,
+            transform: "translate3d(0, 0, 0)",
+            transition: transitions({
+              ...appBarCommonTransition,
+              transform: vars.transitionDuration,
+              opacity: vars.transitionDuration,
+            }),
           },
         },
       },
