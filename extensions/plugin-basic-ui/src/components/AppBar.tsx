@@ -111,6 +111,12 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
       enable: globalOptions.theme === "cupertino",
     });
 
+    const isSlideInTransition =
+      ((globalOptions.theme === "cupertino" &&
+        modalPresentationStyle !== "fullScreen") ||
+        activityEnterStyle === "slideInLeft") &&
+      enterStyle !== "cover";
+
     const onBackClick = (e: React.MouseEvent<HTMLButtonElement>) => {
       if (backButton && "onClick" in backButton && backButton.onClick) {
         backButton.onClick(e);
@@ -297,21 +303,13 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
               heightTransitionDuration,
             [globalVars.appBar.overflow]: overflow,
             [globalVars.appBar.backgroundColor]:
-              backgroundColor ||
-              (((globalOptions.theme === "cupertino" &&
-                modalPresentationStyle !== "fullScreen") ||
-                activityEnterStyle === "slideInLeft") &&
-                enterStyle !== "cover")
+              backgroundColor || isSlideInTransition
                 ? globalVars.backgroundColor
                 : "transparent",
             [globalVars.appBar.backgroundColorTransitionDuration]:
               backgroundColorTransitionDuration,
             [globalVars.appBar.backgroundImage]:
-              backgroundImage ||
-              (((globalOptions.theme === "cupertino" &&
-                modalPresentationStyle !== "fullScreen") ||
-                activityEnterStyle === "slideInLeft") &&
-                enterStyle !== "cover")
+              backgroundImage || isSlideInTransition
                 ? globalVars.appBar.backgroundImage
                 : "none",
             [globalVars.appBar.backgroundImageTransitionDuration]:

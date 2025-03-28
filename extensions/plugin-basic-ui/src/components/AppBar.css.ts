@@ -110,36 +110,6 @@ export const appBar = recipe({
               transform: vars.transitionDuration,
             }),
           },
-          [`${android} &`]: {
-            opacity: 0,
-            transform: "translate3d(50%, 0, 0)",
-            transition: transitions({
-              ...appBarCommonTransition,
-              transform: vars.transitionDuration,
-              opacity: vars.transitionDuration,
-            }),
-          },
-          [`${android} ${exitActive} &`]: {
-            opacity: 0,
-            transform: "translate3d(50%, 0, 0)",
-            transition: transitions({
-              ...appBarCommonTransition,
-              transform: vars.transitionDuration,
-              opacity: vars.transitionDuration,
-            }),
-          },
-          [`
-            ${android} ${enterActive} &,
-            ${android} ${enterDone} &
-          `]: {
-            opacity: 1,
-            transform: "translate3d(0, 0, 0)",
-            transition: transitions({
-              ...appBarCommonTransition,
-              transform: vars.transitionDuration,
-              opacity: vars.transitionDuration,
-            }),
-          },
         },
       },
     },
@@ -177,6 +147,40 @@ export const appBar = recipe({
       },
     },
   },
+
+  compoundVariants: [
+    {
+      variants: {
+        activityEnterStyle: "slideInLeft",
+        enterStyle: "cover",
+      },
+      style: {
+        transition: transitions({
+          ...appBarCommonTransition,
+          transform: vars.transitionDuration,
+          opacity: vars.transitionDuration,
+        }),
+        selectors: {
+          [`${android} &, 
+            ${android} ${exitActive} &, 
+            ${android} ${exitDone} &`]: {
+            opacity: 0,
+            transform: "translate3d(50%, 0, 0)",
+          },
+          [`${android} ${enterActive} &,
+            ${android} ${enterDone} &`]: {
+            opacity: 1,
+            transform: "translate3d(0, 0, 0)",
+            transition: transitions({
+              ...appBarCommonTransition,
+              transform: vars.transitionDuration,
+              opacity: vars.transitionDuration,
+            }),
+          },
+        },
+      },
+    },
+  ],
 });
 
 export const safeArea = style({
