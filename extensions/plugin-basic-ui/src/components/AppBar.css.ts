@@ -155,17 +155,17 @@ export const appBar = recipe({
         enterStyle: "cover",
       },
       style: {
-        transition: transitions({
-          ...appBarCommonTransition,
-          transform: vars.transitionDuration,
-          opacity: vars.transitionDuration,
-        }),
         selectors: {
           [`${android} &, 
             ${android} ${exitActive} &, 
             ${android} ${exitDone} &`]: {
             opacity: 0,
             transform: "translate3d(50%, 0, 0)",
+            transition: transitions({
+              ...appBarCommonTransition,
+              transform: vars.transitionDuration,
+              opacity: vars.transitionDuration,
+            }),
           },
           [`${android} ${enterActive} &,
             ${android} ${enterDone} &`]: {
