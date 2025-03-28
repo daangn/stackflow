@@ -100,17 +100,25 @@ const AppScreen: React.FC<AppScreenProps> = ({
         zIndexBase + (modalPresentationStyle === "fullScreen" ? 2 : 0);
       zIndexPaper =
         zIndexBase +
-        (hasAppBar && modalPresentationStyle !== "fullScreen" ? 1 : 3);
+        (hasAppBar && modalPresentationStyle !== "fullScreen"
+          ? appBar.enterStyle === "cover"
+            ? 2
+            : 1
+          : 3);
       zIndexEdge = zIndexBase + 4;
       zIndexAppBar = zIndexBase + 7;
       break;
     }
     default: {
       zIndexDim = zIndexBase;
-      zIndexPaper = zIndexBase + (activityEnterStyle === "slideInLeft" ? 1 : 3);
+      zIndexPaper =
+        zIndexBase +
+        (activityEnterStyle === "slideInLeft" && appBar?.enterStyle !== "cover"
+          ? 0
+          : 2);
       zIndexEdge = zIndexBase + 4;
       zIndexAppBar =
-        zIndexBase + (activityEnterStyle === "slideInLeft" ? 7 : 4);
+        zIndexBase + (activityEnterStyle === "slideInLeft" ? 6 : 4);
       break;
     }
   }
@@ -123,8 +131,9 @@ const AppScreen: React.FC<AppScreenProps> = ({
   });
   useStyleEffectOffset({
     refs:
-      globalOptions.theme === "cupertino" ||
-      activityEnterStyle === "slideInLeft"
+      (globalOptions.theme === "cupertino" ||
+        activityEnterStyle === "slideInLeft") &&
+      appBar?.enterStyle !== "cover"
         ? [paperRef]
         : [paperRef, appBarRef],
     offsetStyles:
@@ -152,6 +161,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
     appBarRef,
     offset: OFFSET_PX_CUPERTINO,
     transitionDuration: globalVars.transitionDuration,
+    moveAppBarTogether: appBar?.enterStyle === "cover",
     preventSwipeBack:
       isSwipeBackPrevented || globalOptions.theme !== "cupertino",
     getActivityTransitionState() {
@@ -277,7 +287,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
           data-part="paper"
           {...activityDataAttributes}
         >
-          {children}
+          <div className={css.paperContent({ hasAppBar })}>{children}</div>
         </div>
         {!activity?.isRoot &&
           globalOptions.theme === "cupertino" &&

@@ -86,11 +86,6 @@ export const paper = recipe({
     background,
     allTransitions,
     {
-      overflowY: "scroll",
-      WebkitOverflowScrolling: "touch",
-      "::-webkit-scrollbar": {
-        display: "none",
-      },
       zIndex: vars.zIndexes.paper,
       selectors: {
         [`${cupertino} &`]: {
@@ -122,8 +117,7 @@ export const paper = recipe({
         f.borderBox,
         {
           transition: `transform ${vars.transitionDuration}, opacity ${vars.transitionDuration}, margin-top ${globalVars.appBar.heightTransitionDuration}`,
-          marginTop: vars.appBar.topMargin,
-          height: `calc(100% - ${vars.appBar.topMargin})`,
+          paddingTop: vars.appBar.topMargin,
           vars: {
             [vars.appBar.topMargin]: globalVars.appBar.height,
           },
@@ -167,6 +161,28 @@ export const paper = recipe({
             transform: "translate3d(50%, 0, 0)",
           },
         },
+      },
+    },
+  },
+});
+
+export const paperContent = recipe({
+  base: [
+    f.posAbsFull,
+    {
+      overflowY: "scroll",
+      WebkitOverflowScrolling: "touch",
+      "::-webkit-scrollbar": {
+        display: "none",
+      },
+    },
+  ],
+
+  variants: {
+    hasAppBar: {
+      true: {
+        marginTop: vars.appBar.topMargin,
+        height: `calc(100% - ${vars.appBar.topMargin})`,
       },
     },
   },

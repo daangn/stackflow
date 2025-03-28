@@ -4,10 +4,10 @@ import { recipe } from "@vanilla-extract/recipes";
 import { android, cupertino, globalVars } from "../basicUIPlugin.css";
 import { f } from "../styles";
 import {
-  background,
   enterActive,
   enterDone,
   exitActive,
+  exitDone,
   vars,
 } from "./AppScreen.css";
 
@@ -34,7 +34,6 @@ export const appBar = recipe({
     f.posAbs,
     f.fullWidth,
     f.contentBox,
-    background,
     appBarOverflow,
     {
       backgroundColor: globalVars.appBar.backgroundColor,
@@ -72,6 +71,48 @@ export const appBar = recipe({
     },
   ],
   variants: {
+    activityEnterStyle: {
+      slideInLeft: {
+        selectors: {
+          [`${android} &`]: {
+            opacity: 1,
+            transform: "translate3d(0, 0, 0)",
+          },
+          [`${android} ${exitActive} &`]: {
+            transform: "translate3d(100%, 0, 0)",
+            transition: transitions({
+              ...appBarCommonTransition,
+              transform: "0s",
+            }),
+          },
+        },
+      },
+    },
+    enterStyle: {
+      cover: {
+        selectors: {
+          [`${cupertino} &`]: {
+            transform: "translate3d(100%, 0, 0)",
+          },
+          [`${cupertino} ${exitActive} &`]: {
+            transition: transitions({
+              ...appBarCommonTransition,
+              transform: vars.transitionDuration,
+            }),
+          },
+          [`
+            ${cupertino} ${enterActive} &,
+            ${cupertino} ${enterDone} &
+          `]: {
+            transform: "translate3d(0, 0, 0)",
+            transition: transitions({
+              ...appBarCommonTransition,
+              transform: vars.transitionDuration,
+            }),
+          },
+        },
+      },
+    },
     border: {
       true: {
         boxShadow: `inset 0px calc(-1 * ${globalVars.appBar.borderSize}) 0 ${globalVars.appBar.borderColor}`,
@@ -105,24 +146,41 @@ export const appBar = recipe({
         },
       },
     },
-    activityEnterStyle: {
-      slideInLeft: {
+  },
+
+  compoundVariants: [
+    {
+      variants: {
+        activityEnterStyle: "slideInLeft",
+        enterStyle: "cover",
+      },
+      style: {
         selectors: {
-          [`${android} &`]: {
-            opacity: 1,
-            transform: "translate3d(0, 0, 0)",
-          },
-          [`${android} ${exitActive} &`]: {
-            transform: "translate3d(100%, 0, 0)",
+          [`${android} &, 
+            ${android} ${exitActive} &, 
+            ${android} ${exitDone} &`]: {
+            opacity: 0,
+            transform: "translate3d(50%, 0, 0)",
             transition: transitions({
               ...appBarCommonTransition,
-              transform: "0s",
+              transform: vars.transitionDuration,
+              opacity: vars.transitionDuration,
+            }),
+          },
+          [`${android} ${enterActive} &,
+            ${android} ${enterDone} &`]: {
+            opacity: 1,
+            transform: "translate3d(0, 0, 0)",
+            transition: transitions({
+              ...appBarCommonTransition,
+              transform: vars.transitionDuration,
+              opacity: vars.transitionDuration,
             }),
           },
         },
       },
     },
-  },
+  ],
 });
 
 export const safeArea = style({
