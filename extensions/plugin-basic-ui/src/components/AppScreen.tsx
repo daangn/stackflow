@@ -113,11 +113,11 @@ const AppScreen: React.FC<AppScreenProps> = ({
       zIndexPaper =
         zIndexBase +
         (activityEnterStyle === "slideInLeft" && appBar?.enterStyle !== "cover"
-          ? 1
-          : 3);
+          ? 0
+          : 2);
       zIndexEdge = zIndexBase + 4;
       zIndexAppBar =
-        zIndexBase + (activityEnterStyle === "slideInLeft" ? 7 : 4);
+        zIndexBase + (activityEnterStyle === "slideInLeft" ? 6 : 4);
       break;
     }
   }
