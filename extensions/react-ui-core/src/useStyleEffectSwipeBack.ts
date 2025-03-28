@@ -164,6 +164,12 @@ export function useStyleEffectSwipeBack({
               $paper.style.overflowY = "";
               $paper.style.transform = "";
 
+              if (moveAppBarTogether && $appBarRef) {
+                $appBarRef.style.overflowY = "";
+                $appBarRef.style.transform = "";
+                $appBarRef.style.removeProperty("transition");
+              }
+
               $appBarRef?.style.removeProperty(SWIPE_BACK_RATIO_CSS_VAR_NAME);
 
               refs.forEach((ref, i) => {
