@@ -105,6 +105,17 @@ export function findTargetActivityIndices(
 
       break;
     }
+    case "Resumed":
+    case "Paused": {
+      const activity = activities.find(
+        (activity) => activity.id === event.activityId,
+      );
+
+      if (activity) {
+        targetActivities.push(activities.indexOf(activity));
+      }
+      break;
+    }
     default:
       break;
   }
