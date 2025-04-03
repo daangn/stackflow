@@ -111,7 +111,7 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
       enable: globalOptions.theme === "cupertino",
     });
 
-    const isSlideInTransition =
+    const isSlideUnderAppBarTransition =
       ((globalOptions.theme === "cupertino" &&
         modalPresentationStyle !== "fullScreen") ||
         activityEnterStyle === "slideInLeft") &&
@@ -303,13 +303,13 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
               heightTransitionDuration,
             [globalVars.appBar.overflow]: overflow,
             [globalVars.appBar.backgroundColor]:
-              backgroundColor || isSlideInTransition
+              backgroundColor || isSlideUnderAppBarTransition
                 ? globalVars.backgroundColor
                 : "transparent",
             [globalVars.appBar.backgroundColorTransitionDuration]:
               backgroundColorTransitionDuration,
             [globalVars.appBar.backgroundImage]:
-              backgroundImage || isSlideInTransition
+              backgroundImage || isSlideUnderAppBarTransition
                 ? globalVars.appBar.backgroundImage
                 : "none",
             [globalVars.appBar.backgroundImageTransitionDuration]:
