@@ -1,5 +1,16 @@
 # @stackflow/plugin-basic-ui
 
+## 1.14.0
+
+### Minor Changes
+
+- a7650d4: Support full screen gradient background and introduce new app bar entrance type "cover"
+
+### Patch Changes
+
+- Updated dependencies [a7650d4]
+  - @stackflow/react-ui-core@1.3.0
+
 ## 1.13.1
 
 ### Patch Changes

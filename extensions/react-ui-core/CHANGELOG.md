@@ -1,5 +1,11 @@
 # @stackflow/react-ui-core
 
+## 1.3.0
+
+### Minor Changes
+
+- a7650d4: Support full screen gradient background and introduce new app bar entrance type "cover"
+
 ## 1.2.3
 
 ### Patch Changes
