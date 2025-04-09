@@ -60,6 +60,7 @@ type AppBarProps = Partial<
   modalPresentationStyle?: "fullScreen";
   activityEnterStyle?: "slideInLeft";
   onTopClick?: (e: React.MouseEvent) => void;
+  enterStyle?: "cover";
 };
 const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
   (
@@ -88,6 +89,7 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
       backgroundImage,
       backgroundImageTransitionDuration,
       onTopClick,
+      enterStyle,
     },
     ref,
   ) => {
@@ -108,6 +110,12 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
       innerRef: centerRef,
       enable: globalOptions.theme === "cupertino",
     });
+
+    const isUnderAppBarSlideTransition =
+      ((globalOptions.theme === "cupertino" &&
+        modalPresentationStyle !== "fullScreen") ||
+        activityEnterStyle === "slideInLeft") &&
+      enterStyle !== "cover";
 
     const onBackClick = (e: React.MouseEvent<HTMLButtonElement>) => {
       if (backButton && "onClick" in backButton && backButton.onClick) {
@@ -276,6 +284,7 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
           border,
           modalPresentationStyle,
           activityEnterStyle,
+          enterStyle,
         })}
         style={assignInlineVars(
           compactMap({
@@ -294,11 +303,17 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
               heightTransitionDuration,
             [globalVars.appBar.overflow]: overflow,
             [globalVars.appBar.backgroundColor]:
-              backgroundColor || globalVars.backgroundColor,
+              backgroundColor ??
+              (isUnderAppBarSlideTransition
+                ? globalVars.backgroundColor
+                : "transparent"),
             [globalVars.appBar.backgroundColorTransitionDuration]:
               backgroundColorTransitionDuration,
             [globalVars.appBar.backgroundImage]:
-              backgroundImage || globalVars.backgroundImage,
+              backgroundImage ??
+              (isUnderAppBarSlideTransition
+                ? globalVars.appBar.backgroundImage
+                : "none"),
             [globalVars.appBar.backgroundImageTransitionDuration]:
               backgroundImageTransitionDuration,
             [appScreenCss.vars.appBar.center.mainWidth]: `${maxWidth}px`,
