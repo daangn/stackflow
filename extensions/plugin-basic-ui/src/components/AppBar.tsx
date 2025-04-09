@@ -303,15 +303,17 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
               heightTransitionDuration,
             [globalVars.appBar.overflow]: overflow,
             [globalVars.appBar.backgroundColor]:
-              backgroundColor || isUnderAppBarSlideTransition
+              backgroundColor ??
+              (isUnderAppBarSlideTransition
                 ? globalVars.backgroundColor
-                : "transparent",
+                : "transparent"),
             [globalVars.appBar.backgroundColorTransitionDuration]:
               backgroundColorTransitionDuration,
             [globalVars.appBar.backgroundImage]:
-              backgroundImage || isUnderAppBarSlideTransition
+              backgroundImage ??
+              (isUnderAppBarSlideTransition
                 ? globalVars.appBar.backgroundImage
-                : "none",
+                : "none"),
             [globalVars.appBar.backgroundImageTransitionDuration]:
               backgroundImageTransitionDuration,
             [appScreenCss.vars.appBar.center.mainWidth]: `${maxWidth}px`,
