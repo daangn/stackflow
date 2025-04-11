@@ -1,7 +1,7 @@
 import config from "@stackflow/esbuild-config";
 import { context } from "esbuild";
 
-import pkg from "./package.json" assert { type: "json" };
+import pkg from "./package.json" with { type: "json" };
 
 const watch = process.argv.includes("--watch");
 const external = Object.keys({
