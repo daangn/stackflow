@@ -1,9 +1,11 @@
 import type { BaseDomainEvent } from "event-types/_base";
 import type {
   DomainEvent,
+  PausedEvent,
   PoppedEvent,
   PushedEvent,
   ReplacedEvent,
+  ResumedEvent,
   StepPoppedEvent,
   StepPushedEvent,
   StepReplacedEvent,
@@ -35,6 +37,7 @@ export type Activity = {
   context?: {};
   enteredBy: PushedEvent | ReplacedEvent;
   exitedBy?: ReplacedEvent | PoppedEvent;
+  resumedBy?: ResumedEvent;
   steps: ActivityStep[];
   isTop: boolean;
   isActive: boolean;
