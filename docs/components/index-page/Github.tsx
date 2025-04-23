@@ -1,9 +1,11 @@
-export function Github() {
+import React from "react";
+
+export function GitHub() {
   return (
     <svg
       stroke="currentColor"
       fill="currentColor"
-      stroke-width="0"
+      strokeWidth="0"
       viewBox="0 0 496 512"
       className="text-lg"
       height="1em"
