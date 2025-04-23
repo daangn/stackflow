@@ -5,7 +5,7 @@ import { useSimpleReveal } from "simple-reveal";
 import Ellipse from "../../assets/gradient-ellipse.webp";
 import { getLocaleBranch } from "../../utils/locale";
 import { Demo } from "../Demo";
-import { GitHub } from "./GitHub";
+import { GitHub } from "./Github";
 import { Tile } from "./Tile";
 
 export function IndexPage({ lang = "ko" }: { lang: "ko" | "en" }) {
