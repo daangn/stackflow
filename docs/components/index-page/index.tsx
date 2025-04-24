@@ -5,7 +5,7 @@ import { useSimpleReveal } from "simple-reveal";
 import Ellipse from "../../assets/gradient-ellipse.webp";
 import { getLocaleBranch } from "../../utils/locale";
 import { Demo } from "../Demo";
-import { Github } from "./Github";
+import { GitHub } from "./Github";
 import { Tile } from "./Tile";
 
 export function IndexPage({ lang = "ko" }: { lang: "ko" | "en" }) {
@@ -40,7 +40,7 @@ export function IndexPage({ lang = "ko" }: { lang: "ko" | "en" }) {
               className="py-2 flex items-center gap-2 px-4 bg-neutral-950 text-primary-foreground hover:bg-neutral-950/80"
               href="https://github.com/daangn/stackflow"
             >
-              View on Github <Github />
+              View on GitHub <GitHub />
             </Link>
           </div>
         </div>

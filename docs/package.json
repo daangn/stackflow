@@ -7,10 +7,15 @@
   "scripts": {
     "build": "next build",
     "start": "next start",
-    "dev": "next -p 6006"
+    "dev": "next -p 6006",
+    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
   },
   "dependencies": {
     "@mdx-js/react": "^3.0.1",
+    "@opennextjs/cloudflare": "^1.0.0-beta.3",
     "@seed-design/design-token": "^1.0.3",
     "@stackflow/core": "^1.2.0",
     "@stackflow/demo": "^1.4.0",
@@ -37,6 +42,7 @@
     "@seed-design/stylesheet": "^1.0.4",
     "@types/node": "^22.7.5",
     "react-lazy-load-image-component": "^1.6.2",
-    "typescript": "^5.6.3"
+    "typescript": "^5.6.3",
+    "wrangler": "^4.12.1"
   }
 }
