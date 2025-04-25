@@ -7,6 +7,7 @@ export {
   AppScreenProps,
   useAppScreen,
 } from "./components/AppScreen";
+export { default as AppBar } from "./components/AppBar";
 export { vars as appScreenVars } from "./components/AppScreen.css";
 export {
   default as BottomSheet,
