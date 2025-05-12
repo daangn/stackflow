@@ -5,6 +5,7 @@ import { useRef } from "react";
 import {
   useLazy,
   useNullableActivity,
+  usePreventTouchDuringTransition,
   useStyleEffect,
   useZIndexBase,
 } from "@stackflow/react-ui-core";
@@ -72,6 +73,10 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
   const zIndexBase = useZIndexBase() + 3;
   const zIndexPaper = useZIndexBase() + 4;
   const transitionState = activity?.transitionState ?? "enter-done";
+
+  usePreventTouchDuringTransition({
+    ref: containerRef,
+  });
 
   return (
     <div

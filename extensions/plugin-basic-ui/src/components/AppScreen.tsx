@@ -206,7 +206,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
   };
 
   usePreventTouchDuringTransition({
-    appScreenRef,
+    ref: appScreenRef,
   });
 
   return (
