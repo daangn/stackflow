@@ -5506,12 +5506,10 @@ __metadata:
     "@types/react": "npm:^18.3.3"
     esbuild: "npm:^0.23.0"
     esbuild-plugin-file-path-extensions: "npm:^2.1.2"
-    history: "npm:^5.3.0"
     react: "npm:^18.3.1"
     react-fast-compare: "npm:^3.2.2"
     rimraf: "npm:^3.0.2"
     typescript: "npm:^5.5.3"
-    url-pattern: "npm:^1.0.3"
   peerDependencies:
     "@stackflow/config": ^1.0.1-canary.0
     "@stackflow/core": ^1.1.0-canary.0

@@ -6614,12 +6614,10 @@ const RAW_RUNTIME_STATE =
           ["@types/stackflow__core", null],\
           ["esbuild", "npm:0.23.0"],\
           ["esbuild-plugin-file-path-extensions", "npm:2.1.3"],\
-          ["history", "npm:5.3.0"],\
           ["react", "npm:18.3.1"],\
           ["react-fast-compare", "npm:3.2.2"],\
           ["rimraf", "npm:3.0.2"],\
-          ["typescript", "patch:typescript@npm%3A5.5.3#optional!builtin<compat/typescript>::version=5.5.3&hash=379a07"],\
-          ["url-pattern", "npm:1.0.3"]\
+          ["typescript", "patch:typescript@npm%3A5.5.3#optional!builtin<compat/typescript>::version=5.5.3&hash=379a07"]\
         ],\
         "packagePeers": [\
           "@stackflow/config",\
@@ -6641,12 +6639,10 @@ const RAW_RUNTIME_STATE =
           ["@types/react", "npm:18.3.3"],\
           ["esbuild", "npm:0.23.0"],\
           ["esbuild-plugin-file-path-extensions", "npm:2.1.3"],\
-          ["history", "npm:5.3.0"],\
           ["react", "npm:18.3.1"],\
           ["react-fast-compare", "npm:3.2.2"],\
           ["rimraf", "npm:3.0.2"],\
-          ["typescript", "patch:typescript@npm%3A5.5.3#optional!builtin<compat/typescript>::version=5.5.3&hash=379a07"],\
-          ["url-pattern", "npm:1.0.3"]\
+          ["typescript", "patch:typescript@npm%3A5.5.3#optional!builtin<compat/typescript>::version=5.5.3&hash=379a07"]\
         ],\
         "linkType": "SOFT"\
       }]\
