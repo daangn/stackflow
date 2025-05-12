@@ -1,5 +1,11 @@
 # @stackflow/react
 
+## 1.5.2
+
+### Patch Changes
+
+- b9dc68a: fix(react): remove unused dependencies
+
 ## 1.5.1
 
 ### Patch Changes
