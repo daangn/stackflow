@@ -22,10 +22,16 @@ export function usePreventTouchDuringTransition({
       e.preventDefault();
     };
 
+    const onTouchEnd = (e: TouchEvent) => {
+      e.preventDefault();
+    };
+
     $ref.addEventListener("touchstart", onTouchStart);
+    $ref.addEventListener("touchend", onTouchEnd);
 
     return () => {
       $ref.removeEventListener("touchstart", onTouchStart);
+      $ref.removeEventListener("touchend", onTouchEnd);
     };
   }, [stack?.globalTransitionState]);
 }
