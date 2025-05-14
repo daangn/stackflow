@@ -59,8 +59,6 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
       return;
     }
 
-    // const isExiting = activity?.transitionState === "exit-active";
-
     if (popLock.current) {
       return;
     }
