@@ -1,5 +1,13 @@
 # @stackflow/plugin-basic-ui
 
+## 1.14.1
+
+### Patch Changes
+
+- aef952a: fix(plugin-basic-ui): prevent touch events while transitioning for other basic components
+- Updated dependencies [aef952a]
+  - @stackflow/react-ui-core@1.3.1
+
 ## 1.14.0
 
 ### Minor Changes
