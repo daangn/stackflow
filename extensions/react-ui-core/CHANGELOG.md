@@ -1,5 +1,11 @@
 # @stackflow/react-ui-core
 
+## 1.3.1
+
+### Patch Changes
+
+- aef952a: fix(react-ui-core): prevent default `touchend` event
+
 ## 1.3.0
 
 ### Minor Changes
