@@ -287,6 +287,6 @@ export function useStyleEffectSwipeBack({
         $edge.removeEventListener("touchcancel", onTouchEnd);
       };
     },
-    effectDeps: [],
+    effectDeps: [preventSwipeBack],
   });
 }
