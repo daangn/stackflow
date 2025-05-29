@@ -1,5 +1,13 @@
 # @stackflow/plugin-basic-ui
 
+## 1.14.2
+
+### Patch Changes
+
+- 371a39c: fix(plugin-basic-ui): update dependencies
+- Updated dependencies [d2c50f3]
+  - @stackflow/react-ui-core@1.3.2
+
 ## 1.14.1
 
 ### Patch Changes
