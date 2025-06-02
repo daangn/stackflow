@@ -4088,6 +4088,78 @@ test("aggregate - Pause되면 이벤트가 반영되지 않고, globalTransition
   });
 });
 
+test("aggregate - PausedEvent inserts source activity entering event into pausedEvents", () => {
+  let pushedEvent1: PushedEvent;
+  let pushedEvent2: PushedEvent;
+
+  const t = nowTime();
+
+  const events = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+    registeredEvent({
+      activityName: "a",
+    }),
+    registeredEvent({
+      activityName: "b",
+    }),
+    (pushedEvent1 = makeEvent("Pushed", {
+      activityId: "activity-1",
+      activityName: "a",
+      eventDate: enoughPastTime(),
+      activityParams: {},
+    })),
+    (pushedEvent2 = makeEvent("Pushed", {
+      activityId: "activity-2",
+      activityName: "b",
+      activityParams: {},
+      eventDate: enoughPastTime(),
+    })),
+    makeEvent("Paused", {
+      eventDate: t - 150,
+      activityId: "activity-2",
+    }),
+  ];
+
+  const output = aggregate(events, t);
+
+  expect(output).toStrictEqual({
+    activities: [
+      activity({
+        id: "activity-1",
+        name: "a",
+        transitionState: "enter-done",
+        params: {},
+        steps: [
+          {
+            id: "activity-1",
+            params: {},
+            enteredBy: pushedEvent1,
+            zIndex: 0,
+          },
+        ],
+        enteredBy: pushedEvent1,
+        isActive: true,
+        isTop: true,
+        isRoot: true,
+        zIndex: 0,
+      }),
+    ],
+    registeredActivities: [
+      {
+        name: "a",
+      },
+      {
+        name: "b",
+      },
+    ],
+    transitionDuration: 300,
+    globalTransitionState: "paused",
+    pausedEvents: [pushedEvent2],
+  });
+});
+
 test("aggregate - Resumed 되면 해당 시간 이후로 Transition이 정상작동합니다", () => {
   let pushedEvent1: PushedEvent;
   let pushedEvent2: PushedEvent;
@@ -4109,6 +4181,7 @@ test("aggregate - Resumed 되면 해당 시간 이후로 Transition이 정상작
       activityParams: {},
     })),
     makeEvent("Paused", {
+      activityId: "activity-1",
       eventDate: enoughPastTime(),
     }),
     (pushedEvent2 = makeEvent("Pushed", {
@@ -4118,6 +4191,7 @@ test("aggregate - Resumed 되면 해당 시간 이후로 Transition이 정상작
       activityParams: {},
     })),
     makeEvent("Resumed", {
+      activityId: "activity-1",
       eventDate: nowTime() - 150,
     }),
   ];
