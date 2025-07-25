@@ -120,21 +120,22 @@ function createBeforeRouteHandler<
 
     if (loaderDataPromise || lazyComponentPromise) {
       pause();
+
+      Promise.allSettled([loaderDataPromise, lazyComponentPromise])
+        .then(([loaderDataPromiseResult, lazyComponentPromiseResult]) => {
+          printLoaderDataPromiseError({
+            promiseResult: loaderDataPromiseResult,
+            activityName: matchActivity.name,
+          });
+          printLazyComponentPromiseError({
+            promiseResult: lazyComponentPromiseResult,
+            activityName: matchActivity.name,
+          });
+        })
+        .finally(() => {
+          resume();
+        });
     }
-    Promise.allSettled([loaderDataPromise, lazyComponentPromise])
-      .then(([loaderDataPromiseResult, lazyComponentPromiseResult]) => {
-        printLoaderDataPromiseError({
-          promiseResult: loaderDataPromiseResult,
-          activityName: matchActivity.name,
-        });
-        printLazyComponentPromiseError({
-          promiseResult: lazyComponentPromiseResult,
-          activityName: matchActivity.name,
-        });
-      })
-      .finally(() => {
-        resume();
-      });
 
     overrideActionParams({
       ...actionParams,
