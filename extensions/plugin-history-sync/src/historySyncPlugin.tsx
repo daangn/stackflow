@@ -3,7 +3,13 @@ import type {
   Config,
   RegisteredActivityName,
 } from "@stackflow/config";
-import { type StackflowActions, id, makeEvent } from "@stackflow/core";
+import {
+  type Activity,
+  type ActivityStep,
+  type StackflowActions,
+  id,
+  makeEvent,
+} from "@stackflow/core";
 import type { StackflowReactPlugin } from "@stackflow/react";
 import type { ActivityComponentType } from "@stackflow/react/future";
 import type { History, Listener } from "history";
@@ -91,6 +97,7 @@ export function historySyncPlugin<
     let pendingDefaultHistoryEntryInsertionTasks:
       | ((actions: StackflowActions) => void)[]
       | null = null;
+    const defaultHistoryEntryEntities: Set<string> = new Set();
 
     const { requestHistoryTick } = makeHistoryTaskQueue(history);
 
@@ -103,10 +110,12 @@ export function historySyncPlugin<
 
       const nextTask = pendingDefaultHistoryEntryInsertionTasks.shift();
 
+      if (pendingDefaultHistoryEntryInsertionTasks.length === 0) {
+        pendingDefaultHistoryEntryInsertionTasks = null;
+      }
+
       if (nextTask) {
         nextTask(actions);
-      } else {
-        pendingDefaultHistoryEntryInsertionTasks = null;
       }
     }
 
@@ -198,8 +207,12 @@ export function historySyncPlugin<
               ? [
                   (actions: StackflowActions) => {
                     for (const stepParams of stepParamsList) {
+                      const stepId = id();
+
+                      defaultHistoryEntryEntities.add(stepId);
+
                       actions.stepPush({
-                        stepId: id(),
+                        stepId,
                         stepParams,
                         hasZIndex: true, //@TOOD: 괜찮은지 확인
                       });
@@ -213,9 +226,12 @@ export function historySyncPlugin<
                 ({ activityName, decode }) =>
                   ({ push, stepPush }: StackflowActions) => {
                     const [activityParams, ...stepParamsList] = decode(params);
+                    const activityId = id();
+
+                    defaultHistoryEntryEntities.add(activityId);
 
                     push({
-                      activityId: id(),
+                      activityId,
                       activityName,
                       activityParams,
                       activityContext: {
@@ -224,8 +240,12 @@ export function historySyncPlugin<
                     });
 
                     for (const stepParams of stepParamsList) {
+                      const stepId = id();
+
+                      defaultHistoryEntryEntities.add(stepId);
+
                       stepPush({
-                        stepId: id(),
+                        stepId,
                         stepParams,
                         hasZIndex: true,
                       });
@@ -238,9 +258,12 @@ export function historySyncPlugin<
                 options.urlPatternOptions,
               );
               const activityParams = template.parse(currentPath);
+              const activityId = id();
+
+              defaultHistoryEntryEntities.add(activityId);
 
               push({
-                activityId: id(),
+                activityId,
                 activityName: targetActivityRoute.activityName,
                 activityParams: {
                   ...activityParams,
@@ -444,6 +467,13 @@ export function historySyncPlugin<
         defaultHistorySetupCheckpoint(actions);
       },
       onPushed({ effect: { activity } }) {
+        if (
+          pendingDefaultHistoryEntryInsertionTasks &&
+          !defaultHistoryEntryEntities.has(activity.id)
+        ) {
+          pendingDefaultHistoryEntryInsertionTasks = null;
+        }
+
         if (pushFlag) {
           pushFlag -= 1;
           return;
@@ -468,6 +498,13 @@ export function historySyncPlugin<
         });
       },
       onStepPushed({ effect: { activity, step } }) {
+        if (
+          pendingDefaultHistoryEntryInsertionTasks &&
+          !defaultHistoryEntryEntities.has(step.id)
+        ) {
+          pendingDefaultHistoryEntryInsertionTasks = null;
+        }
+
         if (pushFlag) {
           pushFlag -= 1;
           return;
@@ -493,6 +530,10 @@ export function historySyncPlugin<
         });
       },
       onReplaced({ effect: { activity } }) {
+        if (pendingDefaultHistoryEntryInsertionTasks) {
+          pendingDefaultHistoryEntryInsertionTasks = null;
+        }
+
         if (!activity.isActive) {
           return;
         }
@@ -516,6 +557,10 @@ export function historySyncPlugin<
         });
       },
       onStepReplaced({ effect: { activity, step } }) {
+        if (pendingDefaultHistoryEntryInsertionTasks) {
+          pendingDefaultHistoryEntryInsertionTasks = null;
+        }
+
         if (!activity.isActive) {
           return;
         }
@@ -538,6 +583,16 @@ export function historySyncPlugin<
             useHash: options.useHash,
           });
         });
+      },
+      onPopped() {
+        if (pendingDefaultHistoryEntryInsertionTasks) {
+          pendingDefaultHistoryEntryInsertionTasks = null;
+        }
+      },
+      onStepPopped() {
+        if (pendingDefaultHistoryEntryInsertionTasks) {
+          pendingDefaultHistoryEntryInsertionTasks = null;
+        }
       },
       onBeforePush({ actionParams, actions: { overrideActionParams } }) {
         if (
