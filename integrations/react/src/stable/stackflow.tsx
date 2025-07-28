@@ -201,20 +201,24 @@ export function stackflow<T extends BaseActivities>(
         plugins,
         handlers: {
           onInitialActivityIgnored: (initialPushedEvents) => {
-            console.warn(
-              `Stackflow - Some plugin overrides an "initialActivity" option. The "initialActivity" option you set to "${
-                (initialPushedEvents[0] as PushedEvent).activityName
-              }" in the "stackflow" is ignored.`,
-            );
+            if (isBrowser()) {
+              console.warn(
+                `Stackflow - Some plugin overrides an "initialActivity" option. The "initialActivity" option you set to "${
+                  (initialPushedEvents[0] as PushedEvent).activityName
+                }" in the "stackflow" is ignored.`,
+              );
+            }
           },
           onInitialActivityNotFound: () => {
-            console.warn(
-              "Stackflow -" +
-                " There is no initial activity." +
-                " If you want to set the initial activity," +
-                " add the `initialActivity` option of the `stackflow()` function or" +
-                " add a plugin that sets the initial activity. (e.g. `@stackflow/plugin-history-sync`)",
-            );
+            if (isBrowser()) {
+              console.warn(
+                "Stackflow -" +
+                  " There is no initial activity." +
+                  " If you want to set the initial activity," +
+                  " add the `initialActivity` option of the `stackflow()` function or" +
+                  " add a plugin that sets the initial activity. (e.g. `@stackflow/plugin-history-sync`)",
+              );
+            }
           },
         },
       });
