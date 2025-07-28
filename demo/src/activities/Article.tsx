@@ -1,3 +1,4 @@
+import type { InferActivityParams } from "@stackflow/config";
 import {
   type ActivityComponentType,
   useActivityParams,
@@ -19,7 +20,7 @@ declare module "@stackflow/config" {
   }
 }
 
-const Article: ActivityComponentType<"Article"> = ({ params }) => {
+const Article = ({ params }: { params: InferActivityParams<"Article"> }) => {
   const { title } = useActivityParams<"Article">();
   const { imageUrl, recommenderCards } = useLoaderData<typeof articleLoader>();
 
