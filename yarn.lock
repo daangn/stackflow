@@ -5298,6 +5298,7 @@ __metadata:
     "@vanilla-extract/dynamic": "npm:^2.1.1"
     "@vanilla-extract/private": "npm:^1.0.5"
     "@vanilla-extract/recipes": "npm:^0.5.3"
+    clsx: "npm:^2.1.1"
     esbuild: "npm:^0.23.0"
     react: "npm:^18.3.1"
     rimraf: "npm:^3.0.2"
