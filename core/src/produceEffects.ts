@@ -1,7 +1,7 @@
 import isEqual from "react-fast-compare";
 
 import type { Effect } from "./Effect";
-import type { Stack } from "./Stack";
+import type { Activity, Stack } from "./Stack";
 import { omit } from "./utils";
 
 export function produceEffects(prevOutput: Stack, nextOutput: Stack): Effect[] {
@@ -38,8 +38,8 @@ export function produceEffects(prevOutput: Stack, nextOutput: Stack): Effect[] {
     i < Math.max(prevOutput.activities.length, nextOutput.activities.length);
     i += 1
   ) {
-    const prevActivity = prevOutput.activities[i];
-    const nextActivity = nextOutput.activities[i];
+    const prevActivity: Activity | undefined = prevOutput.activities[i];
+    const nextActivity: Activity | undefined = nextOutput.activities[i];
 
     const isPrevActivityPopped =
       prevActivity?.transitionState === "exit-done" ||
@@ -131,9 +131,11 @@ export function produceEffects(prevOutput: Stack, nextOutput: Stack): Effect[] {
     j >= 0;
     j -= 1
   ) {
-    const isPrevActivityPushed =
-      prevOutput.activities[j]?.transitionState === "enter-done" ||
-      prevOutput.activities[j]?.transitionState === "enter-active";
+    const isPrevActivityNotPopped =
+      !prevOutput.activities[j] ||
+      (prevOutput.activities[j].transitionState !== "exit-active" &&
+        prevOutput.activities[j].transitionState !== "exit-done");
+
     const isNextActivityPopped =
       nextOutput.activities[j]?.transitionState === "exit-active" ||
       nextOutput.activities[j]?.transitionState === "exit-done";
@@ -141,7 +143,7 @@ export function produceEffects(prevOutput: Stack, nextOutput: Stack): Effect[] {
       nextOutput.activities[j + 1]?.enteredBy.name === "Replaced" &&
       nextOutput.activities[j + 1]?.transitionState === "enter-done";
 
-    if (isPrevActivityPushed && isNextActivityPopped && !isReplacedEvent) {
+    if (isPrevActivityNotPopped && isNextActivityPopped && !isReplacedEvent) {
       output.push({
         _TAG: "POPPED",
         activity: nextOutput.activities[j],
