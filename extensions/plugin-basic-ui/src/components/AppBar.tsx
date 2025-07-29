@@ -6,6 +6,7 @@ import {
   useNullableActivity,
 } from "@stackflow/react-ui-core";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
+import clsx from "clsx";
 import { forwardRef, useRef } from "react";
 import { IconBack, IconClose } from "../assets";
 import { useGlobalOptions } from "../basicUIPlugin";
@@ -61,6 +62,7 @@ type AppBarProps = Partial<
   activityEnterStyle?: "slideInLeft";
   onTopClick?: (e: React.MouseEvent) => void;
   enterStyle?: "cover";
+  className?: string;
 };
 const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
   (
@@ -90,6 +92,7 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
       backgroundImageTransitionDuration,
       onTopClick,
       enterStyle,
+      className,
     },
     ref,
   ) => {
@@ -280,12 +283,15 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
     return (
       <div
         ref={ref}
-        className={css.appBar({
-          border,
-          modalPresentationStyle,
-          activityEnterStyle,
-          enterStyle,
-        })}
+        className={clsx(
+          css.appBar({
+            border,
+            modalPresentationStyle,
+            activityEnterStyle,
+            enterStyle,
+          }),
+          className,
+        )}
         style={assignInlineVars(
           compactMap({
             [globalVars.appBar.iconColor]: iconColor,
