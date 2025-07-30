@@ -3,13 +3,7 @@ import type {
   Config,
   RegisteredActivityName,
 } from "@stackflow/config";
-import {
-  type Activity,
-  type ActivityStep,
-  type StackflowActions,
-  id,
-  makeEvent,
-} from "@stackflow/core";
+import { type StackflowActions, id, makeEvent } from "@stackflow/core";
 import type { StackflowReactPlugin } from "@stackflow/react";
 import type { ActivityComponentType } from "@stackflow/react/future";
 import type { History, Listener } from "history";
