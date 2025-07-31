@@ -26,4 +26,8 @@ export type Actions = {
   pop(): void;
   pop(options: { animate?: boolean }): void;
   pop(count: number, options?: { animate?: boolean }): void;
+  prepare<K extends RegisteredActivityName>(
+    activityName: K,
+    activityParams?: InferActivityParams<K>,
+  ): Promise<void>;
 };

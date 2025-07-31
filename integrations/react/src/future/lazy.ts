@@ -5,12 +5,12 @@ import type { StaticActivityComponentType } from "../__internal__/StaticActivity
 export function lazy<T extends { [K in keyof T]: any } = {}>(
   load: () => Promise<{ default: StaticActivityComponentType<T> }>,
 ): LazyActivityComponentType<T> {
-  let cachedValue: { default: StaticActivityComponentType<T> } | null = null;
+  let cachedValue: Promise<{ default: StaticActivityComponentType<T> }> | null =
+    null;
 
-  const cachedLoad = async () => {
+  const cachedLoad = () => {
     if (!cachedValue) {
-      const value = await load();
-      cachedValue = value;
+      cachedValue = load();
     }
     return cachedValue;
   };
