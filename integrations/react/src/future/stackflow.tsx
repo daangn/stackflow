@@ -11,6 +11,7 @@ import {
   type PushedEvent,
 } from "@stackflow/core";
 import React, { useMemo } from "react";
+import isEqual from "react-fast-compare";
 import type { ActivityComponentType } from "../__internal__/ActivityComponentType";
 import { makeActivityId } from "../__internal__/activity";
 import { CoreProvider } from "../__internal__/core";
@@ -19,6 +20,7 @@ import { PluginsProvider } from "../__internal__/plugins";
 import { isBrowser, makeRef } from "../__internal__/utils";
 import type { StackflowReactPlugin } from "../stable";
 import type { Actions } from "./Actions";
+import { ActivityComponentMapProvider } from "./ActivityComponentMapProvider";
 import { ConfigProvider } from "./ConfigProvider";
 import { loaderPlugin } from "./loader";
 import { makeActions } from "./makeActions";
@@ -39,6 +41,9 @@ export type StackflowInput<
   config: Config<T>;
   components: R;
   plugins?: Array<StackflowPluginsEntry>;
+  options?: {
+    loaderCacheMaxAge?: number;
+  };
 };
 
 export type StackflowOutput = {
@@ -47,12 +52,61 @@ export type StackflowOutput = {
   stepActions: StepActions<ActivityBaseParams>;
 };
 
+const DEFAULT_LOADER_CACHE_MAX_AGE = 1000 * 30;
+
 export function stackflow<
   T extends ActivityDefinition<RegisteredActivityName>,
   R extends {
     [activityName in RegisteredActivityName]: ActivityComponentType<any>;
   },
 >(input: StackflowInput<T, R>): StackflowOutput {
+  const loaderDataCacheMap = new Map<string, { params: {}; data: unknown }[]>();
+  const loadData = (activityName: string, activityParams: {}) => {
+    const cache = loaderDataCacheMap.get(activityName);
+    const cacheEntry = cache?.find((entry) =>
+      isEqual(entry.params, activityParams),
+    );
+
+    if (cacheEntry) {
+      return cacheEntry.data;
+    }
+
+    const activityConfig = input.config.activities.find(
+      (activity) => activity.name === activityName,
+    );
+
+    if (!activityConfig) {
+      throw new Error(`Activity ${activityName} not found`);
+    }
+
+    const loaderData = activityConfig.loader?.({
+      params: activityParams,
+      config: input.config,
+    });
+    const newCacheEntry = {
+      params: activityParams,
+      data: loaderData,
+    };
+
+    if (cache) {
+      cache.push(newCacheEntry);
+    } else {
+      loaderDataCacheMap.set(activityName, [newCacheEntry]);
+    }
+
+    setTimeout(() => {
+      const cache = loaderDataCacheMap.get(activityName);
+
+      if (!cache) return;
+
+      loaderDataCacheMap.set(
+        activityName,
+        cache.filter((entry) => !isEqual(entry.params, activityParams)),
+      );
+    }, input.options?.loaderCacheMaxAge ?? DEFAULT_LOADER_CACHE_MAX_AGE);
+
+    return loaderData;
+  };
   const plugins = [
     ...(input.plugins ?? [])
       .flat(Number.POSITIVE_INFINITY as 0)
@@ -61,7 +115,7 @@ export function stackflow<
     /**
      * `loaderPlugin()` must be placed after `historySyncPlugin()`
      */
-    loaderPlugin(input),
+    loaderPlugin(input, loadData),
   ];
 
   const enoughPastTime = () =>
@@ -164,10 +218,14 @@ export function stackflow<
       <ConfigProvider value={input.config}>
         <PluginsProvider value={coreStore.pluginInstances}>
           <CoreProvider coreStore={coreStore}>
-            <MainRenderer
-              activityComponentMap={input.components}
-              initialContext={initialContext}
-            />
+            <ActivityComponentMapProvider value={input.components}>
+              <DataLoaderProvider loadData={loadData}>
+                <MainRenderer
+                  initialContext={initialContext}
+                  activityComponentMap={input.components}
+                />
+              </DataLoaderProvider>
+            </ActivityComponentMapProvider>
           </CoreProvider>
         </PluginsProvider>
       </ConfigProvider>
@@ -178,7 +236,40 @@ export function stackflow<
 
   return {
     Stack,
-    actions: makeActions(() => getCoreStore()?.actions),
+    actions: makeActions(
+      () => input.config,
+      () => getCoreStore()?.actions,
+      input.components,
+      loadData,
+    ),
     stepActions: makeStepActions(() => getCoreStore()?.actions),
   };
+}
+
+export const DataLoaderContext = React.createContext<
+  ((activityName: string, activityParams: {}) => unknown) | null
+>(null);
+
+export function DataLoaderProvider({
+  loadData,
+  children,
+}: {
+  loadData: (activityName: string, activityParams: {}) => unknown;
+  children: React.ReactNode;
+}) {
+  return (
+    <DataLoaderContext.Provider value={loadData}>
+      {children}
+    </DataLoaderContext.Provider>
+  );
+}
+
+export function useDataLoader() {
+  const loadData = React.useContext(DataLoaderContext);
+
+  if (!loadData) {
+    throw new Error("useDataLoader() must be used within a DataLoaderProvider");
+  }
+
+  return loadData;
 }

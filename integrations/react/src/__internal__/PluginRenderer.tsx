@@ -1,5 +1,5 @@
 import type React from "react";
-import type { ActivityComponentType } from "./ActivityComponentType";
+import { useActivityComponentMap } from "../future/ActivityComponentMapProvider";
 import { ActivityProvider } from "./activity";
 import { useCoreState } from "./core";
 import { usePlugins } from "./plugins";
@@ -7,17 +7,14 @@ import type { StackflowReactPlugin } from "./StackflowReactPlugin";
 import type { WithRequired } from "./utils";
 
 interface PluginRendererProps {
-  activityComponentMap: {
-    [key: string]: ActivityComponentType;
-  };
   plugin: WithRequired<ReturnType<StackflowReactPlugin>, "render">;
   initialContext: any;
 }
 const PluginRenderer: React.FC<PluginRendererProps> = ({
-  activityComponentMap,
   plugin,
   initialContext,
 }) => {
+  const activityComponentMap = useActivityComponentMap();
   const coreState = useCoreState();
   const plugins = usePlugins();
 
