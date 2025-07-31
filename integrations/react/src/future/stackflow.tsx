@@ -22,7 +22,7 @@ import type { StackflowReactPlugin } from "../stable";
 import type { Actions } from "./Actions";
 import { ActivityComponentMapProvider } from "./ActivityComponentMapProvider";
 import { ConfigProvider } from "./ConfigProvider";
-import { loaderPlugin } from "./loader";
+import { DataLoaderProvider, loaderPlugin } from "./loader";
 import { makeActions } from "./makeActions";
 import { makeStepActions } from "./makeStepActions";
 import type { StackComponentType } from "./StackComponentType";
@@ -244,32 +244,4 @@ export function stackflow<
     ),
     stepActions: makeStepActions(() => getCoreStore()?.actions),
   };
-}
-
-export const DataLoaderContext = React.createContext<
-  ((activityName: string, activityParams: {}) => unknown) | null
->(null);
-
-export function DataLoaderProvider({
-  loadData,
-  children,
-}: {
-  loadData: (activityName: string, activityParams: {}) => unknown;
-  children: React.ReactNode;
-}) {
-  return (
-    <DataLoaderContext.Provider value={loadData}>
-      {children}
-    </DataLoaderContext.Provider>
-  );
-}
-
-export function useDataLoader() {
-  const loadData = React.useContext(DataLoaderContext);
-
-  if (!loadData) {
-    throw new Error("useDataLoader() must be used within a DataLoaderProvider");
-  }
-
-  return loadData;
 }

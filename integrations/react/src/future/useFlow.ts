@@ -1,10 +1,9 @@
 import type { RegisteredActivityName } from "@stackflow/config";
-import { useEffect } from "react";
 import { useCoreActions } from "../__internal__/core";
 import type { Actions } from "./Actions";
 import { useActivityComponentMap } from "./ActivityComponentMapProvider";
+import { useDataLoader } from "./loader";
 import { makeActions } from "./makeActions";
-import { useDataLoader } from "./stackflow";
 import { useConfig } from "./useConfig";
 
 export type FlowOutput = {
