@@ -101,7 +101,9 @@ export function makeActions(
         throw new Error(`Activity ${activityName} not found`);
 
       if (activityParams && activityConfig.loader) {
-        loadData(activityName, activityParams);
+        prefetchTasks.push(
+          Promise.resolve(loadData(activityName, activityParams)),
+        );
       }
 
       if ("_load" in activityComponentMap[activityName]) {
