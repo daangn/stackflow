@@ -11,7 +11,7 @@ export type FlowOutput = {
 };
 
 export interface UseFlowOptions {
-  connectedActivities?: RegisteredActivityName[];
+  reachableActivities?: RegisteredActivityName[];
 }
 
 export function useFlow(options?: UseFlowOptions): Actions {
@@ -26,8 +26,8 @@ export function useFlow(options?: UseFlowOptions): Actions {
     loadData,
   );
 
-  if (options?.connectedActivities) {
-    for (const activityName of options.connectedActivities) {
+  if (options?.reachableActivities) {
+    for (const activityName of options.reachableActivities) {
       actions.prepare(activityName);
     }
   }

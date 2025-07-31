@@ -33,7 +33,7 @@ export interface LinkProps<K extends RegisteredActivityName>
 export function Link<K extends RegisteredActivityName>(props: LinkProps<K>) {
   const config = useConfig();
   const { push, replace } = useFlow({
-    connectedActivities: [props.activityName],
+    reachableActivities: [props.activityName],
   });
 
   const href = useMemo(() => {
