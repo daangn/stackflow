@@ -27,13 +27,11 @@ export function useFlow(options?: UseFlowOptions): Actions {
     loadData,
   );
 
-  useEffect(() => {
-    if (options?.relatedActivities) {
-      for (const activityName of options.relatedActivities) {
-        actions.prepare(activityName);
-      }
+  if (options?.relatedActivities) {
+    for (const activityName of options.relatedActivities) {
+      actions.prepare(activityName);
     }
-  }, [options?.relatedActivities]);
+  }
 
   return actions;
 }
