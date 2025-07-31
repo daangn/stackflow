@@ -50,10 +50,7 @@ export function loaderPlugin<
             return event;
           }
 
-          const loaderData = loader({
-            params: activityParams,
-            config: input.config,
-          });
+          const loaderData = loadData(activityName, activityParams);
 
           if (loaderData instanceof Promise) {
             Promise.allSettled([loaderData]).then(
