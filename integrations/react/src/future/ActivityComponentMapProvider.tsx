@@ -22,7 +22,7 @@ export function useActivityComponentMap() {
 
 type ActivityComponentMapProviderProps = PropsWithChildren<{
   value: {
-    [activityName in RegisteredActivityName]: ActivityComponentType<any>;
+    [activityName in RegisteredActivityName]: ActivityComponentType;
   };
 }>;
 
