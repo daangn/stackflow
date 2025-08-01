@@ -99,7 +99,7 @@ export function lazyActivityPlugin(activityComponentMap: {
       ) {
         actions.pause();
 
-        (Activity._payload as any)._result().then(
+        Activity._payload._result().then(
           () => {
             actions.resume();
           },
