@@ -93,7 +93,10 @@ export function lazyActivityPlugin(activityComponentMap: {
     onBeforePush({ actions, actionParams }) {
       const Activity = activityComponentMap[actionParams.activityName];
 
-      if (isLazyComponent(Activity) && Activity._payload._status === -1) {
+      if (
+        isLazyComponent(Activity) &&
+        Activity._payload._status === Uninitialized
+      ) {
         actions.pause();
 
         (Activity._payload as any)._result().then(
