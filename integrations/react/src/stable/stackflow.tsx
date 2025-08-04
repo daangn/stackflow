@@ -20,6 +20,7 @@ import { CoreProvider } from "../__internal__/core";
 import { PluginsProvider } from "../__internal__/plugins";
 import { isBrowser, makeRef } from "../__internal__/utils";
 import type { BaseActivities } from "./BaseActivities";
+import { lazyActivityPlugin } from "./lazyActivityPlugin";
 import type { UseActionsOutputType } from "./useActions";
 import { useActions } from "./useActions";
 import type { UseStepActionsOutputType } from "./useStepActions";
@@ -129,10 +130,6 @@ export type StackflowOutput<T extends BaseActivities> = {
 export function stackflow<T extends BaseActivities>(
   options: StackflowOptions<T>,
 ): StackflowOutput<T> {
-  const plugins = (options.plugins ?? [])
-    .flat(Number.POSITIVE_INFINITY as 0)
-    .map((p) => p as StackflowReactPlugin);
-
   const activityComponentMap = Object.entries(options.activities).reduce(
     (acc, [key, Activity]) => ({
       ...acc,
@@ -143,6 +140,13 @@ export function stackflow<T extends BaseActivities>(
       [key: string]: ActivityComponentType;
     },
   );
+
+  const plugins: StackflowReactPlugin[] = [
+    ...(options.plugins ?? [])
+      .flat(Number.POSITIVE_INFINITY as 0)
+      .map((p) => p as StackflowReactPlugin),
+    lazyActivityPlugin(activityComponentMap),
+  ];
 
   const enoughPastTime = () =>
     new Date().getTime() - options.transitionDuration * 2;
