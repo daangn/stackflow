@@ -109,6 +109,24 @@ export function lazyActivityPlugin(activityComponentMap: {
         );
       }
     },
-    onBeforeReplace() {},
+    onBeforeReplace({ actions, actionParams }) {
+      const Activity = activityComponentMap[actionParams.activityName];
+
+      if (
+        isLazyComponent(Activity) &&
+        Activity._payload._status === Uninitialized
+      ) {
+        actions.pause();
+
+        Activity._payload._result().then(
+          () => {
+            actions.resume();
+          },
+          () => {
+            actions.resume();
+          },
+        );
+      }
+    },
   });
 }
