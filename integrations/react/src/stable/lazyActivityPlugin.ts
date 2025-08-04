@@ -77,6 +77,7 @@ type LazyComponent = {
   _payload: Payload<unknown>;
 };
 
+// https://github.com/facebook/react/blob/v19.1.1/packages/react/src/ReactMemo.js
 type MemoComponent = {
   $$typeof: symbol | number;
   type: React.ElementType;
