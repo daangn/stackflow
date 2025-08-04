@@ -97,7 +97,8 @@ function isMemoComponent(component: unknown): component is MemoComponent {
     typeof component === "object" &&
     component !== null &&
     "$$typeof" in component &&
-    component.$$typeof === REACT_MEMO_TYPE;
+    component.$$typeof === REACT_MEMO_TYPE &&
+    "type" in component;
   return isMemo;
 }
 
@@ -113,7 +114,7 @@ export function lazyActivityPlugin(activityComponentMap: {
   }) {
     let Activity = activityComponentMap[actionParams.activityName];
 
-    if (isMemoComponent(Activity)) {
+    while (isMemoComponent(Activity)) {
       Activity = Activity.type as ActivityComponentType;
     }
 
