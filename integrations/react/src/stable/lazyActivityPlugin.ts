@@ -1,10 +1,9 @@
 import type { ActivityComponentType } from "../__internal__/ActivityComponentType";
 import type { StackflowReactPlugin } from "../__internal__/StackflowReactPlugin";
 
-
 // https://github.com/facebook/react/blob/v19.1.1/packages/shared/ReactSymbols.js#L32
 const REACT_LAZY_TYPE: symbol = Symbol.for("react.lazy");
-const REACT_MEMO_TYPE: symbol = Symbol.for('react.memo');
+const REACT_MEMO_TYPE: symbol = Symbol.for("react.memo");
 
 // https://github.com/facebook/react/blob/v19.1.1/packages/react/src/ReactLazy.js
 interface Wakeable {
@@ -84,30 +83,31 @@ type MemoComponent = {
 };
 
 function isLazyComponent(component: unknown): component is LazyComponent {
-  const isLazy = (
+  const isLazy =
     typeof component === "object" &&
     component !== null &&
     "$$typeof" in component &&
-      component.$$typeof === REACT_LAZY_TYPE &&
-      "_payload" in component
-    );
+    component.$$typeof === REACT_LAZY_TYPE &&
+    "_payload" in component;
   return isLazy;
 }
 
 function isMemoComponent(component: unknown): component is MemoComponent {
-  const isMemo = (
+  const isMemo =
     typeof component === "object" &&
     component !== null &&
     "$$typeof" in component &&
-    component.$$typeof === REACT_MEMO_TYPE
-  );
+    component.$$typeof === REACT_MEMO_TYPE;
   return isMemo;
 }
 
 export function lazyActivityPlugin(activityComponentMap: {
   [key: string]: ActivityComponentType;
 }): StackflowReactPlugin {
-  function handleLazyActivity({ actions, actionParams }: {
+  function handleLazyActivity({
+    actions,
+    actionParams,
+  }: {
     actions: { pause: () => void; resume: () => void };
     actionParams: { activityName: string };
   }) {
