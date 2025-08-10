@@ -76,7 +76,7 @@ export function stackflow<
     );
 
     if (!activityConfig) {
-      throw new Error(`Activity ${activityName} not found`);
+      throw new Error(`Activity ${activityName} is not registered.`);
     }
 
     const loaderData = activityConfig.loader?.({
@@ -101,7 +101,7 @@ export function stackflow<
 
       loaderDataCacheMap.set(
         activityName,
-        cache.filter((entry) => !isEqual(entry.params, activityParams)),
+        cache.filter((entry) => !isEqual(entry, newCacheEntry)),
       );
     }, input.options?.loaderCacheMaxAge ?? DEFAULT_LOADER_CACHE_MAX_AGE);
 
@@ -237,7 +237,7 @@ export function stackflow<
   return {
     Stack,
     actions: makeActions(
-      () => input.config,
+      input.config,
       () => getCoreStore()?.actions,
       input.components,
       loadData,

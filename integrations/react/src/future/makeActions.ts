@@ -5,6 +5,7 @@ import type {
   RegisteredActivityName,
 } from "@stackflow/config";
 import type { CoreStore } from "@stackflow/core";
+import type { LazyActivityComponentType } from "__internal__/LazyActivityComponentType";
 import type { ActivityComponentType } from "../__internal__/ActivityComponentType";
 import { makeActivityId } from "../__internal__/activity";
 import type { Actions } from "./Actions";
@@ -24,7 +25,7 @@ function parseActionOptions(options?: { animate?: boolean }) {
 }
 
 export function makeActions(
-  getConfig: () => Config<ActivityDefinition<RegisteredActivityName>>,
+  config: Config<ActivityDefinition<RegisteredActivityName>>,
   getCoreActions: () => CoreStore["actions"] | undefined,
   activityComponentMap: {
     [activityName in RegisteredActivityName]: ActivityComponentType<any>;
@@ -92,13 +93,13 @@ export function makeActions(
       activityName: K,
       activityParams?: InferActivityParams<K>,
     ) {
-      const activityConfig = getConfig().activities.find(
+      const activityConfig = config.activities.find(
         ({ name }) => name === activityName,
       );
       const prefetchTasks: Promise<unknown>[] = [];
 
       if (!activityConfig)
-        throw new Error(`Activity ${activityName} not found`);
+        throw new Error(`Activity ${activityName} is not registered.`);
 
       if (activityParams && activityConfig.loader) {
         prefetchTasks.push(
