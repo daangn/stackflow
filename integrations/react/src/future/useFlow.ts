@@ -1,4 +1,3 @@
-import type { RegisteredActivityName } from "@stackflow/config";
 import { useCoreActions } from "../__internal__/core";
 import type { Actions } from "./Actions";
 import { useActivityComponentMap } from "./ActivityComponentMapProvider";
@@ -10,11 +9,7 @@ export type FlowOutput = {
   useFlow: () => Actions;
 };
 
-export interface UseFlowOptions {
-  reachableActivities?: RegisteredActivityName[];
-}
-
-export function useFlow(options?: UseFlowOptions): Actions {
+export function useFlow(): Actions {
   const coreActions = useCoreActions();
   const config = useConfig();
   const activityComponentMap = useActivityComponentMap();
@@ -25,12 +20,6 @@ export function useFlow(options?: UseFlowOptions): Actions {
     activityComponentMap,
     loadData,
   );
-
-  if (options?.reachableActivities) {
-    for (const activityName of options.reachableActivities) {
-      actions.prepare(activityName);
-    }
-  }
 
   return actions;
 }
