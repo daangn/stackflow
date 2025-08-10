@@ -20,7 +20,7 @@ export function useFlow(options?: UseFlowOptions): Actions {
   const activityComponentMap = useActivityComponentMap();
   const loadData = useDataLoader();
   const actions = makeActions(
-    () => config,
+    config,
     () => coreActions,
     activityComponentMap,
     loadData,
