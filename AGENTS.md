@@ -96,7 +96,6 @@ yarn release:canary
 
 ## Testing
 
-- Uses Jest with SWC for transformation
 - Test files: `*.spec.ts` pattern
 - Run tests: `yarn test`
 - Tests are located alongside source files
