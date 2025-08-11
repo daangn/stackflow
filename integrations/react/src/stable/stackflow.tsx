@@ -26,6 +26,8 @@ import { useActions } from "./useActions";
 import type { UseStepActionsOutputType } from "./useStepActions";
 import { useStepActions } from "./useStepActions";
 
+import { version } from "react";
+
 function parseActionOptions(options?: { animate?: boolean }) {
   if (!options) {
     return { skipActiveState: false };
@@ -145,8 +147,17 @@ export function stackflow<T extends BaseActivities>(
     ...(options.plugins ?? [])
       .flat(Number.POSITIVE_INFINITY as 0)
       .map((p) => p as StackflowReactPlugin),
-    lazyActivityPlugin(activityComponentMap),
   ];
+
+  const majorReactVersion = Number.parseInt(version);
+
+  /**
+   * TODO: This plugin depends on internal APIs of React.
+   * A proper solution (e.g. Suspense integration) should be implemented in the next major version.
+   */
+  if (majorReactVersion >= 18 && majorReactVersion <= 19) {
+    plugins.push(lazyActivityPlugin(activityComponentMap));
+  }
 
   const enoughPastTime = () =>
     new Date().getTime() - options.transitionDuration * 2;
