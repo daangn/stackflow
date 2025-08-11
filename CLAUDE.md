@@ -129,38 +129,80 @@ Plugins can hook into various lifecycle events:
 
 ### Adding a New Activity
 ```typescript
-const { Stack, useFlow } = stackflow({
+export const { Stack, useFlow } = stackflow({
+  transitionDuration: 350,
+  plugins: [
+    basicRendererPlugin(),
+    basicUIPlugin({
+      theme: "cupertino",
+    }),
+  ],
   activities: {
-    HomePage: HomeActivity,
-    DetailPage: DetailActivity,
+    MyActivity,
   },
-  transitionDuration: 300,
 });
 ```
 
 ### Navigation
-```typescript
-const { push, pop, replace } = useFlow();
-push("DetailPage", { id: "123" });
-pop();
-replace("HomePage", {});
+```tsx
+const MyActivity: ActivityComponentType = () => {
+  const { push } = useFlow();
+ 
+  const onClick = () => {
+    push("Article", {
+      title: "Hello",
+    });
+  };
+ 
+  return (
+    <AppScreen appBar={{ title: "My Activity" }}>
+      <div>
+        My Activity
+        <button onClick={onClick}>Go to article page</button>
+      </div>
+    </AppScreen>
+  );
+};
 ```
 
 ### Creating a Plugin
-```typescript
-const myPlugin = () => ({
-  onPushed(params) {
-    // Handle push event
-  },
+```tsx
+stackflow({
+  // ...
+  plugins: [
+    () => {
+      return {
+        key: "my-plugin",
+        onPushed(actions, effect) {
+          // actions.getStack()
+          // actions.dispatchEvent(...)
+          console.log("Pushed!");
+          console.log("Effect:", effect);
+        },
+      };
+    },
+  ],
 });
 ```
+
+## Future API (Stackflow 2.0 Preview)
+
+The Future API (`@stackflow/react/future`) is a preview of Stackflow 2.0 that optimizes initial loading performance through better separation of concerns. Key improvements:
+
+- **Config-first approach**: Activities and routes defined in `@stackflow/config` using `defineConfig()`, with React components injected separately
+- **Direct imports**: Hooks (`useFlow`, `useStepFlow`) and `<Link>` component imported directly without factory functions
+- **Loader API**: Built-in data loading without React dependencies for better performance
+- **API Pipelining**: Parallel loading of API data and React app initialization
+- **Enhanced type safety**: Types inferred from config rather than component props
+
+The Future API maintains compatibility with existing code while preparing for Stackflow 2.0. Routes are now declared in the config file alongside activities, and the plugin system has been streamlined to work with the centralized configuration.
 
 ## Build System
 
 - Uses esbuild for JavaScript/TypeScript compilation
 - Separate builds for CommonJS and ESM
 - TypeScript declarations generated separately
-- Monorepo managed with Yarn workspaces
+- Monorepo managed with Yarn workspaces and ultra runner
 
 ## Important Notes
 
