@@ -1,7 +1,4 @@
 import { useActions } from "@stackflow/react";
-import { assignInlineVars } from "@vanilla-extract/dynamic";
-import { useRef } from "react";
-
 import {
   useLazy,
   useNullableActivity,
@@ -9,7 +6,9 @@ import {
   useStyleEffect,
   useZIndexBase,
 } from "@stackflow/react-ui-core";
+import { assignInlineVars } from "@vanilla-extract/dynamic";
 import clsx from "clsx";
+import { useRef } from "react";
 import type { GlobalVars } from "../basicUIPlugin.css";
 import { globalVars } from "../basicUIPlugin.css";
 import { compactMap } from "../utils";

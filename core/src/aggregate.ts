@@ -1,7 +1,7 @@
-import type { ActivityStep, Stack } from "./Stack";
 import { makeStackReducer } from "./activity-utils/makeStackReducer";
 import type { DomainEvent } from "./event-types";
 import { validateEvents } from "./event-utils";
+import type { ActivityStep, Stack } from "./Stack";
 import { compareBy, last, uniqBy } from "./utils";
 
 export function aggregate(inputEvents: DomainEvent[], now: number): Stack {
