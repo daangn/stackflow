@@ -1,7 +1,4 @@
 import { useActions } from "@stackflow/react";
-import { assignInlineVars } from "@vanilla-extract/dynamic";
-import { useRef } from "react";
-
 import {
   useLazy,
   useNullableActivity,
@@ -9,6 +6,9 @@ import {
   useStyleEffect,
   useZIndexBase,
 } from "@stackflow/react-ui-core";
+import { assignInlineVars } from "@vanilla-extract/dynamic";
+import clsx from "clsx";
+import { useRef } from "react";
 import type { GlobalVars } from "../basicUIPlugin.css";
 import { globalVars } from "../basicUIPlugin.css";
 import { compactMap } from "../utils";
@@ -21,6 +21,7 @@ export type BottomSheetProps = Partial<
     paperRef?: React.Ref<HTMLDivElement>;
     onOutsideClick?: React.MouseEventHandler;
     children: React.ReactNode;
+    className?: string;
   };
 const BottomSheet: React.FC<BottomSheetProps> = ({
   borderRadius = "1rem",
@@ -30,6 +31,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
   paperRef,
   onOutsideClick,
   children,
+  className,
 }) => {
   const activity = useNullableActivity();
   const { pop } = useActions();
@@ -80,9 +82,12 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
 
   return (
     <div
-      className={css.container({
-        transitionState: useLazy(transitionState),
-      })}
+      className={clsx(
+        css.container({
+          transitionState: useLazy(transitionState),
+        }),
+        className,
+      )}
       ref={containerRef}
       style={assignInlineVars(
         compactMap({

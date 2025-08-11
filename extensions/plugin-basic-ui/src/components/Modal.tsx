@@ -1,7 +1,4 @@
 import { useActions } from "@stackflow/react";
-import { assignInlineVars } from "@vanilla-extract/dynamic";
-import { useRef } from "react";
-
 import {
   useLazy,
   useNullableActivity,
@@ -9,6 +6,9 @@ import {
   useStyleEffect,
   useZIndexBase,
 } from "@stackflow/react-ui-core";
+import { assignInlineVars } from "@vanilla-extract/dynamic";
+import clsx from "clsx";
+import { useRef } from "react";
 import type { GlobalVars } from "../basicUIPlugin.css";
 import { globalVars } from "../basicUIPlugin.css";
 import { compactMap } from "../utils";
@@ -20,6 +20,7 @@ export type ModalProps = Partial<
   Partial<GlobalVars["modal"]> & {
     onOutsideClick?: React.MouseEventHandler;
     children: React.ReactNode;
+    className?: string;
   };
 const Modal: React.FC<ModalProps> = ({
   backgroundColor,
@@ -29,6 +30,7 @@ const Modal: React.FC<ModalProps> = ({
   maxWidth,
   onOutsideClick,
   children,
+  className,
 }) => {
   const activity = useNullableActivity();
   const { pop } = useActions();
@@ -79,9 +81,12 @@ const Modal: React.FC<ModalProps> = ({
 
   return (
     <div
-      className={css.container({
-        transitionState: useLazy(transitionState),
-      })}
+      className={clsx(
+        css.container({
+          transitionState: useLazy(transitionState),
+        }),
+        className,
+      )}
       ref={containerRef}
       style={assignInlineVars(
         compactMap({
