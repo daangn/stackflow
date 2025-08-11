@@ -192,34 +192,16 @@ export function historySyncPlugin<
             ...searchParams,
             ...pathParams,
           };
-          const [activityParams, ...stepParamsList] =
-            initialHistoryEntry.decode(params);
+          const activityParams = initialHistoryEntry.decode(params);
           const enoughtPastTime = new Date().getTime() - MINUTE;
 
           pendingDefaultHistoryEntryInsertionTasks = [
-            ...(stepParamsList.length > 0
-              ? [
-                  (actions: StackflowActions) => {
-                    for (const stepParams of stepParamsList) {
-                      const stepId = id();
-
-                      defaultHistoryEntryEntities.add(stepId);
-
-                      actions.stepPush({
-                        stepId,
-                        stepParams,
-                        hasZIndex: true, //@TOOD: 괜찮은지 확인
-                      });
-                    }
-                  },
-                ]
-              : []),
             ...targetActivityRoute.defaultHistory
               .slice(1)
               .map(
                 ({ activityName, decode }) =>
-                  ({ push, stepPush }: StackflowActions) => {
-                    const [activityParams, ...stepParamsList] = decode(params);
+                  ({ push }: StackflowActions) => {
+                    const activityParams = decode(params);
                     const activityId = id();
 
                     defaultHistoryEntryEntities.add(activityId);
@@ -232,18 +214,6 @@ export function historySyncPlugin<
                         path: currentPath,
                       },
                     });
-
-                    for (const stepParams of stepParamsList) {
-                      const stepId = id();
-
-                      defaultHistoryEntryEntities.add(stepId);
-
-                      stepPush({
-                        stepId,
-                        stepParams,
-                        hasZIndex: true,
-                      });
-                    }
                   },
               ),
             ({ push }) => {
