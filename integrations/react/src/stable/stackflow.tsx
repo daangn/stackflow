@@ -8,8 +8,6 @@ import { makeCoreStore, makeEvent } from "@stackflow/core";
 import { memo, useMemo } from "react";
 
 import type { ActivityComponentType } from "../__internal__/ActivityComponentType";
-import MainRenderer from "../__internal__/MainRenderer";
-import type { StackflowReactPlugin } from "../__internal__/StackflowReactPlugin";
 import {
   findActivityById,
   findLatestActiveActivity,
@@ -17,7 +15,9 @@ import {
   makeStepId,
 } from "../__internal__/activity";
 import { CoreProvider } from "../__internal__/core";
+import MainRenderer from "../__internal__/MainRenderer";
 import { PluginsProvider } from "../__internal__/plugins";
+import type { StackflowReactPlugin } from "../__internal__/StackflowReactPlugin";
 import { isBrowser, makeRef } from "../__internal__/utils";
 import type { BaseActivities } from "./BaseActivities";
 import { lazyActivityPlugin } from "./lazyActivityPlugin";

@@ -1,4 +1,4 @@
-import { type Lang, getLocaleBranch } from "../../utils/locale";
+import { getLocaleBranch, type Lang } from "../../utils/locale";
 
 export const TransitioningStackDiagram = ({ lang = "en" }: { lang?: Lang }) => {
   const getLocaleText = getLocaleBranch(lang);

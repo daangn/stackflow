@@ -1,8 +1,8 @@
 import {
   type ActivityComponentType,
   useActivityParams,
+  useLoaderData,
 } from "@stackflow/react/future";
-import { useLoaderData } from "@stackflow/react/future";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import ArticleCard from "../components/ArticleCard";
 import ArticleProfile from "../components/ArticleProfile";

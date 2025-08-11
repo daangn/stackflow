@@ -23,11 +23,11 @@ export type DomainEvent =
 
 export * from "./ActivityRegisteredEvent";
 export * from "./InitializedEvent";
+export * from "./PausedEvent";
 export * from "./PoppedEvent";
 export * from "./PushedEvent";
 export * from "./ReplacedEvent";
+export * from "./ResumedEvent";
 export * from "./StepPoppedEvent";
 export * from "./StepPushedEvent";
 export * from "./StepReplacedEvent";
-export * from "./PausedEvent";
-export * from "./ResumedEvent";

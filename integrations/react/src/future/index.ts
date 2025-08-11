@@ -1,29 +1,28 @@
 /**
  * Main
  */
-export * from "./stackflow";
+
+export * from "../__internal__/activity/useActivity";
 
 /**
  * Types
  */
 export * from "../__internal__/StackflowReactPlugin";
-export * from "./ActivityComponentType";
-export * from "./StackComponentType";
-export * from "./Actions";
-export * from "./StepActions";
-
 /**
  * Hooks
  */
 export * from "../__internal__/stack/useStack";
-export * from "../__internal__/activity/useActivity";
-export * from "./useActivityParams";
-export * from "./loader/useLoaderData";
-export * from "./useFlow";
-export * from "./useStepFlow";
-export * from "./useConfig";
-
+export * from "./Actions";
+export * from "./ActivityComponentType";
 /**
  * Utils
  */
 export * from "./lazy";
+export * from "./loader/useLoaderData";
+export * from "./StackComponentType";
+export * from "./StepActions";
+export * from "./stackflow";
+export * from "./useActivityParams";
+export * from "./useConfig";
+export * from "./useFlow";
+export * from "./useStepFlow";
