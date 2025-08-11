@@ -462,7 +462,10 @@ export function historySyncPlugin<
         });
       },
       onStepPushed({ effect: { activity, step } }) {
-        if (pendingDefaultHistoryEntryInsertionTasks) {
+        if (
+          pendingDefaultHistoryEntryInsertionTasks &&
+          !defaultHistoryEntryEntities.has(step.id)
+        ) {
           pendingDefaultHistoryEntryInsertionTasks = null;
         }
 
