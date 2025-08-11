@@ -1,6 +1,6 @@
 import type { RegisteredActivityName } from "@stackflow/config";
-import { createContext, useContext } from "react";
 import type { PropsWithChildren } from "react";
+import { createContext, useContext } from "react";
 import type { ActivityComponentType } from "../__internal__/ActivityComponentType";
 
 const ActivityComponentMapContext = createContext<
