@@ -112,10 +112,11 @@ yarn release:canary
 ## Plugin System
 
 Plugins can hook into various lifecycle events:
-- `onInitialized`
+- `onInit`
 - `onBeforePush/onPushed`
 - `onBeforePop/onPopped`
 - `onBeforeReplace/onReplaced`
+- `onChanged` (catch-all)
 - Activity transition events
 
 ## Important Patterns
