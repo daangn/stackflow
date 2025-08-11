@@ -207,8 +207,8 @@ export function historySyncPlugin<
 
                       actions.stepPush({
                         stepId,
-                        stepParams,
-                        hasZIndex: true, //@TOOD: 괜찮은지 확인
+                        stepParams: stepParams.params,
+                        hasZIndex: stepParams.hasZIndex,
                       });
                     }
                   },
@@ -240,8 +240,8 @@ export function historySyncPlugin<
 
                       stepPush({
                         stepId,
-                        stepParams,
-                        hasZIndex: true,
+                        stepParams: stepParams.params,
+                        hasZIndex: stepParams.hasZIndex,
                       });
                     }
                   },

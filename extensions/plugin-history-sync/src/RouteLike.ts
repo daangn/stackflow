@@ -18,7 +18,10 @@ export type HistoryEntry = {
     activityName: K;
     decode: (
       params: Record<string, string>,
-    ) => NonEmptyArray<RegisteredActivityParamTypes[K]>;
+    ) => [
+      RegisteredActivityParamTypes[K],
+      ...{ params: RegisteredActivityParamTypes[K]; hasZIndex?: boolean }[],
+    ];
   };
 }[RegisteredActivityName];
 
