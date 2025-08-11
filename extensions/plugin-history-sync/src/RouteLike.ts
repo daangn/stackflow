@@ -16,7 +16,9 @@ export type Route<ComponentType> = {
 export type HistoryEntry = {
   [K in RegisteredActivityName]: {
     activityName: K;
-    decode: (params: Record<string, string>) => RegisteredActivityParamTypes[K];
+    decode: (
+      params: Record<string, string>,
+    ) => NonEmptyArray<RegisteredActivityParamTypes[K]>;
   };
 }[RegisteredActivityName];
 
