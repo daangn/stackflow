@@ -69,7 +69,7 @@ Stackflow is a JavaScript library that implements Stack Navigation UX commonly u
 # Install dependencies
 yarn install
 
-# Development mode (all packages)
+# Development mode (watch and build all packages)
 yarn dev
 
 # Build all packages
@@ -116,8 +116,10 @@ Plugins can hook into various lifecycle events:
 - `onBeforePush/onPushed`
 - `onBeforePop/onPopped`
 - `onBeforeReplace/onReplaced`
+- `onBeforeStepPush/onStepPushed`
+- `onBeforeStepPop/onStepPopped`
+- `onBeforeStepReplace/onStepReplaced`
 - `onChanged` (catch-all)
-- Activity transition events
 
 ## Important Patterns
 
