@@ -28,12 +28,13 @@ Stackflow is a JavaScript library that implements Stack Navigation UX commonly u
    - Provides `stackflow()` factory function
    - `<Stack />` component and `useFlow()` hooks
    - Activity component management
-   - Both stable and future API versions
 
-3. **@stackflow/config** (`/config`)
-   - Configuration definitions
-   - Activity definitions and type inference
-   - TypeScript type utilities
+3. **@stackflow/plugin-basic-ui** (`/extensions/plugin-basic-ui`)
+   - Pre-built UI components for navigation
+   - AppScreen component with app bar
+   - Native-like themes (iOS Cupertino, Android Material)
+   - Back button and close button components
+   - Activity transition animations
 
 ### Key Concepts
 
@@ -46,7 +47,7 @@ Stackflow is a JavaScript library that implements Stack Navigation UX commonly u
 
 ## Project Structure
 
-```
+```text
 /
 ├── core/                    # Core library
 ├── integrations/           # Framework integrations
