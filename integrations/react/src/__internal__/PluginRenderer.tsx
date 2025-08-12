@@ -34,9 +34,19 @@ const PluginRenderer: React.FC<PluginRendererProps> = ({
             render(overrideActivity) {
               const Activity = activityComponentMap[activity.name];
 
-              let output: React.ReactNode = (
-                <Activity params={activity.params} />
-              );
+              let output: React.ReactNode =
+                "_load" in Activity &&
+                activity.context &&
+                "lazyActivityComponentRenderContext" in activity.context &&
+                typeof activity.context.lazyActivityComponentRenderContext ===
+                  "object" ? (
+                  <Activity
+                    {...activity.context.lazyActivityComponentRenderContext}
+                    params={activity.params}
+                  />
+                ) : (
+                  <Activity params={activity.params} />
+                );
 
               plugins.forEach((p) => {
                 output =

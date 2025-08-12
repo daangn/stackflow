@@ -230,6 +230,9 @@ export function historySyncPlugin<
                       activityParams,
                       activityContext: {
                         path: currentPath,
+                        lazyActivityContext: {
+                          shouldRenderImmediately: true,
+                        },
                       },
                     });
 
@@ -264,6 +267,9 @@ export function historySyncPlugin<
                 },
                 activityContext: {
                   path: currentPath,
+                  lazyActivityComponentRenderContext: {
+                    shouldRenderImmediately: true,
+                  },
                 },
               });
             },
@@ -279,6 +285,9 @@ export function historySyncPlugin<
               eventDate: enoughtPastTime,
               activityContext: {
                 path: currentPath,
+                lazyActivityComponentRenderContext: {
+                  shouldRenderImmediately: true,
+                },
               },
             }),
           ];
@@ -302,6 +311,9 @@ export function historySyncPlugin<
             eventDate: new Date().getTime() - MINUTE,
             activityContext: {
               path: currentPath,
+              lazyActivityComponentRenderContext: {
+                shouldRenderImmediately: true,
+              },
             },
           }),
         ];
