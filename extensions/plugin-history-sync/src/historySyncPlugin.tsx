@@ -178,48 +178,50 @@ export function historySyncPlugin<
             (activityRoute) =>
               activityRoute.activityName === fallbackActivityName,
           )!;
+        const pattern = new UrlPattern(
+          `${targetActivityRoute.path}/`,
+          options.urlPatternOptions,
+        );
+        const url = pathToUrl(currentPath);
+        const pathParams = pattern.match(url.pathname);
+        const searchParams = urlSearchParamsToMap(url.searchParams);
+        const params = {
+          ...searchParams,
+          ...pathParams,
+        };
+        const defaultHistory =
+          targetActivityRoute.defaultHistory?.(params) ?? [];
 
-        if (targetActivityRoute.defaultHistory) {
-          const initialHistoryEntry = targetActivityRoute.defaultHistory[0];
-          const pattern = new UrlPattern(
-            `${targetActivityRoute.path}/`,
-            options.urlPatternOptions,
-          );
-          const url = pathToUrl(currentPath);
-          const pathParams = pattern.match(url.pathname);
-          const searchParams = urlSearchParamsToMap(url.searchParams);
-          const params = {
-            ...searchParams,
-            ...pathParams,
-          };
-          const [activityParams, ...stepParamsList] =
-            initialHistoryEntry.decode(params);
+        if (defaultHistory[0]) {
+          const initialHistoryEntry = defaultHistory[0];
           const enoughtPastTime = new Date().getTime() - MINUTE;
 
           pendingDefaultHistoryEntryInsertionTasks = [
-            ...(stepParamsList.length > 0
+            ...(initialHistoryEntry.additionalSteps?.length
               ? [
                   (actions: StackflowActions) => {
-                    for (const stepParams of stepParamsList) {
+                    for (const {
+                      stepParams,
+                      hasZIndex,
+                    } of initialHistoryEntry.additionalSteps ?? []) {
                       const stepId = id();
 
                       defaultHistoryEntryEntities.add(stepId);
 
                       actions.stepPush({
                         stepId,
-                        stepParams: stepParams.params,
-                        hasZIndex: stepParams.hasZIndex,
+                        stepParams,
+                        hasZIndex,
                       });
                     }
                   },
                 ]
               : []),
-            ...targetActivityRoute.defaultHistory
+            ...defaultHistory
               .slice(1)
               .map(
-                ({ activityName, decode }) =>
+                ({ activityName, activityParams, additionalSteps }) =>
                   ({ push, stepPush }: StackflowActions) => {
-                    const [activityParams, ...stepParamsList] = decode(params);
                     const activityId = id();
 
                     defaultHistoryEntryEntities.add(activityId);
@@ -236,15 +238,16 @@ export function historySyncPlugin<
                       },
                     });
 
-                    for (const stepParams of stepParamsList) {
+                    for (const { stepParams, hasZIndex } of additionalSteps ??
+                      []) {
                       const stepId = id();
 
                       defaultHistoryEntryEntities.add(stepId);
 
                       stepPush({
                         stepId,
-                        stepParams: stepParams.params,
-                        hasZIndex: stepParams.hasZIndex,
+                        stepParams,
+                        hasZIndex,
                       });
                     }
                   },
@@ -280,7 +283,7 @@ export function historySyncPlugin<
               activityId: id(),
               activityName: initialHistoryEntry.activityName,
               activityParams: {
-                ...activityParams,
+                ...initialHistoryEntry.activityParams,
               },
               eventDate: enoughtPastTime,
               activityContext: {
