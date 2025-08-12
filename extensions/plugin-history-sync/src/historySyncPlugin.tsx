@@ -232,7 +232,7 @@ export function historySyncPlugin<
                       activityParams,
                       activityContext: {
                         path: currentPath,
-                        lazyActivityContext: {
+                        lazyActivityComponentRenderContext: {
                           shouldRenderImmediately: true,
                         },
                       },
