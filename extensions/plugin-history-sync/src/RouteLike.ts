@@ -3,25 +3,23 @@ import type {
   RegisteredActivityParamTypes,
 } from "@stackflow/config";
 import type { ActivityComponentType } from "@stackflow/react";
-import type { NonEmptyArray } from "./NonEmptyArray";
 
 export type Route<ComponentType> = {
   path: string;
   decode?: (
     params: Record<string, string>,
   ) => ComponentType extends ActivityComponentType<infer U> ? U : {};
-  defaultHistory?: NonEmptyArray<HistoryEntry>;
+  defaultHistory?: (params: Record<string, string>) => HistoryEntry[];
 };
 
 export type HistoryEntry = {
   [K in RegisteredActivityName]: {
     activityName: K;
-    decode: (
-      params: Record<string, string>,
-    ) => [
-      RegisteredActivityParamTypes[K],
-      ...{ params: RegisteredActivityParamTypes[K]; hasZIndex?: boolean }[],
-    ];
+    activityParams: RegisteredActivityParamTypes[K];
+    additionalSteps?: {
+      stepParams: RegisteredActivityParamTypes[K];
+      hasZIndex?: boolean;
+    }[];
   };
 }[RegisteredActivityName];
 
