@@ -2,6 +2,7 @@ import type {
   ActivityDefinition,
   RegisteredActivityName,
 } from "@stackflow/config";
+import { isThenable } from "__internal__/utils/isThenable";
 import type { ActivityComponentType } from "../../__internal__/ActivityComponentType";
 import type { StackflowReactPlugin } from "../../__internal__/StackflowReactPlugin";
 import type { StackflowInput } from "../stackflow";
@@ -108,8 +109,7 @@ function createBeforeRouteHandler<
 
     const loaderData = loadData(activityName, activityParams);
 
-    const loaderDataPromise =
-      loaderData instanceof Promise ? loaderData : undefined;
+    const loaderDataPromise = isThenable(loaderData) ? loaderData : undefined;
     const lazyComponentPromise =
       "_load" in matchActivityComponent
         ? matchActivityComponent._load?.()
