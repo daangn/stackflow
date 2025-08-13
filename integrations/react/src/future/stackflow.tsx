@@ -233,12 +233,7 @@ export function stackflow<
 
   return {
     Stack,
-    actions: makeActions(
-      input.config,
-      () => getCoreStore()?.actions,
-      input.components,
-      loadData,
-    ),
+    actions: makeActions(() => getCoreStore()?.actions),
     stepActions: makeStepActions(() => getCoreStore()?.actions),
   };
 }

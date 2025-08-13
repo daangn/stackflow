@@ -1,10 +1,10 @@
 import type { RegisteredActivityName } from "@stackflow/config";
-import { useFlow } from "./useFlow";
+import { usePrepare } from "./usePrepare";
 
 export function useActivityPreparation(activities: RegisteredActivityName[]) {
-  const actions = useFlow();
+  const prepare = usePrepare();
 
   for (const activityName of activities) {
-    actions.prepare(activityName);
+    prepare(activityName);
   }
 }
