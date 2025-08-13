@@ -7,7 +7,7 @@ import type {
 import { makeCoreStore, makeEvent } from "@stackflow/core";
 import { memo, useMemo } from "react";
 
-import { ActivityComponentMapProvider } from "__internal__/ActivityComponentMapProvider";
+import { ActivityComponentMapProvider } from "../__internal__/ActivityComponentMapProvider";
 import type { ActivityComponentType } from "../__internal__/ActivityComponentType";
 import {
   findActivityById,
