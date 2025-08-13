@@ -113,17 +113,7 @@ function createBeforeRouteHandler<
 
     if (
       (loaderDataPromise || lazyComponentPromise) &&
-      (!activityContext ||
-        !("lazyActivityComponentRenderContext" in activityContext) ||
-        typeof activityContext.lazyActivityComponentRenderContext !==
-          "object" ||
-        !activityContext.lazyActivityComponentRenderContext ||
-        !(
-          "shouldRenderImmediately" in
-          activityContext.lazyActivityComponentRenderContext
-        ) ||
-        activityContext.lazyActivityComponentRenderContext
-          .shouldRenderImmediately === false)
+      ((activityContext as any)?.lazyActivityComponentRenderContext?.shouldRenderImmediately !== true)
     ) {
       pause();
 
