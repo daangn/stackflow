@@ -53,7 +53,7 @@ export function loaderPlugin<
 
           const loaderData = loadData(activityName, activityParams);
 
-          if (loaderData instanceof Promise) {
+          if (isThenable(loaderData)) {
             Promise.allSettled([loaderData]).then(
               ([loaderDataPromiseResult]) => {
                 printLoaderDataPromiseError({
