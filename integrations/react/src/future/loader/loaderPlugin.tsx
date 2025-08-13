@@ -2,9 +2,9 @@ import type {
   ActivityDefinition,
   RegisteredActivityName,
 } from "@stackflow/config";
-import { isThenable } from "../../__internal__/utils/isThenable";
 import type { ActivityComponentType } from "../../__internal__/ActivityComponentType";
 import type { StackflowReactPlugin } from "../../__internal__/StackflowReactPlugin";
+import { isPromiseLike } from "../../__internal__/utils/isPromiseLike";
 import type { StackflowInput } from "../stackflow";
 
 export function loaderPlugin<
@@ -53,7 +53,7 @@ export function loaderPlugin<
 
           const loaderData = loadData(activityName, activityParams);
 
-          if (isThenable(loaderData)) {
+          if (isPromiseLike(loaderData)) {
             Promise.allSettled([loaderData]).then(
               ([loaderDataPromiseResult]) => {
                 printLoaderDataPromiseError({
@@ -110,7 +110,9 @@ function createBeforeRouteHandler<
     const loaderData =
       matchActivity.loader && loadData(activityName, activityParams);
 
-    const loaderDataPromise = isThenable(loaderData) ? loaderData : undefined;
+    const loaderDataPromise = isPromiseLike(loaderData)
+      ? loaderData
+      : undefined;
     const lazyComponentPromise =
       "_load" in matchActivityComponent
         ? matchActivityComponent._load?.()
