@@ -36,12 +36,9 @@ const PluginRenderer: React.FC<PluginRendererProps> = ({
 
               let output: React.ReactNode =
                 "_load" in Activity &&
-                activity.context &&
-                "lazyActivityComponentRenderContext" in activity.context &&
-                typeof activity.context.lazyActivityComponentRenderContext ===
-                  "object" ? (
+                typeof (activity.context as any)?.lazyActivityComponentRenderContext === "object" ? (
                   <Activity
-                    {...activity.context.lazyActivityComponentRenderContext}
+                    {...(activity.context as any)?.lazyActivityComponentRenderContext}
                     params={activity.params}
                   />
                 ) : (
