@@ -101,7 +101,7 @@ export function stackflow<
 
       loaderDataCacheMap.set(
         activityName,
-        cache.filter((entry) => !isEqual(entry, newCacheEntry)),
+        cache.filter((entry) => entry !== newCacheEntry),
       );
     }, input.options?.loaderCacheMaxAge ?? DEFAULT_LOADER_CACHE_MAX_AGE);
 
