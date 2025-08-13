@@ -2,7 +2,7 @@ import type {
   ActivityDefinition,
   RegisteredActivityName,
 } from "@stackflow/config";
-import { isThenable } from "__internal__/utils/isThenable";
+import { isThenable } from "../../__internal__/utils/isThenable";
 import type { ActivityComponentType } from "../../__internal__/ActivityComponentType";
 import type { StackflowReactPlugin } from "../../__internal__/StackflowReactPlugin";
 import type { StackflowInput } from "../stackflow";
