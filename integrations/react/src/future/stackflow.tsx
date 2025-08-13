@@ -10,6 +10,7 @@ import {
   makeEvent,
   type PushedEvent,
 } from "@stackflow/core";
+import { isPromiseLike } from "__internal__/utils/isPromiseLike";
 import React, { useMemo } from "react";
 import isEqual from "react-fast-compare";
 import { ActivityComponentMapProvider } from "../__internal__/ActivityComponentMapProvider";
@@ -94,7 +95,7 @@ export function stackflow<
       loaderDataCacheMap.set(activityName, [newCacheEntry]);
     }
 
-    setTimeout(() => {
+    const clearCache = () => {
       const cache = loaderDataCacheMap.get(activityName);
 
       if (!cache) return;
@@ -103,7 +104,15 @@ export function stackflow<
         activityName,
         cache.filter((entry) => entry !== newCacheEntry),
       );
-    }, input.options?.loaderCacheMaxAge ?? DEFAULT_LOADER_CACHE_MAX_AGE);
+    };
+    const clearCacheAfterMaxAge = () => {
+      setTimeout(
+        clearCache,
+        input.options?.loaderCacheMaxAge ?? DEFAULT_LOADER_CACHE_MAX_AGE,
+      );
+    };
+
+    Promise.resolve(loaderData).then(clearCacheAfterMaxAge, clearCache);
 
     return loaderData;
   };
