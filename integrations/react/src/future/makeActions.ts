@@ -3,76 +3,78 @@ import { makeActivityId } from "../__internal__/activity";
 import type { Actions } from "./Actions";
 
 function parseActionOptions(options?: { animate?: boolean }) {
-	if (!options) {
-		return { skipActiveState: false };
-	}
+  if (!options) {
+    return { skipActiveState: false };
+  }
 
-	const isNullableAnimateOption = options.animate == null;
+  const isNullableAnimateOption = options.animate == null;
 
-	if (isNullableAnimateOption) {
-		return { skipActiveState: false };
-	}
+  if (isNullableAnimateOption) {
+    return { skipActiveState: false };
+  }
 
-	return { skipActiveState: !options.animate };
+  return { skipActiveState: !options.animate };
 }
 
-export function makeActions(getCoreActions: () => CoreStore["actions"] | undefined): Actions {
-	return {
-		push(activityName, activityParams, options) {
-			const activityId = makeActivityId();
+export function makeActions(
+  getCoreActions: () => CoreStore["actions"] | undefined,
+): Actions {
+  return {
+    push(activityName, activityParams, options) {
+      const activityId = makeActivityId();
 
-			getCoreActions()?.push({
-				activityId,
-				activityName,
-				activityParams,
-				skipEnterActiveState: parseActionOptions(options).skipActiveState,
-			});
+      getCoreActions()?.push({
+        activityId,
+        activityName,
+        activityParams,
+        skipEnterActiveState: parseActionOptions(options).skipActiveState,
+      });
 
-			return {
-				activityId,
-			};
-		},
-		replace(activityName, activityParams, options) {
-			const activityId = options?.activityId ?? makeActivityId();
+      return {
+        activityId,
+      };
+    },
+    replace(activityName, activityParams, options) {
+      const activityId = options?.activityId ?? makeActivityId();
 
-			getCoreActions()?.replace({
-				activityId,
-				activityName,
-				activityParams,
-				skipEnterActiveState: parseActionOptions(options).skipActiveState,
-			});
+      getCoreActions()?.replace({
+        activityId,
+        activityName,
+        activityParams,
+        skipEnterActiveState: parseActionOptions(options).skipActiveState,
+      });
 
-			return {
-				activityId,
-			};
-		},
-		pop(
-			count?: number | { animate?: boolean } | undefined,
-			options?: { animate?: boolean } | undefined,
-		) {
-			let _count = 1;
-			let _options: { animate?: boolean } = {};
+      return {
+        activityId,
+      };
+    },
+    pop(
+      count?: number | { animate?: boolean } | undefined,
+      options?: { animate?: boolean } | undefined,
+    ) {
+      let _count = 1;
+      let _options: { animate?: boolean } = {};
 
-			if (typeof count === "object") {
-				_options = {
-					...count,
-				};
-			}
-			if (typeof count === "number") {
-				_count = count;
-			}
-			if (options) {
-				_options = {
-					...options,
-				};
-			}
+      if (typeof count === "object") {
+        _options = {
+          ...count,
+        };
+      }
+      if (typeof count === "number") {
+        _count = count;
+      }
+      if (options) {
+        _options = {
+          ...options,
+        };
+      }
 
-			for (let i = 0; i < _count; i += 1) {
-				getCoreActions()?.pop({
-					skipExitActiveState:
-						i === 0 ? parseActionOptions(_options).skipActiveState : true,
-				});
-			}
-		}
-	};
+      for (let i = 0; i < _count; i += 1) {
+        getCoreActions()?.pop({
+          skipExitActiveState:
+            i === 0 ? parseActionOptions(_options).skipActiveState : true,
+        });
+      }
+    },
+  };
 }

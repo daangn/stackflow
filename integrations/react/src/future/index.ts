@@ -10,7 +10,7 @@ export * from "./StepActions";
 export * from "./stackflow";
 export * from "./useActivityParams";
 export * from "./useActivityPreparation";
-export * from "./usePrepare";
 export * from "./useConfig";
 export * from "./useFlow";
+export * from "./usePrepare";
 export * from "./useStepFlow";

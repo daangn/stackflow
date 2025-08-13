@@ -1,12 +1,15 @@
-import { InferActivityParams, RegisteredActivityName } from "@stackflow/config"
-import { useConfig } from "./useConfig";
-import { useDataLoader } from "./loader";
+import type {
+  InferActivityParams,
+  RegisteredActivityName,
+} from "@stackflow/config";
 import { useActivityComponentMap } from "../__internal__/ActivityComponentMapProvider";
+import { useDataLoader } from "./loader";
+import { useConfig } from "./useConfig";
 
-export type Prepare =<K extends RegisteredActivityName>(
+export type Prepare = <K extends RegisteredActivityName>(
   activityName: K,
   activityParams?: InferActivityParams<K>,
-) => Promise<void>
+) => Promise<void>;
 
 export function usePrepare(): Prepare {
   const config = useConfig();

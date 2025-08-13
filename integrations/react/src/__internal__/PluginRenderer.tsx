@@ -1,72 +1,72 @@
 import type React from "react";
 import { useActivityComponentMap } from "./ActivityComponentMapProvider";
-import type { StackflowReactPlugin } from "./StackflowReactPlugin";
 import { ActivityProvider } from "./activity";
 import { useCoreState } from "./core";
 import { usePlugins } from "./plugins";
+import type { StackflowReactPlugin } from "./StackflowReactPlugin";
 import type { WithRequired } from "./utils";
 
 interface PluginRendererProps {
-	plugin: WithRequired<ReturnType<StackflowReactPlugin>, "render">;
-	initialContext: any;
+  plugin: WithRequired<ReturnType<StackflowReactPlugin>, "render">;
+  initialContext: any;
 }
 const PluginRenderer: React.FC<PluginRendererProps> = ({
-	plugin,
-	initialContext,
+  plugin,
+  initialContext,
 }) => {
-	const activityComponentMap = useActivityComponentMap();
-	const coreState = useCoreState();
-	const plugins = usePlugins();
+  const activityComponentMap = useActivityComponentMap();
+  const coreState = useCoreState();
+  const plugins = usePlugins();
 
-	return plugin.render({
-		stack: {
-			...coreState,
-			render(overrideStack) {
-				const stack = {
-					...coreState,
-					...overrideStack,
-				};
+  return plugin.render({
+    stack: {
+      ...coreState,
+      render(overrideStack) {
+        const stack = {
+          ...coreState,
+          ...overrideStack,
+        };
 
-				return {
-					activities: stack.activities.map((activity) => ({
-						...activity,
-						key: activity.id,
-						render(overrideActivity) {
-							const Activity = activityComponentMap[activity.name];
+        return {
+          activities: stack.activities.map((activity) => ({
+            ...activity,
+            key: activity.id,
+            render(overrideActivity) {
+              const Activity = activityComponentMap[activity.name];
 
-							let output: React.ReactNode = (
-								<Activity params={activity.params} />
-							);
+              let output: React.ReactNode = (
+                <Activity params={activity.params} />
+              );
 
-							plugins.forEach((p) => {
-								output =
-									p.wrapActivity?.({
-										activity: {
-											...activity,
-											render: () => output,
-										},
-										initialContext,
-									}) ?? output;
-							});
+              plugins.forEach((p) => {
+                output =
+                  p.wrapActivity?.({
+                    activity: {
+                      ...activity,
+                      render: () => output,
+                    },
+                    initialContext,
+                  }) ?? output;
+              });
 
-							return (
-								<ActivityProvider
-									key={activity.id}
-									value={{
-										...activity,
-										...overrideActivity,
-									}}
-								>
-									{output}
-								</ActivityProvider>
-							);
-						},
-					})),
-				};
-			},
-		},
-		initialContext,
-	});
+              return (
+                <ActivityProvider
+                  key={activity.id}
+                  value={{
+                    ...activity,
+                    ...overrideActivity,
+                  }}
+                >
+                  {output}
+                </ActivityProvider>
+              );
+            },
+          })),
+        };
+      },
+    },
+    initialContext,
+  });
 };
 
 PluginRenderer.displayName = "PluginRenderer";
