@@ -1,6 +1,6 @@
 export interface Thenable<T> {
   then<R>(
-    onFulfilled: (value: T) => R,
+    onFulfilled?: (value: T) => R,
     onRejected?: (reason: unknown) => R,
   ): Thenable<Awaited<R>>;
 }
