@@ -12,6 +12,7 @@ import {
 } from "@stackflow/core";
 import React, { useMemo } from "react";
 import isEqual from "react-fast-compare";
+import { ActivityComponentMapProvider } from "../__internal__/ActivityComponentMapProvider";
 import type { ActivityComponentType } from "../__internal__/ActivityComponentType";
 import { makeActivityId } from "../__internal__/activity";
 import { CoreProvider } from "../__internal__/core";
@@ -20,7 +21,6 @@ import { PluginsProvider } from "../__internal__/plugins";
 import { isBrowser, makeRef } from "../__internal__/utils";
 import type { StackflowReactPlugin } from "../stable";
 import type { Actions } from "./Actions";
-import { ActivityComponentMapProvider } from "./ActivityComponentMapProvider";
 import { ConfigProvider } from "./ConfigProvider";
 import { DataLoaderProvider, loaderPlugin } from "./loader";
 import { makeActions } from "./makeActions";
@@ -220,10 +220,7 @@ export function stackflow<
           <CoreProvider coreStore={coreStore}>
             <ActivityComponentMapProvider value={input.components}>
               <DataLoaderProvider loadData={loadData}>
-                <MainRenderer
-                  initialContext={initialContext}
-                  activityComponentMap={input.components}
-                />
+                <MainRenderer initialContext={initialContext} />
               </DataLoaderProvider>
             </ActivityComponentMapProvider>
           </CoreProvider>

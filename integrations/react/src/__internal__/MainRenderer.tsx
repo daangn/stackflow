@@ -7,9 +7,6 @@ import { StackProvider } from "./stack";
 import type { WithRequired } from "./utils";
 
 interface MainRendererProps {
-  activityComponentMap: {
-    [key: string]: ActivityComponentType;
-  };
   initialContext: any;
 }
 const MainRenderer: React.FC<MainRendererProps> = ({ initialContext }) => {

@@ -1,6 +1,6 @@
+import { useActivityComponentMap } from "../__internal__/ActivityComponentMapProvider";
 import { useCoreActions } from "../__internal__/core";
 import type { Actions } from "./Actions";
-import { useActivityComponentMap } from "./ActivityComponentMapProvider";
 import { useDataLoader } from "./loader";
 import { makeActions } from "./makeActions";
 import { useConfig } from "./useConfig";

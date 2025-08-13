@@ -1,119 +1,118 @@
 import type {
-  ActivityDefinition,
-  Config,
-  InferActivityParams,
-  RegisteredActivityName,
+	ActivityDefinition,
+	Config,
+	InferActivityParams,
+	RegisteredActivityName,
 } from "@stackflow/config";
 import type { CoreStore } from "@stackflow/core";
-import type { LazyActivityComponentType } from "__internal__/LazyActivityComponentType";
 import type { ActivityComponentType } from "../__internal__/ActivityComponentType";
 import { makeActivityId } from "../__internal__/activity";
 import type { Actions } from "./Actions";
 
 function parseActionOptions(options?: { animate?: boolean }) {
-  if (!options) {
-    return { skipActiveState: false };
-  }
+	if (!options) {
+		return { skipActiveState: false };
+	}
 
-  const isNullableAnimateOption = options.animate == null;
+	const isNullableAnimateOption = options.animate == null;
 
-  if (isNullableAnimateOption) {
-    return { skipActiveState: false };
-  }
+	if (isNullableAnimateOption) {
+		return { skipActiveState: false };
+	}
 
-  return { skipActiveState: !options.animate };
+	return { skipActiveState: !options.animate };
 }
 
 export function makeActions(
-  config: Config<ActivityDefinition<RegisteredActivityName>>,
-  getCoreActions: () => CoreStore["actions"] | undefined,
-  activityComponentMap: {
-    [activityName in RegisteredActivityName]: ActivityComponentType<any>;
-  },
-  loadData: (activityName: string, activityParams: {}) => unknown,
+	config: Config<ActivityDefinition<RegisteredActivityName>>,
+	getCoreActions: () => CoreStore["actions"] | undefined,
+	activityComponentMap: {
+		[activityName in RegisteredActivityName]: ActivityComponentType<any>;
+	},
+	loadData: (activityName: string, activityParams: {}) => unknown,
 ): Actions {
-  return {
-    push(activityName, activityParams, options) {
-      const activityId = makeActivityId();
+	return {
+		push(activityName, activityParams, options) {
+			const activityId = makeActivityId();
 
-      getCoreActions()?.push({
-        activityId,
-        activityName,
-        activityParams,
-        skipEnterActiveState: parseActionOptions(options).skipActiveState,
-      });
+			getCoreActions()?.push({
+				activityId,
+				activityName,
+				activityParams,
+				skipEnterActiveState: parseActionOptions(options).skipActiveState,
+			});
 
-      return {
-        activityId,
-      };
-    },
-    replace(activityName, activityParams, options) {
-      const activityId = makeActivityId();
+			return {
+				activityId,
+			};
+		},
+		replace(activityName, activityParams, options) {
+			const activityId = makeActivityId();
 
-      getCoreActions()?.replace({
-        activityId: options?.activityId ?? makeActivityId(),
-        activityName,
-        activityParams,
-        skipEnterActiveState: parseActionOptions(options).skipActiveState,
-      });
+			getCoreActions()?.replace({
+				activityId: options?.activityId ?? makeActivityId(),
+				activityName,
+				activityParams,
+				skipEnterActiveState: parseActionOptions(options).skipActiveState,
+			});
 
-      return {
-        activityId,
-      };
-    },
-    pop(
-      count?: number | { animate?: boolean } | undefined,
-      options?: { animate?: boolean } | undefined,
-    ) {
-      let _count = 1;
-      let _options: { animate?: boolean } = {};
+			return {
+				activityId,
+			};
+		},
+		pop(
+			count?: number | { animate?: boolean } | undefined,
+			options?: { animate?: boolean } | undefined,
+		) {
+			let _count = 1;
+			let _options: { animate?: boolean } = {};
 
-      if (typeof count === "object") {
-        _options = {
-          ...count,
-        };
-      }
-      if (typeof count === "number") {
-        _count = count;
-      }
-      if (options) {
-        _options = {
-          ...options,
-        };
-      }
+			if (typeof count === "object") {
+				_options = {
+					...count,
+				};
+			}
+			if (typeof count === "number") {
+				_count = count;
+			}
+			if (options) {
+				_options = {
+					...options,
+				};
+			}
 
-      for (let i = 0; i < _count; i += 1) {
-        getCoreActions()?.pop({
-          skipExitActiveState:
-            i === 0 ? parseActionOptions(_options).skipActiveState : true,
-        });
-      }
-    },
-    async prepare<K extends RegisteredActivityName>(
-      activityName: K,
-      activityParams?: InferActivityParams<K>,
-    ) {
-      const activityConfig = config.activities.find(
-        ({ name }) => name === activityName,
-      );
-      const prefetchTasks: Promise<unknown>[] = [];
+			for (let i = 0; i < _count; i += 1) {
+				getCoreActions()?.pop({
+					skipExitActiveState:
+						i === 0 ? parseActionOptions(_options).skipActiveState : true,
+				});
+			}
+		},
+		async prepare<K extends RegisteredActivityName>(
+			activityName: K,
+			activityParams?: InferActivityParams<K>,
+		) {
+			const activityConfig = config.activities.find(
+				({ name }) => name === activityName,
+			);
+			const prefetchTasks: Promise<unknown>[] = [];
 
-      if (!activityConfig)
-        throw new Error(`Activity ${activityName} is not registered.`);
+			if (!activityConfig)
+				throw new Error(`Activity ${activityName} is not registered.`);
 
-      if (activityParams && activityConfig.loader) {
-        prefetchTasks.push(
-          Promise.resolve(loadData(activityName, activityParams)),
-        );
-      }
+			if (activityParams && activityConfig.loader) {
+				prefetchTasks.push(
+					Promise.resolve(loadData(activityName, activityParams)),
+				);
+			}
 
-      if ("_load" in activityComponentMap[activityName]) {
-        const lazyComponent = activityComponentMap[activityName];
+			if ("_load" in activityComponentMap[activityName]) {
+				const lazyComponent = activityComponentMap[activityName];
 
-        prefetchTasks.push(Promise.resolve(lazyComponent._load?.()));
-      }
+				prefetchTasks.push(Promise.resolve(lazyComponent._load?.()));
+			}
 
-      await Promise.all(prefetchTasks);
-    },
-  };
+			await Promise.all(prefetchTasks);
+		},
+	};
 }
