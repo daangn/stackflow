@@ -112,7 +112,11 @@ export function stackflow<
       );
     };
 
-    Promise.resolve(loaderData).then(clearCacheAfterMaxAge, clearCache);
+    Promise.resolve(loaderData).then(clearCacheAfterMaxAge, (error) => {
+      clearCache();
+
+      throw error;
+    });
 
     return loaderData;
   };
