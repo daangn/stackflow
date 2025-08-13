@@ -113,6 +113,11 @@ export function historySyncPlugin<
       }
     }
 
+    function clearPendingDefaultHistoryEntryInsertionTasks() {
+      pendingDefaultHistoryEntryInsertionTasks = null;
+      defaultHistoryEntryEntities.clear();
+    }
+
     return {
       key: "plugin-history-sync",
       wrapStack({ stack }) {
@@ -322,7 +327,8 @@ export function historySyncPlugin<
         ];
       },
       onInit({ actions }) {
-        const rootActivity = actions.getStack().activities[0];
+        const { getStack, dispatchEvent, push, stepPush } = actions;
+        const rootActivity = getStack().activities[0];
 
         const match = activityRoutes.find(
           (r) => r.activityName === rootActivity.name,
@@ -412,11 +418,9 @@ export function historySyncPlugin<
           };
 
           if (isBackward()) {
-            actions.dispatchEvent("Popped", {});
-
             if (!nextActivity) {
               pushFlag += 1;
-              actions.push({
+              push({
                 ...targetActivity.enteredBy,
               });
 
@@ -426,11 +430,13 @@ export function historySyncPlugin<
               ) {
                 const { enteredBy } = targetStep;
                 pushFlag += 1;
-                actions.stepPush({
+                stepPush({
                   ...enteredBy,
                 });
               }
             }
+
+            dispatchEvent("Popped", {});
           }
           if (isStepBackward()) {
             if (
@@ -442,17 +448,17 @@ export function historySyncPlugin<
               const { enteredBy } = targetStep;
 
               pushFlag += 1;
-              actions.stepPush({
+              stepPush({
                 ...enteredBy,
               });
             }
 
-            actions.dispatchEvent("StepPopped", {});
+            dispatchEvent("StepPopped", {});
           }
 
           if (isForward()) {
             pushFlag += 1;
-            actions.push({
+            push({
               activityId: targetActivity.id,
               activityName: targetActivity.name,
               activityParams: targetActivity.params,
@@ -464,7 +470,7 @@ export function historySyncPlugin<
             }
 
             pushFlag += 1;
-            actions.stepPush({
+            stepPush({
               stepId: targetStep.id,
               stepParams: targetStep.params,
             });
@@ -480,7 +486,7 @@ export function historySyncPlugin<
           pendingDefaultHistoryEntryInsertionTasks &&
           !defaultHistoryEntryEntities.has(activity.id)
         ) {
-          pendingDefaultHistoryEntryInsertionTasks = null;
+          clearPendingDefaultHistoryEntryInsertionTasks();
         }
 
         if (pushFlag) {
@@ -511,7 +517,7 @@ export function historySyncPlugin<
           pendingDefaultHistoryEntryInsertionTasks &&
           !defaultHistoryEntryEntities.has(step.id)
         ) {
-          pendingDefaultHistoryEntryInsertionTasks = null;
+          clearPendingDefaultHistoryEntryInsertionTasks();
         }
 
         if (pushFlag) {
@@ -540,7 +546,7 @@ export function historySyncPlugin<
       },
       onReplaced({ effect: { activity } }) {
         if (pendingDefaultHistoryEntryInsertionTasks) {
-          pendingDefaultHistoryEntryInsertionTasks = null;
+          clearPendingDefaultHistoryEntryInsertionTasks();
         }
 
         if (!activity.isActive) {
@@ -567,7 +573,7 @@ export function historySyncPlugin<
       },
       onStepReplaced({ effect: { activity, step } }) {
         if (pendingDefaultHistoryEntryInsertionTasks) {
-          pendingDefaultHistoryEntryInsertionTasks = null;
+          clearPendingDefaultHistoryEntryInsertionTasks();
         }
 
         if (!activity.isActive) {
@@ -595,12 +601,12 @@ export function historySyncPlugin<
       },
       onPopped() {
         if (pendingDefaultHistoryEntryInsertionTasks) {
-          pendingDefaultHistoryEntryInsertionTasks = null;
+          clearPendingDefaultHistoryEntryInsertionTasks();
         }
       },
       onStepPopped() {
         if (pendingDefaultHistoryEntryInsertionTasks) {
-          pendingDefaultHistoryEntryInsertionTasks = null;
+          clearPendingDefaultHistoryEntryInsertionTasks();
         }
       },
       onBeforePush({ actionParams, actions: { overrideActionParams } }) {
