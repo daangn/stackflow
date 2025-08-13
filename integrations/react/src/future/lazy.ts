@@ -11,6 +11,11 @@ export function lazy<T extends { [K in keyof T]: any } = {}>(
   const cachedLoad = () => {
     if (!cachedValue) {
       cachedValue = load();
+      cachedValue.catch((error) => {
+        cachedValue = null;
+
+        throw error;
+      });
     }
     return cachedValue;
   };
