@@ -107,7 +107,8 @@ function createBeforeRouteHandler<
       return;
     }
 
-    const loaderData = loadData(activityName, activityParams);
+    const loaderData =
+      matchActivity.loader && loadData(activityName, activityParams);
 
     const loaderDataPromise = isThenable(loaderData) ? loaderData : undefined;
     const lazyComponentPromise =
