@@ -1,6 +1,7 @@
 import React, { type ReactNode, Suspense } from "react";
 import type { LazyActivityComponentType } from "../__internal__/LazyActivityComponentType";
 import type { StaticActivityComponentType } from "../__internal__/StaticActivityComponentType";
+import { useActivity } from "../__internal__/activity/useActivity";
 
 export interface LazyActivityComponentConfig {
   buildPlaceholder?: () => ReactNode;
@@ -30,9 +31,14 @@ export function lazy<T extends { [K in keyof T]: any } = {}>(
     params,
     shouldRenderImmediately,
   }) => {
+    const { transitionState } = useActivity();
     const placeholder = config?.buildPlaceholder?.();
 
     if (placeholder && shouldRenderImmediately) {
+      if (transitionState === "enter-active" && !cachedValue) {
+        return placeholder;
+      }
+
       return (
         <Suspense fallback={placeholder}>
           <LazyLoadedActivityComponent params={params} />
