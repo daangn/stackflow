@@ -366,7 +366,7 @@ export function historySyncPlugin<
           const targetActivityId = state.activity.id;
           const targetStep = state.step;
 
-          const { activities } = actions.getStack();
+          const { activities } = getStack();
           const currentActivity = activities.find(
             (activity) => activity.isActive,
           );
