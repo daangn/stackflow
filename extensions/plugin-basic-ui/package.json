@@ -36,7 +36,8 @@
     "@vanilla-extract/css": "^1.15.3",
     "@vanilla-extract/dynamic": "^2.1.1",
     "@vanilla-extract/private": "^1.0.5",
-    "@vanilla-extract/recipes": "^0.5.3"
+    "@vanilla-extract/recipes": "^0.5.3",
+    "clsx": "^2.1.1"
   },
   "devDependencies": {
     "@stackflow/core": "^1.2.0",

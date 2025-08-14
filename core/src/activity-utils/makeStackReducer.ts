@@ -1,4 +1,3 @@
-import type { Activity, Stack } from "../Stack";
 import type {
   ActivityRegisteredEvent,
   DomainEvent,
@@ -6,6 +5,7 @@ import type {
   PausedEvent,
   ResumedEvent,
 } from "../event-types";
+import type { Activity, Stack } from "../Stack";
 import { findTargetActivityIndices } from "./findTargetActivityIndices";
 import { makeActivitiesReducer } from "./makeActivitiesReducer";
 import { makeActivityReducer } from "./makeActivityReducer";
@@ -84,10 +84,7 @@ function noop(stack: Stack) {
   return stack;
 }
 
-export function makeStackReducer(context: {
-  now: number;
-  resumedAt?: number;
-}) {
+export function makeStackReducer(context: { now: number; resumedAt?: number }) {
   return makeReducer({
     Initialized: withPauseReducer(
       withActivitiesReducer((stack: Stack, event: InitializedEvent): Stack => {

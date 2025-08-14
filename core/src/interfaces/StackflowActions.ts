@@ -1,4 +1,3 @@
-import type { Stack } from "../Stack";
 import type {
   PausedEvent,
   PoppedEvent,
@@ -11,6 +10,7 @@ import type {
 } from "../event-types";
 import type { BaseDomainEvent } from "../event-types/_base";
 import type { DispatchEvent } from "../event-utils";
+import type { Stack } from "../Stack";
 
 export type StackflowActions = {
   /**

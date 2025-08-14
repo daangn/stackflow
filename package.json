@@ -31,7 +31,7 @@
     "@changesets/assemble-release-plan@npm:^6.0.6": "patch:@changesets/assemble-release-plan@npm%3A6.0.6#~/.yarn/patches/@changesets-assemble-release-plan-npm-6.0.6-b2f6e7679e.patch"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.8.3",
+    "@biomejs/biome": "^2.1.4",
     "@changesets/cli": "^2.28.1",
     "@types/jest": "^29.5.12",
     "@types/node": "^20.14.9",

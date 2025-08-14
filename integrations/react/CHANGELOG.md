@@ -1,5 +1,11 @@
 # @stackflow/react
 
+## 1.5.3
+
+### Patch Changes
+
+- 2dc74ad: fix(react): conditionally log warnings in browser environment
+
 ## 1.5.2
 
 ### Patch Changes
