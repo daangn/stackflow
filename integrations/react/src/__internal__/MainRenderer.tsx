@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import type { ActivityComponentType } from "./ActivityComponentType";
-import PluginRenderer from "./PluginRenderer";
 import { useCoreState } from "./core";
+import PluginRenderer from "./PluginRenderer";
 import { usePlugins } from "./plugins";
 import { StackProvider } from "./stack";
 import type { WithRequired } from "./utils";

@@ -1,5 +1,5 @@
-import type { Activity, ActivityTransitionState } from "../Stack";
 import type { DomainEvent } from "../event-types";
+import type { Activity, ActivityTransitionState } from "../Stack";
 import { findIndices, last } from "../utils";
 
 function isActivityNotExited(activity: Activity) {

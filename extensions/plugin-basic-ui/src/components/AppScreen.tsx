@@ -11,6 +11,7 @@ import {
   useZIndexBase,
 } from "@stackflow/react-ui-core";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
+import clsx from "clsx";
 import { createContext, useContext, useMemo, useRef } from "react";
 import { useGlobalOptions } from "../basicUIPlugin";
 import type { GlobalVars } from "../basicUIPlugin.css";
@@ -48,6 +49,7 @@ export type AppScreenProps = Partial<
   preventSwipeBack?: boolean;
   CUPERTINO_ONLY_modalPresentationStyle?: "fullScreen";
   ANDROID_ONLY_activityEnterStyle?: "slideInLeft";
+  className?: string;
   children: React.ReactNode;
 };
 const AppScreen: React.FC<AppScreenProps> = ({
@@ -58,6 +60,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
   preventSwipeBack,
   CUPERTINO_ONLY_modalPresentationStyle,
   ANDROID_ONLY_activityEnterStyle,
+  className,
   children,
 }) => {
   const globalOptions = useGlobalOptions();
@@ -231,12 +234,16 @@ const AppScreen: React.FC<AppScreenProps> = ({
     >
       <div
         ref={appScreenRef}
-        className={css.appScreen({
-          transitionState:
-            transitionState === "enter-done" || transitionState === "exit-done"
-              ? transitionState
-              : lazyTransitionState,
-        })}
+        className={clsx(
+          css.appScreen({
+            transitionState:
+              transitionState === "enter-done" ||
+              transitionState === "exit-done"
+                ? transitionState
+                : lazyTransitionState,
+          }),
+          className,
+        )}
         style={assignInlineVars(
           compactMap({
             [globalVars.backgroundColor]: backgroundColor,

@@ -6,25 +6,25 @@ import type {
 } from "@stackflow/config";
 import {
   type CoreStore,
-  type PushedEvent,
   makeCoreStore,
   makeEvent,
+  type PushedEvent,
 } from "@stackflow/core";
 import React, { useMemo } from "react";
 import type { ActivityComponentType } from "../__internal__/ActivityComponentType";
-import MainRenderer from "../__internal__/MainRenderer";
 import { makeActivityId } from "../__internal__/activity";
 import { CoreProvider } from "../__internal__/core";
+import MainRenderer from "../__internal__/MainRenderer";
 import { PluginsProvider } from "../__internal__/plugins";
 import { isBrowser, makeRef } from "../__internal__/utils";
 import type { StackflowReactPlugin } from "../stable";
 import type { Actions } from "./Actions";
 import { ConfigProvider } from "./ConfigProvider";
-import type { StackComponentType } from "./StackComponentType";
-import type { StepActions } from "./StepActions";
 import { loaderPlugin } from "./loader";
 import { makeActions } from "./makeActions";
 import { makeStepActions } from "./makeStepActions";
+import type { StackComponentType } from "./StackComponentType";
+import type { StepActions } from "./StepActions";
 
 export type StackflowPluginsEntry =
   | StackflowReactPlugin<never>
@@ -130,20 +130,24 @@ export function stackflow<
         plugins,
         handlers: {
           onInitialActivityIgnored: (initialPushedEvents) => {
-            console.warn(
-              `Stackflow - Some plugin overrides an "initialActivity" option. The "initialActivity" option you set to "${
-                (initialPushedEvents[0] as PushedEvent).activityName
-              }" in the "stackflow" is ignored.`,
-            );
+            if (isBrowser()) {
+              console.warn(
+                `Stackflow - Some plugin overrides an "initialActivity" option. The "initialActivity" option you set to "${
+                  (initialPushedEvents[0] as PushedEvent).activityName
+                }" in the "stackflow" is ignored.`,
+              );
+            }
           },
           onInitialActivityNotFound: () => {
-            console.warn(
-              "Stackflow -" +
-                " There is no initial activity." +
-                " If you want to set the initial activity," +
-                " add the `initialActivity` option of the `stackflow()` function or" +
-                " add a plugin that sets the initial activity. (e.g. `@stackflow/plugin-history-sync`)",
-            );
+            if (isBrowser()) {
+              console.warn(
+                "Stackflow -" +
+                  " There is no initial activity." +
+                  " If you want to set the initial activity," +
+                  " add the `initialActivity` option of the `stackflow()` function or" +
+                  " add a plugin that sets the initial activity. (e.g. `@stackflow/plugin-history-sync`)",
+              );
+            }
           },
         },
       });
