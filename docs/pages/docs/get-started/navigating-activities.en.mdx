@@ -169,23 +169,23 @@ const Article: ActivityComponentType<ArticleParams> = ({ params }) => {
 export default Article;
 ```
 
-`pop()` takes optional parameters for the number of stacks to pop and additional options. These parameters can be omitted, and default values will be used.
+`pop()` takes optional parameters for the number of activities to pop and additional options. These parameters can be omitted, and default values will be used.
 
 ```ts
-pop(); // pop a single stack
+pop(); // pop a single activity
 
-pop(3); // pop multiple stacks
+pop(3); // pop multiple activities
 
 pop({
   /* additional option */
-}); // pop a single stack with additional options
+}); // pop a single activity with additional options
 
 pop(3, {
   /* additional option */
-}); // pop multiple stacks with additional options
+}); // pop multiple activities with additional options
 ```
 
-The first parameter of the pop() function can specify the number of stacks to pop or define additional options. If the first parameter is used for the number of stacks, the second parameter can then be used to provide additional options.
+The first parameter of the pop() function can specify the number of activities to pop or define additional options. If the first parameter is used for the number of activities, the second parameter can then be used to provide additional options.
 
 The additional options include the following values.
 

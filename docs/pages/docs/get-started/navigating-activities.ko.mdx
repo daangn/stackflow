@@ -135,10 +135,7 @@ replace(
 
 마지막으로 현재 액티비티를 삭제하고 이전 액티비티로 돌아가는 방법에 대해서 살펴봐요. `stackflow.ts`에서 생성했던 `useFlow()` 훅의 `pop()` 함수를 통해 다음과 같이 현재 액티비티를 삭제할 수 있어요.
 
-```tsx
-/**
- * Article.tsx
- */
+```tsx showLineNumbers filename="Article.tsx" copy /pop/
 import { ActivityComponentType } from "@stackflow/react";
 import { AppScreen } from "@stackflow/plugin-basic-ui";
 import { useFlow } from "./stackflow";
@@ -150,15 +147,22 @@ type ArticleParams = {
 const Article: ActivityComponentType<ArticleParams> = ({ params }) => {
   const { pop } = useFlow();
 
-  const onClick = () => {
+  const goBack = () => {
+    // 액티비티 하나만 제거
     pop();
+  };
+
+  const goBackMultiple = () => {
+    // 액티비티 여러 개 제거
+    pop(3);
   };
 
   return (
     <AppScreen appBar={{ title: "Article" }}>
       <div>
         <h1>{params.title}</h1>
-        <button onClick={onClick}>back</button>
+        <button onClick={goBack}>Back</button>
+        <button onClick={goBackMultiple}>Back 3 Steps</button>
       </div>
     </AppScreen>
   );
@@ -167,15 +171,21 @@ const Article: ActivityComponentType<ArticleParams> = ({ params }) => {
 export default Article;
 ```
 
-`pop()`은 첫번째 파라미터로 추가 옵션을 받아요. 첫번째 파라미터인 추가 옵션은 선택적으로 넘기지 않을 수 있어요. (기본값을 사용해요)
+`pop()` 함수의 첫번째 파라미터는 제거할 액티비티의 개수를 지정하거나 추가 옵션을 정의할 수 있어요.
+첫번째 파라미터를 액티비티 개수로 사용하면, 두번째 매개변수는 추가 옵션을 전달하는 데 사용할 수 있어요.
 
 ```ts
-pop();
+pop(); // 액티비티 하나 제거
 
-// 또는
+pop(3); // 액티비티 여러 개 제거
+
 pop({
   /* 추가 옵션 */
-});
+}); // 추가 옵션과 함께 액티비티 하나 제거
+
+pop(3, {
+  /* 추가 옵션 */
+}); // 추가 옵션과 함께 액티비티 여러 개 제거
 ```
 
 `pop()` 함수의 첫번째 파라미터인 추가 옵션에는 다음과 같은 값이 있어요.
