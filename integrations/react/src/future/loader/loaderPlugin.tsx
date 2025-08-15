@@ -84,10 +84,7 @@ function createBeforeRouteHandler<
     [activityName in RegisteredActivityName]: ActivityComponentType<any>;
   },
 >(input: StackflowInput<T, R>): OnBeforeRoute {
-  return ({
-    actionParams,
-    actions: { overrideActionParams, pause, resume },
-  }) => {
+  return ({ actionParams, actions: { overrideActionParams } }) => {
     const { activityName, activityParams, activityContext } = actionParams;
 
     const matchActivity = input.config.activities.find(
@@ -106,28 +103,15 @@ function createBeforeRouteHandler<
 
     const loaderDataPromise =
       loaderData instanceof Promise ? loaderData : undefined;
-    const lazyComponentPromise =
-      "_load" in matchActivityComponent
-        ? matchActivityComponent._load?.()
-        : undefined;
 
-    if (loaderDataPromise || lazyComponentPromise) {
-      pause();
-    }
-    Promise.allSettled([loaderDataPromise, lazyComponentPromise])
-      .then(([loaderDataPromiseResult, lazyComponentPromiseResult]) => {
+    Promise.allSettled([loaderDataPromise]).then(
+      ([loaderDataPromiseResult]) => {
         printLoaderDataPromiseError({
           promiseResult: loaderDataPromiseResult,
           activityName: matchActivity.name,
         });
-        printLazyComponentPromiseError({
-          promiseResult: lazyComponentPromiseResult,
-          activityName: matchActivity.name,
-        });
-      })
-      .finally(() => {
-        resume();
-      });
+      },
+    );
 
     overrideActionParams({
       ...actionParams,
@@ -150,21 +134,6 @@ function printLoaderDataPromiseError({
     console.error(promiseResult.reason);
     console.error(
       `The above error occurred in the "${activityName}" activity loader`,
-    );
-  }
-}
-
-function printLazyComponentPromiseError({
-  promiseResult,
-  activityName,
-}: {
-  promiseResult: PromiseSettledResult<any>;
-  activityName: string;
-}) {
-  if (promiseResult.status === "rejected") {
-    console.error(promiseResult.reason);
-    console.error(
-      `The above error occurred while loading a lazy react component of the "${activityName}" activity`,
     );
   }
 }

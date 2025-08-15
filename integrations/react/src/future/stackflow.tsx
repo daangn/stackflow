@@ -16,6 +16,7 @@ import { makeActivityId } from "../__internal__/activity";
 import { CoreProvider } from "../__internal__/core";
 import MainRenderer from "../__internal__/MainRenderer";
 import { PluginsProvider } from "../__internal__/plugins";
+import { suspensePlugin } from "../__internal__/suspensePlugin";
 import { isBrowser, makeRef } from "../__internal__/utils";
 import type { StackflowReactPlugin } from "../stable";
 import type { Actions } from "./Actions";
@@ -57,11 +58,8 @@ export function stackflow<
     ...(input.plugins ?? [])
       .flat(Number.POSITIVE_INFINITY as 0)
       .map((p) => p as StackflowReactPlugin),
-
-    /**
-     * `loaderPlugin()` must be placed after `historySyncPlugin()`
-     */
     loaderPlugin(input),
+    suspensePlugin(),
   ];
 
   const enoughPastTime = () =>
