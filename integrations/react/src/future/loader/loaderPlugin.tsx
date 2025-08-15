@@ -111,23 +111,27 @@ function createBeforeRouteHandler<
         ? matchActivityComponent._load?.()
         : undefined;
 
-    if (loaderDataPromise || lazyComponentPromise) {
+    if (
+      (loaderDataPromise || lazyComponentPromise) &&
+      ((activityContext as any)?.lazyActivityComponentRenderContext?.shouldRenderImmediately !== true)
+    ) {
       pause();
+
+      Promise.allSettled([loaderDataPromise, lazyComponentPromise])
+        .then(([loaderDataPromiseResult, lazyComponentPromiseResult]) => {
+          printLoaderDataPromiseError({
+            promiseResult: loaderDataPromiseResult,
+            activityName: matchActivity.name,
+          });
+          printLazyComponentPromiseError({
+            promiseResult: lazyComponentPromiseResult,
+            activityName: matchActivity.name,
+          });
+        })
+        .finally(() => {
+          resume();
+        });
     }
-    Promise.allSettled([loaderDataPromise, lazyComponentPromise])
-      .then(([loaderDataPromiseResult, lazyComponentPromiseResult]) => {
-        printLoaderDataPromiseError({
-          promiseResult: loaderDataPromiseResult,
-          activityName: matchActivity.name,
-        });
-        printLazyComponentPromiseError({
-          promiseResult: lazyComponentPromiseResult,
-          activityName: matchActivity.name,
-        });
-      })
-      .finally(() => {
-        resume();
-      });
 
     overrideActionParams({
       ...actionParams,

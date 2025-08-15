@@ -17,6 +17,12 @@ export const config = defineConfig({
           articleId: Number(params.articleId),
           title: params.title,
         }),
+        defaultHistory: () => [
+          {
+            activityName: "Main",
+            activityParams: {},
+          },
+        ],
       },
       loader: articleLoader,
     },
