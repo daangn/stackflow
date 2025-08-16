@@ -14,15 +14,25 @@ async function main() {
   let initialLoaderData: unknown | null = null;
 
   for (const activity of config.activities) {
-    const t = makeTemplate({ path: activity.route });
-    const match = t.parse(location.pathname + location.search);
+    let t: ReturnType<typeof makeTemplate> | null = null;
 
-    if (!match) {
+    if (typeof activity.route === "string") {
+      t = makeTemplate({ path: activity.route });
+    } else if (typeof activity.route === "object") {
+      t = makeTemplate(activity.route);
+    }
+
+    if (!t) {
+      continue;
+    }
+
+    const match = t.parse(location.pathname + location.search);
+    if (!match || !activity.loader) {
       continue;
     }
 
     // 1. Request API data (do not await)
-    initialLoaderData = activity.loader({ params: match as any });
+    initialLoaderData = activity.loader({ params: match as any, config });
     break;
   }
 
