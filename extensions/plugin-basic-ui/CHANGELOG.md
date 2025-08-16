@@ -1,5 +1,15 @@
 # @stackflow/plugin-basic-ui
 
+## 1.15.0
+
+### Minor Changes
+
+- 658c770: Allow components style to be customized directly
+
+### Patch Changes
+
+- c391bb7: Fix a bug that entrance transition is not applied.
+
 ## 1.14.2
 
 ### Patch Changes
