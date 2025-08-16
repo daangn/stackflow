@@ -18,8 +18,7 @@ The activities accessible through the `activities` field contain information rel
 To access the stack state in a UI component, use the `useStack()` hook.
 
 ```tsx showLineNumbers filename="MyActivity.tsx" copy
-import { useStack } from "@stackflow/react";
-import type { ActivityComponentType } from "@stackflow/react";
+import { useStack, type  ActivityComponentType } from "@stackflow/react";
 import { AppScreen } from "@stackflow/plugin-basic-ui";
 import { useFlow } from "./stackflow";
 
@@ -70,8 +69,7 @@ There are the following fields in the stack state.
 You can use the `useActivity()` hook to get information about the current activity.
 
 ```tsx showLineNumbers filename="MyActivity.tsx" copy
-import { useActivity } from "@stackflow/react";
-import type { ActivityComponentType } from "@stackflow/react";
+import { useActivity, type ActivityComponentType } from "@stackflow/react";
 import { AppScreen } from "@stackflow/plugin-basic-ui";
 import { useFlow } from "./stackflow";
 
