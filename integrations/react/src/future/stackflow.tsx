@@ -10,7 +10,10 @@ import {
   makeEvent,
   type PushedEvent,
 } from "@stackflow/core";
+import { isPromiseLike } from "__internal__/utils/isPromiseLike";
 import React, { useMemo } from "react";
+import isEqual from "react-fast-compare";
+import { ActivityComponentMapProvider } from "../__internal__/ActivityComponentMapProvider";
 import type { ActivityComponentType } from "../__internal__/ActivityComponentType";
 import { makeActivityId } from "../__internal__/activity";
 import { CoreProvider } from "../__internal__/core";
@@ -20,7 +23,7 @@ import { isBrowser, makeRef } from "../__internal__/utils";
 import type { StackflowReactPlugin } from "../stable";
 import type { Actions } from "./Actions";
 import { ConfigProvider } from "./ConfigProvider";
-import { loaderPlugin } from "./loader";
+import { DataLoaderProvider, loaderPlugin } from "./loader";
 import { makeActions } from "./makeActions";
 import { makeStepActions } from "./makeStepActions";
 import type { StackComponentType } from "./StackComponentType";
@@ -39,6 +42,9 @@ export type StackflowInput<
   config: Config<T>;
   components: R;
   plugins?: Array<StackflowPluginsEntry>;
+  options?: {
+    loaderCacheMaxAge?: number;
+  };
 };
 
 export type StackflowOutput = {
@@ -47,12 +53,73 @@ export type StackflowOutput = {
   stepActions: StepActions<ActivityBaseParams>;
 };
 
+const DEFAULT_LOADER_CACHE_MAX_AGE = 1000 * 30;
+
 export function stackflow<
   T extends ActivityDefinition<RegisteredActivityName>,
   R extends {
     [activityName in RegisteredActivityName]: ActivityComponentType<any>;
   },
 >(input: StackflowInput<T, R>): StackflowOutput {
+  const loaderDataCacheMap = new Map<string, { params: {}; data: unknown }[]>();
+  const loadData = (activityName: string, activityParams: {}) => {
+    const cache = loaderDataCacheMap.get(activityName);
+    const cacheEntry = cache?.find((entry) =>
+      isEqual(entry.params, activityParams),
+    );
+
+    if (cacheEntry) {
+      return cacheEntry.data;
+    }
+
+    const activityConfig = input.config.activities.find(
+      (activity) => activity.name === activityName,
+    );
+
+    if (!activityConfig) {
+      throw new Error(`Activity ${activityName} is not registered.`);
+    }
+
+    const loaderData = activityConfig.loader?.({
+      params: activityParams,
+      config: input.config,
+    });
+    const newCacheEntry = {
+      params: activityParams,
+      data: loaderData,
+    };
+
+    if (cache) {
+      cache.push(newCacheEntry);
+    } else {
+      loaderDataCacheMap.set(activityName, [newCacheEntry]);
+    }
+
+    const clearCache = () => {
+      const cache = loaderDataCacheMap.get(activityName);
+
+      if (!cache) return;
+
+      loaderDataCacheMap.set(
+        activityName,
+        cache.filter((entry) => entry !== newCacheEntry),
+      );
+    };
+    const clearCacheAfterMaxAge = () => {
+      setTimeout(
+        clearCache,
+        input.options?.loaderCacheMaxAge ?? DEFAULT_LOADER_CACHE_MAX_AGE,
+      );
+    };
+
+    Promise.resolve(loaderData).then(clearCacheAfterMaxAge, (error) => {
+      clearCache();
+
+      throw error;
+    });
+
+    return loaderData;
+  };
   const plugins = [
     ...(input.plugins ?? [])
       .flat(Number.POSITIVE_INFINITY as 0)
@@ -61,7 +128,7 @@ export function stackflow<
     /**
      * `loaderPlugin()` must be placed after `historySyncPlugin()`
      */
-    loaderPlugin(input),
+    loaderPlugin(input, loadData),
   ];
 
   const enoughPastTime = () =>
@@ -164,10 +231,11 @@ export function stackflow<
       <ConfigProvider value={input.config}>
         <PluginsProvider value={coreStore.pluginInstances}>
           <CoreProvider coreStore={coreStore}>
-            <MainRenderer
-              activityComponentMap={input.components}
-              initialContext={initialContext}
-            />
+            <ActivityComponentMapProvider value={input.components}>
+              <DataLoaderProvider loadData={loadData}>
+                <MainRenderer initialContext={initialContext} />
+              </DataLoaderProvider>
+            </ActivityComponentMapProvider>
           </CoreProvider>
         </PluginsProvider>
       </ConfigProvider>

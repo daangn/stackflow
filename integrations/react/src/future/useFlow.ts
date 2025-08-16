@@ -8,5 +8,6 @@ export type FlowOutput = {
 
 export function useFlow(): Actions {
   const coreActions = useCoreActions();
+
   return makeActions(() => coreActions);
 }

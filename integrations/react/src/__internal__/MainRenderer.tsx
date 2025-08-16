@@ -7,15 +7,9 @@ import { StackProvider } from "./stack";
 import type { WithRequired } from "./utils";
 
 interface MainRendererProps {
-  activityComponentMap: {
-    [key: string]: ActivityComponentType;
-  };
   initialContext: any;
 }
-const MainRenderer: React.FC<MainRendererProps> = ({
-  activityComponentMap,
-  initialContext,
-}) => {
+const MainRenderer: React.FC<MainRendererProps> = ({ initialContext }) => {
   const coreState = useCoreState();
   const plugins = usePlugins();
 
@@ -40,7 +34,6 @@ const MainRenderer: React.FC<MainRendererProps> = ({
       {renderingPlugins.map((plugin) => (
         <PluginRenderer
           key={plugin.key}
-          activityComponentMap={activityComponentMap}
           plugin={plugin}
           initialContext={initialContext}
         />
