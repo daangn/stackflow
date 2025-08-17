@@ -118,13 +118,16 @@ function createBeforeRouteHandler<
         ? matchActivityComponent._load?.()
         : undefined;
 
-    if (
-      (loaderDataPromise || lazyComponentPromise) &&
-      ((activityContext as any)?.lazyActivityComponentRenderContext?.shouldRenderImmediately !== true)
-    ) {
+    if (loaderDataPromise || lazyComponentPromise) {
       pause();
 
-      Promise.allSettled([loaderDataPromise, lazyComponentPromise])
+      Promise.allSettled([
+        (activityContext as any)?.lazyActivityComponentRenderContext
+          ?.shouldRenderImmediately
+          ? loaderDataPromise
+          : undefined,
+        lazyComponentPromise,
+      ])
         .then(([loaderDataPromiseResult, lazyComponentPromiseResult]) => {
           printLoaderDataPromiseError({
             promiseResult: loaderDataPromiseResult,

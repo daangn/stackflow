@@ -1,15 +1,9 @@
-import React, { type ReactNode, Suspense } from "react";
-import { useActivity } from "../__internal__/activity/useActivity";
+import React from "react";
 import type { LazyActivityComponentType } from "../__internal__/LazyActivityComponentType";
 import type { StaticActivityComponentType } from "../__internal__/StaticActivityComponentType";
 
-export interface LazyActivityComponentConfig {
-  buildPlaceholder?: () => ReactNode;
-}
-
 export function lazy<T extends { [K in keyof T]: any } = {}>(
   load: () => Promise<{ default: StaticActivityComponentType<T> }>,
-  config?: LazyActivityComponentConfig,
 ): LazyActivityComponentType<T> {
   let cachedValue: Promise<{ default: StaticActivityComponentType<T> }> | null =
     null;
@@ -26,28 +20,8 @@ export function lazy<T extends { [K in keyof T]: any } = {}>(
     return cachedValue;
   };
 
-  const LazyLoadedActivityComponent = React.lazy(cachedLoad);
-  const LazyActivityComponent: LazyActivityComponentType<T> = ({
-    params,
-    shouldRenderImmediately,
-  }) => {
-    const { transitionState } = useActivity();
-    const placeholder = config?.buildPlaceholder?.();
-
-    if (placeholder && shouldRenderImmediately) {
-      if (transitionState === "enter-active") {
-        return placeholder;
-      }
-
-      return (
-        <Suspense fallback={placeholder}>
-          <LazyLoadedActivityComponent params={params} />
-        </Suspense>
-      );
-    }
-
-    return <LazyLoadedActivityComponent params={params} />;
-  };
+  const LazyActivityComponent: LazyActivityComponentType<T> =
+    React.lazy(cachedLoad);
   LazyActivityComponent._load = cachedLoad;
 
   return LazyActivityComponent;
