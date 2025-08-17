@@ -1,3 +1,8 @@
 import type { BaseDomainEvent } from "./_base";
 
-export type PausedEvent = BaseDomainEvent<"Paused", {}>;
+export type PausedEvent = BaseDomainEvent<
+  "Paused",
+  {
+    activityId: string;
+  }
+>;
