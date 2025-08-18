@@ -234,7 +234,16 @@ const AppScreen: React.FC<AppScreenProps> = ({
     >
       <div
         ref={appScreenRef}
-        className={clsx(css.appScreen({ transitionState }), className)}
+        className={clsx(
+          css.appScreen({
+            transitionState:
+              transitionState === "enter-done" ||
+              transitionState === "exit-done"
+                ? transitionState
+                : lazyTransitionState,
+          }),
+          className,
+        )}
         style={assignInlineVars(
           compactMap({
             [globalVars.backgroundColor]: backgroundColor,
