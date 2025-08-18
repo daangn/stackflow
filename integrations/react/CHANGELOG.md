@@ -1,5 +1,13 @@
 # @stackflow/react
 
+## 1.6.0
+
+### Minor Changes
+
+- d906597: Add prefetch API for lazy activity component and loader data.
+  - A hook `usePrepare()` which returns `prepare(activityName[, activityParams])` is added for navigation warmup.
+  - A hook `useActivityPreparation(activities)` for preparing navigations inside a component is added.
+
 ## 1.5.3
 
 ### Patch Changes
