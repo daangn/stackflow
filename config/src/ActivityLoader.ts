@@ -12,5 +12,8 @@ export function loader<ActivityName extends RegisteredActivityName>(
     loaderCacheMaxAge?: number;
   },
 ): ActivityLoader<ActivityName> {
-  return Object.assign(loaderFn, options);
+  return Object.assign(
+    (args: ActivityLoaderArgs<ActivityName>) => loaderFn(args),
+    options,
+  );
 }
