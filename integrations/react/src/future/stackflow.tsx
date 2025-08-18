@@ -10,7 +10,6 @@ import {
   makeEvent,
   type PushedEvent,
 } from "@stackflow/core";
-import { isPromiseLike } from "__internal__/utils/isPromiseLike";
 import React, { useMemo } from "react";
 import isEqual from "react-fast-compare";
 import { ActivityComponentMapProvider } from "../__internal__/ActivityComponentMapProvider";
