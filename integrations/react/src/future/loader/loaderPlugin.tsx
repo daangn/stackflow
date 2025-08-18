@@ -123,7 +123,7 @@ function createBeforeRouteHandler<
 
       Promise.allSettled([
         (activityContext as any)?.lazyActivityComponentRenderContext
-          ?.shouldRenderImmediately
+          ?.shouldRenderImmediately !== true
           ? loaderDataPromise
           : undefined,
         lazyComponentPromise,
