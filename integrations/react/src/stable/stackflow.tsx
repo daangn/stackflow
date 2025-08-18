@@ -7,6 +7,7 @@ import type {
 import { makeCoreStore, makeEvent } from "@stackflow/core";
 import { memo, useMemo } from "react";
 
+import { ActivityComponentMapProvider } from "../__internal__/ActivityComponentMapProvider";
 import type { ActivityComponentType } from "../__internal__/ActivityComponentType";
 import {
   findActivityById,
@@ -234,10 +235,9 @@ export function stackflow<T extends BaseActivities>(
     return (
       <PluginsProvider value={coreStore.pluginInstances}>
         <CoreProvider coreStore={coreStore}>
-          <MainRenderer
-            activityComponentMap={activityComponentMap}
-            initialContext={props.initialContext}
-          />
+          <ActivityComponentMapProvider value={activityComponentMap}>
+            <MainRenderer initialContext={props.initialContext} />
+          </ActivityComponentMapProvider>
         </CoreProvider>
       </PluginsProvider>
     );

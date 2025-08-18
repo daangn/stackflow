@@ -4,6 +4,7 @@ import type {
 } from "@stackflow/config";
 import type { ActivityComponentType } from "../../__internal__/ActivityComponentType";
 import type { StackflowReactPlugin } from "../../__internal__/StackflowReactPlugin";
+import { isPromiseLike } from "../../__internal__/utils/isPromiseLike";
 import type { StackflowInput } from "../stackflow";
 
 export function loaderPlugin<
@@ -11,67 +12,71 @@ export function loaderPlugin<
   R extends {
     [activityName in RegisteredActivityName]: ActivityComponentType<any>;
   },
->(input: StackflowInput<T, R>): StackflowReactPlugin {
-  return () => ({
-    key: "plugin-loader",
-    overrideInitialEvents({ initialEvents, initialContext }) {
-      if (initialEvents.length === 0) {
-        return [];
-      }
-
-      return initialEvents.map((event) => {
-        if (event.name !== "Pushed") {
-          return event;
+>(
+  input: StackflowInput<T, R>,
+  loadData: (activityName: string, activityParams: {}) => unknown,
+): StackflowReactPlugin {
+  return () => {
+    return {
+      key: "plugin-loader",
+      overrideInitialEvents({ initialEvents, initialContext }) {
+        if (initialEvents.length === 0) {
+          return [];
         }
 
-        if (initialContext.initialLoaderData) {
+        return initialEvents.map((event) => {
+          if (event.name !== "Pushed") {
+            return event;
+          }
+
+          if (initialContext.initialLoaderData) {
+            return {
+              ...event,
+              activityContext: {
+                ...event.activityContext,
+                loaderData: initialContext.initialLoaderData,
+              },
+            };
+          }
+
+          const { activityName, activityParams } = event;
+
+          const matchActivity = input.config.activities.find(
+            (activity) => activity.name === activityName,
+          );
+
+          const loader = matchActivity?.loader;
+
+          if (!loader) {
+            return event;
+          }
+
+          const loaderData = loadData(activityName, activityParams);
+
+          if (isPromiseLike(loaderData)) {
+            Promise.allSettled([loaderData]).then(
+              ([loaderDataPromiseResult]) => {
+                printLoaderDataPromiseError({
+                  promiseResult: loaderDataPromiseResult,
+                  activityName: matchActivity.name,
+                });
+              },
+            );
+          }
+
           return {
             ...event,
             activityContext: {
               ...event.activityContext,
-              loaderData: initialContext.initialLoaderData,
+              loaderData,
             },
           };
-        }
-
-        const { activityName, activityParams } = event;
-
-        const matchActivity = input.config.activities.find(
-          (activity) => activity.name === activityName,
-        );
-
-        const loader = matchActivity?.loader;
-
-        if (!loader) {
-          return event;
-        }
-
-        const loaderData = loader({
-          params: activityParams,
-          config: input.config,
         });
-
-        if (loaderData instanceof Promise) {
-          Promise.allSettled([loaderData]).then(([loaderDataPromiseResult]) => {
-            printLoaderDataPromiseError({
-              promiseResult: loaderDataPromiseResult,
-              activityName: matchActivity.name,
-            });
-          });
-        }
-
-        return {
-          ...event,
-          activityContext: {
-            ...event.activityContext,
-            loaderData,
-          },
-        };
-      });
-    },
-    onBeforePush: createBeforeRouteHandler(input),
-    onBeforeReplace: createBeforeRouteHandler(input),
-  });
+      },
+      onBeforePush: createBeforeRouteHandler(input, loadData),
+      onBeforeReplace: createBeforeRouteHandler(input, loadData),
+    };
+  };
 }
 
 type OnBeforeRoute = NonNullable<
@@ -83,7 +88,10 @@ function createBeforeRouteHandler<
   R extends {
     [activityName in RegisteredActivityName]: ActivityComponentType<any>;
   },
->(input: StackflowInput<T, R>): OnBeforeRoute {
+>(
+  input: StackflowInput<T, R>,
+  loadData: (activityName: string, activityParams: {}) => unknown,
+): OnBeforeRoute {
   return ({
     actionParams,
     actions: { overrideActionParams, pause, resume },
@@ -99,13 +107,12 @@ function createBeforeRouteHandler<
       return;
     }
 
-    const loaderData = matchActivity.loader?.({
-      params: activityParams,
-      config: input.config,
-    });
+    const loaderData =
+      matchActivity.loader && loadData(activityName, activityParams);
 
-    const loaderDataPromise =
-      loaderData instanceof Promise ? loaderData : undefined;
+    const loaderDataPromise = isPromiseLike(loaderData)
+      ? loaderData
+      : undefined;
     const lazyComponentPromise =
       "_load" in matchActivityComponent
         ? matchActivityComponent._load?.()
