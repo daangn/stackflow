@@ -41,9 +41,6 @@ export type StackflowInput<
   config: Config<T>;
   components: R;
   plugins?: Array<StackflowPluginsEntry>;
-  options?: {
-    loaderCacheMaxAge?: number;
-  };
 };
 
 export type StackflowOutput = {
@@ -107,7 +104,8 @@ export function stackflow<
     const clearCacheAfterMaxAge = () => {
       setTimeout(
         clearCache,
-        input.options?.loaderCacheMaxAge ?? DEFAULT_LOADER_CACHE_MAX_AGE,
+        activityConfig.loader?.loaderCacheMaxAge ??
+          DEFAULT_LOADER_CACHE_MAX_AGE,
       );
     };
 
