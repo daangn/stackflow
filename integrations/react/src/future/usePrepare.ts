@@ -34,8 +34,13 @@ export function usePrepare(): Prepare {
       );
     }
 
-    if ("_load" in activityComponentMap[activityName]) {
-      const lazyComponent = activityComponentMap[activityName];
+    const contentComponent =
+      "content" in activityComponentMap[activityName]
+        ? activityComponentMap[activityName].content
+        : activityComponentMap[activityName];
+
+    if ("_load" in contentComponent) {
+      const lazyComponent = contentComponent;
 
       prefetchTasks.push(Promise.resolve(lazyComponent._load?.()));
     }

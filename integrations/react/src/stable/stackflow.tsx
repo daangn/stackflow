@@ -137,8 +137,7 @@ export function stackflow<T extends BaseActivities>(
   const activityComponentMap = Object.entries(options.activities).reduce(
     (acc, [key, Activity]) => ({
       ...acc,
-      [key]:
-        "component" in Activity ? memo(Activity.component) : memo(Activity),
+      [key]: "component" in Activity ? Activity.component : Activity,
     }),
     {} as {
       [key: string]: ActivityComponentType;
@@ -260,7 +259,7 @@ export function stackflow<T extends BaseActivities>(
         return;
       }
 
-      activityComponentMap[activity.name] = memo(activity.component);
+      activityComponentMap[activity.name] = activity.component;
 
       staticCoreStore.actions.dispatchEvent("ActivityRegistered", {
         activityName: activity.name,

@@ -4,6 +4,7 @@ import { ActivityProvider } from "./activity";
 import { useCoreState } from "./core";
 import { usePlugins } from "./plugins";
 import type { StackflowReactPlugin } from "./StackflowReactPlugin";
+import { renderStructuredActivityComponent } from "./StructuredActivityComponentType";
 import type { WithRequired } from "./utils";
 
 interface PluginRendererProps {
@@ -34,9 +35,12 @@ const PluginRenderer: React.FC<PluginRendererProps> = ({
             render(overrideActivity) {
               const Activity = activityComponentMap[activity.name];
 
-              let output: React.ReactNode = (
-                <Activity params={activity.params} />
-              );
+              let output: React.ReactNode =
+                typeof Activity === "function" ? (
+                  <Activity params={activity.params} />
+                ) : (
+                  renderStructuredActivityComponent(Activity, activity.params)
+                );
 
               plugins.forEach((p) => {
                 output =

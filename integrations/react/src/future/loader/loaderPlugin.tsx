@@ -102,6 +102,10 @@ function createBeforeRouteHandler<
       (activity) => activity.name === activityName,
     );
     const matchActivityComponent = input.components[activityName as T["name"]];
+    const contentComponent =
+      "content" in matchActivityComponent
+        ? matchActivityComponent.content
+        : matchActivityComponent;
 
     if (!matchActivity || !matchActivityComponent) {
       return;
@@ -114,20 +118,18 @@ function createBeforeRouteHandler<
       ? loaderData
       : undefined;
     const lazyComponentPromise =
-      "_load" in matchActivityComponent
-        ? matchActivityComponent._load?.()
-        : undefined;
+      "_load" in contentComponent ? contentComponent._load?.() : undefined;
+    const shouldRenderImmediately = (activityContext as any)
+      ?.lazyActivityComponentRenderContext?.shouldRenderImmediately;
 
-    if (loaderDataPromise || lazyComponentPromise) {
+    if (
+      (loaderDataPromise || lazyComponentPromise) &&
+      shouldRenderImmediately !== true &&
+      "loading" in matchActivity === false
+    ) {
       pause();
 
-      Promise.allSettled([
-        (activityContext as any)?.lazyActivityComponentRenderContext
-          ?.shouldRenderImmediately !== true
-          ? loaderDataPromise
-          : undefined,
-        lazyComponentPromise,
-      ])
+      Promise.allSettled([loaderDataPromise, lazyComponentPromise])
         .then(([loaderDataPromiseResult, lazyComponentPromiseResult]) => {
           printLoaderDataPromiseError({
             promiseResult: loaderDataPromiseResult,
