@@ -3,6 +3,7 @@ export * from "../__internal__/StackflowReactPlugin";
 export * from "../__internal__/stack/useStack";
 export * from "./Actions";
 export * from "./ActivityComponentType";
+export * from "./ActivityContentComponentType";
 export * from "./ActivityErrorComponentType";
 export * from "./ActivityLayoutComponentType";
 export * from "./ActivityLoadingComponentType";

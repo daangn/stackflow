@@ -9,5 +9,6 @@ const ArticleLoading = () => {
     </div>
   );
 };
+ArticleLoading.displayName = "ArticleLoading";
 
 export default ArticleLoading;
