@@ -56,6 +56,8 @@ export async function articleLoader({ params }: ActivityLoaderArgs<"Article">) {
     },
   ];
 
+  await new Promise((resolve) => setTimeout(resolve, 5000));
+
   return {
     imageUrl,
     recommenderCards,

@@ -1,6 +1,6 @@
 import { defineConfig } from "@stackflow/config";
-import { articleLoader } from "../activities/Article.loader";
-import { mainLoader } from "../activities/Main.loader";
+import { articleLoader } from "../activities/Article/Article.loader";
+import { mainLoader } from "../activities/Main/Main.loader";
 
 export const config = defineConfig({
   activities: [
