@@ -2,11 +2,11 @@ import type {
   InferActivityParams,
   RegisteredActivityName,
 } from "@stackflow/config";
-import type React from "react";
+import type { ComponentType } from "react";
 
 export type ActivityLayoutComponentType<
   ActivityName extends RegisteredActivityName,
-> = React.ComponentType<{
+> = ComponentType<{
   params: InferActivityParams<ActivityName>;
   children: React.ReactNode;
 }>;
