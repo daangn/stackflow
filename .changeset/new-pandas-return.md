@@ -2,4 +2,4 @@
 "@stackflow/plugin-history-sync": minor
 ---
 
-Default history setup option for rich deep link experiences
+Add `defaultHistory` route option to pre-seed stack for better deep link experiences
