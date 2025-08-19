@@ -36,10 +36,10 @@ const PluginRenderer: React.FC<PluginRendererProps> = ({
               const Activity = activityComponentMap[activity.name];
 
               let output: React.ReactNode =
-                typeof Activity === "function" ? (
-                  <Activity params={activity.params} />
-                ) : (
+                "content" in Activity ? (
                   renderStructuredActivityComponent(Activity, activity.params)
+                ) : (
+                  <Activity params={activity.params} />
                 );
 
               plugins.forEach((p) => {
