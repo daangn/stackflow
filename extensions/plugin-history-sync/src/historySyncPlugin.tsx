@@ -283,9 +283,13 @@ export function historySyncPlugin<
             },
           ];
 
+          const initialActivityId = id();
+
+          defaultHistoryEntryEntities.add(initialActivityId);
+
           return [
             makeEvent("Pushed", {
-              activityId: id(),
+              activityId: initialActivityId,
               activityName: initialHistoryEntry.activityName,
               activityParams: {
                 ...initialHistoryEntry.activityParams,
