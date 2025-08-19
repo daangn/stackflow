@@ -3,7 +3,7 @@ import type {
   Config,
   RegisteredActivityName,
 } from "@stackflow/config";
-import { type StackflowActions, id, makeEvent } from "@stackflow/core";
+import { id, makeEvent, type StackflowActions } from "@stackflow/core";
 import type { StackflowReactPlugin } from "@stackflow/react";
 import type { ActivityComponentType } from "@stackflow/react/future";
 import type { History, Listener } from "history";
@@ -199,7 +199,7 @@ export function historySyncPlugin<
 
         if (defaultHistory[0]) {
           const initialHistoryEntry = defaultHistory[0];
-          const enoughtPastTime = new Date().getTime() - MINUTE;
+          const enoughPastTime = new Date().getTime() - MINUTE;
 
           pendingDefaultHistoryEntryInsertionTasks = [
             ...(initialHistoryEntry.additionalSteps?.length
@@ -290,7 +290,7 @@ export function historySyncPlugin<
               activityParams: {
                 ...initialHistoryEntry.activityParams,
               },
-              eventDate: enoughtPastTime,
+              eventDate: enoughPastTime,
               activityContext: {
                 path: currentPath,
                 lazyActivityComponentRenderContext: {
@@ -419,7 +419,7 @@ export function historySyncPlugin<
 
           if (isBackward()) {
             dispatchEvent("Popped", {});
-            
+
             if (!nextActivity) {
               pushFlag += 1;
               push({
