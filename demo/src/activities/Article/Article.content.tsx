@@ -5,15 +5,6 @@ import ArticleProfile from "../../components/ArticleProfile";
 import * as css from "./Article.content.css";
 import type { articleLoader } from "./Article.loader";
 
-declare module "@stackflow/config" {
-  interface Register {
-    Article: {
-      articleId: number;
-      title?: string;
-    };
-  }
-}
-
 const ArticleContent = () => {
   const { title } = useActivityParams<"Article">();
   const { imageUrl, recommenderCards } = useLoaderData<typeof articleLoader>();
