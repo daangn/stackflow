@@ -2,6 +2,7 @@ import type {
   ActivityBaseParams,
   ActivityDefinition,
   Config,
+  InferActivityParams,
   RegisteredActivityName,
 } from "@stackflow/config";
 import {
@@ -54,7 +55,9 @@ const DEFAULT_LOADER_CACHE_MAX_AGE = 1000 * 30;
 export function stackflow<
   T extends ActivityDefinition<RegisteredActivityName>,
   R extends {
-    [activityName in RegisteredActivityName]: ActivityComponentType<any>;
+    [activityName in RegisteredActivityName]: ActivityComponentType<
+      InferActivityParams<activityName>
+    >;
   },
 >(input: StackflowInput<T, R>): StackflowOutput {
   const loaderDataCacheMap = new Map<string, { params: {}; data: unknown }[]>();
