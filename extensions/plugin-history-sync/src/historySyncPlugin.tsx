@@ -243,7 +243,8 @@ export function historySyncPlugin<
                       },
                     });
 
-                    for (const { stepParams, hasZIndex } of additionalSteps!) {
+                    for (const { stepParams, hasZIndex } of additionalSteps ??
+                      []) {
                       const stepId = id();
 
                       defaultHistoryEntryEntities.add(stepId);
