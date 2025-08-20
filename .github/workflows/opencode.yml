@@ -1,4 +1,4 @@
-name: opencode
+name: OpenCode
 
 on:
   issue_comment:
@@ -14,8 +14,10 @@ jobs:
     runs-on: ubuntu-latest
     environment: Maintainer Only
     permissions:
-      contents: read
       id-token: write
+      contents: write
+      pull-requests: write
+      issues: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -25,6 +27,6 @@ jobs:
       - name: Run opencode
         uses: sst/opencode/github@latest
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         with:
-          model: anthropic/claude-sonnet-4-20250514
+          model: openai/gpt-5-2025-08-07
