@@ -124,8 +124,7 @@ function createBeforeRouteHandler<
 
     if (
       (loaderDataPromise || lazyComponentPromise) &&
-      (shouldRenderImmediately !== true ||
-        "loading" in matchActivityComponent === false)
+      shouldRenderImmediately !== true
     ) {
       pause();
 
