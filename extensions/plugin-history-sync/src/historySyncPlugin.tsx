@@ -208,7 +208,7 @@ export function historySyncPlugin<
                     for (const {
                       stepParams,
                       hasZIndex,
-                    } of initialHistoryEntry.additionalSteps ?? []) {
+                    } of initialHistoryEntry.additionalSteps!) {
                       const stepId = id();
 
                       defaultHistoryEntryEntities.add(stepId);
@@ -243,8 +243,7 @@ export function historySyncPlugin<
                       },
                     });
 
-                    for (const { stepParams, hasZIndex } of additionalSteps ??
-                      []) {
+                    for (const { stepParams, hasZIndex } of additionalSteps!) {
                       const stepId = id();
 
                       defaultHistoryEntryEntities.add(stepId);
@@ -262,7 +261,9 @@ export function historySyncPlugin<
                 targetActivityRoute,
                 options.urlPatternOptions,
               );
-              const activityParams = template.parse(currentPath);
+              const activityParams =
+                template.parse(currentPath) ??
+                urlSearchParamsToMap(pathToUrl(currentPath).searchParams);
               const activityId = id();
 
               defaultHistoryEntryEntities.add(activityId);
