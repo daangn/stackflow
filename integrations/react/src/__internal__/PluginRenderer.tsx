@@ -81,25 +81,22 @@ function renderStructuredActivityComponent<P extends {}>(
   structuredActivityComponent: StructuredActivityComponentType<P>,
   params: P,
 ): ReactNode {
-  const {
-    content: Content,
-    layout: Layout,
-    loading: Loading,
-    error: ErrorComponent,
-  } = structuredActivityComponent;
+  const { content, layout, loading, error } = structuredActivityComponent;
 
   const wrappers: Array<(node: ReactNode) => ReactNode> = [
     (node) =>
-      Loading ? (
-        <Suspense fallback={<Loading params={params} />}>{node}</Suspense>
+      loading?.component ? (
+        <Suspense fallback={<loading.component params={params} />}>
+          {node}
+        </Suspense>
       ) : (
         node
       ),
     (node) =>
-      ErrorComponent ? (
+      error?.component ? (
         <StructuredActivityComponentErrorBoundary
           renderFallback={(err, reset) => (
-            <ErrorComponent params={params} error={err} reset={reset} />
+            <error.component params={params} error={err} reset={reset} />
           )}
         >
           {node}
@@ -107,12 +104,17 @@ function renderStructuredActivityComponent<P extends {}>(
       ) : (
         node
       ),
-    (node) => (Layout ? <Layout params={params}>{node}</Layout> : node),
+    (node) =>
+      layout?.component ? (
+        <layout.component params={params}>{node}</layout.component>
+      ) : (
+        node
+      ),
   ];
 
   return wrappers.reduce<ReactNode>(
     (node, wrapper) => wrapper(node),
-    <Content params={params} />,
+    <content.component params={params} />,
   );
 }
 

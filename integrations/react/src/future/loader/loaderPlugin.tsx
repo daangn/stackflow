@@ -104,7 +104,7 @@ function createBeforeRouteHandler<
     const matchActivityComponent = input.components[activityName as T["name"]];
     const contentComponent =
       "content" in matchActivityComponent
-        ? matchActivityComponent.content
+        ? matchActivityComponent.content.component
         : matchActivityComponent;
 
     if (!matchActivity || !matchActivityComponent) {
@@ -124,7 +124,8 @@ function createBeforeRouteHandler<
 
     if (
       (loaderDataPromise || lazyComponentPromise) &&
-      shouldRenderImmediately !== true
+      (shouldRenderImmediately !== true ||
+        "loading" in matchActivityComponent === false)
     ) {
       pause();
 

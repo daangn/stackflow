@@ -36,7 +36,7 @@ export function usePrepare(): Prepare {
 
     const contentComponent =
       "content" in activityComponentMap[activityName]
-        ? activityComponentMap[activityName].content
+        ? activityComponentMap[activityName].content.component
         : activityComponentMap[activityName];
 
     if ("_load" in contentComponent) {
