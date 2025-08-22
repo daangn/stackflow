@@ -1,5 +1,11 @@
 # @stackflow/plugin-basic-ui
 
+## 1.15.1
+
+### Patch Changes
+
+- 733ebcb: Fix scroll behavior of AppScreen by attaching refs on paperContent
+
 ## 1.15.0
 
 ### Minor Changes
