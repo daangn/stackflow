@@ -184,7 +184,7 @@ export function historySyncPlugin<
               activityRoute.activityName === fallbackActivityName,
           )!;
         const pattern = new UrlPattern(
-          `${targetActivityRoute.path}/`,
+          `${targetActivityRoute.path}(/)`,
           options.urlPatternOptions,
         );
         const url = pathToUrl(currentPath);
