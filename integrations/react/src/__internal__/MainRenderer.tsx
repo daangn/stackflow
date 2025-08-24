@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import type { ActivityComponentType } from "./ActivityComponentType";
 import { useCoreState } from "./core";
 import PluginRenderer from "./PluginRenderer";
 import { usePlugins } from "./plugins";

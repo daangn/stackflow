@@ -11,7 +11,7 @@ export type PreloadPluginOptions<
 > = {
   loaders: {
     [key in Extract<keyof T, string>]?: T[key] extends ActivityComponentType<
-      infer U
+      infer U extends { [key in keyof U]: string | undefined }
     >
       ? Loader<U>
       : Loader<{}>;

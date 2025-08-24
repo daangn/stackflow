@@ -20,8 +20,9 @@ export function lazy<T extends { [K in keyof T]: any } = {}>(
     return cachedValue;
   };
 
-  const LazyComponent: LazyActivityComponentType<T> = React.lazy(cachedLoad);
-  LazyComponent._load = cachedLoad;
+  const LazyActivityComponent: LazyActivityComponentType<T> =
+    React.lazy(cachedLoad);
+  LazyActivityComponent._load = cachedLoad;
 
-  return LazyComponent;
+  return LazyActivityComponent;
 }
