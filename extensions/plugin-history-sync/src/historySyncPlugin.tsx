@@ -485,7 +485,13 @@ export function historySyncPlugin<
 
         history.listen(onPopState);
 
-        defaultHistorySetupCheckpoint(actions);
+        const activities = getStack().activities;
+
+        if (activities.every(({ id }) => defaultHistoryEntryEntities.has(id))) {
+          defaultHistorySetupCheckpoint(actions);
+        } else {
+          clearPendingDefaultHistoryEntryInsertionTasks();
+        }
       },
       onPushed({ effect: { activity } }) {
         if (
