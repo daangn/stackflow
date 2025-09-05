@@ -2,15 +2,16 @@ import { vars } from "@seed-design/design-token";
 import { basicUIPlugin } from "@stackflow/plugin-basic-ui";
 import { historySyncPlugin } from "@stackflow/plugin-history-sync";
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
-import { lazy, stackflow } from "@stackflow/react/future";
-import Main from "../activities/Main";
+import { stackflow } from "@stackflow/react/future";
+import { Article } from "../activities/Article/Article";
+import Main from "../activities/Main/Main";
 import { config } from "./stackflow.config";
 
 export const { Stack, actions } = stackflow({
   config,
   components: {
     Main,
-    Article: lazy(() => import("../activities/Article")),
+    Article,
   },
   plugins: [
     basicRendererPlugin(),

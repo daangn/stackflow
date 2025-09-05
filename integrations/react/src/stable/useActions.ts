@@ -1,8 +1,7 @@
 import { useMemo } from "react";
-
-import type { ActivityComponentType } from "../__internal__/ActivityComponentType";
 import { makeActivityId } from "../__internal__/activity";
 import { useCoreActions } from "../__internal__/core";
+import type { MonolithicActivityComponentType } from "../__internal__/MonolithicActivityComponentType";
 import { useTransition } from "../__internal__/shims";
 import type { BaseActivities } from "./BaseActivities";
 
@@ -32,8 +31,8 @@ export type UseActionsOutputType<T extends BaseActivities> = {
   push<K extends Extract<keyof T, string>>(
     activityName: K,
     params: T[K] extends
-      | ActivityComponentType<infer U>
-      | { component: ActivityComponentType<infer U> }
+      | MonolithicActivityComponentType<infer U>
+      | { component: MonolithicActivityComponentType<infer U> }
       ? U
       : {},
     options?: {
@@ -49,8 +48,8 @@ export type UseActionsOutputType<T extends BaseActivities> = {
   replace<K extends Extract<keyof T, string>>(
     activityName: K,
     params: T[K] extends
-      | ActivityComponentType<infer U>
-      | { component: ActivityComponentType<infer U> }
+      | MonolithicActivityComponentType<infer U>
+      | { component: MonolithicActivityComponentType<infer U> }
       ? U
       : {},
     options?: {

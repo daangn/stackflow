@@ -3,11 +3,12 @@ import type {
   Config,
   RegisteredActivityName,
 } from "@stackflow/config";
-import { id, makeEvent } from "@stackflow/core";
+import { id, makeEvent, type StackflowActions } from "@stackflow/core";
 import type { StackflowReactPlugin } from "@stackflow/react";
 import type { ActivityComponentType } from "@stackflow/react/future";
 import type { History, Listener } from "history";
 import { createBrowserHistory, createMemoryHistory } from "history";
+import UrlPattern from "url-pattern";
 import { HistoryQueueProvider } from "./HistoryQueueContext";
 import { parseState, pushState, replaceState } from "./historyState";
 import { last } from "./last";
@@ -52,6 +53,7 @@ type HistorySyncPluginOptions<T, K extends Extract<keyof T, string>> = (
   history?: History;
   urlPatternOptions?: UrlPatternOptions;
 };
+
 export function historySyncPlugin<
   T extends { [activityName: string]: unknown },
   K extends Extract<keyof T, string>,
@@ -86,8 +88,35 @@ export function historySyncPlugin<
   return () => {
     let pushFlag = 0;
     let silentFlag = false;
+    let pendingDefaultHistoryEntryInsertionTasks:
+      | ((actions: StackflowActions) => void)[]
+      | null = null;
+    const defaultHistoryEntryEntities: Set<string> = new Set();
 
     const { requestHistoryTick } = makeHistoryTaskQueue(history);
+
+    function defaultHistorySetupCheckpoint(actions: StackflowActions) {
+      if (!pendingDefaultHistoryEntryInsertionTasks) return;
+
+      const stack = actions.getStack();
+
+      if (stack.globalTransitionState !== "idle") return;
+
+      const nextTask = pendingDefaultHistoryEntryInsertionTasks.shift();
+
+      if (pendingDefaultHistoryEntryInsertionTasks.length === 0) {
+        pendingDefaultHistoryEntryInsertionTasks = null;
+      }
+
+      if (nextTask) {
+        nextTask(actions);
+      }
+    }
+
+    function clearPendingDefaultHistoryEntryInsertionTasks() {
+      pendingDefaultHistoryEntryInsertionTasks = null;
+      defaultHistoryEntryEntities.clear();
+    }
 
     return {
       key: "plugin-history-sync",
@@ -126,7 +155,7 @@ export function historySyncPlugin<
             initialContext?.req?.path &&
             typeof initialContext.req.path === "string"
           ) {
-            return initialContext.req.path as string;
+            return initialContext.req.path;
           }
 
           if (options.useHash) {
@@ -137,62 +166,174 @@ export function historySyncPlugin<
         }
 
         const currentPath = resolveCurrentPath();
-
-        if (currentPath) {
-          for (const activityRoute of activityRoutes) {
+        const fallbackActivityName = options.fallbackActivity({
+          initialContext,
+        });
+        const targetActivityRoute =
+          activityRoutes.find((activityRoute) => {
             const template = makeTemplate(
               activityRoute,
               options.urlPatternOptions,
             );
             const activityParams = template.parse(currentPath);
 
-            if (activityParams) {
+            return activityParams !== null;
+          }) ??
+          activityRoutes.find(
+            (activityRoute) =>
+              activityRoute.activityName === fallbackActivityName,
+          )!;
+        const pattern = new UrlPattern(
+          `${targetActivityRoute.path}(/)`,
+          options.urlPatternOptions,
+        );
+        const url = pathToUrl(currentPath);
+        const pathParams = pattern.match(url.pathname);
+        const searchParams = urlSearchParamsToMap(url.searchParams);
+        const params = {
+          ...searchParams,
+          ...pathParams,
+        };
+        const defaultHistory =
+          targetActivityRoute.defaultHistory?.(params) ?? [];
+
+        if (defaultHistory[0]) {
+          const initialHistoryEntry = defaultHistory[0];
+          const enoughPastTime = new Date().getTime() - MINUTE;
+
+          pendingDefaultHistoryEntryInsertionTasks = [
+            ...(initialHistoryEntry.additionalSteps?.length
+              ? [
+                  (actions: StackflowActions) => {
+                    for (const {
+                      stepParams,
+                      hasZIndex,
+                    } of initialHistoryEntry.additionalSteps!) {
+                      const stepId = id();
+
+                      defaultHistoryEntryEntities.add(stepId);
+
+                      actions.stepPush({
+                        stepId,
+                        stepParams,
+                        hasZIndex,
+                      });
+                    }
+                  },
+                ]
+              : []),
+            ...defaultHistory
+              .slice(1)
+              .map(
+                ({ activityName, activityParams, additionalSteps }) =>
+                  ({ push, stepPush }: StackflowActions) => {
+                    const activityId = id();
+
+                    defaultHistoryEntryEntities.add(activityId);
+
+                    push({
+                      activityId,
+                      activityName,
+                      activityParams,
+                      activityContext: {
+                        path: currentPath,
+                        lazyActivityComponentRenderContext: {
+                          shouldRenderImmediately: true,
+                        },
+                      },
+                    });
+
+                    for (const { stepParams, hasZIndex } of additionalSteps ??
+                      []) {
+                      const stepId = id();
+
+                      defaultHistoryEntryEntities.add(stepId);
+
+                      stepPush({
+                        stepId,
+                        stepParams,
+                        hasZIndex,
+                      });
+                    }
+                  },
+              ),
+            ({ push }) => {
+              const template = makeTemplate(
+                targetActivityRoute,
+                options.urlPatternOptions,
+              );
+              const activityParams =
+                template.parse(currentPath) ??
+                urlSearchParamsToMap(pathToUrl(currentPath).searchParams);
               const activityId = id();
 
-              return [
-                makeEvent("Pushed", {
-                  activityId,
-                  activityName: activityRoute.activityName,
-                  activityParams: {
-                    ...activityParams,
+              defaultHistoryEntryEntities.add(activityId);
+
+              push({
+                activityId,
+                activityName: targetActivityRoute.activityName,
+                activityParams: {
+                  ...activityParams,
+                },
+                activityContext: {
+                  path: currentPath,
+                  lazyActivityComponentRenderContext: {
+                    shouldRenderImmediately: true,
                   },
-                  eventDate: new Date().getTime() - MINUTE,
-                  activityContext: {
-                    path: currentPath,
-                  },
-                }),
-              ];
-            }
-          }
+                },
+              });
+            },
+          ];
+
+          const initialActivityId = id();
+
+          defaultHistoryEntryEntities.add(initialActivityId);
+
+          return [
+            makeEvent("Pushed", {
+              activityId: initialActivityId,
+              activityName: initialHistoryEntry.activityName,
+              activityParams: {
+                ...initialHistoryEntry.activityParams,
+              },
+              eventDate: enoughPastTime,
+              activityContext: {
+                path: currentPath,
+                lazyActivityComponentRenderContext: {
+                  shouldRenderImmediately: true,
+                },
+              },
+            }),
+          ];
         }
 
-        const fallbackActivityId = id();
-        const fallbackActivityName = options.fallbackActivity({
-          initialContext,
-        });
-        const fallbackActivityRoute = activityRoutes.find(
-          (r) => r.activityName === fallbackActivityName,
+        const template = makeTemplate(
+          targetActivityRoute,
+          options.urlPatternOptions,
         );
-        const fallbackActivityPath = fallbackActivityRoute?.path;
-        const fallbackActivityParams = urlSearchParamsToMap(
-          pathToUrl(currentPath).searchParams,
-        );
+        const activityParams =
+          template.parse(currentPath) ??
+          urlSearchParamsToMap(pathToUrl(currentPath).searchParams);
 
         return [
           makeEvent("Pushed", {
-            activityId: fallbackActivityId,
-            activityName: fallbackActivityName,
+            activityId: id(),
+            activityName: targetActivityRoute.activityName,
             activityParams: {
-              ...fallbackActivityParams,
+              ...activityParams,
             },
             eventDate: new Date().getTime() - MINUTE,
             activityContext: {
-              path: fallbackActivityPath,
+              path: currentPath,
+              lazyActivityComponentRenderContext: {
+                shouldRenderImmediately: true,
+              },
             },
           }),
         ];
       },
-      onInit({ actions: { getStack, dispatchEvent, push, stepPush } }) {
+      onInit({ actions }) {
+        const { getStack, dispatchEvent, push, stepPush } = actions;
         const rootActivity = getStack().activities[0];
 
         const match = activityRoutes.find(
@@ -202,7 +343,8 @@ export function historySyncPlugin<
 
         const lastStep = last(rootActivity.steps);
 
-        requestHistoryTick(() =>
+        requestHistoryTick(() => {
+          silentFlag = true;
           replaceState({
             history,
             pathname: template.fill(rootActivity.params),
@@ -211,8 +353,8 @@ export function historySyncPlugin<
               step: lastStep,
             },
             useHash: options.useHash,
-          }),
-        );
+          });
+        });
 
         const onPopState: Listener = (e) => {
           if (silentFlag) {
@@ -342,8 +484,23 @@ export function historySyncPlugin<
         };
 
         history.listen(onPopState);
+
+        const activities = getStack().activities;
+
+        if (activities.every(({ id }) => defaultHistoryEntryEntities.has(id))) {
+          defaultHistorySetupCheckpoint(actions);
+        } else {
+          clearPendingDefaultHistoryEntryInsertionTasks();
+        }
       },
       onPushed({ effect: { activity } }) {
+        if (
+          pendingDefaultHistoryEntryInsertionTasks &&
+          !defaultHistoryEntryEntities.has(activity.id)
+        ) {
+          clearPendingDefaultHistoryEntryInsertionTasks();
+        }
+
         if (pushFlag) {
           pushFlag -= 1;
           return;
@@ -368,6 +525,13 @@ export function historySyncPlugin<
         });
       },
       onStepPushed({ effect: { activity, step } }) {
+        if (
+          pendingDefaultHistoryEntryInsertionTasks &&
+          !defaultHistoryEntryEntities.has(step.id)
+        ) {
+          clearPendingDefaultHistoryEntryInsertionTasks();
+        }
+
         if (pushFlag) {
           pushFlag -= 1;
           return;
@@ -393,6 +557,10 @@ export function historySyncPlugin<
         });
       },
       onReplaced({ effect: { activity } }) {
+        if (pendingDefaultHistoryEntryInsertionTasks) {
+          clearPendingDefaultHistoryEntryInsertionTasks();
+        }
+
         if (!activity.isActive) {
           return;
         }
@@ -416,6 +584,10 @@ export function historySyncPlugin<
         });
       },
       onStepReplaced({ effect: { activity, step } }) {
+        if (pendingDefaultHistoryEntryInsertionTasks) {
+          clearPendingDefaultHistoryEntryInsertionTasks();
+        }
+
         if (!activity.isActive) {
           return;
         }
@@ -439,38 +611,58 @@ export function historySyncPlugin<
           });
         });
       },
+      onPopped() {
+        if (pendingDefaultHistoryEntryInsertionTasks) {
+          clearPendingDefaultHistoryEntryInsertionTasks();
+        }
+      },
+      onStepPopped() {
+        if (pendingDefaultHistoryEntryInsertionTasks) {
+          clearPendingDefaultHistoryEntryInsertionTasks();
+        }
+      },
       onBeforePush({ actionParams, actions: { overrideActionParams } }) {
-        const match = activityRoutes.find(
-          (r) => r.activityName === actionParams.activityName,
-        )!;
-        const template = makeTemplate(match, options.urlPatternOptions);
-        const path = template.fill(actionParams.activityParams);
+        if (
+          !actionParams.activityContext ||
+          "path" in actionParams.activityContext === false
+        ) {
+          const match = activityRoutes.find(
+            (r) => r.activityName === actionParams.activityName,
+          )!;
+          const template = makeTemplate(match, options.urlPatternOptions);
+          const path = template.fill(actionParams.activityParams);
 
-        overrideActionParams({
-          ...actionParams,
-          activityContext: {
-            ...actionParams.activityContext,
-            path,
-          },
-        });
+          overrideActionParams({
+            ...actionParams,
+            activityContext: {
+              ...actionParams.activityContext,
+              path,
+            },
+          });
+        }
       },
       onBeforeReplace({
         actionParams,
         actions: { overrideActionParams, getStack },
       }) {
-        const match = activityRoutes.find(
-          (r) => r.activityName === actionParams.activityName,
-        )!;
-        const template = makeTemplate(match, options.urlPatternOptions);
-        const path = template.fill(actionParams.activityParams);
+        if (
+          !actionParams.activityContext ||
+          "path" in actionParams.activityContext === false
+        ) {
+          const match = activityRoutes.find(
+            (r) => r.activityName === actionParams.activityName,
+          )!;
+          const template = makeTemplate(match, options.urlPatternOptions);
+          const path = template.fill(actionParams.activityParams);
 
-        overrideActionParams({
-          ...actionParams,
-          activityContext: {
-            ...actionParams.activityContext,
-            path,
-          },
-        });
+          overrideActionParams({
+            ...actionParams,
+            activityContext: {
+              ...actionParams.activityContext,
+              path,
+            },
+          });
+        }
 
         const { activities } = getStack();
         const enteredActivities = activities.filter(
@@ -541,6 +733,9 @@ export function historySyncPlugin<
             });
           }
         }
+      },
+      onChanged({ actions }) {
+        defaultHistorySetupCheckpoint(actions);
       },
     };
   };

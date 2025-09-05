@@ -3,6 +3,7 @@ import type {
   RegisteredActivityName,
 } from "@stackflow/config";
 import { useActivityComponentMap } from "../__internal__/ActivityComponentMapProvider";
+import { isStructuredActivityComponent } from "../__internal__/StructuredActivityComponentType";
 import { useDataLoader } from "./loader";
 import { useConfig } from "./useConfig";
 
@@ -35,9 +36,16 @@ export function usePrepare(): Prepare {
     }
 
     if ("_load" in activityComponentMap[activityName]) {
-      const lazyComponent = activityComponentMap[activityName];
+      prefetchTasks.push(
+        Promise.resolve(activityComponentMap[activityName]._load?.()),
+      );
+    }
 
-      prefetchTasks.push(Promise.resolve(lazyComponent._load?.()));
+    if (
+      isStructuredActivityComponent(activityComponentMap[activityName]) &&
+      typeof activityComponentMap[activityName].content === "function"
+    ) {
+      prefetchTasks.push(activityComponentMap[activityName].content());
     }
 
     await Promise.all(prefetchTasks);

@@ -6,9 +6,7 @@ import type {
 } from "@stackflow/core";
 import { makeCoreStore, makeEvent } from "@stackflow/core";
 import { memo, useMemo } from "react";
-
 import { ActivityComponentMapProvider } from "../__internal__/ActivityComponentMapProvider";
-import type { ActivityComponentType } from "../__internal__/ActivityComponentType";
 import {
   findActivityById,
   findLatestActiveActivity,
@@ -17,6 +15,7 @@ import {
 } from "../__internal__/activity";
 import { CoreProvider } from "../__internal__/core";
 import MainRenderer from "../__internal__/MainRenderer";
+import type { MonolithicActivityComponentType } from "../__internal__/MonolithicActivityComponentType";
 import { PluginsProvider } from "../__internal__/plugins";
 import type { StackflowReactPlugin } from "../__internal__/StackflowReactPlugin";
 import { isBrowser, makeRef } from "../__internal__/utils";
@@ -96,8 +95,8 @@ export type StackflowOutput<T extends BaseActivities> = {
     activityName: K,
   ) => UseStepActionsOutputType<
     T[K] extends
-      | ActivityComponentType<infer U>
-      | { component: ActivityComponentType<infer U> }
+      | MonolithicActivityComponentType<infer U>
+      | { component: MonolithicActivityComponentType<infer U> }
       ? U
       : {}
   >;
@@ -107,7 +106,7 @@ export type StackflowOutput<T extends BaseActivities> = {
    */
   addActivity: (options: {
     name: string;
-    component: ActivityComponentType<any>;
+    component: MonolithicActivityComponentType<any>;
     paramsSchema?: ActivityRegisteredEvent["activityParamsSchema"];
   }) => void;
 
@@ -137,11 +136,10 @@ export function stackflow<T extends BaseActivities>(
   const activityComponentMap = Object.entries(options.activities).reduce(
     (acc, [key, Activity]) => ({
       ...acc,
-      [key]:
-        "component" in Activity ? memo(Activity.component) : memo(Activity),
+      [key]: "component" in Activity ? Activity.component : Activity,
     }),
     {} as {
-      [key: string]: ActivityComponentType;
+      [key: string]: MonolithicActivityComponentType;
     },
   );
 

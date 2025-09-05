@@ -4,6 +4,7 @@ import type {
 } from "@stackflow/config";
 import type { ActivityComponentType } from "../../__internal__/ActivityComponentType";
 import type { StackflowReactPlugin } from "../../__internal__/StackflowReactPlugin";
+import { isStructuredActivityComponent } from "../../__internal__/StructuredActivityComponentType";
 import { isPromiseLike } from "../../__internal__/utils/isPromiseLike";
 import type { StackflowInput } from "../stackflow";
 
@@ -114,27 +115,37 @@ function createBeforeRouteHandler<
       ? loaderData
       : undefined;
     const lazyComponentPromise =
-      "_load" in matchActivityComponent
-        ? matchActivityComponent._load?.()
-        : undefined;
+      isStructuredActivityComponent(matchActivityComponent) &&
+      typeof matchActivityComponent.content === "function"
+        ? matchActivityComponent.content()
+        : "_load" in matchActivityComponent
+          ? matchActivityComponent._load?.()
+          : undefined;
+    const shouldRenderImmediately = (activityContext as any)
+      ?.lazyActivityComponentRenderContext?.shouldRenderImmediately;
 
-    if (loaderDataPromise || lazyComponentPromise) {
+    if (
+      (loaderDataPromise || lazyComponentPromise) &&
+      (shouldRenderImmediately !== true ||
+        "loading" in matchActivityComponent === false)
+    ) {
       pause();
+
+      Promise.allSettled([loaderDataPromise, lazyComponentPromise])
+        .then(([loaderDataPromiseResult, lazyComponentPromiseResult]) => {
+          printLoaderDataPromiseError({
+            promiseResult: loaderDataPromiseResult,
+            activityName: matchActivity.name,
+          });
+          printLazyComponentPromiseError({
+            promiseResult: lazyComponentPromiseResult,
+            activityName: matchActivity.name,
+          });
+        })
+        .finally(() => {
+          resume();
+        });
     }
-    Promise.allSettled([loaderDataPromise, lazyComponentPromise])
-      .then(([loaderDataPromiseResult, lazyComponentPromiseResult]) => {
-        printLoaderDataPromiseError({
-          promiseResult: loaderDataPromiseResult,
-          activityName: matchActivity.name,
-        });
-        printLazyComponentPromiseError({
-          promiseResult: lazyComponentPromiseResult,
-          activityName: matchActivity.name,
-        });
-      })
-      .finally(() => {
-        resume();
-      });
 
     overrideActionParams({
       ...actionParams,

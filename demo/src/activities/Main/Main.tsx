@@ -1,12 +1,12 @@
 import type { ActivityComponentType } from "@stackflow/react/future";
 import { useLoaderData } from "@stackflow/react/future";
 
-import IconBell from "../assets/IconBell";
-import IconExpandMore from "../assets/IconExpandMore";
-import IconSearch from "../assets/IconSearch";
-import BottomTab from "../components/BottomTab";
-import FeedCard from "../components/FeedCard";
-import Layout from "../components/Layout";
+import IconBell from "../../assets/IconBell";
+import IconExpandMore from "../../assets/IconExpandMore";
+import IconSearch from "../../assets/IconSearch";
+import BottomTab from "../../components/BottomTab";
+import FeedCard from "../../components/FeedCard";
+import Layout from "../../components/Layout";
 import * as css from "./Main.css";
 import type { mainLoader } from "./Main.loader";
 

@@ -2,8 +2,8 @@ import { vars } from "@seed-design/design-token";
 import { basicUIPlugin } from "@stackflow/plugin-basic-ui";
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
 import { stackflow } from "@stackflow/react/future";
-import Article from "../activities/Article";
-import Main from "../activities/Main";
+import { Article } from "../activities/Article/Article";
+import Main from "../activities/Main/Main";
 import { config } from "./stackflow.config";
 
 export const { Stack } = stackflow({
