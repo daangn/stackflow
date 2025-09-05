@@ -45,9 +45,7 @@ export function usePrepare(): Prepare {
       isStructuredActivityComponent(activityComponentMap[activityName]) &&
       typeof activityComponentMap[activityName].content === "function"
     ) {
-      prefetchTasks.push(
-        Promise.resolve(activityComponentMap[activityName].content()),
-      );
+      prefetchTasks.push(activityComponentMap[activityName].content());
     }
 
     await Promise.all(prefetchTasks);
