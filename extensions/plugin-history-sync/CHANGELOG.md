@@ -1,5 +1,11 @@
 # @stackflow/plugin-history-sync
 
+## 1.8.0
+
+### Minor Changes
+
+- f298988: Add `defaultHistory` route option to pre-seed stack for better deep link experiences
+
 ## 1.7.1
 
 ### Patch Changes

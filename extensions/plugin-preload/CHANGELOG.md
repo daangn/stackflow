@@ -1,5 +1,11 @@
 # @stackflow/plugin-preload
 
+## 1.4.4
+
+### Patch Changes
+
+- f298988: Sync with type constraint changes in stackflow/react
+
 ## 1.4.3
 
 ## 1.4.3-canary.0
