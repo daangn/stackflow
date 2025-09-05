@@ -60,12 +60,11 @@ const ContentComponentMap = new WeakMap<
 export function getContentComponent(
   structuredActivityComponent: StructuredActivityComponentType<{}>,
 ): Content<{}>["component"] {
-  const content = structuredActivityComponent.content;
-
   if (ContentComponentMap.has(structuredActivityComponent)) {
     return ContentComponentMap.get(structuredActivityComponent)!;
   }
 
+  const content = structuredActivityComponent.content;
   const ContentComponent =
     "component" in content
       ? content.component
