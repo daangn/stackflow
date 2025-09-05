@@ -75,6 +75,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
   const paperRef = useRef<HTMLDivElement>(null);
   const edgeRef = useRef<HTMLDivElement>(null);
   const appBarRef = useRef<HTMLDivElement>(null);
+  const paperContentRef = useRef<HTMLDivElement>(null);
 
   const modalPresentationStyle =
     globalOptions.theme === "cupertino"
@@ -201,7 +202,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
     appBar?.onTopClick?.(e);
 
     if (!e.defaultPrevented) {
-      paperRef.current?.scroll({
+      paperContentRef.current?.scroll({
         top: 0,
         behavior: "smooth",
       });
@@ -217,7 +218,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
       value={useMemo(
         () => ({
           scroll({ top }) {
-            paperRef?.current?.scroll({
+            paperContentRef?.current?.scroll({
               top,
               behavior: "smooth",
             });
@@ -229,7 +230,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
             appBar: zIndexAppBar,
           },
         }),
-        [paperRef, zIndexDim, zIndexPaper, zIndexEdge, zIndexAppBar],
+        [paperContentRef, zIndexDim, zIndexPaper, zIndexEdge, zIndexAppBar],
       )}
     >
       <div
@@ -294,7 +295,12 @@ const AppScreen: React.FC<AppScreenProps> = ({
           data-part="paper"
           {...activityDataAttributes}
         >
-          <div className={css.paperContent({ hasAppBar })}>{children}</div>
+          <div
+            ref={paperContentRef}
+            className={css.paperContent({ hasAppBar })}
+          >
+            {children}
+          </div>
         </div>
         {!activity?.isRoot &&
           globalOptions.theme === "cupertino" &&
