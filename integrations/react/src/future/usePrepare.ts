@@ -2,8 +2,8 @@ import type {
   InferActivityParams,
   RegisteredActivityName,
 } from "@stackflow/config";
-import { isStructuredActivityComponent } from "__internal__/StructuredActivityComponentType";
 import { useActivityComponentMap } from "../__internal__/ActivityComponentMapProvider";
+import { isStructuredActivityComponent } from "../__internal__/StructuredActivityComponentType";
 import { useDataLoader } from "./loader";
 import { useConfig } from "./useConfig";
 

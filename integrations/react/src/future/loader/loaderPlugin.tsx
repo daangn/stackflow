@@ -2,12 +2,9 @@ import type {
   ActivityDefinition,
   RegisteredActivityName,
 } from "@stackflow/config";
-import {
-  getContentComponent,
-  isStructuredActivityComponent,
-} from "__internal__/StructuredActivityComponentType";
 import type { ActivityComponentType } from "../../__internal__/ActivityComponentType";
 import type { StackflowReactPlugin } from "../../__internal__/StackflowReactPlugin";
+import { isStructuredActivityComponent } from "../../__internal__/StructuredActivityComponentType";
 import { isPromiseLike } from "../../__internal__/utils/isPromiseLike";
 import type { StackflowInput } from "../stackflow";
 

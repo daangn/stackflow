@@ -1,4 +1,4 @@
-import React, { Component, lazy, type ReactNode, Suspense } from "react";
+import React, { Component, type ReactNode, Suspense } from "react";
 import { useActivityComponentMap } from "./ActivityComponentMapProvider";
 import { ActivityProvider } from "./activity";
 import { useCoreState } from "./core";
@@ -82,9 +82,9 @@ PluginRenderer.displayName = "PluginRenderer";
 
 export default PluginRenderer;
 
-function renderStructuredActivityComponent<P extends {}>(
-  structuredActivityComponent: StructuredActivityComponentType<P>,
-  params: P,
+function renderStructuredActivityComponent(
+  structuredActivityComponent: StructuredActivityComponentType<{}>,
+  params: {},
 ): ReactNode {
   const { layout, loading, errorHandler } = structuredActivityComponent;
   const ContentComponent = getContentComponent(structuredActivityComponent);

@@ -18,10 +18,18 @@ export interface StructuredActivityComponentType<P extends {}> {
 
 export function structuredActivityComponent<
   ActivityName extends RegisteredActivityName,
->(
-  options: StructuredActivityComponentType<InferActivityParams<ActivityName>>,
-): StructuredActivityComponentType<InferActivityParams<ActivityName>> {
-  return options;
+>(options: {
+  content:
+    | Content<InferActivityParams<ActivityName>>
+    | (() => Promise<{ default: Content<InferActivityParams<ActivityName>> }>);
+  layout?: Layout<InferActivityParams<ActivityName>>;
+  loading?: Loading<InferActivityParams<ActivityName>>;
+  errorHandler?: ErrorHandler<InferActivityParams<ActivityName>>;
+}): StructuredActivityComponentType<InferActivityParams<ActivityName>> {
+  return {
+    ...options,
+    [STRUCTURED_ACTIVITY_COMPONENT_TYPE]: true,
+  };
 }
 
 export function isStructuredActivityComponent(
@@ -44,19 +52,33 @@ export function content<ActivityName extends RegisteredActivityName>(
   return { component };
 }
 
-export function getContentComponent<P extends {}>(
-  structuredActivityComponent: StructuredActivityComponentType<P>,
-): Content<P>["component"] {
+const ContentComponentMap = new WeakMap<
+  StructuredActivityComponentType<{}>,
+  Content<{}>["component"]
+>();
+
+export function getContentComponent(
+  structuredActivityComponent: StructuredActivityComponentType<{}>,
+): Content<{}>["component"] {
   const content = structuredActivityComponent.content;
 
-  return "component" in content
-    ? content.component
-    : lazy(async () => {
-        const {
-          default: { component: Component },
-        } = await content();
-        return { default: Component };
-      });
+  if (ContentComponentMap.has(structuredActivityComponent)) {
+    return ContentComponentMap.get(structuredActivityComponent)!;
+  }
+
+  const ContentComponent =
+    "component" in content
+      ? content.component
+      : lazy(async () => {
+          const {
+            default: { component: Component },
+          } = await content();
+          return { default: Component };
+        });
+
+  ContentComponentMap.set(structuredActivityComponent, ContentComponent);
+
+  return ContentComponent;
 }
 
 export interface Layout<P extends {}> {
