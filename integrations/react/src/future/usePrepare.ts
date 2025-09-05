@@ -2,6 +2,7 @@ import type {
   InferActivityParams,
   RegisteredActivityName,
 } from "@stackflow/config";
+import { isStructuredActivityComponent } from "__internal__/StructuredActivityComponentType";
 import { useActivityComponentMap } from "../__internal__/ActivityComponentMapProvider";
 import { useDataLoader } from "./loader";
 import { useConfig } from "./useConfig";
@@ -34,15 +35,19 @@ export function usePrepare(): Prepare {
       );
     }
 
-    const contentComponent =
-      "content" in activityComponentMap[activityName]
-        ? activityComponentMap[activityName].content.component
-        : activityComponentMap[activityName];
+    if ("_load" in activityComponentMap[activityName]) {
+      prefetchTasks.push(
+        Promise.resolve(activityComponentMap[activityName]._load?.()),
+      );
+    }
 
-    if ("_load" in contentComponent) {
-      const lazyComponent = contentComponent;
-
-      prefetchTasks.push(Promise.resolve(lazyComponent._load?.()));
+    if (
+      isStructuredActivityComponent(activityComponentMap[activityName]) &&
+      typeof activityComponentMap[activityName].content === "function"
+    ) {
+      prefetchTasks.push(
+        Promise.resolve(activityComponentMap[activityName].content()),
+      );
     }
 
     await Promise.all(prefetchTasks);

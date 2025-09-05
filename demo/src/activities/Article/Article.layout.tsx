@@ -1,12 +1,8 @@
-import { useActivityParams } from "@stackflow/react/future";
-import type { ReactNode } from "react";
+import { layout } from "@stackflow/react/future";
 import Layout from "../../components/Layout";
 
-function ArticleLayout({ children }: { children: ReactNode }) {
-  const { title } = useActivityParams<"Article">();
-
+const ArticleLayout = layout<"Article">(({ params: { title }, children }) => {
   return <Layout appBar={{ title }}>{children}</Layout>;
-}
-ArticleLayout.displayName = "ArticleLayout";
+});
 
 export default ArticleLayout;

@@ -2,6 +2,10 @@ import type {
   ActivityDefinition,
   RegisteredActivityName,
 } from "@stackflow/config";
+import {
+  getContentComponent,
+  isStructuredActivityComponent,
+} from "__internal__/StructuredActivityComponentType";
 import type { ActivityComponentType } from "../../__internal__/ActivityComponentType";
 import type { StackflowReactPlugin } from "../../__internal__/StackflowReactPlugin";
 import { isPromiseLike } from "../../__internal__/utils/isPromiseLike";
@@ -102,10 +106,6 @@ function createBeforeRouteHandler<
       (activity) => activity.name === activityName,
     );
     const matchActivityComponent = input.components[activityName as T["name"]];
-    const contentComponent =
-      "content" in matchActivityComponent
-        ? matchActivityComponent.content.component
-        : matchActivityComponent;
 
     if (!matchActivity || !matchActivityComponent) {
       return;
@@ -118,7 +118,12 @@ function createBeforeRouteHandler<
       ? loaderData
       : undefined;
     const lazyComponentPromise =
-      "_load" in contentComponent ? contentComponent._load?.() : undefined;
+      isStructuredActivityComponent(matchActivityComponent) &&
+      typeof matchActivityComponent.content === "function"
+        ? matchActivityComponent.content()
+        : "_load" in matchActivityComponent
+          ? matchActivityComponent._load?.()
+          : undefined;
     const shouldRenderImmediately = (activityContext as any)
       ?.lazyActivityComponentRenderContext?.shouldRenderImmediately;
 

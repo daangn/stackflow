@@ -1,11 +1,15 @@
-import { useActivityParams, useLoaderData } from "@stackflow/react/future";
+import {
+  content,
+  useActivityParams,
+  useLoaderData,
+} from "@stackflow/react/future";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import ArticleCard from "../../components/ArticleCard";
 import ArticleProfile from "../../components/ArticleProfile";
 import * as css from "./Article.content.css";
 import type { articleLoader } from "./Article.loader";
 
-const ArticleContent = () => {
+const ArticleContent = content<"Article">(() => {
   const { title } = useActivityParams<"Article">();
   const { imageUrl, recommenderCards } = useLoaderData<typeof articleLoader>();
 
@@ -42,8 +46,6 @@ const ArticleContent = () => {
       </div>
     </div>
   );
-};
-
-ArticleContent.displayName = "ArticleContent";
+});
 
 export default ArticleContent;

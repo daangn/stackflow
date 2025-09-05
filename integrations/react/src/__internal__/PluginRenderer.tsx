@@ -1,10 +1,14 @@
-import React, { Component, type ReactNode, Suspense } from "react";
+import React, { Component, lazy, type ReactNode, Suspense } from "react";
 import { useActivityComponentMap } from "./ActivityComponentMapProvider";
 import { ActivityProvider } from "./activity";
 import { useCoreState } from "./core";
 import { usePlugins } from "./plugins";
 import type { StackflowReactPlugin } from "./StackflowReactPlugin";
-import type { StructuredActivityComponentType } from "./StructuredActivityComponentType";
+import {
+  getContentComponent,
+  isStructuredActivityComponent,
+  type StructuredActivityComponentType,
+} from "./StructuredActivityComponentType";
 import type { WithRequired } from "./utils";
 
 interface PluginRendererProps {
@@ -35,12 +39,13 @@ const PluginRenderer: React.FC<PluginRendererProps> = ({
             render(overrideActivity) {
               const Activity = activityComponentMap[activity.name];
 
-              let output: React.ReactNode =
-                "content" in Activity ? (
-                  renderStructuredActivityComponent(Activity, activity.params)
-                ) : (
-                  <Activity params={activity.params} />
-                );
+              let output: React.ReactNode = isStructuredActivityComponent(
+                Activity,
+              ) ? (
+                renderStructuredActivityComponent(Activity, activity.params)
+              ) : (
+                <Activity params={activity.params} />
+              );
 
               plugins.forEach((p) => {
                 output =
@@ -81,8 +86,8 @@ function renderStructuredActivityComponent<P extends {}>(
   structuredActivityComponent: StructuredActivityComponentType<P>,
   params: P,
 ): ReactNode {
-  const { content, layout, loading, errorHandler } =
-    structuredActivityComponent;
+  const { layout, loading, errorHandler } = structuredActivityComponent;
+  const ContentComponent = getContentComponent(structuredActivityComponent);
 
   const wrappers: Array<(node: ReactNode) => ReactNode> = [
     (node) =>
@@ -115,7 +120,7 @@ function renderStructuredActivityComponent<P extends {}>(
 
   return wrappers.reduce<ReactNode>(
     (node, wrapper) => wrapper(node),
-    <content.component params={params} />,
+    <ContentComponent params={params} />,
   );
 }
 

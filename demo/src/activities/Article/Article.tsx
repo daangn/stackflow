@@ -1,4 +1,4 @@
-import { type ActivityComponentType, lazy } from "@stackflow/react/future";
+import { structuredActivityComponent } from "@stackflow/react/future";
 import ArticleLayout from "./Article.layout";
 import ArticleLoading from "./Article.loading";
 
@@ -11,8 +11,8 @@ declare module "@stackflow/config" {
   }
 }
 
-export const Article: ActivityComponentType<"Article"> = {
-  content: lazy(() => import("./Article.content")),
+export const Article = structuredActivityComponent<"Article">({
+  content: () => import("./Article.content"),
   layout: ArticleLayout,
   loading: ArticleLoading,
-};
+});
