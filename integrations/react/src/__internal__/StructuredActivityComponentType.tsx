@@ -9,7 +9,7 @@ export interface StructuredActivityComponentType<P extends {}> {
   content: Content<P>;
   layout?: Layout<P>;
   loading?: Loading<P>;
-  error?: Error<P>;
+  errorHandler?: ErrorHandler<P>;
 }
 
 export interface Content<P extends {}> {
@@ -45,16 +45,16 @@ export function loading<ActivityName extends RegisteredActivityName>(
   return { component };
 }
 
-export interface Error<P extends {}> {
+export interface ErrorHandler<P extends {}> {
   component: ComponentType<{ params: P; error: unknown; reset: () => void }>;
 }
 
-export function error<ActivityName extends RegisteredActivityName>(
+export function errorHandler<ActivityName extends RegisteredActivityName>(
   component: ComponentType<{
     params: InferActivityParams<ActivityName>;
     error: unknown;
     reset: () => void;
   }>,
-): Error<InferActivityParams<ActivityName>> {
+): ErrorHandler<InferActivityParams<ActivityName>> {
   return { component };
 }

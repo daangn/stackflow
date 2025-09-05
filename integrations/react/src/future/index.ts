@@ -1,11 +1,6 @@
 export * from "../__internal__/activity/useActivity";
 export * from "../__internal__/StackflowReactPlugin";
-export {
-  content,
-  error,
-  layout,
-  loading,
-} from "../__internal__/StructuredActivityComponentType";
+export * from "../__internal__/StructuredActivityComponentType";
 export * from "../__internal__/stack/useStack";
 export * from "./Actions";
 export * from "./ActivityComponentType";

@@ -81,7 +81,8 @@ function renderStructuredActivityComponent<P extends {}>(
   structuredActivityComponent: StructuredActivityComponentType<P>,
   params: P,
 ): ReactNode {
-  const { content, layout, loading, error } = structuredActivityComponent;
+  const { content, layout, loading, errorHandler } =
+    structuredActivityComponent;
 
   const wrappers: Array<(node: ReactNode) => ReactNode> = [
     (node) =>
@@ -93,10 +94,10 @@ function renderStructuredActivityComponent<P extends {}>(
         node
       ),
     (node) =>
-      error?.component ? (
+      errorHandler?.component ? (
         <StructuredActivityComponentErrorBoundary
           renderFallback={(err, reset) => (
-            <error.component params={params} error={err} reset={reset} />
+            <errorHandler.component params={params} error={err} reset={reset} />
           )}
         >
           {node}
