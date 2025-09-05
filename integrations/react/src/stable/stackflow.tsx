@@ -258,7 +258,7 @@ export function stackflow<T extends BaseActivities>(
         return;
       }
 
-      activityComponentMap[activity.name] = activity.component;
+      activityComponentMap[activity.name] = memo(activity.component);
 
       staticCoreStore.actions.dispatchEvent("ActivityRegistered", {
         activityName: activity.name,
