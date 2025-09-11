@@ -8,8 +8,12 @@ import type { StackflowReactPlugin } from "@stackflow/react";
 import type { ActivityComponentType } from "@stackflow/react/future";
 import type { History, Listener } from "history";
 import { createBrowserHistory, createMemoryHistory } from "history";
+import { useSyncExternalStore } from "react";
 import UrlPattern from "url-pattern";
-import { DefaultHistorySetupProcess } from "./DefaultHistorySetupProcess";
+import {
+  DefaultHistorySetupProcess,
+  DefaultHistorySetupProcessStateContext,
+} from "./DefaultHistorySetupProcess";
 import { HistoryQueueProvider } from "./HistoryQueueContext";
 import { parseState, pushState, replaceState } from "./historyState";
 import { last } from "./last";
@@ -96,10 +100,19 @@ export function historySyncPlugin<
     return {
       key: "plugin-history-sync",
       wrapStack({ stack }) {
+        const defaultHistorySetupProcessState = useSyncExternalStore(
+          () => defaultHistorySetupProcess?.subscribe(() => {}) ?? (() => {}),
+          () => defaultHistorySetupProcess?.getSnapshot() ?? null,
+        );
+
         return (
           <HistoryQueueProvider requestHistoryTick={requestHistoryTick}>
             <RoutesProvider routes={activityRoutes}>
-              {stack.render()}
+              <DefaultHistorySetupProcessStateContext.Provider
+                value={defaultHistorySetupProcessState}
+              >
+                {stack.render()}
+              </DefaultHistorySetupProcessStateContext.Provider>
             </RoutesProvider>
           </HistoryQueueProvider>
         );

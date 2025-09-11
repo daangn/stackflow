@@ -1,10 +1,11 @@
-import type { HistoryEntry } from "RouteLike";
 import {
   id,
   makeEvent,
   type PushedEvent,
   type StackflowActions,
 } from "@stackflow/core";
+import { createContext, useContext } from "react";
+import type { HistoryEntry } from "./RouteLike";
 
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
@@ -21,6 +22,7 @@ export type DefaultHistorySetupProcessStatus =
 export interface DefaultHistorySetupProcessSnapshot {
   status: DefaultHistorySetupProcessStatus;
   defaultHistoryEntryEntities: Set<string>;
+  end: Promise<void>;
 }
 
 export class DefaultHistorySetupProcess {
@@ -30,6 +32,8 @@ export class DefaultHistorySetupProcess {
   private status: DefaultHistorySetupProcessStatus;
   private processListeners: (() => void)[];
   private navigateToTargetActivity: (actions: StackflowActions) => void;
+  private end: Promise<void>;
+  private resolveEnd!: () => void;
   initialEvents: PushedEvent[];
 
   constructor(
@@ -116,6 +120,9 @@ export class DefaultHistorySetupProcess {
     ];
     this.processListeners = [];
     this.navigateToTargetActivity = navigateToTargetActivity;
+    this.end = new Promise<void>((resolve) => {
+      this.resolveEnd = resolve;
+    });
     this.status = DEFAULT_HISTORY_SETUP_PROCESS_STATUS.PROGRESS;
   }
 
@@ -145,6 +152,7 @@ export class DefaultHistorySetupProcess {
       )
     ) {
       this.status = DEFAULT_HISTORY_SETUP_PROCESS_STATUS.CANCELLED;
+      this.resolveEnd();
       this.notifyProcessListeners();
 
       return;
@@ -156,6 +164,7 @@ export class DefaultHistorySetupProcess {
       nextTask(actions);
     } else {
       this.status = DEFAULT_HISTORY_SETUP_PROCESS_STATUS.COMPLETED;
+      this.resolveEnd();
       this.navigateToTargetActivity(actions);
     }
 
@@ -166,6 +175,7 @@ export class DefaultHistorySetupProcess {
     return {
       status: this.status,
       defaultHistoryEntryEntities: new Set(this.defaultHistoryEntryEntities),
+      end: this.end,
     };
   }
 
@@ -183,3 +193,10 @@ export class DefaultHistorySetupProcess {
     this.processListeners.forEach((listener) => listener());
   }
 }
+
+export const DefaultHistorySetupProcessStateContext =
+  createContext<DefaultHistorySetupProcessSnapshot | null>(null);
+
+export const useDefaultHistorySetupProcessState = () => {
+  return useContext(DefaultHistorySetupProcessStateContext);
+};

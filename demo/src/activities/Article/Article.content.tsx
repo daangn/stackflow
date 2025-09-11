@@ -1,8 +1,10 @@
+import { useDefaultHistorySetupProcessState } from "@stackflow/plugin-history-sync";
 import {
   content,
   useActivityParams,
   useLoaderData,
 } from "@stackflow/react/future";
+import { use } from "react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import ArticleCard from "../../components/ArticleCard";
 import ArticleProfile from "../../components/ArticleProfile";
@@ -12,6 +14,11 @@ import type { articleLoader } from "./Article.loader";
 const ArticleContent = content<"Article">(() => {
   const { title } = useActivityParams<"Article">();
   const { imageUrl, recommenderCards } = useLoaderData<typeof articleLoader>();
+  const defaultHistorySetupProcessState = useDefaultHistorySetupProcessState();
+
+  if (defaultHistorySetupProcessState) {
+    use(defaultHistorySetupProcessState.end);
+  }
 
   return (
     <div className={css.container}>
