@@ -3,12 +3,13 @@ import type {
   Config,
   RegisteredActivityName,
 } from "@stackflow/config";
-import { id, makeEvent, type StackflowActions } from "@stackflow/core";
+import { id, makeEvent } from "@stackflow/core";
 import type { StackflowReactPlugin } from "@stackflow/react";
 import type { ActivityComponentType } from "@stackflow/react/future";
 import type { History, Listener } from "history";
 import { createBrowserHistory, createMemoryHistory } from "history";
 import UrlPattern from "url-pattern";
+import { DefaultHistorySetupProcess } from "./DefaultHistorySetupProcess";
 import { HistoryQueueProvider } from "./HistoryQueueContext";
 import { parseState, pushState, replaceState } from "./historyState";
 import { last } from "./last";
@@ -88,35 +89,9 @@ export function historySyncPlugin<
   return () => {
     let pushFlag = 0;
     let silentFlag = false;
-    let pendingDefaultHistoryEntryInsertionTasks:
-      | ((actions: StackflowActions) => void)[]
-      | null = null;
-    const defaultHistoryEntryEntities: Set<string> = new Set();
+    let defaultHistorySetupProcess: DefaultHistorySetupProcess | null = null;
 
     const { requestHistoryTick } = makeHistoryTaskQueue(history);
-
-    function defaultHistorySetupCheckpoint(actions: StackflowActions) {
-      if (!pendingDefaultHistoryEntryInsertionTasks) return;
-
-      const stack = actions.getStack();
-
-      if (stack.globalTransitionState !== "idle") return;
-
-      const nextTask = pendingDefaultHistoryEntryInsertionTasks.shift();
-
-      if (pendingDefaultHistoryEntryInsertionTasks.length === 0) {
-        pendingDefaultHistoryEntryInsertionTasks = null;
-      }
-
-      if (nextTask) {
-        nextTask(actions);
-      }
-    }
-
-    function clearPendingDefaultHistoryEntryInsertionTasks() {
-      pendingDefaultHistoryEntryInsertionTasks = null;
-      defaultHistoryEntryEntities.clear();
-    }
 
     return {
       key: "plugin-history-sync",
@@ -198,65 +173,9 @@ export function historySyncPlugin<
           targetActivityRoute.defaultHistory?.(params) ?? [];
 
         if (defaultHistory[0]) {
-          const initialHistoryEntry = defaultHistory[0];
-          const enoughPastTime = new Date().getTime() - MINUTE;
-
-          pendingDefaultHistoryEntryInsertionTasks = [
-            ...(initialHistoryEntry.additionalSteps?.length
-              ? [
-                  (actions: StackflowActions) => {
-                    for (const {
-                      stepParams,
-                      hasZIndex,
-                    } of initialHistoryEntry.additionalSteps!) {
-                      const stepId = id();
-
-                      defaultHistoryEntryEntities.add(stepId);
-
-                      actions.stepPush({
-                        stepId,
-                        stepParams,
-                        hasZIndex,
-                      });
-                    }
-                  },
-                ]
-              : []),
-            ...defaultHistory
-              .slice(1)
-              .map(
-                ({ activityName, activityParams, additionalSteps }) =>
-                  ({ push, stepPush }: StackflowActions) => {
-                    const activityId = id();
-
-                    defaultHistoryEntryEntities.add(activityId);
-
-                    push({
-                      activityId,
-                      activityName,
-                      activityParams,
-                      activityContext: {
-                        path: currentPath,
-                        lazyActivityComponentRenderContext: {
-                          shouldRenderImmediately: true,
-                        },
-                      },
-                    });
-
-                    for (const { stepParams, hasZIndex } of additionalSteps ??
-                      []) {
-                      const stepId = id();
-
-                      defaultHistoryEntryEntities.add(stepId);
-
-                      stepPush({
-                        stepId,
-                        stepParams,
-                        hasZIndex,
-                      });
-                    }
-                  },
-              ),
+          defaultHistorySetupProcess = new DefaultHistorySetupProcess(
+            [defaultHistory[0], ...defaultHistory.slice(1)],
+            currentPath,
             ({ push }) => {
               const template = makeTemplate(
                 targetActivityRoute,
@@ -266,8 +185,6 @@ export function historySyncPlugin<
                 template.parse(currentPath) ??
                 urlSearchParamsToMap(pathToUrl(currentPath).searchParams);
               const activityId = id();
-
-              defaultHistoryEntryEntities.add(activityId);
 
               push({
                 activityId,
@@ -283,28 +200,9 @@ export function historySyncPlugin<
                 },
               });
             },
-          ];
+          );
 
-          const initialActivityId = id();
-
-          defaultHistoryEntryEntities.add(initialActivityId);
-
-          return [
-            makeEvent("Pushed", {
-              activityId: initialActivityId,
-              activityName: initialHistoryEntry.activityName,
-              activityParams: {
-                ...initialHistoryEntry.activityParams,
-              },
-              eventDate: enoughPastTime,
-              activityContext: {
-                path: currentPath,
-                lazyActivityComponentRenderContext: {
-                  shouldRenderImmediately: true,
-                },
-              },
-            }),
-          ];
+          return defaultHistorySetupProcess.initialEvents;
         }
 
         const template = makeTemplate(
@@ -322,7 +220,7 @@ export function historySyncPlugin<
             activityParams: {
               ...activityParams,
             },
-            eventDate: new Date().getTime() - MINUTE,
+            eventDate: Date.now() - MINUTE,
             activityContext: {
               path: currentPath,
               lazyActivityComponentRenderContext: {
@@ -485,22 +383,9 @@ export function historySyncPlugin<
 
         history.listen(onPopState);
 
-        const activities = getStack().activities;
-
-        if (activities.every(({ id }) => defaultHistoryEntryEntities.has(id))) {
-          defaultHistorySetupCheckpoint(actions);
-        } else {
-          clearPendingDefaultHistoryEntryInsertionTasks();
-        }
+        defaultHistorySetupProcess?.captureNavigationOpportunity(actions);
       },
       onPushed({ effect: { activity } }) {
-        if (
-          pendingDefaultHistoryEntryInsertionTasks &&
-          !defaultHistoryEntryEntities.has(activity.id)
-        ) {
-          clearPendingDefaultHistoryEntryInsertionTasks();
-        }
-
         if (pushFlag) {
           pushFlag -= 1;
           return;
@@ -525,13 +410,6 @@ export function historySyncPlugin<
         });
       },
       onStepPushed({ effect: { activity, step } }) {
-        if (
-          pendingDefaultHistoryEntryInsertionTasks &&
-          !defaultHistoryEntryEntities.has(step.id)
-        ) {
-          clearPendingDefaultHistoryEntryInsertionTasks();
-        }
-
         if (pushFlag) {
           pushFlag -= 1;
           return;
@@ -557,10 +435,6 @@ export function historySyncPlugin<
         });
       },
       onReplaced({ effect: { activity } }) {
-        if (pendingDefaultHistoryEntryInsertionTasks) {
-          clearPendingDefaultHistoryEntryInsertionTasks();
-        }
-
         if (!activity.isActive) {
           return;
         }
@@ -584,10 +458,6 @@ export function historySyncPlugin<
         });
       },
       onStepReplaced({ effect: { activity, step } }) {
-        if (pendingDefaultHistoryEntryInsertionTasks) {
-          clearPendingDefaultHistoryEntryInsertionTasks();
-        }
-
         if (!activity.isActive) {
           return;
         }
@@ -610,16 +480,6 @@ export function historySyncPlugin<
             useHash: options.useHash,
           });
         });
-      },
-      onPopped() {
-        if (pendingDefaultHistoryEntryInsertionTasks) {
-          clearPendingDefaultHistoryEntryInsertionTasks();
-        }
-      },
-      onStepPopped() {
-        if (pendingDefaultHistoryEntryInsertionTasks) {
-          clearPendingDefaultHistoryEntryInsertionTasks();
-        }
       },
       onBeforePush({ actionParams, actions: { overrideActionParams } }) {
         if (
@@ -735,7 +595,7 @@ export function historySyncPlugin<
         }
       },
       onChanged({ actions }) {
-        defaultHistorySetupCheckpoint(actions);
+        defaultHistorySetupProcess?.captureNavigationOpportunity(actions);
       },
     };
   };
