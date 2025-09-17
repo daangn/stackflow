@@ -32,12 +32,12 @@ export class DefaultHistorySetupProcess {
       : [];
 
     if (this.pendingDefaultHistoryEntries.length === 0) return [];
+    if (stack !== null && stack.globalTransitionState !== "idle") return [];
     if (!this.verifyNavigationHistoryIntegrity(navigationHistory)) {
       this.pendingDefaultHistoryEntries = [];
 
       return [];
     }
-    if (stack !== null && stack.globalTransitionState !== "idle") return [];
 
     const nextNavigationEntries = this.pendingDefaultHistoryEntries.splice(
       0,
