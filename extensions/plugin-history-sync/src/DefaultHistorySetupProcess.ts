@@ -27,12 +27,13 @@ export class DefaultHistorySetupProcess {
     stack: Stack | null,
     navigationTime: number,
   ): (PushedEvent | StepPushedEvent)[] {
+    if (stack !== null && stack.globalTransitionState !== "idle") return [];
+
     const navigationHistory = stack
       ? this.filterNavigationEvents(stack.events)
       : [];
 
     if (this.pendingDefaultHistoryEntries.length === 0) return [];
-    if (stack !== null && stack.globalTransitionState !== "idle") return [];
     if (!this.verifyNavigationHistoryIntegrity(navigationHistory)) {
       this.pendingDefaultHistoryEntries = [];
 
