@@ -8,7 +8,6 @@ import type { StackflowReactPlugin } from "@stackflow/react";
 import type { ActivityComponentType } from "@stackflow/react/future";
 import type { History, Listener } from "history";
 import { createBrowserHistory, createMemoryHistory } from "history";
-import { useSyncExternalStore } from "react";
 import UrlPattern from "url-pattern";
 import { DefaultHistorySetupProcess } from "./DefaultHistorySetupProcess";
 import { HistoryQueueProvider } from "./HistoryQueueContext";
