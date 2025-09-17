@@ -10,10 +10,7 @@ import type { History, Listener } from "history";
 import { createBrowserHistory, createMemoryHistory } from "history";
 import { useSyncExternalStore } from "react";
 import UrlPattern from "url-pattern";
-import {
-  DefaultHistorySetupProcess,
-  DefaultHistorySetupProcessStateContext,
-} from "./DefaultHistorySetupProcess";
+import { DefaultHistorySetupProcess } from "./DefaultHistorySetupProcess";
 import { HistoryQueueProvider } from "./HistoryQueueContext";
 import { parseState, pushState, replaceState } from "./historyState";
 import { last } from "./last";
@@ -100,19 +97,10 @@ export function historySyncPlugin<
     return {
       key: "plugin-history-sync",
       wrapStack({ stack }) {
-        const defaultHistorySetupProcessState = useSyncExternalStore(
-          () => defaultHistorySetupProcess?.subscribe(() => {}) ?? (() => {}),
-          () => defaultHistorySetupProcess?.getSnapshot() ?? null,
-        );
-
         return (
           <HistoryQueueProvider requestHistoryTick={requestHistoryTick}>
             <RoutesProvider routes={activityRoutes}>
-              <DefaultHistorySetupProcessStateContext.Provider
-                value={defaultHistorySetupProcessState}
-              >
-                {stack.render()}
-              </DefaultHistorySetupProcessStateContext.Provider>
+              {stack.render()}
             </RoutesProvider>
           </HistoryQueueProvider>
         );
@@ -187,35 +175,26 @@ export function historySyncPlugin<
 
         if (defaultHistory[0]) {
           defaultHistorySetupProcess = new DefaultHistorySetupProcess(
-            [defaultHistory[0], ...defaultHistory.slice(1)],
-            currentPath,
-            ({ push }) => {
-              const template = makeTemplate(
-                targetActivityRoute,
-                options.urlPatternOptions,
-              );
-              const activityParams =
-                template.parse(currentPath) ??
-                urlSearchParamsToMap(pathToUrl(currentPath).searchParams);
-              const activityId = id();
-
-              push({
-                activityId,
+            [
+              defaultHistory[0],
+              ...defaultHistory.slice(1),
+              {
                 activityName: targetActivityRoute.activityName,
-                activityParams: {
-                  ...activityParams,
-                },
-                activityContext: {
-                  path: currentPath,
-                  lazyActivityComponentRenderContext: {
-                    shouldRenderImmediately: true,
-                  },
-                },
-              });
-            },
+                activityParams:
+                  makeTemplate(
+                    targetActivityRoute,
+                    options.urlPatternOptions,
+                  ).parse(currentPath) ??
+                  urlSearchParamsToMap(pathToUrl(currentPath).searchParams),
+              },
+            ],
+            currentPath,
           );
 
-          return defaultHistorySetupProcess.initialEvents;
+          return defaultHistorySetupProcess.captureNavigationOpportunity(
+            null,
+            Date.now() - MINUTE,
+          );
         }
 
         const template = makeTemplate(
@@ -243,9 +222,9 @@ export function historySyncPlugin<
           }),
         ];
       },
-      onInit({ actions }) {
-        const { getStack, dispatchEvent, push, stepPush } = actions;
-        const rootActivity = getStack().activities[0];
+      onInit({ actions: { getStack, dispatchEvent, push, stepPush } }) {
+        const stack = getStack();
+        const rootActivity = stack.activities[0];
 
         const match = activityRoutes.find(
           (r) => r.activityName === rootActivity.name,
@@ -396,7 +375,11 @@ export function historySyncPlugin<
 
         history.listen(onPopState);
 
-        defaultHistorySetupProcess?.captureNavigationOpportunity(actions);
+        defaultHistorySetupProcess
+          ?.captureNavigationOpportunity(stack, Date.now())
+          .forEach((event) =>
+            event.name === "Pushed" ? push(event) : stepPush(event),
+          );
       },
       onPushed({ effect: { activity } }) {
         if (pushFlag) {
@@ -607,8 +590,12 @@ export function historySyncPlugin<
           }
         }
       },
-      onChanged({ actions }) {
-        defaultHistorySetupProcess?.captureNavigationOpportunity(actions);
+      onChanged({ actions: { getStack, push, stepPush } }) {
+        defaultHistorySetupProcess
+          ?.captureNavigationOpportunity(getStack(), Date.now())
+          .forEach((event) =>
+            event.name === "Pushed" ? push(event) : stepPush(event),
+          );
       },
     };
   };

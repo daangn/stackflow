@@ -22,12 +22,17 @@ export function aggregate(inputEvents: DomainEvent[], now: number): Stack {
    * 3. Run reducer
    */
   const stackReducer = makeStackReducer({ now });
-  const stack = events.reduce(stackReducer, {
-    activities: [],
-    globalTransitionState: "idle",
-    registeredActivities: [],
-    transitionDuration: 0,
-  });
+  const stack = events.reduce(
+    (stack: Stack, event) =>
+      stackReducer({ ...stack, events: [...stack.events, event] }, event),
+    {
+      activities: [],
+      globalTransitionState: "idle",
+      registeredActivities: [],
+      transitionDuration: 0,
+      events: [],
+    },
+  );
 
   /**
    * 4. Post-process

@@ -1,58 +1,69 @@
+import type { HistoryEntry } from "RouteLike";
 import {
+  type DomainEvent,
   id,
   makeEvent,
+  type PoppedEvent,
   type PushedEvent,
-  type StackflowActions,
+  type ReplacedEvent,
+  type Stack,
+  type StepPoppedEvent,
+  type StepPushedEvent,
+  type StepReplacedEvent,
 } from "@stackflow/core";
-import { createContext, useContext } from "react";
-import type { HistoryEntry } from "./RouteLike";
-
-const SECOND = 1000;
-const MINUTE = 60 * SECOND;
-
-export const DEFAULT_HISTORY_SETUP_PROCESS_STATUS = {
-  PROGRESS: "progress",
-  COMPLETED: "completed",
-  CANCELLED: "cancelled",
-} as const;
-
-export type DefaultHistorySetupProcessStatus =
-  (typeof DEFAULT_HISTORY_SETUP_PROCESS_STATUS)[keyof typeof DEFAULT_HISTORY_SETUP_PROCESS_STATUS];
-
-export interface DefaultHistorySetupProcessSnapshot {
-  status: DefaultHistorySetupProcessStatus;
-  defaultHistoryEntryEntities: Set<string>;
-  end: Promise<void>;
-}
 
 export class DefaultHistorySetupProcess {
-  private defaultHistoryEntryEntities: Set<string>;
-  private pendingEntryInsertionTasks: ((actions: StackflowActions) => void)[];
+  private pendingDefaultHistoryEntries: HistoryEntry[];
   private entryPath: string;
-  private status: DefaultHistorySetupProcessStatus;
-  private processListeners: (() => void)[];
-  private navigateToTargetActivity: (actions: StackflowActions) => void;
-  private end: Promise<void>;
-  private resolveEnd!: () => void;
-  initialEvents: PushedEvent[];
+  private dispatchedEvents: (PushedEvent | StepPushedEvent)[];
 
-  constructor(
-    defaultHistory: [HistoryEntry, ...HistoryEntry[]],
-    entryPath: string,
-    navigateToTargetActivity: (actions: StackflowActions) => void,
-  ) {
-    const initialHistoryEntry = defaultHistory[0];
-    const initialActivityId = id();
-
+  constructor(defaultHistory: HistoryEntry[], entryPath: string) {
+    this.pendingDefaultHistoryEntries = defaultHistory.slice();
     this.entryPath = entryPath;
-    this.initialEvents = [
+    this.dispatchedEvents = [];
+  }
+
+  captureNavigationOpportunity(
+    stack: Stack | null,
+    navigationTime: number,
+  ): (PushedEvent | StepPushedEvent)[] {
+    const navigationHistory = stack
+      ? this.filterNavigationEvents(stack.events)
+      : [];
+
+    if (this.pendingDefaultHistoryEntries.length === 0) return [];
+    if (!this.verifyNavigationHistoryIntegrity(navigationHistory)) {
+      this.pendingDefaultHistoryEntries = [];
+
+      return [];
+    }
+    if (stack !== null && stack.globalTransitionState !== "idle") return [];
+
+    const nextNavigationEntries = this.pendingDefaultHistoryEntries.splice(
+      0,
+      1,
+    );
+    const nextNavigationEvents = nextNavigationEntries.flatMap((entry) =>
+      this.historyEntryToEvent(entry, navigationTime),
+    );
+
+    this.dispatchedEvents.push(...nextNavigationEvents);
+
+    return nextNavigationEvents;
+  }
+
+  private historyEntryToEvent(
+    { activityName, activityParams, additionalSteps = [] }: HistoryEntry,
+    navigationTime: number,
+  ): (PushedEvent | StepPushedEvent)[] {
+    return [
       makeEvent("Pushed", {
-        activityId: initialActivityId,
-        activityName: initialHistoryEntry.activityName,
+        activityId: id(),
+        activityName,
         activityParams: {
-          ...initialHistoryEntry.activityParams,
+          ...activityParams,
         },
-        eventDate: Date.now() - MINUTE,
+        eventDate: navigationTime,
         activityContext: {
           path: this.entryPath,
           lazyActivityComponentRenderContext: {
@@ -60,143 +71,42 @@ export class DefaultHistorySetupProcess {
           },
         },
       }),
+      ...additionalSteps.map(({ stepParams, hasZIndex }) =>
+        makeEvent("StepPushed", {
+          stepId: id(),
+          stepParams,
+          hasZIndex,
+        }),
+      ),
     ];
-    this.defaultHistoryEntryEntities = new Set([initialActivityId]);
-    this.pendingEntryInsertionTasks = [
-      ...(initialHistoryEntry.additionalSteps?.length
-        ? [
-            (actions: StackflowActions) => {
-              for (const {
-                stepParams,
-                hasZIndex,
-              } of initialHistoryEntry.additionalSteps!) {
-                const stepId = id();
-
-                this.defaultHistoryEntryEntities.add(stepId);
-
-                actions.stepPush({
-                  stepId,
-                  stepParams,
-                  hasZIndex,
-                });
-              }
-            },
-          ]
-        : []),
-      ...defaultHistory
-        .slice(1)
-        .map(
-          ({ activityName, activityParams, additionalSteps }) =>
-            ({ push, stepPush }: StackflowActions) => {
-              const activityId = id();
-
-              this.defaultHistoryEntryEntities.add(activityId);
-
-              push({
-                activityId,
-                activityName,
-                activityParams,
-                activityContext: {
-                  path: this.entryPath,
-                  lazyActivityComponentRenderContext: {
-                    shouldRenderImmediately: true,
-                  },
-                },
-              });
-
-              for (const { stepParams, hasZIndex } of additionalSteps ?? []) {
-                const stepId = id();
-
-                this.defaultHistoryEntryEntities.add(stepId);
-
-                stepPush({
-                  stepId,
-                  stepParams,
-                  hasZIndex,
-                });
-              }
-            },
-        ),
-    ];
-    this.processListeners = [];
-    this.navigateToTargetActivity = navigateToTargetActivity;
-    this.end = new Promise<void>((resolve) => {
-      this.resolveEnd = resolve;
-    });
-    this.status = DEFAULT_HISTORY_SETUP_PROCESS_STATUS.PROGRESS;
   }
 
-  captureNavigationOpportunity(actions: StackflowActions): void {
-    if (
-      this.status === DEFAULT_HISTORY_SETUP_PROCESS_STATUS.COMPLETED ||
-      this.status === DEFAULT_HISTORY_SETUP_PROCESS_STATUS.CANCELLED
-    )
-      return;
-
-    const stack = actions.getStack();
-
-    if (stack.globalTransitionState !== "idle") return;
-    if (
-      stack.activities.some(
-        ({ id, enteredBy, exitedBy, steps }) =>
-          !this.defaultHistoryEntryEntities.has(id) ||
-          enteredBy.name === "Replaced" ||
-          exitedBy ||
-          steps.some(
-            ({ id, enteredBy, exitedBy }) =>
-              !this.defaultHistoryEntryEntities.has(id) ||
-              enteredBy.name === "StepReplaced" ||
-              enteredBy.name === "Replaced" ||
-              exitedBy,
-          ),
-      )
-    ) {
-      this.status = DEFAULT_HISTORY_SETUP_PROCESS_STATUS.CANCELLED;
-      this.resolveEnd();
-      this.notifyProcessListeners();
-
-      return;
-    }
-
-    const nextTask = this.pendingEntryInsertionTasks.shift();
-
-    if (nextTask) {
-      nextTask(actions);
-    } else {
-      this.status = DEFAULT_HISTORY_SETUP_PROCESS_STATUS.COMPLETED;
-      this.resolveEnd();
-      this.navigateToTargetActivity(actions);
-    }
-
-    this.notifyProcessListeners();
+  private verifyNavigationHistoryIntegrity(
+    navigationHistory: NavigationEvents[],
+  ): boolean {
+    if (navigationHistory.length !== this.dispatchedEvents.length) return false;
+    return navigationHistory.every(
+      (event, index) => event.id === this.dispatchedEvents[index].id,
+    );
   }
 
-  getSnapshot(): DefaultHistorySetupProcessSnapshot {
-    return {
-      status: this.status,
-      defaultHistoryEntryEntities: new Set(this.defaultHistoryEntryEntities),
-      end: this.end,
-    };
-  }
-
-  subscribe(listener: () => void): () => void {
-    this.processListeners.push(listener);
-
-    return () => {
-      this.processListeners = this.processListeners.filter(
-        (l) => l !== listener,
-      );
-    };
-  }
-
-  private notifyProcessListeners(): void {
-    this.processListeners.forEach((listener) => listener());
+  private filterNavigationEvents(events: DomainEvent[]): NavigationEvents[] {
+    return events.filter(
+      (event) =>
+        event.name === "Pushed" ||
+        event.name === "Popped" ||
+        event.name === "Replaced" ||
+        event.name === "StepPushed" ||
+        event.name === "StepPopped" ||
+        event.name === "StepReplaced",
+    );
   }
 }
 
-export const DefaultHistorySetupProcessStateContext =
-  createContext<DefaultHistorySetupProcessSnapshot | null>(null);
-
-export const useDefaultHistorySetupProcessState = () => {
-  return useContext(DefaultHistorySetupProcessStateContext);
-};
+export type NavigationEvents =
+  | PushedEvent
+  | PoppedEvent
+  | ReplacedEvent
+  | StepPushedEvent
+  | StepPoppedEvent
+  | StepReplacedEvent;
