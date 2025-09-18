@@ -1,3 +1,6 @@
+import { CompositNavigationProcess } from "NavigationProcess/CompositNavigationProcess";
+import type { NavigationProcess } from "NavigationProcess/NavigationProcess";
+import { SerialNavigationProcess } from "NavigationProcess/SerialNavigationProcess";
 import type {
   ActivityDefinition,
   Config,
@@ -9,7 +12,6 @@ import type { ActivityComponentType } from "@stackflow/react/future";
 import type { History, Listener } from "history";
 import { createBrowserHistory, createMemoryHistory } from "history";
 import UrlPattern from "url-pattern";
-import { DefaultHistorySetupProcess } from "./DefaultHistorySetupProcess";
 import { HistoryQueueProvider } from "./HistoryQueueContext";
 import { parseState, pushState, replaceState } from "./historyState";
 import { last } from "./last";
@@ -89,7 +91,9 @@ export function historySyncPlugin<
   return () => {
     let pushFlag = 0;
     let silentFlag = false;
-    let defaultHistorySetupProcess: DefaultHistorySetupProcess | null = null;
+    let defaultHistorySetupProcess: NavigationProcess | null = null;
+    let entrySetupProcess: NavigationProcess | null = null;
+    let initialSetupProcess: NavigationProcess | null = null;
 
     const { requestHistoryTick } = makeHistoryTaskQueue(history);
 
@@ -172,54 +176,71 @@ export function historySyncPlugin<
         const defaultHistory =
           targetActivityRoute.defaultHistory?.(params) ?? [];
 
-        if (defaultHistory[0]) {
-          defaultHistorySetupProcess = new DefaultHistorySetupProcess(
-            [
-              defaultHistory[0],
-              ...defaultHistory.slice(1),
-              {
-                activityName: targetActivityRoute.activityName,
-                activityParams:
-                  makeTemplate(
-                    targetActivityRoute,
-                    options.urlPatternOptions,
-                  ).parse(currentPath) ??
-                  urlSearchParamsToMap(pathToUrl(currentPath).searchParams),
-              },
-            ],
-            currentPath,
-          );
-
-          return defaultHistorySetupProcess.captureNavigationOpportunity(
-            null,
-            Date.now() - MINUTE,
-          );
-        }
-
-        const template = makeTemplate(
-          targetActivityRoute,
-          options.urlPatternOptions,
+        defaultHistorySetupProcess = new SerialNavigationProcess(
+          defaultHistory.map(
+            ({ activityName, activityParams, additionalSteps = [] }) =>
+              (navigationTime) => [
+                makeEvent("Pushed", {
+                  activityId: id(),
+                  activityName,
+                  activityParams: {
+                    ...activityParams,
+                  },
+                  eventDate: navigationTime,
+                  activityContext: {
+                    path: currentPath,
+                    lazyActivityComponentRenderContext: {
+                      shouldRenderImmediately: true,
+                    },
+                  },
+                }),
+                ...additionalSteps.map(({ stepParams, hasZIndex }) =>
+                  makeEvent("StepPushed", {
+                    stepId: id(),
+                    stepParams,
+                    hasZIndex,
+                    eventDate: navigationTime,
+                  }),
+                ),
+              ],
+          ),
         );
-        const activityParams =
-          template.parse(currentPath) ??
-          urlSearchParamsToMap(pathToUrl(currentPath).searchParams);
+        initialSetupProcess = new CompositNavigationProcess(
+          defaultHistorySetupProcess,
+          (base) => {
+            entrySetupProcess = new SerialNavigationProcess(
+              [
+                (navigationTime) => [
+                  makeEvent("Pushed", {
+                    activityId: id(),
+                    activityName: targetActivityRoute.activityName,
+                    activityParams:
+                      makeTemplate(
+                        targetActivityRoute,
+                        options.urlPatternOptions,
+                      ).parse(currentPath) ??
+                      urlSearchParamsToMap(pathToUrl(currentPath).searchParams),
+                    eventDate: navigationTime,
+                    activityContext: {
+                      path: currentPath,
+                      lazyActivityComponentRenderContext: {
+                        shouldRenderImmediately: true,
+                      },
+                    },
+                  }),
+                ],
+              ],
+              base,
+            );
 
-        return [
-          makeEvent("Pushed", {
-            activityId: id(),
-            activityName: targetActivityRoute.activityName,
-            activityParams: {
-              ...activityParams,
-            },
-            eventDate: Date.now() - MINUTE,
-            activityContext: {
-              path: currentPath,
-              lazyActivityComponentRenderContext: {
-                shouldRenderImmediately: true,
-              },
-            },
-          }),
-        ];
+            return entrySetupProcess;
+          },
+        );
+
+        return initialSetupProcess.captureNavigationOpportunity(
+          null,
+          Date.now() - MINUTE,
+        );
       },
       onInit({ actions: { getStack, dispatchEvent, push, stepPush } }) {
         const stack = getStack();
@@ -374,7 +395,7 @@ export function historySyncPlugin<
 
         history.listen(onPopState);
 
-        defaultHistorySetupProcess
+        initialSetupProcess
           ?.captureNavigationOpportunity(stack, Date.now())
           .forEach((event) =>
             event.name === "Pushed" ? push(event) : stepPush(event),
@@ -590,7 +611,7 @@ export function historySyncPlugin<
         }
       },
       onChanged({ actions: { getStack, push, stepPush } }) {
-        defaultHistorySetupProcess
+        initialSetupProcess
           ?.captureNavigationOpportunity(getStack(), Date.now())
           .forEach((event) =>
             event.name === "Pushed" ? push(event) : stepPush(event),
