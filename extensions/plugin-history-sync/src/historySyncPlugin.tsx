@@ -1,5 +1,6 @@
 import { CompositNavigationProcess } from "NavigationProcess/CompositNavigationProcess";
 import type { NavigationProcess } from "NavigationProcess/NavigationProcess";
+import { ProxyNavigationProcess } from "NavigationProcess/ProxyNavigationProcess";
 import { SerialNavigationProcess } from "NavigationProcess/SerialNavigationProcess";
 import type {
   ActivityDefinition,
@@ -91,9 +92,9 @@ export function historySyncPlugin<
   return () => {
     let pushFlag = 0;
     let silentFlag = false;
-    let defaultHistorySetupProcess: NavigationProcess | null = null;
-    let entrySetupProcess: NavigationProcess | null = null;
-    let initialSetupProcess: NavigationProcess | null = null;
+    const defaultHistorySetupProcess = new ProxyNavigationProcess();
+    const entrySetupProcess = new ProxyNavigationProcess();
+    const initialSetupProcess = new ProxyNavigationProcess();
 
     const { requestHistoryTick } = makeHistoryTaskQueue(history);
 
@@ -176,50 +177,17 @@ export function historySyncPlugin<
         const defaultHistory =
           targetActivityRoute.defaultHistory?.(params) ?? [];
 
-        defaultHistorySetupProcess = new SerialNavigationProcess(
-          defaultHistory.map(
-            ({ activityName, activityParams, additionalSteps = [] }) =>
-              (navigationTime) => [
-                makeEvent("Pushed", {
-                  activityId: id(),
-                  activityName,
-                  activityParams: {
-                    ...activityParams,
-                  },
-                  eventDate: navigationTime,
-                  activityContext: {
-                    path: currentPath,
-                    lazyActivityComponentRenderContext: {
-                      shouldRenderImmediately: true,
-                    },
-                  },
-                }),
-                ...additionalSteps.map(({ stepParams, hasZIndex }) =>
-                  makeEvent("StepPushed", {
-                    stepId: id(),
-                    stepParams,
-                    hasZIndex,
-                    eventDate: navigationTime,
-                  }),
-                ),
-              ],
-          ),
-        );
-        initialSetupProcess = new CompositNavigationProcess(
-          defaultHistorySetupProcess,
-          (base) => {
-            entrySetupProcess = new SerialNavigationProcess(
-              [
+        defaultHistorySetupProcess.setImpl(
+          new SerialNavigationProcess(
+            defaultHistory.map(
+              ({ activityName, activityParams, additionalSteps = [] }) =>
                 (navigationTime) => [
                   makeEvent("Pushed", {
                     activityId: id(),
-                    activityName: targetActivityRoute.activityName,
-                    activityParams:
-                      makeTemplate(
-                        targetActivityRoute,
-                        options.urlPatternOptions,
-                      ).parse(currentPath) ??
-                      urlSearchParamsToMap(pathToUrl(currentPath).searchParams),
+                    activityName,
+                    activityParams: {
+                      ...activityParams,
+                    },
                     eventDate: navigationTime,
                     activityContext: {
                       path: currentPath,
@@ -228,13 +196,51 @@ export function historySyncPlugin<
                       },
                     },
                   }),
+                  ...additionalSteps.map(({ stepParams, hasZIndex }) =>
+                    makeEvent("StepPushed", {
+                      stepId: id(),
+                      stepParams,
+                      hasZIndex,
+                      eventDate: navigationTime,
+                    }),
+                  ),
                 ],
-              ],
-              base,
+            ),
+          ),
+        );
+        initialSetupProcess.setImpl(
+          new CompositNavigationProcess(defaultHistorySetupProcess, (base) => {
+            entrySetupProcess.setImpl(
+              new SerialNavigationProcess(
+                [
+                  (navigationTime) => [
+                    makeEvent("Pushed", {
+                      activityId: id(),
+                      activityName: targetActivityRoute.activityName,
+                      activityParams:
+                        makeTemplate(
+                          targetActivityRoute,
+                          options.urlPatternOptions,
+                        ).parse(currentPath) ??
+                        urlSearchParamsToMap(
+                          pathToUrl(currentPath).searchParams,
+                        ),
+                      eventDate: navigationTime,
+                      activityContext: {
+                        path: currentPath,
+                        lazyActivityComponentRenderContext: {
+                          shouldRenderImmediately: true,
+                        },
+                      },
+                    }),
+                  ],
+                ],
+                base,
+              ),
             );
 
             return entrySetupProcess;
-          },
+          }),
         );
 
         return initialSetupProcess.captureNavigationOpportunity(
@@ -396,7 +402,7 @@ export function historySyncPlugin<
         history.listen(onPopState);
 
         initialSetupProcess
-          ?.captureNavigationOpportunity(stack, Date.now())
+          .captureNavigationOpportunity(stack, Date.now())
           .forEach((event) =>
             event.name === "Pushed" ? push(event) : stepPush(event),
           );
@@ -612,7 +618,7 @@ export function historySyncPlugin<
       },
       onChanged({ actions: { getStack, push, stepPush } }) {
         initialSetupProcess
-          ?.captureNavigationOpportunity(getStack(), Date.now())
+          .captureNavigationOpportunity(getStack(), Date.now())
           .forEach((event) =>
             event.name === "Pushed" ? push(event) : stepPush(event),
           );
