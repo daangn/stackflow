@@ -1,5 +1,4 @@
 import type {
-  DomainEvent,
   PausedEvent,
   PoppedEvent,
   PushedEvent,
