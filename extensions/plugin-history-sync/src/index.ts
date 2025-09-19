@@ -1,5 +1,6 @@
 export { useHistoryTick } from "./HistoryQueueContext";
 export * from "./historySyncPlugin";
+export { useInitialSetupProcessStatus } from "./InitialSetupProcessStatusContext";
 export { makeTemplate, UrlPatternOptions } from "./makeTemplate";
 export {
   isTerminated,
@@ -8,3 +9,4 @@ export {
 } from "./NavigationProcess/NavigationProcess";
 export { Route, RouteLike } from "./RouteLike";
 export { useRoutes } from "./RoutesContext";
+export { useIsEntryActivity } from "./useIsEntryActivity";

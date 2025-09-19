@@ -1,3 +1,4 @@
+import { InitialSetupProcessStatusContext } from "InitialSetupProcessStatusContext";
 import type {
   ActivityDefinition,
   Config,
@@ -8,6 +9,7 @@ import type { StackflowReactPlugin } from "@stackflow/react";
 import type { ActivityComponentType } from "@stackflow/react/future";
 import type { History, Listener } from "history";
 import { createBrowserHistory, createMemoryHistory } from "history";
+import { useSyncExternalStore } from "react";
 import UrlPattern from "url-pattern";
 import { HistoryQueueProvider } from "./HistoryQueueContext";
 import { parseState, pushState, replaceState } from "./historyState";
@@ -17,8 +19,8 @@ import type { UrlPatternOptions } from "./makeTemplate";
 import { makeTemplate, pathToUrl, urlSearchParamsToMap } from "./makeTemplate";
 import type { NavigationEvent } from "./NavigationEvent";
 import { CompositNavigationProcess } from "./NavigationProcess/CompositNavigationProcess";
-import type {
-  NavigationProcess,
+import {
+  type NavigationProcess,
   NavigationProcessStatus,
 } from "./NavigationProcess/NavigationProcess";
 import { SerialNavigationProcess } from "./NavigationProcess/SerialNavigationProcess";
@@ -61,13 +63,12 @@ type HistorySyncPluginOptions<T, K extends Extract<keyof T, string>> = (
   useHash?: boolean;
   history?: History;
   urlPatternOptions?: UrlPatternOptions;
-  onInitialSetupProcessCreated?: (parameters: {
-    process: NavigationProcess;
-    destinationActivityId: string;
+  onInitialSetupProcessCreated?: (
+    process: NavigationProcess,
     subscribeProcessStatusChange: (
       subscriber: (status: NavigationProcessStatus) => void,
-    ) => () => void;
-  }) => void;
+    ) => () => void,
+  ) => void;
 };
 
 export function historySyncPlugin<
@@ -110,13 +111,33 @@ export function historySyncPlugin<
 
     const { requestHistoryTick } = makeHistoryTaskQueue(history);
 
+    const subscribeInitialSetupProcessStatus = (
+      subscriber: (status: NavigationProcessStatus) => void,
+    ) => {
+      return initialSetupProcessPublisher.subscribe(async (status) =>
+        subscriber(status),
+      );
+    };
+    const getInitialSetupProcessStatus = () => {
+      return initialSetupProcess?.getStatus() ?? NavigationProcessStatus.IDLE;
+    };
+
     return {
       key: "plugin-history-sync",
       wrapStack({ stack }) {
+        const initialSetupProcessStatus = useSyncExternalStore(
+          subscribeInitialSetupProcessStatus,
+          getInitialSetupProcessStatus,
+        );
+
         return (
           <HistoryQueueProvider requestHistoryTick={requestHistoryTick}>
             <RoutesProvider routes={activityRoutes}>
-              {stack.render()}
+              <InitialSetupProcessStatusContext.Provider
+                value={initialSetupProcessStatus}
+              >
+                {stack.render()}
+              </InitialSetupProcessStatusContext.Provider>
             </RoutesProvider>
           </HistoryQueueProvider>
         );
@@ -175,7 +196,6 @@ export function historySyncPlugin<
             (activityRoute) =>
               activityRoute.activityName === fallbackActivityName,
           )!;
-        const targetActivityId = id();
         const pattern = new UrlPattern(
           `${targetActivityRoute.path}(/)`,
           options.urlPatternOptions,
@@ -224,7 +244,7 @@ export function historySyncPlugin<
             [
               (navigationTime) => [
                 makeEvent("Pushed", {
-                  activityId: targetActivityId,
+                  activityId: id(),
                   activityName: targetActivityRoute.activityName,
                   activityParams:
                     makeTemplate(
@@ -238,6 +258,7 @@ export function historySyncPlugin<
                     lazyActivityComponentRenderContext: {
                       shouldRenderImmediately: true,
                     },
+                    isEntryActivity: true,
                   },
                 }),
               ],
@@ -253,14 +274,13 @@ export function historySyncPlugin<
           initialSetupProcessPublisher,
         );
 
-        options.onInitialSetupProcessCreated?.({
-          process: initialSetupProcess,
-          destinationActivityId: targetActivityId,
-          subscribeProcessStatusChange: (subscriber) =>
+        options.onInitialSetupProcessCreated?.(
+          initialSetupProcess,
+          (subscriber) =>
             initialSetupProcessPublisher.subscribe(async (status) =>
               subscriber(status),
             ),
-        });
+        );
 
         return initialSetupProcess.captureNavigationOpportunity(
           null,
