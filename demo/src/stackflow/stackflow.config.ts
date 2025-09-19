@@ -22,13 +22,6 @@ export const config = defineConfig({
             activityName: "Main",
             activityParams: {},
           },
-          {
-            activityName: "Article",
-            activityParams: {
-              articleId: 60547101,
-              title: "울랄라",
-            },
-          },
         ],
       },
       loader: articleLoader,
