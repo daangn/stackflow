@@ -1,5 +1,5 @@
-import type { NavigationEvent } from "NavigationEvent";
 import type { PushedEvent, Stack, StepPushedEvent } from "@stackflow/core";
+import type { NavigationEvent } from "../NavigationEvent";
 import {
   type NavigationProcess,
   NavigationProcessStatus,

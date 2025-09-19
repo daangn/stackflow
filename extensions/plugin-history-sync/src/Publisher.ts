@@ -1,4 +1,4 @@
-import { Mutex } from "Mutex";
+import { Mutex } from "./Mutex";
 
 export class Publisher<T> {
   private subscribers: ((value: T) => Promise<void>)[] = [];

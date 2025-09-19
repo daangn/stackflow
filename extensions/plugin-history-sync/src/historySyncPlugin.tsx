@@ -1,4 +1,3 @@
-import { InitialSetupProcessStatusContext } from "InitialSetupProcessStatusContext";
 import type {
   ActivityDefinition,
   Config,
@@ -13,6 +12,7 @@ import { useSyncExternalStore } from "react";
 import UrlPattern from "url-pattern";
 import { HistoryQueueProvider } from "./HistoryQueueContext";
 import { parseState, pushState, replaceState } from "./historyState";
+import { InitialSetupProcessStatusContext } from "./InitialSetupProcessStatusContext";
 import { last } from "./last";
 import { makeHistoryTaskQueue } from "./makeHistoryTaskQueue";
 import type { UrlPatternOptions } from "./makeTemplate";
