@@ -34,6 +34,8 @@ export class CompositNavigationProcess implements NavigationProcess {
       navigationTime,
     );
 
+    this.baseNavigationEvents.push(...events);
+
     if (
       events.length === 0 &&
       this.base.getStatus() === NavigationProcessStatus.SUCCEEDED
@@ -42,8 +44,6 @@ export class CompositNavigationProcess implements NavigationProcess {
 
       return this.derived.captureNavigationOpportunity(stack, navigationTime);
     }
-
-    this.baseNavigationEvents.push(...events);
 
     return events;
   }
