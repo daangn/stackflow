@@ -516,6 +516,8 @@ export function historySyncPlugin<
 
         history.listen(onPopState);
 
+        runActivityActivationMonitors(stack);
+
         initialSetupProcess
           ?.captureNavigationOpportunity(stack, Date.now())
           .forEach((event) =>
