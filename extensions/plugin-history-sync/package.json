@@ -43,6 +43,7 @@
   "dependencies": {
     "flatted": "^3.3.1",
     "history": "^5.3.0",
+    "react18-use": "^0.4.1",
     "url-pattern": "^1.0.3"
   },
   "devDependencies": {
