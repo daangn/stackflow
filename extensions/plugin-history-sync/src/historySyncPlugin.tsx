@@ -3,13 +3,16 @@ import type {
   Config,
   RegisteredActivityName,
 } from "@stackflow/config";
-import { id, makeEvent } from "@stackflow/core";
+import { id, makeEvent, type Stack } from "@stackflow/core";
 import type { StackflowReactPlugin } from "@stackflow/react";
 import type { ActivityComponentType } from "@stackflow/react/future";
 import type { History, Listener } from "history";
 import { createBrowserHistory, createMemoryHistory } from "history";
 import { useSyncExternalStore } from "react";
 import UrlPattern from "url-pattern";
+import { ActivityActivationCountsContext } from "./ActivityActivationCountsContext";
+import type { ActivityActivationMonitor } from "./ActivityActivationMonitor/ActivityActivationMonitor";
+import { DefaultHistoryActivityActivationMonitor } from "./ActivityActivationMonitor/DefaultHistoryActivityActivationMonitor";
 import { HistoryQueueProvider } from "./HistoryQueueContext";
 import { parseState, pushState, replaceState } from "./historyState";
 import { InitialSetupProcessStatusContext } from "./InitialSetupProcessStatusContext";
@@ -63,12 +66,6 @@ type HistorySyncPluginOptions<T, K extends Extract<keyof T, string>> = (
   useHash?: boolean;
   history?: History;
   urlPatternOptions?: UrlPatternOptions;
-  onInitialSetupProcessCreated?: (
-    process: NavigationProcess,
-    subscribeProcessStatusChange: (
-      subscriber: (status: NavigationProcessStatus) => void,
-    ) => () => void,
-  ) => void;
 };
 
 export function historySyncPlugin<
@@ -108,6 +105,8 @@ export function historySyncPlugin<
     const initialSetupProcessPublisher =
       new Publisher<NavigationProcessStatus>();
     let initialSetupProcess: NavigationProcess | null = null;
+    const activityActivationMonitors: ActivityActivationMonitor[] = [];
+    const activityActivationCountsChangeNotifier = new Publisher<void>();
 
     const { requestHistoryTick } = makeHistoryTaskQueue(history);
 
@@ -122,12 +121,79 @@ export function historySyncPlugin<
       return initialSetupProcess?.getStatus() ?? NavigationProcessStatus.IDLE;
     };
 
+    const subscribeActivityActivationCountsChange = (
+      subscriber: () => void,
+    ) => {
+      return activityActivationCountsChangeNotifier.subscribe(async () =>
+        subscriber(),
+      );
+    };
+
+    let cachedActivityActivationCounts:
+      | { activityId: string; activationCount: number }[]
+      | null = null;
+    const getActivityActivationCounts = () => {
+      const currentActivityActivationCounts = activityActivationMonitors.map(
+        (activityActivationMonitor) => ({
+          activityId: activityActivationMonitor.getTargetId(),
+          activationCount: activityActivationMonitor.getActivationCount(),
+        }),
+      );
+
+      if (
+        !cachedActivityActivationCounts ||
+        cachedActivityActivationCounts.length !==
+          currentActivityActivationCounts.length ||
+        cachedActivityActivationCounts.some(
+          ({
+            activityId: cachedActivityId,
+            activationCount: cachedActivationCount,
+          }) =>
+            currentActivityActivationCounts.some(
+              ({ activityId, activationCount }) =>
+                activityId === cachedActivityId &&
+                activationCount !== cachedActivationCount,
+            ),
+        )
+      ) {
+        cachedActivityActivationCounts = currentActivityActivationCounts;
+      }
+
+      return cachedActivityActivationCounts;
+    };
+
+    const runActivityActivationMonitors = (stack: Stack) => {
+      let changeOccurred = false;
+
+      for (const activityActivationMonitor of activityActivationMonitors) {
+        const previousActivationCount =
+          activityActivationMonitor.getActivationCount();
+
+        activityActivationMonitor.captureActivitiesNavigation(stack);
+
+        if (
+          previousActivationCount !==
+          activityActivationMonitor.getActivationCount()
+        ) {
+          changeOccurred = true;
+        }
+      }
+
+      if (changeOccurred) {
+        activityActivationCountsChangeNotifier.publish();
+      }
+    };
+
     return {
       key: "plugin-history-sync",
       wrapStack({ stack }) {
         const initialSetupProcessStatus = useSyncExternalStore(
           subscribeInitialSetupProcessStatus,
           getInitialSetupProcessStatus,
+        );
+        const activityActivationCounts = useSyncExternalStore(
+          subscribeActivityActivationCountsChange,
+          getActivityActivationCounts,
         );
 
         return (
@@ -136,7 +202,11 @@ export function historySyncPlugin<
               <InitialSetupProcessStatusContext.Provider
                 value={initialSetupProcessStatus}
               >
-                {stack.render()}
+                <ActivityActivationCountsContext.Provider
+                  value={activityActivationCounts}
+                >
+                  {stack.render()}
+                </ActivityActivationCountsContext.Provider>
               </InitialSetupProcessStatusContext.Provider>
             </RoutesProvider>
           </HistoryQueueProvider>
@@ -213,30 +283,45 @@ export function historySyncPlugin<
         const defaultHistorySetupProcess = new SerialNavigationProcess(
           defaultHistory.map(
             ({ activityName, activityParams, additionalSteps = [] }) =>
-              (navigationTime) => [
-                makeEvent("Pushed", {
-                  activityId: id(),
-                  activityName,
-                  activityParams: {
-                    ...activityParams,
-                  },
-                  eventDate: navigationTime,
-                  activityContext: {
-                    path: currentPath,
-                    lazyActivityComponentRenderContext: {
-                      shouldRenderImmediately: true,
+              (navigationTime) => {
+                const events = [
+                  makeEvent("Pushed", {
+                    activityId: id(),
+                    activityName,
+                    activityParams: {
+                      ...activityParams,
                     },
-                  },
-                }),
-                ...additionalSteps.map(({ stepParams, hasZIndex }) =>
-                  makeEvent("StepPushed", {
-                    stepId: id(),
-                    stepParams,
-                    hasZIndex,
                     eventDate: navigationTime,
+                    activityContext: {
+                      path: currentPath,
+                      lazyActivityComponentRenderContext: {
+                        shouldRenderImmediately: true,
+                      },
+                    },
                   }),
-                ),
-              ],
+                  ...additionalSteps.map(({ stepParams, hasZIndex }) =>
+                    makeEvent("StepPushed", {
+                      stepId: id(),
+                      stepParams,
+                      hasZIndex,
+                      eventDate: navigationTime,
+                    }),
+                  ),
+                ];
+
+                for (const event of events) {
+                  if (event.name === "Pushed") {
+                    activityActivationMonitors.push(
+                      new DefaultHistoryActivityActivationMonitor(
+                        event.activityId,
+                        defaultHistorySetupProcess,
+                      ),
+                    );
+                  }
+                }
+
+                return events;
+              },
           ),
         );
         const createEntrySetupProcess = (base: NavigationEvent[]) =>
@@ -258,7 +343,6 @@ export function historySyncPlugin<
                     lazyActivityComponentRenderContext: {
                       shouldRenderImmediately: true,
                     },
-                    isEntryActivity: true,
                   },
                 }),
               ],
@@ -272,14 +356,6 @@ export function historySyncPlugin<
             createEntrySetupProcess,
           ),
           initialSetupProcessPublisher,
-        );
-
-        options.onInitialSetupProcessCreated?.(
-          initialSetupProcess,
-          (subscriber) =>
-            initialSetupProcessPublisher.subscribe(async (status) =>
-              subscriber(status),
-            ),
         );
 
         return initialSetupProcess.captureNavigationOpportunity(
@@ -446,7 +522,9 @@ export function historySyncPlugin<
             event.name === "Pushed" ? push(event) : stepPush(event),
           );
       },
-      onPushed({ effect: { activity } }) {
+      onPushed({ effect: { activity }, actions: { getStack } }) {
+        runActivityActivationMonitors(getStack());
+
         if (pushFlag) {
           pushFlag -= 1;
           return;
@@ -495,7 +573,9 @@ export function historySyncPlugin<
           });
         });
       },
-      onReplaced({ effect: { activity } }) {
+      onReplaced({ effect: { activity }, actions: { getStack } }) {
+        runActivityActivationMonitors(getStack());
+
         if (!activity.isActive) {
           return;
         }
@@ -517,6 +597,9 @@ export function historySyncPlugin<
             useHash: options.useHash,
           });
         });
+      },
+      onPopped({ actions: { getStack } }) {
+        runActivityActivationMonitors(getStack());
       },
       onStepReplaced({ effect: { activity, step } }) {
         if (!activity.isActive) {
@@ -656,8 +739,10 @@ export function historySyncPlugin<
         }
       },
       onChanged({ actions: { getStack, push, stepPush } }) {
+        const stack = getStack();
+
         initialSetupProcess
-          ?.captureNavigationOpportunity(getStack(), Date.now())
+          ?.captureNavigationOpportunity(stack, Date.now())
           .forEach((event) =>
             event.name === "Pushed" ? push(event) : stepPush(event),
           );

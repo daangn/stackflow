@@ -9,4 +9,4 @@ export {
 } from "./NavigationProcess/NavigationProcess";
 export { Route, RouteLike } from "./RouteLike";
 export { useRoutes } from "./RoutesContext";
-export { useIsEntryActivity } from "./useIsEntryActivity";
+export { useDelayTransitionRender } from "./useDelayTransitionRender";
