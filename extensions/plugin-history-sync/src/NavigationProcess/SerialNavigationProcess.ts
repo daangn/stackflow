@@ -34,7 +34,7 @@ export class SerialNavigationProcess implements NavigationProcess {
     navigationTime: number,
   ): (PushedEvent | StepPushedEvent)[] {
     if (isTerminated(this.status)) return [];
-    if (stack?.globalTransitionState !== "idle") return [];
+    if (stack && stack.globalTransitionState !== "idle") return [];
 
     if (this.pendingNavigations.length === 0) {
       this.status = NavigationProcessStatus.SUCCEEDED;
