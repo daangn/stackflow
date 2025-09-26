@@ -1,5 +1,5 @@
-import type { Publisher } from "Publisher";
 import type { Stack } from "@stackflow/core";
+import type { Publisher } from "../Publisher";
 import type { ActivityActivationMonitor } from "./ActivityActivationMonitor";
 
 export class CountPublishingActivityActivationMonitor

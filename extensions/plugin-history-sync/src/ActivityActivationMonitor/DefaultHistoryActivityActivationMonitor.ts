@@ -1,8 +1,8 @@
+import type { Stack } from "@stackflow/core";
 import {
   isTerminated,
   type NavigationProcess,
-} from "NavigationProcess/NavigationProcess";
-import type { Stack } from "@stackflow/core";
+} from "../NavigationProcess/NavigationProcess";
 import type { ActivityActivationMonitor } from "./ActivityActivationMonitor";
 
 export class DefaultHistoryActivityActivationMonitor
