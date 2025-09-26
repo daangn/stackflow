@@ -1,19 +1,10 @@
-import { ActivityActivationCountsContext } from "ActivityActivationCountsContext";
-import { useActivity } from "@stackflow/react";
-import { useContext } from "react";
+import { useIsRenderInTransition } from "useIsRenderInTransition";
 import { use } from "react18-use";
 
 export function useDelayTransitionRender() {
-  const { id } = useActivity();
-  const activityActivationCounts = useContext(ActivityActivationCountsContext);
-  const activityActivationCount = activityActivationCounts.find(
-    (activityActivationCount) => activityActivationCount.activityId === id,
-  )?.activationCount;
+  const isRenderInTransition = useIsRenderInTransition();
 
-  if (activityActivationCount === undefined || activityActivationCount >= 1)
-    return;
-
-  return use(suspenseSentinel);
+  if (isRenderInTransition) use(suspenseSentinel);
 }
 
 const suspenseSentinel = new Promise(() => {});

@@ -20,8 +20,6 @@ import { last } from "./last";
 import { makeHistoryTaskQueue } from "./makeHistoryTaskQueue";
 import type { UrlPatternOptions } from "./makeTemplate";
 import { makeTemplate, pathToUrl, urlSearchParamsToMap } from "./makeTemplate";
-import type { NavigationEvent } from "./NavigationEvent";
-import { CompositNavigationProcess } from "./NavigationProcess/CompositNavigationProcess";
 import {
   type NavigationProcess,
   NavigationProcessStatus,
@@ -280,81 +278,70 @@ export function historySyncPlugin<
         const defaultHistory =
           targetActivityRoute.defaultHistory?.(params) ?? [];
 
-        const defaultHistorySetupProcess = new SerialNavigationProcess(
-          defaultHistory.map(
-            ({ activityName, activityParams, additionalSteps = [] }) =>
-              (navigationTime) => {
-                const events = [
-                  makeEvent("Pushed", {
-                    activityId: id(),
-                    activityName,
-                    activityParams: {
-                      ...activityParams,
-                    },
-                    eventDate: navigationTime,
-                    activityContext: {
-                      path: currentPath,
-                      lazyActivityComponentRenderContext: {
-                        shouldRenderImmediately: true,
-                      },
-                    },
-                  }),
-                  ...additionalSteps.map(({ stepParams, hasZIndex }) =>
-                    makeEvent("StepPushed", {
-                      stepId: id(),
-                      stepParams,
-                      hasZIndex,
-                      eventDate: navigationTime,
-                    }),
-                  ),
-                ];
-
-                for (const event of events) {
-                  if (event.name === "Pushed") {
-                    activityActivationMonitors.push(
-                      new DefaultHistoryActivityActivationMonitor(
-                        event.activityId,
-                        defaultHistorySetupProcess,
-                      ),
-                    );
-                  }
-                }
-
-                return events;
-              },
-          ),
-        );
-        const createEntrySetupProcess = (base: NavigationEvent[]) =>
-          new SerialNavigationProcess(
-            [
-              (navigationTime) => [
-                makeEvent("Pushed", {
-                  activityId: id(),
-                  activityName: targetActivityRoute.activityName,
-                  activityParams:
-                    makeTemplate(
-                      targetActivityRoute,
-                      options.urlPatternOptions,
-                    ).parse(currentPath) ??
-                    urlSearchParamsToMap(pathToUrl(currentPath).searchParams),
-                  eventDate: navigationTime,
-                  activityContext: {
-                    path: currentPath,
-                    lazyActivityComponentRenderContext: {
-                      shouldRenderImmediately: true,
-                    },
-                  },
-                }),
-              ],
-            ],
-            base,
-          );
-
         initialSetupProcess = new StatusPublishingNavigationProcess(
-          new CompositNavigationProcess(
-            defaultHistorySetupProcess,
-            createEntrySetupProcess,
-          ),
+          new SerialNavigationProcess([
+            ...defaultHistory.map(
+              ({ activityName, activityParams, additionalSteps = [] }) =>
+                (navigationTime: number) => {
+                  const events = [
+                    makeEvent("Pushed", {
+                      activityId: id(),
+                      activityName,
+                      activityParams: {
+                        ...activityParams,
+                      },
+                      eventDate: navigationTime,
+                      activityContext: {
+                        path: currentPath,
+                        lazyActivityComponentRenderContext: {
+                          shouldRenderImmediately: true,
+                        },
+                      },
+                    }),
+                    ...additionalSteps.map(({ stepParams, hasZIndex }) =>
+                      makeEvent("StepPushed", {
+                        stepId: id(),
+                        stepParams,
+                        hasZIndex,
+                        eventDate: navigationTime,
+                      }),
+                    ),
+                  ];
+
+                  for (const event of events) {
+                    if (event.name === "Pushed") {
+                      activityActivationMonitors.push(
+                        new DefaultHistoryActivityActivationMonitor(
+                          event.activityId,
+                          initialSetupProcess!,
+                        ),
+                      );
+                    }
+                  }
+
+                  return events;
+                },
+            ),
+            (navigationTime) => [
+              makeEvent("Pushed", {
+                activityId: id(),
+                activityName: targetActivityRoute.activityName,
+                activityParams:
+                  makeTemplate(
+                    targetActivityRoute,
+                    options.urlPatternOptions,
+                  ).parse(currentPath) ??
+                  urlSearchParamsToMap(pathToUrl(currentPath).searchParams),
+                eventDate: navigationTime,
+                activityContext: {
+                  path: currentPath,
+                  lazyActivityComponentRenderContext: {
+                    shouldRenderImmediately: true,
+                  },
+                },
+              }),
+            ],
+          ]),
           initialSetupProcessPublisher,
         );
 
@@ -516,13 +503,14 @@ export function historySyncPlugin<
 
         history.listen(onPopState);
 
+        const followUpEvents =
+          initialSetupProcess?.captureNavigationOpportunity(stack, Date.now());
+
         runActivityActivationMonitors(stack);
 
-        initialSetupProcess
-          ?.captureNavigationOpportunity(stack, Date.now())
-          .forEach((event) =>
-            event.name === "Pushed" ? push(event) : stepPush(event),
-          );
+        followUpEvents?.forEach((event) =>
+          event.name === "Pushed" ? push(event) : stepPush(event),
+        );
       },
       onPushed({ effect: { activity }, actions: { getStack } }) {
         runActivityActivationMonitors(getStack());

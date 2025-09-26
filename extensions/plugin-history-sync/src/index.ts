@@ -10,3 +10,4 @@ export {
 export { Route, RouteLike } from "./RouteLike";
 export { useRoutes } from "./RoutesContext";
 export { useDelayTransitionRender } from "./useDelayTransitionRender";
+export { useIsRenderInTransition } from "./useIsRenderInTransition";

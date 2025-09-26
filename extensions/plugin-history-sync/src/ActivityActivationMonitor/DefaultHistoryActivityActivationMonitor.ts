@@ -9,17 +9,17 @@ export class DefaultHistoryActivityActivationMonitor
   implements ActivityActivationMonitor
 {
   private targetId: string;
-  private defaultHistorySetupProcess: NavigationProcess;
+  private initialSetupProcess: NavigationProcess;
   private focusCount: number;
 
-  constructor(targetId: string, defaultHistorySetupProcess: NavigationProcess) {
+  constructor(targetId: string, initialSetupProcess: NavigationProcess) {
     this.targetId = targetId;
-    this.defaultHistorySetupProcess = defaultHistorySetupProcess;
+    this.initialSetupProcess = initialSetupProcess;
     this.focusCount = 0;
   }
 
   captureActivitiesNavigation(stack: Stack): void {
-    const navigationProcessStatus = this.defaultHistorySetupProcess.getStatus();
+    const navigationProcessStatus = this.initialSetupProcess.getStatus();
 
     if (!isTerminated(navigationProcessStatus)) return;
 
@@ -30,6 +30,7 @@ export class DefaultHistoryActivityActivationMonitor
     if (!targetActivity || !targetActivity.isActive) return;
 
     this.focusCount++;
+    console.log("focusCount", this.focusCount);
   }
 
   getActivationCount(): number {
