@@ -121,9 +121,20 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
   };
 
   const setStackValue = (nextStackValue: Stack) => {
-    const effects = produceEffects(stack.value, nextStackValue);
+    const prevStackValue = stack.value;
+    const isEventOrderBroken = prevStackValue.events.some(
+      ({ id }, index) => id !== nextStackValue.events[index].id,
+    );
+
     stack.value = nextStackValue;
-    triggerPostEffectHooks(effects, pluginInstances, actions);
+
+    if (isEventOrderBroken) return;
+
+    triggerPostEffectHooks(
+      produceEffects(prevStackValue, nextStackValue),
+      pluginInstances,
+      actions,
+    );
   };
 
   // Initialize action methods after actions object is fully created
