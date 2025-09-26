@@ -138,10 +138,15 @@ export function makeStackReducer(context: { now: number; resumedAt?: number }) {
         });
 
         const { pausedEvents, ...rest } = stack;
-        return pausedEvents.reduce(reducer, {
+        const resumedStack = pausedEvents.reduce(reducer, {
           ...rest,
           globalTransitionState: "idle",
         });
+
+        return {
+          ...resumedStack,
+          events: [...resumedStack.events, event],
+        };
       },
       context,
     ),
