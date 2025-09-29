@@ -167,7 +167,7 @@ export function historySyncPlugin<
         const previousActivationCount =
           activityActivationMonitor.getActivationCount();
 
-        activityActivationMonitor.captureActivitiesNavigation(stack);
+        activityActivationMonitor.captureStackChange(stack);
 
         if (
           previousActivationCount !==
@@ -503,18 +503,15 @@ export function historySyncPlugin<
 
         history.listen(onPopState);
 
-        const followUpEvents =
-          initialSetupProcess?.captureNavigationOpportunity(stack, Date.now());
+        initialSetupProcess
+          ?.captureNavigationOpportunity(stack, Date.now())
+          .forEach((event) =>
+            event.name === "Pushed" ? push(event) : stepPush(event),
+          );
 
         runActivityActivationMonitors(stack);
-
-        followUpEvents?.forEach((event) =>
-          event.name === "Pushed" ? push(event) : stepPush(event),
-        );
       },
-      onPushed({ effect: { activity }, actions: { getStack } }) {
-        runActivityActivationMonitors(getStack());
-
+      onPushed({ effect: { activity } }) {
         if (pushFlag) {
           pushFlag -= 1;
           return;
@@ -563,9 +560,7 @@ export function historySyncPlugin<
           });
         });
       },
-      onReplaced({ effect: { activity }, actions: { getStack } }) {
-        runActivityActivationMonitors(getStack());
-
+      onReplaced({ effect: { activity } }) {
         if (!activity.isActive) {
           return;
         }
@@ -587,9 +582,6 @@ export function historySyncPlugin<
             useHash: options.useHash,
           });
         });
-      },
-      onPopped({ actions: { getStack } }) {
-        runActivityActivationMonitors(getStack());
       },
       onStepReplaced({ effect: { activity, step } }) {
         if (!activity.isActive) {
@@ -736,6 +728,8 @@ export function historySyncPlugin<
           .forEach((event) =>
             event.name === "Pushed" ? push(event) : stepPush(event),
           );
+
+        runActivityActivationMonitors(stack);
       },
     };
   };

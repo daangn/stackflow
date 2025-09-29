@@ -16,11 +16,11 @@ export class CountPublishingActivityActivationMonitor
     this.publisher = publisher;
   }
 
-  captureActivitiesNavigation(stack: Stack): void {
+  captureStackChange(stack: Stack): void {
     const previousActivationCount =
       this.activityActivationMonitor.getActivationCount();
 
-    this.activityActivationMonitor.captureActivitiesNavigation(stack);
+    this.activityActivationMonitor.captureStackChange(stack);
 
     const currentActivationCount =
       this.activityActivationMonitor.getActivationCount();
