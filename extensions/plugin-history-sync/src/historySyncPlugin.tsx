@@ -100,7 +100,7 @@ export function historySyncPlugin<
   return () => {
     let pushFlag = 0;
     let silentFlag = false;
-    const initialSetupProcessPublisher =
+    const initialSetupProcessStatusPublisher =
       new Publisher<NavigationProcessStatus>();
     let initialSetupProcess: NavigationProcess | null = null;
     const activityActivationMonitors: ActivityActivationMonitor[] = [];
@@ -111,7 +111,7 @@ export function historySyncPlugin<
     const subscribeInitialSetupProcessStatus = (
       subscriber: (status: NavigationProcessStatus) => void,
     ) => {
-      return initialSetupProcessPublisher.subscribe(async (status) =>
+      return initialSetupProcessStatusPublisher.subscribe(async (status) =>
         subscriber(status),
       );
     };
@@ -342,7 +342,7 @@ export function historySyncPlugin<
               }),
             ],
           ]),
-          initialSetupProcessPublisher,
+          initialSetupProcessStatusPublisher,
         );
 
         return initialSetupProcess.captureNavigationOpportunity(
