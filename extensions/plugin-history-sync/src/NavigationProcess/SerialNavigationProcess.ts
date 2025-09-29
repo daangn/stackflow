@@ -59,10 +59,11 @@ export class SerialNavigationProcess implements NavigationProcess {
       return [];
     }
 
-    const nextNavigation = this.pendingNavigations.splice(0, 1);
-    const nextNavigationEvents = nextNavigation.flatMap((navigation) =>
-      navigation(navigationTime),
-    );
+    const nextNavigation = this.pendingNavigations.shift();
+
+    if (!nextNavigation) return [];
+
+    const nextNavigationEvents = nextNavigation(navigationTime);
 
     this.dispatchedEvents.push(...nextNavigationEvents);
     this.status = NavigationProcessStatus.PROGRESS;
@@ -77,18 +78,24 @@ export class SerialNavigationProcess implements NavigationProcess {
   private verifyAllDispatchedEventsAreInNavigationHistory(
     navigationHistory: NavigationEvent[],
   ): boolean {
+    const navigationHistoryEventIds = new Set(
+      navigationHistory.map((e) => e.id),
+    );
+
     return this.dispatchedEvents.every((event) =>
-      navigationHistory.some((e) => e.id === event.id),
+      navigationHistoryEventIds.has(event.id),
     );
   }
 
   private verifyNoUnknownNavigationEvents(
     navigationHistory: NavigationEvent[],
   ): boolean {
+    const knownNavigationEvents = new Set(
+      [...this.baseNavigationEvents, ...this.dispatchedEvents].map((e) => e.id),
+    );
+
     return navigationHistory.every((event) =>
-      [...this.baseNavigationEvents, ...this.dispatchedEvents].some(
-        (e) => e.id === event.id,
-      ),
+      knownNavigationEvents.has(event.id),
     );
   }
 }
