@@ -13,11 +13,11 @@ export class Publisher<T> {
   }
 
   publish(value: T): Promise<PromiseSettledResult<void>[]> {
-    const targetSubcribers = this.subscribers.slice();
+    const targetSubscribers = this.subscribers.slice();
 
     return this.publishLock.runExclusively(() =>
       Promise.allSettled(
-        targetSubcribers.map((subscriber) => subscriber(value)),
+        targetSubscribers.map((subscriber) => subscriber(value)),
       ),
     );
   }
