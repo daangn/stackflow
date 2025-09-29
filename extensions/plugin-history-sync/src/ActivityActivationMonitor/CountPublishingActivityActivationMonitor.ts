@@ -17,16 +17,16 @@ export class CountPublishingActivityActivationMonitor
   }
 
   captureActivitiesNavigation(stack: Stack): void {
-    const previousFocusCount =
+    const previousActivationCount =
       this.activityActivationMonitor.getActivationCount();
 
     this.activityActivationMonitor.captureActivitiesNavigation(stack);
 
-    const currentFocusCount =
+    const currentActivationCount =
       this.activityActivationMonitor.getActivationCount();
 
-    if (currentFocusCount !== previousFocusCount) {
-      this.publisher.publish(currentFocusCount);
+    if (currentActivationCount !== previousActivationCount) {
+      this.publisher.publish(currentActivationCount);
     }
   }
 
