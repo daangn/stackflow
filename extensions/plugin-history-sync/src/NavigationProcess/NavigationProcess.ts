@@ -3,8 +3,7 @@ import type { PushedEvent, Stack, StepPushedEvent } from "@stackflow/core";
 export interface NavigationProcess {
   captureNavigationOpportunity(
     stack: Stack | null,
-    navigationTime: number,
-  ): (PushedEvent | StepPushedEvent)[];
+  ): (Omit<PushedEvent, "eventDate"> | Omit<StepPushedEvent, "eventDate">)[];
 
   getStatus(): NavigationProcessStatus;
 }

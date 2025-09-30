@@ -21,12 +21,8 @@ export class StatusPublishingNavigationProcess implements NavigationProcess {
 
   captureNavigationOpportunity(
     stack: Stack | null,
-    navigationTime: number,
-  ): (PushedEvent | StepPushedEvent)[] {
-    const events = this.process.captureNavigationOpportunity(
-      stack,
-      navigationTime,
-    );
+  ): (Omit<PushedEvent, "eventDate"> | Omit<StepPushedEvent, "eventDate">)[] {
+    const events = this.process.captureNavigationOpportunity(stack);
 
     this.refreshCurrentStatus(this.process.getStatus());
 

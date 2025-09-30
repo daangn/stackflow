@@ -3,7 +3,12 @@ import type {
   Config,
   RegisteredActivityName,
 } from "@stackflow/config";
-import { id, makeEvent, type Stack } from "@stackflow/core";
+import {
+  id,
+  type PushedEvent,
+  type Stack,
+  type StepPushedEvent,
+} from "@stackflow/core";
 import type { StackflowReactPlugin } from "@stackflow/react";
 import type { ActivityComponentType } from "@stackflow/react/future";
 import type { History, Listener } from "history";
@@ -282,28 +287,36 @@ export function historySyncPlugin<
           new SerialNavigationProcess([
             ...defaultHistory.map(
               ({ activityName, activityParams, additionalSteps = [] }) =>
-                (navigationTime: number) => {
-                  const events = [
-                    makeEvent("Pushed", {
+                () => {
+                  const events: (
+                    | Omit<PushedEvent, "eventDate">
+                    | Omit<StepPushedEvent, "eventDate">
+                  )[] = [
+                    {
+                      name: "Pushed",
+                      id: id(),
                       activityId: id(),
                       activityName,
                       activityParams: {
                         ...activityParams,
                       },
-                      eventDate: navigationTime,
                       activityContext: {
                         path: currentPath,
                         lazyActivityComponentRenderContext: {
                           shouldRenderImmediately: true,
                         },
                       },
-                    }),
-                    ...additionalSteps.map(({ stepParams, hasZIndex }) =>
-                      makeEvent("StepPushed", {
+                    },
+                    ...additionalSteps.map(
+                      ({
+                        stepParams,
+                        hasZIndex,
+                      }): Omit<StepPushedEvent, "eventDate"> => ({
+                        name: "StepPushed",
+                        id: id(),
                         stepId: id(),
                         stepParams,
                         hasZIndex,
-                        eventDate: navigationTime,
                       }),
                     ),
                   ];
@@ -322,8 +335,10 @@ export function historySyncPlugin<
                   return events;
                 },
             ),
-            (navigationTime) => [
-              makeEvent("Pushed", {
+            () => [
+              {
+                name: "Pushed",
+                id: id(),
                 activityId: id(),
                 activityName: targetActivityRoute.activityName,
                 activityParams:
@@ -332,23 +347,24 @@ export function historySyncPlugin<
                     options.urlPatternOptions,
                   ).parse(currentPath) ??
                   urlSearchParamsToMap(pathToUrl(currentPath).searchParams),
-                eventDate: navigationTime,
                 activityContext: {
                   path: currentPath,
                   lazyActivityComponentRenderContext: {
                     shouldRenderImmediately: true,
                   },
                 },
-              }),
+              },
             ],
           ]),
           initialSetupProcessStatusPublisher,
         );
 
-        return initialSetupProcess.captureNavigationOpportunity(
-          null,
-          Date.now() - MINUTE,
-        );
+        return initialSetupProcess
+          .captureNavigationOpportunity(null)
+          .map((event) => ({
+            ...event,
+            eventDate: Date.now() - MINUTE,
+          }));
       },
       onInit({ actions: { getStack, dispatchEvent, push, stepPush } }) {
         const stack = getStack();
@@ -504,7 +520,7 @@ export function historySyncPlugin<
         history.listen(onPopState);
 
         initialSetupProcess
-          ?.captureNavigationOpportunity(stack, Date.now())
+          ?.captureNavigationOpportunity(stack)
           .forEach((event) =>
             event.name === "Pushed" ? push(event) : stepPush(event),
           );
@@ -724,7 +740,7 @@ export function historySyncPlugin<
         const stack = getStack();
 
         initialSetupProcess
-          ?.captureNavigationOpportunity(stack, Date.now())
+          ?.captureNavigationOpportunity(stack)
           .forEach((event) =>
             event.name === "Pushed" ? push(event) : stepPush(event),
           );

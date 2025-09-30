@@ -8,16 +8,21 @@ import {
 
 export class SerialNavigationProcess implements NavigationProcess {
   private status: NavigationProcessStatus;
-  private pendingNavigations: ((
-    navigationTime: number,
-  ) => (PushedEvent | StepPushedEvent)[])[];
-  private dispatchedEvents: (PushedEvent | StepPushedEvent)[];
+  private pendingNavigations: (() => (
+    | Omit<PushedEvent, "eventDate">
+    | Omit<StepPushedEvent, "eventDate">
+  )[])[];
+  private dispatchedEvents: (
+    | Omit<PushedEvent, "eventDate">
+    | Omit<StepPushedEvent, "eventDate">
+  )[];
   private baseNavigationEvents: NavigationEvent[];
 
   constructor(
-    navigations: ((
-      navigationTime: number,
-    ) => (PushedEvent | StepPushedEvent)[])[],
+    navigations: (() => (
+      | Omit<PushedEvent, "eventDate">
+      | Omit<StepPushedEvent, "eventDate">
+    )[])[],
     baseNavigationEvents: NavigationEvent[] = [],
   ) {
     this.status =
@@ -31,8 +36,7 @@ export class SerialNavigationProcess implements NavigationProcess {
 
   captureNavigationOpportunity(
     stack: Stack | null,
-    navigationTime: number,
-  ): (PushedEvent | StepPushedEvent)[] {
+  ): (Omit<PushedEvent, "eventDate"> | Omit<StepPushedEvent, "eventDate">)[] {
     if (isTerminated(this.status)) return [];
     if (stack && stack.globalTransitionState !== "idle") return [];
 
@@ -63,7 +67,7 @@ export class SerialNavigationProcess implements NavigationProcess {
 
     if (!nextNavigation) return [];
 
-    const nextNavigationEvents = nextNavigation(navigationTime);
+    const nextNavigationEvents = nextNavigation();
 
     this.dispatchedEvents.push(...nextNavigationEvents);
     this.status = NavigationProcessStatus.PROGRESS;
