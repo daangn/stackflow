@@ -5370,6 +5370,7 @@ __metadata:
     jest: "npm:^29.7.0"
     react: "npm:^18.3.1"
     react-relay: "npm:^17.0.0"
+    react18-use: "npm:^0.4.1"
     relay-compiler: "npm:^17.0.0"
     relay-runtime: "npm:^17.0.0"
     rimraf: "npm:^3.0.2"
@@ -13077,6 +13078,15 @@ __metadata:
   peerDependencies:
     react: ^16.9.0 || ^17 || ^18
   checksum: 10/5f4c3f1e99145c33fba239b0c1e584491f842c5186534fd1156ab25eff014dc82800236d86a63fea28865d2427f47b253504e9f35d8aa0f387cd2e5e9c4a0437
+  languageName: node
+  linkType: hard
+
+"react18-use@npm:^0.4.1":
+  version: 0.4.1
+  resolution: "react18-use@npm:0.4.1"
+  peerDependencies:
+    react: ">=18.0.0"
+  checksum: 10/e8d61ca4ae7ab1b1b206221a470aa17a7fd58deaf1d5e97d9733030bdc20b01d1dfda9c5172b13c6f0602cf50f5832643e4ecefcf67730e3de97b3e72aff7cc2
   languageName: node
   linkType: hard
 

@@ -6378,6 +6378,7 @@ const RAW_RUNTIME_STATE =
           ["jest", "virtual:b327d7e228fba669b88a8bb23bcf526374e46fa67e617b1e6848e8a205357fee5ce94b47c49b5a570fd9e8a44fa218a13cd00e2eca327c99114cbd21d72ecf9c#npm:29.7.0"],\
           ["react", "npm:18.3.1"],\
           ["react-relay", "virtual:991015ceb8acca106af7e64cf676369bf8fb98370003b1af0559fb22931c330c3a09d064107412d6cc26ef286f0afdd26340443bd43177eeda3558644ba5f206#npm:17.0.0"],\
+          ["react18-use", "virtual:991015ceb8acca106af7e64cf676369bf8fb98370003b1af0559fb22931c330c3a09d064107412d6cc26ef286f0afdd26340443bd43177eeda3558644ba5f206#npm:0.4.1"],\
           ["relay-compiler", "npm:17.0.0"],\
           ["relay-runtime", "npm:17.0.0"],\
           ["rimraf", "npm:3.0.2"],\
@@ -6419,6 +6420,7 @@ const RAW_RUNTIME_STATE =
           ["jest", "virtual:b327d7e228fba669b88a8bb23bcf526374e46fa67e617b1e6848e8a205357fee5ce94b47c49b5a570fd9e8a44fa218a13cd00e2eca327c99114cbd21d72ecf9c#npm:29.7.0"],\
           ["react", "npm:18.3.1"],\
           ["react-relay", "virtual:991015ceb8acca106af7e64cf676369bf8fb98370003b1af0559fb22931c330c3a09d064107412d6cc26ef286f0afdd26340443bd43177eeda3558644ba5f206#npm:17.0.0"],\
+          ["react18-use", "virtual:991015ceb8acca106af7e64cf676369bf8fb98370003b1af0559fb22931c330c3a09d064107412d6cc26ef286f0afdd26340443bd43177eeda3558644ba5f206#npm:0.4.1"],\
           ["relay-compiler", "npm:17.0.0"],\
           ["relay-runtime", "npm:17.0.0"],\
           ["rimraf", "npm:3.0.2"],\
@@ -15304,6 +15306,28 @@ const RAW_RUNTIME_STATE =
           ["nullthrows", "npm:1.1.1"],\
           ["react", "npm:18.3.1"],\
           ["relay-runtime", "npm:17.0.0"]\
+        ],\
+        "packagePeers": [\
+          "@types/react",\
+          "react"\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["react18-use", [\
+      ["npm:0.4.1", {\
+        "packageLocation": "./.yarn/cache/react18-use-npm-0.4.1-3dd4e3b3bc-e8d61ca4ae.zip/node_modules/react18-use/",\
+        "packageDependencies": [\
+          ["react18-use", "npm:0.4.1"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:991015ceb8acca106af7e64cf676369bf8fb98370003b1af0559fb22931c330c3a09d064107412d6cc26ef286f0afdd26340443bd43177eeda3558644ba5f206#npm:0.4.1", {\
+        "packageLocation": "./.yarn/__virtual__/react18-use-virtual-91277bc2f8/0/cache/react18-use-npm-0.4.1-3dd4e3b3bc-e8d61ca4ae.zip/node_modules/react18-use/",\
+        "packageDependencies": [\
+          ["react18-use", "virtual:991015ceb8acca106af7e64cf676369bf8fb98370003b1af0559fb22931c330c3a09d064107412d6cc26ef286f0afdd26340443bd43177eeda3558644ba5f206#npm:0.4.1"],\
+          ["@types/react", "npm:18.3.3"],\
+          ["react", "npm:18.3.1"]\
         ],\
         "packagePeers": [\
           "@types/react",\

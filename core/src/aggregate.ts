@@ -27,6 +27,7 @@ export function aggregate(inputEvents: DomainEvent[], now: number): Stack {
     globalTransitionState: "idle",
     registeredActivities: [],
     transitionDuration: 0,
+    events: [],
   });
 
   /**

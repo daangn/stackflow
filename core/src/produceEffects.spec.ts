@@ -32,6 +32,7 @@ test("productEffects - 알 수 없는 이유로 두 object가 다르다면, %SOM
         registeredActivities: [{ name: "hello" }],
         transitionDuration: 300,
         globalTransitionState: "idle",
+        events: [],
       },
       {
         activities: [
@@ -64,6 +65,7 @@ test("productEffects - 알 수 없는 이유로 두 object가 다르다면, %SOM
         registeredActivities: [{ name: "hello" }],
         transitionDuration: 300,
         globalTransitionState: "loading",
+        events: [],
       },
     ),
   ).toEqual([
@@ -81,6 +83,7 @@ test("productEffects - 새로운 액티비티가 추가되었다면, PUSHED 이�
         registeredActivities: [{ name: "hello" }],
         transitionDuration: 300,
         globalTransitionState: "idle",
+        events: [],
       },
       {
         activities: [
@@ -111,6 +114,7 @@ test("productEffects - 새로운 액티비티가 추가되었다면, PUSHED 이�
         registeredActivities: [{ name: "hello" }],
         transitionDuration: 300,
         globalTransitionState: "loading",
+        events: [],
       },
     ),
   ).toEqual([
@@ -154,6 +158,7 @@ test("productEffects - 여러개 액티비티가 추가되었다면, PUSHED 이�
         registeredActivities: [{ name: "hello" }],
         transitionDuration: 300,
         globalTransitionState: "idle",
+        events: [],
       },
       {
         activities: [
@@ -207,6 +212,7 @@ test("productEffects - 여러개 액티비티가 추가되었다면, PUSHED 이�
         registeredActivities: [{ name: "hello" }],
         transitionDuration: 300,
         globalTransitionState: "loading",
+        events: [],
       },
     ),
   ).toEqual([
@@ -323,6 +329,7 @@ test("productEffects - 액티비티 상태가 exit-active로 변한 액티비티
         registeredActivities: [{ name: "hello" }],
         transitionDuration: 300,
         globalTransitionState: "idle",
+        events: [],
       },
       {
         activities: [
@@ -376,6 +383,7 @@ test("productEffects - 액티비티 상태가 exit-active로 변한 액티비티
         registeredActivities: [{ name: "hello" }],
         transitionDuration: 300,
         globalTransitionState: "loading",
+        events: [],
       },
     ),
   ).toEqual([
@@ -466,6 +474,7 @@ test("productEffects - 액티비티 상태가 exit-active로 변한 액티비티
         registeredActivities: [{ name: "hello" }],
         transitionDuration: 300,
         globalTransitionState: "idle",
+        events: [],
       },
       {
         activities: [
@@ -519,6 +528,7 @@ test("productEffects - 액티비티 상태가 exit-active로 변한 액티비티
         registeredActivities: [{ name: "hello" }],
         transitionDuration: 300,
         globalTransitionState: "loading",
+        events: [],
       },
     ),
   ).toEqual([
@@ -635,6 +645,7 @@ test("productEffects - PushedEvent로 인해 액티비티 상태가 enter-active
         registeredActivities: [{ name: "hello" }],
         transitionDuration: 300,
         globalTransitionState: "idle",
+        events: [],
       },
       {
         activities: [
@@ -688,6 +699,7 @@ test("productEffects - PushedEvent로 인해 액티비티 상태가 enter-active
         registeredActivities: [{ name: "hello" }],
         transitionDuration: 300,
         globalTransitionState: "loading",
+        events: [],
       },
     ),
   ).toEqual([
@@ -778,6 +790,7 @@ test("productEffects - Replaced 이벤트로 인해 액티비티 상태가 enter
         registeredActivities: [{ name: "hello" }],
         transitionDuration: 300,
         globalTransitionState: "idle",
+        events: [],
       },
       {
         activities: [
@@ -854,6 +867,7 @@ test("productEffects - Replaced 이벤트로 인해 액티비티 상태가 enter
         registeredActivities: [{ name: "hello" }],
         transitionDuration: 300,
         globalTransitionState: "loading",
+        events: [],
       },
     ),
   ).toEqual([
@@ -944,6 +958,7 @@ test("productEffects - Replaced 이벤트로 인해 아래 액티비티 상태�
         registeredActivities: [{ name: "hello" }],
         transitionDuration: 300,
         globalTransitionState: "loading",
+        events: [],
       },
       {
         activities: [
@@ -997,6 +1012,7 @@ test("productEffects - Replaced 이벤트로 인해 아래 액티비티 상태�
         registeredActivities: [{ name: "hello" }],
         transitionDuration: 300,
         globalTransitionState: "idle",
+        events: [],
       },
     ),
   ).toEqual([
@@ -1061,6 +1077,7 @@ test("productEffects - 아래 액티비티가 Replaced를 통해 Push된 상태�
         registeredActivities: [{ name: "hello" }],
         transitionDuration: 300,
         globalTransitionState: "loading",
+        events: [],
       },
       {
         activities: [
@@ -1114,6 +1131,7 @@ test("productEffects - 아래 액티비티가 Replaced를 통해 Push된 상태�
         registeredActivities: [{ name: "hello" }],
         transitionDuration: 300,
         globalTransitionState: "idle",
+        events: [],
       },
     ),
   ).toEqual([
@@ -1178,6 +1196,7 @@ test("productEffects - Replaced 이벤트에 같은 activityId를 넘겨주어 �
         registeredActivities: [{ name: "hello" }],
         transitionDuration: 300,
         globalTransitionState: "idle",
+        events: [],
       },
       {
         activities: [
@@ -1231,6 +1250,7 @@ test("productEffects - Replaced 이벤트에 같은 activityId를 넘겨주어 �
         registeredActivities: [{ name: "hello" }],
         transitionDuration: 300,
         globalTransitionState: "loading",
+        events: [],
       },
     ),
   ).toEqual([
@@ -1298,6 +1318,7 @@ test("productEffects - StepPushed가 작동해 steps가 늘어난 경우, STEP_P
         registeredActivities: [{ name: "hello" }],
         transitionDuration: 300,
         globalTransitionState: "idle",
+        events: [],
       },
       {
         activities: [
@@ -1344,6 +1365,7 @@ test("productEffects - StepPushed가 작동해 steps가 늘어난 경우, STEP_P
         registeredActivities: [{ name: "hello" }],
         transitionDuration: 300,
         globalTransitionState: "idle",
+        events: [],
       },
     ),
   ).toEqual([
@@ -1570,6 +1592,7 @@ test("produceEffects - StepPushed after Replaced events produces only STEP_PUSHE
         registeredActivities: [],
         transitionDuration: 350,
         globalTransitionState: "idle",
+        events: [],
       },
       {
         activities: [
@@ -1701,6 +1724,7 @@ test("produceEffects - StepPushed after Replaced events produces only STEP_PUSHE
         registeredActivities: [],
         transitionDuration: 350,
         globalTransitionState: "idle",
+        events: [],
       },
     ),
   ).toEqual([
@@ -1833,6 +1857,7 @@ test("productEffects - StepReplaced가 작동해 파라미터가 바뀐 경우, 
         registeredActivities: [{ name: "hello" }],
         transitionDuration: 300,
         globalTransitionState: "idle",
+        events: [],
       },
       {
         activities: [
@@ -1867,6 +1892,7 @@ test("productEffects - StepReplaced가 작동해 파라미터가 바뀐 경우, 
         registeredActivities: [{ name: "hello" }],
         transitionDuration: 300,
         globalTransitionState: "idle",
+        events: [],
       },
     ),
   ).toEqual([
@@ -1964,6 +1990,7 @@ test("productEffects - Popped가 작동해 steps가 모두 삭제되면, POPPED 
         registeredActivities: [{ name: "hello" }],
         transitionDuration: 300,
         globalTransitionState: "idle",
+        events: [],
       },
       {
         activities: [
@@ -1994,6 +2021,7 @@ test("productEffects - Popped가 작동해 steps가 모두 삭제되면, POPPED 
         registeredActivities: [{ name: "hello" }],
         transitionDuration: 300,
         globalTransitionState: "loading",
+        events: [],
       },
     ),
   ).toEqual([
@@ -2089,12 +2117,14 @@ test("produceEffects - Paused가 작동해, globalTransitionState가 paused로 �
         globalTransitionState: "idle",
         registeredActivities: [],
         transitionDuration: 270,
+        events: [],
       },
       {
         activities: [],
         globalTransitionState: "paused",
         registeredActivities: [],
         transitionDuration: 270,
+        events: [],
       },
     ),
   ).toEqual([
@@ -2113,12 +2143,14 @@ test("produceEffects - Paused가 작동해, globalTransitionState가 paused로 �
         globalTransitionState: "loading",
         registeredActivities: [],
         transitionDuration: 270,
+        events: [],
       },
       {
         activities: [],
         globalTransitionState: "paused",
         registeredActivities: [],
         transitionDuration: 270,
+        events: [],
       },
     ),
   ).toEqual([
@@ -2139,12 +2171,14 @@ test("produceEffects - Resumed가 작동해, globalTransitionState가 paused에�
         globalTransitionState: "paused",
         registeredActivities: [],
         transitionDuration: 270,
+        events: [],
       },
       {
         activities: [],
         globalTransitionState: "idle",
         registeredActivities: [],
         transitionDuration: 270,
+        events: [],
       },
     ),
   ).toEqual([
@@ -2163,12 +2197,14 @@ test("produceEffects - Resumed가 작동해, globalTransitionState가 paused에�
         globalTransitionState: "paused",
         registeredActivities: [],
         transitionDuration: 270,
+        events: [],
       },
       {
         activities: [],
         globalTransitionState: "loading",
         registeredActivities: [],
         transitionDuration: 270,
+        events: [],
       },
     ),
   ).toEqual([
