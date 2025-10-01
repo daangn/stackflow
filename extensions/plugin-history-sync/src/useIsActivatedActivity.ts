@@ -2,12 +2,12 @@ import { ActivityActivationCountsContext } from "ActivityActivationCountsContext
 import { useActivity } from "@stackflow/react";
 import { useContext } from "react";
 
-export function useIsRenderInTransition() {
+export function useIsActivatedActivity() {
   const { id } = useActivity();
   const activityActivationCounts = useContext(ActivityActivationCountsContext);
   const activityActivationCount = activityActivationCounts.find(
     (activityActivationCount) => activityActivationCount.activityId === id,
   )?.activationCount;
 
-  return activityActivationCount !== undefined && activityActivationCount === 0;
+  return activityActivationCount === undefined || activityActivationCount > 0;
 }
