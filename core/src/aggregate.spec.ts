@@ -2850,7 +2850,7 @@ test("aggregate - ReplacedEvent가 같은 activityId로 여러번 수행되었�
     transitionDuration: 350,
     globalTransitionState: "loading",
     events: uniqBy(
-      [...events].sort((a, b) => compareBy(a, b, (e) => e.id)),
+      [...events].sort((a, b) => a.eventDate - b.eventDate),
       (e) => e.id,
     ),
   });
