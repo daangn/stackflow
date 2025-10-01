@@ -20,17 +20,12 @@ import type { ActivityActivationMonitor } from "./ActivityActivationMonitor/Acti
 import { DefaultHistoryActivityActivationMonitor } from "./ActivityActivationMonitor/DefaultHistoryActivityActivationMonitor";
 import { HistoryQueueProvider } from "./HistoryQueueContext";
 import { parseState, pushState, replaceState } from "./historyState";
-import { InitialSetupProcessStatusContext } from "./InitialSetupProcessStatusContext";
 import { last } from "./last";
 import { makeHistoryTaskQueue } from "./makeHistoryTaskQueue";
 import type { UrlPatternOptions } from "./makeTemplate";
 import { makeTemplate, pathToUrl, urlSearchParamsToMap } from "./makeTemplate";
-import {
-  type NavigationProcess,
-  NavigationProcessStatus,
-} from "./NavigationProcess/NavigationProcess";
+import type { NavigationProcess } from "./NavigationProcess/NavigationProcess";
 import { SerialNavigationProcess } from "./NavigationProcess/SerialNavigationProcess";
-import { StatusPublishingNavigationProcess } from "./NavigationProcess/StatusPublishingNavigationProcess";
 import { normalizeActivityRouteMap } from "./normalizeActivityRouteMap";
 import { Publisher } from "./Publisher";
 import type { RouteLike } from "./RouteLike";
@@ -105,24 +100,11 @@ export function historySyncPlugin<
   return () => {
     let pushFlag = 0;
     let silentFlag = false;
-    const initialSetupProcessStatusPublisher =
-      new Publisher<NavigationProcessStatus>();
     let initialSetupProcess: NavigationProcess | null = null;
     const activityActivationMonitors: ActivityActivationMonitor[] = [];
     const activityActivationCountsChangeNotifier = new Publisher<void>();
 
     const { requestHistoryTick } = makeHistoryTaskQueue(history);
-
-    const subscribeInitialSetupProcessStatus = (
-      subscriber: (status: NavigationProcessStatus) => void,
-    ) => {
-      return initialSetupProcessStatusPublisher.subscribe(async (status) =>
-        subscriber(status),
-      );
-    };
-    const getInitialSetupProcessStatus = () => {
-      return initialSetupProcess?.getStatus() ?? NavigationProcessStatus.IDLE;
-    };
 
     const subscribeActivityActivationCountsChange = (
       subscriber: () => void,
@@ -190,10 +172,6 @@ export function historySyncPlugin<
     return {
       key: "plugin-history-sync",
       wrapStack({ stack }) {
-        const initialSetupProcessStatus = useSyncExternalStore(
-          subscribeInitialSetupProcessStatus,
-          getInitialSetupProcessStatus,
-        );
         const activityActivationCounts = useSyncExternalStore(
           subscribeActivityActivationCountsChange,
           getActivityActivationCounts,
@@ -202,15 +180,11 @@ export function historySyncPlugin<
         return (
           <HistoryQueueProvider requestHistoryTick={requestHistoryTick}>
             <RoutesProvider routes={activityRoutes}>
-              <InitialSetupProcessStatusContext.Provider
-                value={initialSetupProcessStatus}
+              <ActivityActivationCountsContext.Provider
+                value={activityActivationCounts}
               >
-                <ActivityActivationCountsContext.Provider
-                  value={activityActivationCounts}
-                >
-                  {stack.render()}
-                </ActivityActivationCountsContext.Provider>
-              </InitialSetupProcessStatusContext.Provider>
+                {stack.render()}
+              </ActivityActivationCountsContext.Provider>
             </RoutesProvider>
           </HistoryQueueProvider>
         );
@@ -283,81 +257,78 @@ export function historySyncPlugin<
         const defaultHistory =
           targetActivityRoute.defaultHistory?.(params) ?? [];
 
-        initialSetupProcess = new StatusPublishingNavigationProcess(
-          new SerialNavigationProcess([
-            ...defaultHistory.map(
-              ({ activityName, activityParams, additionalSteps = [] }) =>
-                () => {
-                  const events: (
-                    | Omit<PushedEvent, "eventDate">
-                    | Omit<StepPushedEvent, "eventDate">
-                  )[] = [
-                    {
-                      name: "Pushed",
-                      id: id(),
-                      activityId: id(),
-                      activityName,
-                      activityParams: {
-                        ...activityParams,
-                      },
-                      activityContext: {
-                        path: currentPath,
-                        lazyActivityComponentRenderContext: {
-                          shouldRenderImmediately: true,
-                        },
+        initialSetupProcess = new SerialNavigationProcess([
+          ...defaultHistory.map(
+            ({ activityName, activityParams, additionalSteps = [] }) =>
+              () => {
+                const events: (
+                  | Omit<PushedEvent, "eventDate">
+                  | Omit<StepPushedEvent, "eventDate">
+                )[] = [
+                  {
+                    name: "Pushed",
+                    id: id(),
+                    activityId: id(),
+                    activityName,
+                    activityParams: {
+                      ...activityParams,
+                    },
+                    activityContext: {
+                      path: currentPath,
+                      lazyActivityComponentRenderContext: {
+                        shouldRenderImmediately: true,
                       },
                     },
-                    ...additionalSteps.map(
-                      ({
-                        stepParams,
-                        hasZIndex,
-                      }): Omit<StepPushedEvent, "eventDate"> => ({
-                        name: "StepPushed",
-                        id: id(),
-                        stepId: id(),
-                        stepParams,
-                        hasZIndex,
-                      }),
-                    ),
-                  ];
-
-                  for (const event of events) {
-                    if (event.name === "Pushed") {
-                      activityActivationMonitors.push(
-                        new DefaultHistoryActivityActivationMonitor(
-                          event.activityId,
-                          initialSetupProcess!,
-                        ),
-                      );
-                    }
-                  }
-
-                  return events;
-                },
-            ),
-            () => [
-              {
-                name: "Pushed",
-                id: id(),
-                activityId: id(),
-                activityName: targetActivityRoute.activityName,
-                activityParams:
-                  makeTemplate(
-                    targetActivityRoute,
-                    options.urlPatternOptions,
-                  ).parse(currentPath) ??
-                  urlSearchParamsToMap(pathToUrl(currentPath).searchParams),
-                activityContext: {
-                  path: currentPath,
-                  lazyActivityComponentRenderContext: {
-                    shouldRenderImmediately: true,
                   },
+                  ...additionalSteps.map(
+                    ({
+                      stepParams,
+                      hasZIndex,
+                    }): Omit<StepPushedEvent, "eventDate"> => ({
+                      name: "StepPushed",
+                      id: id(),
+                      stepId: id(),
+                      stepParams,
+                      hasZIndex,
+                    }),
+                  ),
+                ];
+
+                for (const event of events) {
+                  if (event.name === "Pushed") {
+                    activityActivationMonitors.push(
+                      new DefaultHistoryActivityActivationMonitor(
+                        event.activityId,
+                        initialSetupProcess!,
+                      ),
+                    );
+                  }
+                }
+
+                return events;
+              },
+          ),
+          () => [
+            {
+              name: "Pushed",
+              id: id(),
+              activityId: id(),
+              activityName: targetActivityRoute.activityName,
+              activityParams:
+                makeTemplate(
+                  targetActivityRoute,
+                  options.urlPatternOptions,
+                ).parse(currentPath) ??
+                urlSearchParamsToMap(pathToUrl(currentPath).searchParams),
+              activityContext: {
+                path: currentPath,
+                lazyActivityComponentRenderContext: {
+                  shouldRenderImmediately: true,
                 },
               },
-            ],
-          ]),
-          initialSetupProcessStatusPublisher,
-        );
+            },
+          ],
+        ]);
 
         return initialSetupProcess
           .captureNavigationOpportunity(null)
