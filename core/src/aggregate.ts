@@ -9,7 +9,7 @@ export function aggregate(inputEvents: DomainEvent[], now: number): Stack {
    * 1. Pre-process
    */
   const events = uniqBy(
-    [...inputEvents].sort((a, b) => compareBy(a, b, (e) => e.id)),
+    [...inputEvents].sort((a, b) => a.eventDate - b.eventDate),
     (e) => e.id,
   );
 
@@ -27,6 +27,7 @@ export function aggregate(inputEvents: DomainEvent[], now: number): Stack {
     globalTransitionState: "idle",
     registeredActivities: [],
     transitionDuration: 0,
+    events: [],
   });
 
   /**
