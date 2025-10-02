@@ -1,5 +1,11 @@
 # @stackflow/core
 
+## 1.3.0
+
+### Minor Changes
+
+- 83ee5ed: Expose events used to build a stack via `Stack.events`
+
 ## 1.2.0
 
 ### Minor Changes
