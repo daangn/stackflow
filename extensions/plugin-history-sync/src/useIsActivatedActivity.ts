@@ -1,6 +1,6 @@
-import { ActivityActivationCountsContext } from "./ActivityActivationCountsContext";
 import { useActivity } from "@stackflow/react";
 import { useContext } from "react";
+import { ActivityActivationCountsContext } from "./ActivityActivationCountsContext";
 
 export function useIsActivatedActivity() {
   const { id } = useActivity();
