@@ -1,4 +1,4 @@
-import { ActivityActivationCountsContext } from "ActivityActivationCountsContext";
+import { ActivityActivationCountsContext } from "./ActivityActivationCountsContext";
 import { useActivity } from "@stackflow/react";
 import { useContext } from "react";
 
