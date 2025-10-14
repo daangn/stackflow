@@ -1,5 +1,12 @@
 # @stackflow/plugin-history-sync
 
+## 1.8.0
+
+### Minor Changes
+
+- f298988: Add `defaultHistory` route option to pre-seed stack for better deep link experiences
+- 83ee5ed: Expose stack initialization process status for users to disable logging or fetching while initialization transition
+
 ## 1.7.1
 
 ### Patch Changes
