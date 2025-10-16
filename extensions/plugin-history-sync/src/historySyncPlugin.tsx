@@ -429,8 +429,6 @@ export function historySyncPlugin<
           };
 
           if (isBackward()) {
-            dispatchEvent("Popped", {});
-
             if (!nextActivity) {
               pushFlag += 1;
               push({
@@ -448,6 +446,8 @@ export function historySyncPlugin<
                 });
               }
             }
+
+            dispatchEvent("Popped", {});
           }
           if (isStepBackward()) {
             if (
