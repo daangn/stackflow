@@ -1,4 +1,4 @@
-export { ActivityComponentType as ActivityComponentTypeByParams } from "../__internal__/ActivityComponentType";
+export type { ActivityComponentType as ActivityComponentTypeByParams } from "../__internal__/ActivityComponentType";
 export * from "../__internal__/activity/useActivity";
 export * from "../__internal__/StackflowReactPlugin";
 export * from "../__internal__/StructuredActivityComponentType";
