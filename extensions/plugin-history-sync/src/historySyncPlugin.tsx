@@ -430,7 +430,6 @@ export function historySyncPlugin<
 
           if (isBackward()) {
             if (!nextActivity) {
-              pushFlag += 1;
               push({
                 ...targetActivity.enteredBy,
               });
@@ -440,7 +439,7 @@ export function historySyncPlugin<
                 targetStep?.enteredBy.name === "StepReplaced"
               ) {
                 const { enteredBy } = targetStep;
-                pushFlag += 1;
+
                 stepPush({
                   ...enteredBy,
                 });
@@ -458,7 +457,6 @@ export function historySyncPlugin<
             ) {
               const { enteredBy } = targetStep;
 
-              pushFlag += 1;
               stepPush({
                 ...enteredBy,
               });
