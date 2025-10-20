@@ -1,5 +1,11 @@
 # @stackflow/react
 
+## 1.8.0
+
+### Minor Changes
+
+- ead4e78: Add ActivityComponentType paramterized by params
+
 ## 1.7.0
 
 ### Minor Changes
