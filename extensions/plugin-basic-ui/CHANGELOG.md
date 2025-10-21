@@ -1,5 +1,11 @@
 # @stackflow/plugin-basic-ui
 
+## 1.16.0
+
+### Minor Changes
+
+- 99eff56: Export AppBar
+
 ## 1.15.1
 
 ### Patch Changes
