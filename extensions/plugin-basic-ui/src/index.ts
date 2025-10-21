@@ -1,6 +1,7 @@
 export { IconBack, IconClose } from "./assets";
 export { basicUIPlugin } from "./basicUIPlugin";
 export { globalVars as cssVars } from "./basicUIPlugin.css";
+export { type AppBarProps, default as AppBar } from "./components/AppBar";
 export {
   AppScreenContext,
   AppScreenProps,

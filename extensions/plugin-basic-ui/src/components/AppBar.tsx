@@ -16,7 +16,7 @@ import { compactMap } from "../utils";
 import * as css from "./AppBar.css";
 import * as appScreenCss from "./AppScreen.css";
 
-type AppBarProps = Partial<
+export type AppBarProps = Partial<
   Pick<
     GlobalVars["appBar"],
     | "borderColor"
