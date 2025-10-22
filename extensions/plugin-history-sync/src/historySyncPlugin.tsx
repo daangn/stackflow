@@ -395,6 +395,42 @@ export function historySyncPlugin<
             (step) => step.id === targetStep?.id,
           );
 
+          // Synchronize history state with core state for lower activity step modifications
+          if (nextActivity) {
+            const coreSteps = nextActivity.steps;
+            const coreLastStep = last(coreSteps);
+            const historyStep = targetStep;
+
+            // Check if history step exists in core state
+            const historyStepExistsInCore = coreSteps.some(
+              (step) => step.id === historyStep?.id,
+            );
+
+            if (historyStep && !historyStepExistsInCore) {
+              // History step doesn't exist in core → prioritize core state
+              const match = activityRoutes.find(
+                (r) => r.activityName === nextActivity.name,
+              )!;
+              const template = makeTemplate(match, options.urlPatternOptions);
+
+              requestHistoryTick(() => {
+                silentFlag = true;
+                replaceState({
+                  history,
+                  pathname: template.fill(nextActivity.params),
+                  state: {
+                    activity: nextActivity,
+                    step: coreLastStep,
+                  },
+                  useHash: options.useHash,
+                });
+              });
+
+              // Skip normal step navigation logic
+              return;
+            }
+          }
+
           const isBackward = () => currentActivity.id > targetActivityId;
           const isForward = () => currentActivity.id < targetActivityId;
           const isStep = () => currentActivity.id === targetActivityId;

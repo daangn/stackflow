@@ -4,6 +4,7 @@ import type {
   PoppedEvent,
   PushedEvent,
   ReplacedEvent,
+  StepPoppedEvent,
   StepPushedEvent,
   StepReplacedEvent,
 } from "./event-types";
@@ -3974,7 +3975,7 @@ test("aggregate - After Push > Push > Pop > Replace, first pushed activity shoul
   });
 });
 
-test("aggregate - StepPushedEvent must be ignored when top activity is not target activity", () => {
+test("aggregate - StepPushedEvent can target lower activity with targetActivityId", () => {
   const t = nowTime();
 
   let pushedEvent1: PushedEvent;
@@ -4002,7 +4003,7 @@ test("aggregate - StepPushedEvent must be ignored when top activity is not targe
     })),
     (stepPushedEvent = makeEvent("StepPushed", {
       stepId: "s1",
-      stepParams: {},
+      stepParams: { tab: "profile" },
       targetActivityId: pushedEvent1.activityId,
       eventDate: enoughPastTime(),
     })),
@@ -4016,12 +4017,18 @@ test("aggregate - StepPushedEvent must be ignored when top activity is not targe
         id: "A",
         name: "sample",
         transitionState: "enter-done",
-        params: {},
+        params: { tab: "profile" },
         steps: [
           {
             id: "A",
             params: {},
             enteredBy: pushedEvent1,
+            zIndex: 0,
+          },
+          {
+            id: "s1",
+            params: { tab: "profile" },
+            enteredBy: stepPushedEvent,
             zIndex: 0,
           },
         ],
@@ -4321,6 +4328,198 @@ test("aggregate - StepPushedEvent에 hasZIndex 필드가 true이면, Step에 zIn
         isTop: true,
         isRoot: false,
         zIndex: 2,
+      }),
+    ],
+    registeredActivities: [
+      {
+        name: "sample",
+      },
+    ],
+    transitionDuration: 300,
+    globalTransitionState: "idle",
+    events,
+  });
+});
+
+test("aggregate - StepReplacedEvent can target lower activity with targetActivityId", () => {
+  const t = nowTime();
+
+  let pushedEvent1: PushedEvent;
+  let pushedEvent2: PushedEvent;
+  let stepReplacedEvent: StepReplacedEvent;
+
+  const events = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+    registeredEvent({
+      activityName: "sample",
+    }),
+    (pushedEvent1 = makeEvent("Pushed", {
+      activityId: "A",
+      activityName: "sample",
+      activityParams: {},
+      eventDate: enoughPastTime(),
+    })),
+    (pushedEvent2 = makeEvent("Pushed", {
+      activityId: "B",
+      activityName: "sample",
+      activityParams: {},
+      eventDate: enoughPastTime(),
+    })),
+    (stepReplacedEvent = makeEvent("StepReplaced", {
+      stepId: "s1",
+      stepParams: { newParam: "value" },
+      targetActivityId: pushedEvent1.activityId,
+      eventDate: enoughPastTime(),
+    })),
+  ];
+
+  const output = aggregate(events, t + 300);
+
+  expect(output).toStrictEqual({
+    activities: [
+      activity({
+        id: "A",
+        name: "sample",
+        transitionState: "enter-done",
+        params: { newParam: "value" },
+        steps: [
+          {
+            id: "s1",
+            params: { newParam: "value" },
+            enteredBy: stepReplacedEvent,
+            zIndex: 0,
+          },
+        ],
+        enteredBy: pushedEvent1,
+        isActive: false,
+        isTop: false,
+        isRoot: true,
+        zIndex: 0,
+      }),
+      activity({
+        id: "B",
+        name: "sample",
+        transitionState: "enter-done",
+        params: {},
+        steps: [
+          {
+            id: "B",
+            params: {},
+            enteredBy: pushedEvent2,
+            zIndex: 1,
+          },
+        ],
+        enteredBy: pushedEvent2,
+        isActive: true,
+        isTop: true,
+        isRoot: false,
+        zIndex: 1,
+      }),
+    ],
+    registeredActivities: [
+      {
+        name: "sample",
+      },
+    ],
+    transitionDuration: 300,
+    globalTransitionState: "idle",
+    events,
+  });
+});
+
+test("aggregate - StepPoppedEvent can target lower activity with targetActivityId", () => {
+  const t = nowTime();
+
+  let pushedEvent1: PushedEvent;
+  let pushedEvent2: PushedEvent;
+  let stepPushedEvent1: StepPushedEvent;
+  let stepPushedEvent2: StepPushedEvent;
+  let stepPoppedEvent: StepPoppedEvent;
+
+  const events = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+    registeredEvent({
+      activityName: "sample",
+    }),
+    (pushedEvent1 = makeEvent("Pushed", {
+      activityId: "A",
+      activityName: "sample",
+      activityParams: {},
+      eventDate: enoughPastTime(),
+    })),
+    (stepPushedEvent1 = makeEvent("StepPushed", {
+      stepId: "s1",
+      stepParams: { step: "1" },
+      eventDate: enoughPastTime(),
+    })),
+    (stepPushedEvent2 = makeEvent("StepPushed", {
+      stepId: "s2",
+      stepParams: { step: "2" },
+      eventDate: enoughPastTime(),
+    })),
+    (pushedEvent2 = makeEvent("Pushed", {
+      activityId: "B",
+      activityName: "sample",
+      activityParams: {},
+      eventDate: enoughPastTime(),
+    })),
+    (stepPoppedEvent = makeEvent("StepPopped", {
+      targetActivityId: pushedEvent1.activityId,
+      eventDate: enoughPastTime(),
+    })),
+  ];
+
+  const output = aggregate(events, t + 300);
+
+  expect(output).toStrictEqual({
+    activities: [
+      activity({
+        id: "A",
+        name: "sample",
+        transitionState: "enter-done",
+        params: { step: "1" },
+        steps: [
+          {
+            id: "A",
+            params: {},
+            enteredBy: pushedEvent1,
+            zIndex: 0,
+          },
+          {
+            id: "s1",
+            params: { step: "1" },
+            enteredBy: stepPushedEvent1,
+            zIndex: 0,
+          },
+        ],
+        enteredBy: pushedEvent1,
+        isActive: false,
+        isTop: false,
+        isRoot: true,
+        zIndex: 0,
+      }),
+      activity({
+        id: "B",
+        name: "sample",
+        transitionState: "enter-done",
+        params: {},
+        steps: [
+          {
+            id: "B",
+            params: {},
+            enteredBy: pushedEvent2,
+            zIndex: 1,
+          },
+        ],
+        enteredBy: pushedEvent2,
+        isActive: true,
+        isTop: true,
+        isRoot: false,
+        zIndex: 1,
       }),
     ],
     registeredActivities: [
