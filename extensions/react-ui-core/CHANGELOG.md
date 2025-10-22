@@ -1,5 +1,11 @@
 # @stackflow/react-ui-core
 
+## 1.3.3
+
+### Patch Changes
+
+- fe8b8fe: Fix swipe back gesture during push/pop transitions by using capture phase event listeners to prevent touch events from reaching child elements during transitions
+
 ## 1.3.2
 
 ### Patch Changes
