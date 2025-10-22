@@ -402,10 +402,15 @@ export function historySyncPlugin<
             const historyStep = targetStep;
             const historySteps = targetActivity.steps;
 
-            // Check if core state and history state differ
-            if (coreLastStep?.id !== historyStep?.id) {
+            // Check if history step exists in core state
+            const historyStepExistsInCore = historyStep
+              ? coreSteps.some((step) => step.id === historyStep.id)
+              : true;
+
+            if (!historyStepExistsInCore) {
+              // History step was removed or replaced
               if (coreSteps.length < historySteps.length) {
-                // Step Pop: Step was removed from core
+                // Step Pop: Step count decreased
                 // Use history.back() to skip the removed step entry
                 requestHistoryTick(() => {
                   silentFlag = true;
@@ -413,8 +418,8 @@ export function historySyncPlugin<
                 });
                 return;
               } else {
-                // Step Push or Step Replace: New step added or replaced
-                // Use replaceState (accepting forward history volatility per stack semantics)
+                // Step Replace or complex operations: Step count same or increased
+                // Use replaceState to show current core state
                 const match = activityRoutes.find(
                   (r) => r.activityName === nextActivity.name,
                 )!;
@@ -435,6 +440,11 @@ export function historySyncPlugin<
                 return;
               }
             }
+
+            // If history step exists in core, proceed with normal navigation logic
+            // This handles:
+            // - Step exists but is not the last (normal step backward)
+            // - Multiple step pushes then navigating to middle steps
           }
 
           const isBackward = () => currentActivity.id > targetActivityId;
