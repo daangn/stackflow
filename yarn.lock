@@ -5292,7 +5292,7 @@ __metadata:
     "@stackflow/core": "npm:^1.2.0"
     "@stackflow/esbuild-config": "npm:^1.0.3"
     "@stackflow/react": "npm:^1.6.0"
-    "@stackflow/react-ui-core": "npm:^1.3.2"
+    "@stackflow/react-ui-core": "npm:^1.3.3"
     "@types/react": "npm:^18.3.3"
     "@vanilla-extract/css": "npm:^1.15.3"
     "@vanilla-extract/dynamic": "npm:^2.1.1"
@@ -5478,7 +5478,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/react-ui-core@npm:^1.3.2, @stackflow/react-ui-core@workspace:extensions/react-ui-core":
+"@stackflow/react-ui-core@npm:^1.3.3, @stackflow/react-ui-core@workspace:extensions/react-ui-core":
   version: 0.0.0-use.local
   resolution: "@stackflow/react-ui-core@workspace:extensions/react-ui-core"
   dependencies:
