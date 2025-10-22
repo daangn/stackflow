@@ -400,34 +400,40 @@ export function historySyncPlugin<
             const coreSteps = nextActivity.steps;
             const coreLastStep = last(coreSteps);
             const historyStep = targetStep;
+            const historySteps = targetActivity.steps;
 
-            // Check if history step exists in core state
-            const historyStepExistsInCore = coreSteps.some(
-              (step) => step.id === historyStep?.id,
-            );
-
-            if (historyStep && !historyStepExistsInCore) {
-              // History step doesn't exist in core → prioritize core state
-              const match = activityRoutes.find(
-                (r) => r.activityName === nextActivity.name,
-              )!;
-              const template = makeTemplate(match, options.urlPatternOptions);
-
-              requestHistoryTick(() => {
-                silentFlag = true;
-                replaceState({
-                  history,
-                  pathname: template.fill(nextActivity.params),
-                  state: {
-                    activity: nextActivity,
-                    step: coreLastStep,
-                  },
-                  useHash: options.useHash,
+            // Check if core state and history state differ
+            if (coreLastStep?.id !== historyStep?.id) {
+              if (coreSteps.length < historySteps.length) {
+                // Step Pop: Step was removed from core
+                // Use history.back() to skip the removed step entry
+                requestHistoryTick(() => {
+                  silentFlag = true;
+                  history.back();
                 });
-              });
+                return;
+              } else {
+                // Step Push or Step Replace: New step added or replaced
+                // Use replaceState (accepting forward history volatility per stack semantics)
+                const match = activityRoutes.find(
+                  (r) => r.activityName === nextActivity.name,
+                )!;
+                const template = makeTemplate(match, options.urlPatternOptions);
 
-              // Skip normal step navigation logic
-              return;
+                requestHistoryTick(() => {
+                  silentFlag = true;
+                  replaceState({
+                    history,
+                    pathname: template.fill(nextActivity.params),
+                    state: {
+                      activity: nextActivity,
+                      step: coreLastStep,
+                    },
+                    useHash: options.useHash,
+                  });
+                });
+                return;
+              }
             }
           }
 
