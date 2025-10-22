@@ -20,18 +20,22 @@ export function usePreventTouchDuringTransition({
 
     const onTouchStart = (e: TouchEvent) => {
       e.preventDefault();
+      e.stopPropagation();
     };
 
     const onTouchEnd = (e: TouchEvent) => {
       e.preventDefault();
+      e.stopPropagation();
     };
 
-    $ref.addEventListener("touchstart", onTouchStart);
-    $ref.addEventListener("touchend", onTouchEnd);
+    // Use capture phase to prevent touch events from reaching child elements
+    // during transitions (including edge swipe area)
+    $ref.addEventListener("touchstart", onTouchStart, { capture: true });
+    $ref.addEventListener("touchend", onTouchEnd, { capture: true });
 
     return () => {
-      $ref.removeEventListener("touchstart", onTouchStart);
-      $ref.removeEventListener("touchend", onTouchEnd);
+      $ref.removeEventListener("touchstart", onTouchStart, { capture: true });
+      $ref.removeEventListener("touchend", onTouchEnd, { capture: true });
     };
   }, [stack?.globalTransitionState]);
 }
