@@ -396,7 +396,9 @@ export function historySyncPlugin<
           );
 
           // Synchronize history state with core state for lower activity step modifications
-          if (nextActivity) {
+          // Only apply this logic for non-active (lower) activities to avoid interfering
+          // with normal step navigation on the active activity
+          if (nextActivity && !nextActivity.isActive) {
             const coreSteps = nextActivity.steps;
             const coreLastStep = last(coreSteps);
             const historyStep = targetStep;
