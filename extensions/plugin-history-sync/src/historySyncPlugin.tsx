@@ -175,6 +175,7 @@ export function historySyncPlugin<
         const activityActivationCounts = useSyncExternalStore(
           subscribeActivityActivationCountsChange,
           getActivityActivationCounts,
+          getActivityActivationCounts,
         );
 
         return (
