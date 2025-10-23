@@ -1463,4 +1463,94 @@ describe("historySyncPlugin", () => {
      */
     expect(queryResponse.data.hello).toEqual("world");
   });
+
+  test("historySyncPlugin - stepReplace on lower activity syncs when navigating back", async () => {
+    actions.push({
+      activityId: "a1",
+      activityName: "Article",
+      activityParams: {
+        articleId: "10",
+        title: "original",
+      },
+    });
+
+    await actions.push({
+      activityId: "a2",
+      activityName: "Article",
+      activityParams: {
+        articleId: "20",
+        title: "second",
+      },
+    });
+
+    // Modify lower activity's step while at a2
+    actions.stepReplace(
+      {
+        articleId: "10",
+        title: "modified",
+      },
+      { targetActivityId: "a1" },
+    );
+
+    // Navigate back to modified activity
+    history.back();
+
+    // Should show modified params after sync
+    expect(activeActivity(await actions.getStack())?.params.title).toEqual(
+      "modified",
+    );
+    expect(activeActivity(await actions.getStack())?.params.articleId).toEqual(
+      "10",
+    );
+  });
+
+  test("historySyncPlugin - stepPop on lower activity skips removed step when navigating back", async () => {
+    actions.push({
+      activityId: "a1",
+      activityName: "Article",
+      activityParams: {
+        articleId: "10",
+        title: "step1",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s1",
+      stepParams: {
+        articleId: "11",
+        title: "step2",
+      },
+    });
+
+    actions.stepPush({
+      stepId: "s2",
+      stepParams: {
+        articleId: "12",
+        title: "step3",
+      },
+    });
+
+    await actions.push({
+      activityId: "a2",
+      activityName: "Article",
+      activityParams: {
+        articleId: "20",
+        title: "second",
+      },
+    });
+
+    expect(history.index).toEqual(4);
+
+    // Pop step from lower activity a1
+    actions.stepPop({ targetActivityId: "a1" });
+
+    // Navigate back - should skip the removed step3 entry
+    history.back();
+    expect(activeActivity(await actions.getStack())?.params.title).toEqual(
+      "step2",
+    );
+    expect(activeActivity(await actions.getStack())?.params.articleId).toEqual(
+      "11",
+    );
+  });
 });
