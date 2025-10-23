@@ -8,22 +8,20 @@ Allow step actions to target lower activities with targetActivityId
 **Core Changes:**
 - Step actions (stepPush, stepPop, stepReplace) can now target any activity in the stack using `targetActivityId` option
 - Previously only the top activity could be targeted
-- Enables modifying previous activity parameters when popping current activity
+- Enables modifying lower activity steps when popping current activity
 
 **History Sync Plugin Changes:**
-- Added intelligent synchronization when navigating to modified lower activities
-- Uses `history.back()` for step pop to avoid duplicate entries
-- Uses `replaceState()` for step push/replace (accepts forward history volatility per stack semantics)
-- Handles complex step operation sequences correctly
+- Added intelligent synchronization when navigating to lower activities with removed steps
+- When navigating back to a step that was removed via `stepPop`, automatically skips the removed entry
+- Uses `history.back()` to navigate to the correct remaining step
 
 **Use Case:**
 ```typescript
-// Pop and modify previous activity in single operation
-actions.pop({
-  onBeforePop: () => {
-    actions.stepReplace({ newParams }, { targetActivityId: previousActivityId });
-  }
-});
+// Remove a step from a lower activity while at top activity
+actions.stepPop({ targetActivityId: lowerActivityId });
+
+// When user navigates back, the removed step entry is automatically skipped
+history.back(); // Skips removed step, lands on the correct step
 ```
 
 This is backward compatible - existing code works without changes.
