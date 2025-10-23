@@ -1514,4 +1514,48 @@ describe("historySyncPlugin", () => {
     expect(active?.steps[1]?.params.title).toEqual("step2");
     expect(path(history.location)).toEqual("/articles/11/?title=step2");
   });
+
+  test("historySyncPlugin - stepPush on lower activity does not affect current history", async () => {
+    actions.push({
+      activityId: "a1",
+      activityName: "Article",
+      activityParams: {
+        articleId: "10",
+        title: "first",
+      },
+    });
+
+    await actions.push({
+      activityId: "a2",
+      activityName: "Article",
+      activityParams: {
+        articleId: "20",
+        title: "second",
+      },
+    });
+
+    const historyIndexBefore = history.index;
+    const historyPathBefore = path(history.location);
+
+    // Add step to lower activity a1 while at a2
+    await actions.stepPush({
+      stepId: "s1",
+      stepParams: {
+        articleId: "15",
+        title: "added-step",
+      },
+      targetActivityId: "a1",
+    });
+
+    // Current history should NOT change (this is the bug we're testing for)
+    expect(history.index).toEqual(historyIndexBefore);
+    expect(path(history.location)).toEqual(historyPathBefore);
+    expect(path(history.location)).toEqual("/articles/20/?title=second");
+
+    // Stack state should reflect the change
+    const stack = await actions.getStack();
+    const lowerActivity = stack.activities.find((a) => a.id === "a1");
+    expect(lowerActivity?.steps.length).toEqual(2); // initial params + added step
+    expect(lowerActivity?.steps[1]?.params.title).toEqual("added-step");
+  });
 });

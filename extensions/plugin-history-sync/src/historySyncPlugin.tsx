@@ -553,6 +553,11 @@ export function historySyncPlugin<
           return;
         }
 
+        // Only update history for active activity
+        if (!activity.isActive) {
+          return;
+        }
+
         const match = activityRoutes.find(
           (r) => r.activityName === activity.name,
         )!;
@@ -691,7 +696,12 @@ export function historySyncPlugin<
           }
         }
       },
-      onBeforeStepPop({ actions: { getStack } }) {
+      onBeforeStepPop({ actionParams, actions: { getStack } }) {
+        // Only handle history for active activity step pops
+        if (actionParams?.targetActivityId) {
+          return; // Lower activity step pop, don't modify history
+        }
+
         const { activities } = getStack();
         const currentActivity = activities.find(
           (activity) => activity.isActive,
