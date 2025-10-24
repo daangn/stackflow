@@ -1558,4 +1558,44 @@ describe("historySyncPlugin", () => {
     expect(lowerActivity?.steps.length).toEqual(2); // initial params + added step
     expect(lowerActivity?.steps[1]?.params.title).toEqual("added-step");
   });
+
+  test("historySyncPlugin - stepPush on lower activity syncs when navigating back", async () => {
+    actions.push({
+      activityId: "a1",
+      activityName: "Article",
+      activityParams: {
+        articleId: "10",
+        title: "first",
+      },
+    });
+
+    await actions.push({
+      activityId: "a2",
+      activityName: "Article",
+      activityParams: {
+        articleId: "20",
+        title: "second",
+      },
+    });
+
+    // Add step to lower activity a1 while at a2
+    await actions.stepPush({
+      stepId: "s1",
+      stepParams: {
+        articleId: "15",
+        title: "added-step",
+      },
+      targetActivityId: "a1",
+    });
+
+    // Navigate back to a1 - should sync to show the added step
+    history.back();
+
+    const stack = await actions.getStack();
+    const active = activeActivity(stack);
+    expect(active?.id).toEqual("a1");
+    expect(active?.steps.length).toEqual(2);
+    expect(active?.steps[1]?.params.title).toEqual("added-step");
+    expect(path(history.location)).toEqual("/articles/15/?title=added-step");
+  });
 });

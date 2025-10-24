@@ -399,24 +399,48 @@ export function historySyncPlugin<
           // Synchronize history state with core state for lower activity step modifications
           // Only apply this logic for non-active (lower) activities to avoid interfering
           // with normal step navigation on the active activity
-          if (nextActivity && !nextActivity.isActive && targetStep) {
+          if (nextActivity && !nextActivity.isActive) {
             const coreSteps = nextActivity.steps;
+            const coreLastStep = last(coreSteps);
             const historySteps = targetActivity.steps;
 
-            // Check if we're navigating to a step that was removed (stepPop scenario)
-            const historyStepExistsInCore = coreSteps.some(
-              (step) => step.id === targetStep.id,
-            );
+            let needsSync = false;
 
-            if (
-              !historyStepExistsInCore &&
-              coreSteps.length < historySteps.length
-            ) {
-              // Step Pop: The step we're navigating to was removed
-              // Use history.back() to skip the removed step entry
-              // Don't set silentFlag - we want the next popstate to update app state
-              history.back();
-              return;
+            // Case 1: History has a step that doesn't exist in core (stepPop or stepReplace)
+            if (targetStep && !coreSteps.some((step) => step.id === targetStep?.id)) {
+              if (coreSteps.length < historySteps.length) {
+                // Step Pop: Use history.back() to skip removed step entry
+                history.back();
+                return;
+              }
+              needsSync = true; // stepReplace or complex operations
+            }
+            // Case 2: History has no step but core has steps (stepPush added to lower activity)
+            else if (!targetStep && coreSteps.length > 0) {
+              needsSync = true;
+            }
+
+            if (needsSync) {
+              // Sync history with core state
+              const match = activityRoutes.find(
+                (r) => r.activityName === nextActivity.name,
+              )!;
+              const template = makeTemplate(match, options.urlPatternOptions);
+              const paramsForUrl = coreLastStep?.params ?? nextActivity.params;
+
+              replaceState({
+                history,
+                pathname: template.fill(paramsForUrl),
+                state: {
+                  activity: nextActivity,
+                  step: coreLastStep,
+                },
+                useHash: options.useHash,
+              });
+
+              // Update target variables for normal navigation logic
+              targetActivity = nextActivity;
+              targetStep = coreLastStep;
             }
           }
 
