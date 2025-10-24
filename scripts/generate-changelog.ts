@@ -7,7 +7,7 @@
  *
  * 사용법:
  * 1. 프로젝트 루트에서 `yarn generate:changelog` 명령어를 실행합니다.
- * 2. 생성된 Changelog 파일은 `docs/pages/docs/changelog.en.mdx`에 추가됩니다.
+ * 2. 생성된 Changelog 파일은 `docs/pages/docs/changelog.en.mdx`, `docs/pages/docs/changelog.ko.mdx`에 추가됩니다.
  */
 
 import { exec } from "node:child_process";
@@ -437,15 +437,20 @@ async function main() {
       );
     });
 
-    const changelogPath = join(
+    const changelogEnPath = join(
       process.cwd(),
       "docs/pages/docs/changelog.en.mdx",
     );
+    const changelogKoPath = join(
+      process.cwd(),
+      "docs/pages/docs/changelog.ko.mdx",
+    );
+
     console.log("📖 Reading existing changelog...");
-    const existingContent = await readFile(changelogPath, "utf-8");
+    const existingContent = await readFile(changelogEnPath, "utf-8");
 
     console.log("📖 Extracting manual content...");
-    const manualContents = await extractManualContent(changelogPath);
+    const manualContents = await extractManualContent(changelogEnPath);
 
     console.log("🗂️ Organizing changelog entries...");
     const entries = await organizeChangelogEntries(
@@ -458,10 +463,11 @@ async function main() {
     const markdown = generateChangelogMarkdown(entries, existingContent);
 
     console.log("💾 Writing changelog file...");
-    await writeFile(changelogPath, markdown);
+    await writeFile(changelogEnPath, markdown);
+    await writeFile(changelogKoPath, markdown);
 
     console.log("✅ Changelog generated successfully!");
-    console.log(`📄 File: ${changelogPath}`);
+    console.log(`📄 File: ${changelogEnPath}, ${changelogKoPath}`);
   } catch (error) {
     console.error("❌ Error generating changelog:", error);
     process.exit(1);
