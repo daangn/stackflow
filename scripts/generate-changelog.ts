@@ -257,6 +257,7 @@ async function organizeChangelogEntries(
 function generateChangelogMarkdown(
   entries: ChangelogEntry[],
   existingContent = "",
+  title: string,
 ): string {
   // 기존 frontmatter 추출 (updatedAt은 Git lastModified 사용하므로 업데이트하지 않음)
   const frontmatterMatch = existingContent.match(/^---\n([\s\S]*?)\n---\n/);
@@ -268,7 +269,7 @@ function generateChangelogMarkdown(
   } else {
     // 새로운 frontmatter 생성 (updatedAt 없이)
     frontmatter = `---
-title: Changelog
+title: ${title}
 ---
 
 `;
@@ -460,11 +461,20 @@ async function main() {
     );
 
     console.log("📝 Generating changelog markdown...");
-    const markdown = generateChangelogMarkdown(entries, existingContent);
+    const markdownEn = generateChangelogMarkdown(
+      entries,
+      existingContent,
+      "Changelog",
+    );
+    const markdownKo = generateChangelogMarkdown(
+      entries,
+      existingContent,
+      "변경 이력",
+    );
 
     console.log("💾 Writing changelog file...");
-    await writeFile(changelogEnPath, markdown);
-    await writeFile(changelogKoPath, markdown);
+    await writeFile(changelogEnPath, markdownEn);
+    await writeFile(changelogKoPath, markdownKo);
 
     console.log("✅ Changelog generated successfully!");
     console.log(`📄 File: ${changelogEnPath}, ${changelogKoPath}`);
