@@ -133,15 +133,15 @@ async function getChangesetCommits(): Promise<Record<string, string>> {
     const fileList = files.split("\n").filter((file) => file.trim());
     console.log(`📊 Found ${fileList.length} changeset files:`, fileList);
 
-    // 각 파일별로 dev 브랜치에 머지된 commit 찾기
+    // 각 파일별로 main 브랜치에 머지된 commit 찾기
     const commitMap: Record<string, string> = {};
     for (const file of fileList) {
       // changeset ID 추출 (파일명에서 .md 제거)
       const changesetId = file.split("/").pop()?.replace(".md", "") || "";
 
-      // Version Packages 커밋을 제외하고 dev 브랜치에 머지된 커밋 찾기
+      // Version Packages 커밋을 제외하고 main 브랜치에 머지된 커밋 찾기
       const commit = await execCommand(
-        `git log --oneline --first-parent dev -- "${file}" | grep -v "Version Packages" | head -1 | cut -d' ' -f1`,
+        `git log --oneline --first-parent main -- "${file}" | grep -v "Version Packages" | head -1 | cut -d' ' -f1`,
       );
 
       if (commit) {
