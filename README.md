@@ -35,7 +35,7 @@ So, what advantages does **Stackflow** have compared to the existing navigation 
 ## Getting Started
 
 ```bash
-$ yarn add @stackflow/core @stackflow/react
+$ bun add @stackflow/core @stackflow/react
 ```
 
 ```tsx

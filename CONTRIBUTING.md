@@ -11,27 +11,27 @@
 Install the dependencies by entering the following command in the project root
 
 ```bash
-$ yarn
+$ bun install
 ```
 
-> **Stackflow** uses [Yarn 4](https://yarnpkg.com) and Yarn workspace
+> **Stackflow** uses [Bun](https://bun.sh) and Bun workspaces
 
 ### Build
 
 Build all packages
 
 ```bash
-$ yarn build
+$ bun run build
 ```
 
-...or you can build each packages by `yarn workspace` command
+...or you can build each package using the `--filter` flag
 
 ```bash
 # Build @stackflow/core
-$ yarn workspace @stackflow/core build
+$ bun run --filter @stackflow/core build
 
 # Build @stackflow/react
-$ yarn workspace @stackflow/react build
+$ bun run --filter @stackflow/react build
 ```
 
 ### Getting started with `demo`
@@ -39,7 +39,7 @@ $ yarn workspace @stackflow/react build
 You can start your project in the `/demo` folder with the following command
 
 ```bash
-$ yarn workspace @stackflow/demo dev:app
+$ bun run --filter @stackflow/demo dev:app
 ```
 
 ## Development mode
@@ -47,5 +47,5 @@ $ yarn workspace @stackflow/demo dev:app
 View the changes in the `demo` project for testing while editing other packages as follows:
 
 ```bash
-$ yarn dev
+$ bun run dev
 ```
