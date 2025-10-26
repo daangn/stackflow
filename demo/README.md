@@ -5,8 +5,8 @@ This is an example of using Stackflow in a basic Single Page Application environ
 ## Getting Started
 
 ```bash
-$ yarn dev
+$ bun run dev
 
 # or
-$ yarn dev:app
+$ bun run dev:app
 ```
