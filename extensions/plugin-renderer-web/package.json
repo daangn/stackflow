@@ -25,7 +25,7 @@
   "scripts": {
     "build": "bun run build:js && bun run build:dts",
     "build:dts": "tsc --emitDeclarationOnly",
-    "build:js": "node ./esbuild.config.js",
+    "build:js": "bun ./esbuild.config.js",
     "clean": "rimraf dist",
     "dev": "bun run build:js --watch && bun run build:dts --watch",
     "typecheck": "tsc --noEmit"
