@@ -20,13 +20,13 @@
     "src"
   ],
   "scripts": {
-    "build": "yarn build:js && yarn build:dts && yarn build:app",
-    "build:app": "yarn vite build",
+    "build": "bun run build:js && bun run build:dts && bun run build:app",
+    "build:app": "bun run vite build",
     "build:dts": "tsc --emitDeclarationOnly",
     "build:js": "node ./esbuild.config.js",
     "clean": "rimraf dist && rimraf build",
-    "dev": "yarn dev:app && yarn build:js --watch && yarn build:dts --watch",
-    "dev:app": "yarn vite --host 0.0.0.0",
+    "dev": "bun run dev:app && bun run build:js --watch && bun run build:dts --watch",
+    "dev:app": "bun run vite --host 0.0.0.0",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

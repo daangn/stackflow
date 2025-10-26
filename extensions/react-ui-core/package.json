@@ -24,11 +24,11 @@
     "README.md"
   ],
   "scripts": {
-    "build": "yarn build:js && yarn build:dts",
+    "build": "bun run build:js && bun run build:dts",
     "build:dts": "tsc --emitDeclarationOnly",
     "build:js": "node ./esbuild.config.js",
     "clean": "rimraf dist",
-    "dev": "yarn build:js --watch && yarn build:dts --watch",
+    "dev": "bun run build:js --watch && bun run build:dts --watch",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
