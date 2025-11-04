@@ -15,6 +15,7 @@
     "@vanilla-extract/esbuild-plugin": "^2.3.8"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "provenance": true
   }
 }
