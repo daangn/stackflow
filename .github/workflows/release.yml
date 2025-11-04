@@ -12,6 +12,10 @@ jobs:
   release:
     name: Create PR or release packages
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -69,7 +73,6 @@ jobs:
           publish: yarn changeset publish
           version: yarn changeset:version
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.DAANGNBOT_PAT }}
 
       - name: Continuous release via pkg.pr.new
