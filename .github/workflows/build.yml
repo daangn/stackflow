@@ -19,22 +19,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version: "22"
+          bun-version: 1.3.1
 
-      - uses: actions/cache@v4
-        with:
-          path: |
-            .yarn/unplugged/
-            .yarn/install-state.gz
-          key: ${{ runner.os }}-yarn-v1-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-v1
-
-      - name: Install the unplugged dependencies and check that the Yarn files do not change during the installation process. If an error occurs, run "yarn install" and commit and push.
+      - name: Install dependencies with Bun
         run: |
-          yarn install --immutable
+          bun install --frozen-lockfile
         shell: bash
 
       - uses: actions/cache/restore@v4
@@ -51,7 +42,7 @@ jobs:
 
       - name: Build the entire monorepo
         run: |
-          yarn build
+          bun run build
 
       - uses: actions/cache/save@v4
         if: github.event_name == 'push'

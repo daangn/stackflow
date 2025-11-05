@@ -46,12 +46,9 @@
   "files": {
     "includes": [
       "**",
-      "!**/.pnp.cjs",
-      "!**/.pnp.loader.mjs",
       "!**/.changeset/**",
       "!**/.github/**",
       "!**/.vscode/**",
-      "!**/.yarn/**",
       "!**/.next/**",
       "!**/__generated__/**",
       "!**/.ultra.cache.json",

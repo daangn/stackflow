@@ -7,7 +7,7 @@ Add Google analytics 4 script to current service.
 ### Inatallation
 
 ```bash
-yarn add @stackflow/plugin-google-analytics-4
+bun add @stackflow/plugin-google-analytics-4
 ```
 
 ### Initialize

@@ -67,43 +67,44 @@ Stackflow is a JavaScript library that implements Stack Navigation UX commonly u
 
 ```bash
 # Install dependencies
-yarn install
+bun install
 
 # Development mode (watch and build all packages)
-yarn dev
+bun run dev
 
 # Build all packages
-yarn build
+bun run build
 
 # Run tests
-yarn test
+bun run test
 
 # Type checking
-yarn typecheck
+bun run typecheck
 
 # Format code
-yarn format
+bun run format
 
 # Lint code
-yarn lint
+bun run lint
 
 # Release process
-yarn release
+bun run release
 
 # Canary release
-yarn release:canary
+bun run release:canary
 ```
 
 ## Testing
 
 - Test files: `*.spec.ts` pattern
-- Run tests: `yarn test`
+- Run tests: `bun run test`
 - Tests are located alongside source files
 
 ## Key Dependencies
 
 - **React**: >=16.8.0 (peer dependency)
 - **TypeScript**: ^5.5.3
+- **Bun**: Package manager and runtime
 - **Biome**: Code formatting and linting
 - **Ultra Runner**: Monorepo task runner
 - **Changesets**: Version management and publishing
@@ -205,12 +206,13 @@ The Future API maintains compatibility with existing code while preparing for St
 - Uses esbuild for JavaScript/TypeScript compilation
 - Separate builds for CommonJS and ESM
 - TypeScript declarations generated separately
-- Monorepo managed with Yarn workspaces and ultra runner
+- Monorepo managed with Bun workspaces and ultra runner
 
 ## Important Notes
 
-- Always use `yarn` commands (not npm)
-- The project uses Yarn Berry (v4)
+- Always use `bun` commands (not npm or yarn)
+- The project uses Bun as its package manager
+- Workspaces are used for monorepo management
 - Changesets are used for versioning
 - Biome is used for formatting/linting (not ESLint/Prettier)
 - Documentation site is built with Next.js and deployed to Cloudflare

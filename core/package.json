@@ -23,12 +23,12 @@
     "README.md"
   ],
   "scripts": {
-    "build": "yarn build:js && yarn build:dts",
+    "build": "bun run build:js && bun run build:dts",
     "build:dts": "tsc --emitDeclarationOnly",
-    "build:js": "node ./esbuild.config.js",
+    "build:js": "bun ./esbuild.config.js",
     "clean": "rimraf dist",
-    "dev": "yarn test --watch && yarn build:js --watch && yarn build:dts --watch",
-    "test": "yarn jest",
+    "dev": "bun run test --watch && bun run build:js --watch && bun run build:dts --watch",
+    "test": "bun run jest",
     "typecheck": "tsc --noEmit"
   },
   "jest": {
