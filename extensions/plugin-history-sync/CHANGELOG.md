@@ -1,5 +1,11 @@
 # @stackflow/plugin-history-sync
 
+## 1.8.1
+
+### Patch Changes
+
+- 567352a: Fix SSR compatibility by adding getServerSnapshot parameter to useSyncExternalStore. This resolves the "Missing getServerSnapshot, which is required for server-rendered content" error in SSR environments.
+
 ## 1.8.0
 
 ### Minor Changes

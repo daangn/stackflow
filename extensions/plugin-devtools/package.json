@@ -41,7 +41,8 @@
     "@stackflow/core": "^1.1.0-canary.0"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "provenance": true
   },
   "ultra": {
     "concurrent": [
