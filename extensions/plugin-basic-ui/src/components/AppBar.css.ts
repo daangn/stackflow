@@ -198,11 +198,7 @@ export const container = style([
     transition: transitions({
       height: globalVars.appBar.heightTransitionDuration,
     }),
-    selectors: {
-      [`${android} &`]: {
-        padding: "0 1rem",
-      },
-    },
+    padding: "0 1rem",
   },
 ]);
 
@@ -211,17 +207,9 @@ export const left = style([
   f.fullHeight,
   appBarMinHeight,
   {
+    paddingRight: "1rem",
     ":empty": {
       display: "none",
-    },
-    selectors: {
-      [`${android} &`]: {
-        paddingRight: "1rem",
-      },
-      [`${cupertino} &`]: {
-        paddingLeft: "1rem",
-        paddingRight: "1rem",
-      },
     },
   },
 ]);
@@ -327,17 +315,9 @@ export const right = style([
   appBarMinHeight,
   {
     marginLeft: "auto",
+    paddingLeft: "1rem",
     ":empty": {
       display: "none",
-    },
-    selectors: {
-      [`${android} &`]: {
-        paddingLeft: "1rem",
-      },
-      [`${cupertino} &`]: {
-        paddingLeft: "1rem",
-        paddingRight: "1rem",
-      },
     },
   },
 ]);
