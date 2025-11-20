@@ -208,7 +208,7 @@ export const left = style([
   f.fullHeight,
   appBarMinHeight,
   {
-    paddingRight: "1rem",
+    paddingRight: globalVars.appBar.wrappingInlinePadding,
     ":empty": {
       display: "none",
     },
@@ -315,7 +315,7 @@ export const right = style([
   f.posRel,
   appBarMinHeight,
   {
-    paddingLeft: "1rem",
+    paddingLeft: globalVars.appBar.wrappingInlinePadding,
     ":empty": {
       display: "none",
     },
