@@ -198,8 +198,12 @@ export const container = style([
     transition: transitions({
       height: globalVars.appBar.heightTransitionDuration,
     }),
-    paddingLeft: globalVars.appBar.wrappingInlinePadding,
-    paddingRight: globalVars.appBar.wrappingInlinePadding,
+    selectors: {
+      [`${android} &`]: {
+        paddingLeft: globalVars.appBar.wrappingInlinePadding,
+        paddingRight: globalVars.appBar.wrappingInlinePadding,
+      },
+    },
   },
 ]);
 
@@ -208,9 +212,17 @@ export const left = style([
   f.fullHeight,
   appBarMinHeight,
   {
-    paddingRight: globalVars.appBar.wrappingInlinePadding,
     ":empty": {
       display: "none",
+    },
+    selectors: {
+      [`${android} &`]: {
+        paddingRight: globalVars.appBar.wrappingInlinePadding,
+      },
+      [`${cupertino} &`]: {
+        paddingLeft: globalVars.appBar.wrappingInlinePadding,
+        paddingRight: globalVars.appBar.wrappingInlinePadding,
+      },
     },
   },
 ]);
@@ -313,9 +325,17 @@ export const right = style([
   f.posRel,
   appBarMinHeight,
   {
-    paddingLeft: globalVars.appBar.wrappingInlinePadding,
     ":empty": {
       display: "none",
+    },
+    selectors: {
+      [`${android} &`]: {
+        paddingLeft: globalVars.appBar.wrappingInlinePadding,
+      },
+      [`${cupertino} &`]: {
+        paddingLeft: globalVars.appBar.wrappingInlinePadding,
+        paddingRight: globalVars.appBar.wrappingInlinePadding,
+      },
     },
   },
 ]);
