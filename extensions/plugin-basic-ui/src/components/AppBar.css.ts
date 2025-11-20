@@ -226,8 +226,8 @@ export const backButton = style([
       opacity: "300ms",
       color: globalVars.appBar.iconColorTransitionDuration,
     }),
-    padding: globalVars.appBar.backButton.touchAreaExpansion,
-    margin: `calc(-1 * ${globalVars.appBar.backButton.touchAreaExpansion})`,
+    padding: globalVars.appBar.backButtonTouchAreaExpansion,
+    margin: `calc(-1 * ${globalVars.appBar.backButtonTouchAreaExpansion})`,
     ":active": {
       opacity: "0.2",
       transition: transitions({
