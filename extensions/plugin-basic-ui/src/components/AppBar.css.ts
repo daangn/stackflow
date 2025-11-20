@@ -198,7 +198,8 @@ export const container = style([
     transition: transitions({
       height: globalVars.appBar.heightTransitionDuration,
     }),
-    padding: "0 1rem",
+    paddingLeft: globalVars.appBar.wrappingInlinePadding,
+    paddingRight: globalVars.appBar.wrappingInlinePadding,
   },
 ]);
 
