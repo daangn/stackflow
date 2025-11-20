@@ -315,7 +315,6 @@ export const right = style([
   f.posRel,
   appBarMinHeight,
   {
-    marginLeft: "auto",
     paddingLeft: "1rem",
     ":empty": {
       display: "none",
