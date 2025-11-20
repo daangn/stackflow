@@ -31,6 +31,9 @@ const GLOBAL_VARS = {
     overflow: "app-bar-overflow",
     minSafeAreaInsetTop: "app-bar-min-safe-area-inset-top",
     wrappingInlinePadding: "app-bar-wrapping-inline-padding",
+    backButton: {
+      touchAreaExpansion: "app-bar-back-button-touch-area-expansion",
+    },
   },
   bottomSheet: {
     borderRadius: "bottom-sheet-border-radius",
@@ -72,6 +75,9 @@ const androidValues: GlobalVars = {
     overflow: "hidden",
     minSafeAreaInsetTop: "0px",
     wrappingInlinePadding: "1rem",
+    backButton: {
+      touchAreaExpansion: "0.5rem",
+    },
   },
   bottomSheet: {
     borderRadius: "1rem",
