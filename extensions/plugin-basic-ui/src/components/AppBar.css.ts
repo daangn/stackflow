@@ -243,8 +243,10 @@ export const closeButton = style([backButton]);
 export const center = style([f.flexAlignCenter, f.flex1, appBarMinHeight]);
 
 export const centerMain = style({
-  width: vars.appBar.center.mainWidth,
+  display: "flex",
   color: globalVars.appBar.textColor,
+  fontSize: globalVars.appBar.fontSize,
+  fontWeight: "bold",
   transition: transitions({
     height: globalVars.appBar.heightTransitionDuration,
     color: globalVars.appBar.textColorTransitionDuration,
@@ -253,20 +255,16 @@ export const centerMain = style({
     [`${android} &`]: {
       width: "100%",
       justifyContent: "flex-start",
-      fontSize: "1.125rem",
       lineHeight: "1.5",
-      fontWeight: "bold",
       boxSizing: "border-box",
     },
     [`${cupertino} &`]: {
+      width: vars.appBar.center.mainWidth,
       position: "absolute",
-      display: "flex",
       alignItems: "center",
       justifyContent: "center",
       textAlign: "center",
       fontFamily: "-apple-system, BlinkMacSystemFont",
-      fontWeight: "bold",
-      fontSize: "1.125rem",
       left: "50%",
       transform: "translate(-50%)",
       height: globalVars.appBar.height,

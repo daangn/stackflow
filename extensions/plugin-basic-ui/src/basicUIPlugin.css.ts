@@ -31,6 +31,7 @@ const GLOBAL_VARS = {
     overflow: "app-bar-overflow",
     minSafeAreaInsetTop: "app-bar-min-safe-area-inset-top",
     wrappingInlinePadding: "app-bar-wrapping-inline-padding",
+    fontSize: "app-bar-font-size",
     backButton: {
       touchAreaExpansion: "app-bar-back-button-touch-area-expansion",
     },
@@ -75,6 +76,7 @@ const androidValues: GlobalVars = {
     overflow: "hidden",
     minSafeAreaInsetTop: "0px",
     wrappingInlinePadding: "1rem",
+    fontSize: "1.125rem",
     backButton: {
       touchAreaExpansion: "0.5rem",
     },
