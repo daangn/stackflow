@@ -85,6 +85,11 @@ export const basicUIPlugin: (
               [css.globalVars.bottomSheet.borderRadius]:
                 _options.bottomSheet?.borderRadius,
               [css.globalVars.modal.borderRadius]: _options.modal?.borderRadius,
+              [css.globalVars.appBar.wrappingInlinePadding]:
+                _options.appBar?.wrappingInlinePadding,
+              [css.globalVars.appBar.fontSize]: _options.appBar?.fontSize,
+              [css.globalVars.appBar.backButtonTouchAreaExpansion]:
+                _options.appBar?.backButtonTouchAreaExpansion,
             }),
           )}
         >
