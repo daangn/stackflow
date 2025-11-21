@@ -258,6 +258,7 @@ export const centerMain = style({
   display: "flex",
   color: globalVars.appBar.textColor,
   fontSize: globalVars.appBar.fontSize,
+  lineHeight: globalVars.appBar.lineHeight,
   fontWeight: "bold",
   transition: transitions({
     height: globalVars.appBar.heightTransitionDuration,
@@ -267,7 +268,6 @@ export const centerMain = style({
     [`${android} &`]: {
       width: "100%",
       justifyContent: "flex-start",
-      lineHeight: "1.5",
       boxSizing: "border-box",
     },
     [`${cupertino} &`]: {

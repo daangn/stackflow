@@ -36,6 +36,7 @@ export type AppBarProps = Partial<
     | "minHeight"
     | "wrappingInlinePadding"
     | "fontSize"
+    | "lineHeight"
     | "backButtonTouchAreaExpansion"
   >
 > & {
@@ -100,6 +101,7 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
       minHeight,
       wrappingInlinePadding,
       fontSize,
+      lineHeight,
       backButtonTouchAreaExpansion,
     },
     ref,
@@ -336,6 +338,7 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
             [globalVars.appBar.fontSize]: fontSize,
             [globalVars.appBar.backButtonTouchAreaExpansion]:
               backButtonTouchAreaExpansion,
+            [globalVars.appBar.lineHeight]: lineHeight,
           }),
         )}
         data-part="appBar"

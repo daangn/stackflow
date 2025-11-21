@@ -32,6 +32,7 @@ const GLOBAL_VARS = {
     minSafeAreaInsetTop: "app-bar-min-safe-area-inset-top",
     wrappingInlinePadding: "app-bar-wrapping-inline-padding",
     fontSize: "app-bar-font-size",
+    lineHeight: "app-bar-line-height",
     backButtonTouchAreaExpansion: "app-bar-back-button-touch-area-expansion",
   },
   bottomSheet: {
@@ -76,6 +77,7 @@ const androidValues: GlobalVars = {
     wrappingInlinePadding: "1rem",
     fontSize: "1.125rem",
     backButtonTouchAreaExpansion: "0.5rem",
+    lineHeight: "1.5",
   },
   bottomSheet: {
     borderRadius: "1rem",
@@ -93,6 +95,7 @@ const cupertinoValues: GlobalVars = {
     height: "2.75rem",
     minHeight: "2.75rem",
     borderSize: "0.5px",
+    lineHeight: "normal",
   },
 };
 

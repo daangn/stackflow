@@ -88,6 +88,7 @@ export const basicUIPlugin: (
               [css.globalVars.appBar.wrappingInlinePadding]:
                 _options.appBar?.wrappingInlinePadding,
               [css.globalVars.appBar.fontSize]: _options.appBar?.fontSize,
+              [css.globalVars.appBar.lineHeight]: _options.appBar?.lineHeight,
               [css.globalVars.appBar.backButtonTouchAreaExpansion]:
                 _options.appBar?.backButtonTouchAreaExpansion,
             }),
