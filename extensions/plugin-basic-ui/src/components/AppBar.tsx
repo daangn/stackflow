@@ -33,6 +33,11 @@ export type AppBarProps = Partial<
     | "backgroundColorTransitionDuration"
     | "backgroundImage"
     | "backgroundImageTransitionDuration"
+    | "minHeight"
+    | "wrappingInlinePadding"
+    | "fontSize"
+    | "lineHeight"
+    | "backButtonTouchAreaExpansion"
   >
 > & {
   title?: React.ReactNode;
@@ -93,6 +98,11 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
       onTopClick,
       enterStyle,
       className,
+      minHeight,
+      wrappingInlinePadding,
+      fontSize,
+      lineHeight,
+      backButtonTouchAreaExpansion,
     },
     ref,
   ) => {
@@ -323,6 +333,12 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
             [globalVars.appBar.backgroundImageTransitionDuration]:
               backgroundImageTransitionDuration,
             [appScreenCss.vars.appBar.center.mainWidth]: `${maxWidth}px`,
+            [globalVars.appBar.minHeight]: minHeight,
+            [globalVars.appBar.wrappingInlinePadding]: wrappingInlinePadding,
+            [globalVars.appBar.fontSize]: fontSize,
+            [globalVars.appBar.backButtonTouchAreaExpansion]:
+              backButtonTouchAreaExpansion,
+            [globalVars.appBar.lineHeight]: lineHeight,
           }),
         )}
         data-part="appBar"
