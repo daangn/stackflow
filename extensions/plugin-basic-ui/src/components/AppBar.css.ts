@@ -295,9 +295,9 @@ export const centerMainEdge = style([
   f.cursorPointer,
   {
     left: "50%",
-    height: "1.25rem",
+    height: globalVars.appBar.fontSize,
     transform: "translate(-50%)",
-    maxWidth: "5rem",
+    maxWidth: `calc(${globalVars.appBar.fontSize} * 5)`,
     display: "none",
     width: vars.appBar.center.mainWidth,
     selectors: {
