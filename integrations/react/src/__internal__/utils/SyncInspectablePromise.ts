@@ -96,11 +96,13 @@ export class SyncInspectablePromise<T> extends Promise<T> {
                 reject(error);
               }
             });
+
+            return;
           } else {
             fulfillPromise(value as T);
-          }
 
-          return;
+            return;
+          }
         } catch (error) {
           rejectPromise(error);
 
