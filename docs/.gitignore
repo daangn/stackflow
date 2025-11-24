@@ -1,3 +1,6 @@
 /.next
 /out
 .open-next
+
+/public/llms-*.txt
+/public/llms.txt
