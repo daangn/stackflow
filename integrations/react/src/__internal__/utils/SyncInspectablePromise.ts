@@ -132,20 +132,3 @@ export class SyncInspectablePromise<T> extends Promise<T> {
     return undefined;
   }
 }
-
-export const resolved = <T>(value: T) => SyncInspectablePromise.resolve(value);
-export const rejected = (reason?: unknown) =>
-  SyncInspectablePromise.reject(reason);
-export const deferred = <T>() => {
-  let resolve!: (value: T | PromiseLike<T>) => void;
-  let reject!: (reason?: unknown) => void;
-
-  return {
-    promise: new SyncInspectablePromise((_resolve, _reject) => {
-      resolve = _resolve;
-      reject = _reject;
-    }),
-    resolve,
-    reject,
-  };
-};
