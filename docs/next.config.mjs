@@ -14,9 +14,6 @@ export default withNextra({
     defaultLocale: "en",
     localeDetection: false,
   },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
 });
 
 import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
