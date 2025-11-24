@@ -16,3 +16,5 @@ export * from "./useConfig";
 export * from "./useFlow";
 export * from "./usePrepare";
 export * from "./useStepFlow";
+export * from "./defineActivity";
+export * from "./structuredStackflow";
