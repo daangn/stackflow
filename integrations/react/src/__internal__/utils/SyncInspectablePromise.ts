@@ -53,7 +53,11 @@ export class SyncInspectablePromise<T> extends Promise<T> {
       },
     );
 
-    executor(resolve, reject);
+    try {
+      executor(resolve, reject);
+    } catch (error) {
+      reject(error);
+    }
   }
 
   private createResolvingFunctions(
