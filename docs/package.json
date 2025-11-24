@@ -5,7 +5,7 @@
   "description": "Mobile-first stack navigator framework with Composable Plugin System",
   "license": "MIT",
   "scripts": {
-    "build:llms": "tsx scripts/generate-llms-txt.ts",
+    "build:llms": "yarn tsx scripts/generate-llms-txt.ts",
     "build": "yarn build:llms && next build",
     "start": "next start",
     "dev": "next -p 6006",
