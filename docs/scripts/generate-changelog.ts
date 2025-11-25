@@ -274,6 +274,11 @@ function generateChangelogMarkdown(
   for (const entry of sortedEntries) {
     markdown += `## ${entry.date}\n\n`;
 
+    // 수동 작성 내용이 있으면 렌더링
+    if (entry.manualContent) {
+      markdown += `<!-- MANUAL_CONTENT_START -->\n${entry.manualContent}\n<!-- MANUAL_CONTENT_END -->\n\n`;
+    }
+
     // changeset별 변경사항 (각 changeset의 개별 commit 링크와 함께)
     for (const changeset of entry.changesets) {
       const lines = changeset.content.split("\n");
