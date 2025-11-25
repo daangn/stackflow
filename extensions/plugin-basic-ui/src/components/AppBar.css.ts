@@ -212,16 +212,13 @@ export const left = style([
   f.fullHeight,
   appBarMinHeight,
   {
+    paddingRight: globalVars.appBar.surroundingContentSpacing,
     ":empty": {
       display: "none",
     },
     selectors: {
-      [`${android} &`]: {
-        paddingRight: globalVars.appBar.wrappingInlinePadding,
-      },
       [`${cupertino} &`]: {
         paddingLeft: globalVars.appBar.wrappingInlinePadding,
-        paddingRight: globalVars.appBar.wrappingInlinePadding,
       },
     },
   },
@@ -325,15 +322,12 @@ export const right = style([
   f.posRel,
   appBarMinHeight,
   {
+    paddingLeft: globalVars.appBar.surroundingContentSpacing,
     ":empty": {
       display: "none",
     },
     selectors: {
-      [`${android} &`]: {
-        paddingLeft: globalVars.appBar.wrappingInlinePadding,
-      },
       [`${cupertino} &`]: {
-        paddingLeft: globalVars.appBar.wrappingInlinePadding,
         paddingRight: globalVars.appBar.wrappingInlinePadding,
       },
     },

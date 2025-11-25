@@ -90,6 +90,8 @@ export const basicUIPlugin: (
               [css.globalVars.appBar.fontSize]: _options.appBar?.fontSize,
               [css.globalVars.appBar.lineHeight]: _options.appBar?.lineHeight,
               [css.globalVars.appBar.hitSlop]: _options.appBar?.hitSlop,
+              [css.globalVars.appBar.surroundingContentSpacing]:
+                _options.appBar?.surroundingContentSpacing,
             }),
           )}
         >

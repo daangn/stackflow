@@ -38,6 +38,7 @@ export type AppBarProps = Partial<
     | "fontSize"
     | "lineHeight"
     | "hitSlop"
+    | "surroundingContentSpacing"
   >
 > & {
   title?: React.ReactNode;
@@ -103,6 +104,7 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
       fontSize,
       lineHeight,
       hitSlop,
+      surroundingContentSpacing,
     },
     ref,
   ) => {
@@ -338,6 +340,8 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
             [globalVars.appBar.fontSize]: fontSize,
             [globalVars.appBar.hitSlop]: hitSlop,
             [globalVars.appBar.lineHeight]: lineHeight,
+            [globalVars.appBar.surroundingContentSpacing]:
+              surroundingContentSpacing,
           }),
         )}
         data-part="appBar"
