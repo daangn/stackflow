@@ -1,6 +1,5 @@
 import fs from "node:fs";
 import path from "node:path";
-import matter from "gray-matter";
 import { remark } from "remark";
 import remarkGfm from "remark-gfm";
 import remarkStringify from "remark-stringify";
@@ -19,9 +18,11 @@ async function generateLlmsFull() {
 }
 
 async function generateLlmsChangelog() {
-  const changelogPath = path.join(process.cwd(), "pages/docs/changelog.en.mdx");
-  const fileContent = fs.readFileSync(changelogPath, "utf-8");
-  const { content } = matter(fileContent);
+  const changelogContentPath = path.join(
+    process.cwd(),
+    "components/ChangelogContent.mdx",
+  );
+  const content = fs.readFileSync(changelogContentPath, "utf-8");
 
   const processed = await remark()
     .use(remarkGfm)
