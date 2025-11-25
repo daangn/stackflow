@@ -184,10 +184,15 @@ async function organizeChangelogEntries(
   releasePlan: ReleasePlan,
   manualContents: Record<string, string>,
   existingContent: string,
+  packages: Awaited<ReturnType<typeof getPackages>>,
 ): Promise<ChangelogEntry[]> {
-  // 실제로 버전이 변경되는 releases만 필터링 (type !== "none")
+  // 실제로 버전이 변경되는 releases만 필터링 (type !== "none" && public package)
   const actualReleases = releasePlan.releases.filter(
-    (release) => release.type !== "none",
+    (release) =>
+      release.type !== "none" &&
+      packages.packages.some(
+        (pkg) => pkg.packageJson.name === release.name && !pkg.packageJson.private,
+      ),
   );
 
   console.log(
@@ -458,6 +463,7 @@ async function main() {
       releasePlan,
       manualContents,
       existingContent,
+      packages,
     );
 
     console.log("📝 Generating changelog markdown...");
