@@ -145,14 +145,18 @@ export function makeActions({
 
       const now = new Date().getTime();
 
+      const uniqueActivityNames = [
+        ...new Set(activeActivities.map((a) => a.name)),
+      ];
+
       const newEvents: DomainEvent[] = [
         makeEvent("Initialized", {
-          transitionDuration: 0,
+          transitionDuration: store.getStack().transitionDuration,
           eventDate: now,
         }),
-        ...activeActivities.map((activity) =>
+        ...uniqueActivityNames.map((activityName) =>
           makeEvent("ActivityRegistered", {
-            activityName: activity.name,
+            activityName,
             eventDate: now,
           }),
         ),
