@@ -281,3 +281,71 @@ test("makeCoreStore - subscribe에 등록한 이후에 아무 Event가 없는 �
 
   expect(listener1).toHaveBeenCalledTimes(0);
 });
+
+test("makeCoreStore - prune이 호출되면, 과거의 이벤트를 정리하고 현재 상태를 유지합니다", () => {
+  const { actions, pullEvents } = makeCoreStore({
+    initialEvents: [
+      makeEvent("Initialized", {
+        transitionDuration: 0,
+        eventDate: enoughPastTime(),
+      }),
+      makeEvent("ActivityRegistered", {
+        activityName: "home",
+        eventDate: enoughPastTime(),
+      }),
+      makeEvent("ActivityRegistered", {
+        activityName: "detail",
+        eventDate: enoughPastTime(),
+      }),
+      makeEvent("Pushed", {
+        activityId: "a1",
+        activityName: "home",
+        activityParams: {},
+        eventDate: enoughPastTime(),
+      }),
+    ],
+    plugins: [],
+  });
+
+  // Push detail (a2)
+  actions.push({
+    activityId: "a2",
+    activityName: "detail",
+    activityParams: { id: "1" },
+  });
+
+  // Push detail (a3)
+  actions.push({
+    activityId: "a3",
+    activityName: "detail",
+    activityParams: { id: "2" },
+  });
+
+  // Pop a3 -> a3 becomes exit-done
+  actions.pop();
+
+  // Pop a2 -> a2 becomes exit-done
+  actions.pop();
+
+  // Now only a1 (home) is active
+  const stackBeforePrune = actions.getStack();
+  const eventsBeforePrune = pullEvents();
+
+  expect(stackBeforePrune.activities.length).toBe(3); // a1, a2, a3
+  expect(eventsBeforePrune.length).toBeGreaterThan(5);
+
+  // Prune!
+  actions.prune();
+
+  const stackAfterPrune = actions.getStack();
+  const eventsAfterPrune = pullEvents();
+
+  // Verify activities: only a1 should remain
+  expect(stackAfterPrune.activities.length).toBe(1);
+  expect(stackAfterPrune.activities[0].id).toEqual("a1");
+  expect(stackAfterPrune.activities[0].transitionState).toEqual("enter-done");
+
+  // Verify events: should be reset to minimal set
+  // Initialized + ActivityRegistered(home) + Pushed(a1) = 3 events
+  expect(eventsAfterPrune.length).toBe(3);
+});
