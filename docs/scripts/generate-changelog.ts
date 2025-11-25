@@ -268,6 +268,18 @@ async function organizeChangelogEntries(
 }
 
 /**
+ * JSX처럼 보이는 텍스트를 백틱 코드로 감싸서 MDX 파싱 오류 방지
+ * 예: <Modal /> → `<Modal />`
+ */
+function escapeJsxLikeTags(text: string): string {
+  // 이미 백틱으로 감싸진 경우는 제외하고, <ComponentName /> 또는 <ComponentName> 패턴을 찾아서 변환
+  return text.replace(
+    /(?<!`)(<[A-Z][a-zA-Z]*(?:\s+[^>]*)?\s*\/?>)(?!`)/g,
+    "`$1`",
+  );
+}
+
+/**
  * changelog 마크다운 생성 (frontmatter 없이 컨텐츠만)
  */
 function generateChangelogMarkdown(
@@ -310,7 +322,7 @@ function generateChangelogMarkdown(
         changesetContent += `\n${restLines.join("\n")}`;
       }
 
-      markdown += `${changesetContent}\n`;
+      markdown += `${escapeJsxLikeTags(changesetContent)}\n`;
 
       // "영향받는 패키지"를 bullet point로 추가
       if (changeset.packages.length > 0) {
