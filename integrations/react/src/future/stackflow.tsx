@@ -11,6 +11,7 @@ import {
   makeEvent,
   type PushedEvent,
 } from "@stackflow/core";
+import { SyncInspectablePromise } from "__internal__/utils/SyncInspectablePromise";
 import React, { useMemo } from "react";
 import isEqual from "react-fast-compare";
 import { ActivityComponentMapProvider } from "../__internal__/ActivityComponentMapProvider";
@@ -79,10 +80,12 @@ export function stackflow<
       throw new Error(`Activity ${activityName} is not registered.`);
     }
 
-    const loaderData = activityConfig.loader?.({
-      params: activityParams,
-      config: input.config,
-    });
+    const loaderData = SyncInspectablePromise.resolve(
+      activityConfig.loader?.({
+        params: activityParams,
+        config: input.config,
+      }),
+    );
     const newCacheEntry = {
       params: activityParams,
       data: loaderData,
@@ -112,7 +115,7 @@ export function stackflow<
       );
     };
 
-    Promise.resolve(loaderData).then(clearCacheAfterMaxAge, (error) => {
+    loaderData.then(clearCacheAfterMaxAge, (error) => {
       clearCache();
 
       throw error;
