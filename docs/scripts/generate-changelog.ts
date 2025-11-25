@@ -118,57 +118,61 @@ async function execCommand(command: string): Promise<string> {
 }
 
 /**
- * .changeset 폴더의 .md 파일들(README.md 제외)의 commit hash 가져오기
- * 각 changeset ID별로 해당하는 커밋 해시를 매핑하여 반환
+ * changeset ID 목록에서 각 changeset의 commit hash 가져오기
+ * releasePlan.changesets에서 ID를 받아 .changeset/<id>.md 경로로 커밋을 찾음
  */
-async function getChangesetCommits(): Promise<Record<string, string>> {
-  try {
-    // .changeset 폴더의 .md 파일들 찾기 (README.md 제외)
-    const files = await execCommand(
-      "find .changeset -name '*.md' -not -name 'README.md' | head -10",
-    );
-
-    if (!files) {
-      console.log("📝 No changeset files found in .changeset folder");
-
-      return {};
-    }
-
-    const fileList = files.split("\n").filter((file) => file.trim());
-    console.log(`📊 Found ${fileList.length} changeset files:`, fileList);
-
-    // 각 파일별로 main 브랜치에 머지된 commit 찾기
-    const commitMap: Record<string, string> = {};
-    for (const file of fileList) {
-      // changeset ID 추출 (파일명에서 .md 제거)
-      const changesetId = file.split("/").pop()?.replace(".md", "") || "";
-
-      // Version Packages 커밋을 제외하고 main 브랜치에 머지된 커밋 찾기
-      const commit = await execCommand(
-        `git log --oneline --first-parent main -- "${file}" | grep -v "Version Packages" | head -1 | cut -d' ' -f1`,
-      );
-
-      if (commit) {
-        // 전체 커밋 해시 가져오기
-        const fullCommit = await execCommand(`git rev-parse ${commit}`);
-        if (fullCommit) {
-          commitMap[changesetId] = fullCommit;
-          console.log(`  📄 ${changesetId} → ${fullCommit.slice(0, 7)}`);
-        }
-      }
-    }
-
-    if (Object.keys(commitMap).length === 0) {
-      console.log("⚠️  No commits found for changeset files");
-      return {};
-    }
-
-    console.log(`✅ Found ${Object.keys(commitMap).length} changeset commits`);
-    return commitMap;
-  } catch (error) {
-    console.log("⚠️  Error getting changeset commits:", error);
+async function getChangesetCommits(
+  changesetIds: string[],
+): Promise<Record<string, string>> {
+  if (changesetIds.length === 0) {
+    console.log("📝 No changeset IDs provided");
     return {};
   }
+
+  console.log(`📊 Processing ${changesetIds.length} changesets`);
+
+  const commitMap: Record<string, string> = {};
+
+  for (const changesetId of changesetIds) {
+    const filePath = `.changeset/${changesetId}.md`;
+
+    try {
+      // git log로 해당 파일을 추가한 커밋들 가져오기 (--format으로 해시와 메시지 분리)
+      const logOutput = await execCommand(
+        `git log --first-parent main --format="%H %s" -- "${filePath}"`,
+      );
+
+      if (!logOutput) {
+        continue;
+      }
+
+      // 각 줄을 파싱하여 "Version Packages"가 아닌 첫 번째 커밋 찾기
+      const lines = logOutput.split("\n").filter((line) => line.trim());
+      for (const line of lines) {
+        const spaceIndex = line.indexOf(" ");
+        if (spaceIndex === -1) continue;
+
+        const commitHash = line.substring(0, spaceIndex);
+        const message = line.substring(spaceIndex + 1);
+
+        if (!message.includes("Version Packages")) {
+          commitMap[changesetId] = commitHash;
+          console.log(`  📄 ${changesetId} → ${commitHash.slice(0, 7)}`);
+          break;
+        }
+      }
+    } catch {
+      // 개별 changeset 실패는 무시하고 계속 진행
+    }
+  }
+
+  if (Object.keys(commitMap).length === 0) {
+    console.log("⚠️  No commits found for changeset files");
+    return {};
+  }
+
+  console.log(`✅ Found ${Object.keys(commitMap).length} changeset commits`);
+  return commitMap;
 }
 
 /**
@@ -222,7 +226,8 @@ async function organizeChangelogEntries(
 
   if (releasePlan.changesets.length > 0) {
     // changeset 파일들의 commit hash 가져오기 (ID별로 매핑)
-    const commitMap = await getChangesetCommits();
+    const changesetIds = releasePlan.changesets.map((c) => c.id);
+    const commitMap = await getChangesetCommits(changesetIds);
 
     // 모든 changeset을 개별적으로 처리하며 각각의 커밋 링크 포함
     const changesetEntries = releasePlan.changesets.map((changeset) => {
