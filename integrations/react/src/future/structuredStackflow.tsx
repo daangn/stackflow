@@ -31,22 +31,19 @@ type AllActivityNames<T extends DestinationsMap> = T extends DestinationsMap
   ? {
       [K in keyof T]: T[K] extends NavigationDefinitionOutput<string, infer U>
         ? AllActivityNames<U>
-        : K;
+        : T[K] extends ActivityDefinitionOutput<infer N, any>
+          ? N
+          : never;
     }[keyof T]
   : never;
 
-type GetActivityDefinition<
-  T extends DestinationsMap,
-  K extends string,
-> = K extends keyof T
-  ? T[K] extends ActivityDefinitionOutput<string, any>
-    ? T[K]
-    : never
-  : {
-      [N in keyof T]: T[N] extends NavigationDefinitionOutput<string, infer U>
-        ? GetActivityDefinition<U, K>
-        : never;
-    }[keyof T];
+type GetActivityDefinition<T extends DestinationsMap, K extends string> = {
+  [N in keyof T]: T[N] extends ActivityDefinitionOutput<K, infer P>
+    ? ActivityDefinitionOutput<K, P>
+    : T[N] extends NavigationDefinitionOutput<string, infer U>
+      ? GetActivityDefinition<U, K>
+      : never;
+}[keyof T];
 
 export type InferActivityParamsFromMap<
   TActivities extends DestinationsMap,
@@ -101,10 +98,17 @@ function flattenActivities(
   }> = [],
   visitedNames: Set<string> = new Set(),
 ): Array<{ name: string; route?: any; loader?: any; component: any }> {
-  for (const [, def] of Object.entries(activities)) {
+  for (const [key, def] of Object.entries(activities)) {
     if (isNavigationDefinition(def)) {
       flattenActivities(def.activities, result, visitedNames);
     } else {
+      if (key !== def.name) {
+        throw new Error(
+          `Activity map key "${key}" does not match activity name "${def.name}". ` +
+            `The map key must match the name provided to defineActivity(). ` +
+            `Change the key to "${def.name}" or update defineActivity("${def.name}") to defineActivity("${key}").`,
+        );
+      }
       if (visitedNames.has(def.name)) {
         throw new Error(
           `Duplicate activity name detected: "${def.name}". Activity names must be unique across the entire application.`,
