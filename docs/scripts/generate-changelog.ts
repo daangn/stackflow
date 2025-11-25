@@ -7,7 +7,8 @@
  *
  * 사용법:
  * 1. docs 폴더에서 `yarn generate:changelog` 명령어를 실행합니다.
- * 2. 생성된 Changelog 파일은 `docs/pages/docs/changelog.en.mdx`, `docs/pages/docs/changelog.ko.mdx`에 추가됩니다.
+ * 2. 생성된 Changelog 파일은 `docs/components/ChangelogContent.mdx`에 추가됩니다.
+ *    (changelog.en.mdx와 changelog.ko.mdx에서 공용으로 import하여 사용)
  */
 
 import { exec } from "node:child_process";
@@ -255,33 +256,16 @@ async function organizeChangelogEntries(
 }
 
 /**
- * changelog 마크다운 생성
+ * changelog 마크다운 생성 (frontmatter 없이 컨텐츠만)
  */
 function generateChangelogMarkdown(
   entries: ChangelogEntry[],
   existingContent = "",
-  title: string,
 ): string {
-  // 기존 frontmatter 추출 (updatedAt은 Git lastModified 사용하므로 업데이트하지 않음)
-  const frontmatterMatch = existingContent.match(/^---\n([\s\S]*?)\n---\n/);
-
-  let frontmatter: string;
-  if (frontmatterMatch) {
-    // 기존 frontmatter 그대로 유지
-    frontmatter = `${frontmatterMatch[0]}\n`;
-  } else {
-    // 새로운 frontmatter 생성 (updatedAt 없이)
-    frontmatter = `---
-title: ${title}
----
-
-`;
-  }
-
   // 기존 changelog 내용 추출 (새로운 날짜가 아닌 것들)
   const existingEntries = extractExistingEntries(existingContent, entries);
 
-  let markdown = frontmatter;
+  let markdown = "";
 
   // 모든 엔트리 병합 및 정렬 (최신순)
   const allEntries = [...entries, ...existingEntries];
@@ -441,14 +425,21 @@ async function main() {
       );
     });
 
-    const changelogEnPath = join(rootDir, "docs/pages/docs/changelog.en.mdx");
-    const changelogKoPath = join(rootDir, "docs/pages/docs/changelog.ko.mdx");
+    const changelogContentPath = join(
+      rootDir,
+      "docs/components/ChangelogContent.mdx",
+    );
 
     console.log("📖 Reading existing changelog...");
-    const existingContent = await readFile(changelogEnPath, "utf-8");
+    let existingContent = "";
+    try {
+      existingContent = await readFile(changelogContentPath, "utf-8");
+    } catch {
+      // 파일이 없으면 빈 문자열로 시작
+    }
 
     console.log("📖 Extracting manual content...");
-    const manualContents = await extractManualContent(changelogEnPath);
+    const manualContents = await extractManualContent(changelogContentPath);
 
     console.log("🗂️ Organizing changelog entries...");
     const entries = await organizeChangelogEntries(
@@ -458,23 +449,13 @@ async function main() {
     );
 
     console.log("📝 Generating changelog markdown...");
-    const markdownEn = generateChangelogMarkdown(
-      entries,
-      existingContent,
-      "Changelog",
-    );
-    const markdownKo = generateChangelogMarkdown(
-      entries,
-      existingContent,
-      "변경 이력",
-    );
+    const markdown = generateChangelogMarkdown(entries, existingContent);
 
     console.log("💾 Writing changelog file...");
-    await writeFile(changelogEnPath, markdownEn);
-    await writeFile(changelogKoPath, markdownKo);
+    await writeFile(changelogContentPath, markdown);
 
     console.log("✅ Changelog generated successfully!");
-    console.log(`📄 File: ${changelogEnPath}, ${changelogKoPath}`);
+    console.log(`📄 File: ${changelogContentPath}`);
   } catch (error) {
     console.error("❌ Error generating changelog:", error);
     process.exit(1);
