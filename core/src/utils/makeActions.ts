@@ -136,8 +136,8 @@ export function makeActions({
       dispatchEvent("Resumed", nextActionParams);
     },
     prune() {
-      const { activities } = store.getStack();
-      const activeActivities = activities.filter(
+      const stack = store.getStack();
+      const activeActivities = stack.activities.filter(
         (activity) =>
           activity.transitionState === "enter-active" ||
           activity.transitionState === "enter-done",
@@ -145,31 +145,100 @@ export function makeActions({
 
       const now = new Date().getTime();
 
+      const originalInitialized = store.events.value.find(
+        (e) => e.name === "Initialized",
+      );
+      const initializedEventDate = originalInitialized?.eventDate ?? now;
+
+      const activityRegisteredEvents = new Map<
+        string,
+        {
+          eventDate: number;
+          paramsSchema?: {
+            type: "object";
+            properties: {
+              [key: string]: {
+                type: "string";
+                enum?: string[];
+              };
+            };
+            required: string[];
+          };
+        }
+      >();
+      for (const event of store.events.value) {
+        if (event.name === "ActivityRegistered") {
+          activityRegisteredEvents.set(event.activityName, {
+            eventDate: event.eventDate,
+            ...(event.activityParamsSchema
+              ? { paramsSchema: event.activityParamsSchema }
+              : {}),
+          });
+        }
+      }
+
       const uniqueActivityNames = [
         ...new Set(activeActivities.map((a) => a.name)),
       ];
 
       const newEvents: DomainEvent[] = [
         makeEvent("Initialized", {
-          transitionDuration: store.getStack().transitionDuration,
-          eventDate: now,
+          transitionDuration: stack.transitionDuration,
+          eventDate: initializedEventDate,
         }),
-        ...uniqueActivityNames.map((activityName) =>
-          makeEvent("ActivityRegistered", {
+        ...uniqueActivityNames.map((activityName) => {
+          const registered = activityRegisteredEvents.get(activityName);
+          return makeEvent("ActivityRegistered", {
             activityName,
-            eventDate: now,
-          }),
-        ),
-        ...activeActivities.map((activity) =>
+            eventDate: registered?.eventDate ?? initializedEventDate,
+            ...(registered?.paramsSchema
+              ? { activityParamsSchema: registered.paramsSchema }
+              : {}),
+          });
+        }),
+      ];
+
+      for (const activity of activeActivities) {
+        const rootStep = activity.steps[0];
+        if (!rootStep) {
+          newEvents.push(
+            makeEvent("Pushed", {
+              activityId: activity.id,
+              activityName: activity.name,
+              activityParams: activity.params,
+              eventDate: activity.enteredBy.eventDate,
+              skipEnterActiveState: true,
+              ...(activity.context
+                ? { activityContext: activity.context }
+                : {}),
+            }),
+          );
+          continue;
+        }
+
+        newEvents.push(
           makeEvent("Pushed", {
             activityId: activity.id,
             activityName: activity.name,
-            activityParams: activity.params,
-            eventDate: now,
+            activityParams: rootStep.params,
+            eventDate: activity.enteredBy.eventDate,
             skipEnterActiveState: true,
+            ...(activity.context ? { activityContext: activity.context } : {}),
           }),
-        ),
-      ];
+        );
+
+        for (const step of activity.steps.slice(1)) {
+          const isStepReplaced = step.enteredBy.name === "StepReplaced";
+          newEvents.push(
+            makeEvent(isStepReplaced ? "StepReplaced" : "StepPushed", {
+              stepId: step.id,
+              stepParams: step.params,
+              eventDate: step.enteredBy.eventDate,
+              ...(step.hasZIndex ? { hasZIndex: step.hasZIndex } : {}),
+            }),
+          );
+        }
+      }
 
       store.events.value = newEvents;
 
