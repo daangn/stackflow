@@ -11,7 +11,6 @@
     "packages/*",
     "extensions/*"
   ],
-  "type": "module",
   "scripts": {
     "build": "ultra -r build",
     "build:dts": "ultra -r --build build:dts",
