@@ -6,7 +6,7 @@
  * llms.txt와 같은 파일에 추후에 도움을 받기 위해 변경 이력들을 한 파일에 쌓습니다.
  *
  * 사용법:
- * 1. 프로젝트 루트에서 `yarn generate:changelog` 명령어를 실행합니다.
+ * 1. docs 폴더에서 `yarn generate:changelog` 명령어를 실행합니다.
  * 2. 생성된 Changelog 파일은 `docs/pages/docs/changelog.en.mdx`, `docs/pages/docs/changelog.ko.mdx`에 추가됩니다.
  */
 
@@ -22,6 +22,9 @@ import type { ReleasePlan } from "@changesets/types";
 import { getPackages } from "@manypkg/get-packages";
 
 const execAsync = promisify(exec);
+
+// 프로젝트 루트 경로 (docs 폴더의 상위 디렉토리)
+const rootDir = join(import.meta.dirname, "../..");
 
 interface ChangelogEntry {
   date: string;
@@ -105,7 +108,7 @@ function createCommitLink(commitHash: string): string {
  */
 async function execCommand(command: string): Promise<string> {
   try {
-    const { stdout } = await execAsync(command);
+    const { stdout } = await execAsync(command, { cwd: rootDir });
     return stdout.trim();
   } catch (error) {
     console.log(`⚠️  Git command failed: ${command}`, error);
@@ -403,10 +406,10 @@ function extractExistingEntries(
 async function main() {
   try {
     console.log("🔧 Reading changeset config...");
-    const config = await read(process.cwd());
+    const config = await read(rootDir);
 
     console.log("🔍 Reading changesets...");
-    const changesets = await readChangesets(process.cwd());
+    const changesets = await readChangesets(rootDir);
 
     if (changesets.length === 0) {
       console.error("📝 No changeset files found.");
@@ -417,10 +420,10 @@ async function main() {
     console.log(`📊 Found ${changesets.length} changeset files`);
 
     console.log("📦 Getting packages...");
-    const packages = await getPackages(process.cwd());
+    const packages = await getPackages(rootDir);
 
     console.log("📋 Assembling release plan...");
-    const preState = await readPreState(process.cwd());
+    const preState = await readPreState(rootDir);
     const releasePlan = assembleReleasePlan(
       changesets,
       packages,
@@ -438,14 +441,8 @@ async function main() {
       );
     });
 
-    const changelogEnPath = join(
-      process.cwd(),
-      "docs/pages/docs/changelog.en.mdx",
-    );
-    const changelogKoPath = join(
-      process.cwd(),
-      "docs/pages/docs/changelog.ko.mdx",
-    );
+    const changelogEnPath = join(rootDir, "docs/pages/docs/changelog.en.mdx");
+    const changelogKoPath = join(rootDir, "docs/pages/docs/changelog.ko.mdx");
 
     console.log("📖 Reading existing changelog...");
     const existingContent = await readFile(changelogEnPath, "utf-8");

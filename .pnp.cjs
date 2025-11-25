@@ -6361,6 +6361,12 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./docs/",\
         "packageDependencies": [\
           ["@stackflow/docs", "workspace:docs"],\
+          ["@changesets/assemble-release-plan", "npm:6.0.9"],\
+          ["@changesets/config", "npm:3.1.1"],\
+          ["@changesets/pre", "npm:2.0.2"],\
+          ["@changesets/read", "npm:0.6.5"],\
+          ["@changesets/types", "npm:6.1.0"],\
+          ["@manypkg/get-packages", "npm:1.1.3"],\
           ["@mdx-js/react", "virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#npm:3.0.1"],\
           ["@opennextjs/cloudflare", "virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#npm:1.0.0-beta.3"],\
           ["@seed-design/design-token", "npm:1.0.3"],\
