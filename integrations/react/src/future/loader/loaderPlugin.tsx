@@ -2,6 +2,10 @@ import type {
   ActivityDefinition,
   RegisteredActivityName,
 } from "@stackflow/config";
+import {
+  PromiseStatus,
+  type SyncInspectablePromise,
+} from "__internal__/utils/SyncInspectablePromise";
 import type { ActivityComponentType } from "../../__internal__/ActivityComponentType";
 import type { StackflowReactPlugin } from "../../__internal__/StackflowReactPlugin";
 import { isStructuredActivityComponent } from "../../__internal__/StructuredActivityComponentType";
@@ -15,7 +19,10 @@ export function loaderPlugin<
   },
 >(
   input: StackflowInput<T, R>,
-  loadData: (activityName: string, activityParams: {}) => unknown,
+  loadData: (
+    activityName: string,
+    activityParams: {},
+  ) => SyncInspectablePromise<unknown>,
 ): StackflowReactPlugin {
   return () => {
     return {
@@ -91,7 +98,10 @@ function createBeforeRouteHandler<
   },
 >(
   input: StackflowInput<T, R>,
-  loadData: (activityName: string, activityParams: {}) => unknown,
+  loadData: (
+    activityName: string,
+    activityParams: {},
+  ) => SyncInspectablePromise<unknown>,
 ): OnBeforeRoute {
   return ({
     actionParams,
@@ -110,10 +120,6 @@ function createBeforeRouteHandler<
 
     const loaderData =
       matchActivity.loader && loadData(activityName, activityParams);
-
-    const loaderDataPromise = isPromiseLike(loaderData)
-      ? loaderData
-      : undefined;
     const lazyComponentPromise =
       isStructuredActivityComponent(matchActivityComponent) &&
       typeof matchActivityComponent.content === "function"
@@ -125,13 +131,13 @@ function createBeforeRouteHandler<
       ?.lazyActivityComponentRenderContext?.shouldRenderImmediately;
 
     if (
-      (loaderDataPromise || lazyComponentPromise) &&
+      (loaderData?.status === PromiseStatus.PENDING || lazyComponentPromise) &&
       (shouldRenderImmediately !== true ||
         "loading" in matchActivityComponent === false)
     ) {
       pause();
 
-      Promise.allSettled([loaderDataPromise, lazyComponentPromise])
+      Promise.allSettled([loaderData, lazyComponentPromise])
         .then(([loaderDataPromiseResult, lazyComponentPromiseResult]) => {
           printLoaderDataPromiseError({
             promiseResult: loaderDataPromiseResult,
