@@ -1,5 +1,11 @@
 # @stackflow/plugin-basic-ui
 
+## 1.17.0
+
+### Minor Changes
+
+- a136f96: Expose interfaces to modify dimensions of AppBar
+
 ## 1.16.1
 
 ### Patch Changes
