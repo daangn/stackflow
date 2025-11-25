@@ -13,7 +13,8 @@
 
 import { exec } from "node:child_process";
 import { readFile, writeFile } from "node:fs/promises";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { promisify } from "node:util";
 import assembleReleasePlan from "@changesets/assemble-release-plan";
 import { read } from "@changesets/config";
@@ -25,7 +26,8 @@ import { getPackages } from "@manypkg/get-packages";
 const execAsync = promisify(exec);
 
 // 프로젝트 루트 경로 (docs 폴더의 상위 디렉토리)
-const rootDir = join(import.meta.dirname, "../..");
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const rootDir = join(__dirname, "../..");
 
 interface ChangelogEntry {
   date: string;
