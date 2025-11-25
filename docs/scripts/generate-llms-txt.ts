@@ -7,7 +7,7 @@ import { baseUrl } from "../utils/constants";
 import { getAllPages } from "../utils/get-all-pages";
 
 async function generateLlmsFull() {
-  const pages = getAllPages();
+  const pages = getAllPages({ locale: "en" });
   const content = pages
     .map((page) => `# ${page.title}\n\n${page.content}`)
     .join("\n\n");

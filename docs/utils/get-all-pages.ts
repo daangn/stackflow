@@ -10,7 +10,12 @@ interface Page {
   data: Record<string, any>;
 }
 
-export function getAllPages(): Page[] {
+interface GetAllPagesOptions {
+  locale?: "en" | "ko";
+}
+
+export function getAllPages(options: GetAllPagesOptions = {}): Page[] {
+  const { locale } = options;
   const pagesDir = path.join(process.cwd(), "pages");
   const files = getAllMdxFiles(pagesDir);
 
@@ -32,6 +37,19 @@ export function getAllPages(): Page[] {
       // API routes, _app, _document 등 제외
       if (page.path.startsWith("api/")) return false;
       if (page.path.startsWith("_")) return false;
+
+      // locale 필터링: .en.mdx 또는 .ko.mdx 패턴
+      if (locale === "en") {
+        // 영어 문서만: .en.mdx로 끝나거나, locale suffix가 없는 파일
+        if (page.path.endsWith(".ko.mdx") || page.path.endsWith(".ko.md")) {
+          return false;
+        }
+      } else if (locale === "ko") {
+        // 한국어 문서만
+        if (page.path.endsWith(".en.mdx") || page.path.endsWith(".en.md")) {
+          return false;
+        }
+      }
 
       return true;
     })
