@@ -56,8 +56,7 @@
     "ultra-runner": "^3.10.5"
   },
   "publishConfig": {
-    "access": "public",
-    "provenance": true
+    "access": "public"
   },
   "ultra": {
     "concurrent": [

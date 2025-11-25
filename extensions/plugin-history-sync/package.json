@@ -88,8 +88,7 @@
     "eagerEsModules": true
   },
   "publishConfig": {
-    "access": "public",
-    "provenance": true
+    "access": "public"
   },
   "ultra": {
     "concurrent": [
