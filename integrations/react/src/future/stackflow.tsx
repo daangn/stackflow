@@ -61,7 +61,10 @@ export function stackflow<
     >;
   },
 >(input: StackflowInput<T, R>): StackflowOutput {
-  const loaderDataCacheMap = new Map<string, { params: {}; data: unknown }[]>();
+  const loaderDataCacheMap = new Map<
+    string,
+    { params: {}; data: SyncInspectablePromise<unknown> }[]
+  >();
   const loadData = (activityName: string, activityParams: {}) => {
     const cache = loaderDataCacheMap.get(activityName);
     const cacheEntry = cache?.find((entry) =>
@@ -80,11 +83,13 @@ export function stackflow<
       throw new Error(`Activity ${activityName} is not registered.`);
     }
 
-    const loaderData = SyncInspectablePromise.resolve(
-      activityConfig.loader?.({
-        params: activityParams,
-        config: input.config,
-      }),
+    const loaderData = new SyncInspectablePromise((resolve) =>
+      resolve(
+        activityConfig.loader?.({
+          params: activityParams,
+          config: input.config,
+        }),
+      ),
     );
     const newCacheEntry = {
       params: activityParams,
