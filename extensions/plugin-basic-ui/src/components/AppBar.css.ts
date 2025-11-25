@@ -200,7 +200,8 @@ export const container = style([
     }),
     selectors: {
       [`${android} &`]: {
-        padding: "0 1rem",
+        paddingLeft: globalVars.appBar.containerPadding,
+        paddingRight: globalVars.appBar.containerPadding,
       },
     },
   },
@@ -211,16 +212,13 @@ export const left = style([
   f.fullHeight,
   appBarMinHeight,
   {
+    paddingRight: globalVars.appBar.itemGap,
     ":empty": {
       display: "none",
     },
     selectors: {
-      [`${android} &`]: {
-        paddingRight: "1rem",
-      },
       [`${cupertino} &`]: {
-        paddingLeft: "1rem",
-        paddingRight: "1rem",
+        paddingLeft: globalVars.appBar.containerPadding,
       },
     },
   },
@@ -237,8 +235,8 @@ export const backButton = style([
       opacity: "300ms",
       color: globalVars.appBar.iconColorTransitionDuration,
     }),
-    padding: ".5rem",
-    margin: "-.5rem",
+    padding: globalVars.appBar.hitSlop,
+    margin: `calc(-1 * ${globalVars.appBar.hitSlop})`,
     ":active": {
       opacity: "0.2",
       transition: transitions({
@@ -254,8 +252,11 @@ export const closeButton = style([backButton]);
 export const center = style([f.flexAlignCenter, f.flex1, appBarMinHeight]);
 
 export const centerMain = style({
-  width: vars.appBar.center.mainWidth,
+  display: "flex",
   color: globalVars.appBar.textColor,
+  fontSize: globalVars.appBar.fontSize,
+  lineHeight: globalVars.appBar.lineHeight,
+  fontWeight: "bold",
   transition: transitions({
     height: globalVars.appBar.heightTransitionDuration,
     color: globalVars.appBar.textColorTransitionDuration,
@@ -264,20 +265,15 @@ export const centerMain = style({
     [`${android} &`]: {
       width: "100%",
       justifyContent: "flex-start",
-      fontSize: "1.125rem",
-      lineHeight: "1.5",
-      fontWeight: "bold",
       boxSizing: "border-box",
     },
     [`${cupertino} &`]: {
+      width: vars.appBar.center.mainWidth,
       position: "absolute",
-      display: "flex",
       alignItems: "center",
       justifyContent: "center",
       textAlign: "center",
       fontFamily: "-apple-system, BlinkMacSystemFont",
-      fontWeight: "bold",
-      fontSize: "1.125rem",
       left: "50%",
       transform: "translate(-50%)",
       height: globalVars.appBar.height,
@@ -296,9 +292,9 @@ export const centerMainEdge = style([
   f.cursorPointer,
   {
     left: "50%",
-    height: "1.25rem",
+    height: globalVars.appBar.fontSize,
     transform: "translate(-50%)",
-    maxWidth: "5rem",
+    maxWidth: `calc(${globalVars.appBar.fontSize} * 5)`,
     display: "none",
     width: vars.appBar.center.mainWidth,
     selectors: {
@@ -326,17 +322,13 @@ export const right = style([
   f.posRel,
   appBarMinHeight,
   {
-    marginLeft: "auto",
+    paddingLeft: globalVars.appBar.itemGap,
     ":empty": {
       display: "none",
     },
     selectors: {
-      [`${android} &`]: {
-        paddingLeft: "1rem",
-      },
       [`${cupertino} &`]: {
-        paddingLeft: "1rem",
-        paddingRight: "1rem",
+        paddingRight: globalVars.appBar.containerPadding,
       },
     },
   },
