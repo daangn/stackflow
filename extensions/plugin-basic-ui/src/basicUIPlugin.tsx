@@ -89,8 +89,7 @@ export const basicUIPlugin: (
                 _options.appBar?.wrappingInlinePadding,
               [css.globalVars.appBar.fontSize]: _options.appBar?.fontSize,
               [css.globalVars.appBar.lineHeight]: _options.appBar?.lineHeight,
-              [css.globalVars.appBar.backButtonTouchAreaExpansion]:
-                _options.appBar?.backButtonTouchAreaExpansion,
+              [css.globalVars.appBar.hitSlop]: _options.appBar?.hitSlop,
             }),
           )}
         >

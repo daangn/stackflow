@@ -33,7 +33,7 @@ const GLOBAL_VARS = {
     wrappingInlinePadding: "app-bar-wrapping-inline-padding",
     fontSize: "app-bar-font-size",
     lineHeight: "app-bar-line-height",
-    backButtonTouchAreaExpansion: "app-bar-back-button-touch-area-expansion",
+    hitSlop: "app-bar-hit-slop",
   },
   bottomSheet: {
     borderRadius: "bottom-sheet-border-radius",
@@ -76,7 +76,7 @@ const androidValues: GlobalVars = {
     minSafeAreaInsetTop: "0px",
     wrappingInlinePadding: "1rem",
     fontSize: "1.125rem",
-    backButtonTouchAreaExpansion: "0.5rem",
+    hitSlop: "0.5rem",
     lineHeight: "1.5",
   },
   bottomSheet: {

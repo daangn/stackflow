@@ -37,7 +37,7 @@ export type AppBarProps = Partial<
     | "wrappingInlinePadding"
     | "fontSize"
     | "lineHeight"
-    | "backButtonTouchAreaExpansion"
+    | "hitSlop"
   >
 > & {
   title?: React.ReactNode;
@@ -102,7 +102,7 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
       wrappingInlinePadding,
       fontSize,
       lineHeight,
-      backButtonTouchAreaExpansion,
+      hitSlop,
     },
     ref,
   ) => {
@@ -336,8 +336,7 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
             [globalVars.appBar.minHeight]: minHeight,
             [globalVars.appBar.wrappingInlinePadding]: wrappingInlinePadding,
             [globalVars.appBar.fontSize]: fontSize,
-            [globalVars.appBar.backButtonTouchAreaExpansion]:
-              backButtonTouchAreaExpansion,
+            [globalVars.appBar.hitSlop]: hitSlop,
             [globalVars.appBar.lineHeight]: lineHeight,
           }),
         )}
