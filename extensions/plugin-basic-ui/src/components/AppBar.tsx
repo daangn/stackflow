@@ -34,11 +34,11 @@ export type AppBarProps = Partial<
     | "backgroundImage"
     | "backgroundImageTransitionDuration"
     | "minHeight"
-    | "wrappingInlinePadding"
     | "fontSize"
     | "lineHeight"
     | "hitSlop"
-    | "surroundingContentSpacing"
+    | "containerPadding"
+    | "itemGap"
   >
 > & {
   title?: React.ReactNode;
@@ -100,11 +100,11 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
       enterStyle,
       className,
       minHeight,
-      wrappingInlinePadding,
       fontSize,
       lineHeight,
       hitSlop,
-      surroundingContentSpacing,
+      containerPadding,
+      itemGap,
     },
     ref,
   ) => {
@@ -336,12 +336,11 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
               backgroundImageTransitionDuration,
             [appScreenCss.vars.appBar.center.mainWidth]: `${maxWidth}px`,
             [globalVars.appBar.minHeight]: minHeight,
-            [globalVars.appBar.wrappingInlinePadding]: wrappingInlinePadding,
+            [globalVars.appBar.containerPadding]: containerPadding,
             [globalVars.appBar.fontSize]: fontSize,
             [globalVars.appBar.hitSlop]: hitSlop,
             [globalVars.appBar.lineHeight]: lineHeight,
-            [globalVars.appBar.surroundingContentSpacing]:
-              surroundingContentSpacing,
+            [globalVars.appBar.itemGap]: itemGap,
           }),
         )}
         data-part="appBar"

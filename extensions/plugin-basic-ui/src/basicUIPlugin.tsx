@@ -85,13 +85,12 @@ export const basicUIPlugin: (
               [css.globalVars.bottomSheet.borderRadius]:
                 _options.bottomSheet?.borderRadius,
               [css.globalVars.modal.borderRadius]: _options.modal?.borderRadius,
-              [css.globalVars.appBar.wrappingInlinePadding]:
-                _options.appBar?.wrappingInlinePadding,
+              [css.globalVars.appBar.containerPadding]:
+                _options.appBar?.containerPadding,
               [css.globalVars.appBar.fontSize]: _options.appBar?.fontSize,
               [css.globalVars.appBar.lineHeight]: _options.appBar?.lineHeight,
               [css.globalVars.appBar.hitSlop]: _options.appBar?.hitSlop,
-              [css.globalVars.appBar.surroundingContentSpacing]:
-                _options.appBar?.surroundingContentSpacing,
+              [css.globalVars.appBar.itemGap]: _options.appBar?.itemGap,
             }),
           )}
         >
