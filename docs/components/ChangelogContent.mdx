@@ -1,20 +1,670 @@
 ## 2025.11.25
 
-Add LLMs.txt and changelog section [`89813a6`](https://github.com/daangn/stackflow/commit/89813a68adb385abfacd7f96e781cf3b853100d7)
-
-Released packages:
-- 📦 [@stackflow/docs@2.1.0](https://npmjs.com/package/@stackflow/docs/v/2.1.0)
-
----
-
-Expose interfaces to modify dimensions of AppBar [`a136f96`](https://github.com/daangn/stackflow/commit/a136f9621b88e662bb2e28a28153b8e6f258ecee)
+Expose interfaces to modify dimensions of AppBar [`a136f96`](https://github.com/daangn/stackflow/commit/a136f96)
 
 Released packages:
 - 📦 [@stackflow/plugin-basic-ui@1.17.0](https://npmjs.com/package/@stackflow/plugin-basic-ui/v/1.17.0)
 
 ---
 
- [`b0bbf6c`](https://github.com/daangn/stackflow/commit/b0bbf6cf8a3b78a64ddb761a0b582127a6dd5851)
+## 2025.10.23
+
+Fix SSR compatibility by adding getServerSnapshot parameter to useSyncExternalStore. This resolves the "Missing getServerSnapshot, which is required for server-rendered content" error in SSR environments. [`567352a`](https://github.com/daangn/stackflow/commit/567352a)
+
+Released packages:
+- 📦 [@stackflow/plugin-history-sync@1.8.1](https://npmjs.com/package/@stackflow/plugin-history-sync/v/1.8.1)
+
+---
+
+## 2025.10.22
+
+Fix swipe back gesture during push/pop transitions by using capture phase event listeners to prevent touch events from reaching child elements during transitions [`fe8b8fe`](https://github.com/daangn/stackflow/commit/fe8b8fe)
+
+Released packages:
+- 📦 [@stackflow/plugin-basic-ui@1.16.1](https://npmjs.com/package/@stackflow/plugin-basic-ui/v/1.16.1)
+- 📦 [@stackflow/react-ui-core@1.3.3](https://npmjs.com/package/@stackflow/react-ui-core/v/1.3.3)
+
+---
+
+## 2025.10.21
+
+Export AppBar [`99eff56`](https://github.com/daangn/stackflow/commit/99eff56)
+
+Released packages:
+- 📦 [@stackflow/plugin-basic-ui@1.16.0](https://npmjs.com/package/@stackflow/plugin-basic-ui/v/1.16.0)
+
+---
+
+## 2025.10.16
+
+Add ActivityComponentType paramterized by params [`ead4e78`](https://github.com/daangn/stackflow/commit/ead4e78)
+
+Released packages:
+- 📦 [@stackflow/react@1.8.0](https://npmjs.com/package/@stackflow/react/v/1.8.0)
+
+---
+
+## 2025.10.02
+
+Expose events used to build a stack via `Stack.events` [`83ee5ed`](https://github.com/daangn/stackflow/commit/83ee5ed)
+
+Released packages:
+- 📦 [@stackflow/core@1.3.0](https://npmjs.com/package/@stackflow/core/v/1.3.0)
+- 📦 [@stackflow/plugin-history-sync@1.8.0](https://npmjs.com/package/@stackflow/plugin-history-sync/v/1.8.0)
+
+---
+
+## 2025.09.05
+
+`StructuredActivityComponentType` is added. [`f298988`](https://github.com/daangn/stackflow/commit/f298988)
+
+Released packages:
+- 📦 [@stackflow/plugin-history-sync@1.8.0](https://npmjs.com/package/@stackflow/plugin-history-sync/v/1.8.0)
+- 📦 [@stackflow/plugin-preload@1.4.4](https://npmjs.com/package/@stackflow/plugin-preload/v/1.4.4)
+- 📦 [@stackflow/react@1.7.0](https://npmjs.com/package/@stackflow/react/v/1.7.0)
+
+---
+
+## 2025.08.22
+
+Fix scroll behavior of AppScreen by attaching refs on paperContent [`733ebcb`](https://github.com/daangn/stackflow/commit/733ebcb)
+
+Released packages:
+- 📦 [@stackflow/plugin-basic-ui@1.15.1](https://npmjs.com/package/@stackflow/plugin-basic-ui/v/1.15.1)
+
+---
+
+## 2025.08.18
+
+Add prefetch API for lazy activity component and loader data. [`d906597`](https://github.com/daangn/stackflow/commit/d906597)
+
+Released packages:
+- 📦 [@stackflow/react@1.6.0](https://npmjs.com/package/@stackflow/react/v/1.6.0)
+
+---
+
+## 2025.08.15
+
+Fix a bug that entrance transition is not applied. [`c391bb7`](https://github.com/daangn/stackflow/commit/c391bb7)
+
+Released packages:
+- 📦 [@stackflow/plugin-basic-ui@1.15.0](https://npmjs.com/package/@stackflow/plugin-basic-ui/v/1.15.0)
+
+---
+
+## 2025.08.10
+
+Allow components style to be customized directly [`658c770`](https://github.com/daangn/stackflow/commit/658c770)
+
+Released packages:
+- 📦 [@stackflow/plugin-basic-ui@1.15.0](https://npmjs.com/package/@stackflow/plugin-basic-ui/v/1.15.0)
+
+---
+
+## 2025.07.28
+
+fix(react): conditionally log warnings in browser environment [`2dc74ad`](https://github.com/daangn/stackflow/commit/2dc74ad)
+
+Released packages:
+- 📦 [@stackflow/react@1.5.3](https://npmjs.com/package/@stackflow/react/v/1.5.3)
+
+---
+
+## 2025.05.29
+
+fix(plugin-basic-ui): update dependencies [`371a39c`](https://github.com/daangn/stackflow/commit/371a39c)
+
+Released packages:
+- 📦 [@stackflow/plugin-basic-ui@1.14.2](https://npmjs.com/package/@stackflow/plugin-basic-ui/v/1.14.2)
+
+---
+
+fix(react-ui-core): add `preventSwipeBack` into effect dependencies [`d2c50f3`](https://github.com/daangn/stackflow/commit/d2c50f3)
+
+Released packages:
+- 📦 [@stackflow/react-ui-core@1.3.2](https://npmjs.com/package/@stackflow/react-ui-core/v/1.3.2)
+
+---
+
+## 2025.05.15
+
+fix(plugin-basic-ui): prevent touch events while transitioning for other basic components [`aef952a`](https://github.com/daangn/stackflow/commit/aef952a)
+
+Released packages:
+- 📦 [@stackflow/plugin-basic-ui@1.14.1](https://npmjs.com/package/@stackflow/plugin-basic-ui/v/1.14.1)
+- 📦 [@stackflow/react-ui-core@1.3.1](https://npmjs.com/package/@stackflow/react-ui-core/v/1.3.1)
+
+---
+
+## 2025.05.12
+
+fix(react): remove unused dependencies [`b9dc68a`](https://github.com/daangn/stackflow/commit/b9dc68a)
+
+Released packages:
+- 📦 [@stackflow/react@1.5.2](https://npmjs.com/package/@stackflow/react/v/1.5.2)
+
+---
+
+## 2025.04.09
+
+Support full screen gradient background and introduce new app bar entrance type "cover" [`a7650d4`](https://github.com/daangn/stackflow/commit/a7650d4)
+
+Released packages:
+- 📦 [@stackflow/plugin-basic-ui@1.14.0](https://npmjs.com/package/@stackflow/plugin-basic-ui/v/1.14.0)
+- 📦 [@stackflow/react-ui-core@1.3.0](https://npmjs.com/package/@stackflow/react-ui-core/v/1.3.0)
+
+---
+
+## 2025.03.24
+
+fix(react-ui-core): consider nullable stack [`5c4b96c`](https://github.com/daangn/stackflow/commit/5c4b96c)
+
+Released packages:
+- 📦 [@stackflow/plugin-basic-ui@1.13.1](https://npmjs.com/package/@stackflow/plugin-basic-ui/v/1.13.1)
+- 📦 [@stackflow/react-ui-core@1.2.3](https://npmjs.com/package/@stackflow/react-ui-core/v/1.2.3)
+
+---
+
+## 2025.03.14
+
+fix(plugin-basic-ui,react-ui-core): prevent touch events while transitioning [`8593b5a`](https://github.com/daangn/stackflow/commit/8593b5a)
+
+Released packages:
+- 📦 [@stackflow/plugin-basic-ui@1.13.0](https://npmjs.com/package/@stackflow/plugin-basic-ui/v/1.13.0)
+- 📦 [@stackflow/react-ui-core@1.2.2](https://npmjs.com/package/@stackflow/react-ui-core/v/1.2.2)
+
+---
+
+## 2025.03.11
+
+To support various background designs, enable users to configure the background-image option in AppScreen, AppBar, BottomSheet and Modal. [`91413b6`](https://github.com/daangn/stackflow/commit/91413b6)
+
+Released packages:
+- 📦 [@stackflow/plugin-basic-ui@1.13.0](https://npmjs.com/package/@stackflow/plugin-basic-ui/v/1.13.0)
+
+---
+
+## 2025.02.24
+
+fix(react): pause lazy component transition when no loader defined [`7751e60`](https://github.com/daangn/stackflow/commit/7751e60)
+
+Released packages:
+- 📦 [@stackflow/react@1.5.1](https://npmjs.com/package/@stackflow/react/v/1.5.1)
+
+---
+
+## 2025.02.13
+
+Supports dynamic import for activities, and delays transition effects while loading an activity or waiting for a loader response [`cfa7af8`](https://github.com/daangn/stackflow/commit/cfa7af8)
+
+Released packages:
+- 📦 [@stackflow/core@1.2.0](https://npmjs.com/package/@stackflow/core/v/1.2.0)
+- 📦 [@stackflow/plugin-basic-ui@1.12.0](https://npmjs.com/package/@stackflow/plugin-basic-ui/v/1.12.0)
+- 📦 [@stackflow/react@1.5.0](https://npmjs.com/package/@stackflow/react/v/1.5.0)
+
+---
+
+Add missing logics of considering `targetActivityId` while updating using update functions. [`82b52b0`](https://github.com/daangn/stackflow/commit/82b52b0)
+
+Released packages:
+- 📦 [@stackflow/react@1.5.0](https://npmjs.com/package/@stackflow/react/v/1.5.0)
+
+---
+
+## 2025.01.22
+
+fix: add `decode()` interface to `Config` and support `path: string[]` [`e323ce3`](https://github.com/daangn/stackflow/commit/e323ce3)
+
+Released packages:
+- 📦 [@stackflow/config@1.2.1](https://npmjs.com/package/@stackflow/config/v/1.2.1)
+- 📦 [@stackflow/link@1.6.1](https://npmjs.com/package/@stackflow/link/v/1.6.1)
+- 📦 [@stackflow/plugin-history-sync@1.7.1](https://npmjs.com/package/@stackflow/plugin-history-sync/v/1.7.1)
+- 📦 [@stackflow/react@1.4.2](https://npmjs.com/package/@stackflow/react/v/1.4.2)
+
+---
+
+## 2025.01.20
+
+Made `divideBy` to be friendly to type inference. [`5fc54cb`](https://github.com/daangn/stackflow/commit/5fc54cb)
+
+Released packages:
+- 📦 [@stackflow/core@1.1.1](https://npmjs.com/package/@stackflow/core/v/1.1.1)
+
+---
+
+## 2024.12.18
+
+chore(plugin-basic-ui): update react-ui-core dependency [`151631b`](https://github.com/daangn/stackflow/commit/151631b)
+
+Released packages:
+- 📦 [@stackflow/plugin-basic-ui@1.11.1](https://npmjs.com/package/@stackflow/plugin-basic-ui/v/1.11.1)
+
+---
+
+feat(react-ui-core, plugin-basic-ui): add `onSwipe*` hooks and add data attributes and css variables [`dc35bfc`](https://github.com/daangn/stackflow/commit/dc35bfc)
+
+Released packages:
+- 📦 [@stackflow/plugin-basic-ui@1.11.0](https://npmjs.com/package/@stackflow/plugin-basic-ui/v/1.11.0)
+- 📦 [@stackflow/react-ui-core@1.2.0](https://npmjs.com/package/@stackflow/react-ui-core/v/1.2.0)
+
+---
+
+feat(react-ui-core): add swipe back ratio css var in other activity roots and add `transitionend` state in `useStyleEffectSwipeBack()` [`48693e7`](https://github.com/daangn/stackflow/commit/48693e7)
+
+Released packages:
+- 📦 [@stackflow/react-ui-core@1.2.1](https://npmjs.com/package/@stackflow/react-ui-core/v/1.2.1)
+
+---
+
+## 2024.12.16
+
+Change to the latest AppBar style [`f9f1399`](https://github.com/daangn/stackflow/commit/f9f1399)
+
+Released packages:
+- 📦 [@stackflow/plugin-basic-ui@1.11.0](https://npmjs.com/package/@stackflow/plugin-basic-ui/v/1.11.0)
+
+---
+
+## 2024.11.19
+
+fix(plugin-basic-ui): add `max()` in support query [`eb9ed7c`](https://github.com/daangn/stackflow/commit/eb9ed7c)
+
+Released packages:
+- 📦 [@stackflow/plugin-basic-ui@1.10.1](https://npmjs.com/package/@stackflow/plugin-basic-ui/v/1.10.1)
+
+---
+
+fix(plugin-basic-ui): add `maxWidth` option in <Modal /> [`eb4578f`](https://github.com/daangn/stackflow/commit/eb4578f)
+
+Released packages:
+- 📦 [@stackflow/plugin-basic-ui@1.10.1](https://npmjs.com/package/@stackflow/plugin-basic-ui/v/1.10.1)
+
+---
+
+## 2024.11.07
+
+feat(link): disable long press behavior in iOS [`db2aa80`](https://github.com/daangn/stackflow/commit/db2aa80)
+
+Released packages:
+- 📦 [@stackflow/link@1.6.0](https://npmjs.com/package/@stackflow/link/v/1.6.0)
+
+---
+
+## 2024.10.23
+
+move `<StackProvider />` up so that `useStack()` can be used in `Plugin.wrapStack` [`a4a7366`](https://github.com/daangn/stackflow/commit/a4a7366)
+
+Released packages:
+- 📦 [@stackflow/react@1.4.1](https://npmjs.com/package/@stackflow/react/v/1.4.1)
+
+---
+
+## 2024.09.26
+
+add `config` property in loader args [`412de46`](https://github.com/daangn/stackflow/commit/412de46)
+
+Released packages:
+- 📦 [@stackflow/config@1.2.0](https://npmjs.com/package/@stackflow/config/v/1.2.0)
+- 📦 [@stackflow/link@1.5.0](https://npmjs.com/package/@stackflow/link/v/1.5.0)
+- 📦 [@stackflow/react@1.4.0](https://npmjs.com/package/@stackflow/react/v/1.4.0)
+
+---
+
+## 2024.09.24
+
+feat: Support `<Link />` in Future API [`7b1780f`](https://github.com/daangn/stackflow/commit/7b1780f)
+
+Released packages:
+- 📦 [@stackflow/config@1.2.0](https://npmjs.com/package/@stackflow/config/v/1.2.0)
+- 📦 [@stackflow/link@1.5.0](https://npmjs.com/package/@stackflow/link/v/1.5.0)
+- 📦 [@stackflow/plugin-history-sync@1.7.0](https://npmjs.com/package/@stackflow/plugin-history-sync/v/1.7.0)
+- 📦 [@stackflow/react@1.4.0](https://npmjs.com/package/@stackflow/react/v/1.4.0)
+
+---
+
+## 2024.09.23
+
+fix(plugin-history-sync): replace json-cycle with flatted [`dc26742`](https://github.com/daangn/stackflow/commit/dc26742)
+
+Released packages:
+- 📦 [@stackflow/plugin-history-sync@1.7.0](https://npmjs.com/package/@stackflow/plugin-history-sync/v/1.7.0)
+
+---
+
+## 2024.09.11
+
+feat(plugin-basic-ui): add interface to access z-index about AppScreen [`5b1865e`](https://github.com/daangn/stackflow/commit/5b1865e)
+
+Released packages:
+- 📦 [@stackflow/plugin-basic-ui@1.10.0](https://npmjs.com/package/@stackflow/plugin-basic-ui/v/1.10.0)
+
+---
+
+## 2024.09.03
+
+chore(react): add typing for step action parameter [`95f2ae8`](https://github.com/daangn/stackflow/commit/95f2ae8)
+
+Released packages:
+- 📦 [@stackflow/react@1.3.2](https://npmjs.com/package/@stackflow/react/v/1.3.2)
+
+---
+
+## 2024.08.30
+
+fix: pass initial context to `<MainRenderer />` [`46ac359`](https://github.com/daangn/stackflow/commit/46ac359)
+
+Released packages:
+- 📦 [@stackflow/react@1.3.2](https://npmjs.com/package/@stackflow/react/v/1.3.2)
+
+---
+
+## 2024.08.21
+
+fix(plugin-history-sync): serialize state before pushState, replaceState [`31dc20f`](https://github.com/daangn/stackflow/commit/31dc20f)
+
+Released packages:
+- 📦 [@stackflow/plugin-history-sync@1.6.3](https://npmjs.com/package/@stackflow/plugin-history-sync/v/1.6.3)
+
+---
+
+## 2024.08.14
+
+feat(core,react): add `targetActivityId` option [`667570b`](https://github.com/daangn/stackflow/commit/667570b)
+
+Released packages:
+- 📦 [@stackflow/core@1.1.0](https://npmjs.com/package/@stackflow/core/v/1.1.0)
+- 📦 [@stackflow/react@1.3.0](https://npmjs.com/package/@stackflow/react/v/1.3.0)
+
+---
+
+fix(react): specify .mjs extension for esm exports [`1fc97b4`](https://github.com/daangn/stackflow/commit/1fc97b4)
+
+Released packages:
+- 📦 [@stackflow/react@1.3.1](https://npmjs.com/package/@stackflow/react/v/1.3.1)
+
+---
+
+## 2024.08.08
+
+fix: enable cyclic dependency and fix promise return in loader [`96ff22d`](https://github.com/daangn/stackflow/commit/96ff22d)
+
+Released packages:
+- 📦 [@stackflow/core@1.0.14](https://npmjs.com/package/@stackflow/core/v/1.0.14)
+- 📦 [@stackflow/plugin-history-sync@1.6.1](https://npmjs.com/package/@stackflow/plugin-history-sync/v/1.6.1)
+
+---
+
+[Future API] wrap loader return value with use() in useLoaderData() [`5ac2798`](https://github.com/daangn/stackflow/commit/5ac2798)
+
+Released packages:
+- 📦 [@stackflow/react@1.2.2](https://npmjs.com/package/@stackflow/react/v/1.2.2)
+
+---
+
+## 2024.08.07
+
+Extract core react hooks as a "@stackflow/react-ui-core" package [`e3dbaac`](https://github.com/daangn/stackflow/commit/e3dbaac)
+
+Released packages:
+- 📦 [@stackflow/plugin-basic-ui@1.9.0](https://npmjs.com/package/@stackflow/plugin-basic-ui/v/1.9.0)
+- 📦 [@stackflow/react-ui-core@1.1.0](https://npmjs.com/package/@stackflow/react-ui-core/v/1.1.0)
+
+---
+
+## 2024.08.01
+
+fix(plugin-basic-ui): calculate app screen height correctly with safearea [`3e8df1b`](https://github.com/daangn/stackflow/commit/3e8df1b)
+
+Released packages:
+- 📦 [@stackflow/plugin-basic-ui@1.8.4](https://npmjs.com/package/@stackflow/plugin-basic-ui/v/1.8.4)
+
+---
+
+refactor(plugin-preload): moved a dependency from `dependencies` to `peerDependencies` [`658510f`](https://github.com/daangn/stackflow/commit/658510f)
+
+Released packages:
+- 📦 [@stackflow/plugin-preload@1.4.0](https://npmjs.com/package/@stackflow/plugin-preload/v/1.4.0)
+
+---
+
+## 2024.07.31
+
+Change `stack()` to `stackflow()` in Future API [`fc2061a`](https://github.com/daangn/stackflow/commit/fc2061a)
+
+Released packages:
+- 📦 [@stackflow/react@1.2.1](https://npmjs.com/package/@stackflow/react/v/1.2.1)
+
+---
+
+change extension esm package .mjs to .js [`7df613a`](https://github.com/daangn/stackflow/commit/7df613a)
+
+Released packages:
+- 📦 [@stackflow/config@1.1.0](https://npmjs.com/package/@stackflow/config/v/1.1.0)
+- 📦 [@stackflow/plugin-history-sync@1.6.0](https://npmjs.com/package/@stackflow/plugin-history-sync/v/1.6.0)
+- 📦 [@stackflow/react@1.2.0](https://npmjs.com/package/@stackflow/react/v/1.2.0)
+
+---
+
+feat(plugin-history-sync): sort routes by computed score [`e9bb029`](https://github.com/daangn/stackflow/commit/e9bb029)
+
+Released packages:
+- 📦 [@stackflow/plugin-history-sync@1.6.0](https://npmjs.com/package/@stackflow/plugin-history-sync/v/1.6.0)
+
+---
+
+## 2024.07.24
+
+fix(plugin-basic-ui): remove `will-change` property [`bef6214`](https://github.com/daangn/stackflow/commit/bef6214)
+
+Released packages:
+- 📦 [@stackflow/plugin-basic-ui@1.8.1](https://npmjs.com/package/@stackflow/plugin-basic-ui/v/1.8.1)
+
+---
+
+## 2024.07.23
+
+change asterisk(`*`) priority to lowest [`7788fbc`](https://github.com/daangn/stackflow/commit/7788fbc)
+
+Released packages:
+- 📦 [@stackflow/plugin-history-sync@1.5.3](https://npmjs.com/package/@stackflow/plugin-history-sync/v/1.5.3)
+
+---
+
+## 2024.07.22
+
+style(plugin-basic-ui): move top padding to margin [`3872e44`](https://github.com/daangn/stackflow/commit/3872e44)
+
+Released packages:
+- 📦 [@stackflow/plugin-basic-ui@1.8.0](https://npmjs.com/package/@stackflow/plugin-basic-ui/v/1.8.0)
+
+---
+
+## 2024.07.19
+
+use Biome for lint instead of ESLint and fix fixable errors [`edfffda`](https://github.com/daangn/stackflow/commit/edfffda)
+
+Released packages:
+- 📦 [@stackflow/compat-await-push@1.1.9](https://npmjs.com/package/@stackflow/compat-await-push/v/1.1.9)
+- 📦 [@stackflow/core@1.0.12](https://npmjs.com/package/@stackflow/core/v/1.0.12)
+- 📦 [@stackflow/link@1.4.1](https://npmjs.com/package/@stackflow/link/v/1.4.1)
+- 📦 [@stackflow/plugin-basic-ui@1.8.0](https://npmjs.com/package/@stackflow/plugin-basic-ui/v/1.8.0)
+- 📦 [@stackflow/plugin-devtools@0.1.9](https://npmjs.com/package/@stackflow/plugin-devtools/v/0.1.9)
+- 📦 [@stackflow/plugin-google-analytics-4@1.1.11](https://npmjs.com/package/@stackflow/plugin-google-analytics-4/v/1.1.11)
+- 📦 [@stackflow/plugin-history-sync@1.5.2](https://npmjs.com/package/@stackflow/plugin-history-sync/v/1.5.2)
+- 📦 [@stackflow/plugin-map-initial-activity@1.0.7](https://npmjs.com/package/@stackflow/plugin-map-initial-activity/v/1.0.7)
+- 📦 [@stackflow/plugin-preload@1.3.1](https://npmjs.com/package/@stackflow/plugin-preload/v/1.3.1)
+- 📦 [@stackflow/plugin-renderer-basic@1.1.9](https://npmjs.com/package/@stackflow/plugin-renderer-basic/v/1.1.9)
+- 📦 [@stackflow/plugin-renderer-web@1.1.9](https://npmjs.com/package/@stackflow/plugin-renderer-web/v/1.1.9)
+- 📦 [@stackflow/plugin-stack-depth-change@1.1.3](https://npmjs.com/package/@stackflow/plugin-stack-depth-change/v/1.1.3)
+- 📦 [@stackflow/react@1.1.10](https://npmjs.com/package/@stackflow/react/v/1.1.10)
+
+---
+
+feat(plugin-basic-ui): export `useStyleEffect()` [`0f882e8`](https://github.com/daangn/stackflow/commit/0f882e8)
+
+Released packages:
+- 📦 [@stackflow/plugin-basic-ui@1.8.0](https://npmjs.com/package/@stackflow/plugin-basic-ui/v/1.8.0)
+
+---
+
+## 2024.07.09
+
+accept only serializable parameters when making domain event [`7df36f1b`](https://github.com/daangn/stackflow/commit/7df36f1b)
+
+Released packages:
+- 📦 [@stackflow/core@1.0.11](https://npmjs.com/package/@stackflow/core/v/1.0.11)
+- 📦 [@stackflow/plugin-history-sync@1.5.1](https://npmjs.com/package/@stackflow/plugin-history-sync/v/1.5.1)
+
+---
+
+## 2024.05.27
+
+Expose `paperRef` from `<BottomSheet />` and add `!important` paper exit transition [`207b8490`](https://github.com/daangn/stackflow/commit/207b8490)
+
+Released packages:
+- 📦 [@stackflow/plugin-basic-ui@1.7.0](https://npmjs.com/package/@stackflow/plugin-basic-ui/v/1.7.0)
+
+---
+
+## 2024.05.24
+
+fix(react): infer `BaseActivities` from given activities [`27246ad7`](https://github.com/daangn/stackflow/commit/27246ad7)
+
+Released packages:
+- 📦 [@stackflow/react@1.1.9](https://npmjs.com/package/@stackflow/react/v/1.1.9)
+
+---
+
+## 2024.05.22
+
+Pass initial search params to fallback activity as an activity params [`cea51375`](https://github.com/daangn/stackflow/commit/cea51375)
+
+Released packages:
+- 📦 [@stackflow/plugin-history-sync@1.5.0](https://npmjs.com/package/@stackflow/plugin-history-sync/v/1.5.0)
+
+---
+
+## 2024.04.24
+
+theme branching via :root's dataset [`20d19546`](https://github.com/daangn/stackflow/commit/20d19546)
+
+Released packages:
+- 📦 [@stackflow/plugin-basic-ui@1.6.0](https://npmjs.com/package/@stackflow/plugin-basic-ui/v/1.6.0)
+
+---
+
+## 2024.02.13
+
+feat: add decode interface [`6ad362f7`](https://github.com/daangn/stackflow/commit/6ad362f7)
+
+Released packages:
+- 📦 [@stackflow/link@1.4.0](https://npmjs.com/package/@stackflow/link/v/1.4.0)
+- 📦 [@stackflow/plugin-history-sync@1.4.0](https://npmjs.com/package/@stackflow/plugin-history-sync/v/1.4.0)
+- 📦 [@stackflow/plugin-preload@1.3.0](https://npmjs.com/package/@stackflow/plugin-preload/v/1.3.0)
+- 📦 [@stackflow/react@1.1.8](https://npmjs.com/package/@stackflow/react/v/1.1.8)
+
+---
+
+Resolved issue where `urlPatternOptions` props were passed to anchor tag. [`43a2f2a4`](https://github.com/daangn/stackflow/commit/43a2f2a4)
+
+Released packages:
+- 📦 [@stackflow/link@1.4.0](https://npmjs.com/package/@stackflow/link/v/1.4.0)
+
+---
+
+pass `urlPatternOptions` to `usePreloader()` hook [`8c774239`](https://github.com/daangn/stackflow/commit/8c774239)
+
+Released packages:
+- 📦 [@stackflow/link@1.4.0](https://npmjs.com/package/@stackflow/link/v/1.4.0)
+
+---
+
+## 2024.02.05
+
+Sort routes by variable count and refactor useRoutes(), normalizeRouteInput() function [`36613e35`](https://github.com/daangn/stackflow/commit/36613e35)
+
+Released packages:
+- 📦 [@stackflow/link@1.4.0](https://npmjs.com/package/@stackflow/link/v/1.4.0)
+- 📦 [@stackflow/plugin-history-sync@1.4.0](https://npmjs.com/package/@stackflow/plugin-history-sync/v/1.4.0)
+- 📦 [@stackflow/plugin-preload@1.3.0](https://npmjs.com/package/@stackflow/plugin-preload/v/1.3.0)
+
+---
+
+## 2024.01.30
+
+fix(core)!: delegate overrideInitialEvents to makeCoreStore [`a32a7e09`](https://github.com/daangn/stackflow/commit/a32a7e09)
+
+Released packages:
+- 📦 [@stackflow/core@1.0.10](https://npmjs.com/package/@stackflow/core/v/1.0.10)
+- 📦 [@stackflow/react@1.1.7](https://npmjs.com/package/@stackflow/react/v/1.1.7)
+
+---
+
+## 2024.01.22
+
+fix(plugin-history-sync): request history tick on init [`99c34fa4`](https://github.com/daangn/stackflow/commit/99c34fa4)
+
+Released packages:
+- 📦 [@stackflow/plugin-history-sync@1.3.17](https://npmjs.com/package/@stackflow/plugin-history-sync/v/1.3.17)
+
+---
+
+fix(plugin-history-sync)!: reduce loop count for parsing state [`45cf3f4d`](https://github.com/daangn/stackflow/commit/45cf3f4d)
+
+Released packages:
+- 📦 [@stackflow/plugin-history-sync@1.3.16](https://npmjs.com/package/@stackflow/plugin-history-sync/v/1.3.16)
+
+---
+
+## 2024.01.19
+
+fix(plugin-stack-depth-change): invoke `onDepthChanged` only when transition is done [`da18f07e`](https://github.com/daangn/stackflow/commit/da18f07e)
+
+Released packages:
+- 📦 [@stackflow/plugin-stack-depth-change@1.1.1](https://npmjs.com/package/@stackflow/plugin-stack-depth-change/v/1.1.1)
+
+---
+
+## 2024.01.16
+
+fix hydration mismatch warning in server-side rendering [`d4e86c55`](https://github.com/daangn/stackflow/commit/d4e86c55)
+
+Released packages:
+- 📦 [@stackflow/plugin-basic-ui@1.5.1](https://npmjs.com/package/@stackflow/plugin-basic-ui/v/1.5.1)
+
+---
+
+fix(plugin-history-sync): fix history queue on init [`f3b2d720`](https://github.com/daangn/stackflow/commit/f3b2d720)
+
+Released packages:
+- 📦 [@stackflow/plugin-history-sync@1.3.15](https://npmjs.com/package/@stackflow/plugin-history-sync/v/1.3.15)
+
+---
+
+## 2023.12.23
+
+feat(plugin-basic-ui): export css variables from components [`dd5be87f`](https://github.com/daangn/stackflow/commit/dd5be87f)
+
+Released packages:
+- 📦 [@stackflow/plugin-basic-ui@1.5.0](https://npmjs.com/package/@stackflow/plugin-basic-ui/v/1.5.0)
+
+---
+
+## 2023.12.22
+
+feat(plugin-stack-depth-change): invoke callback only when depth level has changed [`a2ecfaf4`](https://github.com/daangn/stackflow/commit/a2ecfaf4)
+
+Released packages:
+- 📦 [@stackflow/plugin-stack-depth-change@1.1.0](https://npmjs.com/package/@stackflow/plugin-stack-depth-change/v/1.1.0)
+
+---
+
+## 2023.12.01
+
+feat(plugin-basic-ui): update IconBack component (#423) [`7dca11ee`](https://github.com/daangn/stackflow/commit/7dca11ee)
+
+Released packages:
+- 📦 [@stackflow/plugin-basic-ui@1.4.1](https://npmjs.com/package/@stackflow/plugin-basic-ui/v/1.4.1)
 
 ---
 
