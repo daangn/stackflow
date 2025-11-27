@@ -77,6 +77,8 @@ export const basicUIPlugin: (
                 stack.globalTransitionState === "loading"
                   ? `${stack.transitionDuration}ms`
                   : "0ms",
+              [css.globalVars.defaultTransitionOffSet]:
+                _options.defaultTransitionOffSet,
               [css.globalVars.appBar.borderColor]: _options.appBar?.borderColor,
               [css.globalVars.appBar.borderSize]: _options.appBar?.borderSize,
               [css.globalVars.appBar.height]: _options.appBar?.height,

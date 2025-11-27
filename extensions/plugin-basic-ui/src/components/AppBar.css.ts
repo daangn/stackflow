@@ -45,7 +45,7 @@ export const appBar = recipe({
           position: "absolute",
         },
         [`${cupertino} ${exitActive} &`]: {
-          transform: "translate3d(100%, 0, 0)",
+          transform: `translate3d(${globalVars.defaultTransitionOffSet}, 0, 0)`,
           transition: transitions({
             ...appBarCommonTransition,
             transform: "0s",
@@ -53,7 +53,7 @@ export const appBar = recipe({
         },
         [`${android} &`]: {
           opacity: 0,
-          transform: "translate3d(0, 10rem, 0)",
+          transform: `translate3d(0, ${globalVars.defaultTransitionOffSet}, 0)`,
           transition: transitions({
             ...appBarCommonTransition,
             transform: vars.transitionDuration,

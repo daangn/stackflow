@@ -116,7 +116,7 @@ export const paper = recipe({
       zIndex: vars.zIndexes.paper,
       selectors: {
         [`${cupertino} &`]: {
-          transform: "translate3d(100%, 0, 0)",
+          transform: `translate3d(${globalVars.defaultTransitionOffSet}, 0, 0)`,
         },
         [`
           ${cupertino} ${enterActive} &,
@@ -126,7 +126,7 @@ export const paper = recipe({
         },
         [`${android} &`]: {
           opacity: 0,
-          transform: "translate3d(0, 10rem, 0)",
+          transform: `translate3d(0, ${globalVars.defaultTransitionOffSet}, 0)`,
         },
         [`
           ${android} ${enterActive} &,
