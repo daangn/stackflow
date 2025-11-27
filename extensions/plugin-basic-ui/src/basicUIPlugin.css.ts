@@ -45,6 +45,9 @@ const GLOBAL_VARS = {
     borderRadius: "modal-border-radius",
     maxWidth: "modal-max-width",
   },
+  edge: {
+    width: 'edge-width',
+  }
 };
 
 export const globalVars = createGlobalThemeContract(
@@ -92,6 +95,9 @@ const androidValues: GlobalVars = {
     borderRadius: "1rem",
     maxWidth: "100%",
   },
+  edge: {
+    width: "1.25rem",
+  }
 };
 
 const cupertinoValues: GlobalVars = {

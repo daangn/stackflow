@@ -94,7 +94,8 @@ export const basicUIPlugin: (
               [css.globalVars.appBar.lineHeight]: _options.appBar?.lineHeight,
               [css.globalVars.appBar.hitSlop]: _options.appBar?.hitSlop,
               [css.globalVars.appBar.itemGap]: _options.appBar?.itemGap,
-            }),
+              [css.globalVars.edge.width]: _options.edge?.width,
+            })
           )}
         >
           {stack.render()}
