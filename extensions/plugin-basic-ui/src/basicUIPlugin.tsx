@@ -70,7 +70,6 @@ export const basicUIPlugin: (
               [css.globalVars.backgroundImage]: _options.backgroundImage,
               [css.globalVars.dimBackgroundColor]: _options.dimBackgroundColor,
               [css.globalVars.dimHeight]: _options.dimHeight,
-              [css.globalVars.edgeWidth]: _options.edgeWidth,
               [css.globalVars.transitionDuration]:
                 `${stack.transitionDuration}ms`,
               [css.globalVars.computedTransitionDuration]:
