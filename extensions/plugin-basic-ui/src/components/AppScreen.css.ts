@@ -59,9 +59,9 @@ export const dim = style([
   {
     opacity: 0,
     zIndex: vars.zIndexes.dim,
+    height: globalVars.dimHeight,
     selectors: {
       [`${android} &`]: {
-        height: "10rem",
         background: `linear-gradient(${globalVars.dimBackgroundColor}, rgba(0, 0, 0, 0))`,
       },
       [`

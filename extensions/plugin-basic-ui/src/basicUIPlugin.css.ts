@@ -9,6 +9,7 @@ const GLOBAL_VARS = {
   backgroundColor: "background-color",
   backgroundImage: "background-image",
   dimBackgroundColor: "dim-background-color",
+  dimHeight: "dim-height",
   transitionDuration: "transition-duration",
   computedTransitionDuration: "computed-transition-duration",
   appBar: {
@@ -56,6 +57,7 @@ const androidValues: GlobalVars = {
   backgroundColor: "#fff",
   backgroundImage: "unset",
   dimBackgroundColor: "rgba(0, 0, 0, 0.15)",
+  dimHeight: "10rem",
   transitionDuration: "0s",
   computedTransitionDuration: "0s",
   appBar: {
@@ -92,6 +94,7 @@ const androidValues: GlobalVars = {
 
 const cupertinoValues: GlobalVars = {
   ...androidValues,
+  dimHeight: "100%",
   appBar: {
     ...androidValues.appBar,
     height: "2.75rem",
