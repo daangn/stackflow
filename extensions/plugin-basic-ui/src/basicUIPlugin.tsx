@@ -69,8 +69,7 @@ export const basicUIPlugin: (
               [css.globalVars.backgroundColor]: _options.backgroundColor,
               [css.globalVars.backgroundImage]: _options.backgroundImage,
               [css.globalVars.dimBackgroundColor]: _options.dimBackgroundColor,
-              [css.globalVars.transitionDuration]:
-                `${stack.transitionDuration}ms`,
+              [css.globalVars.transitionDuration]: `${stack.transitionDuration}ms`,
               [css.globalVars.computedTransitionDuration]:
                 stack.globalTransitionState === "loading"
                   ? `${stack.transitionDuration}ms`
@@ -91,7 +90,8 @@ export const basicUIPlugin: (
               [css.globalVars.appBar.lineHeight]: _options.appBar?.lineHeight,
               [css.globalVars.appBar.hitSlop]: _options.appBar?.hitSlop,
               [css.globalVars.appBar.itemGap]: _options.appBar?.itemGap,
-            }),
+              [css.globalVars.edge.width]: _options.edge?.width,
+            })
           )}
         >
           {stack.render()}
