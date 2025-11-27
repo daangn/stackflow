@@ -20,10 +20,13 @@ import { PluginsProvider } from "../__internal__/plugins";
 import type { StackflowReactPlugin } from "../__internal__/StackflowReactPlugin";
 import { isBrowser, makeRef } from "../__internal__/utils";
 import type { BaseActivities } from "./BaseActivities";
+import { lazyActivityPlugin } from "./lazyActivityPlugin";
 import type { UseActionsOutputType } from "./useActions";
 import { useActions } from "./useActions";
 import type { UseStepActionsOutputType } from "./useStepActions";
 import { useStepActions } from "./useStepActions";
+
+import { version } from "react";
 
 function parseActionOptions(options?: { animate?: boolean }) {
   if (!options) {
@@ -129,10 +132,6 @@ export type StackflowOutput<T extends BaseActivities> = {
 export function stackflow<T extends BaseActivities>(
   options: StackflowOptions<T>,
 ): StackflowOutput<T> {
-  const plugins = (options.plugins ?? [])
-    .flat(Number.POSITIVE_INFINITY as 0)
-    .map((p) => p as StackflowReactPlugin);
-
   const activityComponentMap = Object.entries(options.activities).reduce(
     (acc, [key, Activity]) => ({
       ...acc,
@@ -142,6 +141,22 @@ export function stackflow<T extends BaseActivities>(
       [key: string]: MonolithicActivityComponentType;
     },
   );
+
+  const plugins: StackflowReactPlugin[] = [
+    ...(options.plugins ?? [])
+      .flat(Number.POSITIVE_INFINITY as 0)
+      .map((p) => p as StackflowReactPlugin),
+  ];
+
+  const majorReactVersion = Number.parseInt(version);
+
+  /**
+   * TODO: This plugin depends on internal APIs of React.
+   * A proper solution (e.g. Suspense integration) should be implemented in the next major version.
+   */
+  if (majorReactVersion >= 18 && majorReactVersion <= 19) {
+    plugins.push(lazyActivityPlugin(activityComponentMap));
+  }
 
   const enoughPastTime = () =>
     new Date().getTime() - options.transitionDuration * 2;
