@@ -49,6 +49,33 @@ export const appScreen = recipe({
       "exit-active": exitActive,
       "exit-done": exitDone,
     },
+    hasAppBar: {
+      true: {
+        vars: {
+          [vars.appBar.topMargin]: globalVars.appBar.height,
+        },
+        /**
+         * When `max()` and `env()` (or `constant()`) supported
+         *
+         * - https://caniuse.com/css-env-function
+         * - https://caniuse.com/css-math-functions
+         */
+        "@supports": {
+          "(padding: max(0px)) and (padding: constant(safe-area-inset-top))": {
+            vars: {
+              [vars.appBar.topMargin]:
+                `calc(${globalVars.appBar.height} + max(${globalVars.appBar.minSafeAreaInsetTop}, constant(safe-area-inset-top)))`,
+            },
+          },
+          "(padding: max(0px)) and (padding: env(safe-area-inset-top))": {
+            vars: {
+              [vars.appBar.topMargin]:
+                `calc(${globalVars.appBar.height} + max(${globalVars.appBar.minSafeAreaInsetTop}, env(safe-area-inset-top)))`,
+            },
+          },
+        },
+      },
+    },
   },
 });
 
@@ -118,30 +145,6 @@ export const paper = recipe({
         {
           transition: `transform ${vars.transitionDuration}, opacity ${vars.transitionDuration}, margin-top ${globalVars.appBar.heightTransitionDuration}`,
           paddingTop: vars.appBar.topMargin,
-          vars: {
-            [vars.appBar.topMargin]: globalVars.appBar.height,
-          },
-          /**
-           * When `max()` and `env()` (or `constant()`) supported
-           *
-           * - https://caniuse.com/css-env-function
-           * - https://caniuse.com/css-math-functions
-           */
-          "@supports": {
-            "(padding: max(0px)) and (padding: constant(safe-area-inset-top))":
-              {
-                vars: {
-                  [vars.appBar.topMargin]:
-                    `calc(${globalVars.appBar.height} + max(${globalVars.appBar.minSafeAreaInsetTop}, constant(safe-area-inset-top)))`,
-                },
-              },
-            "(padding: max(0px)) and (padding: env(safe-area-inset-top))": {
-              vars: {
-                [vars.appBar.topMargin]:
-                  `calc(${globalVars.appBar.height} + max(${globalVars.appBar.minSafeAreaInsetTop}, env(safe-area-inset-top)))`,
-              },
-            },
-          },
         },
       ],
     },
@@ -202,8 +205,8 @@ export const edge = recipe({
   variants: {
     hasAppBar: {
       true: {
-        top: globalVars.appBar.height,
-        height: `calc(100% - ${globalVars.appBar.height})`,
+        top: vars.appBar.topMargin,
+        height: `calc(100% - ${vars.appBar.topMargin})`,
       },
     },
   },

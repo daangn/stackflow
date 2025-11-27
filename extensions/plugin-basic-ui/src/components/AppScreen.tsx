@@ -241,6 +241,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
         ref={appScreenRef}
         className={clsx(
           css.appScreen({
+            hasAppBar,
             transitionState:
               transitionState === "enter-done" ||
               transitionState === "exit-done"
