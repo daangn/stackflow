@@ -1,5 +1,11 @@
 # @stackflow/react
 
+## 1.9.0
+
+### Minor Changes
+
+- 7907371: Export StaticActivityComponentType type hepler
+
 ## 1.8.0
 
 ### Minor Changes

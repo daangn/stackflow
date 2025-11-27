@@ -69,12 +69,15 @@ export const basicUIPlugin: (
               [css.globalVars.backgroundColor]: _options.backgroundColor,
               [css.globalVars.backgroundImage]: _options.backgroundImage,
               [css.globalVars.dimBackgroundColor]: _options.dimBackgroundColor,
+              [css.globalVars.dimHeight]: _options.dimHeight,
               [css.globalVars.transitionDuration]:
                 `${stack.transitionDuration}ms`,
               [css.globalVars.computedTransitionDuration]:
                 stack.globalTransitionState === "loading"
                   ? `${stack.transitionDuration}ms`
                   : "0ms",
+              [css.globalVars.defaultTransitionOffSet]:
+                _options.defaultTransitionOffSet,
               [css.globalVars.appBar.borderColor]: _options.appBar?.borderColor,
               [css.globalVars.appBar.borderSize]: _options.appBar?.borderSize,
               [css.globalVars.appBar.height]: _options.appBar?.height,
@@ -85,7 +88,14 @@ export const basicUIPlugin: (
               [css.globalVars.bottomSheet.borderRadius]:
                 _options.bottomSheet?.borderRadius,
               [css.globalVars.modal.borderRadius]: _options.modal?.borderRadius,
-            }),
+              [css.globalVars.appBar.containerPadding]:
+                _options.appBar?.containerPadding,
+              [css.globalVars.appBar.fontSize]: _options.appBar?.fontSize,
+              [css.globalVars.appBar.lineHeight]: _options.appBar?.lineHeight,
+              [css.globalVars.appBar.hitSlop]: _options.appBar?.hitSlop,
+              [css.globalVars.appBar.itemGap]: _options.appBar?.itemGap,
+              [css.globalVars.edge.width]: _options.edge?.width,
+            })
           )}
         >
           {stack.render()}

@@ -8,6 +8,7 @@ export * from "./ActivityComponentType";
 export * from "./lazy";
 export * from "./loader/useLoaderData";
 export * from "./StackComponentType";
+export * from "./StaticActivityComponentType";
 export * from "./StepActions";
 export * from "./stackflow";
 export * from "./useActivityParams";

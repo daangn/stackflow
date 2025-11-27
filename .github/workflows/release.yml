@@ -23,7 +23,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: "22"
+          node-version: 24.x
           registry-url: https://registry.npmjs.org
 
       - uses: actions/cache@v4
@@ -74,6 +74,7 @@ jobs:
           version: yarn changeset:version
         env:
           GITHUB_TOKEN: ${{ secrets.DAANGNBOT_PAT }}
+          NPM_CONFIG_PROVENANCE: true
 
       - name: Continuous release via pkg.pr.new
         if: github.event_name == 'pull_request'

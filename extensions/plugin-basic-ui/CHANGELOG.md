@@ -1,5 +1,22 @@
 # @stackflow/plugin-basic-ui
 
+## 1.18.0
+
+### Minor Changes
+
+- 4e4c0d9: Expose interfaces to modify width of edge
+- 151b13f: Parameterize default appscreen transition offset and appscreen dim height
+
+### Patch Changes
+
+- 151b13f: Fix edge height
+
+## 1.17.0
+
+### Minor Changes
+
+- a136f96: Expose interfaces to modify dimensions of AppBar
+
 ## 1.16.1
 
 ### Patch Changes

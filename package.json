@@ -18,7 +18,7 @@
     "dev": "ultra -r --concurrency 100 dev",
     "format": "biome check --write .",
     "lint": "biome lint .",
-    "changeset:version": "changeset version && yarn install --no-immutable",
+    "changeset:version": "yarn workspace @stackflow/docs generate:changelog && changeset version && yarn install --no-immutable",
     "release": "yarn clean && yarn build && changeset && yarn changeset:version && changeset publish",
     "release:canary": "yarn clean && yarn build && changeset pre enter canary && changeset && yarn changeset:version && changeset publish && changeset pre exit",
     "test": "yarn build && ultra -r test",
