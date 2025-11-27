@@ -69,11 +69,15 @@ export const basicUIPlugin: (
               [css.globalVars.backgroundColor]: _options.backgroundColor,
               [css.globalVars.backgroundImage]: _options.backgroundImage,
               [css.globalVars.dimBackgroundColor]: _options.dimBackgroundColor,
-              [css.globalVars.transitionDuration]: `${stack.transitionDuration}ms`,
+              [css.globalVars.dimHeight]: _options.dimHeight,
+              [css.globalVars.transitionDuration]:
+                `${stack.transitionDuration}ms`,
               [css.globalVars.computedTransitionDuration]:
                 stack.globalTransitionState === "loading"
                   ? `${stack.transitionDuration}ms`
                   : "0ms",
+              [css.globalVars.defaultTransitionOffSet]:
+                _options.defaultTransitionOffSet,
               [css.globalVars.appBar.borderColor]: _options.appBar?.borderColor,
               [css.globalVars.appBar.borderSize]: _options.appBar?.borderSize,
               [css.globalVars.appBar.height]: _options.appBar?.height,
