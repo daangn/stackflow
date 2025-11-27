@@ -198,7 +198,7 @@ export const edge = recipe({
     f.left0,
     f.fullHeight,
     {
-      width: "1.25rem",
+      width: globalVars.edgeWidth,
       zIndex: vars.zIndexes.edge,
     },
   ],

@@ -10,6 +10,7 @@ const GLOBAL_VARS = {
   backgroundImage: "background-image",
   dimBackgroundColor: "dim-background-color",
   dimHeight: "dim-height",
+  edgeWidth: "edge-width",
   transitionDuration: "transition-duration",
   computedTransitionDuration: "computed-transition-duration",
   appBar: {
@@ -58,6 +59,7 @@ const androidValues: GlobalVars = {
   backgroundImage: "unset",
   dimBackgroundColor: "rgba(0, 0, 0, 0.15)",
   dimHeight: "10rem",
+  edgeWidth: "1.25rem",
   transitionDuration: "0s",
   computedTransitionDuration: "0s",
   appBar: {
