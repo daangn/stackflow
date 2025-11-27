@@ -308,6 +308,11 @@ const AppScreen: React.FC<AppScreenProps> = ({
             <div
               ref={edgeRef}
               className={css.edge({ hasAppBar })}
+              style={assignInlineVars(
+                compactMap({
+                  [globalVars.edge.width]: globalOptions.edge?.width,
+                }),
+              )}
               data-part="edge"
               {...activityDataAttributes}
             />
