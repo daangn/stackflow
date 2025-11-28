@@ -1,5 +1,11 @@
 # @stackflow/plugin-basic-ui
 
+## 1.18.1
+
+### Patch Changes
+
+- d76f1d1: Add interface to inject appBar.minHeight
+
 ## 1.18.0
 
 ### Minor Changes
