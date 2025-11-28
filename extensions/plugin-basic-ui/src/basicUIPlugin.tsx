@@ -81,6 +81,7 @@ export const basicUIPlugin: (
               [css.globalVars.appBar.borderColor]: _options.appBar?.borderColor,
               [css.globalVars.appBar.borderSize]: _options.appBar?.borderSize,
               [css.globalVars.appBar.height]: _options.appBar?.height,
+              [css.globalVars.appBar.minHeight]: _options.appBar?.minHeight,
               [css.globalVars.appBar.iconColor]: _options.appBar?.iconColor,
               [css.globalVars.appBar.textColor]: _options.appBar?.textColor,
               [css.globalVars.appBar.minSafeAreaInsetTop]:
@@ -95,7 +96,7 @@ export const basicUIPlugin: (
               [css.globalVars.appBar.hitSlop]: _options.appBar?.hitSlop,
               [css.globalVars.appBar.itemGap]: _options.appBar?.itemGap,
               [css.globalVars.edge.width]: _options.edge?.width,
-            })
+            }),
           )}
         >
           {stack.render()}
