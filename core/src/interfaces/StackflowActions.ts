@@ -62,4 +62,9 @@ export type StackflowActions = {
    * Resume paused stack
    */
   resume: (params?: Omit<ResumedEvent, keyof BaseDomainEvent>) => void;
+
+  /**
+   * Clear past events and reconstruct state with active activities to release memory
+   */
+  prune: () => void;
 };
