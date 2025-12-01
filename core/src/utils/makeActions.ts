@@ -137,13 +137,20 @@ export function makeActions({
     },
     prune() {
       const stack = store.getStack();
+
+      if (stack.globalTransitionState === "paused") {
+        throw new Error("Cannot prune while the stack is paused");
+      }
+
       const activeActivities = stack.activities.filter(
         (activity) =>
           activity.transitionState === "enter-active" ||
-          activity.transitionState === "enter-done",
+          activity.transitionState === "enter-done" ||
+          activity.transitionState === "exit-active",
       );
 
-      const now = new Date().getTime();
+      const lastEvent = store.events.value[store.events.value.length - 1];
+      const now = Math.max(new Date().getTime(), lastEvent?.eventDate ?? 0) + 1;
 
       const originalInitialized = store.events.value.find(
         (e) => e.name === "Initialized",
@@ -177,50 +184,31 @@ export function makeActions({
         }
       }
 
-      const uniqueActivityNames = [
-        ...new Set(activeActivities.map((a) => a.name)),
-      ];
-
       const newEvents: DomainEvent[] = [
         makeEvent("Initialized", {
           transitionDuration: stack.transitionDuration,
           eventDate: initializedEventDate,
         }),
-        ...uniqueActivityNames.map((activityName) => {
-          const registered = activityRegisteredEvents.get(activityName);
-          return makeEvent("ActivityRegistered", {
-            activityName,
-            eventDate: registered?.eventDate ?? initializedEventDate,
-            ...(registered?.paramsSchema
-              ? { activityParamsSchema: registered.paramsSchema }
-              : {}),
-          });
-        }),
+        ...Array.from(activityRegisteredEvents.entries()).map(
+          ([activityName, registered]) =>
+            makeEvent("ActivityRegistered", {
+              activityName,
+              eventDate: registered.eventDate,
+              ...(registered.paramsSchema
+                ? { activityParamsSchema: registered.paramsSchema }
+                : {}),
+            }),
+        ),
       ];
 
       for (const activity of activeActivities) {
-        const rootStep = activity.steps[0];
-        if (!rootStep) {
-          newEvents.push(
-            makeEvent("Pushed", {
-              activityId: activity.id,
-              activityName: activity.name,
-              activityParams: activity.params,
-              eventDate: activity.enteredBy.eventDate,
-              skipEnterActiveState: true,
-              ...(activity.context
-                ? { activityContext: activity.context }
-                : {}),
-            }),
-          );
-          continue;
-        }
+        const isReplaced = activity.enteredBy.name === "Replaced";
 
         newEvents.push(
-          makeEvent("Pushed", {
+          makeEvent(isReplaced ? "Replaced" : "Pushed", {
             activityId: activity.id,
             activityName: activity.name,
-            activityParams: rootStep.params,
+            activityParams: activity.params,
             eventDate: activity.enteredBy.eventDate,
             skipEnterActiveState: true,
             ...(activity.context ? { activityContext: activity.context } : {}),
@@ -239,6 +227,17 @@ export function makeActions({
           );
         }
       }
+
+      const poppedEvents = activeActivities
+        .filter(
+          (activity) =>
+            activity.transitionState === "exit-active" &&
+            activity.exitedBy?.name === "Popped",
+        )
+        .map((activity) => activity.exitedBy as DomainEvent)
+        .sort((a, b) => a.eventDate - b.eventDate);
+
+      newEvents.push(...poppedEvents);
 
       store.events.value = newEvents;
 
