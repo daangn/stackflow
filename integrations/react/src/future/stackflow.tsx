@@ -11,11 +11,6 @@ import {
   makeEvent,
   type PushedEvent,
 } from "@stackflow/core";
-import {
-  liftValue,
-  makeSyncInspectable,
-  type SyncInspectablePromise,
-} from "__internal__/utils/SyncInspectablePromise";
 import React, { useMemo } from "react";
 import isEqual from "react-fast-compare";
 import { ActivityComponentMapProvider } from "../__internal__/ActivityComponentMapProvider";
@@ -25,6 +20,10 @@ import { CoreProvider } from "../__internal__/core";
 import MainRenderer from "../__internal__/MainRenderer";
 import { PluginsProvider } from "../__internal__/plugins";
 import { isBrowser, makeRef } from "../__internal__/utils";
+import {
+  liftValue,
+  type SyncInspectablePromise,
+} from "../__internal__/utils/SyncInspectablePromise";
 import type { StackflowReactPlugin } from "../stable";
 import type { Actions } from "./Actions";
 import { ConfigProvider } from "./ConfigProvider";
