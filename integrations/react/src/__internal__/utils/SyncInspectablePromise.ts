@@ -49,10 +49,10 @@ export function inspect<T>(
 }
 
 export function makeSyncInspectable<T>(
-  promise: PromiseLike<T>,
+  thenable: PromiseLike<T>,
 ): SyncInspectablePromise<T> {
   const syncInspectablePromise: SyncInspectablePromise<T> = Object.assign(
-    new Promise<T>((resolve) => resolve(promise)),
+    new Promise<T>((resolve) => resolve(thenable)),
     { status: PromiseStatus.PENDING },
   );
 
