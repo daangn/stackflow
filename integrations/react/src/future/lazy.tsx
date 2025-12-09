@@ -1,6 +1,6 @@
-import React from "react";
 import type { LazyActivityComponentType } from "../__internal__/LazyActivityComponentType";
 import type { StaticActivityComponentType } from "../__internal__/StaticActivityComponentType";
+import { optimizableLazyComponent } from "../__internal__/utils/OptimizableLazyComponent";
 import {
   inspect,
   makeSyncInspectable,
@@ -27,7 +27,7 @@ export function lazy<T extends { [K in keyof T]: any } = {}>(
   };
 
   const LazyActivityComponent: LazyActivityComponentType<T> =
-    React.lazy(cachedLoad);
+    optimizableLazyComponent(cachedLoad) as LazyActivityComponentType<T>;
   LazyActivityComponent._load = cachedLoad;
 
   return LazyActivityComponent;
