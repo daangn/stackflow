@@ -1,3 +1,9 @@
+import {
+  inspect,
+  makeSyncInspectable,
+  PromiseStatus,
+  type SyncInspectablePromise,
+} from "__internal__/utils/SyncInspectablePromise";
 import React from "react";
 import type { LazyActivityComponentType } from "../__internal__/LazyActivityComponentType";
 import type { StaticActivityComponentType } from "../__internal__/StaticActivityComponentType";
@@ -5,18 +11,18 @@ import type { StaticActivityComponentType } from "../__internal__/StaticActivity
 export function lazy<T extends { [K in keyof T]: any } = {}>(
   load: () => Promise<{ default: StaticActivityComponentType<T> }>,
 ): LazyActivityComponentType<T> {
-  let cachedValue: Promise<{ default: StaticActivityComponentType<T> }> | null =
-    null;
+  let cachedValue: SyncInspectablePromise<{
+    default: StaticActivityComponentType<T>;
+  }> | null = null;
 
   const cachedLoad = () => {
-    if (!cachedValue) {
-      cachedValue = load();
-      cachedValue.catch((error) => {
-        cachedValue = null;
-
-        throw error;
-      });
+    if (
+      !cachedValue ||
+      inspect(cachedValue).status === PromiseStatus.REJECTED
+    ) {
+      cachedValue = makeSyncInspectable(load());
     }
+
     return cachedValue;
   };
 
