@@ -11,7 +11,11 @@ import {
   makeEvent,
   type PushedEvent,
 } from "@stackflow/core";
-import { SyncInspectablePromise } from "__internal__/utils/SyncInspectablePromise";
+import {
+  liftValue,
+  makeSyncInspectable,
+  type SyncInspectablePromise,
+} from "__internal__/utils/SyncInspectablePromise";
 import React, { useMemo } from "react";
 import isEqual from "react-fast-compare";
 import { ActivityComponentMapProvider } from "../__internal__/ActivityComponentMapProvider";
