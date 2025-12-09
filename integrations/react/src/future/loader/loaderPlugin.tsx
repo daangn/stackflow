@@ -2,7 +2,11 @@ import type {
   ActivityDefinition,
   RegisteredActivityName,
 } from "@stackflow/config";
-import type { ActivityComponentType } from "../../__internal__/ActivityComponentType";
+import { isLazyActivityComponentType } from "__internal__/MonolithicActivityComponentType";
+import {
+  type ActivityComponentType,
+  isMonolithicActivityComponentType,
+} from "../../__internal__/ActivityComponentType";
 import type { StackflowReactPlugin } from "../../__internal__/StackflowReactPlugin";
 import { isStructuredActivityComponent } from "../../__internal__/StructuredActivityComponentType";
 import {
@@ -121,7 +125,8 @@ function createBeforeRouteHandler<
       isStructuredActivityComponent(matchActivityComponent) &&
         typeof matchActivityComponent.content === "function"
         ? matchActivityComponent.content()
-        : "_load" in matchActivityComponent
+        : isMonolithicActivityComponentType(matchActivityComponent) &&
+            isLazyActivityComponentType(matchActivityComponent)
           ? matchActivityComponent._load?.()
           : undefined,
     );
