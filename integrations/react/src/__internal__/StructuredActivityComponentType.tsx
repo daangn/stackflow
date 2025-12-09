@@ -3,6 +3,13 @@ import type {
   RegisteredActivityName,
 } from "@stackflow/config";
 import { type ComponentType, lazy, type ReactNode } from "react";
+import {
+  inspect,
+  liftValue,
+  makeSyncInspectable,
+  PromiseStatus,
+  type SyncInspectablePromise,
+} from "./utils/SyncInspectablePromise";
 
 export const STRUCTURED_ACTIVITY_COMPONENT_TYPE: unique symbol = Symbol(
   "STRUCTURED_ACTIVITY_COMPONENT_TYPE",
@@ -26,8 +33,31 @@ export function structuredActivityComponent<
   loading?: Loading<InferActivityParams<ActivityName>>;
   errorHandler?: ErrorHandler<InferActivityParams<ActivityName>>;
 }): StructuredActivityComponentType<InferActivityParams<ActivityName>> {
+  let cachedContent: SyncInspectablePromise<{
+    default: Content<InferActivityParams<ActivityName>>;
+  }> | null = null;
+
   return {
     ...options,
+    content:
+      typeof options.content === "function"
+        ? () => {
+            if (
+              !cachedContent ||
+              inspect(cachedContent).status === PromiseStatus.REJECTED
+            ) {
+              cachedContent = makeSyncInspectable(
+                (
+                  options.content as () => Promise<{
+                    default: Content<InferActivityParams<ActivityName>>;
+                  }>
+                )(),
+              );
+            }
+
+            return cachedContent;
+          }
+        : options.content,
     [STRUCTURED_ACTIVITY_COMPONENT_TYPE]: true,
   };
 }
@@ -68,11 +98,15 @@ export function getContentComponent(
   const ContentComponent =
     "component" in content
       ? content.component
-      : lazy(async () => {
-          const {
-            default: { component: Component },
-          } = await content();
-          return { default: Component };
+      : lazy(() => {
+          const contentPromise = liftValue(content());
+          const state = inspect(contentPromise);
+
+          if (state.status === PromiseStatus.FULFILLED)
+            return liftValue({ default: state.value.default.component });
+          return contentPromise.then(({ default: { component } }) => ({
+            default: component,
+          }));
         });
 
   ContentComponentMap.set(structuredActivityComponent, ContentComponent);

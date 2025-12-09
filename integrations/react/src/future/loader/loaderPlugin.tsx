@@ -117,19 +117,20 @@ function createBeforeRouteHandler<
 
     const loaderData =
       matchActivity.loader && loadData(activityName, activityParams);
-    const lazyComponentPromise =
+    const lazyComponentPromise = liftValue(
       isStructuredActivityComponent(matchActivityComponent) &&
-      typeof matchActivityComponent.content === "function"
+        typeof matchActivityComponent.content === "function"
         ? matchActivityComponent.content()
         : "_load" in matchActivityComponent
           ? matchActivityComponent._load?.()
-          : undefined;
+          : undefined,
+    );
     const shouldRenderImmediately = (activityContext as any)
       ?.lazyActivityComponentRenderContext?.shouldRenderImmediately;
 
     if (
       ((loaderData && inspect(loaderData).status === PromiseStatus.PENDING) ||
-        lazyComponentPromise) &&
+        inspect(lazyComponentPromise).status === PromiseStatus.PENDING) &&
       (shouldRenderImmediately !== true ||
         "loading" in matchActivityComponent === false)
     ) {
