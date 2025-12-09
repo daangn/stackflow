@@ -1,12 +1,12 @@
+import React from "react";
+import type { LazyActivityComponentType } from "../__internal__/LazyActivityComponentType";
+import type { StaticActivityComponentType } from "../__internal__/StaticActivityComponentType";
 import {
   inspect,
   makeSyncInspectable,
   PromiseStatus,
   type SyncInspectablePromise,
-} from "__internal__/utils/SyncInspectablePromise";
-import React from "react";
-import type { LazyActivityComponentType } from "../__internal__/LazyActivityComponentType";
-import type { StaticActivityComponentType } from "../__internal__/StaticActivityComponentType";
+} from "../__internal__/utils/SyncInspectablePromise";
 
 export function lazy<T extends { [K in keyof T]: any } = {}>(
   load: () => Promise<{ default: StaticActivityComponentType<T> }>,

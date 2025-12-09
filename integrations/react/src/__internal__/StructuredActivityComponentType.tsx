@@ -42,6 +42,7 @@ export function structuredActivityComponent<
     content:
       typeof options.content === "function"
         ? () => {
+            console.log("cachedContent", cachedContent);
             if (
               !cachedContent ||
               inspect(cachedContent).status === PromiseStatus.REJECTED
@@ -94,20 +95,29 @@ export function getContentComponent(
     return ContentComponentMap.get(structuredActivityComponent)!;
   }
 
-  const content = structuredActivityComponent.content;
-  const ContentComponent =
-    "component" in content
-      ? content.component
-      : lazy(() => {
-          const contentPromise = liftValue(content());
-          const state = inspect(contentPromise);
+  const ContentComponent = lazy(() => {
+    const content = structuredActivityComponent.content;
+    const contentComponentPromise = liftValue(
+      "component" in content ? content : content(),
+    );
+    const state = inspect(contentComponentPromise);
 
-          if (state.status === PromiseStatus.FULFILLED)
-            return liftValue({ default: state.value.default.component });
-          return contentPromise.then(({ default: { component } }) => ({
-            default: component,
-          }));
-        });
+    if (state.status === PromiseStatus.FULFILLED) {
+      return liftValue({
+        default:
+          "component" in state.value
+            ? state.value.component
+            : state.value.default.component,
+      });
+    }
+
+    return contentComponentPromise.then((moduleOrContent) => ({
+      default:
+        "component" in moduleOrContent
+          ? moduleOrContent.component
+          : moduleOrContent.default.component,
+    }));
+  });
 
   ContentComponentMap.set(structuredActivityComponent, ContentComponent);
 

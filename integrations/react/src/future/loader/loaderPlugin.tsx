@@ -2,15 +2,15 @@ import type {
   ActivityDefinition,
   RegisteredActivityName,
 } from "@stackflow/config";
+import type { ActivityComponentType } from "../../__internal__/ActivityComponentType";
+import type { StackflowReactPlugin } from "../../__internal__/StackflowReactPlugin";
+import { isStructuredActivityComponent } from "../../__internal__/StructuredActivityComponentType";
 import {
   inspect,
   liftValue,
   PromiseStatus,
   type SyncInspectablePromise,
-} from "__internal__/utils/SyncInspectablePromise";
-import type { ActivityComponentType } from "../../__internal__/ActivityComponentType";
-import type { StackflowReactPlugin } from "../../__internal__/StackflowReactPlugin";
-import { isStructuredActivityComponent } from "../../__internal__/StructuredActivityComponentType";
+} from "../../__internal__/utils/SyncInspectablePromise";
 import type { StackflowInput } from "../stackflow";
 
 export function loaderPlugin<
