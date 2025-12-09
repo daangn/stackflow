@@ -1,4 +1,17 @@
-export type SyncInspectablePromise<T> = Promise<T> & PromiseState<T>;
+import { isPromiseLike } from "./isPromiseLike";
+
+export interface SyncInspectablePromise<T> extends Promise<T> {
+  status: PromiseStatus;
+  value?: T;
+  reason?: unknown;
+}
+
+export const PromiseStatus = {
+  PENDING: "pending",
+  FULFILLED: "fulfilled",
+  REJECTED: "rejected",
+} as const;
+export type PromiseStatus = (typeof PromiseStatus)[keyof typeof PromiseStatus];
 
 export type PromiseState<T> =
   | {
@@ -13,37 +26,57 @@ export type PromiseState<T> =
       reason: unknown;
     };
 
-export const PromiseStatus = {
-  PENDING: "pending",
-  FULFILLED: "fulfilled",
-  REJECTED: "rejected",
-} as const;
-export type PromiseStatus = (typeof PromiseStatus)[keyof typeof PromiseStatus];
+export function inspect<T>(
+  promise: SyncInspectablePromise<T>,
+): PromiseState<T> {
+  if (promise.status === PromiseStatus.PENDING) {
+    return {
+      status: PromiseStatus.PENDING,
+    };
+  } else if (promise.status === PromiseStatus.FULFILLED && "value" in promise) {
+    return {
+      status: PromiseStatus.FULFILLED,
+      value: promise.value as T,
+    };
+  } else if (promise.status === PromiseStatus.REJECTED && "reason" in promise) {
+    return {
+      status: PromiseStatus.REJECTED,
+      reason: promise.reason,
+    };
+  } else {
+    throw new Error("Invalid promise state");
+  }
+}
 
 export function makeSyncInspectable<T>(
-  promise: Promise<T>,
+  promise: PromiseLike<T>,
 ): SyncInspectablePromise<T> {
   const syncInspectablePromise: SyncInspectablePromise<T> = Object.assign(
     new Promise<T>((resolve) => resolve(promise)),
-    {
-      status: PromiseStatus.PENDING,
-    },
+    { status: PromiseStatus.PENDING },
   );
 
   syncInspectablePromise.then(
     (value) => {
-      Object.assign(syncInspectablePromise, {
-        status: PromiseStatus.FULFILLED,
-        value,
-      });
+      syncInspectablePromise.status = PromiseStatus.FULFILLED;
+      syncInspectablePromise.value = value;
     },
     (reason) => {
-      Object.assign(syncInspectablePromise, {
-        status: PromiseStatus.REJECTED,
-        reason,
-      });
+      syncInspectablePromise.status = PromiseStatus.REJECTED;
+      syncInspectablePromise.reason = reason;
     },
   );
 
   return syncInspectablePromise;
+}
+
+export function liftValue<T>(value: T): SyncInspectablePromise<Awaited<T>> {
+  if (isPromiseLike(value)) {
+    return makeSyncInspectable(value) as SyncInspectablePromise<Awaited<T>>;
+  }
+
+  return Object.assign(Promise.resolve(value), {
+    status: PromiseStatus.FULFILLED,
+    value,
+  }) as SyncInspectablePromise<Awaited<T>>;
 }
