@@ -26,9 +26,12 @@ export function lazy<T extends { [K in keyof T]: any } = {}>(
     return cachedValue;
   };
 
-  const LazyActivityComponent: LazyActivityComponentType<T> =
-    optimizableLazyComponent(cachedLoad) as LazyActivityComponentType<T>;
-  LazyActivityComponent._load = cachedLoad;
+  const LazyActivityComponent: LazyActivityComponentType<T> = Object.assign(
+    optimizableLazyComponent(cachedLoad),
+    {
+      _load: cachedLoad,
+    },
+  );
 
   return LazyActivityComponent;
 }
