@@ -2,7 +2,8 @@ import type {
   InferActivityParams,
   RegisteredActivityName,
 } from "@stackflow/config";
-import { type ComponentType, lazy, type ReactNode } from "react";
+import type { ComponentType, ReactNode } from "react";
+import { optimizableLazyComponent } from "./utils/OptimizableLazyComponent";
 import {
   inspect,
   liftValue,
@@ -95,29 +96,31 @@ export function getContentComponent(
     return ContentComponentMap.get(structuredActivityComponent)!;
   }
 
-  const ContentComponent = lazy(() => {
-    const content = structuredActivityComponent.content;
-    const contentComponentPromise = liftValue(
-      "component" in content ? content : content(),
-    );
-    const state = inspect(contentComponentPromise);
+  const ContentComponent = optimizableLazyComponent(
+    (): Promise<{ default: Content<{}>["component"] }> => {
+      const content = structuredActivityComponent.content;
+      const contentComponentPromise = liftValue(
+        "component" in content ? content : content(),
+      );
+      const state = inspect(contentComponentPromise);
 
-    if (state.status === PromiseStatus.FULFILLED) {
-      return liftValue({
+      if (state.status === PromiseStatus.FULFILLED) {
+        return liftValue({
+          default:
+            "component" in state.value
+              ? state.value.component
+              : state.value.default.component,
+        });
+      }
+
+      return contentComponentPromise.then((moduleOrContent) => ({
         default:
-          "component" in state.value
-            ? state.value.component
-            : state.value.default.component,
-      });
-    }
-
-    return contentComponentPromise.then((moduleOrContent) => ({
-      default:
-        "component" in moduleOrContent
-          ? moduleOrContent.component
-          : moduleOrContent.default.component,
-    }));
-  });
+          "component" in moduleOrContent
+            ? moduleOrContent.component
+            : moduleOrContent.default.component,
+      }));
+    },
+  );
 
   ContentComponentMap.set(structuredActivityComponent, ContentComponent);
 
