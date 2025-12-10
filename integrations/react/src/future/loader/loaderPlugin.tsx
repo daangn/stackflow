@@ -2,11 +2,11 @@ import type {
   ActivityDefinition,
   RegisteredActivityName,
 } from "@stackflow/config";
-import { isLazyActivityComponentType } from "__internal__/MonolithicActivityComponentType";
 import {
   type ActivityComponentType,
   isMonolithicActivityComponentType,
 } from "../../__internal__/ActivityComponentType";
+import { isLazyActivityComponentType } from "../../__internal__/MonolithicActivityComponentType";
 import type { StackflowReactPlugin } from "../../__internal__/StackflowReactPlugin";
 import { isStructuredActivityComponent } from "../../__internal__/StructuredActivityComponentType";
 import {
