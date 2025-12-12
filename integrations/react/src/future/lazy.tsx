@@ -13,11 +13,7 @@ export function lazy<T extends { [K in keyof T]: any } = {}>(
   const LazyActivityComponent: LazyActivityComponentType<T> = Object.assign(
     Component,
     {
-      _load: async () => {
-        await preload();
-
-        return { default: Component };
-      },
+      _load: () => liftValue(preload().then(() => ({ default: Component }))),
     },
   );
 
