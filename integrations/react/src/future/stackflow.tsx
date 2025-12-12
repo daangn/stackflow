@@ -17,6 +17,10 @@ import { ActivityComponentMapProvider } from "../__internal__/ActivityComponentM
 import type { ActivityComponentType } from "../__internal__/ActivityComponentType";
 import { makeActivityId } from "../__internal__/activity";
 import { CoreProvider } from "../__internal__/core";
+import {
+  GlobalErrorBoundaryProvider,
+  type GlobalErrorBoundaryConfig,
+} from "../__internal__/GlobalErrorBoundaryProvider";
 import MainRenderer from "../__internal__/MainRenderer";
 import { PluginsProvider } from "../__internal__/plugins";
 import { isBrowser, makeRef } from "../__internal__/utils";
@@ -28,6 +32,8 @@ import { makeActions } from "./makeActions";
 import { makeStepActions } from "./makeStepActions";
 import type { StackComponentType } from "./StackComponentType";
 import type { StepActions } from "./StepActions";
+
+export type { GlobalErrorBoundaryConfig };
 
 export type StackflowPluginsEntry =
   | StackflowReactPlugin<never>
@@ -42,6 +48,13 @@ export type StackflowInput<
   config: Config<T>;
   components: R;
   plugins?: Array<StackflowPluginsEntry>;
+
+  /**
+   * Global ErrorBoundary configuration
+   * Wraps all StructuredActivity components with a custom ErrorBoundary
+   * (e.g., Sentry.ErrorBoundary)
+   */
+  globalErrorBoundary?: GlobalErrorBoundaryConfig;
 };
 
 export type StackflowOutput = {
@@ -232,9 +245,13 @@ export function stackflow<
         <PluginsProvider value={coreStore.pluginInstances}>
           <CoreProvider coreStore={coreStore}>
             <ActivityComponentMapProvider value={input.components}>
-              <DataLoaderProvider loadData={loadData}>
-                <MainRenderer initialContext={initialContext} />
-              </DataLoaderProvider>
+              <GlobalErrorBoundaryProvider
+                value={input.globalErrorBoundary ?? null}
+              >
+                <DataLoaderProvider loadData={loadData}>
+                  <MainRenderer initialContext={initialContext} />
+                </DataLoaderProvider>
+              </GlobalErrorBoundaryProvider>
             </ActivityComponentMapProvider>
           </CoreProvider>
         </PluginsProvider>

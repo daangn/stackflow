@@ -14,6 +14,10 @@ import {
   makeStepId,
 } from "../__internal__/activity";
 import { CoreProvider } from "../__internal__/core";
+import {
+  GlobalErrorBoundaryProvider,
+  type GlobalErrorBoundaryConfig,
+} from "../__internal__/GlobalErrorBoundaryProvider";
 import MainRenderer from "../__internal__/MainRenderer";
 import type { MonolithicActivityComponentType } from "../__internal__/MonolithicActivityComponentType";
 import { PluginsProvider } from "../__internal__/plugins";
@@ -24,6 +28,8 @@ import type { UseActionsOutputType } from "./useActions";
 import { useActions } from "./useActions";
 import type { UseStepActionsOutputType } from "./useStepActions";
 import { useStepActions } from "./useStepActions";
+
+export type { GlobalErrorBoundaryConfig };
 
 function parseActionOptions(options?: { animate?: boolean }) {
   if (!options) {
@@ -70,6 +76,13 @@ export type StackflowOptions<T extends BaseActivities> = {
    * Inject stackflow plugins
    */
   plugins?: Array<StackflowPluginsEntry<NoInfer<T>>>;
+
+  /**
+   * Global ErrorBoundary configuration
+   * Wraps all StructuredActivity components with a custom ErrorBoundary
+   * (e.g., Sentry.ErrorBoundary)
+   */
+  globalErrorBoundary?: GlobalErrorBoundaryConfig;
 };
 
 export type StackflowOutput<T extends BaseActivities> = {
@@ -234,7 +247,11 @@ export function stackflow<T extends BaseActivities>(
       <PluginsProvider value={coreStore.pluginInstances}>
         <CoreProvider coreStore={coreStore}>
           <ActivityComponentMapProvider value={activityComponentMap}>
-            <MainRenderer initialContext={props.initialContext} />
+            <GlobalErrorBoundaryProvider
+              value={options.globalErrorBoundary ?? null}
+            >
+              <MainRenderer initialContext={props.initialContext} />
+            </GlobalErrorBoundaryProvider>
           </ActivityComponentMapProvider>
         </CoreProvider>
       </PluginsProvider>

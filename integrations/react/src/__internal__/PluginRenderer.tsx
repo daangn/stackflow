@@ -2,6 +2,10 @@ import React, { Component, type ReactNode, Suspense } from "react";
 import { useActivityComponentMap } from "./ActivityComponentMapProvider";
 import { ActivityProvider } from "./activity";
 import { useCoreState } from "./core";
+import {
+  useGlobalErrorBoundary,
+  type GlobalErrorBoundaryConfig,
+} from "./GlobalErrorBoundaryProvider";
 import { usePlugins } from "./plugins";
 import type { StackflowReactPlugin } from "./StackflowReactPlugin";
 import {
@@ -22,6 +26,7 @@ const PluginRenderer: React.FC<PluginRendererProps> = ({
   const activityComponentMap = useActivityComponentMap();
   const coreState = useCoreState();
   const plugins = usePlugins();
+  const globalErrorBoundary = useGlobalErrorBoundary();
 
   return plugin.render({
     stack: {
@@ -42,7 +47,11 @@ const PluginRenderer: React.FC<PluginRendererProps> = ({
               let output: React.ReactNode = isStructuredActivityComponent(
                 Activity,
               ) ? (
-                renderStructuredActivityComponent(Activity, activity.params)
+                renderStructuredActivityComponent(
+                  Activity,
+                  activity.params,
+                  globalErrorBoundary,
+                )
               ) : (
                 <Activity params={activity.params} />
               );
@@ -85,11 +94,13 @@ export default PluginRenderer;
 function renderStructuredActivityComponent(
   structuredActivityComponent: StructuredActivityComponentType<{}>,
   params: {},
+  globalErrorBoundary: GlobalErrorBoundaryConfig | null,
 ): ReactNode {
   const { layout, loading, errorHandler } = structuredActivityComponent;
   const ContentComponent = getContentComponent(structuredActivityComponent);
 
   const wrappers: Array<(node: ReactNode) => ReactNode> = [
+    // 1. Suspense (loading)
     (node) =>
       loading?.component ? (
         <Suspense fallback={<loading.component params={params} />}>
@@ -98,6 +109,7 @@ function renderStructuredActivityComponent(
       ) : (
         node
       ),
+    // 2. Individual Activity errorHandler (inner)
     (node) =>
       errorHandler?.component ? (
         <StructuredActivityComponentErrorBoundary
@@ -110,6 +122,16 @@ function renderStructuredActivityComponent(
       ) : (
         node
       ),
+    // 3. Global ErrorBoundary (outer)
+    (node) => {
+      const GlobalErrorBoundary = globalErrorBoundary?.component;
+      return GlobalErrorBoundary ? (
+        <GlobalErrorBoundary>{node}</GlobalErrorBoundary>
+      ) : (
+        node
+      );
+    },
+    // 4. Layout
     (node) =>
       layout?.component ? (
         <layout.component params={params}>{node}</layout.component>
