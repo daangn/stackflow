@@ -4,10 +4,10 @@ import type {
 } from "@stackflow/config";
 import type { ComponentType, ReactNode } from "react";
 import { optimizableLazyComponent } from "./utils/OptimizableLazyComponent";
+import { preloadableLazyComponent } from "./utils/PreloadableLazyComponent";
 import {
   inspect,
   liftValue,
-  makeSyncInspectable,
   PromiseStatus,
   type SyncInspectablePromise,
 } from "./utils/SyncInspectablePromise";
@@ -40,26 +40,19 @@ export function structuredActivityComponent<
 
   return {
     ...options,
-    content:
-      typeof options.content === "function"
-        ? () => {
-            console.log("cachedContent", cachedContent);
-            if (
-              !cachedContent ||
-              inspect(cachedContent).status === PromiseStatus.REJECTED
-            ) {
-              cachedContent = makeSyncInspectable(
-                (
-                  options.content as () => Promise<{
-                    default: Content<InferActivityParams<ActivityName>>;
-                  }>
-                )(),
-              );
-            }
+    content: () => {
+      if (typeof options.content !== "function")
+        return liftValue({ default: options.content });
 
-            return cachedContent;
-          }
-        : options.content,
+      if (
+        !cachedContent ||
+        inspect(cachedContent).status === PromiseStatus.REJECTED
+      ) {
+        cachedContent = liftValue(options.content());
+      }
+
+      return cachedContent;
+    },
     [STRUCTURED_ACTIVITY_COMPONENT_TYPE]: true,
   };
 }
@@ -96,31 +89,25 @@ export function getContentComponent(
     return ContentComponentMap.get(structuredActivityComponent)!;
   }
 
-  const ContentComponent = optimizableLazyComponent(
-    (): Promise<{ default: Content<{}>["component"] }> => {
-      const content = structuredActivityComponent.content;
-      const contentComponentPromise = liftValue(
-        "component" in content ? content : content(),
-      );
-      const state = inspect(contentComponentPromise);
+  const { Component: ContentComponent } = preloadableLazyComponent(() => {
+    const content = structuredActivityComponent.content;
+    const contentPromise = liftValue(
+      typeof content === "function" ? content() : { default: content },
+    );
+    const state = inspect(contentPromise);
 
-      if (state.status === PromiseStatus.FULFILLED) {
-        return liftValue({
-          default:
-            "component" in state.value
-              ? state.value.component
-              : state.value.default.component,
-        });
-      }
+    if (state.status === PromiseStatus.FULFILLED) {
+      return liftValue({
+        default: state.value.default.component,
+      });
+    }
 
-      return contentComponentPromise.then((moduleOrContent) => ({
-        default:
-          "component" in moduleOrContent
-            ? moduleOrContent.component
-            : moduleOrContent.default.component,
-      }));
-    },
-  );
+    return liftValue(
+      contentPromise.then((value) => ({
+        default: value.default.component,
+      })),
+    );
+  });
 
   ContentComponentMap.set(structuredActivityComponent, ContentComponent);
 
