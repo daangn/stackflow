@@ -3,7 +3,6 @@ import type {
   RegisteredActivityName,
 } from "@stackflow/config";
 import type { ComponentType, ReactNode } from "react";
-import { optimizableLazyComponent } from "./utils/OptimizableLazyComponent";
 import { preloadableLazyComponent } from "./utils/PreloadableLazyComponent";
 import {
   inspect,
