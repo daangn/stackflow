@@ -105,7 +105,13 @@ export function loading<ActivityName extends RegisteredActivityName>(
 
 export interface ErrorHandler<P extends {}> {
   component: ComponentType<{ params: P; error: unknown; reset: () => void }>;
+  boundary?: CustomErrorBoundary;
 }
+
+export type CustomErrorBoundary = ComponentType<{
+  children: ReactNode;
+  renderFallback: (error: unknown, reset: () => void) => ReactNode;
+}>;
 
 export function errorHandler<ActivityName extends RegisteredActivityName>(
   component: ComponentType<{
@@ -113,6 +119,9 @@ export function errorHandler<ActivityName extends RegisteredActivityName>(
     error: unknown;
     reset: () => void;
   }>,
+  options?: {
+    boundary?: CustomErrorBoundary;
+  },
 ): ErrorHandler<InferActivityParams<ActivityName>> {
-  return { component };
+  return { component, boundary: options?.boundary };
 }

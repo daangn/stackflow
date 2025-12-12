@@ -98,18 +98,22 @@ function renderStructuredActivityComponent(
       ) : (
         node
       ),
-    (node) =>
-      errorHandler?.component ? (
-        <StructuredActivityComponentErrorBoundary
+    (node) => {
+      if (!errorHandler) return node;
+
+      const ErrorBoundary =
+        errorHandler.boundary ?? StructuredActivityComponentErrorBoundary;
+
+      return (
+        <ErrorBoundary
           renderFallback={(err, reset) => (
             <errorHandler.component params={params} error={err} reset={reset} />
           )}
         >
           {node}
-        </StructuredActivityComponentErrorBoundary>
-      ) : (
-        node
-      ),
+        </ErrorBoundary>
+      );
+    },
     (node) =>
       layout?.component ? (
         <layout.component params={params}>{node}</layout.component>
