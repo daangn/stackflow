@@ -5,7 +5,12 @@ import type {
 import type { ActivityComponentType } from "../../__internal__/ActivityComponentType";
 import type { StackflowReactPlugin } from "../../__internal__/StackflowReactPlugin";
 import { isStructuredActivityComponent } from "../../__internal__/StructuredActivityComponentType";
-import { isPromiseLike } from "../../__internal__/utils/isPromiseLike";
+import {
+  inspect,
+  liftValue,
+  PromiseStatus,
+  type SyncInspectablePromise,
+} from "../../__internal__/utils/SyncInspectablePromise";
 import type { StackflowInput } from "../stackflow";
 
 export function loaderPlugin<
@@ -15,7 +20,10 @@ export function loaderPlugin<
   },
 >(
   input: StackflowInput<T, R>,
-  loadData: (activityName: string, activityParams: {}) => unknown,
+  loadData: (
+    activityName: string,
+    activityParams: {},
+  ) => SyncInspectablePromise<unknown>,
 ): StackflowReactPlugin {
   return () => {
     return {
@@ -35,7 +43,7 @@ export function loaderPlugin<
               ...event,
               activityContext: {
                 ...event.activityContext,
-                loaderData: initialContext.initialLoaderData,
+                loaderData: liftValue(initialContext.initialLoaderData),
               },
             };
           }
@@ -54,16 +62,12 @@ export function loaderPlugin<
 
           const loaderData = loadData(activityName, activityParams);
 
-          if (isPromiseLike(loaderData)) {
-            Promise.allSettled([loaderData]).then(
-              ([loaderDataPromiseResult]) => {
-                printLoaderDataPromiseError({
-                  promiseResult: loaderDataPromiseResult,
-                  activityName: matchActivity.name,
-                });
-              },
-            );
-          }
+          Promise.allSettled([loaderData]).then(([loaderDataPromiseResult]) => {
+            printLoaderDataPromiseError({
+              promiseResult: loaderDataPromiseResult,
+              activityName: matchActivity.name,
+            });
+          });
 
           return {
             ...event,
@@ -91,7 +95,10 @@ function createBeforeRouteHandler<
   },
 >(
   input: StackflowInput<T, R>,
-  loadData: (activityName: string, activityParams: {}) => unknown,
+  loadData: (
+    activityName: string,
+    activityParams: {},
+  ) => SyncInspectablePromise<unknown>,
 ): OnBeforeRoute {
   return ({
     actionParams,
@@ -110,28 +117,27 @@ function createBeforeRouteHandler<
 
     const loaderData =
       matchActivity.loader && loadData(activityName, activityParams);
-
-    const loaderDataPromise = isPromiseLike(loaderData)
-      ? loaderData
-      : undefined;
-    const lazyComponentPromise =
+    const lazyComponentPromise = liftValue(
       isStructuredActivityComponent(matchActivityComponent) &&
-      typeof matchActivityComponent.content === "function"
+        typeof matchActivityComponent.content === "function"
         ? matchActivityComponent.content()
-        : "_load" in matchActivityComponent
-          ? matchActivityComponent._load?.()
-          : undefined;
+        : "_load" in matchActivityComponent &&
+            typeof matchActivityComponent._load === "function"
+          ? matchActivityComponent._load()
+          : undefined,
+    );
     const shouldRenderImmediately = (activityContext as any)
       ?.lazyActivityComponentRenderContext?.shouldRenderImmediately;
 
     if (
-      (loaderDataPromise || lazyComponentPromise) &&
+      ((loaderData && inspect(loaderData).status === PromiseStatus.PENDING) ||
+        inspect(lazyComponentPromise).status === PromiseStatus.PENDING) &&
       (shouldRenderImmediately !== true ||
         "loading" in matchActivityComponent === false)
     ) {
       pause();
 
-      Promise.allSettled([loaderDataPromise, lazyComponentPromise])
+      Promise.allSettled([loaderData, lazyComponentPromise])
         .then(([loaderDataPromiseResult, lazyComponentPromiseResult]) => {
           printLoaderDataPromiseError({
             promiseResult: loaderDataPromiseResult,

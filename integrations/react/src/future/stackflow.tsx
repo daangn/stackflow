@@ -20,6 +20,10 @@ import { CoreProvider } from "../__internal__/core";
 import MainRenderer from "../__internal__/MainRenderer";
 import { PluginsProvider } from "../__internal__/plugins";
 import { isBrowser, makeRef } from "../__internal__/utils";
+import {
+  liftValue,
+  type SyncInspectablePromise,
+} from "../__internal__/utils/SyncInspectablePromise";
 import type { StackflowReactPlugin } from "../stable";
 import type { Actions } from "./Actions";
 import { ConfigProvider } from "./ConfigProvider";
@@ -60,8 +64,14 @@ export function stackflow<
     >;
   },
 >(input: StackflowInput<T, R>): StackflowOutput {
-  const loaderDataCacheMap = new Map<string, { params: {}; data: unknown }[]>();
-  const loadData = (activityName: string, activityParams: {}) => {
+  const loaderDataCacheMap = new Map<
+    string,
+    { params: {}; data: SyncInspectablePromise<unknown> }[]
+  >();
+  const loadData = (
+    activityName: string,
+    activityParams: {},
+  ): SyncInspectablePromise<unknown> => {
     const cache = loaderDataCacheMap.get(activityName);
     const cacheEntry = cache?.find((entry) =>
       isEqual(entry.params, activityParams),
@@ -79,10 +89,12 @@ export function stackflow<
       throw new Error(`Activity ${activityName} is not registered.`);
     }
 
-    const loaderData = activityConfig.loader?.({
-      params: activityParams,
-      config: input.config,
-    });
+    const loaderData = liftValue(
+      activityConfig.loader?.({
+        params: activityParams,
+        config: input.config,
+      }),
+    );
     const newCacheEntry = {
       params: activityParams,
       data: loaderData,
@@ -112,7 +124,7 @@ export function stackflow<
       );
     };
 
-    Promise.resolve(loaderData).then(clearCacheAfterMaxAge, (error) => {
+    loaderData.then(clearCacheAfterMaxAge, (error) => {
       clearCache();
 
       throw error;
