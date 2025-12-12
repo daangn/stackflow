@@ -105,11 +105,13 @@ export function loading<ActivityName extends RegisteredActivityName>(
 
 export interface ErrorHandler<P extends {}> {
   component: ComponentType<{ params: P; error: unknown; reset: () => void }>;
-  boundary?: ComponentType<{
-    children: ReactNode;
-    renderFallback: (error: unknown, reset: () => void) => ReactNode;
-  }>;
+  boundary?: CustomErrorBoundary;
 }
+
+export type CustomErrorBoundary = ComponentType<{
+  children: ReactNode;
+  renderFallback: (error: unknown, reset: () => void) => ReactNode;
+}>;
 
 export function errorHandler<ActivityName extends RegisteredActivityName>(
   component: ComponentType<{
@@ -118,10 +120,7 @@ export function errorHandler<ActivityName extends RegisteredActivityName>(
     reset: () => void;
   }>,
   options?: {
-    boundary?: ComponentType<{
-      children: ReactNode;
-      renderFallback: (error: unknown, reset: () => void) => ReactNode;
-    }>;
+    boundary?: CustomErrorBoundary;
   },
 ): ErrorHandler<InferActivityParams<ActivityName>> {
   return { component, boundary: options?.boundary };
