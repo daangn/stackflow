@@ -1,5 +1,11 @@
 # @stackflow/react
 
+## 1.10.0
+
+### Minor Changes
+
+- f159bd4: Add an option for customizing error boundary in ErrorHandler of structured activity components
+
 ## 1.9.0
 
 ### Minor Changes
