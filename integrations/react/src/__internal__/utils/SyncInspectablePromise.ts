@@ -48,7 +48,7 @@ export function inspect<T>(
   }
 }
 
-export function makeSyncInspectable<T>(
+function makeSyncInspectable<T>(
   thenable: PromiseLike<T>,
 ): SyncInspectablePromise<T> {
   const syncInspectablePromise: SyncInspectablePromise<T> = Object.assign(
