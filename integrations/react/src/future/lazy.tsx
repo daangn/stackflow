@@ -3,8 +3,8 @@ import type { StaticActivityComponentType } from "../__internal__/StaticActivity
 import { preloadableLazyComponent } from "../__internal__/utils/PreloadableLazyComponent";
 import {
   inspect,
-  liftError,
   PromiseStatus,
+  reject,
   resolve,
 } from "../__internal__/utils/SyncInspectablePromise";
 
@@ -25,7 +25,7 @@ export function lazy<T extends { [K in keyof T]: any } = {}>(
         if (preloadTaskState.status === PromiseStatus.FULFILLED) {
           return resolve({ default: Component });
         } else if (preloadTaskState.status === PromiseStatus.REJECTED) {
-          return liftError(preloadTaskState.reason);
+          return reject(preloadTaskState.reason);
         }
 
         return resolve(preloadTask.then(() => ({ default: Component })));

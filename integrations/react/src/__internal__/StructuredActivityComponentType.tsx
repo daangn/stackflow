@@ -6,8 +6,8 @@ import type { ComponentType, ReactNode } from "react";
 import { preloadableLazyComponent } from "./utils/PreloadableLazyComponent";
 import {
   inspect,
-  liftError,
   PromiseStatus,
+  reject,
   resolve,
   type SyncInspectablePromise,
 } from "./utils/SyncInspectablePromise";
@@ -102,7 +102,7 @@ export function getContentComponent(
         default: state.value.default.component,
       });
     } else if (state.status === PromiseStatus.REJECTED) {
-      return liftError(state.reason);
+      return reject(state.reason);
     }
 
     return resolve(
