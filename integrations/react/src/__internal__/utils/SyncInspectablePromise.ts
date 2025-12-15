@@ -73,10 +73,11 @@ function makeSyncInspectable<T>(
 export function liftValue<T>(value: T): SyncInspectablePromise<Awaited<T>> {
   if (isPromiseLike(value)) {
     if (
+      value instanceof Promise &&
       "status" in value &&
       Object.values(PromiseStatus).some((status) => status === value.status)
     ) {
-      return value as unknown as SyncInspectablePromise<Awaited<T>>;
+      return value as SyncInspectablePromise<Awaited<T>>;
     }
 
     return makeSyncInspectable(value) as SyncInspectablePromise<Awaited<T>>;
