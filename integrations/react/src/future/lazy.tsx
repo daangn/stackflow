@@ -1,7 +1,11 @@
 import type { LazyActivityComponentType } from "../__internal__/LazyActivityComponentType";
 import type { StaticActivityComponentType } from "../__internal__/StaticActivityComponentType";
 import { preloadableLazyComponent } from "../__internal__/utils/PreloadableLazyComponent";
-import { liftValue } from "../__internal__/utils/SyncInspectablePromise";
+import {
+  inspect,
+  liftValue,
+  PromiseStatus,
+} from "../__internal__/utils/SyncInspectablePromise";
 
 export function lazy<T extends { [K in keyof T]: any } = {}>(
   load: () => Promise<{ default: StaticActivityComponentType<T> }>,
@@ -13,7 +17,15 @@ export function lazy<T extends { [K in keyof T]: any } = {}>(
   const LazyActivityComponent: LazyActivityComponentType<T> = Object.assign(
     Component,
     {
-      _load: () => liftValue(preload().then(() => ({ default: Component }))),
+      _load: () => {
+        const preloadTask = liftValue(preload());
+
+        if (inspect(preloadTask).status === PromiseStatus.FULFILLED) {
+          return liftValue({ default: Component });
+        }
+
+        return liftValue(preloadTask.then(() => ({ default: Component })));
+      },
     },
   );
 
