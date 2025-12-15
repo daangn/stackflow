@@ -88,3 +88,10 @@ export function liftValue<T>(value: T): SyncInspectablePromise<Awaited<T>> {
     value,
   }) as SyncInspectablePromise<Awaited<T>>;
 }
+
+export function liftError(error: unknown): SyncInspectablePromise<never> {
+  return Object.assign(Promise.reject(error), {
+    status: PromiseStatus.REJECTED,
+    reason: error,
+  }) as SyncInspectablePromise<never>;
+}
