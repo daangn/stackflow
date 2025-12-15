@@ -1,5 +1,5 @@
 import type { ComponentType } from "react";
-import { use } from "../../future/loader/use";
+import { use } from "react18-use";
 import {
   inspect,
   PromiseStatus,

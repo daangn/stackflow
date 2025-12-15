@@ -6854,6 +6854,7 @@ const RAW_RUNTIME_STATE =
           ["esbuild-plugin-file-path-extensions", "npm:2.1.3"],\
           ["react", "npm:18.3.1"],\
           ["react-fast-compare", "npm:3.2.2"],\
+          ["react18-use", "virtual:991015ceb8acca106af7e64cf676369bf8fb98370003b1af0559fb22931c330c3a09d064107412d6cc26ef286f0afdd26340443bd43177eeda3558644ba5f206#npm:0.4.1"],\
           ["rimraf", "npm:3.0.2"],\
           ["typescript", "patch:typescript@npm%3A5.5.3#optional!builtin<compat/typescript>::version=5.5.3&hash=379a07"]\
         ],\
@@ -6879,6 +6880,7 @@ const RAW_RUNTIME_STATE =
           ["esbuild-plugin-file-path-extensions", "npm:2.1.3"],\
           ["react", "npm:18.3.1"],\
           ["react-fast-compare", "npm:3.2.2"],\
+          ["react18-use", "virtual:991015ceb8acca106af7e64cf676369bf8fb98370003b1af0559fb22931c330c3a09d064107412d6cc26ef286f0afdd26340443bd43177eeda3558644ba5f206#npm:0.4.1"],\
           ["rimraf", "npm:3.0.2"],\
           ["typescript", "patch:typescript@npm%3A5.5.3#optional!builtin<compat/typescript>::version=5.5.3&hash=379a07"]\
         ],\

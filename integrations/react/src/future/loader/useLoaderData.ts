@@ -1,6 +1,6 @@
 import type { ActivityLoaderArgs } from "@stackflow/config";
+import { use } from "react18-use";
 import { useActivity } from "../../stable";
-import { use } from "./use";
 
 export function useLoaderData<
   T extends (args: ActivityLoaderArgs<any>) => any,
