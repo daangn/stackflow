@@ -33,25 +33,26 @@ export function structuredActivityComponent<
   loading?: Loading<InferActivityParams<ActivityName>>;
   errorHandler?: ErrorHandler<InferActivityParams<ActivityName>>;
 }): StructuredActivityComponentType<InferActivityParams<ActivityName>> {
+  const content = options.content;
   let cachedContent: SyncInspectablePromise<{
     default: Content<InferActivityParams<ActivityName>>;
   }> | null = null;
 
   return {
     ...options,
-    content: () => {
-      if (typeof options.content !== "function")
-        return liftValue({ default: options.content });
+    content:
+      typeof content !== "function"
+        ? content
+        : () => {
+            if (
+              !cachedContent ||
+              inspect(cachedContent).status === PromiseStatus.REJECTED
+            ) {
+              cachedContent = liftValue(content());
+            }
 
-      if (
-        !cachedContent ||
-        inspect(cachedContent).status === PromiseStatus.REJECTED
-      ) {
-        cachedContent = liftValue(options.content());
-      }
-
-      return cachedContent;
-    },
+            return cachedContent;
+          },
     [STRUCTURED_ACTIVITY_COMPONENT_TYPE]: true,
   };
 }
