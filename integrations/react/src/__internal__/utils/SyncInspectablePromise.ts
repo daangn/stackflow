@@ -70,7 +70,7 @@ function makeSyncInspectable<T>(
   return syncInspectablePromise;
 }
 
-export function liftValue<T>(value: T): SyncInspectablePromise<Awaited<T>> {
+export function resolve<T>(value: T): SyncInspectablePromise<Awaited<T>> {
   if (isPromiseLike(value)) {
     if (
       value instanceof Promise &&

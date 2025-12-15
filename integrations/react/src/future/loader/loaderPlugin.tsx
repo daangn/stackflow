@@ -7,8 +7,8 @@ import type { StackflowReactPlugin } from "../../__internal__/StackflowReactPlug
 import { isStructuredActivityComponent } from "../../__internal__/StructuredActivityComponentType";
 import {
   inspect,
-  liftValue,
   PromiseStatus,
+  resolve,
   type SyncInspectablePromise,
 } from "../../__internal__/utils/SyncInspectablePromise";
 import type { StackflowInput } from "../stackflow";
@@ -43,7 +43,7 @@ export function loaderPlugin<
               ...event,
               activityContext: {
                 ...event.activityContext,
-                loaderData: liftValue(initialContext.initialLoaderData),
+                loaderData: resolve(initialContext.initialLoaderData),
               },
             };
           }
@@ -117,7 +117,7 @@ function createBeforeRouteHandler<
 
     const loaderData =
       matchActivity.loader && loadData(activityName, activityParams);
-    const lazyComponentPromise = liftValue(
+    const lazyComponentPromise = resolve(
       isStructuredActivityComponent(matchActivityComponent) &&
         typeof matchActivityComponent.content === "function"
         ? matchActivityComponent.content()

@@ -7,8 +7,8 @@ import { preloadableLazyComponent } from "./utils/PreloadableLazyComponent";
 import {
   inspect,
   liftError,
-  liftValue,
   PromiseStatus,
+  resolve,
   type SyncInspectablePromise,
 } from "./utils/SyncInspectablePromise";
 
@@ -49,7 +49,7 @@ export function structuredActivityComponent<
               !cachedContent ||
               inspect(cachedContent).status === PromiseStatus.REJECTED
             ) {
-              cachedContent = liftValue(content());
+              cachedContent = resolve(content());
             }
 
             return cachedContent;
@@ -92,20 +92,20 @@ export function getContentComponent(
 
   const { Component: ContentComponent } = preloadableLazyComponent(() => {
     const content = structuredActivityComponent.content;
-    const contentPromise = liftValue(
+    const contentPromise = resolve(
       typeof content === "function" ? content() : { default: content },
     );
     const state = inspect(contentPromise);
 
     if (state.status === PromiseStatus.FULFILLED) {
-      return liftValue({
+      return resolve({
         default: state.value.default.component,
       });
     } else if (state.status === PromiseStatus.REJECTED) {
       return liftError(state.reason);
     }
 
-    return liftValue(
+    return resolve(
       contentPromise.then((value) => ({
         default: value.default.component,
       })),

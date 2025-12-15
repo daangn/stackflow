@@ -1,7 +1,7 @@
-import { inspect, liftValue, PromiseStatus } from "./SyncInspectablePromise";
+import { inspect, PromiseStatus, resolve } from "./SyncInspectablePromise";
 
 export function useThenable<T>(thenable: PromiseLike<T>): Awaited<T> {
-  const syncInspectable = liftValue(thenable);
+  const syncInspectable = resolve(thenable);
   const state = inspect(syncInspectable);
 
   if (state.status === PromiseStatus.FULFILLED) {
