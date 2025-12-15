@@ -41,8 +41,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "react-fast-compare": "^3.2.2",
-    "react18-use": "^0.4.1"
+    "react-fast-compare": "^3.2.2"
   },
   "devDependencies": {
     "@stackflow/config": "^1.2.1",

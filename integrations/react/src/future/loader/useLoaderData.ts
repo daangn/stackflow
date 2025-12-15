@@ -1,9 +1,10 @@
 import type { ActivityLoaderArgs } from "@stackflow/config";
-import { use } from "react18-use";
+import { liftValue } from "../../__internal__/utils/SyncInspectablePromise";
+import { useThenable } from "../../__internal__/utils/useThenable";
 import { useActivity } from "../../stable";
 
 export function useLoaderData<
   T extends (args: ActivityLoaderArgs<any>) => any,
 >(): Awaited<ReturnType<T>> {
-  return use((useActivity().context as any)?.loaderData);
+  return useThenable(liftValue((useActivity().context as any)?.loaderData));
 }

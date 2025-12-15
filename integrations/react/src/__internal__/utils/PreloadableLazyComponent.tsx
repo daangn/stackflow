@@ -1,10 +1,10 @@
 import type { ComponentType } from "react";
-import { use } from "react18-use";
 import {
   inspect,
   PromiseStatus,
   type SyncInspectablePromise,
 } from "./SyncInspectablePromise";
+import { useThenable } from "./useThenable";
 
 export function preloadableLazyComponent<P extends {}>(
   load: () => SyncInspectablePromise<{ default: ComponentType<P> }>,
@@ -23,7 +23,7 @@ export function preloadableLazyComponent<P extends {}>(
     return cachedLoadingPromise;
   };
   const Component = (props: P) => {
-    const { default: Component } = use(cachedLoad());
+    const { default: Component } = useThenable(cachedLoad());
 
     return <Component {...props} />;
   };
