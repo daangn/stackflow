@@ -2,15 +2,14 @@ import type {
   ActivityDefinition,
   RegisteredActivityName,
 } from "@stackflow/config";
-import { isPromiseLike } from "__internal__/utils/isPromiseLike";
 import type { ActivityComponentType } from "../../__internal__/ActivityComponentType";
 import type { StackflowReactPlugin } from "../../__internal__/StackflowReactPlugin";
 import { isStructuredActivityComponent } from "../../__internal__/StructuredActivityComponentType";
+import { isPromiseLike } from "../../__internal__/utils/isPromiseLike";
 import {
   inspect,
   PromiseStatus,
   resolve,
-  type SyncInspectablePromise,
 } from "../../__internal__/utils/SyncInspectablePromise";
 import type { StackflowInput } from "../stackflow";
 
