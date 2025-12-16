@@ -49,10 +49,17 @@ export function inspect<T>(
 }
 
 function makeSyncInspectable<T>(
-  thenable: PromiseLike<T>,
+  promise: Promise<T>,
 ): SyncInspectablePromise<T> {
+  if (
+    "status" in promise &&
+    Object.values(PromiseStatus).some((status) => status === promise.status)
+  ) {
+    return promise as SyncInspectablePromise<T>;
+  }
+
   const syncInspectablePromise: SyncInspectablePromise<T> = Object.assign(
-    new Promise<T>((resolve) => resolve(thenable)),
+    promise,
     { status: PromiseStatus.PENDING },
   );
 
@@ -72,15 +79,9 @@ function makeSyncInspectable<T>(
 
 export function resolve<T>(value: T): SyncInspectablePromise<Awaited<T>> {
   if (isPromiseLike(value)) {
-    if (
-      value instanceof Promise &&
-      "status" in value &&
-      Object.values(PromiseStatus).some((status) => status === value.status)
-    ) {
-      return value as SyncInspectablePromise<Awaited<T>>;
-    }
-
-    return makeSyncInspectable(value) as SyncInspectablePromise<Awaited<T>>;
+    return makeSyncInspectable(
+      value instanceof Promise ? value : Promise.resolve(value),
+    );
   }
 
   return Object.assign(Promise.resolve(value), {

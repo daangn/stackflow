@@ -57,18 +57,14 @@ export function loaderPlugin<
             return event;
           }
 
-          const loaderData = loadData(activityName, activityParams);
+          const loaderData = resolve(loadData(activityName, activityParams));
 
-          if (isPromiseLike(loaderData)) {
-            Promise.allSettled([loaderData]).then(
-              ([loaderDataPromiseResult]) => {
-                printLoaderDataPromiseError({
-                  promiseResult: loaderDataPromiseResult,
-                  activityName: matchActivity.name,
-                });
-              },
-            );
-          }
+          Promise.allSettled([loaderData]).then(([loaderDataPromiseResult]) => {
+            printLoaderDataPromiseError({
+              promiseResult: loaderDataPromiseResult,
+              activityName: matchActivity.name,
+            });
+          });
 
           return {
             ...event,
