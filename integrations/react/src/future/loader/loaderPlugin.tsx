@@ -2,6 +2,7 @@ import type {
   ActivityDefinition,
   RegisteredActivityName,
 } from "@stackflow/config";
+import { isPromiseLike } from "__internal__/utils/isPromiseLike";
 import type { ActivityComponentType } from "../../__internal__/ActivityComponentType";
 import type { StackflowReactPlugin } from "../../__internal__/StackflowReactPlugin";
 import { isStructuredActivityComponent } from "../../__internal__/StructuredActivityComponentType";
@@ -20,10 +21,7 @@ export function loaderPlugin<
   },
 >(
   input: StackflowInput<T, R>,
-  loadData: (
-    activityName: string,
-    activityParams: {},
-  ) => SyncInspectablePromise<unknown>,
+  loadData: (activityName: string, activityParams: {}) => unknown,
 ): StackflowReactPlugin {
   return () => {
     return {
@@ -62,12 +60,16 @@ export function loaderPlugin<
 
           const loaderData = loadData(activityName, activityParams);
 
-          Promise.allSettled([loaderData]).then(([loaderDataPromiseResult]) => {
-            printLoaderDataPromiseError({
-              promiseResult: loaderDataPromiseResult,
-              activityName: matchActivity.name,
-            });
-          });
+          if (isPromiseLike(loaderData)) {
+            Promise.allSettled([loaderData]).then(
+              ([loaderDataPromiseResult]) => {
+                printLoaderDataPromiseError({
+                  promiseResult: loaderDataPromiseResult,
+                  activityName: matchActivity.name,
+                });
+              },
+            );
+          }
 
           return {
             ...event,
@@ -95,10 +97,7 @@ function createBeforeRouteHandler<
   },
 >(
   input: StackflowInput<T, R>,
-  loadData: (
-    activityName: string,
-    activityParams: {},
-  ) => SyncInspectablePromise<unknown>,
+  loadData: (activityName: string, activityParams: {}) => unknown,
 ): OnBeforeRoute {
   return ({
     actionParams,
@@ -116,7 +115,7 @@ function createBeforeRouteHandler<
     }
 
     const loaderData =
-      matchActivity.loader && loadData(activityName, activityParams);
+      matchActivity.loader && resolve(loadData(activityName, activityParams));
     const lazyComponentPromise = resolve(
       isStructuredActivityComponent(matchActivityComponent) &&
         typeof matchActivityComponent.content === "function"
