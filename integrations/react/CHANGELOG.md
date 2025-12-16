@@ -1,5 +1,15 @@
 # @stackflow/react
 
+## 1.11.0
+
+### Minor Changes
+
+- 3cb6e33: utilize synchronously inspectable promise to optimize suspense fallback rendering
+
+### Patch Changes
+
+- 29a0bb6: Remove data loader cache
+
 ## 1.10.0
 
 ### Minor Changes

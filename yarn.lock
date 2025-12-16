@@ -5351,7 +5351,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/config@npm:^1.2.0, @stackflow/config@npm:^1.2.1, @stackflow/config@workspace:config":
+"@stackflow/config@npm:^1.2.0, @stackflow/config@npm:^1.2.1, @stackflow/config@npm:^1.2.2, @stackflow/config@workspace:config":
   version: 0.0.0-use.local
   resolution: "@stackflow/config@workspace:config"
   dependencies:
@@ -5737,7 +5737,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@stackflow/react@workspace:integrations/react"
   dependencies:
-    "@stackflow/config": "npm:^1.2.1"
+    "@stackflow/config": "npm:^1.2.2"
     "@stackflow/core": "npm:^1.3.0"
     "@stackflow/esbuild-config": "npm:^1.0.3"
     "@types/react": "npm:^18.3.3"
