@@ -1,5 +1,20 @@
 # @stackflow/react
 
+## 2.0.0
+
+### Major Changes
+
+- 29a0bb6: Remove data loader cache
+
+### Minor Changes
+
+- 3cb6e33: utilize synchronously inspectable promise to optimize suspense fallback rendering
+
+### Patch Changes
+
+- Updated dependencies [29a0bb6]
+  - @stackflow/config@2.0.0
+
 ## 1.10.0
 
 ### Minor Changes

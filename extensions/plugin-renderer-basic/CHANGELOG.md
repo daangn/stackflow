@@ -1,5 +1,13 @@
 # @stackflow/plugin-renderer-basic
 
+## 1.1.14
+
+### Patch Changes
+
+- Updated dependencies [3cb6e33]
+- Updated dependencies [29a0bb6]
+  - @stackflow/react@2.0.0
+
 ## 1.1.13
 
 ## 1.1.13-canary.0

@@ -1,5 +1,21 @@
 # @stackflow/demo
 
+## 1.4.1
+
+### Patch Changes
+
+- Updated dependencies [3cb6e33]
+- Updated dependencies [29a0bb6]
+  - @stackflow/react@2.0.0
+  - @stackflow/config@2.0.0
+  - @stackflow/compat-await-push@1.1.14
+  - @stackflow/link@1.6.2
+  - @stackflow/plugin-basic-ui@1.18.2
+  - @stackflow/plugin-history-sync@1.8.2
+  - @stackflow/plugin-map-initial-activity@1.0.12
+  - @stackflow/plugin-preload@1.4.5
+  - @stackflow/plugin-renderer-basic@1.1.14
+
 ## 1.4.0
 
 ### Minor Changes

@@ -1,5 +1,13 @@
 # @stackflow/plugin-preload
 
+## 1.4.5
+
+### Patch Changes
+
+- Updated dependencies [3cb6e33]
+- Updated dependencies [29a0bb6]
+  - @stackflow/react@2.0.0
+
 ## 1.4.4
 
 ### Patch Changes
