@@ -1,6 +1,6 @@
 ---
-"@stackflow/react": major
-"@stackflow/config": major
+"@stackflow/react": patch
+"@stackflow/config": patch
 ---
 
 Remove data loader cache
