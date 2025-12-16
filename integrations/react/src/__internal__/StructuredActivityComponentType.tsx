@@ -2,7 +2,15 @@ import type {
   InferActivityParams,
   RegisteredActivityName,
 } from "@stackflow/config";
-import { type ComponentType, lazy, type ReactNode } from "react";
+import type { ComponentType, ReactNode } from "react";
+import { preloadableLazyComponent } from "./utils/PreloadableLazyComponent";
+import {
+  inspect,
+  PromiseStatus,
+  reject,
+  resolve,
+  type SyncInspectablePromise,
+} from "./utils/SyncInspectablePromise";
 
 export const STRUCTURED_ACTIVITY_COMPONENT_TYPE: unique symbol = Symbol(
   "STRUCTURED_ACTIVITY_COMPONENT_TYPE",
@@ -26,8 +34,26 @@ export function structuredActivityComponent<
   loading?: Loading<InferActivityParams<ActivityName>>;
   errorHandler?: ErrorHandler<InferActivityParams<ActivityName>>;
 }): StructuredActivityComponentType<InferActivityParams<ActivityName>> {
+  const content = options.content;
+  let cachedContent: SyncInspectablePromise<{
+    default: Content<InferActivityParams<ActivityName>>;
+  }> | null = null;
+
   return {
     ...options,
+    content:
+      typeof content !== "function"
+        ? content
+        : () => {
+            if (
+              !cachedContent ||
+              inspect(cachedContent).status === PromiseStatus.REJECTED
+            ) {
+              cachedContent = resolve(content());
+            }
+
+            return cachedContent;
+          },
     [STRUCTURED_ACTIVITY_COMPONENT_TYPE]: true,
   };
 }
@@ -64,16 +90,27 @@ export function getContentComponent(
     return ContentComponentMap.get(structuredActivityComponent)!;
   }
 
-  const content = structuredActivityComponent.content;
-  const ContentComponent =
-    "component" in content
-      ? content.component
-      : lazy(async () => {
-          const {
-            default: { component: Component },
-          } = await content();
-          return { default: Component };
-        });
+  const { Component: ContentComponent } = preloadableLazyComponent(() => {
+    const content = structuredActivityComponent.content;
+    const contentPromise = resolve(
+      typeof content === "function" ? content() : { default: content },
+    );
+    const state = inspect(contentPromise);
+
+    if (state.status === PromiseStatus.FULFILLED) {
+      return resolve({
+        default: state.value.default.component,
+      });
+    } else if (state.status === PromiseStatus.REJECTED) {
+      return reject(state.reason);
+    }
+
+    return resolve(
+      contentPromise.then((value) => ({
+        default: value.default.component,
+      })),
+    );
+  });
 
   ContentComponentMap.set(structuredActivityComponent, ContentComponent);
 

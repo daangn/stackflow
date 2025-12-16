@@ -1,28 +1,37 @@
-import React from "react";
 import type { LazyActivityComponentType } from "../__internal__/LazyActivityComponentType";
 import type { StaticActivityComponentType } from "../__internal__/StaticActivityComponentType";
+import { preloadableLazyComponent } from "../__internal__/utils/PreloadableLazyComponent";
+import {
+  inspect,
+  PromiseStatus,
+  reject,
+  resolve,
+} from "../__internal__/utils/SyncInspectablePromise";
 
 export function lazy<T extends { [K in keyof T]: any } = {}>(
   load: () => Promise<{ default: StaticActivityComponentType<T> }>,
 ): LazyActivityComponentType<T> {
-  let cachedValue: Promise<{ default: StaticActivityComponentType<T> }> | null =
-    null;
+  const { Component, preload } = preloadableLazyComponent(() =>
+    resolve(load()),
+  );
 
-  const cachedLoad = () => {
-    if (!cachedValue) {
-      cachedValue = load();
-      cachedValue.catch((error) => {
-        cachedValue = null;
+  const LazyActivityComponent: LazyActivityComponentType<T> = Object.assign(
+    Component,
+    {
+      _load: () => {
+        const preloadTask = resolve(preload());
+        const preloadTaskState = inspect(preloadTask);
 
-        throw error;
-      });
-    }
-    return cachedValue;
-  };
+        if (preloadTaskState.status === PromiseStatus.FULFILLED) {
+          return resolve({ default: Component });
+        } else if (preloadTaskState.status === PromiseStatus.REJECTED) {
+          return reject(preloadTaskState.reason);
+        }
 
-  const LazyActivityComponent: LazyActivityComponentType<T> =
-    React.lazy(cachedLoad);
-  LazyActivityComponent._load = cachedLoad;
+        return resolve(preloadTask.then(() => ({ default: Component })));
+      },
+    },
+  );
 
   return LazyActivityComponent;
 }

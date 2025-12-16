@@ -12,7 +12,6 @@ import {
   type PushedEvent,
 } from "@stackflow/core";
 import React, { useMemo } from "react";
-import isEqual from "react-fast-compare";
 import { ActivityComponentMapProvider } from "../__internal__/ActivityComponentMapProvider";
 import type { ActivityComponentType } from "../__internal__/ActivityComponentType";
 import { makeActivityId } from "../__internal__/activity";

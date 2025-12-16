@@ -6,6 +6,11 @@ import type { ActivityComponentType } from "../../__internal__/ActivityComponent
 import type { StackflowReactPlugin } from "../../__internal__/StackflowReactPlugin";
 import { isStructuredActivityComponent } from "../../__internal__/StructuredActivityComponentType";
 import { isPromiseLike } from "../../__internal__/utils/isPromiseLike";
+import {
+  inspect,
+  PromiseStatus,
+  resolve,
+} from "../../__internal__/utils/SyncInspectablePromise";
 import type { StackflowInput } from "../stackflow";
 
 export function loaderPlugin<
@@ -35,7 +40,7 @@ export function loaderPlugin<
               ...event,
               activityContext: {
                 ...event.activityContext,
-                loaderData: initialContext.initialLoaderData,
+                loaderData: resolve(initialContext.initialLoaderData),
               },
             };
           }
@@ -109,29 +114,28 @@ function createBeforeRouteHandler<
     }
 
     const loaderData =
-      matchActivity.loader && loadData(activityName, activityParams);
-
-    const loaderDataPromise = isPromiseLike(loaderData)
-      ? loaderData
-      : undefined;
-    const lazyComponentPromise =
+      matchActivity.loader && resolve(loadData(activityName, activityParams));
+    const lazyComponentPromise = resolve(
       isStructuredActivityComponent(matchActivityComponent) &&
-      typeof matchActivityComponent.content === "function"
+        typeof matchActivityComponent.content === "function"
         ? matchActivityComponent.content()
-        : "_load" in matchActivityComponent
-          ? matchActivityComponent._load?.()
-          : undefined;
+        : "_load" in matchActivityComponent &&
+            typeof matchActivityComponent._load === "function"
+          ? matchActivityComponent._load()
+          : undefined,
+    );
     const shouldRenderImmediately = (activityContext as any)
       ?.lazyActivityComponentRenderContext?.shouldRenderImmediately;
 
     if (
-      (loaderDataPromise || lazyComponentPromise) &&
+      ((loaderData && inspect(loaderData).status === PromiseStatus.PENDING) ||
+        inspect(lazyComponentPromise).status === PromiseStatus.PENDING) &&
       (shouldRenderImmediately !== true ||
         "loading" in matchActivityComponent === false)
     ) {
       pause();
 
-      Promise.allSettled([loaderDataPromise, lazyComponentPromise])
+      Promise.allSettled([loaderData, lazyComponentPromise])
         .then(([loaderDataPromiseResult, lazyComponentPromiseResult]) => {
           printLoaderDataPromiseError({
             promiseResult: loaderDataPromiseResult,
