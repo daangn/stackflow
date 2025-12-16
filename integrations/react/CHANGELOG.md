@@ -1,5 +1,11 @@
 # @stackflow/react
 
+## 1.11.1
+
+### Patch Changes
+
+- 43cd76c: Attach state tracking instruments to original promise when creating SyncInspectablePromises with Promises
+
 ## 1.11.0
 
 ### Minor Changes
