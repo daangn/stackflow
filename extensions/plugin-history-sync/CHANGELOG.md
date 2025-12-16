@@ -6,8 +6,6 @@
 
 - Updated dependencies [3cb6e33]
 - Updated dependencies [29a0bb6]
-  - @stackflow/react@2.0.0
-  - @stackflow/config@2.0.0
 
 ## 1.8.1
 

@@ -55,10 +55,10 @@
     "typescript": "^5.5.3"
   },
   "peerDependencies": {
-    "@stackflow/core": "^1.1.0-canary.0",
+    "@stackflow/core": ">=1.1.0-canary.0",
     "@stackflow/plugin-history-sync": "^1.6.4-canary.0",
     "@stackflow/plugin-preload": "^1.4.3-canary.0",
-    "@stackflow/react": "^2.0.0",
+    "@stackflow/react": ">=1.3.2-canary.0",
     "@types/react": ">=16.8.0",
     "react": ">=16.8.0"
   },
