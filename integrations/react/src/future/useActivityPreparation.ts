@@ -1,4 +1,5 @@
 import type { RegisteredActivityName } from "@stackflow/config";
+import { useEffect } from "react";
 import { usePrepare } from "./usePrepare";
 
 export function useActivityPreparation(
@@ -6,7 +7,9 @@ export function useActivityPreparation(
 ) {
   const prepare = usePrepare();
 
-  for (const { activityName } of activities) {
-    prepare(activityName);
-  }
+  useEffect(() => {
+    for (const { activityName } of activities) {
+      prepare(activityName);
+    }
+  }, [activities]);
 }
