@@ -1,5 +1,11 @@
 # @stackflow/react
 
+## 1.12.0
+
+### Minor Changes
+
+- 57fd2da: Improve scheduling of Activity preparation tasks by marking them as passive effects.
+
 ## 1.11.1
 
 ### Patch Changes
