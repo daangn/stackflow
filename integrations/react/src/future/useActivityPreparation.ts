@@ -11,5 +11,5 @@ export function useActivityPreparation(
     for (const { activityName } of activities) {
       prepare(activityName);
     }
-  }, [activities]);
+  }, [activities, prepare]);
 }
