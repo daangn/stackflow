@@ -77,30 +77,34 @@ export function findTargetActivityIndices(
     }
     case "StepPushed":
     case "StepReplaced": {
-      const latestActivity = findLatestActiveActivity(activities);
+      let targetActivity: Activity | undefined;
 
-      if (latestActivity) {
-        if (
-          event.targetActivityId &&
-          event.targetActivityId !== latestActivity.id
-        ) {
-          break;
-        }
-        targetActivities.push(activities.indexOf(latestActivity));
+      if (event.targetActivityId) {
+        targetActivity = activities.find(
+          (activity) => activity.id === event.targetActivityId,
+        );
+      } else {
+        targetActivity = findLatestActiveActivity(activities);
+      }
+
+      if (targetActivity) {
+        targetActivities.push(activities.indexOf(targetActivity));
       }
       break;
     }
     case "StepPopped": {
-      const latestActivity = findLatestActiveActivity(activities);
+      let targetActivity: Activity | undefined;
 
-      if (latestActivity && latestActivity.steps.length > 1) {
-        if (
-          event.targetActivityId &&
-          event.targetActivityId !== latestActivity.id
-        ) {
-          break;
-        }
-        targetActivities.push(activities.indexOf(latestActivity));
+      if (event.targetActivityId) {
+        targetActivity = activities.find(
+          (activity) => activity.id === event.targetActivityId,
+        );
+      } else {
+        targetActivity = findLatestActiveActivity(activities);
+      }
+
+      if (targetActivity && targetActivity.steps.length > 1) {
+        targetActivities.push(activities.indexOf(targetActivity));
       }
 
       break;

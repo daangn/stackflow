@@ -374,9 +374,10 @@ export function historySyncPlugin<
             return;
           }
 
-          const targetActivity = state.activity;
+          // Use mutable variables so we can update them if needed
+          let targetActivity = state.activity;
           const targetActivityId = state.activity.id;
-          const targetStep = state.step;
+          let targetStep = state.step;
 
           const { activities } = getStack();
           const currentActivity = activities.find(
@@ -395,6 +396,54 @@ export function historySyncPlugin<
           const nextStep = currentActivity.steps.find(
             (step) => step.id === targetStep?.id,
           );
+
+          // Synchronize history state with core state for lower activity step modifications
+          // Only apply this logic for non-active (lower) activities to avoid interfering
+          // with normal step navigation on the active activity
+          if (nextActivity && !nextActivity.isActive) {
+            const coreSteps = nextActivity.steps;
+            const coreLastStep = last(coreSteps);
+            const historySteps = targetActivity.steps;
+
+            let needsSync = false;
+
+            // Case 1: History has a step that doesn't exist in core (stepPop or stepReplace)
+            if (targetStep && !coreSteps.some((step) => step.id === targetStep?.id)) {
+              if (coreSteps.length < historySteps.length) {
+                // Step Pop: Use history.back() to skip removed step entry
+                history.back();
+                return;
+              }
+              needsSync = true; // stepReplace or complex operations
+            }
+            // Case 2: History has no step but core has steps (stepPush added to lower activity)
+            else if (!targetStep && coreSteps.length > 0) {
+              needsSync = true;
+            }
+
+            if (needsSync) {
+              // Sync history with core state
+              const match = activityRoutes.find(
+                (r) => r.activityName === nextActivity.name,
+              )!;
+              const template = makeTemplate(match, options.urlPatternOptions);
+              const paramsForUrl = coreLastStep?.params ?? nextActivity.params;
+
+              replaceState({
+                history,
+                pathname: template.fill(paramsForUrl),
+                state: {
+                  activity: nextActivity,
+                  step: coreLastStep,
+                },
+                useHash: options.useHash,
+              });
+
+              // Update target variables for normal navigation logic
+              targetActivity = nextActivity;
+              targetStep = coreLastStep;
+            }
+          }
 
           const isBackward = () => currentActivity.id > targetActivityId;
           const isForward = () => currentActivity.id < targetActivityId;
@@ -526,6 +575,11 @@ export function historySyncPlugin<
       onStepPushed({ effect: { activity, step } }) {
         if (pushFlag) {
           pushFlag -= 1;
+          return;
+        }
+
+        // Only update history for active activity
+        if (!activity.isActive) {
           return;
         }
 
@@ -667,7 +721,12 @@ export function historySyncPlugin<
           }
         }
       },
-      onBeforeStepPop({ actions: { getStack } }) {
+      onBeforeStepPop({ actionParams, actions: { getStack } }) {
+        // Only handle history for active activity step pops
+        if (actionParams?.targetActivityId) {
+          return; // Lower activity step pop, don't modify history
+        }
+
         const { activities } = getStack();
         const currentActivity = activities.find(
           (activity) => activity.isActive,
