@@ -29,7 +29,6 @@ export class SyncAggregator implements Aggregator {
   }
 
   dispatchEvent(event: DomainEvent): void {
-    console.log("dispatchEvent", event);
     this.events.push(event);
     this.updateStack();
   }
