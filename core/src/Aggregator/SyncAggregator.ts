@@ -106,13 +106,15 @@ class DynamicallyScheduledTask {
     const timeoutId = setTimeout(
       () => {
         if (this.scheduleId !== timeoutId) return;
+
+        this.scheduleId = null;
+
         if (Date.now() < timestamp) {
           this.schedule(timestamp);
           return;
         }
 
         this.task();
-        this.scheduleId = null;
       },
       Math.max(0, timestamp - Date.now()),
     );
