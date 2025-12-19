@@ -7,10 +7,8 @@ import { omit } from "./utils";
 export function produceEffects(prevOutput: Stack, nextOutput: Stack): Effect[] {
   const output: Effect[] = [];
 
-  const somethingChanged = !isEqual(prevOutput, nextOutput);
-
-  if (!somethingChanged) {
-    return output;
+  if (isEqual(prevOutput, nextOutput)) {
+    return [];
   }
 
   output.push({
