@@ -30,6 +30,7 @@ export function makeActivityReducer(context: {
       ...activity,
       exitedBy: event,
       transitionState: "exit-done",
+      estimatedTransitionEnd: context.now,
     }),
 
     /**
