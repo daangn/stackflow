@@ -1,12 +1,7 @@
 import { produceEffects } from "produceEffects";
 import { aggregate } from "../aggregate";
 import type { Effect } from "../Effect";
-import type {
-  DomainEvent,
-  PoppedEvent,
-  PushedEvent,
-  ReplacedEvent,
-} from "../event-types";
+import type { DomainEvent } from "../event-types";
 import type { Stack } from "../Stack";
 import type { Publisher } from "../utils/Publisher/Publisher";
 import type { Aggregator } from "./Aggregator";
@@ -30,7 +25,7 @@ export class SyncAggregator implements Aggregator {
   }
 
   getStack(): Stack {
-    return this.computeStack();
+    return this.previousStack;
   }
 
   dispatchEvent(event: DomainEvent): void {
