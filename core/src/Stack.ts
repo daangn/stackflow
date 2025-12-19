@@ -1,4 +1,3 @@
-import type { BaseDomainEvent } from "event-types/_base";
 import type {
   DomainEvent,
   PoppedEvent,
