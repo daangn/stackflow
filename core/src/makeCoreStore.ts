@@ -1,4 +1,5 @@
 import isEqual from "react-fast-compare";
+import type { Aggregator } from "./Aggregator/Aggregator";
 import { aggregate } from "./aggregate";
 import type { DomainEvent, PushedEvent, StepPushedEvent } from "./event-types";
 import { makeEvent } from "./event-utils";
@@ -76,39 +77,20 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
     options.handlers?.onInitialActivityNotFound?.();
   }
 
-  const events: { value: DomainEvent[] } = {
-    value: [...initialRemainingEvents, ...initialPushedEvents],
-  };
+  const aggregator: Aggregator = undefined as any;
 
-  const stack = {
-    value: aggregate(events.value, new Date().getTime()),
-  };
+  aggregator.subscribeChanges((effects) => {
+    triggerPostEffectHooks(effects, pluginInstances, actions);
+  });
 
   const actions: StackflowActions = {
     getStack() {
-      return stack.value;
+      return aggregator.getStack();
     },
     dispatchEvent(name, params) {
       const newEvent = makeEvent(name, params);
-      const nextStackValue = aggregate(
-        [...events.value, newEvent],
-        new Date().getTime(),
-      );
 
-      events.value.push(newEvent);
-      setStackValue(nextStackValue);
-
-      const interval = setInterval(() => {
-        const nextStackValue = aggregate(events.value, new Date().getTime());
-
-        if (!isEqual(stack.value, nextStackValue)) {
-          setStackValue(nextStackValue);
-        }
-
-        if (nextStackValue.globalTransitionState === "idle") {
-          clearInterval(interval);
-        }
-      }, INTERVAL_MS);
+      aggregator.dispatchEvent(newEvent);
     },
     push: () => {},
     replace: () => {},
@@ -118,12 +100,6 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
     stepPop: () => {},
     pause: () => {},
     resume: () => {},
-  };
-
-  const setStackValue = (nextStackValue: Stack) => {
-    const effects = produceEffects(stack.value, nextStackValue);
-    stack.value = nextStackValue;
-    triggerPostEffectHooks(effects, pluginInstances, actions);
   };
 
   // Initialize action methods after actions object is fully created
@@ -145,7 +121,7 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
         });
       });
     }),
-    pullEvents: () => events.value,
+    pullEvents: () => aggregator.getStack().events,
     subscribe(listener) {
       storeListeners.push(listener);
 
