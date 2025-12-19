@@ -49,8 +49,7 @@ export class SyncAggregator implements Aggregator {
     event: DomainEvent;
     timestamp: number;
   } | null {
-    const stack = this.computeStack();
-    const activeActivities = stack.activities.filter(
+    const activeActivities = this.previousStack.activities.filter(
       (activity) =>
         activity.transitionState === "enter-active" ||
         activity.transitionState === "exit-active",
