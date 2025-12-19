@@ -9,11 +9,13 @@ export function produceEffects(prevOutput: Stack, nextOutput: Stack): Effect[] {
 
   const somethingChanged = !isEqual(prevOutput, nextOutput);
 
-  if (somethingChanged) {
-    output.push({
-      _TAG: "%SOMETHING_CHANGED%",
-    });
+  if (!somethingChanged) {
+    return output;
   }
+
+  output.push({
+    _TAG: "%SOMETHING_CHANGED%",
+  });
 
   const isPaused =
     prevOutput.globalTransitionState !== "paused" &&

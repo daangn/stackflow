@@ -49,6 +49,8 @@ export function makeActivityReducer(context: {
         ...activity,
         exitedBy: event,
         transitionState,
+        estimatedTransitionEnd:
+          (context.resumedAt ?? event.eventDate) + context.transitionDuration,
         params:
           transitionState === "exit-done"
             ? activity.steps[0].params

@@ -4,11 +4,13 @@ import type { Activity, ActivityTransitionState } from "../Stack";
 export function makeActivityFromEvent(
   event: PushedEvent | ReplacedEvent,
   transitionState: ActivityTransitionState,
+  estimatedTransitionEnd: number,
 ): Activity {
   return {
     id: event.activityId,
     name: event.activityName,
     transitionState,
+    estimatedTransitionEnd,
     params: event.activityParams,
     context: event.activityContext,
     steps: [
