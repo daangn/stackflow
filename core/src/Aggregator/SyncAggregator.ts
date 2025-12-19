@@ -56,7 +56,7 @@ export class SyncAggregator implements Aggregator {
         activity.transitionState === "exit-active",
     );
     const mostRecentlyActivatedActivity = activeActivities.sort(
-      (a, b) => b.estimatedTransitionEnd! - a.estimatedTransitionEnd!,
+      (a, b) => b.estimatedTransitionEnd - a.estimatedTransitionEnd,
     )[0];
 
     return mostRecentlyActivatedActivity
@@ -64,7 +64,7 @@ export class SyncAggregator implements Aggregator {
           event:
             mostRecentlyActivatedActivity.exitedBy ??
             mostRecentlyActivatedActivity.enteredBy,
-          timestamp: mostRecentlyActivatedActivity.estimatedTransitionEnd!,
+          timestamp: mostRecentlyActivatedActivity.estimatedTransitionEnd,
         }
       : null;
   }
