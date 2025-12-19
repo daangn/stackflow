@@ -1,13 +1,12 @@
-import isEqual from "react-fast-compare";
+import { ExclusiveTaskQueue } from "utils/TaskQueue/ExclusiveTaskQueue";
 import type { Aggregator } from "./Aggregator/Aggregator";
-import { aggregate } from "./aggregate";
+import { SyncAggregator } from "./Aggregator/SyncAggregator";
 import type { DomainEvent, PushedEvent, StepPushedEvent } from "./event-types";
 import { makeEvent } from "./event-utils";
 import type { StackflowActions, StackflowPlugin } from "./interfaces";
-import { produceEffects } from "./produceEffects";
-import type { Stack } from "./Stack";
 import { divideBy, once } from "./utils";
 import { makeActions } from "./utils/makeActions";
+import { QueuingPublisher } from "./utils/Publisher/QueuingPublisher";
 import { triggerPostEffectHooks } from "./utils/triggerPostEffectHooks";
 
 const SECOND = 1000;
@@ -77,7 +76,10 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
     options.handlers?.onInitialActivityNotFound?.();
   }
 
-  const aggregator: Aggregator = undefined as any;
+  const aggregator: Aggregator = new SyncAggregator(
+    [...initialRemainingEvents, ...initialPushedEvents],
+    new QueuingPublisher(new ExclusiveTaskQueue()),
+  );
 
   aggregator.subscribeChanges((effects) => {
     triggerPostEffectHooks(effects, pluginInstances, actions);
