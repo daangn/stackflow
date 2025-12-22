@@ -1,5 +1,5 @@
-import type { Effect } from "Effect";
-import type { DomainEvent } from "event-types";
+import type { Effect } from "../Effect";
+import type { DomainEvent } from "../event-types";
 import type { Stack } from "../Stack";
 
 export interface Aggregator {
