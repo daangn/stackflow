@@ -9,11 +9,6 @@ import { makeActions } from "./utils/makeActions";
 import { QueuingPublisher } from "./utils/Publisher/QueuingPublisher";
 import { triggerPostEffectHooks } from "./utils/triggerPostEffectHooks";
 
-const SECOND = 1000;
-
-// 60FPS
-const INTERVAL_MS = SECOND / 60;
-
 export type MakeCoreStoreOptions = {
   initialEvents: DomainEvent[];
   initialContext?: any;
