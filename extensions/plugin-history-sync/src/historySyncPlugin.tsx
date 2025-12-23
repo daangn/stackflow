@@ -415,36 +415,80 @@ export function historySyncPlugin<
 
         return initialSetupProcess
           .captureNavigationOpportunity(null)
-          .map((event) => ({
+          .map((event, index) => ({
             ...event,
-            eventDate: Date.now() - MINUTE,
+            eventDate: Date.now() - MINUTE + index,
           }));
       },
       onInit({ actions: { getStack, dispatchEvent, push, stepPush } }) {
         const stack = getStack();
-        const rootActivity = stack.activities[0];
 
-        const match = activityRoutes.find(
-          (r) => r.activityName === rootActivity.name,
-        )!;
-        const template = makeTemplate(match, options.urlPatternOptions);
+        for (const activity of stack.activities) {
+          if (
+            activity.transitionState === "enter-done" ||
+            activity.transitionState === "enter-active"
+          ) {
+            const match = activityRoutes.find(
+              (r) => r.activityName === activity.name,
+            )!;
+            const template = makeTemplate(match, options.urlPatternOptions);
 
-        const lastStep = last(rootActivity.steps);
+            if (activity.isRoot) {
+              requestHistoryTick(() => {
+                silentFlag = true;
+                console.log("replaceActivity", activity);
+                replaceState({
+                  history,
+                  pathname: template.fill(activity.params),
+                  state: {
+                    activity: activity,
+                    step: activity.steps[0],
+                  },
+                  useHash: options.useHash,
+                });
+                console.log("silentFlag - after", silentFlag);
+              });
+            } else {
+              requestHistoryTick(() => {
+                silentFlag = true;
+                console.log("pushActivity", activity);
+                pushState({
+                  history,
+                  pathname: template.fill(activity.params),
+                  state: {
+                    activity: activity,
+                    step: activity.steps[0],
+                  },
+                  useHash: options.useHash,
+                });
+                console.log("silentFlag - after", silentFlag);
+              });
+            }
 
-        requestHistoryTick(() => {
-          silentFlag = true;
-          replaceState({
-            history,
-            pathname: template.fill(rootActivity.params),
-            state: {
-              activity: rootActivity,
-              step: lastStep,
-            },
-            useHash: options.useHash,
-          });
-        });
+            for (const step of activity.steps) {
+              if (!step.exitedBy && step.enteredBy.name !== "Pushed") {
+                requestHistoryTick(() => {
+                  console.log("pushStep", step);
+                  silentFlag = true;
+                  pushState({
+                    history,
+                    pathname: template.fill(activity.params),
+                    state: {
+                      activity: activity,
+                      step: step,
+                    },
+                    useHash: options.useHash,
+                  });
+                  console.log("silentFlag - after", silentFlag);
+                });
+              }
+            }
+          }
+        }
 
         const onPopState: Listener = (e) => {
+          console.log("onPopState", e);
+          console.log("silentFlag", silentFlag);
           if (silentFlag) {
             silentFlag = false;
             return;
@@ -603,6 +647,7 @@ export function historySyncPlugin<
             },
             useHash: options.useHash,
           });
+          console.log("silentFlag - after / onPushed", silentFlag);
         });
       },
       onStepPushed({ effect: { activity, step } }) {
@@ -628,6 +673,7 @@ export function historySyncPlugin<
             },
             useHash: options.useHash,
           });
+          console.log("silentFlag - after / onStepPushed", silentFlag);
         });
       },
       onReplaced({ effect: { activity } }) {
@@ -651,6 +697,7 @@ export function historySyncPlugin<
             },
             useHash: options.useHash,
           });
+          console.log("silentFlag - after / onReplaced", silentFlag);
         });
       },
       onStepReplaced({ effect: { activity, step } }) {
@@ -675,6 +722,7 @@ export function historySyncPlugin<
             },
             useHash: options.useHash,
           });
+          console.log("silentFlag - after / onStepReplaced", silentFlag);
         });
       },
       onBeforePush({ actionParams, actions: { overrideActionParams } }) {
@@ -758,6 +806,7 @@ export function historySyncPlugin<
         if ((currentActivity?.steps.length ?? 0) > 1) {
           requestHistoryTick(() => {
             silentFlag = true;
+            console.log("silentFlag - before / onBeforeStepPop", silentFlag);
             history.back();
           });
         }
@@ -786,12 +835,15 @@ export function historySyncPlugin<
             requestHistoryTick(() => {
               silentFlag = true;
               history.back();
+              console.log("silentFlag - before / onBeforePop", silentFlag);
             });
           }
         }
       },
       onChanged({ actions: { getStack, push, stepPush } }) {
         const stack = getStack();
+
+        console.log("stack", stack);
 
         initialSetupProcess
           ?.captureNavigationOpportunity(stack)
