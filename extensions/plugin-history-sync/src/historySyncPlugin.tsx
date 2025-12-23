@@ -436,7 +436,6 @@ export function historySyncPlugin<
             if (activity.isRoot) {
               requestHistoryTick(() => {
                 silentFlag = true;
-                console.log("replaceActivity", activity);
                 replaceState({
                   history,
                   pathname: template.fill(activity.params),
@@ -446,12 +445,10 @@ export function historySyncPlugin<
                   },
                   useHash: options.useHash,
                 });
-                console.log("silentFlag - after", silentFlag);
               });
             } else {
               requestHistoryTick(() => {
                 silentFlag = true;
-                console.log("pushActivity", activity);
                 pushState({
                   history,
                   pathname: template.fill(activity.params),
@@ -461,14 +458,12 @@ export function historySyncPlugin<
                   },
                   useHash: options.useHash,
                 });
-                console.log("silentFlag - after", silentFlag);
               });
             }
 
             for (const step of activity.steps) {
               if (!step.exitedBy && step.enteredBy.name !== "Pushed") {
                 requestHistoryTick(() => {
-                  console.log("pushStep", step);
                   silentFlag = true;
                   pushState({
                     history,
@@ -479,7 +474,6 @@ export function historySyncPlugin<
                     },
                     useHash: options.useHash,
                   });
-                  console.log("silentFlag - after", silentFlag);
                 });
               }
             }
@@ -487,8 +481,6 @@ export function historySyncPlugin<
         }
 
         const onPopState: Listener = (e) => {
-          console.log("onPopState", e);
-          console.log("silentFlag", silentFlag);
           if (silentFlag) {
             silentFlag = false;
             return;
@@ -647,7 +639,6 @@ export function historySyncPlugin<
             },
             useHash: options.useHash,
           });
-          console.log("silentFlag - after / onPushed", silentFlag);
         });
       },
       onStepPushed({ effect: { activity, step } }) {
@@ -673,7 +664,6 @@ export function historySyncPlugin<
             },
             useHash: options.useHash,
           });
-          console.log("silentFlag - after / onStepPushed", silentFlag);
         });
       },
       onReplaced({ effect: { activity } }) {
@@ -697,7 +687,6 @@ export function historySyncPlugin<
             },
             useHash: options.useHash,
           });
-          console.log("silentFlag - after / onReplaced", silentFlag);
         });
       },
       onStepReplaced({ effect: { activity, step } }) {
@@ -722,7 +711,6 @@ export function historySyncPlugin<
             },
             useHash: options.useHash,
           });
-          console.log("silentFlag - after / onStepReplaced", silentFlag);
         });
       },
       onBeforePush({ actionParams, actions: { overrideActionParams } }) {
@@ -806,7 +794,6 @@ export function historySyncPlugin<
         if ((currentActivity?.steps.length ?? 0) > 1) {
           requestHistoryTick(() => {
             silentFlag = true;
-            console.log("silentFlag - before / onBeforeStepPop", silentFlag);
             history.back();
           });
         }
@@ -835,15 +822,12 @@ export function historySyncPlugin<
             requestHistoryTick(() => {
               silentFlag = true;
               history.back();
-              console.log("silentFlag - before / onBeforePop", silentFlag);
             });
           }
         }
       },
       onChanged({ actions: { getStack, push, stepPush } }) {
         const stack = getStack();
-
-        console.log("stack", stack);
 
         initialSetupProcess
           ?.captureNavigationOpportunity(stack)
