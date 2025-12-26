@@ -381,8 +381,8 @@ export function historySyncPlugin<
 
         for (const activity of stack.activities) {
           if (
-            activity.transitionState === "enter-done" ||
-            activity.transitionState === "enter-active"
+            activity.transitionState === "enter-active" ||
+            activity.transitionState === "enter-done"
           ) {
             const match = activityRoutes.find(
               (r) => r.activityName === activity.name,
@@ -390,46 +390,37 @@ export function historySyncPlugin<
             const template = makeTemplate(match, options.urlPatternOptions);
 
             if (activity.isRoot) {
-              requestHistoryTick(() => {
-                silentFlag = true;
-                replaceState({
-                  history,
-                  pathname: template.fill(activity.params),
-                  state: {
-                    activity: activity,
-                    step: activity.steps[0],
-                  },
-                  useHash: options.useHash,
-                });
+              replaceState({
+                history,
+                pathname: template.fill(activity.params),
+                state: {
+                  activity: activity,
+                  step: activity.steps[0],
+                },
+                useHash: options.useHash,
               });
             } else {
-              requestHistoryTick(() => {
-                silentFlag = true;
-                pushState({
-                  history,
-                  pathname: template.fill(activity.params),
-                  state: {
-                    activity: activity,
-                    step: activity.steps[0],
-                  },
-                  useHash: options.useHash,
-                });
+              pushState({
+                history,
+                pathname: template.fill(activity.params),
+                state: {
+                  activity: activity,
+                  step: activity.steps[0],
+                },
+                useHash: options.useHash,
               });
             }
 
             for (const step of activity.steps) {
               if (!step.exitedBy && step.enteredBy.name !== "Pushed") {
-                requestHistoryTick(() => {
-                  silentFlag = true;
-                  pushState({
-                    history,
-                    pathname: template.fill(activity.params),
-                    state: {
-                      activity: activity,
-                      step: step,
-                    },
-                    useHash: options.useHash,
-                  });
+                pushState({
+                  history,
+                  pathname: template.fill(step.params),
+                  state: {
+                    activity: activity,
+                    step: step,
+                  },
+                  useHash: options.useHash,
                 });
               }
             }
