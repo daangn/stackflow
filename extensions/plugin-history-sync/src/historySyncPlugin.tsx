@@ -342,31 +342,38 @@ export function historySyncPlugin<
           ]);
         } else {
           initialSetupProcess = new SerialNavigationProcess([
-            ...defaultHistory.map((historyEntry) => () => {
-              const events = historyEntryToEvents(historyEntry);
+            ...defaultHistory.map((historyEntry, index) => () => {
+              let isFirstPush = true;
 
-              for (const event of events) {
-                if (event.name === "Pushed") {
-                  activityActivationMonitors.push(
-                    new DefaultHistoryActivityActivationMonitor(
-                      event.activityId,
-                      initialSetupProcess!,
-                    ),
-                  );
-                }
-              }
+              return historyEntryToEvents(historyEntry).map((event) => {
+                if (event.name !== "Pushed") return event;
+                const skipEnterActiveState = index === 0 && isFirstPush;
 
-              return events;
+                isFirstPush = false;
+                activityActivationMonitors.push(
+                  new DefaultHistoryActivityActivationMonitor(
+                    event.activityId,
+                    initialSetupProcess!,
+                  ),
+                );
+
+                return {
+                  ...event,
+                  skipEnterActiveState,
+                };
+              });
             }),
             () => [createTargetActivityPushEvent()],
           ]);
         }
 
+        const now = Date.now();
+
         return initialSetupProcess
           .captureNavigationOpportunity(null)
-          .map((event, index) => ({
+          .map((event, index, array) => ({
             ...event,
-            eventDate: Date.now() - MINUTE + index,
+            eventDate: now - (array.length - index),
           }));
       },
       onInit({ actions: { getStack, dispatchEvent, push, stepPush } }) {
