@@ -7,13 +7,13 @@ import { omit } from "./utils";
 export function produceEffects(prevOutput: Stack, nextOutput: Stack): Effect[] {
   const output: Effect[] = [];
 
-  const somethingChanged = !isEqual(prevOutput, nextOutput);
-
-  if (somethingChanged) {
-    output.push({
-      _TAG: "%SOMETHING_CHANGED%",
-    });
+  if (isEqual(prevOutput, nextOutput)) {
+    return [];
   }
+
+  output.push({
+    _TAG: "%SOMETHING_CHANGED%",
+  });
 
   const isPaused =
     prevOutput.globalTransitionState !== "paused" &&

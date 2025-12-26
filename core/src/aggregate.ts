@@ -83,6 +83,7 @@ export function aggregate(inputEvents: DomainEvent[], now: number): Stack {
           id: activity.id,
           name: activity.name,
           transitionState: activity.transitionState,
+          estimatedTransitionEnd: activity.estimatedTransitionEnd,
           params: activity.params,
           steps,
           enteredBy: activity.enteredBy,

@@ -1,4 +1,3 @@
-import type { BaseDomainEvent } from "event-types/_base";
 import type {
   DomainEvent,
   PoppedEvent,
@@ -29,6 +28,7 @@ export type Activity = {
   id: string;
   name: string;
   transitionState: ActivityTransitionState;
+  estimatedTransitionEnd: number;
   params: {
     [key: string]: string | undefined;
   };
