@@ -261,82 +261,80 @@ export function historySyncPlugin<
 
         if (options.skipDefaultHistorySetupTransition) {
           initialSetupProcess = new SerialNavigationProcess([
-            () => {
-              const events: (
-                | Omit<PushedEvent, "eventDate">
-                | Omit<StepPushedEvent, "eventDate">
-              )[] = [
-                ...defaultHistory.flatMap(
-                  ({ activityName, activityParams, additionalSteps = [] }) => {
-                    const activityId = id();
+            (): (
+              | Omit<PushedEvent, "eventDate">
+              | Omit<StepPushedEvent, "eventDate">
+            )[] => [
+              ...defaultHistory.flatMap(
+                ({
+                  activityName,
+                  activityParams,
+                  additionalSteps = [],
+                }): (
+                  | Omit<PushedEvent, "eventDate">
+                  | Omit<StepPushedEvent, "eventDate">
+                )[] => {
+                  const activityId = id();
 
-                    activityActivationMonitors.push(
-                      new DefaultHistoryActivityActivationMonitor(
-                        activityId,
-                        initialSetupProcess!,
-                      ),
-                    );
+                  activityActivationMonitors.push(
+                    new DefaultHistoryActivityActivationMonitor(
+                      activityId,
+                      initialSetupProcess!,
+                    ),
+                  );
 
-                    const events: (
-                      | Omit<PushedEvent, "eventDate">
-                      | Omit<StepPushedEvent, "eventDate">
-                    )[] = [
-                      {
-                        name: "Pushed",
-                        id: id(),
-                        activityId,
-                        activityName,
-                        activityParams: {
-                          ...activityParams,
-                        },
-                        activityContext: {
-                          path: currentPath,
-                          lazyActivityComponentRenderContext: {
-                            shouldRenderImmediately: true,
-                          },
-                        },
-                        skipEnterActiveState: true,
+                  return [
+                    {
+                      name: "Pushed",
+                      id: id(),
+                      activityId,
+                      activityName,
+                      activityParams: {
+                        ...activityParams,
                       },
-                      ...additionalSteps.map(
-                        ({
-                          stepParams,
-                          hasZIndex,
-                        }): Omit<StepPushedEvent, "eventDate"> => ({
-                          name: "StepPushed",
-                          id: id(),
-                          stepId: id(),
-                          stepParams,
-                          hasZIndex,
-                        }),
-                      ),
-                    ];
-
-                    return events;
-                  },
-                ),
-                {
-                  name: "Pushed",
-                  id: id(),
-                  activityId: id(),
-                  activityName: targetActivityRoute.activityName,
-                  activityParams:
-                    makeTemplate(
-                      targetActivityRoute,
-                      options.urlPatternOptions,
-                    ).parse(currentPath) ??
-                    urlSearchParamsToMap(pathToUrl(currentPath).searchParams),
-                  activityContext: {
-                    path: currentPath,
-                    lazyActivityComponentRenderContext: {
-                      shouldRenderImmediately: true,
+                      activityContext: {
+                        path: currentPath,
+                        lazyActivityComponentRenderContext: {
+                          shouldRenderImmediately: true,
+                        },
+                      },
+                      skipEnterActiveState: true,
                     },
-                  },
-                  skipEnterActiveState: true,
+                    ...additionalSteps.map(
+                      ({
+                        stepParams,
+                        hasZIndex,
+                      }): Omit<StepPushedEvent, "eventDate"> => ({
+                        name: "StepPushed",
+                        id: id(),
+                        stepId: id(),
+                        stepParams,
+                        hasZIndex,
+                      }),
+                    ),
+                  ];
                 },
-              ];
-
-              return events;
-            },
+              ),
+              {
+                name: "Pushed",
+                id: id(),
+                activityId: id(),
+                activityName: targetActivityRoute.activityName,
+                activityParams:
+                  makeTemplate(
+                    targetActivityRoute,
+                    options.urlPatternOptions,
+                  ).parse(currentPath) ??
+                  urlSearchParamsToMap(pathToUrl(currentPath).searchParams),
+                activityContext: {
+                  path: currentPath,
+                  lazyActivityComponentRenderContext: {
+                    shouldRenderImmediately: true,
+                  },
+                },
+                skipEnterActiveState: true,
+              },
+            ],
           ]);
         } else {
           initialSetupProcess = new SerialNavigationProcess([
