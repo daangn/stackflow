@@ -28,7 +28,7 @@ import type { NavigationProcess } from "./NavigationProcess/NavigationProcess";
 import { SerialNavigationProcess } from "./NavigationProcess/SerialNavigationProcess";
 import { normalizeActivityRouteMap } from "./normalizeActivityRouteMap";
 import { Publisher } from "./Publisher";
-import type { RouteLike } from "./RouteLike";
+import type { HistoryEntry, RouteLike } from "./RouteLike";
 import { RoutesProvider } from "./RoutesContext";
 import { sortActivityRoutes } from "./sortActivityRoutes";
 
@@ -258,156 +258,107 @@ export function historySyncPlugin<
         };
         const defaultHistory =
           targetActivityRoute.defaultHistory?.(params) ?? [];
+        const historyEntryToEvents = ({
+          activityName,
+          activityParams,
+          additionalSteps = [],
+        }: HistoryEntry): (
+          | Omit<PushedEvent, "eventDate">
+          | Omit<StepPushedEvent, "eventDate">
+        )[] => [
+          {
+            name: "Pushed",
+            id: id(),
+            activityId: id(),
+            activityName,
+            activityParams: {
+              ...activityParams,
+            },
+            activityContext: {
+              path: currentPath,
+              lazyActivityComponentRenderContext: {
+                shouldRenderImmediately: true,
+              },
+            },
+          },
+          ...additionalSteps.map(
+            ({
+              stepParams,
+              hasZIndex,
+            }): Omit<StepPushedEvent, "eventDate"> => ({
+              name: "StepPushed",
+              id: id(),
+              stepId: id(),
+              stepParams,
+              hasZIndex,
+            }),
+          ),
+        ];
+        const createTargetActivityPushEvent = (): Omit<
+          PushedEvent,
+          "eventDate"
+        > => ({
+          name: "Pushed",
+          id: id(),
+          activityId: id(),
+          activityName: targetActivityRoute.activityName,
+          activityParams:
+            makeTemplate(targetActivityRoute, options.urlPatternOptions).parse(
+              currentPath,
+            ) ?? urlSearchParamsToMap(pathToUrl(currentPath).searchParams),
+          activityContext: {
+            path: currentPath,
+            lazyActivityComponentRenderContext: {
+              shouldRenderImmediately: true,
+            },
+          },
+        });
 
         if (options.skipDefaultHistorySetupTransition) {
           initialSetupProcess = new SerialNavigationProcess([
-            (): (
-              | Omit<PushedEvent, "eventDate">
-              | Omit<StepPushedEvent, "eventDate">
-            )[] => [
-              ...defaultHistory.flatMap(
-                ({
-                  activityName,
-                  activityParams,
-                  additionalSteps = [],
-                }): (
-                  | Omit<PushedEvent, "eventDate">
-                  | Omit<StepPushedEvent, "eventDate">
-                )[] => {
-                  const activityId = id();
+            () => [
+              ...defaultHistory.flatMap((historyEntry) =>
+                historyEntryToEvents(historyEntry).map((event) => {
+                  if (event.name !== "Pushed") return event;
 
                   activityActivationMonitors.push(
                     new DefaultHistoryActivityActivationMonitor(
-                      activityId,
+                      event.activityId,
                       initialSetupProcess!,
                     ),
                   );
 
-                  return [
-                    {
-                      name: "Pushed",
-                      id: id(),
-                      activityId,
-                      activityName,
-                      activityParams: {
-                        ...activityParams,
-                      },
-                      activityContext: {
-                        path: currentPath,
-                        lazyActivityComponentRenderContext: {
-                          shouldRenderImmediately: true,
-                        },
-                      },
-                      skipEnterActiveState: true,
-                    },
-                    ...additionalSteps.map(
-                      ({
-                        stepParams,
-                        hasZIndex,
-                      }): Omit<StepPushedEvent, "eventDate"> => ({
-                        name: "StepPushed",
-                        id: id(),
-                        stepId: id(),
-                        stepParams,
-                        hasZIndex,
-                      }),
-                    ),
-                  ];
-                },
+                  return {
+                    ...event,
+                    skipEnterActiveState: true,
+                  };
+                }),
               ),
               {
-                name: "Pushed",
-                id: id(),
-                activityId: id(),
-                activityName: targetActivityRoute.activityName,
-                activityParams:
-                  makeTemplate(
-                    targetActivityRoute,
-                    options.urlPatternOptions,
-                  ).parse(currentPath) ??
-                  urlSearchParamsToMap(pathToUrl(currentPath).searchParams),
-                activityContext: {
-                  path: currentPath,
-                  lazyActivityComponentRenderContext: {
-                    shouldRenderImmediately: true,
-                  },
-                },
+                ...createTargetActivityPushEvent(),
                 skipEnterActiveState: true,
               },
             ],
           ]);
         } else {
           initialSetupProcess = new SerialNavigationProcess([
-            ...defaultHistory.map(
-              ({ activityName, activityParams, additionalSteps = [] }) =>
-                () => {
-                  const events: (
-                    | Omit<PushedEvent, "eventDate">
-                    | Omit<StepPushedEvent, "eventDate">
-                  )[] = [
-                    {
-                      name: "Pushed",
-                      id: id(),
-                      activityId: id(),
-                      activityName,
-                      activityParams: {
-                        ...activityParams,
-                      },
-                      activityContext: {
-                        path: currentPath,
-                        lazyActivityComponentRenderContext: {
-                          shouldRenderImmediately: true,
-                        },
-                      },
-                    },
-                    ...additionalSteps.map(
-                      ({
-                        stepParams,
-                        hasZIndex,
-                      }): Omit<StepPushedEvent, "eventDate"> => ({
-                        name: "StepPushed",
-                        id: id(),
-                        stepId: id(),
-                        stepParams,
-                        hasZIndex,
-                      }),
+            ...defaultHistory.map((historyEntry) => () => {
+              const events = historyEntryToEvents(historyEntry);
+
+              for (const event of events) {
+                if (event.name === "Pushed") {
+                  activityActivationMonitors.push(
+                    new DefaultHistoryActivityActivationMonitor(
+                      event.activityId,
+                      initialSetupProcess!,
                     ),
-                  ];
+                  );
+                }
+              }
 
-                  for (const event of events) {
-                    if (event.name === "Pushed") {
-                      activityActivationMonitors.push(
-                        new DefaultHistoryActivityActivationMonitor(
-                          event.activityId,
-                          initialSetupProcess!,
-                        ),
-                      );
-                    }
-                  }
-
-                  return events;
-                },
-            ),
-            () => [
-              {
-                name: "Pushed",
-                id: id(),
-                activityId: id(),
-                activityName: targetActivityRoute.activityName,
-                activityParams:
-                  makeTemplate(
-                    targetActivityRoute,
-                    options.urlPatternOptions,
-                  ).parse(currentPath) ??
-                  urlSearchParamsToMap(pathToUrl(currentPath).searchParams),
-                activityContext: {
-                  path: currentPath,
-                  lazyActivityComponentRenderContext: {
-                    shouldRenderImmediately: true,
-                  },
-                },
-              },
-            ],
+              return events;
+            }),
+            () => [createTargetActivityPushEvent()],
           ]);
         }
 
