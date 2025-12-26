@@ -379,47 +379,49 @@ export function historySyncPlugin<
       onInit({ actions: { getStack, dispatchEvent, push, stepPush } }) {
         const stack = getStack();
 
-        for (const activity of stack.activities) {
-          if (
-            activity.transitionState === "enter-active" ||
-            activity.transitionState === "enter-done"
-          ) {
-            const match = activityRoutes.find(
-              (r) => r.activityName === activity.name,
-            )!;
-            const template = makeTemplate(match, options.urlPatternOptions);
+        if (parseState(history.location.state) === null) {
+          for (const activity of stack.activities) {
+            if (
+              activity.transitionState === "enter-active" ||
+              activity.transitionState === "enter-done"
+            ) {
+              const match = activityRoutes.find(
+                (r) => r.activityName === activity.name,
+              )!;
+              const template = makeTemplate(match, options.urlPatternOptions);
 
-            if (activity.isRoot) {
-              replaceState({
-                history,
-                pathname: template.fill(activity.params),
-                state: {
-                  activity: activity,
-                },
-                useHash: options.useHash,
-              });
-            } else {
-              pushState({
-                history,
-                pathname: template.fill(activity.params),
-                state: {
-                  activity: activity,
-                },
-                useHash: options.useHash,
-              });
-            }
-
-            for (const step of activity.steps) {
-              if (!step.exitedBy && step.enteredBy.name !== "Pushed") {
-                pushState({
+              if (activity.isRoot) {
+                replaceState({
                   history,
-                  pathname: template.fill(step.params),
+                  pathname: template.fill(activity.params),
                   state: {
                     activity: activity,
-                    step: step,
                   },
                   useHash: options.useHash,
                 });
+              } else {
+                pushState({
+                  history,
+                  pathname: template.fill(activity.params),
+                  state: {
+                    activity: activity,
+                  },
+                  useHash: options.useHash,
+                });
+              }
+
+              for (const step of activity.steps) {
+                if (!step.exitedBy && step.enteredBy.name !== "Pushed") {
+                  pushState({
+                    history,
+                    pathname: template.fill(step.params),
+                    state: {
+                      activity: activity,
+                      step: step,
+                    },
+                    useHash: options.useHash,
+                  });
+                }
               }
             }
           }
