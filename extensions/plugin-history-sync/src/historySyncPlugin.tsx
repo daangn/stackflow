@@ -395,7 +395,6 @@ export function historySyncPlugin<
                 pathname: template.fill(activity.params),
                 state: {
                   activity: activity,
-                  step: activity.steps[0],
                 },
                 useHash: options.useHash,
               });
@@ -405,7 +404,6 @@ export function historySyncPlugin<
                 pathname: template.fill(activity.params),
                 state: {
                   activity: activity,
-                  step: activity.steps[0],
                 },
                 useHash: options.useHash,
               });
