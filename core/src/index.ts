@@ -1,7 +1,3 @@
-import "disposablestack/Symbol.dispose/auto";
-import "disposablestack/Symbol.asyncDispose/auto";
-import "suppressed-error/auto";
-
 export { aggregate } from "./aggregate";
 export { Effect } from "./Effect";
 export * from "./event-types";

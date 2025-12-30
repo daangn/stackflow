@@ -1,24 +1,51 @@
-export class Mutex {
-  private latestlyBookedSession: Promise<void> = Promise.resolve();
+import { getAbortReason } from "./getAbortReason";
 
-  acquire(): Promise<{ release: () => void }> {
-    return new Promise((resolveSessionHandle) => {
-      this.latestlyBookedSession = this.latestlyBookedSession.then(
-        () =>
-          new Promise((resolveSession) =>
-            resolveSessionHandle({ release: () => resolveSession() }),
-          ),
-      );
+export class Mutex {
+  private lockWaitQueue: ((lockHandle: LockHandle) => void)[] = [];
+  private waitQueueFlushTask: Promise<void> | null = null;
+
+  acquire(options?: { signal?: AbortSignal }): Promise<LockHandle> {
+    return new Promise((resolve, reject) => {
+      const signal = options?.signal;
+      const abortHandler = () => {
+        if (!signal) return;
+
+        this.lockWaitQueue = this.lockWaitQueue.filter((h) => h !== resolve);
+
+        reject(getAbortReason(signal));
+      };
+      const lockWaiter = (lockHandle: LockHandle) => {
+        resolve(lockHandle);
+
+        signal?.removeEventListener("abort", abortHandler);
+      };
+
+      if (signal?.aborted) throw getAbortReason(signal);
+
+      signal?.addEventListener("abort", abortHandler, { once: true });
+
+      this.lockWaitQueue.push(lockWaiter);
+      this.scheduleWaitQueueFlush();
     });
   }
 
-  async runExclusively<T>(thunk: () => Promise<T>): Promise<T> {
-    const { release } = await this.acquire();
+  private scheduleWaitQueueFlush(): void {
+    if (this.waitQueueFlushTask) return;
 
-    try {
-      return await thunk();
-    } finally {
-      release();
-    }
+    this.waitQueueFlushTask = Promise.resolve().then(async () => {
+      do {
+        const nextWaiter = this.lockWaitQueue.shift();
+
+        if (!nextWaiter) break;
+
+        await new Promise<void>((resolve) => nextWaiter({ release: resolve }));
+      } while (this.lockWaitQueue.length > 0);
+
+      this.waitQueueFlushTask = null;
+    });
   }
+}
+
+export interface LockHandle {
+  release: () => void;
 }

@@ -1,12 +1,14 @@
-import { ExclusiveTaskQueue } from "utils/TaskQueue/ExclusiveTaskQueue";
-import type { Aggregator } from "./Aggregator/Aggregator";
-import { SyncAggregator } from "./Aggregator/SyncAggregator";
+import type { Aggregator } from "./aggregators/Aggregator";
+import { SyncAggregator } from "./aggregators/SyncAggregator";
 import type { DomainEvent, PushedEvent, StepPushedEvent } from "./event-types";
 import { makeEvent } from "./event-utils";
 import type { StackflowActions, StackflowPlugin } from "./interfaces";
 import { divideBy, once } from "./utils";
+import { Mutex } from "./utils/Mutex";
 import { makeActions } from "./utils/makeActions";
-import { QueuingPublisher } from "./utils/Publisher/QueuingPublisher";
+import { ScheduledPublisher } from "./utils/publishers/ScheduledPublisher";
+import { SequentialScheduler } from "./utils/schedulers/SequentialScheduler";
+import { SwitchScheduler } from "./utils/schedulers/SwitchScheduler";
 import { triggerPostEffectHooks } from "./utils/triggerPostEffectHooks";
 
 export type MakeCoreStoreOptions = {
@@ -73,7 +75,8 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
 
   const aggregator: Aggregator = new SyncAggregator(
     [...initialRemainingEvents, ...initialPushedEvents],
-    new QueuingPublisher(new ExclusiveTaskQueue()),
+    new ScheduledPublisher(new SequentialScheduler(new Mutex())),
+    new SwitchScheduler(new Mutex()),
   );
 
   aggregator.subscribeChanges((effects) => {

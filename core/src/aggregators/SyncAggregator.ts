@@ -3,24 +3,24 @@ import { aggregate } from "../aggregate";
 import type { Effect } from "../Effect";
 import type { DomainEvent } from "../event-types";
 import type { Stack } from "../Stack";
-import type { Publisher } from "../utils/Publisher/Publisher";
+import type { Publisher } from "../utils/publishers/Publisher";
+import type { Scheduler } from "../utils/schedulers/Scheduler";
 import type { Aggregator } from "./Aggregator";
 
 export class SyncAggregator implements Aggregator {
   private events: DomainEvent[];
   private changePublisher: Publisher<{ effects: Effect[]; stack: Stack }>;
-  private autoUpdateTask: DynamicallyScheduledTask;
+  private updateScheduler: Scheduler;
   private previousStack: Stack;
 
   constructor(
     events: DomainEvent[],
     changePublisher: Publisher<{ effects: Effect[]; stack: Stack }>,
+    updateScheduler: Scheduler,
   ) {
     this.events = events;
     this.changePublisher = changePublisher;
-    this.autoUpdateTask = new DynamicallyScheduledTask(async () => {
-      this.updateStack();
-    });
+    this.updateScheduler = updateScheduler;
     this.previousStack = this.computeStack();
   }
 
@@ -82,43 +82,10 @@ export class SyncAggregator implements Aggregator {
         this.predictUpcomingTransitionStateUpdate();
 
       if (upcomingTransitionStateUpdate) {
-        this.autoUpdateTask.schedule(upcomingTransitionStateUpdate.timestamp);
+        this.updateScheduler.schedule(async () => {
+          this.updateStack();
+        });
       }
     }
-  }
-}
-
-class DynamicallyScheduledTask {
-  private task: () => Promise<void>;
-  private scheduleId: number | null;
-
-  constructor(task: () => Promise<void>) {
-    this.task = task;
-    this.scheduleId = null;
-  }
-
-  schedule(timestamp: number): void {
-    if (this.scheduleId !== null) {
-      clearTimeout(this.scheduleId);
-      this.scheduleId = null;
-    }
-
-    const timeoutId = setTimeout(
-      () => {
-        if (this.scheduleId !== timeoutId) return;
-
-        this.scheduleId = null;
-
-        if (Date.now() < timestamp) {
-          this.schedule(timestamp);
-          return;
-        }
-
-        this.task();
-      },
-      Math.max(0, timestamp - Date.now()),
-    );
-
-    this.scheduleId = timeoutId;
   }
 }
