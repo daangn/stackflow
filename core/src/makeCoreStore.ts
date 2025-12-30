@@ -73,11 +73,13 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
     options.handlers?.onInitialActivityNotFound?.();
   }
 
-  const aggregator: Aggregator = new SyncAggregator(
-    [...initialRemainingEvents, ...initialPushedEvents],
-    new ScheduledPublisher(new SequentialScheduler(new Mutex())),
-    new SwitchScheduler(new Mutex()),
-  );
+  const aggregator: Aggregator = new SyncAggregator({
+    initialEvents: [...initialRemainingEvents, ...initialPushedEvents],
+    changePublisher: new ScheduledPublisher(
+      new SequentialScheduler(new Mutex()),
+    ),
+    updateScheduler: new SwitchScheduler(new Mutex()),
+  });
 
   aggregator.subscribeChanges((effects) => {
     triggerPostEffectHooks(effects, pluginInstances, actions);

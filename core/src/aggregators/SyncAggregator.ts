@@ -1,36 +1,37 @@
-import { produceEffects } from "produceEffects";
 import { aggregate } from "../aggregate";
 import type { Effect } from "../Effect";
 import type { DomainEvent } from "../event-types";
+import { produceEffects } from "../produceEffects";
 import type { Stack } from "../Stack";
+import { delay } from "../utils/delay";
 import type { Publisher } from "../utils/publishers/Publisher";
 import type { Scheduler } from "../utils/schedulers/Scheduler";
 import type { Aggregator } from "./Aggregator";
 
 export class SyncAggregator implements Aggregator {
   private events: DomainEvent[];
+  private latestStackSnapshot: Stack;
   private changePublisher: Publisher<{ effects: Effect[]; stack: Stack }>;
   private updateScheduler: Scheduler;
-  private previousStack: Stack;
 
-  constructor(
-    events: DomainEvent[],
-    changePublisher: Publisher<{ effects: Effect[]; stack: Stack }>,
-    updateScheduler: Scheduler,
-  ) {
-    this.events = events;
-    this.changePublisher = changePublisher;
-    this.updateScheduler = updateScheduler;
-    this.previousStack = this.computeStack();
+  constructor(options: {
+    initialEvents: DomainEvent[];
+    changePublisher: Publisher<{ effects: Effect[]; stack: Stack }>;
+    updateScheduler: Scheduler;
+  }) {
+    this.events = options.initialEvents;
+    this.latestStackSnapshot = aggregate(this.events, Date.now());
+    this.changePublisher = options.changePublisher;
+    this.updateScheduler = options.updateScheduler;
   }
 
   getStack(): Stack {
-    return this.previousStack;
+    return this.latestStackSnapshot;
   }
 
   dispatchEvent(event: DomainEvent): void {
     this.events.push(event);
-    this.updateStack();
+    this.updateSnapshot();
   }
 
   subscribeChanges(
@@ -41,15 +42,41 @@ export class SyncAggregator implements Aggregator {
     });
   }
 
-  private computeStack(): Stack {
-    return aggregate(this.events, Date.now());
+  private updateSnapshot(): void {
+    const previousSnapshot = this.latestStackSnapshot;
+    const currentSnapshot = aggregate(this.events, Date.now());
+    const effects = produceEffects(previousSnapshot, currentSnapshot);
+
+    if (effects.length > 0) {
+      this.latestStackSnapshot = currentSnapshot;
+      this.changePublisher.publish({
+        effects,
+        stack: this.latestStackSnapshot,
+      });
+    }
+
+    const earliestUpcomingTransitionStateUpdate =
+      this.calculateEarliestUpcomingTransitionStateUpdate();
+
+    if (earliestUpcomingTransitionStateUpdate) {
+      this.updateScheduler.schedule(async (options) => {
+        await delay(
+          earliestUpcomingTransitionStateUpdate.timestamp - Date.now(),
+          { signal: options?.signal },
+        );
+
+        if (options?.signal?.aborted) return;
+
+        this.updateSnapshot();
+      });
+    }
   }
 
-  private predictUpcomingTransitionStateUpdate(): {
+  private calculateEarliestUpcomingTransitionStateUpdate(): {
     event: DomainEvent;
     timestamp: number;
   } | null {
-    const activeActivities = this.previousStack.activities.filter(
+    const activeActivities = this.latestStackSnapshot.activities.filter(
       (activity) =>
         activity.transitionState === "enter-active" ||
         activity.transitionState === "exit-active",
@@ -66,26 +93,5 @@ export class SyncAggregator implements Aggregator {
           timestamp: mostRecentlyActivatedActivity.estimatedTransitionEnd,
         }
       : null;
-  }
-
-  private updateStack(): void {
-    const previousStack = this.previousStack;
-    const currentStack = this.computeStack();
-    const effects = produceEffects(previousStack, currentStack);
-
-    if (effects.length > 0) {
-      this.changePublisher.publish({ effects, stack: currentStack });
-
-      this.previousStack = currentStack;
-
-      const upcomingTransitionStateUpdate =
-        this.predictUpcomingTransitionStateUpdate();
-
-      if (upcomingTransitionStateUpdate) {
-        this.updateScheduler.schedule(async () => {
-          this.updateStack();
-        });
-      }
-    }
   }
 }

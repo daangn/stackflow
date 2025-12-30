@@ -15,7 +15,12 @@ export class Mutex {
         reject(getAbortReason(signal));
       };
       const lockWaiter = (lockHandle: LockHandle) => {
-        resolve(lockHandle);
+        if (signal?.aborted) {
+          reject(getAbortReason(signal));
+          lockHandle.release();
+        } else {
+          resolve(lockHandle);
+        }
 
         signal?.removeEventListener("abort", abortHandler);
       };
