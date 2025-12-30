@@ -41,9 +41,7 @@
     }
   },
   "dependencies": {
-    "disposablestack": "^1.1.7",
-    "react-fast-compare": "^3.2.2",
-    "suppressed-error": "^1.0.3"
+    "react-fast-compare": "^3.2.2"
   },
   "devDependencies": {
     "@stackflow/esbuild-config": "^1.0.3",
