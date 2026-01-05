@@ -87,7 +87,9 @@ function renderStructuredActivityComponent(
   params: {},
 ): ReactNode {
   const { layout, loading, errorHandler } = structuredActivityComponent;
-  const ContentComponent = getContentComponent(structuredActivityComponent);
+  const { Component: ContentComponent } = getContentComponent(
+    structuredActivityComponent,
+  );
 
   const wrappers: Array<(node: ReactNode) => ReactNode> = [
     (node) =>
