@@ -1463,4 +1463,158 @@ describe("historySyncPlugin", () => {
      */
     expect(queryResponse.data.hello).toEqual("world");
   });
+
+  test("historySyncPlugin - uses the initially entered route pattern among multiple patterns", async () => {
+    history = createMemoryHistory({
+      initialEntries: ["/foo"],
+    });
+
+    const coreStore = stackflow({
+      activityNames: ["Home"],
+      plugins: [
+        historySyncPlugin({
+          history,
+          routes: {
+            Home: ["/", "/foo", "/bar", "/baz"],
+          },
+          fallbackActivity: () => "Home",
+        }),
+      ],
+    });
+
+    actions = makeActionsProxy({
+      actions: coreStore.actions,
+    });
+
+    expect(path(history.location)).toEqual("/foo");
+
+    await actions.push({
+      activityId: "a1",
+      activityName: "Home",
+      activityParams: {},
+    });
+
+    expect(path(history.location)).toEqual("/foo/");
+  });
+
+  test("historySyncPlugin - uses the corresponding pattern when entering with a different route pattern", async () => {
+    history = createMemoryHistory({
+      initialEntries: ["/bar"],
+    });
+
+    const coreStore = stackflow({
+      activityNames: ["Home", "Article"],
+      plugins: [
+        historySyncPlugin({
+          history,
+          routes: {
+            Home: ["/", "/foo", "/bar", "/baz"],
+            Article: "/articles/:articleId",
+          },
+          fallbackActivity: () => "Home",
+        }),
+      ],
+    });
+
+    actions = makeActionsProxy({
+      actions: coreStore.actions,
+    });
+
+    expect(path(history.location)).toEqual("/bar");
+
+    await actions.push({
+      activityId: "a1",
+      activityName: "Article",
+      activityParams: {
+        articleId: "123",
+      },
+    });
+
+    expect(path(history.location)).toEqual("/articles/123/");
+
+    history.back();
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    expect(path(history.location)).toEqual("/bar/");
+  });
+
+  test("historySyncPlugin - maintains the initially entered route pattern even during replace", async () => {
+    history = createMemoryHistory({
+      initialEntries: ["/baz"],
+    });
+
+    const coreStore = stackflow({
+      activityNames: ["Home", "Article"],
+      plugins: [
+        historySyncPlugin({
+          history,
+          routes: {
+            Home: ["/", "/foo", "/bar", "/baz"],
+            Article: "/articles/:articleId",
+          },
+          fallbackActivity: () => "Home",
+        }),
+      ],
+    });
+
+    actions = makeActionsProxy({
+      actions: coreStore.actions,
+    });
+
+    expect(path(history.location)).toEqual("/baz");
+
+    await actions.push({
+      activityId: "a1",
+      activityName: "Article",
+      activityParams: {
+        articleId: "123",
+      },
+    });
+
+    expect(path(history.location)).toEqual("/articles/123/");
+
+    history.back();
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    expect(path(history.location)).toEqual("/baz/");
+  });
+
+  test("historySyncPlugin - each activity maintains its own route pattern when entered with different patterns", async () => {
+    history = createMemoryHistory({
+      initialEntries: ["/foo"],
+    });
+
+    const coreStore = stackflow({
+      activityNames: ["Home", "SecondHome"],
+      plugins: [
+        historySyncPlugin({
+          history,
+          routes: {
+            Home: ["/", "/foo", "/bar"],
+            SecondHome: ["/second", "/second-foo", "/second-bar"],
+          },
+          fallbackActivity: () => "Home",
+        }),
+      ],
+    });
+
+    actions = makeActionsProxy({
+      actions: coreStore.actions,
+    });
+
+    expect(path(history.location)).toEqual("/foo");
+
+    await actions.push({
+      activityId: "s1",
+      activityName: "SecondHome",
+      activityParams: {},
+    });
+
+    expect(path(history.location)).toEqual("/second/");
+
+    history.back();
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    expect(path(history.location)).toEqual("/foo/");
+  });
 });
