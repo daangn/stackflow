@@ -97,6 +97,20 @@ export function historySyncPlugin<
 
   const activityRoutes = sortActivityRoutes(normalizeActivityRouteMap(routes));
 
+  const findMatchingRoute = (activityName: string, path?: string) => {
+    if (path) {
+      // Try to find route that matches both activity name and path
+      const matchByPath = activityRoutes.find((route) => {
+        if (route.activityName !== activityName) return false;
+        const template = makeTemplate(route, options.urlPatternOptions);
+        return template.parse(path) !== null;
+      });
+      if (matchByPath) return matchByPath;
+    }
+    // Fallback to first route with matching activity name
+    return activityRoutes.find((r) => r.activityName === activityName)!;
+  };
+
   return () => {
     let pushFlag = 0;
     let silentFlag = false;
@@ -322,7 +336,15 @@ export function historySyncPlugin<
                 ).parse(currentPath) ??
                 urlSearchParamsToMap(pathToUrl(currentPath).searchParams),
               activityContext: {
-                path: currentPath,
+                path: makeTemplate(
+                  targetActivityRoute,
+                  options.urlPatternOptions,
+                ).fill(
+                  makeTemplate(
+                    targetActivityRoute,
+                    options.urlPatternOptions,
+                  ).parse(currentPath) ?? {},
+                ),
                 lazyActivityComponentRenderContext: {
                   shouldRenderImmediately: true,
                 },
@@ -342,9 +364,10 @@ export function historySyncPlugin<
         const stack = getStack();
         const rootActivity = stack.activities[0];
 
-        const match = activityRoutes.find(
-          (r) => r.activityName === rootActivity.name,
-        )!;
+        const activityPath = rootActivity.context && "path" in rootActivity.context
+          ? (rootActivity.context.path as string)
+          : undefined;
+        const match = findMatchingRoute(rootActivity.name, activityPath);
         const template = makeTemplate(match, options.urlPatternOptions);
 
         const lastStep = last(rootActivity.steps);
@@ -505,10 +528,10 @@ export function historySyncPlugin<
           return;
         }
 
-        const match = activityRoutes.find(
-          (r) => r.activityName === activity.name,
-        )!;
-
+        const activityPath = activity.context && "path" in activity.context
+          ? (activity.context.path as string)
+          : undefined;
+        const match = findMatchingRoute(activity.name, activityPath);
         const template = makeTemplate(match, options.urlPatternOptions);
 
         requestHistoryTick(() => {
@@ -529,10 +552,10 @@ export function historySyncPlugin<
           return;
         }
 
-        const match = activityRoutes.find(
-          (r) => r.activityName === activity.name,
-        )!;
-
+        const activityPath = activity.context && "path" in activity.context
+          ? (activity.context.path as string)
+          : undefined;
+        const match = findMatchingRoute(activity.name, activityPath);
         const template = makeTemplate(match, options.urlPatternOptions);
 
         requestHistoryTick(() => {
@@ -553,10 +576,10 @@ export function historySyncPlugin<
           return;
         }
 
-        const match = activityRoutes.find(
-          (r) => r.activityName === activity.name,
-        )!;
-
+        const activityPath = activity.context && "path" in activity.context
+          ? (activity.context.path as string)
+          : undefined;
+        const match = findMatchingRoute(activity.name, activityPath);
         const template = makeTemplate(match, options.urlPatternOptions);
 
         requestHistoryTick(() => {
@@ -576,10 +599,10 @@ export function historySyncPlugin<
           return;
         }
 
-        const match = activityRoutes.find(
-          (r) => r.activityName === activity.name,
-        )!;
-
+        const activityPath = activity.context && "path" in activity.context
+          ? (activity.context.path as string)
+          : undefined;
+        const match = findMatchingRoute(activity.name, activityPath);
         const template = makeTemplate(match, options.urlPatternOptions);
 
         requestHistoryTick(() => {
