@@ -32,9 +32,6 @@ import type { HistoryEntry, RouteLike } from "./RouteLike";
 import { RoutesProvider } from "./RoutesContext";
 import { sortActivityRoutes } from "./sortActivityRoutes";
 
-const SECOND = 1000;
-const MINUTE = 60 * SECOND;
-
 type ConfigHistorySync = {
   makeTemplate: typeof makeTemplate;
   urlPatternOptions?: UrlPatternOptions;
