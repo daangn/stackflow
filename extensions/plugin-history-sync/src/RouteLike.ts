@@ -9,7 +9,13 @@ export type Route<ComponentType> = {
   decode?: (
     params: Record<string, string>,
   ) => ComponentType extends ActivityComponentType<infer U> ? U : {};
-  defaultHistory?: (params: Record<string, string>) => HistoryEntry[];
+  defaultHistory?: (
+    params: Record<string, string>,
+  ) => HistoryEntry[] | DefaultHistoryDescriptor;
+};
+
+export type DefaultHistoryDescriptor = {
+  entries: HistoryEntry[];
   skipDefaultHistorySetupTransition?: boolean;
 };
 
@@ -29,3 +35,22 @@ export type RouteLike<ComponentType> =
   | string[]
   | Route<ComponentType>
   | Route<ComponentType>[];
+
+export function interpretDefaultHistoryOption(
+  option:
+    | ((
+        params: Record<string, string>,
+      ) => HistoryEntry[] | DefaultHistoryDescriptor)
+    | undefined,
+  params: Record<string, string>,
+): DefaultHistoryDescriptor {
+  if (!option) return { entries: [] };
+
+  const entiresOrDescriptor = option(params);
+
+  if (Array.isArray(entiresOrDescriptor)) {
+    return { entries: entiresOrDescriptor };
+  }
+
+  return entiresOrDescriptor;
+}

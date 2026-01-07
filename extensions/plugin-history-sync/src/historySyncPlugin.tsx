@@ -28,7 +28,11 @@ import type { NavigationProcess } from "./NavigationProcess/NavigationProcess";
 import { SerialNavigationProcess } from "./NavigationProcess/SerialNavigationProcess";
 import { normalizeActivityRouteMap } from "./normalizeActivityRouteMap";
 import { Publisher } from "./Publisher";
-import type { HistoryEntry, RouteLike } from "./RouteLike";
+import {
+  type HistoryEntry,
+  interpretDefaultHistoryOption,
+  type RouteLike,
+} from "./RouteLike";
 import { RoutesProvider } from "./RoutesContext";
 import { sortActivityRoutes } from "./sortActivityRoutes";
 
@@ -252,8 +256,10 @@ export function historySyncPlugin<
           ...searchParams,
           ...pathParams,
         };
-        const defaultHistory =
-          targetActivityRoute.defaultHistory?.(params) ?? [];
+        const defaultHistory = interpretDefaultHistoryOption(
+          targetActivityRoute.defaultHistory,
+          params,
+        );
         const historyEntryToEvents = ({
           activityName,
           activityParams,
@@ -310,10 +316,10 @@ export function historySyncPlugin<
           },
         });
 
-        if (targetActivityRoute.skipDefaultHistorySetupTransition) {
+        if (defaultHistory.skipDefaultHistorySetupTransition) {
           initialSetupProcess = new SerialNavigationProcess([
             () => [
-              ...defaultHistory.flatMap((historyEntry) =>
+              ...defaultHistory.entries.flatMap((historyEntry) =>
                 historyEntryToEvents(historyEntry).map((event) => {
                   if (event.name !== "Pushed") return event;
 
@@ -337,9 +343,8 @@ export function historySyncPlugin<
             ],
           ]);
         } else {
-          //@TODO: Initial push must be marked as skipEnterActiveState: true
           initialSetupProcess = new SerialNavigationProcess([
-            ...defaultHistory.map((historyEntry) => () => {
+            ...defaultHistory.entries.map((historyEntry) => () => {
               return historyEntryToEvents(historyEntry).map((event) => {
                 if (event.name !== "Pushed") return event;
 
