@@ -337,15 +337,12 @@ export function historySyncPlugin<
             ],
           ]);
         } else {
+          //@TODO: Initial push must be marked as skipEnterActiveState: true
           initialSetupProcess = new SerialNavigationProcess([
-            ...defaultHistory.map((historyEntry, index) => () => {
-              let isFirstPush = true;
-
+            ...defaultHistory.map((historyEntry) => () => {
               return historyEntryToEvents(historyEntry).map((event) => {
                 if (event.name !== "Pushed") return event;
-                const skipEnterActiveState = index === 0 && isFirstPush;
 
-                isFirstPush = false;
                 activityActivationMonitors.push(
                   new DefaultHistoryActivityActivationMonitor(
                     event.activityId,
@@ -355,7 +352,6 @@ export function historySyncPlugin<
 
                 return {
                   ...event,
-                  skipEnterActiveState,
                 };
               });
             }),
@@ -364,13 +360,24 @@ export function historySyncPlugin<
         }
 
         const now = Date.now();
-
-        return initialSetupProcess
+        const initialEvents = initialSetupProcess
           .captureNavigationOpportunity(null)
           .map((event, index, array) => ({
             ...event,
             eventDate: now - (array.length - index),
           }));
+        const firstPushEvent = initialEvents.find(
+          (event) => event.name === "Pushed",
+        );
+
+        return initialEvents.map((event) => {
+          if (event.id !== firstPushEvent?.id) return event;
+
+          return {
+            ...event,
+            skipEnterActiveState: true,
+          };
+        });
       },
       onInit({ actions: { getStack, dispatchEvent, push, stepPush } }) {
         const stack = getStack();
