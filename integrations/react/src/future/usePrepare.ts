@@ -4,7 +4,10 @@ import type {
 } from "@stackflow/config";
 import { useCallback } from "react";
 import { useActivityComponentMap } from "../__internal__/ActivityComponentMapProvider";
-import { isStructuredActivityComponent } from "../__internal__/StructuredActivityComponentType";
+import {
+  getContentComponent,
+  isStructuredActivityComponent,
+} from "../__internal__/StructuredActivityComponentType";
 import { useDataLoader } from "./loader";
 import { useConfig } from "./useConfig";
 
@@ -47,7 +50,9 @@ export function usePrepare(): Prepare {
         isStructuredActivityComponent(activityComponentMap[activityName]) &&
         typeof activityComponentMap[activityName].content === "function"
       ) {
-        prefetchTasks.push(activityComponentMap[activityName].content());
+        prefetchTasks.push(
+          getContentComponent(activityComponentMap[activityName]).preload(),
+        );
       }
 
       await Promise.all(prefetchTasks);

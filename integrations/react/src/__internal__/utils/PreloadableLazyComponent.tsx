@@ -2,6 +2,7 @@ import type { ComponentType } from "react";
 import {
   inspect,
   PromiseStatus,
+  resolve,
   type SyncInspectablePromise,
 } from "./SyncInspectablePromise";
 import { useThenable } from "./useThenable";
@@ -30,6 +31,14 @@ export function preloadableLazyComponent<P extends {}>(
 
   return {
     Component,
-    preload: async () => void (await cachedLoad()),
+    preload: () => {
+      const componentPromise = cachedLoad();
+
+      if (inspect(componentPromise).status === PromiseStatus.FULFILLED) {
+        return resolve(undefined);
+      }
+
+      return componentPromise.then(() => undefined);
+    },
   };
 }

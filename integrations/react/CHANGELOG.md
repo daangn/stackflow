@@ -1,5 +1,15 @@
 # @stackflow/react
 
+## 1.12.0
+
+### Minor Changes
+
+- 57fd2da: Improve scheduling of Activity preparation tasks by marking them as passive effects.
+
+### Patch Changes
+
+- 4b894ae: Make structured activities defined by other than the standard constructor can be preloaded and cached
+
 ## 1.11.1
 
 ### Patch Changes

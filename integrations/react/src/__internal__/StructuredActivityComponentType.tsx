@@ -34,26 +34,8 @@ export function structuredActivityComponent<
   loading?: Loading<InferActivityParams<ActivityName>>;
   errorHandler?: ErrorHandler<InferActivityParams<ActivityName>>;
 }): StructuredActivityComponentType<InferActivityParams<ActivityName>> {
-  const content = options.content;
-  let cachedContent: SyncInspectablePromise<{
-    default: Content<InferActivityParams<ActivityName>>;
-  }> | null = null;
-
   return {
     ...options,
-    content:
-      typeof content !== "function"
-        ? content
-        : () => {
-            if (
-              !cachedContent ||
-              inspect(cachedContent).status === PromiseStatus.REJECTED
-            ) {
-              cachedContent = resolve(content());
-            }
-
-            return cachedContent;
-          },
     [STRUCTURED_ACTIVITY_COMPONENT_TYPE]: true,
   };
 }
@@ -80,17 +62,17 @@ export function content<ActivityName extends RegisteredActivityName>(
 
 const ContentComponentMap = new WeakMap<
   StructuredActivityComponentType<{}>,
-  Content<{}>["component"]
+  { Component: Content<{}>["component"]; preload: () => Promise<void> }
 >();
 
 export function getContentComponent(
   structuredActivityComponent: StructuredActivityComponentType<{}>,
-): Content<{}>["component"] {
+): { Component: Content<{}>["component"]; preload: () => Promise<void> } {
   if (ContentComponentMap.has(structuredActivityComponent)) {
     return ContentComponentMap.get(structuredActivityComponent)!;
   }
 
-  const { Component: ContentComponent } = preloadableLazyComponent(() => {
+  const { Component, preload } = preloadableLazyComponent(() => {
     const content = structuredActivityComponent.content;
     const contentPromise = resolve(
       typeof content === "function" ? content() : { default: content },
@@ -112,9 +94,9 @@ export function getContentComponent(
     );
   });
 
-  ContentComponentMap.set(structuredActivityComponent, ContentComponent);
+  ContentComponentMap.set(structuredActivityComponent, { Component, preload });
 
-  return ContentComponent;
+  return { Component, preload };
 }
 
 export interface Layout<P extends {}> {

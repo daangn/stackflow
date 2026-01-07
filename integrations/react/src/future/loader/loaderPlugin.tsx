@@ -4,7 +4,10 @@ import type {
 } from "@stackflow/config";
 import type { ActivityComponentType } from "../../__internal__/ActivityComponentType";
 import type { StackflowReactPlugin } from "../../__internal__/StackflowReactPlugin";
-import { isStructuredActivityComponent } from "../../__internal__/StructuredActivityComponentType";
+import {
+  getContentComponent,
+  isStructuredActivityComponent,
+} from "../../__internal__/StructuredActivityComponentType";
 import { isPromiseLike } from "../../__internal__/utils/isPromiseLike";
 import {
   inspect,
@@ -114,7 +117,7 @@ function createBeforeRouteHandler<
     const lazyComponentPromise = resolve(
       isStructuredActivityComponent(matchActivityComponent) &&
         typeof matchActivityComponent.content === "function"
-        ? matchActivityComponent.content()
+        ? getContentComponent(matchActivityComponent).preload()
         : "_load" in matchActivityComponent &&
             typeof matchActivityComponent._load === "function"
           ? matchActivityComponent._load()
