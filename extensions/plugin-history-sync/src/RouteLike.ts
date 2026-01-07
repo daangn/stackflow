@@ -46,11 +46,11 @@ export function interpretDefaultHistoryOption(
 ): DefaultHistoryDescriptor {
   if (!option) return { entries: [] };
 
-  const entiresOrDescriptor = option(params);
+  const entriesOrDescriptor = option(params);
 
-  if (Array.isArray(entiresOrDescriptor)) {
-    return { entries: entiresOrDescriptor };
+  if (Array.isArray(entriesOrDescriptor)) {
+    return { entries: entriesOrDescriptor };
   }
 
-  return entiresOrDescriptor;
+  return entriesOrDescriptor;
 }
