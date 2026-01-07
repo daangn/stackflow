@@ -10,6 +10,7 @@ export type Route<ComponentType> = {
     params: Record<string, string>,
   ) => ComponentType extends ActivityComponentType<infer U> ? U : {};
   defaultHistory?: (params: Record<string, string>) => HistoryEntry[];
+  skipDefaultHistorySetupTransition?: boolean;
 };
 
 export type HistoryEntry = {

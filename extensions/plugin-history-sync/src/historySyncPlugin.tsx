@@ -61,7 +61,6 @@ type HistorySyncPluginOptions<T, K extends Extract<keyof T, string>> = (
   useHash?: boolean;
   history?: History;
   urlPatternOptions?: UrlPatternOptions;
-  skipDefaultHistorySetupTransition?: boolean;
 };
 
 export function historySyncPlugin<
@@ -311,7 +310,7 @@ export function historySyncPlugin<
           },
         });
 
-        if (options.skipDefaultHistorySetupTransition) {
+        if (targetActivityRoute.skipDefaultHistorySetupTransition) {
           initialSetupProcess = new SerialNavigationProcess([
             () => [
               ...defaultHistory.flatMap((historyEntry) =>
