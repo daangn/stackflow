@@ -5,15 +5,15 @@ import type { Stack } from "./Stack";
 import { omit } from "./utils";
 
 export function produceEffects(prevOutput: Stack, nextOutput: Stack): Effect[] {
-  const output: Effect[] = [];
-
   if (isEqual(prevOutput, nextOutput)) {
     return [];
   }
 
-  output.push({
-    _TAG: "%SOMETHING_CHANGED%",
-  });
+  const output: Effect[] = [
+    {
+      _TAG: "%SOMETHING_CHANGED%",
+    },
+  ];
 
   const isPaused =
     prevOutput.globalTransitionState !== "paused" &&
