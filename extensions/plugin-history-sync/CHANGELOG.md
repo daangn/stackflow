@@ -1,5 +1,11 @@
 # @stackflow/plugin-history-sync
 
+## 1.9.0
+
+### Minor Changes
+
+- a7d0c01: Add an option to skip default history setup transition
+
 ## 1.8.1
 
 ### Patch Changes
