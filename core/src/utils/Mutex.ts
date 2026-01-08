@@ -5,11 +5,11 @@ export class Mutex {
 
   acquire(options?: { signal?: AbortSignal }): Promise<LockHandle> {
     return new Promise((resolve, reject) => {
-      this.sequentialScheduler.schedule(
-        () =>
-          new Promise<void>((release) => resolve({ release: () => release() })),
-        { signal: options?.signal },
-      );
+      this.sequentialScheduler
+        .schedule(() => new Promise<void>((release) => resolve({ release })), {
+          signal: options?.signal,
+        })
+        .catch(reject);
     });
   }
 }
