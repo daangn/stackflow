@@ -25,9 +25,8 @@ export function makeActivitiesReducer({
      * Push new activity to activities
      */
     Pushed(activities: Activity[], event: PushedEvent): Activity[] {
-      const estimatedTransitionEnd =
-        (resumedAt ?? event.eventDate) + transitionDuration;
-      const isTransitionDone = estimatedTransitionEnd <= now;
+      const isTransitionDone =
+        (resumedAt ?? event.eventDate) + transitionDuration <= now;
 
       const transitionState: ActivityTransitionState =
         event.skipEnterActiveState || isTransitionDone
@@ -38,7 +37,7 @@ export function makeActivitiesReducer({
 
       return [
         ...activities.slice(0, reservedIndex),
-        makeActivityFromEvent(event, transitionState, estimatedTransitionEnd),
+        makeActivityFromEvent(event, transitionState),
         ...activities.slice(reservedIndex + 1),
       ];
     },
@@ -47,9 +46,8 @@ export function makeActivitiesReducer({
      * Replace activity at reservedIndex with new activity
      */
     Replaced(activities: Activity[], event: ReplacedEvent): Activity[] {
-      const estimatedTransitionEnd =
-        (resumedAt ?? event.eventDate) + transitionDuration;
-      const isTransitionDone = estimatedTransitionEnd <= now;
+      const isTransitionDone =
+        (resumedAt ?? event.eventDate) + transitionDuration <= now;
 
       const reservedIndex = findNewActivityIndex(activities, event);
 
@@ -62,7 +60,7 @@ export function makeActivitiesReducer({
 
       return [
         ...activities.slice(0, reservedIndex),
-        makeActivityFromEvent(event, transitionState, estimatedTransitionEnd),
+        makeActivityFromEvent(event, transitionState),
         ...activities.slice(reservedIndex + 1),
       ];
     },

@@ -30,16 +30,15 @@ export function makeActivityReducer(context: {
       ...activity,
       exitedBy: event,
       transitionState: "exit-done",
-      estimatedTransitionEnd: context.resumedAt ?? event.eventDate,
     }),
 
     /**
      * Change transition state to exit-done or exit-active depending on skipExitActiveState
      */
     Popped: (activity: Activity, event: PoppedEvent): Activity => {
-      const estimatedTransitionEnd =
-        (context.resumedAt ?? event.eventDate) + context.transitionDuration;
-      const isTransitionDone = estimatedTransitionEnd <= context.now;
+      const isTransitionDone =
+        (context.resumedAt ?? event.eventDate) + context.transitionDuration <=
+        context.now;
 
       const transitionState: ActivityTransitionState =
         event.skipExitActiveState || isTransitionDone
@@ -50,7 +49,6 @@ export function makeActivityReducer(context: {
         ...activity,
         exitedBy: event,
         transitionState,
-        estimatedTransitionEnd,
         params:
           transitionState === "exit-done"
             ? activity.steps[0].params
