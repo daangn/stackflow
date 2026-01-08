@@ -1,17 +1,11 @@
-import { getAbortReason } from "utils/getAbortReason";
-import { sumSignals } from "utils/sumSignals";
-import type { Mutex } from "../Mutex";
+import { getAbortReason } from "../getAbortReason";
+import { sumSignals } from "../sumSignals";
 import type { Scheduler } from "./Scheduler";
 import { SequentialScheduler } from "./SequentialScheduler";
 
 export class SwitchScheduler implements Scheduler {
-  private sequentialScheduler: SequentialScheduler;
-  private previousTaskController: AbortController | null;
-
-  constructor(executionLock: Mutex) {
-    this.sequentialScheduler = new SequentialScheduler(executionLock);
-    this.previousTaskController = null;
-  }
+  private sequentialScheduler: SequentialScheduler = new SequentialScheduler();
+  private previousTaskController: AbortController | null = null;
 
   async schedule<T>(
     task: (options?: { signal?: AbortSignal }) => Promise<T>,
