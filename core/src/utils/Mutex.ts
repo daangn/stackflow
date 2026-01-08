@@ -10,7 +10,7 @@ export class Mutex {
       const abortHandler = () => {
         if (!signal) return;
 
-        this.lockWaitQueue = this.lockWaitQueue.filter((h) => h !== resolve);
+        this.lockWaitQueue = this.lockWaitQueue.filter((h) => h !== lockWaiter);
 
         reject(getAbortReason(signal));
       };
