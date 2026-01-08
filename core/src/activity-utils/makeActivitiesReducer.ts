@@ -26,7 +26,7 @@ export function makeActivitiesReducer({
      */
     Pushed(activities: Activity[], event: PushedEvent): Activity[] {
       const isTransitionDone =
-        (resumedAt ?? event.eventDate) + transitionDuration <= now;
+        now - (resumedAt ?? event.eventDate) >= transitionDuration;
 
       const transitionState: ActivityTransitionState =
         event.skipEnterActiveState || isTransitionDone
@@ -47,7 +47,7 @@ export function makeActivitiesReducer({
      */
     Replaced(activities: Activity[], event: ReplacedEvent): Activity[] {
       const isTransitionDone =
-        (resumedAt ?? event.eventDate) + transitionDuration <= now;
+        now - (resumedAt ?? event.eventDate) >= transitionDuration;
 
       const reservedIndex = findNewActivityIndex(activities, event);
 
