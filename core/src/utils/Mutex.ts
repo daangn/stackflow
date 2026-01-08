@@ -1,52 +1,15 @@
-import { getAbortReason } from "./getAbortReason";
+import { SequentialScheduler } from "./schedulers/SequentialScheduler";
 
 export class Mutex {
-  private lockWaitQueue: ((lockHandle: LockHandle) => void)[] = [];
-  private waitQueueFlushTask: Promise<void> | null = null;
+  private sequentialScheduler: SequentialScheduler = new SequentialScheduler();
 
   acquire(options?: { signal?: AbortSignal }): Promise<LockHandle> {
     return new Promise((resolve, reject) => {
-      const signal = options?.signal;
-      const abortHandler = () => {
-        if (!signal) return;
-
-        this.lockWaitQueue = this.lockWaitQueue.filter((h) => h !== lockWaiter);
-
-        reject(getAbortReason(signal));
-      };
-      const lockWaiter = (lockHandle: LockHandle) => {
-        if (signal?.aborted) {
-          reject(getAbortReason(signal));
-          lockHandle.release();
-        } else {
-          resolve(lockHandle);
-        }
-
-        signal?.removeEventListener("abort", abortHandler);
-      };
-
-      if (signal?.aborted) throw getAbortReason(signal);
-
-      signal?.addEventListener("abort", abortHandler, { once: true });
-
-      this.lockWaitQueue.push(lockWaiter);
-      this.scheduleWaitQueueFlush();
-    });
-  }
-
-  private scheduleWaitQueueFlush(): void {
-    if (this.waitQueueFlushTask) return;
-
-    this.waitQueueFlushTask = Promise.resolve().then(async () => {
-      do {
-        const nextWaiter = this.lockWaitQueue.shift();
-
-        if (!nextWaiter) break;
-
-        await new Promise<void>((resolve) => nextWaiter({ release: resolve }));
-      } while (this.lockWaitQueue.length > 0);
-
-      this.waitQueueFlushTask = null;
+      this.sequentialScheduler.schedule(
+        () =>
+          new Promise<void>((release) => resolve({ release: () => release() })),
+        { signal: options?.signal },
+      );
     });
   }
 }
