@@ -4,7 +4,6 @@ import type { DomainEvent, PushedEvent, StepPushedEvent } from "./event-types";
 import { makeEvent } from "./event-utils";
 import type { StackflowActions, StackflowPlugin } from "./interfaces";
 import { divideBy, once } from "./utils";
-import { Mutex } from "./utils/Mutex";
 import { makeActions } from "./utils/makeActions";
 import { ScheduledPublisher } from "./utils/publishers/ScheduledPublisher";
 import { SequentialScheduler } from "./utils/schedulers/SequentialScheduler";
@@ -74,11 +73,14 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
   }
 
   const aggregator: Aggregator = new SyncAggregator({
+    changePublisher: new ScheduledPublisher(new SequentialScheduler()),
+    updateScheduler: new SwitchScheduler({
+      scheduler: new SequentialScheduler(),
+    }),
+    updateErrorReporter: (error) => {
+      console.error(error);
+    },
     initialEvents: [...initialRemainingEvents, ...initialPushedEvents],
-    changePublisher: new ScheduledPublisher(
-      new SequentialScheduler(new Mutex()),
-    ),
-    updateScheduler: new SwitchScheduler(new Mutex()),
   });
 
   aggregator.subscribeChanges((effects) => {
