@@ -1,3 +1,4 @@
+import { head } from "lodash";
 import { SwitchScheduler } from "utils/schedulers/SwitchScheduler";
 import { aggregate } from "../aggregate";
 import type { Effect } from "../Effect";
@@ -8,32 +9,24 @@ import type { Stack } from "../Stack";
 import { delay } from "../utils/delay";
 import { getAbortReason } from "../utils/getAbortReason";
 import type { Publisher } from "../utils/publishers/Publisher";
-import type { Scheduler } from "../utils/schedulers/Scheduler";
 import type { Aggregator } from "./Aggregator";
 
 export class SyncAggregator implements Aggregator {
   private changePublisher: Publisher<{ effects: Effect[]; stack: Stack }>;
   private updateScheduler: SwitchScheduler;
+  private updateErrorReporter: (error: unknown) => void;
   private events: DomainEvent[];
   private latestStackSnapshot: Stack | null;
 
-  private static UpdateOverridedError =
-    class UpdateOverridedError extends Error {
-      constructor() {
-        super("a new update is scheduled");
-      }
-    };
-
   constructor(options: {
     changePublisher: Publisher<{ effects: Effect[]; stack: Stack }>;
-    updateScheduler: Scheduler;
+    updateScheduler: SwitchScheduler;
+    updateErrorReporter: (error: unknown) => void;
     initialEvents: DomainEvent[];
   }) {
     this.changePublisher = options.changePublisher;
-    this.updateScheduler = new SwitchScheduler({
-      SwitchException: SyncAggregator.UpdateOverridedError,
-      scheduler: options.updateScheduler,
-    });
+    this.updateScheduler = options.updateScheduler;
+    this.updateErrorReporter = options.updateErrorReporter;
     this.events = options.initialEvents;
     this.latestStackSnapshot = null;
   }
@@ -65,14 +58,19 @@ export class SyncAggregator implements Aggregator {
   }
 
   private applyUpdate(update: () => void): void {
-    const previousSnapshot = this.readSnapshot();
+    try {
+      const previousSnapshot = this.readSnapshot();
+      const projectionTime = Date.now();
 
-    update();
-    this.latestStackSnapshot = aggregate(this.events, Date.now());
-    this.flushChanges(
-      produceEffects(previousSnapshot, this.latestStackSnapshot),
-    );
-    this.scheduleTransitionStateUpdates();
+      update();
+      this.latestStackSnapshot = aggregate(this.events, projectionTime);
+      this.flushChanges(
+        produceEffects(previousSnapshot, this.latestStackSnapshot),
+      );
+      this.scheduleTransitionStateUpdates(projectionTime);
+    } catch (error) {
+      this.updateErrorReporter(error);
+    }
   }
 
   private flushChanges(effects: Effect[]): void {
@@ -81,14 +79,16 @@ export class SyncAggregator implements Aggregator {
     this.changePublisher.publish({ effects, stack: this.readSnapshot() });
   }
 
-  private scheduleTransitionStateUpdates(): void {
+  private scheduleTransitionStateUpdates(projectionTime: number): void {
     const ongoingTransitions = projectToOngoingTransitions(
       this.events,
-      Date.now(),
+      projectionTime,
     );
-    const nextToComplete = ongoingTransitions.sort(
-      (a, b) => a.estimatedTransitionEnd - b.estimatedTransitionEnd,
-    )[0];
+    const nextToComplete = head(
+      ongoingTransitions.sort(
+        (a, b) => a.estimatedTransitionEnd - b.estimatedTransitionEnd,
+      ),
+    );
 
     if (!nextToComplete) return;
 
@@ -104,12 +104,12 @@ export class SyncAggregator implements Aggregator {
       })
       .catch((error) => {
         if (
-          error instanceof SyncAggregator.UpdateOverridedError ||
+          error instanceof SwitchScheduler.SwitchException ||
           (error instanceof DOMException && error.name === "AbortError")
         )
           return;
 
-        throw error;
+        this.updateErrorReporter(error);
       });
   }
 }
