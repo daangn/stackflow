@@ -3,17 +3,16 @@ import { sumSignals } from "../sumSignals";
 import type { Scheduler } from "./Scheduler";
 
 export class SwitchScheduler implements Scheduler {
-  private SwitchException: new (
-    message?: string,
-  ) => Error;
   private scheduler: Scheduler;
   private previousTaskController: AbortController | null = null;
 
+  static SwitchException = class SwitchException extends Error {
+    override name = "SwitchException";
+  };
+
   constructor(options: {
-    SwitchException: new (message?: string) => Error;
     scheduler: Scheduler;
   }) {
-    this.SwitchException = options.SwitchException;
     this.scheduler = options.scheduler;
   }
 
@@ -30,7 +29,7 @@ export class SwitchScheduler implements Scheduler {
 
     if (this.previousTaskController) {
       this.previousTaskController.abort(
-        new this.SwitchException("a new task is scheduled"),
+        new SwitchScheduler.SwitchException("a new task is scheduled"),
       );
     }
 
