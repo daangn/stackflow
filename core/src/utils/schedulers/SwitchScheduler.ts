@@ -36,7 +36,7 @@ export class SwitchScheduler implements Scheduler {
 
     this.previousTaskController = controller;
 
-    return await this.scheduler.schedule(task, {
+    return this.scheduler.schedule(task, {
       signal,
     });
   }
