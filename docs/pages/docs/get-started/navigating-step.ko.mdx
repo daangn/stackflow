@@ -22,7 +22,7 @@ import { Callout, Link } from "nextra-theme-docs";
 `stackflow.ts`에서 생성할 수 있는 `useStepFlow()` 훅을 사용해요. 해당 훅 내에 `stepPush()` 함수를 통해 다음과 같이 새 스텝을 쌓을 수 있어요.
 
 ```tsx showLineNumbers filename="Article.tsx" copy /stepPush/
-import { ActivityComponentType } from "@stackflow/react";
+import type { ActivityComponentType } from "@stackflow/react";
 import { AppScreen } from "@stackflow/plugin-basic-ui";
 import { useStepFlow } from "./stackflow";
 
@@ -59,7 +59,7 @@ export default Article;
 `useStepFlow()`의 `stepReplace()` 함수를 활용하면 현재 스텝을 교체할 수 있어요.
 
 ```tsx showLineNumbers filename="Article.tsx" copy /stepReplace/
-import { ActivityComponentType } from "@stackflow/react";
+import type { ActivityComponentType } from "@stackflow/react";
 import { AppScreen } from "@stackflow/plugin-basic-ui";
 import { useStepFlow } from "./stackflow";
 
@@ -95,7 +95,7 @@ export default Article;
 `useStepFlow()`의 `stepPop()` 함수를 활용하면 현재 스텝을 삭제할 수 있어요.
 
 ```tsx showLineNumbers filename="Article.tsx" copy /stepPop/
-import { ActivityComponentType } from "@stackflow/react";
+import type { ActivityComponentType } from "@stackflow/react";
 import { AppScreen } from "@stackflow/plugin-basic-ui";
 import { useStepFlow } from "./stackflow";
 

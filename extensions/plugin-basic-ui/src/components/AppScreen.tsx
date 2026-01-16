@@ -11,6 +11,7 @@ import {
   useZIndexBase,
 } from "@stackflow/react-ui-core";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
+import clsx from "clsx";
 import { createContext, useContext, useMemo, useRef } from "react";
 import { useGlobalOptions } from "../basicUIPlugin";
 import type { GlobalVars } from "../basicUIPlugin.css";
@@ -48,6 +49,7 @@ export type AppScreenProps = Partial<
   preventSwipeBack?: boolean;
   CUPERTINO_ONLY_modalPresentationStyle?: "fullScreen";
   ANDROID_ONLY_activityEnterStyle?: "slideInLeft";
+  className?: string;
   children: React.ReactNode;
 };
 const AppScreen: React.FC<AppScreenProps> = ({
@@ -58,6 +60,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
   preventSwipeBack,
   CUPERTINO_ONLY_modalPresentationStyle,
   ANDROID_ONLY_activityEnterStyle,
+  className,
   children,
 }) => {
   const globalOptions = useGlobalOptions();
@@ -72,6 +75,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
   const paperRef = useRef<HTMLDivElement>(null);
   const edgeRef = useRef<HTMLDivElement>(null);
   const appBarRef = useRef<HTMLDivElement>(null);
+  const paperContentRef = useRef<HTMLDivElement>(null);
 
   const modalPresentationStyle =
     globalOptions.theme === "cupertino"
@@ -198,7 +202,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
     appBar?.onTopClick?.(e);
 
     if (!e.defaultPrevented) {
-      paperRef.current?.scroll({
+      paperContentRef.current?.scroll({
         top: 0,
         behavior: "smooth",
       });
@@ -206,7 +210,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
   };
 
   usePreventTouchDuringTransition({
-    appScreenRef,
+    ref: appScreenRef,
   });
 
   return (
@@ -214,7 +218,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
       value={useMemo(
         () => ({
           scroll({ top }) {
-            paperRef?.current?.scroll({
+            paperContentRef?.current?.scroll({
               top,
               behavior: "smooth",
             });
@@ -226,17 +230,22 @@ const AppScreen: React.FC<AppScreenProps> = ({
             appBar: zIndexAppBar,
           },
         }),
-        [paperRef, zIndexDim, zIndexPaper, zIndexEdge, zIndexAppBar],
+        [paperContentRef, zIndexDim, zIndexPaper, zIndexEdge, zIndexAppBar],
       )}
     >
       <div
         ref={appScreenRef}
-        className={css.appScreen({
-          transitionState:
-            transitionState === "enter-done" || transitionState === "exit-done"
-              ? transitionState
-              : lazyTransitionState,
-        })}
+        className={clsx(
+          css.appScreen({
+            hasAppBar,
+            transitionState:
+              transitionState === "enter-done" ||
+              transitionState === "exit-done"
+                ? transitionState
+                : lazyTransitionState,
+          }),
+          className,
+        )}
         style={assignInlineVars(
           compactMap({
             [globalVars.backgroundColor]: backgroundColor,
@@ -287,7 +296,12 @@ const AppScreen: React.FC<AppScreenProps> = ({
           data-part="paper"
           {...activityDataAttributes}
         >
-          <div className={css.paperContent({ hasAppBar })}>{children}</div>
+          <div
+            ref={paperContentRef}
+            className={css.paperContent({ hasAppBar })}
+          >
+            {children}
+          </div>
         </div>
         {!activity?.isRoot &&
           globalOptions.theme === "cupertino" &&

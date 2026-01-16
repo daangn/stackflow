@@ -17,4 +17,5 @@ export default withNextra({
 });
 
 import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
+
 initOpenNextCloudflareForDev();

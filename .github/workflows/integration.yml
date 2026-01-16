@@ -101,6 +101,7 @@ jobs:
   changeset:
     name: Check the status of Changesets
     runs-on: ubuntu-latest
+    if: github.head_ref != 'changeset-release/main'
     steps:
       - uses: actions/checkout@v4
         with:

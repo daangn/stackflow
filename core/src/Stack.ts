@@ -53,4 +53,5 @@ export type Stack = {
   transitionDuration: number;
   globalTransitionState: "idle" | "loading" | "paused";
   pausedEvents?: DomainEvent[];
+  events: DomainEvent[];
 };

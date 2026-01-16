@@ -1,5 +1,5 @@
-import type { Activity, ActivityTransitionState } from "../Stack";
 import type { PushedEvent, ReplacedEvent } from "../event-types";
+import type { Activity, ActivityTransitionState } from "../Stack";
 
 export function makeActivityFromEvent(
   event: PushedEvent | ReplacedEvent,

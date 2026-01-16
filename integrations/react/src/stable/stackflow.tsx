@@ -6,10 +6,7 @@ import type {
 } from "@stackflow/core";
 import { makeCoreStore, makeEvent } from "@stackflow/core";
 import { memo, useMemo } from "react";
-
-import type { ActivityComponentType } from "../__internal__/ActivityComponentType";
-import MainRenderer from "../__internal__/MainRenderer";
-import type { StackflowReactPlugin } from "../__internal__/StackflowReactPlugin";
+import { ActivityComponentMapProvider } from "../__internal__/ActivityComponentMapProvider";
 import {
   findActivityById,
   findLatestActiveActivity,
@@ -17,7 +14,10 @@ import {
   makeStepId,
 } from "../__internal__/activity";
 import { CoreProvider } from "../__internal__/core";
+import MainRenderer from "../__internal__/MainRenderer";
+import type { MonolithicActivityComponentType } from "../__internal__/MonolithicActivityComponentType";
 import { PluginsProvider } from "../__internal__/plugins";
+import type { StackflowReactPlugin } from "../__internal__/StackflowReactPlugin";
 import { isBrowser, makeRef } from "../__internal__/utils";
 import type { BaseActivities } from "./BaseActivities";
 import type { UseActionsOutputType } from "./useActions";
@@ -95,8 +95,8 @@ export type StackflowOutput<T extends BaseActivities> = {
     activityName: K,
   ) => UseStepActionsOutputType<
     T[K] extends
-      | ActivityComponentType<infer U>
-      | { component: ActivityComponentType<infer U> }
+      | MonolithicActivityComponentType<infer U>
+      | { component: MonolithicActivityComponentType<infer U> }
       ? U
       : {}
   >;
@@ -106,7 +106,7 @@ export type StackflowOutput<T extends BaseActivities> = {
    */
   addActivity: (options: {
     name: string;
-    component: ActivityComponentType<any>;
+    component: MonolithicActivityComponentType<any>;
     paramsSchema?: ActivityRegisteredEvent["activityParamsSchema"];
   }) => void;
 
@@ -136,11 +136,10 @@ export function stackflow<T extends BaseActivities>(
   const activityComponentMap = Object.entries(options.activities).reduce(
     (acc, [key, Activity]) => ({
       ...acc,
-      [key]:
-        "component" in Activity ? memo(Activity.component) : memo(Activity),
+      [key]: "component" in Activity ? Activity.component : Activity,
     }),
     {} as {
-      [key: string]: ActivityComponentType;
+      [key: string]: MonolithicActivityComponentType;
     },
   );
 
@@ -201,20 +200,24 @@ export function stackflow<T extends BaseActivities>(
         plugins,
         handlers: {
           onInitialActivityIgnored: (initialPushedEvents) => {
-            console.warn(
-              `Stackflow - Some plugin overrides an "initialActivity" option. The "initialActivity" option you set to "${
-                (initialPushedEvents[0] as PushedEvent).activityName
-              }" in the "stackflow" is ignored.`,
-            );
+            if (isBrowser()) {
+              console.warn(
+                `Stackflow - Some plugin overrides an "initialActivity" option. The "initialActivity" option you set to "${
+                  (initialPushedEvents[0] as PushedEvent).activityName
+                }" in the "stackflow" is ignored.`,
+              );
+            }
           },
           onInitialActivityNotFound: () => {
-            console.warn(
-              "Stackflow -" +
-                " There is no initial activity." +
-                " If you want to set the initial activity," +
-                " add the `initialActivity` option of the `stackflow()` function or" +
-                " add a plugin that sets the initial activity. (e.g. `@stackflow/plugin-history-sync`)",
-            );
+            if (isBrowser()) {
+              console.warn(
+                "Stackflow -" +
+                  " There is no initial activity." +
+                  " If you want to set the initial activity," +
+                  " add the `initialActivity` option of the `stackflow()` function or" +
+                  " add a plugin that sets the initial activity. (e.g. `@stackflow/plugin-history-sync`)",
+              );
+            }
           },
         },
       });
@@ -230,10 +233,9 @@ export function stackflow<T extends BaseActivities>(
     return (
       <PluginsProvider value={coreStore.pluginInstances}>
         <CoreProvider coreStore={coreStore}>
-          <MainRenderer
-            activityComponentMap={activityComponentMap}
-            initialContext={props.initialContext}
-          />
+          <ActivityComponentMapProvider value={activityComponentMap}>
+            <MainRenderer initialContext={props.initialContext} />
+          </ActivityComponentMapProvider>
         </CoreProvider>
       </PluginsProvider>
     );

@@ -1,5 +1,24 @@
 # @stackflow/plugin-history-sync
 
+## 1.9.0
+
+### Minor Changes
+
+- a7d0c01: Add an option to skip default history setup transition
+
+## 1.8.1
+
+### Patch Changes
+
+- 567352a: Fix SSR compatibility by adding getServerSnapshot parameter to useSyncExternalStore. This resolves the "Missing getServerSnapshot, which is required for server-rendered content" error in SSR environments.
+
+## 1.8.0
+
+### Minor Changes
+
+- f298988: Add `defaultHistory` route option to pre-seed stack for better deep link experiences
+- 83ee5ed: Expose stack initialization process status for users to disable logging or fetching while initialization transition
+
 ## 1.7.1
 
 ### Patch Changes

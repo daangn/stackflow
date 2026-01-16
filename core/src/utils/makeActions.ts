@@ -1,5 +1,4 @@
-import type { StackflowActions } from "../interfaces";
-import type { StackflowPlugin } from "../interfaces";
+import type { StackflowActions, StackflowPlugin } from "../interfaces";
 import { triggerPreEffectHook } from "./triggerPreEffectHooks";
 
 type ActionCreatorOptions = {

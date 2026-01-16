@@ -1,4 +1,3 @@
-import type { Activity, Stack } from "../Stack";
 import type {
   ActivityRegisteredEvent,
   DomainEvent,
@@ -6,6 +5,7 @@ import type {
   PausedEvent,
   ResumedEvent,
 } from "../event-types";
+import type { Stack } from "../Stack";
 import { findTargetActivityIndices } from "./findTargetActivityIndices";
 import { makeActivitiesReducer } from "./makeActivitiesReducer";
 import { makeActivityReducer } from "./makeActivityReducer";
@@ -80,20 +80,18 @@ function withActivitiesReducer<T extends DomainEvent>(
   };
 }
 
-function noop(stack: Stack) {
-  return stack;
+function noop(stack: Stack, event: DomainEvent) {
+  return { ...stack, events: [...stack.events, event] };
 }
 
-export function makeStackReducer(context: {
-  now: number;
-  resumedAt?: number;
-}) {
+export function makeStackReducer(context: { now: number; resumedAt?: number }) {
   return makeReducer({
     Initialized: withPauseReducer(
       withActivitiesReducer((stack: Stack, event: InitializedEvent): Stack => {
         return {
           ...stack,
           transitionDuration: event.transitionDuration,
+          events: [...stack.events, event],
         };
       }, context),
     ),
@@ -113,6 +111,7 @@ export function makeStackReducer(context: {
                   : null),
               },
             ],
+            events: [...stack.events, event],
           };
         },
         context,
@@ -123,13 +122,14 @@ export function makeStackReducer(context: {
         return {
           ...stack,
           globalTransitionState: "paused",
+          events: [...stack.events, event],
         };
       }, context),
     ),
     Resumed: withActivitiesReducer(
       (stack: Stack, event: ResumedEvent): Stack => {
         if (stack.globalTransitionState !== "paused" || !stack.pausedEvents) {
-          return stack;
+          return { ...stack, events: [...stack.events, event] };
         }
 
         const reducer = makeStackReducer({
@@ -138,10 +138,15 @@ export function makeStackReducer(context: {
         });
 
         const { pausedEvents, ...rest } = stack;
-        return pausedEvents.reduce(reducer, {
+        const resumedStack = pausedEvents.reduce(reducer, {
           ...rest,
           globalTransitionState: "idle",
         });
+
+        return {
+          ...resumedStack,
+          events: [...resumedStack.events, event],
+        };
       },
       context,
     ),

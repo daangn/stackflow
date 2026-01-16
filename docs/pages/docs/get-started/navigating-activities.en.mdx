@@ -14,7 +14,7 @@ If you have successfully registered an activity, it's time to navigate between a
 We use the `useFlow()` hook created in `stackflow.ts`. Through the `push()` function within this hook, we can stack a new activity as follows.
 
 ```tsx showLineNumbers filename="MyActivity.tsx" copy /push/
-import { ActivityComponentType } from "@stackflow/react";
+import type { ActivityComponentType } from "@stackflow/react";
 import { AppScreen } from "@stackflow/plugin-basic-ui";
 import { useFlow } from "./stackflow";
 
@@ -76,7 +76,7 @@ The third parameter of the `push()` function, additional options, includes the f
 Next, let's look at how to replace the current activity without adding a new activity to the stack. Using the `replace()` function from the `useFlow()` hook created in `stackflow.ts`, you can replace the current activity as follows.
 
 ```tsx showLineNumbers filename="MyActivity.tsx" copy /replace/
-import { ActivityComponentType } from "@stackflow/react";
+import type { ActivityComponentType } from "@stackflow/react";
 import { AppScreen } from "@stackflow/plugin-basic-ui";
 import { useFlow } from "./stackflow";
 
@@ -134,7 +134,7 @@ The third parameter of the `replace()` function, additional options, includes th
 Finally, let's look at how to delete the current activity and return to the previous activity. Using the `pop()` function from the `useFlow()` hook created in `stackflow.ts`, you can delete the current activity as follows.
 
 ```tsx showLineNumbers filename="Article.tsx" copy /pop/
-import { ActivityComponentType } from "@stackflow/react";
+import type { ActivityComponentType } from "@stackflow/react";
 import { AppScreen } from "@stackflow/plugin-basic-ui";
 import { useFlow } from "./stackflow";
 
@@ -169,23 +169,23 @@ const Article: ActivityComponentType<ArticleParams> = ({ params }) => {
 export default Article;
 ```
 
-`pop()` takes optional parameters for the number of stacks to pop and additional options. These parameters can be omitted, and default values will be used.
+`pop()` takes optional parameters for the number of activities to pop and additional options. These parameters can be omitted, and default values will be used.
 
 ```ts
-pop(); // pop a single stack
+pop(); // pop a single activity
 
-pop(3); // pop multiple stacks
+pop(3); // pop multiple activities
 
 pop({
   /* additional option */
-}); // pop a single stack with additional options
+}); // pop a single activity with additional options
 
 pop(3, {
   /* additional option */
-}); // pop multiple stacks with additional options
+}); // pop multiple activities with additional options
 ```
 
-The first parameter of the pop() function can specify the number of stacks to pop or define additional options. If the first parameter is used for the number of stacks, the second parameter can then be used to provide additional options.
+The first parameter of the pop() function can specify the number of activities to pop or define additional options. If the first parameter is used for the number of activities, the second parameter can then be used to provide additional options.
 
 The additional options include the following values.
 

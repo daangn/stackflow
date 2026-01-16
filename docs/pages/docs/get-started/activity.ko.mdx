@@ -21,7 +21,7 @@ import { APITable } from "../../../components/APITable";
 액티비티를 실제로 사용하기 위해서는 사용하기 전 `stackflow()` 함수에 등록이 필요해요. 액티비티는 `ActivityComponentType`이라는 타입으로 선언되는 리액트 컴포넌트에요.
 
 ```tsx showLineNumbers filename="MyActivity.tsx" copy
-import { ActivityComponentType } from "@stackflow/react";
+import type { ActivityComponentType } from "@stackflow/react";
 import { AppScreen } from "@stackflow/plugin-basic-ui";
 
 const MyActivity: ActivityComponentType = () => {
@@ -105,7 +105,7 @@ export const { Stack, useFlow } = stackflow({
 해당 액티비티가 사용될 때, 특정 파라미터가 필요한 경우가 있어요. 이런 경우 다음과 같이 액티비티의 Props로 해당 파라미터를 선언해요.
 
 ```tsx showLineNumbers filename="Article.tsx" copy
-import { ActivityComponentType } from "@stackflow/react";
+import type { ActivityComponentType } from "@stackflow/react";
 import { AppScreen } from "@stackflow/plugin-basic-ui";
 
 type ArticleParams = {

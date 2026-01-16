@@ -1,5 +1,11 @@
 # @stackflow/config
 
+## 1.2.2
+
+### Patch Changes
+
+- 29a0bb6: Remove data loader cache
+
 ## 1.2.1
 
 ### Patch Changes

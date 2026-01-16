@@ -1,5 +1,5 @@
-import type { Activity, ActivityTransitionState } from "../Stack";
 import type { DomainEvent, PushedEvent, ReplacedEvent } from "../event-types";
+import type { Activity, ActivityTransitionState } from "../Stack";
 import { findNewActivityIndex } from "./findNewActivityIndex";
 import { makeActivityFromEvent } from "./makeActivityFromEvent";
 import { makeReducer } from "./makeReducer";

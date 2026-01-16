@@ -1,8 +1,6 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.8.3/schema.json",
-  "organizeImports": {
-    "enabled": true
-  },
+  "$schema": "https://biomejs.dev/schemas/2.1.4/schema.json",
+  "assist": { "actions": { "source": { "organizeImports": "on" } } },
   "linter": {
     "enabled": true,
     "rules": {
@@ -28,7 +26,8 @@
       },
       "a11y": {
         "useKeyWithClickEvents": "off",
-        "noSvgWithoutTitle": "off"
+        "noSvgWithoutTitle": "off",
+        "noStaticElementInteractions": "off"
       },
       "performance": {
         "noAccumulatingSpread": "off"
@@ -45,17 +44,18 @@
     "useIgnoreFile": true
   },
   "files": {
-    "ignore": [
-      ".pnp.cjs",
-      ".pnp.loader.mjs",
-      ".changeset/**",
-      ".github/**",
-      ".vscode/**",
-      ".yarn/**",
-      ".next/**",
-      "__generated__/**",
-      ".ultra.cache.json",
-      "package.json"
+    "includes": [
+      "**",
+      "!**/.pnp.cjs",
+      "!**/.pnp.loader.mjs",
+      "!**/.changeset/**",
+      "!**/.github/**",
+      "!**/.vscode/**",
+      "!**/.yarn/**",
+      "!**/.next/**",
+      "!**/__generated__/**",
+      "!**/.ultra.cache.json",
+      "!**/package.json"
     ]
   }
 }

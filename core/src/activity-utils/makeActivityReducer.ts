@@ -1,4 +1,3 @@
-import type { Activity, ActivityTransitionState } from "../Stack";
 import type {
   DomainEvent,
   PoppedEvent,
@@ -7,6 +6,7 @@ import type {
   StepPushedEvent,
   StepReplacedEvent,
 } from "../event-types";
+import type { Activity, ActivityTransitionState } from "../Stack";
 import { last } from "../utils";
 import { makeReducer } from "./makeReducer";
 

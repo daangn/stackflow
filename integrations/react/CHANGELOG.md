@@ -1,5 +1,78 @@
 # @stackflow/react
 
+## 1.12.0
+
+### Minor Changes
+
+- 57fd2da: Improve scheduling of Activity preparation tasks by marking them as passive effects.
+
+### Patch Changes
+
+- 4b894ae: Make structured activities defined by other than the standard constructor can be preloaded and cached
+
+## 1.11.1
+
+### Patch Changes
+
+- 43cd76c: Attach state tracking instruments to original promise when creating SyncInspectablePromises with Promises
+
+## 1.11.0
+
+### Minor Changes
+
+- 3cb6e33: utilize synchronously inspectable promise to optimize suspense fallback rendering
+
+### Patch Changes
+
+- 29a0bb6: Remove data loader cache
+
+## 1.10.0
+
+### Minor Changes
+
+- f159bd4: Add an option for customizing error boundary in ErrorHandler of structured activity components
+
+## 1.9.0
+
+### Minor Changes
+
+- 7907371: Export StaticActivityComponentType type hepler
+
+## 1.8.0
+
+### Minor Changes
+
+- ead4e78: Add ActivityComponentType paramterized by params
+
+## 1.7.0
+
+### Minor Changes
+
+- f298988: `StructuredActivityComponentType` is added.
+
+  Structured activity components are components modeling activity view while exposing major features of an activity.
+  Allowing developers easily customize user experience of an activity view, it even allow stackflow to perform various kinds of optimizations.
+
+## 1.6.0
+
+### Minor Changes
+
+- d906597: Add prefetch API for lazy activity component and loader data.
+  - A hook `usePrepare()` which returns `prepare(activityName[, activityParams])` is added for navigation warmup.
+  - A hook `useActivityPreparation(activities)` for preparing navigations inside a component is added.
+
+## 1.5.3
+
+### Patch Changes
+
+- 2dc74ad: fix(react): conditionally log warnings in browser environment
+
+## 1.5.2
+
+### Patch Changes
+
+- b9dc68a: fix(react): remove unused dependencies
+
 ## 1.5.1
 
 ### Patch Changes

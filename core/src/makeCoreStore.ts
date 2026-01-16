@@ -1,11 +1,10 @@
 import isEqual from "react-fast-compare";
-
-import type { Stack } from "./Stack";
 import { aggregate } from "./aggregate";
 import type { DomainEvent, PushedEvent, StepPushedEvent } from "./event-types";
 import { makeEvent } from "./event-utils";
 import type { StackflowActions, StackflowPlugin } from "./interfaces";
 import { produceEffects } from "./produceEffects";
+import type { Stack } from "./Stack";
 import { divideBy, once } from "./utils";
 import { makeActions } from "./utils/makeActions";
 import { triggerPostEffectHooks } from "./utils/triggerPostEffectHooks";

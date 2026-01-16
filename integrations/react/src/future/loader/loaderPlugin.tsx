@@ -3,6 +3,16 @@ import type {
   RegisteredActivityName,
 } from "@stackflow/config";
 import type { StackflowReactPlugin } from "../../__internal__/StackflowReactPlugin";
+import {
+  getContentComponent,
+  isStructuredActivityComponent,
+} from "../../__internal__/StructuredActivityComponentType";
+import { isPromiseLike } from "../../__internal__/utils/isPromiseLike";
+import {
+  inspect,
+  PromiseStatus,
+  resolve,
+} from "../../__internal__/utils/SyncInspectablePromise";
 import type { ActivityComponentType } from "../ActivityComponentType";
 import type { StackflowInput } from "../stackflow";
 
@@ -11,67 +21,67 @@ export function loaderPlugin<
   R extends {
     [activityName in RegisteredActivityName]: ActivityComponentType<any>;
   },
->(input: StackflowInput<T, R>): StackflowReactPlugin {
-  return () => ({
-    key: "plugin-loader",
-    overrideInitialEvents({ initialEvents, initialContext }) {
-      if (initialEvents.length === 0) {
-        return [];
-      }
-
-      return initialEvents.map((event) => {
-        if (event.name !== "Pushed") {
-          return event;
+>(
+  input: StackflowInput<T, R>,
+  loadData: (activityName: string, activityParams: {}) => unknown,
+): StackflowReactPlugin {
+  return () => {
+    return {
+      key: "plugin-loader",
+      overrideInitialEvents({ initialEvents, initialContext }) {
+        if (initialEvents.length === 0) {
+          return [];
         }
 
-        if (initialContext.initialLoaderData) {
-          return {
-            ...event,
-            activityContext: {
-              ...event.activityContext,
-              loaderData: initialContext.initialLoaderData,
-            },
-          };
-        }
+        return initialEvents.map((event) => {
+          if (event.name !== "Pushed") {
+            return event;
+          }
 
-        const { activityName, activityParams } = event;
+          if (initialContext.initialLoaderData) {
+            return {
+              ...event,
+              activityContext: {
+                ...event.activityContext,
+                loaderData: resolve(initialContext.initialLoaderData),
+              },
+            };
+          }
 
-        const matchActivity = input.config.activities.find(
-          (activity) => activity.name === activityName,
-        );
+          const { activityName, activityParams } = event;
 
-        const loader = matchActivity?.loader;
+          const matchActivity = input.config.activities.find(
+            (activity) => activity.name === activityName,
+          );
 
-        if (!loader) {
-          return event;
-        }
+          const loader = matchActivity?.loader;
 
-        const loaderData = loader({
-          params: activityParams,
-          config: input.config,
-        });
+          if (!loader) {
+            return event;
+          }
 
-        if (loaderData instanceof Promise) {
+          const loaderData = resolve(loadData(activityName, activityParams));
+
           Promise.allSettled([loaderData]).then(([loaderDataPromiseResult]) => {
             printLoaderDataPromiseError({
               promiseResult: loaderDataPromiseResult,
               activityName: matchActivity.name,
             });
           });
-        }
 
-        return {
-          ...event,
-          activityContext: {
-            ...event.activityContext,
-            loaderData,
-          },
-        };
-      });
-    },
-    onBeforePush: createBeforeRouteHandler(input),
-    onBeforeReplace: createBeforeRouteHandler(input),
-  });
+          return {
+            ...event,
+            activityContext: {
+              ...event.activityContext,
+              loaderData,
+            },
+          };
+        });
+      },
+      onBeforePush: createBeforeRouteHandler(input, loadData),
+      onBeforeReplace: createBeforeRouteHandler(input, loadData),
+    };
+  };
 }
 
 type OnBeforeRoute = NonNullable<
@@ -83,7 +93,10 @@ function createBeforeRouteHandler<
   R extends {
     [activityName in RegisteredActivityName]: ActivityComponentType<any>;
   },
->(input: StackflowInput<T, R>): OnBeforeRoute {
+>(
+  input: StackflowInput<T, R>,
+  loadData: (activityName: string, activityParams: {}) => unknown,
+): OnBeforeRoute {
   return ({
     actionParams,
     actions: { overrideActionParams, pause, resume },
@@ -99,35 +112,43 @@ function createBeforeRouteHandler<
       return;
     }
 
-    const loaderData = matchActivity.loader?.({
-      params: activityParams,
-      config: input.config,
-    });
+    const loaderData =
+      matchActivity.loader && resolve(loadData(activityName, activityParams));
+    const lazyComponentPromise = resolve(
+      isStructuredActivityComponent(matchActivityComponent) &&
+        typeof matchActivityComponent.content === "function"
+        ? getContentComponent(matchActivityComponent).preload()
+        : "_load" in matchActivityComponent &&
+            typeof matchActivityComponent._load === "function"
+          ? matchActivityComponent._load()
+          : undefined,
+    );
+    const shouldRenderImmediately = (activityContext as any)
+      ?.lazyActivityComponentRenderContext?.shouldRenderImmediately;
 
-    const loaderDataPromise =
-      loaderData instanceof Promise ? loaderData : undefined;
-    const lazyComponentPromise =
-      "_load" in matchActivityComponent
-        ? matchActivityComponent._load?.()
-        : undefined;
-
-    if (loaderDataPromise || lazyComponentPromise) {
+    if (
+      ((loaderData && inspect(loaderData).status === PromiseStatus.PENDING) ||
+        inspect(lazyComponentPromise).status === PromiseStatus.PENDING) &&
+      (shouldRenderImmediately !== true ||
+        "loading" in matchActivityComponent === false)
+    ) {
       pause();
+
+      Promise.allSettled([loaderData, lazyComponentPromise])
+        .then(([loaderDataPromiseResult, lazyComponentPromiseResult]) => {
+          printLoaderDataPromiseError({
+            promiseResult: loaderDataPromiseResult,
+            activityName: matchActivity.name,
+          });
+          printLazyComponentPromiseError({
+            promiseResult: lazyComponentPromiseResult,
+            activityName: matchActivity.name,
+          });
+        })
+        .finally(() => {
+          resume();
+        });
     }
-    Promise.allSettled([loaderDataPromise, lazyComponentPromise])
-      .then(([loaderDataPromiseResult, lazyComponentPromiseResult]) => {
-        printLoaderDataPromiseError({
-          promiseResult: loaderDataPromiseResult,
-          activityName: matchActivity.name,
-        });
-        printLazyComponentPromiseError({
-          promiseResult: lazyComponentPromiseResult,
-          activityName: matchActivity.name,
-        });
-      })
-      .finally(() => {
-        resume();
-      });
 
     overrideActionParams({
       ...actionParams,

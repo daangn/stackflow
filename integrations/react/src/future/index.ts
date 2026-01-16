@@ -1,29 +1,19 @@
-/**
- * Main
- */
-export * from "./stackflow";
-
-/**
- * Types
- */
-export * from "../__internal__/StackflowReactPlugin";
-export * from "./ActivityComponentType";
-export * from "./StackComponentType";
-export * from "./Actions";
-export * from "./StepActions";
-
-/**
- * Hooks
- */
-export * from "../__internal__/stack/useStack";
+export type { ActivityComponentType as ActivityComponentTypeByParams } from "../__internal__/ActivityComponentType";
 export * from "../__internal__/activity/useActivity";
-export * from "./useActivityParams";
-export * from "./loader/useLoaderData";
-export * from "./useFlow";
-export * from "./useStepFlow";
-export * from "./useConfig";
-
-/**
- * Utils
- */
+export * from "../__internal__/StackflowReactPlugin";
+export * from "../__internal__/StructuredActivityComponentType";
+export * from "../__internal__/stack/useStack";
+export * from "./Actions";
+export * from "./ActivityComponentType";
 export * from "./lazy";
+export * from "./loader/useLoaderData";
+export * from "./StackComponentType";
+export * from "./StaticActivityComponentType";
+export * from "./StepActions";
+export * from "./stackflow";
+export * from "./useActivityParams";
+export * from "./useActivityPreparation";
+export * from "./useConfig";
+export * from "./useFlow";
+export * from "./usePrepare";
+export * from "./useStepFlow";

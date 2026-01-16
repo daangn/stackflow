@@ -1,5 +1,16 @@
 # @stackflow/docs
 
+## 2.1.0
+
+### Minor Changes
+
+- 89813a6: Add LLMs.txt and changelog section
+
+### Patch Changes
+
+- Updated dependencies [a136f96]
+  - @stackflow/plugin-basic-ui@1.17.0
+
 ## 2.0.3
 
 ### Patch Changes

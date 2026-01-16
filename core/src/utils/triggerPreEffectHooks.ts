@@ -1,7 +1,6 @@
 import type { DomainEvent } from "../event-types";
 import type { BaseDomainEvent } from "../event-types/_base";
-import type { StackflowPlugin } from "../interfaces";
-import type { StackflowActions } from "../interfaces";
+import type { StackflowActions, StackflowPlugin } from "../interfaces";
 import type { StackflowPluginPreEffectHook } from "../interfaces/StackflowPluginHook";
 
 type PreEffectHookResult<T> = {
