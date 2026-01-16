@@ -2,7 +2,9 @@ import type {
   InferActivityParams,
   RegisteredActivityName,
 } from "@stackflow/config";
-import type { ActivityComponentType as ActivityComponentTypeInternal } from "../__internal__/ActivityComponentType";
+import type { MonolithicActivityComponentType } from "../__internal__/MonolithicActivityComponentType";
+import type { StructuredActivityComponentType } from "../__internal__/StructuredActivityComponentType";
 
 export type ActivityComponentType<ActivityName extends RegisteredActivityName> =
-  ActivityComponentTypeInternal<InferActivityParams<ActivityName>>;
+  | MonolithicActivityComponentType<InferActivityParams<ActivityName>>
+  | StructuredActivityComponentType<InferActivityParams<ActivityName>>;
