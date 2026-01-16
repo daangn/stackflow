@@ -75,5 +75,3 @@ To contribute new features or options to **Stackflow**, please check [Contributi
 ## License
 
 MIT
-
-test
