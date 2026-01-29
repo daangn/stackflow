@@ -46,7 +46,7 @@ export interface UrlPatternOptions {
 }
 
 export function makeTemplate<T>(
-  { path, decode }: Route<T>,
+  { path, decode, encode }: Route<T>,
   urlPatternOptions?: UrlPatternOptions,
 ) {
   const pattern = new UrlPattern(`${path}(/)`, urlPatternOptions);
@@ -58,11 +58,14 @@ export function makeTemplate<T>(
     : (pattern as any).names.length;
 
   return {
-    fill(params: { [key: string]: string | undefined }) {
-      const pathname = pattern.stringify(params);
+    fill(params: { [key: string]: any }) {
+      const encodedParams: { [key: string]: string | undefined } = encode
+        ? encode(params as Parameters<typeof encode>[0])
+        : params;
+      const pathname = pattern.stringify(encodedParams);
       const pathParams = pattern.match(pathname);
 
-      const searchParamsMap = { ...params };
+      const searchParamsMap = { ...encodedParams };
 
       Object.keys(pathParams).forEach((key) => {
         delete searchParamsMap[key];

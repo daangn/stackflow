@@ -9,6 +9,11 @@ export type Route<ComponentType> = {
   decode?: (
     params: Record<string, string>,
   ) => ComponentType extends ActivityComponentType<infer U> ? U : {};
+  encode?: (
+    params: ComponentType extends ActivityComponentType<infer U>
+      ? U
+      : Record<string, any>,
+  ) => Record<string, string | undefined>;
   defaultHistory?: (
     params: Record<string, string>,
   ) => HistoryEntry[] | DefaultHistoryDescriptor;
