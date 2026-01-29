@@ -1,5 +1,4 @@
 import type {
-  DomainEvent,
   PoppedEvent,
   ReplacedEvent,
   StepPoppedEvent,
@@ -107,7 +106,7 @@ export function makeActivityReducer(context: {
      * Pop the last step
      * If there are params in the previous step, set them as the new params
      */
-    StepPopped: (activity: Activity, event: StepPoppedEvent): Activity => {
+    StepPopped: (activity: Activity, _: StepPoppedEvent): Activity => {
       activity.steps.pop();
 
       const beforeActivityParams = last(activity.steps)?.params;
