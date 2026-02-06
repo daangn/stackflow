@@ -7,10 +7,33 @@ export type ActivityLoader<ActivityName extends RegisteredActivityName> = (
   args: ActivityLoaderArgs<ActivityName>,
 ) => any;
 
+export interface LoaderOptions<ActivityName extends RegisteredActivityName> {
+  shouldInvalidate?: (args: {
+    prevActivity: Activity;
+    currentActivity: Activity;
+  }) => boolean;
+}
+
 export function loader<ActivityName extends RegisteredActivityName>(
   loaderFn: (args: ActivityLoaderArgs<ActivityName>) => any,
-): ActivityLoader<ActivityName> {
-  return (args: ActivityLoaderArgs<ActivityName>) => loaderFn(args);
+): ActivityLoader<ActivityName>;
+
+export function loader<ActivityName extends RegisteredActivityName>(
+  loaderFn: (args: ActivityLoaderArgs<ActivityName>) => any,
+  options: LoaderOptions<ActivityName>,
+): ActivityLoaderConfigObject<ActivityName>;
+
+export function loader<ActivityName extends RegisteredActivityName>(
+  loaderFn: (args: ActivityLoaderArgs<ActivityName>) => any,
+  options?: LoaderOptions<ActivityName>,
+): ActivityLoader<ActivityName> | ActivityLoaderConfigObject<ActivityName> {
+  if (options) {
+    return {
+      fn: loaderFn,
+      shouldInvalidate: options.shouldInvalidate,
+    };
+  }
+  return loaderFn;
 }
 
 export interface ActivityLoaderConfigObject<

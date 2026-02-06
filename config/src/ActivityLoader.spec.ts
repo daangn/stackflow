@@ -1,5 +1,5 @@
 import type { Activity } from "@stackflow/core";
-import { getLoaderFn, getShouldInvalidate } from "./ActivityLoader";
+import { getLoaderFn, getShouldInvalidate, loader } from "./ActivityLoader";
 
 describe("getLoaderFn", () => {
   it("should return undefined when loaderConfig is undefined", () => {
@@ -58,5 +58,41 @@ describe("getShouldInvalidate", () => {
       fn: () => Promise.resolve({ data: "test" }),
     };
     expect(getShouldInvalidate(loaderConfig)).toBeUndefined();
+  });
+});
+
+describe("loader", () => {
+  it("should return the function directly when no options provided", () => {
+    const loaderFn = () => Promise.resolve({ data: "test" });
+    const result = loader(loaderFn);
+    expect(result).toBe(loaderFn);
+  });
+
+  it("should return ActivityLoaderConfigObject when options provided", () => {
+    const loaderFn = () => Promise.resolve({ data: "test" });
+    const shouldInvalidateFn = ({
+      prevActivity,
+      currentActivity,
+    }: {
+      prevActivity: Activity;
+      currentActivity: Activity;
+    }) => !prevActivity.isActive && currentActivity.isActive;
+
+    const result = loader(loaderFn, { shouldInvalidate: shouldInvalidateFn });
+
+    expect(result).toEqual({
+      fn: loaderFn,
+      shouldInvalidate: shouldInvalidateFn,
+    });
+  });
+
+  it("should work with getLoaderFn and getShouldInvalidate", () => {
+    const loaderFn = () => Promise.resolve({ data: "test" });
+    const shouldInvalidateFn = () => true;
+
+    const config = loader(loaderFn, { shouldInvalidate: shouldInvalidateFn });
+
+    expect(getLoaderFn(config)).toBe(loaderFn);
+    expect(getShouldInvalidate(config)).toBe(shouldInvalidateFn);
   });
 });
