@@ -7,6 +7,9 @@ export const CoreActionsContext = createContext<CoreStore["actions"]>(
   null as any,
 );
 export const CoreStateContext = createContext<Stack>(null as any);
+export const CoreSubscribeContext = createContext<CoreStore["subscribe"]>(
+  null as any,
+);
 
 export interface CoreProviderProps {
   coreStore: CoreStore;
@@ -27,7 +30,9 @@ export const CoreProvider: React.FC<CoreProviderProps> = ({
   return (
     <CoreStateContext.Provider value={deferredStack}>
       <CoreActionsContext.Provider value={coreStore.actions}>
-        {children}
+        <CoreSubscribeContext.Provider value={coreStore.subscribe}>
+          {children}
+        </CoreSubscribeContext.Provider>
       </CoreActionsContext.Provider>
     </CoreStateContext.Provider>
   );

@@ -5,6 +5,7 @@ import type {
   InferActivityParams,
   RegisteredActivityName,
 } from "@stackflow/config";
+import { getLoaderFn } from "@stackflow/config";
 import {
   type CoreStore,
   makeCoreStore,
@@ -66,12 +67,12 @@ export function stackflow<
       throw new Error(`Activity ${activityName} is not registered.`);
     }
 
-    const loaderData = activityConfig.loader?.({
-      params: activityParams,
-      config: input.config,
-    });
+    const loader = getLoaderFn(activityConfig.loader);
+    if (loader) {
+      return loader({ params: activityParams, config: input.config });
+    }
 
-    return loaderData;
+    return undefined;
   };
   const plugins = [
     ...(input.plugins ?? [])

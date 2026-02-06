@@ -2,13 +2,14 @@ import type {
   ActivityDefinition,
   RegisteredActivityName,
 } from "@stackflow/config";
+import { getLoaderFn, getShouldInvalidate } from "@stackflow/config";
+import { ActivityLoaderProvider } from "./ActivityLoaderProvider";
 import type { ActivityComponentType } from "../../__internal__/ActivityComponentType";
 import type { StackflowReactPlugin } from "../../__internal__/StackflowReactPlugin";
 import {
   getContentComponent,
   isStructuredActivityComponent,
 } from "../../__internal__/StructuredActivityComponentType";
-import { isPromiseLike } from "../../__internal__/utils/isPromiseLike";
 import {
   inspect,
   PromiseStatus,
@@ -28,6 +29,29 @@ export function loaderPlugin<
   return () => {
     return {
       key: "plugin-loader",
+      wrapActivity({ activity }) {
+        const matchActivity = input.config.activities.find(
+          (a) => a.name === activity.name,
+        );
+
+        if (!matchActivity?.loader) {
+          return <>{activity.render()}</>;
+        }
+
+        const shouldInvalidate = getShouldInvalidate(matchActivity.loader);
+        const initialLoaderData = (activity.context as any)?.loaderData;
+
+        return (
+          <ActivityLoaderProvider
+            activity={activity}
+            initialLoaderData={initialLoaderData}
+            loadData={loadData}
+            shouldInvalidate={shouldInvalidate}
+          >
+            {activity.render()}
+          </ActivityLoaderProvider>
+        );
+      },
       overrideInitialEvents({ initialEvents, initialContext }) {
         if (initialEvents.length === 0) {
           return [];
@@ -54,9 +78,9 @@ export function loaderPlugin<
             (activity) => activity.name === activityName,
           );
 
-          const loader = matchActivity?.loader;
+          const loader = getLoaderFn(matchActivity?.loader);
 
-          if (!loader) {
+          if (!loader || !matchActivity) {
             return event;
           }
 
@@ -112,8 +136,8 @@ function createBeforeRouteHandler<
       return;
     }
 
-    const loaderData =
-      matchActivity.loader && resolve(loadData(activityName, activityParams));
+    const loaderFn = getLoaderFn(matchActivity.loader);
+    const loaderData = loaderFn && resolve(loadData(activityName, activityParams));
     const lazyComponentPromise = resolve(
       isStructuredActivityComponent(matchActivityComponent) &&
         typeof matchActivityComponent.content === "function"
