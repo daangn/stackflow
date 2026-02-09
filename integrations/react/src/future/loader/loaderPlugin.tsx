@@ -9,6 +9,7 @@ import {
   getContentComponent,
   isStructuredActivityComponent,
 } from "../../__internal__/StructuredActivityComponentType";
+import { isPromiseLike } from "../../__internal__/utils/isPromiseLike";
 import {
   inspect,
   PromiseStatus,
@@ -67,7 +68,9 @@ export function loaderPlugin<
               ...event,
               activityContext: {
                 ...event.activityContext,
-                loaderData: resolve(initialContext.initialLoaderData),
+                loaderData: isPromiseLike(initialContext.initialLoaderData)
+                  ? resolve(initialContext.initialLoaderData)
+                  : initialContext.initialLoaderData,
               },
             };
           }
@@ -84,7 +87,11 @@ export function loaderPlugin<
             return event;
           }
 
-          const loaderData = resolve(loadData(activityName, activityParams));
+          const loaderDataRaw = loadData(activityName, activityParams);
+
+          const loaderData = isPromiseLike(loaderDataRaw)
+            ? resolve(loaderDataRaw)
+            : loaderDataRaw;
 
           Promise.allSettled([loaderData]).then(([loaderDataPromiseResult]) => {
             printLoaderDataPromiseError({
