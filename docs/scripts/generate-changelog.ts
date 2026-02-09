@@ -191,7 +191,8 @@ async function organizeChangelogEntries(
     (release) =>
       release.type !== "none" &&
       packages.packages.some(
-        (pkg) => pkg.packageJson.name === release.name && !pkg.packageJson.private,
+        (pkg) =>
+          pkg.packageJson.name === release.name && !pkg.packageJson.private,
       ),
   );
 
