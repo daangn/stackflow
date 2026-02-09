@@ -21,7 +21,7 @@ export function useStyleEffect<T extends HTMLElement>({
   effectDeps,
 }: {
   styleName: string;
-  refs: Array<React.RefObject<T>>;
+  refs: Array<React.RefObject<T | null>>;
   effect?: (params: {
     activityTransitionState: ActivityTransitionState;
     refs: Array<React.RefObject<T>>;

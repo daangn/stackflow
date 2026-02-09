@@ -19,10 +19,10 @@ export function useStyleEffectSwipeBack({
   onSwipeEnd,
   onTransitionEnd,
 }: {
-  dimRef: React.RefObject<HTMLDivElement>;
-  edgeRef: React.RefObject<HTMLDivElement>;
-  paperRef: React.RefObject<HTMLDivElement>;
-  appBarRef?: React.RefObject<HTMLDivElement>;
+  dimRef: React.RefObject<HTMLDivElement | null>;
+  edgeRef: React.RefObject<HTMLDivElement | null>;
+  paperRef: React.RefObject<HTMLDivElement | null>;
+  appBarRef?: React.RefObject<HTMLDivElement | null>;
   offset: number;
   transitionDuration: string;
   preventSwipeBack: boolean;
