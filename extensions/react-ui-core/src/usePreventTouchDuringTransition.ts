@@ -4,7 +4,7 @@ import { useNullableStack } from "./useNullableStack";
 export function usePreventTouchDuringTransition({
   ref,
 }: {
-  ref: React.RefObject<HTMLDivElement | null>;
+  ref: React.RefObject<HTMLDivElement>;
 }) {
   const stack = useNullableStack();
 
