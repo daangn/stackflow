@@ -1,8 +1,8 @@
+import { getLoaderFn } from "@stackflow/config";
 import { useContext } from "react";
 import { useActivity } from "../../stable";
-import { ActivityLoaderContext } from "./ActivityLoaderContext";
 import { useConfig } from "../useConfig";
-import { getLoaderFn } from "@stackflow/config";
+import { ActivityLoaderContext } from "./ActivityLoaderContext";
 
 export function useLoader<T extends (...args: any[]) => any>(options: {
   loaderFn: T;

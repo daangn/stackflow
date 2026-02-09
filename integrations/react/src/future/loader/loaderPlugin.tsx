@@ -3,7 +3,6 @@ import type {
   RegisteredActivityName,
 } from "@stackflow/config";
 import { getLoaderFn, getShouldInvalidate } from "@stackflow/config";
-import { ActivityLoaderProvider } from "./ActivityLoaderProvider";
 import type { ActivityComponentType } from "../../__internal__/ActivityComponentType";
 import type { StackflowReactPlugin } from "../../__internal__/StackflowReactPlugin";
 import {
@@ -16,6 +15,7 @@ import {
   resolve,
 } from "../../__internal__/utils/SyncInspectablePromise";
 import type { StackflowInput } from "../stackflow";
+import { ActivityLoaderProvider } from "./ActivityLoaderProvider";
 
 export function loaderPlugin<
   T extends ActivityDefinition<RegisteredActivityName>,
@@ -137,7 +137,8 @@ function createBeforeRouteHandler<
     }
 
     const loaderFn = getLoaderFn(matchActivity.loader);
-    const loaderData = loaderFn && resolve(loadData(activityName, activityParams));
+    const loaderData =
+      loaderFn && resolve(loadData(activityName, activityParams));
     const lazyComponentPromise = resolve(
       isStructuredActivityComponent(matchActivityComponent) &&
         typeof matchActivityComponent.content === "function"

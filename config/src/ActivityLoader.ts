@@ -62,7 +62,9 @@ export function getLoaderFn<ActivityName extends RegisteredActivityName>(
   return loaderConfig.fn;
 }
 
-export function getShouldInvalidate<ActivityName extends RegisteredActivityName>(
+export function getShouldInvalidate<
+  ActivityName extends RegisteredActivityName,
+>(
   loaderConfig: ActivityLoaderConfig<ActivityName> | undefined,
 ): ActivityLoaderConfigObject<ActivityName>["shouldInvalidate"] | undefined {
   if (!loaderConfig || typeof loaderConfig === "function") {
