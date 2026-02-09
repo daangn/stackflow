@@ -5449,7 +5449,7 @@ __metadata:
     "@stackflow/plugin-renderer-basic": "npm:^1.1.13"
     "@stackflow/react": "npm:^1.5.0"
     "@types/node": "npm:^22.7.5"
-    "@types/react": "npm:^19.2.13"
+    "@types/react": "npm:^18.3.3"
     autoprefixer: "npm:^10.4.20"
     class-variance-authority: "npm:^0.7.0"
     clsx: "npm:^2.1.1"
@@ -5459,8 +5459,8 @@ __metadata:
     nextra: "npm:^2.13.4"
     nextra-theme-docs: "npm:^2.13.4"
     postcss: "npm:^8.4.47"
-    react: "npm:^19.2.4"
-    react-dom: "npm:^19.2.4"
+    react: "npm:^18.3.1"
+    react-dom: "npm:^18.3.1"
     react-lazy-load-image-component: "npm:^1.6.2"
     remark: "npm:^15.0.1"
     remark-gfm: "npm:^4.0.1"
@@ -6247,6 +6247,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/prop-types@npm:*":
+  version: 15.7.15
+  resolution: "@types/prop-types@npm:15.7.15"
+  checksum: 10/31aa2f59b28f24da6fb4f1d70807dae2aedfce090ec63eaf9ea01727a9533ef6eaf017de5bff99fbccad7d1c9e644f52c6c2ba30869465dd22b1a7221c29f356
+  languageName: node
+  linkType: hard
+
 "@types/react-dom@npm:^19.2.3":
   version: 19.2.3
   resolution: "@types/react-dom@npm:19.2.3"
@@ -6276,12 +6283,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:19.2.13":
+"@types/react@npm:*, @types/react@npm:^19.2.13":
   version: 19.2.13
   resolution: "@types/react@npm:19.2.13"
   dependencies:
     csstype: "npm:^3.2.2"
   checksum: 10/a3bb8d09c79f5f29dfbc7e47c5b39c687f4329b76041713993c025781f32c26e4881fbeead65ff44d728945f222b781c6053263bc1819ef90596b4fbfd83f718
+  languageName: node
+  linkType: hard
+
+"@types/react@npm:^18.3.3":
+  version: 18.3.28
+  resolution: "@types/react@npm:18.3.28"
+  dependencies:
+    "@types/prop-types": "npm:*"
+    csstype: "npm:^3.2.2"
+  checksum: 10/6db7bb7f19957ee9f530baa7d143527f8befedad1585b064eb80777be0d84621157de75aba4f499ff429b10c5ef0c7d13e89be6bca3296ef71c80472894ff0eb
   languageName: node
   linkType: hard
 
@@ -11073,7 +11090,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"loose-envify@npm:^1.0.0":
+"loose-envify@npm:^1.0.0, loose-envify@npm:^1.1.0":
   version: 1.4.0
   resolution: "loose-envify@npm:1.4.0"
   dependencies:
@@ -13785,6 +13802,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-dom@npm:^18.3.1":
+  version: 18.3.1
+  resolution: "react-dom@npm:18.3.1"
+  dependencies:
+    loose-envify: "npm:^1.1.0"
+    scheduler: "npm:^0.23.2"
+  peerDependencies:
+    react: ^18.3.1
+  checksum: 10/3f4b73a3aa083091173b29812b10394dd06f4ac06aff410b74702cfb3aa29d7b0ced208aab92d5272919b612e5cda21aeb1d54191848cf6e46e9e354f3541f81
+  languageName: node
+  linkType: hard
+
 "react-dom@npm:^19.2.4":
   version: 19.2.4
   resolution: "react-dom@npm:19.2.4"
@@ -13857,6 +13886,15 @@ __metadata:
   peerDependencies:
     react: ">=18.0.0"
   checksum: 10/e8d61ca4ae7ab1b1b206221a470aa17a7fd58deaf1d5e97d9733030bdc20b01d1dfda9c5172b13c6f0602cf50f5832643e4ecefcf67730e3de97b3e72aff7cc2
+  languageName: node
+  linkType: hard
+
+"react@npm:^18.3.1":
+  version: 18.3.1
+  resolution: "react@npm:18.3.1"
+  dependencies:
+    loose-envify: "npm:^1.1.0"
+  checksum: 10/261137d3f3993eaa2368a83110466fc0e558bc2c7f7ae7ca52d94f03aac945f45146bd85e5f481044db1758a1dbb57879e2fcdd33924e2dde1bdc550ce73f7bf
   languageName: node
   linkType: hard
 
@@ -14353,6 +14391,15 @@ __metadata:
   version: 2.1.2
   resolution: "safer-buffer@npm:2.1.2"
   checksum: 10/7eaf7a0cf37cc27b42fb3ef6a9b1df6e93a1c6d98c6c6702b02fe262d5fcbd89db63320793b99b21cb5348097d0a53de81bd5f4e8b86e20cc9412e3f1cfb4e83
+  languageName: node
+  linkType: hard
+
+"scheduler@npm:^0.23.2":
+  version: 0.23.2
+  resolution: "scheduler@npm:0.23.2"
+  dependencies:
+    loose-envify: "npm:^1.1.0"
+  checksum: 10/e8d68b89d18d5b028223edf090092846868a765a591944760942b77ea1f69b17235f7e956696efbb62c8130ab90af7e0949bfb8eba7896335507317236966bc9
   languageName: node
   linkType: hard
 

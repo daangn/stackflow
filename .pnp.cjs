@@ -101,14 +101,14 @@ const RAW_RUNTIME_STATE =
     ["@stackflow/plugin-basic-ui", ["virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#workspace:extensions/plugin-basic-ui", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-basic-ui", "workspace:extensions/plugin-basic-ui"]],\
     ["@stackflow/plugin-devtools", ["virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-devtools", "workspace:extensions/plugin-devtools"]],\
     ["@stackflow/plugin-google-analytics-4", ["workspace:extensions/plugin-google-analytics-4"]],\
-    ["@stackflow/plugin-history-sync", ["virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#workspace:extensions/plugin-history-sync", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-history-sync", "workspace:extensions/plugin-history-sync"]],\
+    ["@stackflow/plugin-history-sync", ["virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#workspace:extensions/plugin-history-sync", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-history-sync", "virtual:f1e8b3be79a3719e98163974e7462846769e40ab512ef3237df54554e840830b2fa83a2ea95ed5ee1a96cd3ac34a93ff793bd957c7351bef25a7a8313ff4fabe#workspace:extensions/plugin-history-sync", "workspace:extensions/plugin-history-sync"]],\
     ["@stackflow/plugin-map-initial-activity", ["virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-map-initial-activity", "workspace:extensions/plugin-map-initial-activity"]],\
     ["@stackflow/plugin-preload", ["virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-preload", "workspace:extensions/plugin-preload"]],\
     ["@stackflow/plugin-renderer-basic", ["virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#workspace:extensions/plugin-renderer-basic", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-renderer-basic", "workspace:extensions/plugin-renderer-basic"]],\
     ["@stackflow/plugin-renderer-web", ["workspace:extensions/plugin-renderer-web"]],\
     ["@stackflow/plugin-stack-depth-change", ["virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-stack-depth-change", "workspace:extensions/plugin-stack-depth-change"]],\
-    ["@stackflow/react", ["virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#workspace:integrations/react", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:integrations/react", "workspace:integrations/react"]],\
-    ["@stackflow/react-ui-core", ["virtual:669046a185e83900af978519e5adddf8e8f1f8fed824849248ba56cf8fcd4e4208872f27e14c3c844d3b769f42be1ba6e0aa90f12df9fa6c38a55aedee211f53#workspace:extensions/react-ui-core", "virtual:9506e63a437e20118ec53e35394f44ac597a1e19dd190b4d073d27922774bba693971575adba8977670ff1bb425f29ad6779506df7c002f3a95d17880d69dfb6#workspace:extensions/react-ui-core", "workspace:extensions/react-ui-core"]]\
+    ["@stackflow/react", ["virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#workspace:integrations/react", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:integrations/react", "virtual:8f79789b7596dc8e9f70c60031453434661604b15a8072f45557464369a8ad2df6bc8a1b8fae71d2a3bdd6412a4268e1fb3464e2abd3d53e12cea3ee2330994d#workspace:integrations/react", "workspace:integrations/react"]],\
+    ["@stackflow/react-ui-core", ["virtual:669046a185e83900af978519e5adddf8e8f1f8fed824849248ba56cf8fcd4e4208872f27e14c3c844d3b769f42be1ba6e0aa90f12df9fa6c38a55aedee211f53#workspace:extensions/react-ui-core", "virtual:7bc56a0a49bfde369e6afea5fc247c2b917048c8320a75d4e8351596b911c950f65d0fd1539123ce66a7f784da726f29daf56c4fa1dcd5adeabd608300740902#workspace:extensions/react-ui-core", "virtual:9506e63a437e20118ec53e35394f44ac597a1e19dd190b4d073d27922774bba693971575adba8977670ff1bb425f29ad6779506df7c002f3a95d17880d69dfb6#workspace:extensions/react-ui-core", "workspace:extensions/react-ui-core"]]\
   ],\
   "fallbackPool": [\
   ],\
@@ -3971,11 +3971,11 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@headlessui/react", "virtual:31bda37fdd3727eeeb1eab610f8e745af6d6a329f1418d8b25a6cbf2863df151e17023ac847c10175e57be4f459137fc974a1bb690b654782e4d326bab6b43e2#npm:1.7.19"],\
           ["@tanstack/react-virtual", "virtual:c7c0205b406c700922c01d71ac2ddbf45e5a85d8c468cf33162cb32e772475ebb2e0e3db1e33b6bc59d5352af5e3435da74971b25bbf9996216c6bd855e077f4#npm:3.8.1"],\
-          ["@types/react", "npm:19.2.13"],\
+          ["@types/react", "npm:18.3.28"],\
           ["@types/react-dom", null],\
           ["client-only", "npm:0.0.1"],\
-          ["react", "npm:19.2.4"],\
-          ["react-dom", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#npm:19.2.4"]\
+          ["react", "npm:18.3.1"],\
+          ["react-dom", "virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#npm:18.3.1"]\
         ],\
         "packagePeers": [\
           "@types/react-dom",\
@@ -4620,8 +4620,8 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@mdx-js/react", "virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#npm:3.0.1"],\
           ["@types/mdx", "npm:2.0.1"],\
-          ["@types/react", "npm:19.2.13"],\
-          ["react", "npm:19.2.4"]\
+          ["@types/react", "npm:18.3.28"],\
+          ["react", "npm:18.3.1"]\
         ],\
         "packagePeers": [\
           "@types/react",\
@@ -6264,7 +6264,7 @@ const RAW_RUNTIME_STATE =
           ["@stackflow/compat-await-push", "workspace:extensions/compat-await-push"],\
           ["@stackflow/core", "workspace:core"],\
           ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
-          ["@stackflow/react", "virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#workspace:integrations/react"],\
+          ["@stackflow/react", "virtual:8f79789b7596dc8e9f70c60031453434661604b15a8072f45557464369a8ad2df6bc8a1b8fae71d2a3bdd6412a4268e1fb3464e2abd3d53e12cea3ee2330994d#workspace:integrations/react"],\
           ["@types/react", "npm:19.2.13"],\
           ["esbuild", "npm:0.23.0"],\
           ["react", "npm:19.2.4"],\
@@ -6399,7 +6399,7 @@ const RAW_RUNTIME_STATE =
           ["@stackflow/plugin-renderer-basic", "virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#workspace:extensions/plugin-renderer-basic"],\
           ["@stackflow/react", "virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#workspace:integrations/react"],\
           ["@types/node", "npm:22.7.5"],\
-          ["@types/react", "npm:19.2.13"],\
+          ["@types/react", "npm:18.3.28"],\
           ["autoprefixer", "virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#npm:10.4.20"],\
           ["class-variance-authority", "npm:0.7.0"],\
           ["clsx", "npm:2.1.1"],\
@@ -6409,9 +6409,9 @@ const RAW_RUNTIME_STATE =
           ["nextra", "virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#npm:2.13.4"],\
           ["nextra-theme-docs", "virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#npm:2.13.4"],\
           ["postcss", "npm:8.4.47"],\
-          ["react", "npm:19.2.4"],\
-          ["react-dom", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#npm:19.2.4"],\
-          ["react-lazy-load-image-component", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#npm:1.6.2"],\
+          ["react", "npm:18.3.1"],\
+          ["react-dom", "virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#npm:18.3.1"],\
+          ["react-lazy-load-image-component", "virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#npm:1.6.2"],\
           ["remark", "npm:15.0.1"],\
           ["remark-gfm", "npm:4.0.1"],\
           ["remark-stringify", "npm:11.0.0"],\
@@ -6516,7 +6516,7 @@ const RAW_RUNTIME_STATE =
           ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
           ["@stackflow/react", "virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#workspace:integrations/react"],\
           ["@stackflow/react-ui-core", "virtual:9506e63a437e20118ec53e35394f44ac597a1e19dd190b4d073d27922774bba693971575adba8977670ff1bb425f29ad6779506df7c002f3a95d17880d69dfb6#workspace:extensions/react-ui-core"],\
-          ["@types/react", "npm:19.2.13"],\
+          ["@types/react", "npm:18.3.28"],\
           ["@types/stackflow__core", null],\
           ["@types/stackflow__react", null],\
           ["@vanilla-extract/css", "npm:1.15.3"],\
@@ -6525,7 +6525,7 @@ const RAW_RUNTIME_STATE =
           ["@vanilla-extract/recipes", "virtual:669046a185e83900af978519e5adddf8e8f1f8fed824849248ba56cf8fcd4e4208872f27e14c3c844d3b769f42be1ba6e0aa90f12df9fa6c38a55aedee211f53#npm:0.5.3"],\
           ["clsx", "npm:2.1.1"],\
           ["esbuild", "npm:0.23.0"],\
-          ["react", "npm:19.2.4"],\
+          ["react", "npm:18.3.1"],\
           ["rimraf", "npm:3.0.2"],\
           ["typescript", "patch:typescript@npm%3A5.5.3#optional!builtin<compat/typescript>::version=5.5.3&hash=379a07"]\
         ],\
@@ -6576,8 +6576,8 @@ const RAW_RUNTIME_STATE =
           ["@stackflow/plugin-basic-ui", "workspace:extensions/plugin-basic-ui"],\
           ["@stackflow/core", "workspace:core"],\
           ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
-          ["@stackflow/react", "virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#workspace:integrations/react"],\
-          ["@stackflow/react-ui-core", "virtual:9506e63a437e20118ec53e35394f44ac597a1e19dd190b4d073d27922774bba693971575adba8977670ff1bb425f29ad6779506df7c002f3a95d17880d69dfb6#workspace:extensions/react-ui-core"],\
+          ["@stackflow/react", "virtual:8f79789b7596dc8e9f70c60031453434661604b15a8072f45557464369a8ad2df6bc8a1b8fae71d2a3bdd6412a4268e1fb3464e2abd3d53e12cea3ee2330994d#workspace:integrations/react"],\
+          ["@stackflow/react-ui-core", "virtual:7bc56a0a49bfde369e6afea5fc247c2b917048c8320a75d4e8351596b911c950f65d0fd1539123ce66a7f784da726f29daf56c4fa1dcd5adeabd608300740902#workspace:extensions/react-ui-core"],\
           ["@types/react", "npm:19.2.13"],\
           ["@vanilla-extract/css", "npm:1.15.3"],\
           ["@vanilla-extract/dynamic", "npm:2.1.1"],\
@@ -6632,7 +6632,7 @@ const RAW_RUNTIME_STATE =
           ["@stackflow/plugin-google-analytics-4", "workspace:extensions/plugin-google-analytics-4"],\
           ["@stackflow/core", "workspace:core"],\
           ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
-          ["@stackflow/react", "virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#workspace:integrations/react"],\
+          ["@stackflow/react", "virtual:8f79789b7596dc8e9f70c60031453434661604b15a8072f45557464369a8ad2df6bc8a1b8fae71d2a3bdd6412a4268e1fb3464e2abd3d53e12cea3ee2330994d#workspace:integrations/react"],\
           ["@types/react", "npm:19.2.13"],\
           ["esbuild", "npm:0.23.0"],\
           ["react", "npm:19.2.4"],\
@@ -6657,7 +6657,7 @@ const RAW_RUNTIME_STATE =
           ["@swc/jest", "virtual:b327d7e228fba669b88a8bb23bcf526374e46fa67e617b1e6848e8a205357fee5ce94b47c49b5a570fd9e8a44fa218a13cd00e2eca327c99114cbd21d72ecf9c#npm:0.2.36"],\
           ["@types/jest", "npm:29.5.12"],\
           ["@types/node", "npm:20.14.9"],\
-          ["@types/react", "npm:19.2.13"],\
+          ["@types/react", "npm:18.3.28"],\
           ["@types/react-relay", "npm:16.0.6"],\
           ["@types/relay-runtime", "npm:17.0.4"],\
           ["@types/stackflow__config", null],\
@@ -6668,9 +6668,9 @@ const RAW_RUNTIME_STATE =
           ["graphql", "npm:16.9.0"],\
           ["history", "npm:5.3.0"],\
           ["jest", "virtual:b327d7e228fba669b88a8bb23bcf526374e46fa67e617b1e6848e8a205357fee5ce94b47c49b5a570fd9e8a44fa218a13cd00e2eca327c99114cbd21d72ecf9c#npm:29.7.0"],\
-          ["react", "npm:19.2.4"],\
-          ["react-relay", "virtual:991015ceb8acca106af7e64cf676369bf8fb98370003b1af0559fb22931c330c3a09d064107412d6cc26ef286f0afdd26340443bd43177eeda3558644ba5f206#npm:17.0.0"],\
-          ["react18-use", "virtual:991015ceb8acca106af7e64cf676369bf8fb98370003b1af0559fb22931c330c3a09d064107412d6cc26ef286f0afdd26340443bd43177eeda3558644ba5f206#npm:0.4.1"],\
+          ["react", "npm:18.3.1"],\
+          ["react-relay", "virtual:f6cfb0d7c27cc8eeb8867cd4b30979954dd52c902f2cf3a566778a5c3f3eb82a8f6ab62efc72ea2a70d4f6eb2b25665a488509a1d259737588a43581d36887b5#npm:17.0.0"],\
+          ["react18-use", "virtual:f6cfb0d7c27cc8eeb8867cd4b30979954dd52c902f2cf3a566778a5c3f3eb82a8f6ab62efc72ea2a70d4f6eb2b25665a488509a1d259737588a43581d36887b5#npm:0.4.1"],\
           ["relay-compiler", "npm:17.0.0"],\
           ["relay-runtime", "npm:17.0.0"],\
           ["rimraf", "npm:3.0.2"],\
@@ -6723,6 +6723,50 @@ const RAW_RUNTIME_STATE =
         ],\
         "packagePeers": [\
           "@stackflow/config",\
+          "@stackflow/core",\
+          "@stackflow/react",\
+          "@types/react",\
+          "@types/stackflow__config",\
+          "@types/stackflow__core",\
+          "@types/stackflow__react",\
+          "react"\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:f1e8b3be79a3719e98163974e7462846769e40ab512ef3237df54554e840830b2fa83a2ea95ed5ee1a96cd3ac34a93ff793bd957c7351bef25a7a8313ff4fabe#workspace:extensions/plugin-history-sync", {\
+        "packageLocation": "./.yarn/__virtual__/@stackflow-plugin-history-sync-virtual-6038b02868/1/extensions/plugin-history-sync/",\
+        "packageDependencies": [\
+          ["@stackflow/plugin-history-sync", "virtual:f1e8b3be79a3719e98163974e7462846769e40ab512ef3237df54554e840830b2fa83a2ea95ed5ee1a96cd3ac34a93ff793bd957c7351bef25a7a8313ff4fabe#workspace:extensions/plugin-history-sync"],\
+          ["@graphql-tools/schema", "virtual:991015ceb8acca106af7e64cf676369bf8fb98370003b1af0559fb22931c330c3a09d064107412d6cc26ef286f0afdd26340443bd43177eeda3558644ba5f206#npm:10.0.5"],\
+          ["@stackflow/config", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:config"],\
+          ["@stackflow/core", "workspace:core"],\
+          ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
+          ["@stackflow/react", "virtual:8f79789b7596dc8e9f70c60031453434661604b15a8072f45557464369a8ad2df6bc8a1b8fae71d2a3bdd6412a4268e1fb3464e2abd3d53e12cea3ee2330994d#workspace:integrations/react"],\
+          ["@swc/core", "virtual:b327d7e228fba669b88a8bb23bcf526374e46fa67e617b1e6848e8a205357fee5ce94b47c49b5a570fd9e8a44fa218a13cd00e2eca327c99114cbd21d72ecf9c#npm:1.6.6"],\
+          ["@swc/jest", "virtual:b327d7e228fba669b88a8bb23bcf526374e46fa67e617b1e6848e8a205357fee5ce94b47c49b5a570fd9e8a44fa218a13cd00e2eca327c99114cbd21d72ecf9c#npm:0.2.36"],\
+          ["@types/jest", "npm:29.5.12"],\
+          ["@types/node", "npm:20.14.9"],\
+          ["@types/react", "npm:19.2.13"],\
+          ["@types/react-relay", "npm:16.0.6"],\
+          ["@types/relay-runtime", "npm:17.0.4"],\
+          ["@types/stackflow__config", null],\
+          ["@types/stackflow__core", null],\
+          ["@types/stackflow__react", null],\
+          ["esbuild", "npm:0.23.0"],\
+          ["flatted", "npm:3.3.1"],\
+          ["graphql", "npm:16.9.0"],\
+          ["history", "npm:5.3.0"],\
+          ["jest", "virtual:b327d7e228fba669b88a8bb23bcf526374e46fa67e617b1e6848e8a205357fee5ce94b47c49b5a570fd9e8a44fa218a13cd00e2eca327c99114cbd21d72ecf9c#npm:29.7.0"],\
+          ["react", "npm:19.2.4"],\
+          ["react-relay", "virtual:991015ceb8acca106af7e64cf676369bf8fb98370003b1af0559fb22931c330c3a09d064107412d6cc26ef286f0afdd26340443bd43177eeda3558644ba5f206#npm:17.0.0"],\
+          ["react18-use", "virtual:991015ceb8acca106af7e64cf676369bf8fb98370003b1af0559fb22931c330c3a09d064107412d6cc26ef286f0afdd26340443bd43177eeda3558644ba5f206#npm:0.4.1"],\
+          ["relay-compiler", "npm:17.0.0"],\
+          ["relay-runtime", "npm:17.0.0"],\
+          ["rimraf", "npm:3.0.2"],\
+          ["typescript", "patch:typescript@npm%3A5.5.3#optional!builtin<compat/typescript>::version=5.5.3&hash=379a07"],\
+          ["url-pattern", "npm:1.0.3"]\
+        ],\
+        "packagePeers": [\
           "@stackflow/core",\
           "@stackflow/react",\
           "@types/react",\
@@ -6794,7 +6838,7 @@ const RAW_RUNTIME_STATE =
           ["@stackflow/plugin-map-initial-activity", "workspace:extensions/plugin-map-initial-activity"],\
           ["@stackflow/core", "workspace:core"],\
           ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
-          ["@stackflow/react", "virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#workspace:integrations/react"],\
+          ["@stackflow/react", "virtual:8f79789b7596dc8e9f70c60031453434661604b15a8072f45557464369a8ad2df6bc8a1b8fae71d2a3bdd6412a4268e1fb3464e2abd3d53e12cea3ee2330994d#workspace:integrations/react"],\
           ["esbuild", "npm:0.23.0"],\
           ["rimraf", "npm:3.0.2"],\
           ["typescript", "patch:typescript@npm%3A5.5.3#optional!builtin<compat/typescript>::version=5.5.3&hash=379a07"]\
@@ -6838,8 +6882,8 @@ const RAW_RUNTIME_STATE =
           ["@stackflow/plugin-preload", "workspace:extensions/plugin-preload"],\
           ["@stackflow/core", "workspace:core"],\
           ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
-          ["@stackflow/plugin-history-sync", "virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#workspace:extensions/plugin-history-sync"],\
-          ["@stackflow/react", "virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#workspace:integrations/react"],\
+          ["@stackflow/plugin-history-sync", "virtual:f1e8b3be79a3719e98163974e7462846769e40ab512ef3237df54554e840830b2fa83a2ea95ed5ee1a96cd3ac34a93ff793bd957c7351bef25a7a8313ff4fabe#workspace:extensions/plugin-history-sync"],\
+          ["@stackflow/react", "virtual:8f79789b7596dc8e9f70c60031453434661604b15a8072f45557464369a8ad2df6bc8a1b8fae71d2a3bdd6412a4268e1fb3464e2abd3d53e12cea3ee2330994d#workspace:integrations/react"],\
           ["@types/react", "npm:19.2.13"],\
           ["esbuild", "npm:0.23.0"],\
           ["react", "npm:19.2.4"],\
@@ -6857,11 +6901,11 @@ const RAW_RUNTIME_STATE =
           ["@stackflow/core", "workspace:core"],\
           ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
           ["@stackflow/react", "virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#workspace:integrations/react"],\
-          ["@types/react", "npm:19.2.13"],\
+          ["@types/react", "npm:18.3.28"],\
           ["@types/stackflow__core", null],\
           ["@types/stackflow__react", null],\
           ["esbuild", "npm:0.23.0"],\
-          ["react", "npm:19.2.4"],\
+          ["react", "npm:18.3.1"],\
           ["rimraf", "npm:3.0.2"],\
           ["typescript", "patch:typescript@npm%3A5.5.3#optional!builtin<compat/typescript>::version=5.5.3&hash=379a07"]\
         ],\
@@ -6906,7 +6950,7 @@ const RAW_RUNTIME_STATE =
           ["@stackflow/plugin-renderer-basic", "workspace:extensions/plugin-renderer-basic"],\
           ["@stackflow/core", "workspace:core"],\
           ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
-          ["@stackflow/react", "virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#workspace:integrations/react"],\
+          ["@stackflow/react", "virtual:8f79789b7596dc8e9f70c60031453434661604b15a8072f45557464369a8ad2df6bc8a1b8fae71d2a3bdd6412a4268e1fb3464e2abd3d53e12cea3ee2330994d#workspace:integrations/react"],\
           ["@types/react", "npm:19.2.13"],\
           ["esbuild", "npm:0.23.0"],\
           ["react", "npm:19.2.4"],\
@@ -6923,7 +6967,7 @@ const RAW_RUNTIME_STATE =
           ["@stackflow/plugin-renderer-web", "workspace:extensions/plugin-renderer-web"],\
           ["@stackflow/core", "workspace:core"],\
           ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
-          ["@stackflow/react", "virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#workspace:integrations/react"],\
+          ["@stackflow/react", "virtual:8f79789b7596dc8e9f70c60031453434661604b15a8072f45557464369a8ad2df6bc8a1b8fae71d2a3bdd6412a4268e1fb3464e2abd3d53e12cea3ee2330994d#workspace:integrations/react"],\
           ["@types/react", "npm:19.2.13"],\
           ["esbuild", "npm:0.23.0"],\
           ["react", "npm:19.2.4"],\
@@ -6974,12 +7018,12 @@ const RAW_RUNTIME_STATE =
           ["@stackflow/config", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:config"],\
           ["@stackflow/core", "workspace:core"],\
           ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
-          ["@types/react", "npm:19.2.13"],\
+          ["@types/react", "npm:18.3.28"],\
           ["@types/stackflow__config", null],\
           ["@types/stackflow__core", null],\
           ["esbuild", "npm:0.23.0"],\
           ["esbuild-plugin-file-path-extensions", "npm:2.1.3"],\
-          ["react", "npm:19.2.4"],\
+          ["react", "npm:18.3.1"],\
           ["react-fast-compare", "npm:3.2.2"],\
           ["rimraf", "npm:3.0.2"],\
           ["typescript", "patch:typescript@npm%3A5.5.3#optional!builtin<compat/typescript>::version=5.5.3&hash=379a07"]\
@@ -7012,6 +7056,32 @@ const RAW_RUNTIME_STATE =
         ],\
         "packagePeers": [\
           "@stackflow/config",\
+          "@stackflow/core",\
+          "@types/react",\
+          "@types/stackflow__config",\
+          "@types/stackflow__core",\
+          "react"\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:8f79789b7596dc8e9f70c60031453434661604b15a8072f45557464369a8ad2df6bc8a1b8fae71d2a3bdd6412a4268e1fb3464e2abd3d53e12cea3ee2330994d#workspace:integrations/react", {\
+        "packageLocation": "./.yarn/__virtual__/@stackflow-react-virtual-66a2297359/1/integrations/react/",\
+        "packageDependencies": [\
+          ["@stackflow/react", "virtual:8f79789b7596dc8e9f70c60031453434661604b15a8072f45557464369a8ad2df6bc8a1b8fae71d2a3bdd6412a4268e1fb3464e2abd3d53e12cea3ee2330994d#workspace:integrations/react"],\
+          ["@stackflow/config", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:config"],\
+          ["@stackflow/core", "workspace:core"],\
+          ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
+          ["@types/react", "npm:19.2.13"],\
+          ["@types/stackflow__config", null],\
+          ["@types/stackflow__core", null],\
+          ["esbuild", "npm:0.23.0"],\
+          ["esbuild-plugin-file-path-extensions", "npm:2.1.3"],\
+          ["react", "npm:19.2.4"],\
+          ["react-fast-compare", "npm:3.2.2"],\
+          ["rimraf", "npm:3.0.2"],\
+          ["typescript", "patch:typescript@npm%3A5.5.3#optional!builtin<compat/typescript>::version=5.5.3&hash=379a07"]\
+        ],\
+        "packagePeers": [\
           "@stackflow/core",\
           "@types/react",\
           "@types/stackflow__config",\
@@ -7064,6 +7134,31 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "SOFT"\
       }],\
+      ["virtual:7bc56a0a49bfde369e6afea5fc247c2b917048c8320a75d4e8351596b911c950f65d0fd1539123ce66a7f784da726f29daf56c4fa1dcd5adeabd608300740902#workspace:extensions/react-ui-core", {\
+        "packageLocation": "./.yarn/__virtual__/@stackflow-react-ui-core-virtual-760f7a28b7/1/extensions/react-ui-core/",\
+        "packageDependencies": [\
+          ["@stackflow/react-ui-core", "virtual:7bc56a0a49bfde369e6afea5fc247c2b917048c8320a75d4e8351596b911c950f65d0fd1539123ce66a7f784da726f29daf56c4fa1dcd5adeabd608300740902#workspace:extensions/react-ui-core"],\
+          ["@stackflow/core", "workspace:core"],\
+          ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
+          ["@stackflow/react", "virtual:8f79789b7596dc8e9f70c60031453434661604b15a8072f45557464369a8ad2df6bc8a1b8fae71d2a3bdd6412a4268e1fb3464e2abd3d53e12cea3ee2330994d#workspace:integrations/react"],\
+          ["@types/react", "npm:19.2.13"],\
+          ["@types/stackflow__core", null],\
+          ["@types/stackflow__react", null],\
+          ["esbuild", "npm:0.23.0"],\
+          ["react", "npm:19.2.4"],\
+          ["rimraf", "npm:3.0.2"],\
+          ["typescript", "patch:typescript@npm%3A5.5.3#optional!builtin<compat/typescript>::version=5.5.3&hash=379a07"]\
+        ],\
+        "packagePeers": [\
+          "@stackflow/core",\
+          "@stackflow/react",\
+          "@types/react",\
+          "@types/stackflow__core",\
+          "@types/stackflow__react",\
+          "react"\
+        ],\
+        "linkType": "SOFT"\
+      }],\
       ["virtual:9506e63a437e20118ec53e35394f44ac597a1e19dd190b4d073d27922774bba693971575adba8977670ff1bb425f29ad6779506df7c002f3a95d17880d69dfb6#workspace:extensions/react-ui-core", {\
         "packageLocation": "./.yarn/__virtual__/@stackflow-react-ui-core-virtual-dd722669ce/1/extensions/react-ui-core/",\
         "packageDependencies": [\
@@ -7071,11 +7166,11 @@ const RAW_RUNTIME_STATE =
           ["@stackflow/core", "workspace:core"],\
           ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
           ["@stackflow/react", "virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#workspace:integrations/react"],\
-          ["@types/react", "npm:19.2.13"],\
+          ["@types/react", "npm:18.3.28"],\
           ["@types/stackflow__core", null],\
           ["@types/stackflow__react", null],\
           ["esbuild", "npm:0.23.0"],\
-          ["react", "npm:19.2.4"],\
+          ["react", "npm:18.3.1"],\
           ["rimraf", "npm:3.0.2"],\
           ["typescript", "patch:typescript@npm%3A5.5.3#optional!builtin<compat/typescript>::version=5.5.3&hash=379a07"]\
         ],\
@@ -7095,7 +7190,7 @@ const RAW_RUNTIME_STATE =
           ["@stackflow/react-ui-core", "workspace:extensions/react-ui-core"],\
           ["@stackflow/core", "workspace:core"],\
           ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
-          ["@stackflow/react", "virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#workspace:integrations/react"],\
+          ["@stackflow/react", "virtual:8f79789b7596dc8e9f70c60031453434661604b15a8072f45557464369a8ad2df6bc8a1b8fae71d2a3bdd6412a4268e1fb3464e2abd3d53e12cea3ee2330994d#workspace:integrations/react"],\
           ["@types/react", "npm:19.2.13"],\
           ["esbuild", "npm:0.23.0"],\
           ["react", "npm:19.2.4"],\
@@ -7297,10 +7392,10 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@tanstack/react-virtual", "virtual:c7c0205b406c700922c01d71ac2ddbf45e5a85d8c468cf33162cb32e772475ebb2e0e3db1e33b6bc59d5352af5e3435da74971b25bbf9996216c6bd855e077f4#npm:3.8.1"],\
           ["@tanstack/virtual-core", "npm:3.8.1"],\
-          ["@types/react", "npm:19.2.13"],\
+          ["@types/react", "npm:18.3.28"],\
           ["@types/react-dom", null],\
-          ["react", "npm:19.2.4"],\
-          ["react-dom", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#npm:19.2.4"]\
+          ["react", "npm:18.3.1"],\
+          ["react-dom", "virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#npm:18.3.1"]\
         ],\
         "packagePeers": [\
           "@types/react-dom",\
@@ -7332,9 +7427,9 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@theguild-remark-mermaid-virtual-540717bd06/0/cache/@theguild-remark-mermaid-npm-0.0.5-8344cf6566-964bf5ced5.zip/node_modules/@theguild/remark-mermaid/",\
         "packageDependencies": [\
           ["@theguild/remark-mermaid", "virtual:c66d995444893f59591f9fdf32bcb6d7443fab6368798576b65e2fd7769138a25a057a454cd80c22f3dc140394e88d707d3f6e5bee5a65a2aa59ba9e6e43f309#npm:0.0.5"],\
-          ["@types/react", "npm:19.2.13"],\
+          ["@types/react", "npm:18.3.28"],\
           ["mermaid", "npm:10.9.1"],\
-          ["react", "npm:19.2.4"],\
+          ["react", "npm:18.3.1"],\
           ["unist-util-visit", "npm:5.0.0"]\
         ],\
         "packagePeers": [\
@@ -7679,7 +7774,25 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["@types/prop-types", [\
+      ["npm:15.7.15", {\
+        "packageLocation": "./.yarn/cache/@types-prop-types-npm-15.7.15-cefe16a1fa-31aa2f59b2.zip/node_modules/@types/prop-types/",\
+        "packageDependencies": [\
+          ["@types/prop-types", "npm:15.7.15"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["@types/react", [\
+      ["npm:18.3.28", {\
+        "packageLocation": "./.yarn/cache/@types-react-npm-18.3.28-7235948954-6db7bb7f19.zip/node_modules/@types/react/",\
+        "packageDependencies": [\
+          ["@types/react", "npm:18.3.28"],\
+          ["@types/prop-types", "npm:15.7.15"],\
+          ["csstype", "npm:3.2.3"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
       ["npm:19.2.13", {\
         "packageLocation": "./.yarn/cache/@types-react-npm-19.2.13-19be05944a-a3bb8d09c7.zip/node_modules/@types/react/",\
         "packageDependencies": [\
@@ -13072,8 +13185,8 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/lucide-react-virtual-8a4778cdf4/0/cache/lucide-react-npm-0.451.0-cd76f7980d-55e88c68d2.zip/node_modules/lucide-react/",\
         "packageDependencies": [\
           ["lucide-react", "virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#npm:0.451.0"],\
-          ["@types/react", "npm:19.2.13"],\
-          ["react", "npm:19.2.4"]\
+          ["@types/react", "npm:18.3.28"],\
+          ["react", "npm:18.3.1"]\
         ],\
         "packagePeers": [\
           "@types/react",\
@@ -14815,15 +14928,15 @@ const RAW_RUNTIME_STATE =
           ["@swc/helpers", "npm:0.5.5"],\
           ["@types/opentelemetry__api", null],\
           ["@types/playwright__test", null],\
-          ["@types/react", "npm:19.2.13"],\
+          ["@types/react", "npm:18.3.28"],\
           ["@types/react-dom", null],\
           ["@types/sass", null],\
           ["busboy", "npm:1.6.0"],\
           ["caniuse-lite", "npm:1.0.30001639"],\
           ["graceful-fs", "npm:4.2.11"],\
           ["postcss", "npm:8.4.31"],\
-          ["react", "npm:19.2.4"],\
-          ["react-dom", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#npm:19.2.4"],\
+          ["react", "npm:18.3.1"],\
+          ["react-dom", "virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#npm:18.3.1"],\
           ["sass", null],\
           ["styled-jsx", "virtual:3bb900bfbdcab60b7cda3261bf4a5f2a5b90deaac0ee74b596813055d2fd538d3493fd3c06719399a845b2ecbd9abf18e82e841300144c33dab70b9c083ccabe#npm:5.1.1"]\
         ],\
@@ -14856,10 +14969,10 @@ const RAW_RUNTIME_STATE =
           ["next-mdx-remote", "virtual:c66d995444893f59591f9fdf32bcb6d7443fab6368798576b65e2fd7769138a25a057a454cd80c22f3dc140394e88d707d3f6e5bee5a65a2aa59ba9e6e43f309#npm:4.4.1"],\
           ["@mdx-js/mdx", "npm:2.3.0"],\
           ["@mdx-js/react", "virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#npm:3.0.1"],\
-          ["@types/react", "npm:19.2.13"],\
+          ["@types/react", "npm:18.3.28"],\
           ["@types/react-dom", null],\
-          ["react", "npm:19.2.4"],\
-          ["react-dom", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#npm:19.2.4"],\
+          ["react", "npm:18.3.1"],\
+          ["react-dom", "virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#npm:18.3.1"],\
           ["vfile", "npm:5.3.7"],\
           ["vfile-matter", "npm:3.0.1"]\
         ],\
@@ -14885,11 +14998,11 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["next-seo", "virtual:31bda37fdd3727eeeb1eab610f8e745af6d6a329f1418d8b25a6cbf2863df151e17023ac847c10175e57be4f459137fc974a1bb690b654782e4d326bab6b43e2#npm:6.5.0"],\
           ["@types/next", null],\
-          ["@types/react", "npm:19.2.13"],\
+          ["@types/react", "npm:18.3.28"],\
           ["@types/react-dom", null],\
           ["next", "virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#npm:14.2.4"],\
-          ["react", "npm:19.2.4"],\
-          ["react-dom", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#npm:19.2.4"]\
+          ["react", "npm:18.3.1"],\
+          ["react-dom", "virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#npm:18.3.1"]\
         ],\
         "packagePeers": [\
           "@types/next",\
@@ -14915,11 +15028,11 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["next-themes", "virtual:31bda37fdd3727eeeb1eab610f8e745af6d6a329f1418d8b25a6cbf2863df151e17023ac847c10175e57be4f459137fc974a1bb690b654782e4d326bab6b43e2#npm:0.2.1"],\
           ["@types/next", null],\
-          ["@types/react", "npm:19.2.13"],\
+          ["@types/react", "npm:18.3.28"],\
           ["@types/react-dom", null],\
           ["next", "virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#npm:14.2.4"],\
-          ["react", "npm:19.2.4"],\
-          ["react-dom", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#npm:19.2.4"]\
+          ["react", "npm:18.3.1"],\
+          ["react-dom", "virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#npm:18.3.1"]\
         ],\
         "packagePeers": [\
           "@types/next",\
@@ -14951,7 +15064,7 @@ const RAW_RUNTIME_STATE =
           ["@theguild/remark-mermaid", "virtual:c66d995444893f59591f9fdf32bcb6d7443fab6368798576b65e2fd7769138a25a057a454cd80c22f3dc140394e88d707d3f6e5bee5a65a2aa59ba9e6e43f309#npm:0.0.5"],\
           ["@theguild/remark-npm2yarn", "npm:0.2.1"],\
           ["@types/next", null],\
-          ["@types/react", "npm:19.2.13"],\
+          ["@types/react", "npm:18.3.28"],\
           ["@types/react-dom", null],\
           ["clsx", "npm:2.1.1"],\
           ["github-slugger", "npm:2.0.0"],\
@@ -14962,8 +15075,8 @@ const RAW_RUNTIME_STATE =
           ["next", "virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#npm:14.2.4"],\
           ["next-mdx-remote", "virtual:c66d995444893f59591f9fdf32bcb6d7443fab6368798576b65e2fd7769138a25a057a454cd80c22f3dc140394e88d707d3f6e5bee5a65a2aa59ba9e6e43f309#npm:4.4.1"],\
           ["p-limit", "npm:3.1.0"],\
-          ["react", "npm:19.2.4"],\
-          ["react-dom", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#npm:19.2.4"],\
+          ["react", "npm:18.3.1"],\
+          ["react-dom", "virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#npm:18.3.1"],\
           ["rehype-katex", "npm:7.0.0"],\
           ["rehype-pretty-code", "virtual:c66d995444893f59591f9fdf32bcb6d7443fab6368798576b65e2fd7769138a25a057a454cd80c22f3dc140394e88d707d3f6e5bee5a65a2aa59ba9e6e43f309#npm:0.9.11"],\
           ["rehype-raw", "npm:7.0.0"],\
@@ -15004,7 +15117,7 @@ const RAW_RUNTIME_STATE =
           ["@popperjs/core", "npm:2.11.8"],\
           ["@types/next", null],\
           ["@types/nextra", null],\
-          ["@types/react", "npm:19.2.13"],\
+          ["@types/react", "npm:18.3.28"],\
           ["@types/react-dom", null],\
           ["clsx", "npm:2.1.1"],\
           ["escape-string-regexp", "npm:5.0.0"],\
@@ -15017,8 +15130,8 @@ const RAW_RUNTIME_STATE =
           ["next-seo", "virtual:31bda37fdd3727eeeb1eab610f8e745af6d6a329f1418d8b25a6cbf2863df151e17023ac847c10175e57be4f459137fc974a1bb690b654782e4d326bab6b43e2#npm:6.5.0"],\
           ["next-themes", "virtual:31bda37fdd3727eeeb1eab610f8e745af6d6a329f1418d8b25a6cbf2863df151e17023ac847c10175e57be4f459137fc974a1bb690b654782e4d326bab6b43e2#npm:0.2.1"],\
           ["nextra", "virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#npm:2.13.4"],\
-          ["react", "npm:19.2.4"],\
-          ["react-dom", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#npm:19.2.4"],\
+          ["react", "npm:18.3.1"],\
+          ["react-dom", "virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#npm:18.3.1"],\
           ["scroll-into-view-if-needed", "npm:3.1.0"],\
           ["zod", "npm:3.23.8"]\
         ],\
@@ -16057,6 +16170,14 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["react", [\
+      ["npm:18.3.1", {\
+        "packageLocation": "./.yarn/cache/react-npm-18.3.1-af38f3c1ae-261137d3f3.zip/node_modules/react/",\
+        "packageDependencies": [\
+          ["react", "npm:18.3.1"],\
+          ["loose-envify", "npm:1.4.0"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
       ["npm:19.2.4", {\
         "packageLocation": "./.yarn/cache/react-npm-19.2.4-d29a5aac4d-18179fe217.zip/node_modules/react/",\
         "packageDependencies": [\
@@ -16066,12 +16187,34 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["react-dom", [\
+      ["npm:18.3.1", {\
+        "packageLocation": "./.yarn/cache/react-dom-npm-18.3.1-a805663f38-3f4b73a3aa.zip/node_modules/react-dom/",\
+        "packageDependencies": [\
+          ["react-dom", "npm:18.3.1"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
       ["npm:19.2.4", {\
         "packageLocation": "./.yarn/cache/react-dom-npm-19.2.4-4921ae503e-ec17721a8c.zip/node_modules/react-dom/",\
         "packageDependencies": [\
           ["react-dom", "npm:19.2.4"]\
         ],\
         "linkType": "SOFT"\
+      }],\
+      ["virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#npm:18.3.1", {\
+        "packageLocation": "./.yarn/__virtual__/react-dom-virtual-e3091363b9/0/cache/react-dom-npm-18.3.1-a805663f38-3f4b73a3aa.zip/node_modules/react-dom/",\
+        "packageDependencies": [\
+          ["react-dom", "virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#npm:18.3.1"],\
+          ["@types/react", "npm:18.3.28"],\
+          ["loose-envify", "npm:1.4.0"],\
+          ["react", "npm:18.3.1"],\
+          ["scheduler", "npm:0.23.2"]\
+        ],\
+        "packagePeers": [\
+          "@types/react",\
+          "react"\
+        ],\
+        "linkType": "HARD"\
       }],\
       ["virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#npm:19.2.4", {\
         "packageLocation": "./.yarn/__virtual__/react-dom-virtual-c5f1a1497b/0/cache/react-dom-npm-19.2.4-4921ae503e-ec17721a8c.zip/node_modules/react-dom/",\
@@ -16123,6 +16266,21 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "SOFT"\
       }],\
+      ["virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#npm:1.6.2", {\
+        "packageLocation": "./.yarn/__virtual__/react-lazy-load-image-component-virtual-6e7b317b13/0/cache/react-lazy-load-image-component-npm-1.6.2-c273e1a1a8-37d29dc9ac.zip/node_modules/react-lazy-load-image-component/",\
+        "packageDependencies": [\
+          ["react-lazy-load-image-component", "virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#npm:1.6.2"],\
+          ["@types/react", "npm:18.3.28"],\
+          ["lodash.debounce", "npm:4.0.8"],\
+          ["lodash.throttle", "npm:4.1.1"],\
+          ["react", "npm:18.3.1"]\
+        ],\
+        "packagePeers": [\
+          "@types/react",\
+          "react"\
+        ],\
+        "linkType": "HARD"\
+      }],\
       ["virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#npm:1.6.2", {\
         "packageLocation": "./.yarn/__virtual__/react-lazy-load-image-component-virtual-d1f0eae657/0/cache/react-lazy-load-image-component-npm-1.6.2-c273e1a1a8-37d29dc9ac.zip/node_modules/react-lazy-load-image-component/",\
         "packageDependencies": [\
@@ -16173,6 +16331,24 @@ const RAW_RUNTIME_STATE =
           "react"\
         ],\
         "linkType": "HARD"\
+      }],\
+      ["virtual:f6cfb0d7c27cc8eeb8867cd4b30979954dd52c902f2cf3a566778a5c3f3eb82a8f6ab62efc72ea2a70d4f6eb2b25665a488509a1d259737588a43581d36887b5#npm:17.0.0", {\
+        "packageLocation": "./.yarn/__virtual__/react-relay-virtual-4f84ac65a3/0/cache/react-relay-npm-17.0.0-b76694d525-5f4c3f1e99.zip/node_modules/react-relay/",\
+        "packageDependencies": [\
+          ["react-relay", "virtual:f6cfb0d7c27cc8eeb8867cd4b30979954dd52c902f2cf3a566778a5c3f3eb82a8f6ab62efc72ea2a70d4f6eb2b25665a488509a1d259737588a43581d36887b5#npm:17.0.0"],\
+          ["@babel/runtime", "npm:7.25.0"],\
+          ["@types/react", "npm:18.3.28"],\
+          ["fbjs", "npm:3.0.5"],\
+          ["invariant", "npm:2.2.4"],\
+          ["nullthrows", "npm:1.1.1"],\
+          ["react", "npm:18.3.1"],\
+          ["relay-runtime", "npm:17.0.0"]\
+        ],\
+        "packagePeers": [\
+          "@types/react",\
+          "react"\
+        ],\
+        "linkType": "HARD"\
       }]\
     ]],\
     ["react18-use", [\
@@ -16189,6 +16365,19 @@ const RAW_RUNTIME_STATE =
           ["react18-use", "virtual:991015ceb8acca106af7e64cf676369bf8fb98370003b1af0559fb22931c330c3a09d064107412d6cc26ef286f0afdd26340443bd43177eeda3558644ba5f206#npm:0.4.1"],\
           ["@types/react", "npm:19.2.13"],\
           ["react", "npm:19.2.4"]\
+        ],\
+        "packagePeers": [\
+          "@types/react",\
+          "react"\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["virtual:f6cfb0d7c27cc8eeb8867cd4b30979954dd52c902f2cf3a566778a5c3f3eb82a8f6ab62efc72ea2a70d4f6eb2b25665a488509a1d259737588a43581d36887b5#npm:0.4.1", {\
+        "packageLocation": "./.yarn/__virtual__/react18-use-virtual-62802b7587/0/cache/react18-use-npm-0.4.1-3dd4e3b3bc-e8d61ca4ae.zip/node_modules/react18-use/",\
+        "packageDependencies": [\
+          ["react18-use", "virtual:f6cfb0d7c27cc8eeb8867cd4b30979954dd52c902f2cf3a566778a5c3f3eb82a8f6ab62efc72ea2a70d4f6eb2b25665a488509a1d259737588a43581d36887b5#npm:0.4.1"],\
+          ["@types/react", "npm:18.3.28"],\
+          ["react", "npm:18.3.1"]\
         ],\
         "packagePeers": [\
           "@types/react",\
@@ -16677,6 +16866,14 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["scheduler", [\
+      ["npm:0.23.2", {\
+        "packageLocation": "./.yarn/cache/scheduler-npm-0.23.2-6d1dd9c2b7-e8d68b89d1.zip/node_modules/scheduler/",\
+        "packageDependencies": [\
+          ["scheduler", "npm:0.23.2"],\
+          ["loose-envify", "npm:1.4.0"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
       ["npm:0.27.0", {\
         "packageLocation": "./.yarn/cache/scheduler-npm-0.27.0-772f0dd512-eab3c3a837.zip/node_modules/scheduler/",\
         "packageDependencies": [\
@@ -16956,8 +17153,8 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/simple-reveal-virtual-4d8b1c4f67/0/cache/simple-reveal-npm-0.8.0-28f77473ab-f28a4dff50.zip/node_modules/simple-reveal/",\
         "packageDependencies": [\
           ["simple-reveal", "virtual:0349e4c3e3c13e6c2c3644c139b8cc36986a13e674699ef552f832f4811603d25720461dd0f421afb36637b7bef854e2b3f31dfc5b707238429c2469f85316ac#npm:0.8.0"],\
-          ["@types/react", "npm:19.2.13"],\
-          ["react", "npm:19.2.4"]\
+          ["@types/react", "npm:18.3.28"],\
+          ["react", "npm:18.3.1"]\
         ],\
         "packagePeers": [\
           "@types/react",\
@@ -17333,10 +17530,10 @@ const RAW_RUNTIME_STATE =
           ["@babel/core", null],\
           ["@types/babel-plugin-macros", null],\
           ["@types/babel__core", null],\
-          ["@types/react", "npm:19.2.13"],\
+          ["@types/react", "npm:18.3.28"],\
           ["babel-plugin-macros", null],\
           ["client-only", "npm:0.0.1"],\
-          ["react", "npm:19.2.4"]\
+          ["react", "npm:18.3.1"]\
         ],\
         "packagePeers": [\
           "@babel/core",\
