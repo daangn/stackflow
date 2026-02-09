@@ -35,9 +35,9 @@
     "@stackflow/esbuild-config": "^1.0.3",
     "@stackflow/plugin-history-sync": "^1.8.0",
     "@stackflow/react": "^1.7.0",
-    "@types/react": "^19.2.13",
+    "@types/react": "^18.3.3",
     "esbuild": "^0.23.0",
-    "react": "^19.2.4",
+    "react": "^18.3.1",
     "rimraf": "^3.0.2",
     "typescript": "^5.5.3"
   },
