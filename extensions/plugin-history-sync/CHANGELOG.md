@@ -1,5 +1,11 @@
 # @stackflow/plugin-history-sync
 
+## 1.10.0
+
+### Minor Changes
+
+- 45fb7ba: Add encode option to Route interface for converting activity params to URL string params
+
 ## 1.9.0
 
 ### Minor Changes
