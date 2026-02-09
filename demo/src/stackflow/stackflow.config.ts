@@ -1,4 +1,4 @@
-import { defineConfig } from "@stackflow/config";
+import { defineConfig, loader } from "@stackflow/config";
 import { articleLoader } from "../activities/Article/Article.loader";
 import { mainLoader } from "../activities/Main/Main.loader";
 
@@ -7,7 +7,11 @@ export const config = defineConfig({
     {
       name: "Main",
       route: "/",
-      loader: mainLoader,
+      loader: loader(mainLoader, {
+        shouldInvalidate: ({ prevActivity, currentActivity }) => {
+          return !prevActivity.isActive && currentActivity.isActive;
+        },
+      }),
     },
     {
       name: "Article",

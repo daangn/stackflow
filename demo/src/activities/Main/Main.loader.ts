@@ -1,76 +1,54 @@
+function getRandomInt(min: number, max: number) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function getRandomItem<T>(arr: T[]): T {
+  return arr[getRandomInt(0, arr.length - 1)];
+}
+
+const TITLES = [
+  "Master",
+  "Wild",
+  "Universe",
+  "Private",
+  "Harbor",
+  "Valuable",
+  "Also",
+  "Ever",
+  "Production",
+  "Chest",
+  "Dream",
+  "Cloud",
+  "Star",
+  "Moon",
+  "River",
+];
+
+const REGIONS = [
+  "Nagevan",
+  "Inguima",
+  "Litenego",
+  "Umumtaw",
+  "Gubdidgi",
+  "Jumjelewu",
+  "Salhega",
+  "Jaifuup",
+  "Idcipwel",
+  "Ajapaktar",
+  "Vamtoro",
+  "Solgude",
+  "Pilnaga",
+  "Faldimor",
+];
+
 export function mainLoader() {
-  return {
-    cards: [
-      {
-        articleId: 2542470,
-        price: 41,
-        title: "Master",
-        region: "Nagevan",
-        daysAgo: 4,
-      },
-      {
-        articleId: 11257089,
-        price: 24,
-        title: "Wild",
-        region: "Inguima",
-        daysAgo: 4,
-      },
-      {
-        articleId: 8407137,
-        price: 42,
-        title: "Universe",
-        region: "Litenego",
-        daysAgo: 4,
-      },
-      {
-        articleId: 32979422,
-        price: 12,
-        title: "Private",
-        region: "Umumtaw",
-        daysAgo: 6,
-      },
-      {
-        articleId: 37998208,
-        price: 3,
-        title: "Harbor",
-        region: "Gubdidgi",
-        daysAgo: 3,
-      },
-      {
-        articleId: 1695878,
-        price: 1,
-        title: "Valuable",
-        region: "Jumjelewu",
-        daysAgo: 1,
-      },
-      {
-        articleId: 9792471,
-        price: 31,
-        title: "Also",
-        region: "Salhega",
-        daysAgo: 1,
-      },
-      {
-        articleId: 23939055,
-        price: 49,
-        title: "Ever",
-        region: "Jaifuup",
-        daysAgo: 9,
-      },
-      {
-        articleId: 94689745,
-        price: 26,
-        title: "Production",
-        region: "Idcipwel",
-        daysAgo: 3,
-      },
-      {
-        articleId: 49322156,
-        price: 35,
-        title: "Chest",
-        region: "Ajapaktar",
-        daysAgo: 7,
-      },
-    ],
-  };
+  const cards = Array.from({ length: 10 }).map(() => ({
+    articleId: getRandomInt(1000000, 99999999),
+    price: getRandomInt(1, 50),
+    title: getRandomItem(TITLES),
+    region: getRandomItem(REGIONS),
+    daysAgo: getRandomInt(1, 10),
+  }));
+
+  return { cards };
 }
