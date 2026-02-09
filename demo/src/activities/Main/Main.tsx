@@ -1,6 +1,5 @@
 import type { ActivityComponentType } from "@stackflow/react/future";
-import { useLoaderData } from "@stackflow/react/future";
-
+import { useLoader } from "@stackflow/react/future";
 import IconBell from "../../assets/IconBell";
 import IconExpandMore from "../../assets/IconExpandMore";
 import IconSearch from "../../assets/IconSearch";
@@ -8,7 +7,7 @@ import BottomTab from "../../components/BottomTab";
 import FeedCard from "../../components/FeedCard";
 import Layout from "../../components/Layout";
 import * as css from "./Main.css";
-import type { mainLoader } from "./Main.loader";
+import { mainLoader } from "./Main.loader";
 
 declare module "@stackflow/config" {
   interface Register {
@@ -17,7 +16,10 @@ declare module "@stackflow/config" {
 }
 
 const Main: ActivityComponentType<"Main"> = () => {
-  const { cards } = useLoaderData<typeof mainLoader>();
+  const {
+    data: { cards },
+    invalidate,
+  } = useLoader({ loaderFn: mainLoader });
 
   const appBarLeft = () => (
     <div className={css.appBarLeft}>
@@ -44,6 +46,9 @@ const Main: ActivityComponentType<"Main"> = () => {
     >
       <div className={css.wrapper}>
         <div className={css.scrollable}>
+          <button type="button" onClick={invalidate}>
+            Invalidate
+          </button>
           {cards.map((card) => (
             <FeedCard key={card.articleId} {...card} />
           ))}
