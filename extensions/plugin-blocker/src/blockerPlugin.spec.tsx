@@ -5,7 +5,11 @@ import type { StackflowReactPlugin } from "@stackflow/react";
 import { stackflow } from "@stackflow/react/future";
 import { act, render } from "@testing-library/react";
 import React from "react";
-import { blockerPlugin, useBlocker } from "./blockerPlugin";
+import {
+  type BlockedNavigation,
+  blockerPlugin,
+  useBlocker,
+} from "./blockerPlugin";
 
 declare module "@stackflow/config" {
   interface Register {
@@ -871,6 +875,131 @@ describe("blockerPlugin", () => {
 
       // then
       expect(onBlocked).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("3-1. 기본 bypass", () => {
+    it("bypass(blockedNavigation)를 호출하면 차단된 네비게이션이 재시도된다", async () => {
+      // given
+      let getStack!: () => Stack;
+      let bypassFn!: (b: BlockedNavigation) => void;
+      let lastBlocked: BlockedNavigation | null = null;
+
+      const spyPlugin: StackflowReactPlugin = () => ({
+        key: "spy",
+        onInit({ actions }) {
+          getStack = actions.getStack;
+        },
+      });
+
+      function TestActivity() {
+        const { bypass } = useBlocker({
+          shouldBlock: () => true,
+          onBlocked: (b) => {
+            lastBlocked = b;
+          },
+        });
+        React.useEffect(() => {
+          bypassFn = bypass;
+        }, []);
+        return <div>Test</div>;
+      }
+
+      function OtherActivity() {
+        return <div>Other</div>;
+      }
+
+      const config = defineConfig({
+        activities: [{ name: "TestActivity" }, { name: "OtherActivity" }],
+        transitionDuration: 0,
+        initialActivity: () => "TestActivity",
+      });
+
+      const { Stack, actions } = stackflow({
+        config,
+        components: { TestActivity, OtherActivity },
+        plugins: [blockerPlugin(), basicRendererPlugin(), spyPlugin],
+      });
+
+      render(<Stack />);
+
+      // when
+      await act(async () => {
+        actions.push("OtherActivity", {});
+      });
+
+      const activitiesBeforeBypass = getStack().activities;
+
+      await act(async () => {
+        bypassFn(lastBlocked!);
+      });
+
+      // then
+      const activities = getStack().activities;
+      expect(activities).toHaveLength(activitiesBeforeBypass.length + 1);
+      expect(activities[activities.length - 1].name).toBe("OtherActivity");
+      expect(activities[activities.length - 1].enteredBy.name).toBe("Pushed");
+    });
+
+    it("재시도되는 네비게이션의 이벤트는 차단되었던 네비게이션의 이벤트와 다른 id를 갖는다", async () => {
+      // given
+      let getStack!: () => Stack;
+      let bypassFn!: (b: BlockedNavigation) => void;
+      let lastBlocked: BlockedNavigation | null = null;
+
+      const spyPlugin: StackflowReactPlugin = () => ({
+        key: "spy",
+        onInit({ actions }) {
+          getStack = actions.getStack;
+        },
+      });
+
+      function TestActivity() {
+        const { bypass } = useBlocker({
+          shouldBlock: () => true,
+          onBlocked: (b) => {
+            lastBlocked = b;
+          },
+        });
+        React.useEffect(() => {
+          bypassFn = bypass;
+        }, []);
+        return <div>Test</div>;
+      }
+
+      function OtherActivity() {
+        return <div>Other</div>;
+      }
+
+      const config = defineConfig({
+        activities: [{ name: "TestActivity" }, { name: "OtherActivity" }],
+        transitionDuration: 0,
+        initialActivity: () => "TestActivity",
+      });
+
+      const { Stack, actions } = stackflow({
+        config,
+        components: { TestActivity, OtherActivity },
+        plugins: [blockerPlugin(), basicRendererPlugin(), spyPlugin],
+      });
+
+      render(<Stack />);
+
+      // when
+      await act(async () => {
+        actions.push("OtherActivity", {});
+      });
+
+      const blockedEventId = lastBlocked!.event.id;
+
+      await act(async () => {
+        bypassFn(lastBlocked!);
+      });
+
+      // then
+      const activities = getStack().activities;
+      const retriedActivity = activities[activities.length - 1];
+      expect(retriedActivity.enteredBy.id).not.toBe(blockedEventId);
     });
   });
 });
