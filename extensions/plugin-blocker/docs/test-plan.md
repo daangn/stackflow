@@ -24,7 +24,7 @@
 - `shouldBlock`이 `false`를 반환하면 네비게이션이 허용된다
 
 #### 1-3. 이벤트 선택적 차단
-- Popped만 차단하고 Pushed는 허용할 수 있다
+- Replaced는 차단하고 Pushed는 허용할 수 있다
 - shouldBlock은 마지막으로 commit된 render에서 전달된 함수를 사용한다
 
 #### 1-4. Activity 스코프
@@ -100,6 +100,49 @@ cd extensions/plugin-blocker && yarn test
 
 - DOM 대신 spyPlugin으로 검증: `onInit({ actions })`에서 `getStack` 캡처
 - `getStack().activities` 전체 배열 비교 (active activity의 steps만 비교하면 false positive 가능)
+
+#### push 성공 검증 패턴
+
+push가 성공했는지 꼼꼼히 확인하려면 세 가지를 모두 검증한다:
+
+```tsx
+const activitiesBefore = getStack().activities;
+await act(async () => { actions.push("OtherActivity", {}); });
+const activities = getStack().activities;
+expect(activities).toHaveLength(activitiesBefore.length + 1);
+expect(activities[activities.length - 1].name).toBe("OtherActivity");
+expect(activities[activities.length - 1].enteredBy.name).toBe("Pushed");
+```
+
+#### pop 성공 검증 패턴
+
+`transitionState`가 `"enter-done"` 또는 `"enter-active"`인 액티비티 수가 줄었는지 확인한다:
+
+```tsx
+const activeCountBefore = getStack().activities.filter(
+  (a) => a.transitionState === "enter-done" || a.transitionState === "enter-active",
+).length;
+await act(async () => { actions.pop(); });
+const activeCountAfter = getStack().activities.filter(
+  (a) => a.transitionState === "enter-done" || a.transitionState === "enter-active",
+).length;
+expect(activeCountAfter).toBe(activeCountBefore - 1);
+```
+
+### given / when / then 규칙
+
+- `expect`는 반드시 `// then` 블록에서만 사용한다
+- setup 단계(given)와 중간 조작 단계(when)에서는 assertion을 하지 않는다
+- React state setter는 `useEffect` 안에서 외부 변수에 할당해 테스트 스코프에 노출한다:
+
+```tsx
+let setSomeState!: (v: boolean) => void;
+function TestActivity() {
+  const [state, setState] = React.useState(false);
+  React.useEffect(() => { setSomeState = setState; }, []);
+  // ...
+}
+```
 
 ### act 사용법
 
