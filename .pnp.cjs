@@ -6743,8 +6743,10 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./extensions/plugin-blocker/",\
         "packageDependencies": [\
           ["@stackflow/plugin-blocker", "workspace:extensions/plugin-blocker"],\
+          ["@stackflow/config", "workspace:config"],\
           ["@stackflow/core", "workspace:core"],\
           ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
+          ["@stackflow/plugin-renderer-basic", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-renderer-basic"],\
           ["@stackflow/react", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:integrations/react"],\
           ["@swc/core", "virtual:b327d7e228fba669b88a8bb23bcf526374e46fa67e617b1e6848e8a205357fee5ce94b47c49b5a570fd9e8a44fa218a13cd00e2eca327c99114cbd21d72ecf9c#npm:1.6.6"],\
           ["@swc/jest", "virtual:b327d7e228fba669b88a8bb23bcf526374e46fa67e617b1e6848e8a205357fee5ce94b47c49b5a570fd9e8a44fa218a13cd00e2eca327c99114cbd21d72ecf9c#npm:0.2.36"],\
