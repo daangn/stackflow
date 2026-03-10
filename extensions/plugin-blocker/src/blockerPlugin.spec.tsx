@@ -1071,6 +1071,212 @@ describe("blockerPlugin", () => {
     });
   });
 
+  describe("4. Composition (다중 블로커)", () => {
+    it("복수 블로커 등록 시, shouldBlock이 true인 모든 훅의 onBlocked가 호출된다", async () => {
+      // given
+      const onBlockedA = jest.fn();
+      const onBlockedB = jest.fn();
+
+      function TestActivity() {
+        useBlocker({
+          shouldBlock: () => true,
+          onBlocked: onBlockedA,
+        });
+        useBlocker({
+          shouldBlock: () => true,
+          onBlocked: onBlockedB,
+        });
+        return <div>Test</div>;
+      }
+
+      function OtherActivity() {
+        return <div>Other</div>;
+      }
+
+      const config = defineConfig({
+        activities: [{ name: "TestActivity" }, { name: "OtherActivity" }],
+        transitionDuration: 0,
+        initialActivity: () => "TestActivity",
+      });
+
+      const { Stack, actions } = stackflow({
+        config,
+        components: { TestActivity, OtherActivity },
+        plugins: [blockerPlugin(), basicRendererPlugin()],
+      });
+
+      render(<Stack />);
+
+      // when
+      await act(async () => {
+        actions.push("OtherActivity", {});
+      });
+
+      // then
+      expect(onBlockedA).toHaveBeenCalledTimes(1);
+      expect(onBlockedA).toHaveBeenCalledWith({
+        event: expect.objectContaining({ name: "Pushed" }),
+      });
+      expect(onBlockedB).toHaveBeenCalledTimes(1);
+      expect(onBlockedB).toHaveBeenCalledWith({
+        event: expect.objectContaining({ name: "Pushed" }),
+      });
+    });
+
+    it("하나의 블로커만 shouldBlock: true이면 그 블로커의 onBlocked만 호출된다", async () => {
+      // given
+      const onBlockedA = jest.fn();
+      const onBlockedB = jest.fn();
+
+      function TestActivity() {
+        useBlocker({
+          shouldBlock: () => true,
+          onBlocked: onBlockedA,
+        });
+        useBlocker({
+          shouldBlock: () => false,
+          onBlocked: onBlockedB,
+        });
+        return <div>Test</div>;
+      }
+
+      function OtherActivity() {
+        return <div>Other</div>;
+      }
+
+      const config = defineConfig({
+        activities: [{ name: "TestActivity" }, { name: "OtherActivity" }],
+        transitionDuration: 0,
+        initialActivity: () => "TestActivity",
+      });
+
+      const { Stack, actions } = stackflow({
+        config,
+        components: { TestActivity, OtherActivity },
+        plugins: [blockerPlugin(), basicRendererPlugin()],
+      });
+
+      render(<Stack />);
+
+      // when
+      await act(async () => {
+        actions.push("OtherActivity", {});
+      });
+
+      // then
+      expect(onBlockedA).toHaveBeenCalledTimes(1);
+      expect(onBlockedB).not.toHaveBeenCalled();
+    });
+
+    it("하나의 블로커의 shouldBlock이라도 true를 반환하면 내비게이션이 차단된다", async () => {
+      // given
+      let getStack!: () => Stack;
+
+      const spyPlugin: StackflowReactPlugin = () => ({
+        key: "spy",
+        onInit({ actions }) {
+          getStack = actions.getStack;
+        },
+      });
+
+      function TestActivity() {
+        useBlocker({
+          shouldBlock: () => true,
+          onBlocked: () => {},
+        });
+        useBlocker({
+          shouldBlock: () => false,
+          onBlocked: () => {},
+        });
+        return <div>Test</div>;
+      }
+
+      function OtherActivity() {
+        return <div>Other</div>;
+      }
+
+      const config = defineConfig({
+        activities: [{ name: "TestActivity" }, { name: "OtherActivity" }],
+        transitionDuration: 0,
+        initialActivity: () => "TestActivity",
+      });
+
+      const { Stack, actions } = stackflow({
+        config,
+        components: { TestActivity, OtherActivity },
+        plugins: [blockerPlugin(), basicRendererPlugin(), spyPlugin],
+      });
+
+      render(<Stack />);
+
+      const activitiesBefore = getStack().activities;
+
+      // when
+      await act(async () => {
+        actions.push("OtherActivity", {});
+      });
+
+      // then
+      const activitiesAfter = getStack().activities;
+      expect(activitiesAfter).toEqual(activitiesBefore);
+    });
+
+    it("모든 블로커의 shouldBlock이 false를 반환하면 내비게이션이 허용된다", async () => {
+      // given
+      let getStack!: () => Stack;
+
+      const spyPlugin: StackflowReactPlugin = () => ({
+        key: "spy",
+        onInit({ actions }) {
+          getStack = actions.getStack;
+        },
+      });
+
+      function TestActivity() {
+        useBlocker({
+          shouldBlock: () => false,
+          onBlocked: () => {},
+        });
+        useBlocker({
+          shouldBlock: () => false,
+          onBlocked: () => {},
+        });
+        return <div>Test</div>;
+      }
+
+      function OtherActivity() {
+        return <div>Other</div>;
+      }
+
+      const config = defineConfig({
+        activities: [{ name: "TestActivity" }, { name: "OtherActivity" }],
+        transitionDuration: 0,
+        initialActivity: () => "TestActivity",
+      });
+
+      const { Stack, actions } = stackflow({
+        config,
+        components: { TestActivity, OtherActivity },
+        plugins: [blockerPlugin(), basicRendererPlugin(), spyPlugin],
+      });
+
+      render(<Stack />);
+
+      const activitiesBefore = getStack().activities;
+
+      // when
+      await act(async () => {
+        actions.push("OtherActivity", {});
+      });
+
+      // then
+      const activities = getStack().activities;
+      expect(activities).toHaveLength(activitiesBefore.length + 1);
+      expect(activities[activities.length - 1].name).toBe("OtherActivity");
+      expect(activities[activities.length - 1].enteredBy.name).toBe("Pushed");
+    });
+  });
+
   describe("3-3. 비멱등성", () => {
     it("같은 blockedNavigation으로 여러 번 bypass를 호출하면 매번 재시도된다", async () => {
       // given
