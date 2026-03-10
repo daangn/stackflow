@@ -1,0 +1,81 @@
+# blockerPlugin 테스트 계획
+
+## Context
+
+테크 스펙에 따르면 `blockerPlugin`은 현재 구현과 완전히 다른 API를 가져야 한다:
+- **현재**: `blockerPlugin({ shouldBlock })` — 전역 플러그인 옵션으로 차단
+- **스펙**: `blockerPlugin()` (무인자) + `useBlocker({ shouldBlock, onBlocked })` React 훅
+
+스펙의 시멘틱 섹션(§5)을 기준으로 테스트 항목을 정의한다.
+
+## 테스트 항목
+
+### 1. 차단 (Blocking)
+
+#### 1-1. 기본 차단
+- `shouldBlock`이 `true`를 반환하면 pop이 차단된다
+- `shouldBlock`이 `true`를 반환하면 push가 차단된다
+- `shouldBlock`이 `true`를 반환하면 replace가 차단된다
+- `shouldBlock`이 `true`를 반환하면 stepPush가 차단된다
+- `shouldBlock`이 `true`를 반환하면 stepPop이 차단된다
+- `shouldBlock`이 `true`를 반환하면 stepReplace가 차단된다
+
+#### 1-2. 기본 허용
+- `shouldBlock`이 `false`를 반환하면 네비게이션이 허용된다
+
+#### 1-3. 이벤트 선택적 차단
+- Popped만 차단하고 Pushed는 허용할 수 있다
+- shouldBlock은 마지막으로 commit된 render에서 전달된 함수를 사용한다
+
+#### 1-4. Activity 스코프
+- 액티비티 위에 다른 액티비티가 push되면 밑에 있던 액티비티의 블로커는 비활성화된다
+- 액티비티 위에 push되어있던 모든 액티비티가 pop으로 exit되면 밑에 있던 액티비티의 블로커가 다시 활성화된다
+- 액티비티가 replace되면 해당 액티비티의 블로커는 비활성화된다
+- 액티비티가 pop되면 해당 액티비티의 블로커는 비활성화된다
+
+### 2. 통보 (Notification)
+
+- 해당 블로커가 내비게이션을 차단하면 onBlocked가 호출된다
+- 해당 블로커가 차단하지 않은 내비게이션 차단 건에 대해서는 onBlocked가 호출되지 않는다
+- 차단되지 않은 내비게이션에 대해서는 onBlocked가 호출되지 않는다
+
+### 3. bypass
+
+#### 3-1. 기본 bypass
+- `bypass(blockedNavigation)`를 호출하면 차단된 네비게이션이 재시도된다
+- 재시도되는 네비게이션의 이벤트는 차단되었던 네비게이션의 이벤트와 다른 id를 갖는다
+- 재시도되는 네비게이션의 이벤트에 대해, bypass를 제공한 블로커의 shouldBlock 함수가 true를 반환해도 내비게이션이 차단되지 않는다
+
+#### 3-2. 호출 블로커만 우회
+- bypass는 호출한 블로커만 우회하고, 다른 블로커가 `shouldBlock: true`이면 다시 차단된다
+
+#### 3-3. 비멱등성
+- 같은 `blockedNavigation`으로 여러 번 `bypass`를 호출하면 매번 재시도된다
+- 재시도되는 모든 내비게이션의 이벤트의 id는 서로 다르다
+
+### 4. Composition (다중 블로커)
+
+- 복수 블로커 등록 시, `shouldBlock`이 `true`인 모든 훅의 `onBlocked`가 호출된다
+- 하나의 블로커만 `shouldBlock: true`이면 그 블로커의 `onBlocked`만 호출된다
+- 하나의 블로커의 shouldBlock이라도 true를 반환하면 내비게이션이 차단된다
+- 모든 블로커의 shouldBlock이 false를 반환하면 내비게이션이 허용된다
+
+### 5. Lifecycle
+
+- 블로커를 소유한 컴포넌트가 unmount되면 해당 블로커는 더 이상 차단 여부에 영향을 주지 않는다
+- 블로커를 소유한 컴포넌트가 unmount되면 해당 블로커의 onBlocked도 더 이상 호출되지 않는다
+- 블로커를 소유한 컴포넌트가 unmount되어도 해당 블로커의 bypass는 동작하되, 해당 블로커의 shouldBlock이 `true`를 반환했을 때와 동일하게 동작한다
+
+---
+
+## 구현 파일
+
+- **테스트**: `extensions/plugin-blocker/src/blockerPlugin.spec.tsx`
+- **플러그인**: `extensions/plugin-blocker/src/blockerPlugin.ts`
+- **Export**: `extensions/plugin-blocker/src/index.ts`
+
+## 검증 방법
+
+```bash
+cd extensions/plugin-blocker && yarn test
+```
