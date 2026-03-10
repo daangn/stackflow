@@ -79,3 +79,28 @@
 ```bash
 cd extensions/plugin-blocker && yarn test
 ```
+
+## 세부 가이드라인
+
+> 새로운 가이드라인이 내려오면 이 단락을 업데이트하세요.
+
+### API
+
+- `@stackflow/react/future의 stackflow({ config, components, plugins })` 사용
+  - 이 플러그인은 `@stackflow/react/future` 전용
+- activity 등록은 `defineConfig()` + `declare module "@stackflow/config" { interface Register }` 타입 확장
+
+### 테스트 구조
+
+- 매 `it` 블록마다 `stackflow()`를 새로 호출해 독립된 인스턴스 생성
+- 모든 테스트를 한 파일에 모아서 관리
+- `// given / // when / // then` 주석으로 가독성 확보
+
+### 스택 상태 검증
+
+- DOM 대신 spyPlugin으로 검증: `onInit({ actions })`에서 `getStack` 캡처
+- `getStack().activities` 전체 배열 비교 (active activity의 steps만 비교하면 false positive 가능)
+
+### act 사용법
+
+- `await act(async () => { ... })` 패턴 고정 (concurrent rendering 대응)
