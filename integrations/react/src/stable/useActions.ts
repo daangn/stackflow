@@ -64,8 +64,8 @@ export type UseActionsOutputType<T extends BaseActivities> = {
    * Remove top activity
    */
   pop(): void;
-  pop(options: { animate?: boolean }): void;
-  pop(count: number, options?: { animate?: boolean }): void;
+  pop(options: { animate?: boolean, skipActiveState?: boolean }): void;
+  pop(count: number, options: { animate?: boolean }): void;
 };
 
 export function useActions<
@@ -106,11 +106,11 @@ export function useActions<
         };
       },
       pop(
-        count?: number | { animate?: boolean } | undefined,
+        count?: number | { animate?: boolean, skipActiveState?: boolean } | undefined,
         options?: { animate?: boolean } | undefined,
       ) {
         let _count = 1;
-        let _options: { animate?: boolean } = {};
+        let _options: { animate?: boolean, skipActiveState?: boolean } = {};
 
         if (typeof count === "object") {
           _options = {
@@ -123,13 +123,14 @@ export function useActions<
         if (options) {
           _options = {
             ...options,
+            skipActiveState: false,
           };
         }
 
         for (let i = 0; i < _count; i += 1) {
           coreActions?.pop({
-            skipExitActiveState:
-              i === 0 ? parseActionOptions(_options).skipActiveState : true,
+            skipExitActiveState: _options.skipActiveState || 
+              (i === 0 ? parseActionOptions(_options).skipActiveState : true),
           });
         }
       },

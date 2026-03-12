@@ -191,9 +191,11 @@ const AppScreen: React.FC<AppScreenProps> = ({
 
       return null;
     },
-    onSwipeEnd({ swiped }) {
+    onTransitionEnd({ swiped }) {
       if (swiped) {
-        pop();
+        pop({
+          skipActiveState: true
+        });
       }
     },
   });
