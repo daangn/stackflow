@@ -2,11 +2,11 @@
 
 ## Context
 
-테크 스펙에 따르면 `blockerPlugin`은 현재 구현과 완전히 다른 API를 가져야 한다:
-- **현재**: `blockerPlugin({ shouldBlock })` — 전역 플러그인 옵션으로 차단
-- **스펙**: `blockerPlugin()` (무인자) + `useBlocker({ shouldBlock, onBlocked })` React 훅
+`blockerPlugin`은 코어 변경 없이 `StackflowReactPlugin`으로 구현된 화면 이탈 방지 플러그인이다:
+- `blockerPlugin()` (무인자) — 플러그인 등록
+- `useBlocker({ shouldBlock, onBlocked })` — 액티비티 컴포넌트에서 차단 정책 선언
 
-스펙의 시멘틱 섹션(§5)을 기준으로 테스트 항목을 정의한다.
+`shouldBlock`과 `onBlocked`가 받는 값은 `NavigationAction` 타입으로, 이벤트가 되기 전의 네비게이션 액션이다 (`id`, `eventDate` 미포함). 스펙의 시멘틱 섹션(§5)을 기준으로 테스트 항목을 정의한다.
 
 ## 테스트 항목
 
@@ -23,7 +23,7 @@
 #### 1-2. 기본 허용
 - `shouldBlock`이 `false`를 반환하면 네비게이션이 허용된다
 
-#### 1-3. 이벤트 선택적 차단
+#### 1-3. 액션 선택적 차단
 - Replaced는 차단하고 Pushed는 허용할 수 있다
 - shouldBlock은 마지막으로 commit된 render에서 전달된 함수를 사용한다
 

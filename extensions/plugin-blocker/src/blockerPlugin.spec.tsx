@@ -227,7 +227,7 @@ describe("blockerPlugin", () => {
 
       function TestActivity() {
         useBlocker({
-          shouldBlock: (event) => event.name === "StepPopped",
+          shouldBlock: (action) => action.name === "StepPopped",
           onBlocked: () => {},
         });
         return <div>Test</div>;
@@ -280,7 +280,7 @@ describe("blockerPlugin", () => {
 
       function TestActivity() {
         useBlocker({
-          shouldBlock: (event) => event.name === "StepReplaced",
+          shouldBlock: (action) => action.name === "StepReplaced",
           onBlocked: () => {},
         });
         return <div>Test</div>;
@@ -373,7 +373,7 @@ describe("blockerPlugin", () => {
     });
   });
 
-  describe("1-3. 이벤트 선택적 차단", () => {
+  describe("1-3. 액션 선택적 차단", () => {
     it("Replaced는 차단하고 Pushed는 허용할 수 있다", async () => {
       // given
       let getStack!: () => Stack;
@@ -387,7 +387,7 @@ describe("blockerPlugin", () => {
 
       function TestActivity() {
         useBlocker({
-          shouldBlock: (event) => event.name === "Replaced",
+          shouldBlock: (action) => action.name === "Replaced",
           onBlocked: () => {},
         });
         return <div>Test</div>;
@@ -510,7 +510,7 @@ describe("blockerPlugin", () => {
       function TestActivity() {
         // pop만 차단
         useBlocker({
-          shouldBlock: (event) => event.name === "Popped",
+          shouldBlock: (action) => action.name === "Popped",
           onBlocked: () => {},
         });
         return <div>Test</div>;
@@ -642,7 +642,7 @@ describe("blockerPlugin", () => {
       function TestActivity() {
         // push는 차단하지만 replace는 허용
         useBlocker({
-          shouldBlock: (event) => event.name === "Pushed",
+          shouldBlock: (action) => action.name === "Pushed",
           onBlocked: () => {},
         });
         return <div>Test</div>;
@@ -702,7 +702,7 @@ describe("blockerPlugin", () => {
       function TestActivity() {
         // push는 차단하지만 pop은 허용
         useBlocker({
-          shouldBlock: (event) => event.name === "Pushed",
+          shouldBlock: (action) => action.name === "Pushed",
           onBlocked: () => {},
         });
         return <div>Test</div>;
@@ -785,7 +785,7 @@ describe("blockerPlugin", () => {
       // then
       expect(onBlocked).toHaveBeenCalledTimes(1);
       expect(onBlocked).toHaveBeenCalledWith({
-        event: expect.objectContaining({ name: "Pushed" }),
+        action: expect.objectContaining({ name: "Pushed" }),
       });
     });
 
@@ -1102,11 +1102,11 @@ describe("blockerPlugin", () => {
       // then
       expect(onBlockedA).toHaveBeenCalledTimes(1);
       expect(onBlockedA).toHaveBeenCalledWith({
-        event: expect.objectContaining({ name: "Pushed" }),
+        action: expect.objectContaining({ name: "Pushed" }),
       });
       expect(onBlockedB).toHaveBeenCalledTimes(1);
       expect(onBlockedB).toHaveBeenCalledWith({
-        event: expect.objectContaining({ name: "Pushed" }),
+        action: expect.objectContaining({ name: "Pushed" }),
       });
     });
 
