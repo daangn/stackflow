@@ -65,38 +65,38 @@ stackflow({
 ### `useBlocker`
 
 ```tsx
-type NavigationEvent =
-  | PushedEvent
-  | PoppedEvent
-  | ReplacedEvent
-  | StepPushedEvent
-  | StepPoppedEvent
-  | StepReplacedEvent
+type NavigationAction =
+  | Omit<PushedEvent, "id" | "eventDate">
+  | Omit<PoppedEvent, "id" | "eventDate">
+  | Omit<ReplacedEvent, "id" | "eventDate">
+  | Omit<StepPushedEvent, "id" | "eventDate">
+  | Omit<StepPoppedEvent, "id" | "eventDate">
+  | Omit<StepReplacedEvent, "id" | "eventDate">
 
-type BlockedNavigation = { event: NavigationEvent }
+type BlockedNavigation = { action: NavigationAction }
 
 declare function useBlocker(options: {
-  shouldBlock: (event: NavigationEvent) => boolean
+  shouldBlock: (action: NavigationAction) => boolean
   onBlocked: (blockedNavigation: BlockedNavigation) => void
 }): {
   override: (fn: () => void) => void
 }
 ```
 
-각 이벤트는 `name` 필드(`"Pushed"`, `"Popped"`, `"Replaced"`, `"StepPushed"`, `"StepPopped"`, `"StepReplaced"`)로 구분할 수 있다. `shouldBlock`에서 이를 활용해 차단할 이벤트 종류를 선택한다.
+`shouldBlock`과 `onBlocked`가 받는 값은 이벤트가 아니라 **아직 이벤트가 되기 전의 네비게이션 액션**이다. 코어의 `onBefore*` 훅 시점에는 이벤트 `id`와 `eventDate`가 아직 할당되지 않았기 때문에 이 필드들은 포함되지 않는다. 각 액션은 `name` 필드(`"Pushed"`, `"Popped"`, `"Replaced"`, `"StepPushed"`, `"StepPopped"`, `"StepReplaced"`)로 구분할 수 있다.
 
 ## 5. 시멘틱
 
 ### 차단
 
-- `shouldBlock(event)` — 네비게이션 이벤트를 받아 차단 여부를 반환. `true`면 `preventDefault()`로 차단.
-- 이벤트 발생 시점에 **commit된 render의 `shouldBlock`**이 사용된다.
+- `shouldBlock(action)` — 네비게이션 액션을 받아 차단 여부를 반환. `true`면 `preventDefault()`로 차단.
+- 액션 발생 시점에 **commit된 render의 `shouldBlock`**이 사용된다.
 - 블로커는 **activity 단위**로 동작. `isActive: true`인 activity의 블로커만 활성화.
 
 ### 통보
 
 - `onBlocked(blockedNavigation)` — 네비게이션이 차단될 때마다 호출.
-- `blockedNavigation`은 순수 데이터. `{ event: NavigationEvent }`.
+- `blockedNavigation`은 순수 데이터. `{ action: NavigationAction }`.
 
 ### override
 
