@@ -30,7 +30,7 @@ export function useBlocker(options: {
   shouldBlock: (event: NavigationEvent) => boolean;
   onBlocked: (blockedNavigation: BlockedNavigation) => void;
 }): {
-  bypass: (blockedNavigation: BlockedNavigation) => void;
+  override: (fn: () => void) => void;
 } {
   throw new Error("Not implemented");
 }

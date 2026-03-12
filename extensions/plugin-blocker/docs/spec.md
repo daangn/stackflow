@@ -79,7 +79,7 @@ declare function useBlocker(options: {
   shouldBlock: (event: NavigationEvent) => boolean
   onBlocked: (blockedNavigation: BlockedNavigation) => void
 }): {
-  bypass: (blockedNavigation: BlockedNavigation) => void
+  override: (fn: () => void) => void
 }
 ```
 
@@ -98,11 +98,11 @@ declare function useBlocker(options: {
 - `onBlocked(blockedNavigation)` — 네비게이션이 차단될 때마다 호출.
 - `blockedNavigation`은 순수 데이터. `{ event: NavigationEvent }`.
 
-### bypass
+### override
 
-- `bypass(blockedNavigation)` — `useBlocker` 반환값에 포함된 함수. `blockedNavigation`을 인자로 받아 해당 네비게이션을 재시도한다.
-- **호출한 블로커만 우회한다.** 동일 activity의 다른 블로커는 독립적으로 동작하며, 그 블로커의 `shouldBlock`이 `true`면 다시 차단된다.
-- 같은 `blockedNavigation`으로 여러 번 호출하면 **매 호출마다 재시도**한다 (비멱등).
+- `override(fn)` — `useBlocker` 반환값에 포함된 함수. 콜백 `fn` 내에서 실행되는 모든 네비게이션이 이 블로커를 우회한다.
+- **호출한 블로커만 우회한다.** 동일 activity의 다른 블로커는 독립적으로 동작하며, 그 블로커의 `shouldBlock`이 `true`면 차단된다.
+- 임의의 네비게이션을 우회할 수 있다. 차단된 네비게이션을 재시도하는 것뿐 아니라, 완전히 다른 네비게이션도 가능하다.
 
 ### Composition
 
@@ -114,162 +114,3 @@ declare function useBlocker(options: {
 
 - 블로커가 비활성화(unmount)되면 `shouldBlock`은 `() => false`로 간주. bypass 시 자동 통과.
 - `onBlocked` 내 비동기 작업의 lifecycle 관리는 개발자 책임이다.
-
-## 6. 사용 예시
-
-### 확인 다이얼로그 (pop만 차단)
-
-```tsx
-function WritingPage() {
-  const [dirty, setDirty] = useState(false)
-  const [pending, setPending] = useState<BlockedNavigation | null>(null)
-
-  const { bypass } = useBlocker({
-    shouldBlock: (event) => event.name === "Popped" && dirty,
-    onBlocked: (blocked) => {
-      setPending(blocked)
-    },
-  })
-
-  return (
-    <AppScreen>
-      <Form onChange={() => setDirty(true)} />
-      {pending && (
-        <Dialog
-          title="정말 나가시겠습니까?"
-          onConfirm={() => { bypass(pending); setPending(null) }}
-          onCancel={() => setPending(null)}
-        />
-      )}
-    </AppScreen>
-  )
-}
-```
-
-### 모든 네비게이션 차단
-
-```tsx
-function WritingPage() {
-  const [dirty, setDirty] = useState(false)
-  const [pending, setPending] = useState<BlockedNavigation | null>(null)
-
-  const { bypass } = useBlocker({
-    shouldBlock: () => dirty,
-    onBlocked: (blocked) => {
-      setPending(blocked)
-    },
-  })
-
-  return (
-    <AppScreen>
-      <Form onChange={() => setDirty(true)} />
-      {pending && (
-        <Dialog
-          title="저장하지 않은 변경사항이 있습니다"
-          onConfirm={() => { bypass(pending); setPending(null) }}
-          onCancel={() => setPending(null)}
-        />
-      )}
-    </AppScreen>
-  )
-}
-```
-
-### 다이얼로그 토글 (두 번째 back → 닫기)
-
-```tsx
-function WritingPage() {
-  const [dirty, setDirty] = useState(false)
-  const [pending, setPending] = useState<BlockedNavigation | null>(null)
-
-  const { bypass } = useBlocker({
-    shouldBlock: (event) => event.name === "Popped" && dirty,
-    onBlocked: (blocked) => {
-      setPending((prev) => prev !== null ? null : blocked)
-    },
-  })
-
-  return (
-    <AppScreen>
-      <Form onChange={() => setDirty(true)} />
-      {pending && (
-        <Dialog
-          title="정말 나가시겠습니까?"
-          onConfirm={() => { bypass(pending); setPending(null) }}
-          onCancel={() => setPending(null)}
-        />
-      )}
-    </AppScreen>
-  )
-}
-```
-
-### 저장 후 이탈
-
-```tsx
-function WritingPage() {
-  const [dirty, setDirty] = useState(false)
-  const [pending, setPending] = useState<BlockedNavigation | null>(null)
-
-  const { bypass } = useBlocker({
-    shouldBlock: (event) => event.name === "Popped" && dirty,
-    onBlocked: (blocked) => {
-      setPending(blocked)
-    },
-  })
-
-  const handleSaveAndLeave = async () => {
-    await save()
-    if (pending) bypass(pending)
-    setPending(null)
-  }
-
-  return (
-    <AppScreen>
-      <Form onChange={() => setDirty(true)} />
-      {pending && (
-        <Dialog
-          title="저장하지 않은 변경사항이 있습니다"
-          onSaveAndLeave={handleSaveAndLeave}
-          onLeave={() => { bypass(pending); setPending(null) }}
-          onCancel={() => setPending(null)}
-        />
-      )}
-    </AppScreen>
-  )
-}
-```
-
-### Multipop 처리
-
-`pop({ count: 3 })`은 독립적인 pop 이벤트 3개를 발생시킨다. 각각 별개로 차단되므로 `onBlocked`가 3번 호출된다.
-
-```tsx
-function WritingPage() {
-  const [dirty, setDirty] = useState(false)
-  const [pendingList, setPendingList] = useState<BlockedNavigation[]>([])
-
-  const { bypass } = useBlocker({
-    shouldBlock: (event) => event.name === "Popped" && dirty,
-    onBlocked: (blocked) => {
-      setPendingList((prev) => [...prev, blocked])
-    },
-  })
-
-  return (
-    <AppScreen>
-      <Form onChange={() => setDirty(true)} />
-      {pendingList.length > 0 && (
-        <Dialog
-          title="정말 나가시겠습니까?"
-          onConfirm={() => {
-            pendingList.forEach((b) => bypass(b))
-            setPendingList([])
-          }}
-          onCancel={() => setPendingList([])}
-        />
-      )}
-    </AppScreen>
-  )
-}
-```

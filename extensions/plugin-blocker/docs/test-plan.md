@@ -39,18 +39,16 @@
 - 차단하지 않은 블로커의 onBlocked는 호출되지 않는다
 - 차단되지 않은 네비게이션에 대해서는 onBlocked가 호출되지 않는다
 
-### 3. bypass
+### 3. override
 
-#### 3-1. 기본 bypass
-- `bypass(blockedNavigation)`를 호출하면 차단된 네비게이션이 재시도된다
-- 재시도되는 네비게이션의 이벤트는 차단되었던 네비게이션의 이벤트와 다른 id를 갖는다
+#### 3-1. 기본 override
+- `override(fn)` 콜백 내 네비게이션은 블로커를 우회한다
 
 #### 3-2. 호출 블로커만 우회
-- bypass는 호출한 블로커만 우회하고, 다른 블로커가 `shouldBlock: true`이면 다시 차단된다
+- `override`는 호출한 블로커만 우회하고, 다른 블로커가 `shouldBlock: true`이면 다시 차단된다
 
-#### 3-3. 비멱등성
-- 같은 `blockedNavigation`으로 여러 번 `bypass`를 호출하면 매번 재시도된다
-- 재시도되는 모든 내비게이션의 이벤트의 id는 서로 다르다
+#### 3-3. 독립 실행
+- `override`를 여러 번 호출하면 매번 독립적으로 실행된다
 
 ### 4. Composition (다중 블로커)
 
@@ -63,7 +61,7 @@
 
 - 블로커를 소유한 컴포넌트가 unmount되면 해당 블로커는 더 이상 차단 여부에 영향을 주지 않는다
 - 블로커를 소유한 컴포넌트가 unmount되면 해당 블로커의 onBlocked도 더 이상 호출되지 않는다
-- 블로커를 소유한 컴포넌트가 unmount되어도 해당 블로커의 bypass는 동작하되, 해당 블로커의 shouldBlock이 `false`를 반환했을 때와 동일하게 동작한다
+- 블로커를 소유한 컴포넌트가 unmount되어도 해당 블로커의 `override`는 동작하되, 해당 블로커의 shouldBlock이 `false`를 반환했을 때와 동일하게 동작한다
 
 ---
 
