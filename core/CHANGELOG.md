@@ -1,5 +1,11 @@
 # @stackflow/core
 
+## 1.3.1
+
+### Patch Changes
+
+- 4d3b294: fix(core): prevent duplicate setInterval in dispatchEvent
+
 ## 1.3.0
 
 ### Minor Changes
