@@ -44,7 +44,7 @@ describe("blockerPlugin", () => {
       const config = defineConfig({
         activities: [{ name: "TestActivity" }, { name: "OtherActivity" }],
         transitionDuration: 0,
-        initialActivity: () => "TestActivity",
+        initialActivity: () => "OtherActivity",
       });
 
       const { Stack, actions } = stackflow({
@@ -54,6 +54,10 @@ describe("blockerPlugin", () => {
       });
 
       render(<Stack />);
+
+      await act(async () => {
+        actions.push("TestActivity", {});
+      });
 
       const activitiesBefore = getStack().activities;
 
