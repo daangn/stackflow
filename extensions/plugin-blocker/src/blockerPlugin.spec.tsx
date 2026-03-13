@@ -169,7 +169,7 @@ describe("blockerPlugin", () => {
       expect(activitiesAfter).toEqual(activitiesBefore);
     });
 
-    it("shouldBlock이 true를 반환하면 stepPush가 차단된다", async () => {
+    it("shouldBlock이 true를 반환하면 pushStep이 차단된다", async () => {
       // given
       let getStack!: () => Stack;
 
@@ -218,7 +218,7 @@ describe("blockerPlugin", () => {
       expect(activitiesAfter).toEqual(activitiesBefore);
     });
 
-    it("shouldBlock이 true를 반환하면 stepPop이 차단된다", async () => {
+    it("shouldBlock이 true를 반환하면 popStep이 차단된다", async () => {
       // given
       let getStack!: () => Stack;
 
@@ -271,7 +271,7 @@ describe("blockerPlugin", () => {
       expect(activitiesAfter).toEqual(activitiesBefore);
     });
 
-    it("shouldBlock이 true를 반환하면 stepReplace가 차단된다", async () => {
+    it("shouldBlock이 true를 반환하면 replaceStep이 차단된다", async () => {
       // given
       let getStack!: () => Stack;
 
