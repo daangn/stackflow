@@ -8,16 +8,16 @@ import type {
 } from "@stackflow/core";
 import type { StackflowReactPlugin } from "@stackflow/react";
 
-export type NavigationEvent =
-  | PushedEvent
-  | PoppedEvent
-  | ReplacedEvent
-  | StepPushedEvent
-  | StepPoppedEvent
-  | StepReplacedEvent;
+export type NavigationAction =
+  | Omit<PushedEvent, "id" | "eventDate">
+  | Omit<PoppedEvent, "id" | "eventDate">
+  | Omit<ReplacedEvent, "id" | "eventDate">
+  | Omit<StepPushedEvent, "id" | "eventDate">
+  | Omit<StepPoppedEvent, "id" | "eventDate">
+  | Omit<StepReplacedEvent, "id" | "eventDate">;
 
 export type BlockedNavigation = {
-  event: NavigationEvent;
+  event: NavigationAction;
 };
 
 export function blockerPlugin(): StackflowReactPlugin {
@@ -27,7 +27,7 @@ export function blockerPlugin(): StackflowReactPlugin {
 }
 
 export function useBlocker(options: {
-  shouldBlock: (event: NavigationEvent) => boolean;
+  shouldBlock: (action: NavigationAction) => boolean;
   onBlocked: (blockedNavigation: BlockedNavigation) => void;
 }): {
   override: (fn: () => void) => void;
