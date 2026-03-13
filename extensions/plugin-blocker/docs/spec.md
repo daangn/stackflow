@@ -77,10 +77,11 @@ type BlockedNavigation = { action: NavigationAction }
 
 declare function useBlocker(options: {
   shouldBlock: (action: NavigationAction) => boolean
-  onBlocked: (blockedNavigation: BlockedNavigation) => void
-}): {
-  override: (fn: () => void) => void
-}
+  onBlocked: (
+    blockedNavigation: BlockedNavigation,
+    actions: { proceed: () => void },
+  ) => void
+}): void
 ```
 
 `shouldBlock`과 `onBlocked`가 받는 값은 이벤트가 아니라 **아직 이벤트가 되기 전의 네비게이션 액션**이다. 코어의 `onBefore*` 훅 시점에는 이벤트 `id`와 `eventDate`가 아직 할당되지 않았기 때문에 이 필드들은 포함되지 않는다. 각 액션은 `name` 필드(`"Pushed"`, `"Popped"`, `"Replaced"`, `"StepPushed"`, `"StepPopped"`, `"StepReplaced"`)로 구분할 수 있다.
@@ -95,14 +96,15 @@ declare function useBlocker(options: {
 
 ### 통보
 
-- `onBlocked(blockedNavigation)` — 네비게이션이 차단될 때마다 호출.
+- `onBlocked(blockedNavigation, { proceed })` — 네비게이션이 차단될 때마다 호출.
 - `blockedNavigation`은 순수 데이터. `{ action: NavigationAction }`.
+- `proceed`는 차단된 해당 네비게이션을 이 블로커를 우회하여 재시도하는 `() => void` 함수.
 
-### override
+### proceed
 
-- `override(fn)` — `useBlocker` 반환값에 포함된 함수. 콜백 `fn` 내에서 실행되는 모든 네비게이션이 이 블로커를 우회한다.
-- **호출한 블로커만 우회한다.** 동일 activity의 다른 블로커는 독립적으로 동작하며, 그 블로커의 `shouldBlock`이 `true`면 차단된다.
-- 임의의 네비게이션을 우회할 수 있다. 차단된 네비게이션을 재시도하는 것뿐 아니라, 완전히 다른 네비게이션도 가능하다.
+- `proceed()` — `onBlocked` 콜백의 두 번째 인자로 전달. 차단된 네비게이션 액션을 해당 블로커만 우회하여 재실행한다.
+- **호출한 블로커만 우회한다.** 동일 activity의 다른 블로커는 독립적으로 동작하며, 그 블로커의 `shouldBlock`이 `true`면 다시 차단된다.
+- 여러 번 호출 시 매번 독립적으로 실행된다.
 
 ### Composition
 
@@ -112,5 +114,6 @@ declare function useBlocker(options: {
 
 ### Lifecycle
 
-- 블로커가 비활성화(unmount)되면 `shouldBlock`은 `() => false`로 간주. bypass 시 자동 통과.
+- 블로커가 비활성화(unmount)되면 `shouldBlock`은 `() => false`로 간주. `proceed` 재시도 시 자동 통과.
+- unmount 이전에 캡처된 `proceed`는 unmount 이후에도 호출 가능하다. 해당 블로커는 자동 통과한다.
 - `onBlocked` 내 비동기 작업의 lifecycle 관리는 개발자 책임이다.
