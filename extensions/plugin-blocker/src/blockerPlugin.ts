@@ -40,6 +40,7 @@ type BlockerStore = {
   blockers: Map<symbol, BlockerEntry>;
   actions: StackflowActions | null;
   skipNext: boolean;
+  onError: (error: unknown) => void;
 };
 
 const BlockerStoreContext = createContext<BlockerStore | null>(null);
@@ -137,15 +138,22 @@ function handleBeforeNavigation(
       }
     };
 
-    blocker.onBlocked({ action }, { proceed });
+    try {
+      blocker.onBlocked({ action }, { proceed });
+    } catch (e) {
+      store.onError(e);
+    }
   }
 }
 
-export function blockerPlugin(): StackflowReactPlugin {
+export function blockerPlugin(options?: {
+  onError?: (error: unknown) => void;
+}): StackflowReactPlugin {
   const store: BlockerStore = {
     blockers: new Map(),
     actions: null,
     skipNext: false,
+    onError: options?.onError ?? console.error,
   };
 
   return () => ({

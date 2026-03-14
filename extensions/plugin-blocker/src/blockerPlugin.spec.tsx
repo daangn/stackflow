@@ -1611,4 +1611,76 @@ describe("blockerPlugin", () => {
       expect(activities[activities.length - 1].enteredBy.name).toBe("Pushed");
     });
   });
+
+  describe("6. 오류 격리", () => {
+    it("하나의 블로커의 onBlocked가 오류를 던져도 다른 블로커의 onBlocked는 정상 호출된다", async () => {
+      // given
+      let getStack!: () => Stack;
+
+      const spyPlugin: StackflowReactPlugin = () => ({
+        key: "spy",
+        onInit({ actions }) {
+          getStack = actions.getStack;
+        },
+      });
+
+      const onBlockedB = jest.fn();
+      const onError = jest.fn();
+      const thrownError = new Error("BlockerA error");
+
+      function BlockerA() {
+        useBlocker({
+          shouldBlock: () => true,
+          onBlocked: () => {
+            throw thrownError;
+          },
+        });
+        return null;
+      }
+
+      function BlockerB() {
+        useBlocker({
+          shouldBlock: () => true,
+          onBlocked: onBlockedB,
+        });
+        return null;
+      }
+
+      function TestActivity() {
+        return (
+          <div>
+            <BlockerA />
+            <BlockerB />
+          </div>
+        );
+      }
+
+      function OtherActivity() {
+        return <div>Other</div>;
+      }
+
+      const config = defineConfig({
+        activities: [{ name: "TestActivity" }, { name: "OtherActivity" }],
+        transitionDuration: 0,
+        initialActivity: () => "TestActivity",
+      });
+
+      const { Stack, actions } = stackflow({
+        config,
+        components: { TestActivity, OtherActivity },
+        plugins: [blockerPlugin({ onError }), basicRendererPlugin(), spyPlugin],
+      });
+
+      render(<Stack />);
+
+      // when
+      await act(async () => {
+        actions.push("OtherActivity", {});
+      });
+
+      // then
+      expect(onBlockedB).toHaveBeenCalledTimes(1);
+      expect(onError).toHaveBeenCalledWith(thrownError);
+    });
+  });
 });
