@@ -28,7 +28,7 @@
     "build:js": "node ./esbuild.config.js",
     "clean": "rimraf dist",
     "dev": "yarn build:js --watch && yarn build:dts --watch",
-    "test": "jest",
+    "test": "yarn jest",
     "typecheck": "tsc --noEmit"
   },
   "jest": {
