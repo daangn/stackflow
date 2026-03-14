@@ -61,37 +61,41 @@ function replayAction(store: BlockerStore, action: NavigationAction) {
   const actions = store.actions!;
 
   store.skipNext = true;
-  switch (action.name) {
-    case "Pushed": {
-      const { name: _, ...params } = action;
-      actions.push(params);
-      break;
+  try {
+    switch (action.name) {
+      case "Pushed": {
+        const { name: _, ...params } = action;
+        actions.push(params);
+        break;
+      }
+      case "Popped": {
+        const { name: _, ...params } = action;
+        actions.pop(params);
+        break;
+      }
+      case "Replaced": {
+        const { name: _, ...params } = action;
+        actions.replace(params);
+        break;
+      }
+      case "StepPushed": {
+        const { name: _, ...params } = action;
+        actions.stepPush(params);
+        break;
+      }
+      case "StepPopped": {
+        const { name: _, ...params } = action;
+        actions.stepPop(params);
+        break;
+      }
+      case "StepReplaced": {
+        const { name: _, ...params } = action;
+        actions.stepReplace(params);
+        break;
+      }
     }
-    case "Popped": {
-      const { name: _, ...params } = action;
-      actions.pop(params);
-      break;
-    }
-    case "Replaced": {
-      const { name: _, ...params } = action;
-      actions.replace(params);
-      break;
-    }
-    case "StepPushed": {
-      const { name: _, ...params } = action;
-      actions.stepPush(params);
-      break;
-    }
-    case "StepPopped": {
-      const { name: _, ...params } = action;
-      actions.stepPop(params);
-      break;
-    }
-    case "StepReplaced": {
-      const { name: _, ...params } = action;
-      actions.stepReplace(params);
-      break;
-    }
+  } finally {
+    store.skipNext = false;
   }
 }
 
