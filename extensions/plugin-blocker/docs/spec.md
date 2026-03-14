@@ -98,13 +98,16 @@ declare function useBlocker(options: {
 
 - `onBlocked(blockedNavigation, { proceed })` — 네비게이션이 차단될 때마다 호출.
 - `blockedNavigation`은 순수 데이터. `{ action: NavigationAction }`.
-- `proceed`는 차단된 해당 네비게이션을 이 블로커를 우회하여 재시도하는 `() => void` 함수.
+- `proceed`는 이 블로커의 차단을 해제하는 `() => void` 함수.
 
 ### proceed
 
-- `proceed()` — `onBlocked` 콜백의 두 번째 인자로 전달. 차단된 네비게이션 액션을 해당 블로커만 우회하여 재실행한다.
-- **호출한 블로커만 우회한다.** 동일 activity의 다른 블로커는 독립적으로 동작하며, 그 블로커의 `shouldBlock`이 `true`면 다시 차단된다.
-- 여러 번 호출 시 매번 독립적으로 실행된다.
+- 네비게이션이 차단되면 `shouldBlock: true`인 모든 블로커가 **차단 집합**에 수집된다.
+- 각 블로커의 `onBlocked`에 전달되는 `proceed()`는 해당 블로커를 차단 집합에서 제거한다.
+- **차단 집합이 비면 네비게이션이 실행된다.** 모든 블로커가 `proceed`를 호출해야 네비게이션이 통과한다.
+- `proceed` 호출 시 `shouldBlock`의 재평가는 일어나지 않는다. 차단 여부는 액션 dispatch 시점에 한 번만 결정된다.
+- 여러 번 호출해도 한 번만 동작한다. 이미 차단 집합에서 제거된 블로커에 대한 중복 호출은 무시된다.
+- 호출 순서는 무관하다.
 
 ### Composition
 
@@ -114,6 +117,6 @@ declare function useBlocker(options: {
 
 ### Lifecycle
 
-- 블로커가 비활성화(unmount)되면 `shouldBlock`은 `() => false`로 간주. `proceed` 재시도 시 자동 통과.
-- unmount 이전에 캡처된 `proceed`는 unmount 이후에도 호출 가능하다. 해당 블로커는 자동 통과한다.
+- 블로커가 비활성화(unmount)되면 `shouldBlock`은 `() => false`로 간주.
+- unmount 이전에 캡처된 `proceed`는 unmount 이후에도 호출 가능하다.
 - `onBlocked` 내 비동기 작업의 lifecycle 관리는 개발자 책임이다.
