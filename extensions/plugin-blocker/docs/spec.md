@@ -111,7 +111,6 @@ declare function useBlocker(options: {
 
 ### Composition
 
-- 각 `useBlocker`는 **항상 독립적**으로 동작한다. 훅 간 암묵적 연결이 없다.
 - 같은 activity에 복수 `useBlocker` 등록 가능. 경고/에러 없음.
 - 차단 시 `shouldBlock`이 `true`인 **모든** 훅의 `onBlocked`가 호출된다.
 
