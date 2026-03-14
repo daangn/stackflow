@@ -1,2 +1,2 @@
-export type { BlockedNavigation, NavigationEvent } from "./blockerPlugin";
+export type { BlockedNavigation, NavigationAction } from "./blockerPlugin";
 export { blockerPlugin, useBlocker } from "./blockerPlugin";

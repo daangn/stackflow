@@ -788,9 +788,10 @@ describe("blockerPlugin", () => {
 
       // then
       expect(onBlocked).toHaveBeenCalledTimes(1);
-      expect(onBlocked).toHaveBeenCalledWith({
-        action: expect.objectContaining({ name: "Pushed" }),
-      });
+      expect(onBlocked).toHaveBeenCalledWith(
+        { action: expect.objectContaining({ name: "Pushed" }) },
+        { proceed: expect.any(Function) },
+      );
     });
 
     it("차단하지 않은 블로커의 onBlocked는 호출되지 않는다", async () => {
@@ -878,11 +879,11 @@ describe("blockerPlugin", () => {
     });
   });
 
-  describe("3-1. 기본 override", () => {
-    it("override(fn) 콜백 내 네비게이션은 블로커를 우회한다", async () => {
+  describe("3-1. 기본 proceed", () => {
+    it("단일 블로커일 때 proceed() 호출 시 차단된 네비게이션이 실행된다", async () => {
       // given
       let getStack!: () => Stack;
-      let overrideFn!: (fn: () => void) => void;
+      let capturedProceed!: () => void;
 
       const spyPlugin: StackflowReactPlugin = () => ({
         key: "spy",
@@ -892,13 +893,12 @@ describe("blockerPlugin", () => {
       });
 
       function TestActivity() {
-        const { override } = useBlocker({
+        useBlocker({
           shouldBlock: () => true,
-          onBlocked: () => {},
+          onBlocked: (_, { proceed }) => {
+            capturedProceed = proceed;
+          },
         });
-        React.useEffect(() => {
-          overrideFn = override;
-        }, []);
         return <div>Test</div>;
       }
 
@@ -920,29 +920,31 @@ describe("blockerPlugin", () => {
 
       render(<Stack />);
 
-      const activitiesBeforeOverride = getStack().activities;
-
-      // when
+      // when: 네비게이션 시도 → 차단됨 → proceed 캡처
       await act(async () => {
-        overrideFn(() => {
-          actions.push("OtherActivity", {});
-        });
+        actions.push("OtherActivity", {});
+      });
+
+      const activitiesBeforeProceed = getStack().activities;
+
+      // when: proceed 호출 → 차단 집합 비어짐 → 네비게이션 실행
+      await act(async () => {
+        capturedProceed();
       });
 
       // then
       const activities = getStack().activities;
-      expect(activities).toHaveLength(activitiesBeforeOverride.length + 1);
+      expect(activities).toHaveLength(activitiesBeforeProceed.length + 1);
       expect(activities[activities.length - 1].name).toBe("OtherActivity");
       expect(activities[activities.length - 1].enteredBy.name).toBe("Pushed");
     });
   });
 
-  describe("3-2. 호출 블로커만 우회", () => {
-    it("override는 호출한 블로커만 우회하고, 다른 블로커가 shouldBlock: true이면 다시 차단된다", async () => {
+  describe("3-2. 차단 집합에서 호출 블로커만 제거", () => {
+    it("다중 블로커에서 proceed는 호출한 블로커만 차단 집합에서 제거한다. 다른 블로커가 남아있으면 네비게이션은 실행되지 않는다", async () => {
       // given
       let getStack!: () => Stack;
-      let overrideA!: (fn: () => void) => void;
-      const onBlockedB = jest.fn();
+      let capturedProceedA!: () => void;
 
       const spyPlugin: StackflowReactPlugin = () => ({
         key: "spy",
@@ -952,17 +954,16 @@ describe("blockerPlugin", () => {
       });
 
       function TestActivity() {
-        const blockerA = useBlocker({
+        useBlocker({
           shouldBlock: () => true,
-          onBlocked: () => {},
+          onBlocked: (_, { proceed }) => {
+            capturedProceedA = proceed;
+          },
         });
         useBlocker({
           shouldBlock: () => true,
-          onBlocked: onBlockedB,
+          onBlocked: () => {},
         });
-        React.useEffect(() => {
-          overrideA = blockerA.override;
-        }, []);
         return <div>Test</div>;
       }
 
@@ -984,27 +985,30 @@ describe("blockerPlugin", () => {
 
       render(<Stack />);
 
-      const activitiesBeforeOverride = getStack().activities;
-
-      // when
+      // when: 네비게이션 시도 → A, B 모두 차단
       await act(async () => {
-        overrideA(() => {
-          actions.push("OtherActivity", {});
-        });
+        actions.push("OtherActivity", {});
+      });
+
+      const activitiesBeforeProceed = getStack().activities;
+
+      // when: A만 proceed → B가 남아있으므로 네비게이션 미실행
+      await act(async () => {
+        capturedProceedA();
       });
 
       // then
-      const activities = getStack().activities;
-      expect(activities).toEqual(activitiesBeforeOverride);
-      expect(onBlockedB).toHaveBeenCalledTimes(1);
+      const activitiesAfter = getStack().activities;
+      expect(activitiesAfter).toEqual(activitiesBeforeProceed);
     });
   });
 
-  describe("3-3. 독립 실행", () => {
-    it("override를 여러 번 호출하면 매번 독립적으로 실행된다", async () => {
+  describe("3-3. 모든 블로커 proceed 시 네비게이션 실행", () => {
+    it("다중 블로커에서 모든 블로커가 proceed를 호출하면 네비게이션이 실행된다", async () => {
       // given
       let getStack!: () => Stack;
-      let overrideFn!: (fn: () => void) => void;
+      let capturedProceedA!: () => void;
+      let capturedProceedB!: () => void;
 
       const spyPlugin: StackflowReactPlugin = () => ({
         key: "spy",
@@ -1014,13 +1018,18 @@ describe("blockerPlugin", () => {
       });
 
       function TestActivity() {
-        const { override } = useBlocker({
+        useBlocker({
           shouldBlock: () => true,
-          onBlocked: () => {},
+          onBlocked: (_, { proceed }) => {
+            capturedProceedA = proceed;
+          },
         });
-        React.useEffect(() => {
-          overrideFn = override;
-        }, []);
+        useBlocker({
+          shouldBlock: () => true,
+          onBlocked: (_, { proceed }) => {
+            capturedProceedB = proceed;
+          },
+        });
         return <div>Test</div>;
       }
 
@@ -1042,23 +1051,88 @@ describe("blockerPlugin", () => {
 
       render(<Stack />);
 
-      const activitiesBefore = getStack().activities;
-
-      // when
+      // when: 네비게이션 시도 → A, B 모두 차단
       await act(async () => {
-        overrideFn(() => {
-          actions.push("OtherActivity", {});
-        });
+        actions.push("OtherActivity", {});
       });
+
+      const activitiesBeforeProceed = getStack().activities;
+
+      // when: A proceed → B 남아있으므로 미실행
       await act(async () => {
-        overrideFn(() => {
-          actions.push("OtherActivity", {});
-        });
+        capturedProceedA();
+      });
+
+      // when: B proceed → 차단 집합 비어짐 → 네비게이션 실행
+      await act(async () => {
+        capturedProceedB();
       });
 
       // then
       const activities = getStack().activities;
-      expect(activities).toHaveLength(activitiesBefore.length + 2);
+      expect(activities).toHaveLength(activitiesBeforeProceed.length + 1);
+      expect(activities[activities.length - 1].name).toBe("OtherActivity");
+      expect(activities[activities.length - 1].enteredBy.name).toBe("Pushed");
+    });
+  });
+
+  describe("3-4. 멱등성", () => {
+    it("proceed를 여러 번 호출해도 한 번만 동작한다", async () => {
+      // given
+      let getStack!: () => Stack;
+      let capturedProceed!: () => void;
+
+      const spyPlugin: StackflowReactPlugin = () => ({
+        key: "spy",
+        onInit({ actions }) {
+          getStack = actions.getStack;
+        },
+      });
+
+      function TestActivity() {
+        useBlocker({
+          shouldBlock: () => true,
+          onBlocked: (_, { proceed }) => {
+            capturedProceed = proceed;
+          },
+        });
+        return <div>Test</div>;
+      }
+
+      function OtherActivity() {
+        return <div>Other</div>;
+      }
+
+      const config = defineConfig({
+        activities: [{ name: "TestActivity" }, { name: "OtherActivity" }],
+        transitionDuration: 0,
+        initialActivity: () => "TestActivity",
+      });
+
+      const { Stack, actions } = stackflow({
+        config,
+        components: { TestActivity, OtherActivity },
+        plugins: [blockerPlugin(), basicRendererPlugin(), spyPlugin],
+      });
+
+      render(<Stack />);
+
+      // when: 네비게이션 시도 → 차단
+      await act(async () => {
+        actions.push("OtherActivity", {});
+      });
+
+      const activitiesBeforeProceed = getStack().activities;
+
+      // when: proceed 두 번 호출
+      await act(async () => {
+        capturedProceed();
+        capturedProceed();
+      });
+
+      // then: 네비게이션은 한 번만 실행됨
+      const activities = getStack().activities;
+      expect(activities).toHaveLength(activitiesBeforeProceed.length + 1);
     });
   });
 
@@ -1105,13 +1179,15 @@ describe("blockerPlugin", () => {
 
       // then
       expect(onBlockedA).toHaveBeenCalledTimes(1);
-      expect(onBlockedA).toHaveBeenCalledWith({
-        action: expect.objectContaining({ name: "Pushed" }),
-      });
+      expect(onBlockedA).toHaveBeenCalledWith(
+        { action: expect.objectContaining({ name: "Pushed" }) },
+        { proceed: expect.any(Function) },
+      );
       expect(onBlockedB).toHaveBeenCalledTimes(1);
-      expect(onBlockedB).toHaveBeenCalledWith({
-        action: expect.objectContaining({ name: "Pushed" }),
-      });
+      expect(onBlockedB).toHaveBeenCalledWith(
+        { action: expect.objectContaining({ name: "Pushed" }) },
+        { proceed: expect.any(Function) },
+      );
     });
 
     it("하나의 블로커만 shouldBlock: true이면 그 블로커의 onBlocked만 호출된다", async () => {
@@ -1388,11 +1464,11 @@ describe("blockerPlugin", () => {
       expect(onBlockedChild).not.toHaveBeenCalled();
     });
 
-    it("블로커를 소유한 컴포넌트가 unmount되어도 해당 블로커의 override는 동작하되, shouldBlock이 false를 반환했을 때와 동일하게 동작한다", async () => {
+    it("블로커를 소유한 컴포넌트가 unmount되어도 이전에 캡처된 proceed는 호출 가능하다. 해당 블로커는 차단 집합에서 제거되지만, 다른 블로커가 남아있으면 네비게이션은 실행되지 않는다", async () => {
       // given
       let getStack!: () => Stack;
       let setShowChild!: (v: boolean) => void;
-      let overrideChild!: (fn: () => void) => void;
+      let capturedProceedChild!: () => void;
       const onBlockedParent = jest.fn();
 
       const spyPlugin: StackflowReactPlugin = () => ({
@@ -1403,13 +1479,12 @@ describe("blockerPlugin", () => {
       });
 
       function BlockerChild() {
-        const { override } = useBlocker({
+        useBlocker({
           shouldBlock: () => true,
-          onBlocked: () => {},
+          onBlocked: (_, { proceed }) => {
+            capturedProceedChild = proceed;
+          },
         });
-        React.useEffect(() => {
-          overrideChild = override;
-        }, []);
         return <div>Child</div>;
       }
 
@@ -1443,23 +1518,25 @@ describe("blockerPlugin", () => {
 
       render(<Stack />);
 
-      // when
+      // when: 네비게이션 시도 → 두 블로커 모두 차단
+      await act(async () => {
+        actions.push("OtherActivity", {});
+      });
+
+      const activitiesBeforeProceed = getStack().activities;
+
+      // when: child unmount 후 캡처된 proceed 호출
       await act(async () => {
         setShowChild(false);
       });
 
-      const activitiesBefore = getStack().activities;
-
       await act(async () => {
-        overrideChild(() => {
-          actions.push("OtherActivity", {});
-        });
+        capturedProceedChild();
       });
 
-      // then — child blocker는 unmount되어 자동 통과하지만, parent blocker가 차단
+      // then — child의 proceed로 차단 집합에서 제거되지만, parent blocker가 남아있어 네비게이션은 실행되지 않음
       const activitiesAfter = getStack().activities;
-      expect(activitiesAfter).toEqual(activitiesBefore);
-      expect(onBlockedParent).toHaveBeenCalledTimes(1);
+      expect(activitiesAfter).toEqual(activitiesBeforeProceed);
     });
   });
 });

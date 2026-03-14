@@ -28,9 +28,10 @@ export function blockerPlugin(): StackflowReactPlugin {
 
 export function useBlocker(options: {
   shouldBlock: (action: NavigationAction) => boolean;
-  onBlocked: (blockedNavigation: BlockedNavigation) => void;
-}): {
-  override: (fn: () => void) => void;
-} {
+  onBlocked: (
+    blockedNavigation: BlockedNavigation,
+    actions: { proceed: () => void },
+  ) => void;
+}): void {
   throw new Error("Not implemented");
 }
