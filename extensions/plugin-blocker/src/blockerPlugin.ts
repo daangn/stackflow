@@ -41,6 +41,8 @@ type BlockerStore = {
   actions: StackflowActions | null;
   skipNext: boolean;
   onError: (error: unknown) => void;
+  dispatching: boolean;
+  notifyQueue: Array<() => void>;
 };
 
 const BlockerStoreContext = createContext<BlockerStore | null>(null);
@@ -128,21 +130,38 @@ function handleBeforeNavigation(
   const proceededSet = new Set<symbol>();
   let executed = false;
 
-  for (const blocker of blockingBlockers) {
-    const proceed = () => {
-      proceededSet.add(blocker.id);
+  const notify = () => {
+    for (const blocker of blockingBlockers) {
+      const proceed = () => {
+        proceededSet.add(blocker.id);
 
-      if (proceededSet.size >= blockingSet.size && !executed) {
-        executed = true;
-        replayAction(store, action);
+        if (proceededSet.size >= blockingSet.size && !executed) {
+          executed = true;
+          replayAction(store, action);
+        }
+      };
+
+      try {
+        blocker.onBlocked({ action }, { proceed });
+      } catch (e) {
+        store.onError(e);
       }
-    };
-
-    try {
-      blocker.onBlocked({ action }, { proceed });
-    } catch (e) {
-      store.onError(e);
     }
+  };
+
+  if (store.dispatching) {
+    store.notifyQueue.push(notify);
+    return;
+  }
+
+  store.dispatching = true;
+  try {
+    notify();
+    while (store.notifyQueue.length > 0) {
+      store.notifyQueue.shift()!();
+    }
+  } finally {
+    store.dispatching = false;
   }
 }
 
@@ -154,6 +173,8 @@ export function blockerPlugin(options?: {
     actions: null,
     skipNext: false,
     onError: options?.onError ?? console.error,
+    dispatching: false,
+    notifyQueue: [],
   };
 
   return () => ({

@@ -2,7 +2,7 @@ import { defineConfig } from "@stackflow/config";
 import type { Stack } from "@stackflow/core";
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
 import type { StackflowReactPlugin } from "@stackflow/react";
-import { stackflow } from "@stackflow/react/future";
+import { stackflow, useFlow } from "@stackflow/react/future";
 import { act, render } from "@testing-library/react";
 import React from "react";
 import { blockerPlugin, useBlocker } from "./blockerPlugin";
@@ -1615,15 +1615,6 @@ describe("blockerPlugin", () => {
   describe("6. 오류 격리", () => {
     it("하나의 블로커의 onBlocked가 오류를 던져도 다른 블로커의 onBlocked는 정상 호출된다", async () => {
       // given
-      let getStack!: () => Stack;
-
-      const spyPlugin: StackflowReactPlugin = () => ({
-        key: "spy",
-        onInit({ actions }) {
-          getStack = actions.getStack;
-        },
-      });
-
       const onBlockedB = jest.fn();
       const onError = jest.fn();
       const thrownError = new Error("BlockerA error");
@@ -1668,7 +1659,7 @@ describe("blockerPlugin", () => {
       const { Stack, actions } = stackflow({
         config,
         components: { TestActivity, OtherActivity },
-        plugins: [blockerPlugin({ onError }), basicRendererPlugin(), spyPlugin],
+        plugins: [blockerPlugin({ onError }), basicRendererPlugin()],
       });
 
       render(<Stack />);
@@ -1681,6 +1672,132 @@ describe("blockerPlugin", () => {
       // then
       expect(onBlockedB).toHaveBeenCalledTimes(1);
       expect(onError).toHaveBeenCalledWith(thrownError);
+    });
+  });
+
+  describe("7. 알림 순서", () => {
+    it("onBlocked 안에서 시작된 내비게이션의 onBlocked는 현재 onBlocked가 반환된 후 호출된다", async () => {
+      // given
+      const callLog: string[] = [];
+
+      function TestActivity() {
+        const { replace } = useFlow();
+        useBlocker({
+          shouldBlock: () => true,
+          onBlocked: ({ action }) => {
+            if (action.name === "Pushed") {
+              callLog.push("push:start");
+              replace("OtherActivity", {});
+              // replace의 onBlocked가 재진입으로 호출됐다면 이 시점에 'replace'가 찍혀 있을 것
+              callLog.push("push:end");
+            } else if (action.name === "Replaced") {
+              callLog.push("replace");
+            }
+          },
+        });
+        return <div>Test</div>;
+      }
+
+      function OtherActivity() {
+        return <div>Other</div>;
+      }
+
+      const config = defineConfig({
+        activities: [{ name: "TestActivity" }, { name: "OtherActivity" }],
+        transitionDuration: 0,
+        initialActivity: () => "TestActivity",
+      });
+
+      const { Stack, actions } = stackflow({
+        config,
+        components: { TestActivity, OtherActivity },
+        plugins: [blockerPlugin(), basicRendererPlugin()],
+      });
+
+      render(<Stack />);
+
+      // when
+      await act(async () => {
+        actions.push("OtherActivity", {});
+      });
+
+      // then: push가 완전히 끝난 뒤 replace가 호출된다
+      expect(callLog).toEqual(["push:start", "push:end", "replace"]);
+    });
+
+    it("onBlocked는 내비게이션 발생 순서대로 호출된다", async () => {
+      // given
+      const callLog: string[] = [];
+
+      function BlockerB1() {
+        const { replace } = useFlow();
+        useBlocker({
+          shouldBlock: () => true,
+          onBlocked: ({ action }) => {
+            if (action.name === "Pushed") {
+              callLog.push("B1:push");
+              replace("OtherActivity", {}); // B1의 push onBlocked 안에서 replace 시도
+            } else if (action.name === "Replaced") {
+              callLog.push("B1:replace");
+            }
+          },
+        });
+        return null;
+      }
+
+      function BlockerB2() {
+        useBlocker({
+          shouldBlock: () => true,
+          onBlocked: ({ action }) => {
+            if (action.name === "Pushed") {
+              callLog.push("B2:push");
+            } else if (action.name === "Replaced") {
+              callLog.push("B2:replace");
+            }
+          },
+        });
+        return null;
+      }
+
+      function TestActivity() {
+        return (
+          <div>
+            <BlockerB1 />
+            <BlockerB2 />
+          </div>
+        );
+      }
+
+      function OtherActivity() {
+        return <div>Other</div>;
+      }
+
+      const config = defineConfig({
+        activities: [{ name: "TestActivity" }, { name: "OtherActivity" }],
+        transitionDuration: 0,
+        initialActivity: () => "TestActivity",
+      });
+
+      const { Stack, actions } = stackflow({
+        config,
+        components: { TestActivity, OtherActivity },
+        plugins: [blockerPlugin(), basicRendererPlugin()],
+      });
+
+      render(<Stack />);
+
+      // when
+      await act(async () => {
+        actions.push("OtherActivity", {});
+      });
+
+      // then: push 알림이 모두 끝난 뒤 replace 알림이 순서대로 온다
+      expect(callLog).toEqual([
+        "B1:push",
+        "B2:push",
+        "B1:replace",
+        "B2:replace",
+      ]);
     });
   });
 });
