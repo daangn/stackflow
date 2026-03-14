@@ -1,5 +1,11 @@
 # @stackflow/react-ui-core
 
+## 1.3.4
+
+### Patch Changes
+
+- b9c1946: fix(react-ui-core): clamp swipe-back dx to prevent left-drag screen movement
+
 ## 1.3.3
 
 ### Patch Changes

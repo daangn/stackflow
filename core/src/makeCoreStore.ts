@@ -84,6 +84,8 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
     value: aggregate(events.value, new Date().getTime()),
   };
 
+  let currentInterval: ReturnType<typeof setInterval> | null = null;
+
   const actions: StackflowActions = {
     getStack() {
       return stack.value;
@@ -98,6 +100,10 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
       events.value.push(newEvent);
       setStackValue(nextStackValue);
 
+      if (currentInterval !== null) {
+        clearInterval(currentInterval);
+      }
+
       const interval = setInterval(() => {
         const nextStackValue = aggregate(events.value, new Date().getTime());
 
@@ -107,8 +113,12 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
 
         if (nextStackValue.globalTransitionState === "idle") {
           clearInterval(interval);
+          if (currentInterval === interval) {
+            currentInterval = null;
+          }
         }
       }, INTERVAL_MS);
+      currentInterval = interval;
     },
     push: () => {},
     replace: () => {},

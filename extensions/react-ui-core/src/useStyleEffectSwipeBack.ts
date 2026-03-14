@@ -251,7 +251,7 @@ export function useStyleEffectSwipeBack({
 
         x = e.touches[0].clientX;
 
-        const dx = x - x0;
+        const dx = Math.max(0, x - x0);
         const ratio = dx / $paper.clientWidth;
 
         moveActivity({ dx, ratio });
