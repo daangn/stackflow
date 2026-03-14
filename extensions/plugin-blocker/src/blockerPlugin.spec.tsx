@@ -1538,5 +1538,77 @@ describe("blockerPlugin", () => {
       const activitiesAfter = getStack().activities;
       expect(activitiesAfter).toEqual(activitiesBeforeProceed);
     });
+
+    it("블로커를 소유한 컴포넌트가 unmount되어도 이전에 캡처된 proceed는 호출 가능하다. 해당 블로커는 차단 집합에서 제거된다. 해당 블로커가 유일한 블로커였으면 내비게이션이 실행된다", async () => {
+      // given
+      let getStack!: () => Stack;
+      let setShowChild!: (v: boolean) => void;
+      let capturedProceedChild!: () => void;
+
+      const spyPlugin: StackflowReactPlugin = () => ({
+        key: "spy",
+        onInit({ actions }) {
+          getStack = actions.getStack;
+        },
+      });
+
+      function BlockerChild() {
+        useBlocker({
+          shouldBlock: () => true,
+          onBlocked: (_, { proceed }) => {
+            capturedProceedChild = proceed;
+          },
+        });
+        return <div>Child</div>;
+      }
+
+      function TestActivity() {
+        const [showChild, setShow] = React.useState(true);
+        React.useEffect(() => {
+          setShowChild = setShow;
+        }, []);
+        return <div>{showChild && <BlockerChild />}</div>;
+      }
+
+      function OtherActivity() {
+        return <div>Other</div>;
+      }
+
+      const config = defineConfig({
+        activities: [{ name: "TestActivity" }, { name: "OtherActivity" }],
+        transitionDuration: 0,
+        initialActivity: () => "TestActivity",
+      });
+
+      const { Stack, actions } = stackflow({
+        config,
+        components: { TestActivity, OtherActivity },
+        plugins: [blockerPlugin(), basicRendererPlugin(), spyPlugin],
+      });
+
+      render(<Stack />);
+
+      // when: 네비게이션 시도 → 차단
+      await act(async () => {
+        actions.push("OtherActivity", {});
+      });
+
+      const activitiesBeforeProceed = getStack().activities;
+
+      // when: child unmount 후 캡처된 proceed 호출
+      await act(async () => {
+        setShowChild(false);
+      });
+
+      await act(async () => {
+        capturedProceedChild();
+      });
+
+      // then — 유일한 블로커의 proceed이므로 차단 집합이 비어짐 → 네비게이션 실행
+      const activities = getStack().activities;
+      expect(activities).toHaveLength(activitiesBeforeProceed.length + 1);
+      expect(activities[activities.length - 1].name).toBe("OtherActivity");
+      expect(activities[activities.length - 1].enteredBy.name).toBe("Pushed");
+    });
   });
 });
