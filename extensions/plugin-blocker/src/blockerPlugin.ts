@@ -39,7 +39,6 @@ type BlockerEntry = {
 type BlockerStore = {
   blockers: Map<symbol, BlockerEntry>;
   actions: StackflowActions | null;
-  skipNext: boolean;
   onError: (error: unknown) => void;
   dispatching: boolean;
   notifyQueue: Array<() => void>;
@@ -57,55 +56,48 @@ function useBlockerStore(): BlockerStore {
   return store;
 }
 
-function replayAction(store: BlockerStore, action: NavigationAction) {
+function replayAction(
+  replayMarker: symbol,
+  store: BlockerStore,
+  action: NavigationAction,
+) {
   const actions = store.actions!;
 
-  store.skipNext = true;
-  try {
-    switch (action.name) {
-      case "Pushed": {
-        const { name: _, ...params } = action;
-        actions.push(params);
-        break;
-      }
-      case "Popped": {
-        const { name: _, ...params } = action;
-        actions.pop(params);
-        break;
-      }
-      case "Replaced": {
-        const { name: _, ...params } = action;
-        actions.replace(params);
-        break;
-      }
-      case "StepPushed": {
-        const { name: _, ...params } = action;
-        actions.stepPush(params);
-        break;
-      }
-      case "StepPopped": {
-        const { name: _, ...params } = action;
-        actions.stepPop(params);
-        break;
-      }
-      case "StepReplaced": {
-        const { name: _, ...params } = action;
-        actions.stepReplace(params);
-        break;
-      }
+  switch (action.name) {
+    case "Pushed": {
+      const { name: _, ...params } = action;
+      return actions.push({ ...params, [replayMarker]: true });
     }
-  } finally {
-    store.skipNext = false;
+    case "Popped": {
+      const { name: _, ...params } = action;
+      return actions.pop({ ...params, [replayMarker]: true });
+    }
+    case "Replaced": {
+      const { name: _, ...params } = action;
+      return actions.replace({ ...params, [replayMarker]: true });
+    }
+    case "StepPushed": {
+      const { name: _, ...params } = action;
+      return actions.stepPush({ ...params, [replayMarker]: true });
+    }
+    case "StepPopped": {
+      const { name: _, ...params } = action;
+      return actions.stepPop({ ...params, [replayMarker]: true });
+    }
+    case "StepReplaced": {
+      const { name: _, ...params } = action;
+      return actions.stepReplace({ ...params, [replayMarker]: true });
+    }
   }
 }
 
 function handleBeforeNavigation(
+  replayMarker: symbol,
   store: BlockerStore,
   action: NavigationAction,
   preventDefault: () => void,
 ) {
-  if (store.skipNext) {
-    store.skipNext = false;
+  if (replayMarker in action) {
     return;
   }
 
@@ -141,7 +133,7 @@ function handleBeforeNavigation(
 
         if (proceededSet.size >= blockingSet.size && !executed) {
           executed = true;
-          replayAction(store, action);
+          replayAction(replayMarker, store, action);
         }
       };
 
@@ -172,10 +164,11 @@ function handleBeforeNavigation(
 export function blockerPlugin(options?: {
   onError?: (error: unknown) => void;
 }): StackflowReactPlugin {
+  const replayMarker = Symbol("@@blockerReplay");
+
   const store: BlockerStore = {
     blockers: new Map(),
     actions: null,
-    skipNext: false,
     onError: options?.onError ?? console.error,
     dispatching: false,
     notifyQueue: [],
@@ -198,6 +191,7 @@ export function blockerPlugin(options?: {
 
     onBeforePush({ actionParams, actions }) {
       handleBeforeNavigation(
+        replayMarker,
         store,
         { name: "Pushed", ...actionParams },
         actions.preventDefault,
@@ -205,6 +199,7 @@ export function blockerPlugin(options?: {
     },
     onBeforePop({ actionParams, actions }) {
       handleBeforeNavigation(
+        replayMarker,
         store,
         { name: "Popped", ...actionParams },
         actions.preventDefault,
@@ -212,6 +207,7 @@ export function blockerPlugin(options?: {
     },
     onBeforeReplace({ actionParams, actions }) {
       handleBeforeNavigation(
+        replayMarker,
         store,
         { name: "Replaced", ...actionParams },
         actions.preventDefault,
@@ -219,6 +215,7 @@ export function blockerPlugin(options?: {
     },
     onBeforeStepPush({ actionParams, actions }) {
       handleBeforeNavigation(
+        replayMarker,
         store,
         { name: "StepPushed", ...actionParams },
         actions.preventDefault,
@@ -226,6 +223,7 @@ export function blockerPlugin(options?: {
     },
     onBeforeStepPop({ actionParams, actions }) {
       handleBeforeNavigation(
+        replayMarker,
         store,
         { name: "StepPopped", ...actionParams },
         actions.preventDefault,
@@ -233,6 +231,7 @@ export function blockerPlugin(options?: {
     },
     onBeforeStepReplace({ actionParams, actions }) {
       handleBeforeNavigation(
+        replayMarker,
         store,
         { name: "StepReplaced", ...actionParams },
         actions.preventDefault,
