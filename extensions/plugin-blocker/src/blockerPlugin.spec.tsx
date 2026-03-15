@@ -1800,4 +1800,380 @@ describe("blockerPlugin", () => {
       ]);
     });
   });
+
+  describe("8. proceed 시 다른 플러그인과의 상호작용", () => {
+    describe("8-1. blockerPlugin보다 먼저 적용된 플러그인", () => {
+      it("proceed로 replay될 때 earlier 플러그인의 onBefore* 훅이 호출된다", async () => {
+        // given
+        let capturedProceed!: () => void;
+        let beforePushCallCount = 0;
+
+        const earlyPlugin: StackflowReactPlugin = () => ({
+          key: "early",
+          onBeforePush() {
+            beforePushCallCount++;
+          },
+        });
+
+        function TestActivity() {
+          useBlocker({
+            shouldBlock: () => true,
+            onBlocked: (_, { proceed }) => {
+              capturedProceed = proceed;
+            },
+          });
+          return <div>Test</div>;
+        }
+
+        function OtherActivity() {
+          return <div>Other</div>;
+        }
+
+        const config = defineConfig({
+          activities: [{ name: "TestActivity" }, { name: "OtherActivity" }],
+          transitionDuration: 0,
+          initialActivity: () => "TestActivity",
+        });
+
+        const { Stack, actions } = stackflow({
+          config,
+          components: { TestActivity, OtherActivity },
+          plugins: [earlyPlugin, blockerPlugin(), basicRendererPlugin()],
+        });
+
+        render(<Stack />);
+
+        await act(async () => {
+          actions.push("OtherActivity", {});
+        });
+
+        // when: proceed
+        await act(async () => {
+          capturedProceed();
+        });
+
+        // then: earlyPlugin의 onBeforePush가 replay 시에도 호출됨
+        expect(beforePushCallCount).toBe(2);
+      });
+
+      it("earlier 플러그인이 replay 중 다른 내비게이션을 실행해도 해당 내비게이션은 blocker 판단을 거친다", async () => {
+        // given
+        let capturedProceed!: () => void;
+        let shouldBlockCalls: string[] = [];
+        let pushCallCount = 0;
+
+        const earlyPlugin: StackflowReactPlugin = () => ({
+          key: "early",
+          onBeforePush({ actions: hookActions }) {
+            pushCallCount++;
+            if (pushCallCount === 2) {
+              // replay 중 별도의 pop을 실행
+              hookActions.pop();
+            }
+          },
+        });
+
+        function TestActivity() {
+          useBlocker({
+            shouldBlock: (action) => {
+              shouldBlockCalls.push(action.name);
+              return action.name === "Pushed";
+            },
+            onBlocked: (_, { proceed }) => {
+              capturedProceed = proceed;
+            },
+          });
+          return <div>Test</div>;
+        }
+
+        function OtherActivity() {
+          return <div>Other</div>;
+        }
+
+        const config = defineConfig({
+          activities: [{ name: "TestActivity" }, { name: "OtherActivity" }],
+          transitionDuration: 0,
+          initialActivity: () => "TestActivity",
+        });
+
+        const { Stack, actions } = stackflow({
+          config,
+          components: { TestActivity, OtherActivity },
+          plugins: [earlyPlugin, blockerPlugin(), basicRendererPlugin()],
+        });
+
+        render(<Stack />);
+
+        await act(async () => {
+          actions.push("OtherActivity", {});
+        });
+
+        shouldBlockCalls = [];
+
+        // when: proceed → replay → earlyPlugin이 pop 실행
+        await act(async () => {
+          capturedProceed();
+        });
+
+        // then: earlyPlugin이 실행한 pop이 blocker의 shouldBlock을 거침
+        expect(shouldBlockCalls).toContain("Popped");
+      });
+
+      it("earlier 플러그인이 replay 중 preventDefault하면 replay가 취소된다", async () => {
+        // given
+        let capturedProceed!: () => void;
+        let getStack!: () => Stack;
+        let pushCallCount = 0;
+
+        const earlyPlugin: StackflowReactPlugin = () => ({
+          key: "early",
+          onInit({ actions: a }) {
+            getStack = a.getStack;
+          },
+          onBeforePush({ actions: hookActions }) {
+            pushCallCount++;
+            if (pushCallCount === 2) {
+              hookActions.preventDefault();
+            }
+          },
+        });
+
+        function TestActivity() {
+          useBlocker({
+            shouldBlock: () => true,
+            onBlocked: (_, { proceed }) => {
+              capturedProceed = proceed;
+            },
+          });
+          return <div>Test</div>;
+        }
+
+        function OtherActivity() {
+          return <div>Other</div>;
+        }
+
+        const config = defineConfig({
+          activities: [{ name: "TestActivity" }, { name: "OtherActivity" }],
+          transitionDuration: 0,
+          initialActivity: () => "TestActivity",
+        });
+
+        const { Stack, actions } = stackflow({
+          config,
+          components: { TestActivity, OtherActivity },
+          plugins: [earlyPlugin, blockerPlugin(), basicRendererPlugin()],
+        });
+
+        render(<Stack />);
+
+        await act(async () => {
+          actions.push("OtherActivity", {});
+        });
+
+        const activitiesBefore = getStack().activities;
+
+        // when: proceed → replay → earlyPlugin이 preventDefault
+        await act(async () => {
+          capturedProceed();
+        });
+
+        // then: push가 취소됨
+        const activitiesAfter = getStack().activities;
+        expect(activitiesAfter).toEqual(activitiesBefore);
+      });
+    });
+
+    describe("8-2. blockerPlugin보다 나중에 적용된 플러그인", () => {
+      it("proceed로 replay될 때 later 플러그인의 onBefore* 훅이 호출된다", async () => {
+        // given
+        let capturedProceed!: () => void;
+        let beforePushCallCount = 0;
+
+        const latePlugin: StackflowReactPlugin = () => ({
+          key: "late",
+          onBeforePush() {
+            beforePushCallCount++;
+          },
+        });
+
+        function TestActivity() {
+          useBlocker({
+            shouldBlock: () => true,
+            onBlocked: (_, { proceed }) => {
+              capturedProceed = proceed;
+            },
+          });
+          return <div>Test</div>;
+        }
+
+        function OtherActivity() {
+          return <div>Other</div>;
+        }
+
+        const config = defineConfig({
+          activities: [{ name: "TestActivity" }, { name: "OtherActivity" }],
+          transitionDuration: 0,
+          initialActivity: () => "TestActivity",
+        });
+
+        const { Stack, actions } = stackflow({
+          config,
+          components: { TestActivity, OtherActivity },
+          plugins: [blockerPlugin(), latePlugin, basicRendererPlugin()],
+        });
+
+        render(<Stack />);
+
+        // when: push → blocked
+        await act(async () => {
+          actions.push("OtherActivity", {});
+        });
+
+        expect(beforePushCallCount).toBe(1);
+
+        // when: proceed
+        await act(async () => {
+          capturedProceed();
+        });
+
+        // then: latePlugin의 onBeforePush가 replay 시에도 호출됨
+        expect(beforePushCallCount).toBe(2);
+      });
+
+      it("later 플러그인이 replay 중 다른 내비게이션을 실행해도 해당 내비게이션은 blocker 판단을 거친다", async () => {
+        // given
+        let capturedProceed!: () => void;
+        let shouldBlockCalls: string[] = [];
+        let pushCallCount = 0;
+
+        const latePlugin: StackflowReactPlugin = () => ({
+          key: "late",
+          onBeforePush({ actions: hookActions }) {
+            pushCallCount++;
+            if (pushCallCount === 2) {
+              // replay 중 별도의 pop을 실행
+              hookActions.pop();
+            }
+          },
+        });
+
+        function TestActivity() {
+          useBlocker({
+            shouldBlock: (action) => {
+              shouldBlockCalls.push(action.name);
+              return action.name === "Pushed";
+            },
+            onBlocked: (_, { proceed }) => {
+              capturedProceed = proceed;
+            },
+          });
+          return <div>Test</div>;
+        }
+
+        function OtherActivity() {
+          return <div>Other</div>;
+        }
+
+        const config = defineConfig({
+          activities: [{ name: "TestActivity" }, { name: "OtherActivity" }],
+          transitionDuration: 0,
+          initialActivity: () => "TestActivity",
+        });
+
+        const { Stack, actions } = stackflow({
+          config,
+          components: { TestActivity, OtherActivity },
+          plugins: [blockerPlugin(), latePlugin, basicRendererPlugin()],
+        });
+
+        render(<Stack />);
+
+        await act(async () => {
+          actions.push("OtherActivity", {});
+        });
+
+        shouldBlockCalls = [];
+
+        // when: proceed → replay → latePlugin이 pop 실행
+        await act(async () => {
+          capturedProceed();
+        });
+
+        // then: latePlugin이 실행한 pop이 blocker의 shouldBlock을 거침
+        expect(shouldBlockCalls).toContain("Popped");
+      });
+
+      it("later 플러그인이 replay 중 preventDefault하면 replay가 취소된다", async () => {
+        // given
+        let capturedProceed!: () => void;
+        let getStack!: () => Stack;
+        let pushCallCount = 0;
+
+        const latePlugin: StackflowReactPlugin = () => ({
+          key: "late",
+          onBeforePush({ actions: hookActions }) {
+            pushCallCount++;
+            if (pushCallCount === 2) {
+              hookActions.preventDefault();
+            }
+          },
+        });
+
+        const spyPlugin: StackflowReactPlugin = () => ({
+          key: "spy",
+          onInit({ actions: a }) {
+            getStack = a.getStack;
+          },
+        });
+
+        function TestActivity() {
+          useBlocker({
+            shouldBlock: () => true,
+            onBlocked: (_, { proceed }) => {
+              capturedProceed = proceed;
+            },
+          });
+          return <div>Test</div>;
+        }
+
+        function OtherActivity() {
+          return <div>Other</div>;
+        }
+
+        const config = defineConfig({
+          activities: [{ name: "TestActivity" }, { name: "OtherActivity" }],
+          transitionDuration: 0,
+          initialActivity: () => "TestActivity",
+        });
+
+        const { Stack, actions } = stackflow({
+          config,
+          components: { TestActivity, OtherActivity },
+          plugins: [
+            blockerPlugin(),
+            latePlugin,
+            basicRendererPlugin(),
+            spyPlugin,
+          ],
+        });
+
+        render(<Stack />);
+
+        await act(async () => {
+          actions.push("OtherActivity", {});
+        });
+
+        const activitiesBefore = getStack().activities;
+
+        // when: proceed → replay → latePlugin이 preventDefault
+        await act(async () => {
+          capturedProceed();
+        });
+
+        // then: push가 취소됨
+        const activitiesAfter = getStack().activities;
+        expect(activitiesAfter).toEqual(activitiesBefore);
+      });
+    });
+  });
 });
