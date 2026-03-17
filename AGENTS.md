@@ -207,6 +207,10 @@ The Future API maintains compatibility with existing code while preparing for St
 - TypeScript declarations generated separately
 - Monorepo managed with Yarn workspaces and ultra runner
 
+## Skills
+
+- React code review guidelines: `.agents/skills/review-react/`
+
 ## Important Notes
 
 - Always use `yarn` commands (not npm)
