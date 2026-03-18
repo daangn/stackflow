@@ -1,41 +1,40 @@
 ---
-title: Use Ternary for Conditional Rendering
-impact: MEDIUM
-impactDescription: prevents rendering "0" or "" as visible text
-tags: rendering, conditional, ternary, falsy-values
+title: Use Explicit Conditional Rendering
+impact: LOW
+impactDescription: prevents rendering 0 or NaN
+tags: rendering, conditional, jsx, falsy-values
 ---
 
-## Use Ternary for Conditional Rendering
+## Use Explicit Conditional Rendering
 
-**Impact: MEDIUM (prevents rendering "0" or "" as visible text)**
+Use explicit ternary operators (`? :`) instead of `&&` for conditional rendering when the condition can be `0`, `NaN`, or other falsy values that render.
 
-The `&&` operator with non-boolean left operands can render unexpected falsy values like `0` or `""` as visible text in the DOM.
-
-**Incorrect (falsy number renders as "0"):**
+**Incorrect (renders "0" when count is 0):**
 
 ```tsx
-function Notifications({ count }) {
-  return <div>{count && <Badge count={count} />}</div>
-  // When count is 0, renders "0" as text
+function Badge({ count }: { count: number }) {
+  return (
+    <div>
+      {count && <span className="badge">{count}</span>}
+    </div>
+  )
 }
+
+// When count = 0, renders: <div>0</div>
+// When count = 5, renders: <div><span class="badge">5</span></div>
 ```
 
-**Correct (explicit ternary):**
+**Correct (renders nothing when count is 0):**
 
 ```tsx
-function Notifications({ count }) {
-  return <div>{count > 0 ? <Badge count={count} /> : null}</div>
+function Badge({ count }: { count: number }) {
+  return (
+    <div>
+      {count > 0 ? <span className="badge">{count}</span> : null}
+    </div>
+  )
 }
+
+// When count = 0, renders: <div></div>
+// When count = 5, renders: <div><span class="badge">5</span></div>
 ```
-
-**Also correct (double negation for boolean coercion):**
-
-```tsx
-function Notifications({ count }) {
-  return <div>{!!count && <Badge count={count} />}</div>
-}
-```
-
-This is especially important with numeric values (`0`), empty strings (`""`), and `NaN`. Boolean, `null`, and `undefined` are safe with `&&`.
-
-Reference: [Conditional Rendering](https://react.dev/learn/conditional-rendering)

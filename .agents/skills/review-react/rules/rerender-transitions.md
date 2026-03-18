@@ -1,60 +1,40 @@
 ---
-title: Use startTransition for Non-Urgent Updates
+title: Use Transitions for Non-Urgent Updates
 impact: MEDIUM
-impactDescription: keeps UI responsive during expensive state updates
-tags: rerender, useTransition, startTransition, concurrent
+impactDescription: maintains UI responsiveness
+tags: rerender, transitions, startTransition, performance
 ---
 
-## Use startTransition for Non-Urgent Updates
+## Use Transitions for Non-Urgent Updates
 
-**Impact: MEDIUM (keeps UI responsive during expensive state updates)**
+Mark frequent, non-urgent state updates as transitions to maintain UI responsiveness.
 
-When a state update triggers expensive rendering (large lists, complex computations), wrapping it in `startTransition` tells React it can be interrupted by more urgent updates like typing.
-
-**Incorrect (expensive update blocks input):**
+**Incorrect (blocks UI on every scroll):**
 
 ```tsx
-function FilterableList({ items }) {
-  const [filter, setFilter] = useState('')
-
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setFilter(e.target.value) // Expensive filter blocks typing
-  }
-
-  const filtered = items.filter(item => item.name.includes(filter))
-
-  return (
-    <>
-      <input onChange={handleChange} />
-      <List items={filtered} />
-    </>
-  )
+function ScrollTracker() {
+  const [scrollY, setScrollY] = useState(0)
+  useEffect(() => {
+    const handler = () => setScrollY(window.scrollY)
+    window.addEventListener('scroll', handler, { passive: true })
+    return () => window.removeEventListener('scroll', handler)
+  }, [])
 }
 ```
 
-**Correct (defer expensive update with transition):**
+**Correct (non-blocking updates):**
 
 ```tsx
-function FilterableList({ items }) {
-  const [input, setInput] = useState('')
-  const [filter, setFilter] = useState('')
+import { startTransition } from 'react'
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setInput(e.target.value) // Urgent: update input immediately
-    startTransition(() => {
-      setFilter(e.target.value) // Non-urgent: can be interrupted
-    })
-  }
-
-  const filtered = items.filter(item => item.name.includes(filter))
-
-  return (
-    <>
-      <input value={input} onChange={handleChange} />
-      <List items={filtered} />
-    </>
-  )
+function ScrollTracker() {
+  const [scrollY, setScrollY] = useState(0)
+  useEffect(() => {
+    const handler = () => {
+      startTransition(() => setScrollY(window.scrollY))
+    }
+    window.addEventListener('scroll', handler, { passive: true })
+    return () => window.removeEventListener('scroll', handler)
+  }, [])
 }
 ```
-
-Reference: [startTransition](https://react.dev/reference/react/startTransition)

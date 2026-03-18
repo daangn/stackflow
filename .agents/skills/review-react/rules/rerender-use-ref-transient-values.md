@@ -1,55 +1,73 @@
 ---
-title: Use Refs for Frequently-Changing Transient Values
+title: Use useRef for Transient Values
 impact: MEDIUM
-impactDescription: avoids high-frequency re-renders from values not needed in JSX
-tags: rerender, useRef, transient, scroll, mouse, animation
+impactDescription: avoids unnecessary re-renders on frequent updates
+tags: rerender, useref, state, performance
 ---
 
-## Use Refs for Frequently-Changing Transient Values
+## Use useRef for Transient Values
 
-**Impact: MEDIUM (avoids high-frequency re-renders from values not needed in JSX)**
+When a value changes frequently and you don't want a re-render on every update (e.g., mouse trackers, intervals, transient flags), store it in `useRef` instead of `useState`. Keep component state for UI; use refs for temporary DOM-adjacent values. Updating a ref does not trigger a re-render.
 
-Values that change at high frequency (scroll position, mouse coordinates, animation progress) but aren't displayed in JSX should be stored in refs to avoid triggering re-renders.
-
-**Incorrect (state for high-frequency value):**
+**Incorrect (renders every update):**
 
 ```tsx
-function Scroller() {
-  const [scrollY, setScrollY] = useState(0)
+function Tracker() {
+  const [lastX, setLastX] = useState(0)
 
   useEffect(() => {
-    const handler = () => setScrollY(window.scrollY) // Re-render per scroll event
-    window.addEventListener('scroll', handler)
-    return () => window.removeEventListener('scroll', handler)
+    const onMove = (e: MouseEvent) => setLastX(e.clientX)
+    window.addEventListener('mousemove', onMove)
+    return () => window.removeEventListener('mousemove', onMove)
   }, [])
 
-  // scrollY only used to check a threshold, not displayed
-  useEffect(() => {
-    if (scrollY > 100) showFloatingButton()
-  }, [scrollY])
+  return (
+    <div
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: lastX,
+        width: 8,
+        height: 8,
+        background: 'black',
+      }}
+    />
+  )
 }
 ```
 
-**Correct (ref for transient value):**
+**Correct (no re-render for tracking):**
 
 ```tsx
-function Scroller() {
-  const scrollY = useRef(0)
-  const [showButton, setShowButton] = useState(false)
+function Tracker() {
+  const lastXRef = useRef(0)
+  const dotRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const handler = () => {
-      scrollY.current = window.scrollY
-      setShowButton(scrollY.current > 100) // Only re-renders when boolean changes
+    const onMove = (e: MouseEvent) => {
+      lastXRef.current = e.clientX
+      const node = dotRef.current
+      if (node) {
+        node.style.transform = `translateX(${e.clientX}px)`
+      }
     }
-    window.addEventListener('scroll', handler, { passive: true })
-    return () => window.removeEventListener('scroll', handler)
+    window.addEventListener('mousemove', onMove)
+    return () => window.removeEventListener('mousemove', onMove)
   }, [])
 
-  return showButton ? <FloatingButton /> : null
+  return (
+    <div
+      ref={dotRef}
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: 8,
+        height: 8,
+        background: 'black',
+        transform: 'translateX(0px)',
+      }}
+    />
+  )
 }
 ```
-
-Combine with `requestAnimationFrame` for animation-related values to further reduce work.
-
-Reference: [useRef](https://react.dev/reference/react/useRef)

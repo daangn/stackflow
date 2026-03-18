@@ -1,56 +1,45 @@
 ---
-title: Use Primitive Values in Effect Dependencies
-impact: MEDIUM
-impactDescription: prevents effects from re-firing on every render due to new object references
-tags: rerender, useEffect, dependencies, primitives
+title: Narrow Effect Dependencies
+impact: LOW
+impactDescription: minimizes effect re-runs
+tags: rerender, useEffect, dependencies, optimization
 ---
 
-## Use Primitive Values in Effect Dependencies
+## Narrow Effect Dependencies
 
-**Impact: MEDIUM (prevents effects from re-firing on every render due to new object references)**
+Specify primitive dependencies instead of objects to minimize effect re-runs.
 
-Object and array dependencies create new references each render, causing effects to re-run unnecessarily. Extract the primitive values you actually depend on.
-
-**Incorrect (object in dependency array):**
+**Incorrect (re-runs on any user field change):**
 
 ```tsx
-function UserProfile({ user }) {
-  useEffect(() => {
-    document.title = user.name
-  }, [user]) // Fires every render if `user` is a new object
-}
+useEffect(() => {
+  console.log(user.id)
+}, [user])
 ```
 
-**Correct (primitive dependency):**
+**Correct (re-runs only when id changes):**
 
 ```tsx
-function UserProfile({ user }) {
-  useEffect(() => {
-    document.title = user.name
-  }, [user.name]) // Only fires when name actually changes
-}
+useEffect(() => {
+  console.log(user.id)
+}, [user.id])
 ```
 
-**Incorrect (derived object in dependency):**
+**For derived state, compute outside effect:**
 
 ```tsx
-function Chart({ data }) {
-  const config = { type: 'bar', data }
+// Incorrect: runs on width=767, 766, 765...
+useEffect(() => {
+  if (width < 768) {
+    enableMobileMode()
+  }
+}, [width])
 
-  useEffect(() => {
-    renderChart(config)
-  }, [config]) // New object every render
-}
+// Correct: runs only on boolean transition
+const isMobile = width < 768
+useEffect(() => {
+  if (isMobile) {
+    enableMobileMode()
+  }
+}, [isMobile])
 ```
-
-**Correct (memoize or use primitives):**
-
-```tsx
-function Chart({ data }) {
-  useEffect(() => {
-    renderChart({ type: 'bar', data })
-  }, [data])
-}
-```
-
-Reference: [Removing unnecessary dependencies](https://react.dev/learn/removing-effect-dependencies)

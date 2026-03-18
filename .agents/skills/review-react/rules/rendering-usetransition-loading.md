@@ -1,60 +1,75 @@
 ---
-title: Prefer useTransition Over Manual Loading State
-impact: MEDIUM
-impactDescription: avoids flash of loading state and keeps UI responsive
-tags: rendering, useTransition, loading, isPending
+title: Use useTransition Over Manual Loading States
+impact: LOW
+impactDescription: reduces re-renders and improves code clarity
+tags: rendering, transitions, useTransition, loading, state
 ---
 
-## Prefer useTransition Over Manual Loading State
+## Use useTransition Over Manual Loading States
 
-**Impact: MEDIUM (avoids flash of loading state and keeps UI responsive)**
-
-Manual boolean loading state (`setLoading(true/false)`) can cause flashes and blocks the UI. `useTransition` gives React control over when to show loading indicators.
+Use `useTransition` instead of manual `useState` for loading states. This provides built-in `isPending` state and automatically manages transitions.
 
 **Incorrect (manual loading state):**
 
 ```tsx
-function TabPanel() {
-  const [tab, setTab] = useState('home')
-  const [loading, setLoading] = useState(false)
+function SearchResults() {
+  const [query, setQuery] = useState('')
+  const [results, setResults] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
 
-  const switchTab = async (newTab: string) => {
-    setLoading(true)
-    setTab(newTab)
-    setLoading(false) // Flash of loading state
+  const handleSearch = async (value: string) => {
+    setIsLoading(true)
+    setQuery(value)
+    const data = await fetchResults(value)
+    setResults(data)
+    setIsLoading(false)
   }
 
   return (
-    <div>
-      {loading && <Spinner />}
-      <TabContent tab={tab} />
-    </div>
+    <>
+      <input onChange={(e) => handleSearch(e.target.value)} />
+      {isLoading && <Spinner />}
+      <ResultsList results={results} />
+    </>
   )
 }
 ```
 
-**Correct (useTransition):**
+**Correct (useTransition with built-in pending state):**
 
 ```tsx
-function TabPanel() {
-  const [tab, setTab] = useState('home')
+import { useTransition, useState } from 'react'
+
+function SearchResults() {
+  const [query, setQuery] = useState('')
+  const [results, setResults] = useState([])
   const [isPending, startTransition] = useTransition()
 
-  const switchTab = (newTab: string) => {
-    startTransition(() => {
-      setTab(newTab)
+  const handleSearch = (value: string) => {
+    setQuery(value) // Update input immediately
+    
+    startTransition(async () => {
+      // Fetch and update results
+      const data = await fetchResults(value)
+      setResults(data)
     })
   }
 
   return (
-    <div>
+    <>
+      <input onChange={(e) => handleSearch(e.target.value)} />
       {isPending && <Spinner />}
-      <TabContent tab={tab} />
-    </div>
+      <ResultsList results={results} />
+    </>
   )
 }
 ```
 
-`useTransition` lets React keep showing the old UI until the new one is ready, preventing layout shifts and blank screens.
+**Benefits:**
+
+- **Automatic pending state**: No need to manually manage `setIsLoading(true/false)`
+- **Error resilience**: Pending state correctly resets even if the transition throws
+- **Better responsiveness**: Keeps the UI responsive during updates
+- **Interrupt handling**: New transitions automatically cancel pending ones
 
 Reference: [useTransition](https://react.dev/reference/react/useTransition)

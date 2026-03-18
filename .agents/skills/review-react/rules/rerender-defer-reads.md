@@ -1,63 +1,39 @@
 ---
-title: Defer State Reads to Usage Points
+title: Defer State Reads to Usage Point
 impact: MEDIUM
-impactDescription: avoids re-renders from state changes only used in callbacks
-tags: rerender, state-subscription, useRef, callbacks
+impactDescription: avoids unnecessary subscriptions
+tags: rerender, searchParams, localStorage, optimization
 ---
 
-## Defer State Reads to Usage Points
+## Defer State Reads to Usage Point
 
-**Impact: MEDIUM (avoids re-renders from state changes only used in callbacks)**
+Don't subscribe to dynamic state (searchParams, localStorage) if you only read it inside callbacks.
 
-If a state value is only consumed in event handlers (not in JSX), subscribing to it via `useState` causes unnecessary re-renders. Defer the read using a ref or by restructuring the component.
-
-**Incorrect (subscribing to state only used in callback):**
+**Incorrect (subscribes to all searchParams changes):**
 
 ```tsx
-function Form() {
-  const [draft, setDraft] = useState('')
-  const [items, setItems] = useState<string[]>([])
+function ShareButton({ chatId }: { chatId: string }) {
+  const searchParams = useSearchParams()
 
-  // `draft` is read only in this handler, but every keystroke re-renders
-  const handleAdd = () => {
-    setItems(prev => [...prev, draft])
-    setDraft('')
+  const handleShare = () => {
+    const ref = searchParams.get('ref')
+    shareChat(chatId, { ref })
   }
 
-  return (
-    <>
-      <input value={draft} onChange={e => setDraft(e.target.value)} />
-      <button onClick={handleAdd}>Add</button>
-      <ItemList items={items} />
-    </>
-  )
+  return <button onClick={handleShare}>Share</button>
 }
 ```
 
-**Correct (use ref for value only needed in callbacks):**
+**Correct (reads on demand, no subscription):**
 
 ```tsx
-function Form() {
-  const draftRef = useRef('')
-  const [items, setItems] = useState<string[]>([])
-  const inputRef = useRef<HTMLInputElement>(null)
-
-  const handleAdd = () => {
-    setItems(prev => [...prev, draftRef.current])
-    draftRef.current = ''
-    if (inputRef.current) inputRef.current.value = ''
+function ShareButton({ chatId }: { chatId: string }) {
+  const handleShare = () => {
+    const params = new URLSearchParams(window.location.search)
+    const ref = params.get('ref')
+    shareChat(chatId, { ref })
   }
 
-  return (
-    <>
-      <input ref={inputRef} onChange={e => { draftRef.current = e.target.value }} />
-      <button onClick={handleAdd}>Add</button>
-      <ItemList items={items} />
-    </>
-  )
+  return <button onClick={handleShare}>Share</button>
 }
 ```
-
-Note: This pattern trades React's controlled input for an uncontrolled one. Only apply when the state truly isn't needed in the render output.
-
-Reference: [useRef](https://react.dev/reference/react/useRef)

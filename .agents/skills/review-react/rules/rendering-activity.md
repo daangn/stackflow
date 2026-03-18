@@ -1,51 +1,26 @@
 ---
-title: Use Activity Component for Preserving Hidden UI State
+title: Use Activity Component for Show/Hide
 impact: MEDIUM
-impactDescription: preserves component state and DOM when toggling visibility
-tags: rendering, Activity, show-hide, state-preservation
+impactDescription: preserves state/DOM
+tags: rendering, activity, visibility, state-preservation
 ---
 
-## Use Activity Component for Preserving Hidden UI State
+## Use Activity Component for Show/Hide
 
-**Impact: MEDIUM (preserves component state and DOM when toggling visibility)**
+Use React's `<Activity>` to preserve state/DOM for expensive components that frequently toggle visibility.
 
-When hiding and showing UI (tabs, navigation stacks, offscreen content), unmounting destroys state and DOM. React's `<Activity>` component (React 19+) hides content while preserving its state.
-
-**Incorrect (unmounting destroys state):**
+**Usage:**
 
 ```tsx
-function Tabs({ activeTab }) {
+import { Activity } from 'react'
+
+function Dropdown({ isOpen }: Props) {
   return (
-    <div>
-      {activeTab === 'home' && <HomeTab />}
-      {activeTab === 'profile' && <ProfileTab />}
-    </div>
-  )
-}
-// Switching tabs loses scroll position, form input, etc.
-```
-
-**Correct (Activity preserves state):**
-
-```tsx
-import { unstable_Activity as Activity } from 'react'
-
-function Tabs({ activeTab }) {
-  return (
-    <div>
-      <Activity mode={activeTab === 'home' ? 'visible' : 'hidden'}>
-        <HomeTab />
-      </Activity>
-      <Activity mode={activeTab === 'profile' ? 'visible' : 'hidden'}>
-        <ProfileTab />
-      </Activity>
-    </div>
+    <Activity mode={isOpen ? 'visible' : 'hidden'}>
+      <ExpensiveMenu />
+    </Activity>
   )
 }
 ```
 
-When `mode="hidden"`, the component tree is rendered at lower priority and hidden via CSS. Effects are cleaned up when hidden and re-run when shown.
-
-Note: `Activity` is currently `unstable_Activity` in React 19. The API may change.
-
-Reference: [Activity (React RFC)](https://github.com/reactjs/rfcs/blob/main/text/0extracting-state-updates-from-the-rendering-process.md)
+Avoids expensive re-renders and state loss.

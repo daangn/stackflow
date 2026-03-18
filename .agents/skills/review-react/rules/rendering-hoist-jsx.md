@@ -1,58 +1,46 @@
 ---
-title: Hoist Static JSX Outside Component Functions
-impact: MEDIUM
-impactDescription: avoids recreating identical React elements on every render
-tags: rendering, static-jsx, hoisting, optimization
+title: Hoist Static JSX Elements
+impact: LOW
+impactDescription: avoids re-creation
+tags: rendering, jsx, static, optimization
 ---
 
-## Hoist Static JSX Outside Component Functions
+## Hoist Static JSX Elements
 
-**Impact: MEDIUM (avoids recreating identical React elements on every render)**
+Extract static JSX outside components to avoid re-creation.
 
-JSX that doesn't depend on props, state, or context produces the same output every render. Hoist it to module scope so React creates the element once and reuses it.
-
-**Incorrect (static JSX recreated every render):**
+**Incorrect (recreates element every render):**
 
 ```tsx
-function Layout({ children }) {
+function LoadingSkeleton() {
+  return <div className="animate-pulse h-20 bg-gray-200" />
+}
+
+function Container() {
   return (
     <div>
-      <header>
-        <h1>My App</h1>
-        <nav>
-          <a href="/">Home</a>
-          <a href="/about">About</a>
-        </nav>
-      </header>
-      {children}
+      {loading && <LoadingSkeleton />}
     </div>
   )
 }
 ```
 
-**Correct (static parts hoisted):**
+**Correct (reuses same element):**
 
 ```tsx
-const header = (
-  <header>
-    <h1>My App</h1>
-    <nav>
-      <a href="/">Home</a>
-      <a href="/about">About</a>
-    </nav>
-  </header>
+const loadingSkeleton = (
+  <div className="animate-pulse h-20 bg-gray-200" />
 )
 
-function Layout({ children }) {
+function Container() {
   return (
     <div>
-      {header}
-      {children}
+      {loading && loadingSkeleton}
     </div>
   )
 }
 ```
 
-React Compiler does this automatically. If you use React Compiler, this optimization is handled for you.
+This is especially helpful for large and static SVG nodes, which can be expensive to recreate on every render.
 
-Reference: [React Compiler](https://react.dev/learn/react-compiler)
+**Note:** If your project has [React Compiler](https://react.dev/learn/react-compiler) enabled, the compiler automatically hoists static JSX elements and optimizes component re-renders, making manual hoisting unnecessary.

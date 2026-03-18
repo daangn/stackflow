@@ -1,36 +1,29 @@
 ---
-title: Subscribe to Derived Booleans, Not Raw Objects
+title: Subscribe to Derived State
 impact: MEDIUM
-impactDescription: reduces re-renders by narrowing subscription scope
-tags: rerender, derived-state, selectors, context
+impactDescription: reduces re-render frequency
+tags: rerender, derived-state, media-query, optimization
 ---
 
-## Subscribe to Derived Booleans, Not Raw Objects
+## Subscribe to Derived State
 
-**Impact: MEDIUM (reduces re-renders by narrowing subscription scope)**
+Subscribe to derived boolean state instead of continuous values to reduce re-render frequency.
 
-When a component only needs to know whether a condition is true (e.g., "is the list empty?"), subscribing to the full object causes re-renders whenever any part of the object changes. Derive a boolean or primitive and subscribe to that instead.
-
-**Incorrect (subscribing to full array to check emptiness):**
+**Incorrect (re-renders on every pixel change):**
 
 ```tsx
-function EmptyBanner() {
-  const items = useStore(state => state.items) // Re-renders on any item change
-  if (items.length > 0) return null
-  return <p>No items yet</p>
+function Sidebar() {
+  const width = useWindowWidth()  // updates continuously
+  const isMobile = width < 768
+  return <nav className={isMobile ? 'mobile' : 'desktop'} />
 }
 ```
 
-**Correct (subscribe to derived boolean):**
+**Correct (re-renders only when boolean changes):**
 
 ```tsx
-function EmptyBanner() {
-  const isEmpty = useStore(state => state.items.length === 0)
-  if (!isEmpty) return null
-  return <p>No items yet</p>
+function Sidebar() {
+  const isMobile = useMediaQuery('(max-width: 767px)')
+  return <nav className={isMobile ? 'mobile' : 'desktop'} />
 }
 ```
-
-This pattern works with any external store, context selector, or state management library that supports selectors.
-
-Reference: [useSyncExternalStore](https://react.dev/reference/react/useSyncExternalStore)

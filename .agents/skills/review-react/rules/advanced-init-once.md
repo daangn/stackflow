@@ -1,68 +1,42 @@
 ---
-title: Initialize App-Level Singletons Once
-impact: LOW
-impactDescription: prevents duplicate initialization in Strict Mode and re-mounts
-tags: advanced, initialization, singleton, module-scope
+title: Initialize App Once, Not Per Mount
+impact: LOW-MEDIUM
+impactDescription: avoids duplicate init in development
+tags: initialization, useEffect, app-startup, side-effects
 ---
 
-## Initialize App-Level Singletons Once
+## Initialize App Once, Not Per Mount
 
-**Impact: LOW (prevents duplicate initialization in Strict Mode and re-mounts)**
+Do not put app-wide initialization that must run once per app load inside `useEffect([])` of a component. Components can remount and effects will re-run. Use a module-level guard or top-level init in the entry module instead.
 
-App-level setup (analytics, error tracking, SDK initialization) should run once per app load, not per component mount. Strict Mode double-invokes effects, causing duplicate initialization.
-
-**Incorrect (initialization in effect runs twice in Strict Mode):**
+**Incorrect (runs twice in dev, re-runs on remount):**
 
 ```tsx
-function App() {
+function Comp() {
   useEffect(() => {
-    analytics.init('key') // Runs twice in Strict Mode
-    errorTracker.setup()  // May cause duplicate event listeners
+    loadFromStorage()
+    checkAuthToken()
   }, [])
 
-  return <Router />
+  // ...
 }
 ```
 
-**Correct (module-level initialization):**
-
-```tsx
-// app-init.ts
-let initialized = false
-
-export function initApp() {
-  if (initialized) return
-  initialized = true
-  analytics.init('key')
-  errorTracker.setup()
-}
-```
-
-```tsx
-// App.tsx
-import { initApp } from './app-init'
-
-initApp() // Runs once at module evaluation
-
-function App() {
-  return <Router />
-}
-```
-
-**Also correct (top-level flag guard):**
+**Correct (once per app load):**
 
 ```tsx
 let didInit = false
 
-function App() {
+function Comp() {
   useEffect(() => {
     if (didInit) return
     didInit = true
-    analytics.init('key')
+    loadFromStorage()
+    checkAuthToken()
   }, [])
 
-  return <Router />
+  // ...
 }
 ```
 
-Reference: [How to handle the Effect firing twice in development](https://react.dev/learn/synchronizing-with-effects#how-to-handle-the-effect-firing-twice-in-development)
+Reference: [Initializing the application](https://react.dev/learn/you-might-not-need-an-effect#initializing-the-application)

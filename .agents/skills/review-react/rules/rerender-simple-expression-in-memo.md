@@ -1,34 +1,35 @@
 ---
-title: Don't useMemo for Simple Primitive Expressions
-impact: MEDIUM
-impactDescription: useMemo overhead exceeds the cost of trivial computations
-tags: rerender, useMemo, premature-optimization
+title: Do not wrap a simple expression with a primitive result type in useMemo
+impact: LOW-MEDIUM
+impactDescription: wasted computation on every render
+tags: rerender, useMemo, optimization
 ---
 
-## Don't useMemo for Simple Primitive Expressions
+## Do not wrap a simple expression with a primitive result type in useMemo
 
-**Impact: MEDIUM (useMemo overhead exceeds the cost of trivial computations)**
+When an expression is simple (few logical or arithmetical operators) and has a primitive result type (boolean, number, string), do not wrap it in `useMemo`.
+Calling `useMemo` and comparing hook dependencies may consume more resources than the expression itself.
 
-`useMemo` has overhead (dependency comparison, closure allocation). For simple math or string operations that produce primitives, the memoization cost exceeds the computation cost.
-
-**Incorrect (memoizing trivial expression):**
+**Incorrect:**
 
 ```tsx
-function Progress({ current, total }) {
-  const percentage = useMemo(() => Math.round((current / total) * 100), [current, total])
-  return <span>{percentage}%</span>
+function Header({ user, notifications }: Props) {
+  const isLoading = useMemo(() => {
+    return user.isLoading || notifications.isLoading
+  }, [user.isLoading, notifications.isLoading])
+
+  if (isLoading) return <Skeleton />
+  // return some markup
 }
 ```
 
-**Correct (compute inline):**
+**Correct:**
 
 ```tsx
-function Progress({ current, total }) {
-  const percentage = Math.round((current / total) * 100)
-  return <span>{percentage}%</span>
+function Header({ user, notifications }: Props) {
+  const isLoading = user.isLoading || notifications.isLoading
+
+  if (isLoading) return <Skeleton />
+  // return some markup
 }
 ```
-
-Reserve `useMemo` for expensive computations (large array transformations, complex calculations) or when the result is an object/array passed to a memoized child.
-
-Reference: [useMemo](https://react.dev/reference/react/useMemo)

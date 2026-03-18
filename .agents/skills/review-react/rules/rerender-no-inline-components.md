@@ -1,43 +1,82 @@
 ---
-title: Never Define Components Inside Components
-impact: MEDIUM
-impactDescription: causes full remount and state loss on every parent render
-tags: rerender, inline-components, state-loss
+title: Don't Define Components Inside Components
+impact: HIGH
+impactDescription: prevents remount on every render
+tags: rerender, components, remount, performance
 ---
 
-## Never Define Components Inside Components
+## Don't Define Components Inside Components
 
-**Impact: MEDIUM (causes full remount and state loss on every parent render)**
+**Impact: HIGH (prevents remount on every render)**
 
-When a component is defined inside another component, React creates a new component type on every render. This forces React to unmount and remount the inner component, destroying all its state.
+Defining a component inside another component creates a new component type on every render. React sees a different component each time and fully remounts it, destroying all state and DOM.
 
-**Incorrect (component defined inside parent):**
+A common reason developers do this is to access parent variables without passing props. Always pass props instead.
+
+**Incorrect (remounts on every render):**
 
 ```tsx
-function Parent() {
-  // New function identity every render = new component type
-  function Child() {
-    const [count, setCount] = useState(0)
-    return <button onClick={() => setCount(c => c + 1)}>{count}</button>
-  }
+function UserProfile({ user, theme }) {
+  // Defined inside to access `theme` - BAD
+  const Avatar = () => (
+    <img
+      src={user.avatarUrl}
+      className={theme === 'dark' ? 'avatar-dark' : 'avatar-light'}
+    />
+  )
 
-  return <Child />
+  // Defined inside to access `user` - BAD
+  const Stats = () => (
+    <div>
+      <span>{user.followers} followers</span>
+      <span>{user.posts} posts</span>
+    </div>
+  )
+
+  return (
+    <div>
+      <Avatar />
+      <Stats />
+    </div>
+  )
 }
 ```
 
-**Correct (component defined outside parent):**
+Every time `UserProfile` renders, `Avatar` and `Stats` are new component types. React unmounts the old instances and mounts new ones, losing any internal state, running effects again, and recreating DOM nodes.
+
+**Correct (pass props instead):**
 
 ```tsx
-function Child() {
-  const [count, setCount] = useState(0)
-  return <button onClick={() => setCount(c => c + 1)}>{count}</button>
+function Avatar({ src, theme }: { src: string; theme: string }) {
+  return (
+    <img
+      src={src}
+      className={theme === 'dark' ? 'avatar-dark' : 'avatar-light'}
+    />
+  )
 }
 
-function Parent() {
-  return <Child />
+function Stats({ followers, posts }: { followers: number; posts: number }) {
+  return (
+    <div>
+      <span>{followers} followers</span>
+      <span>{posts} posts</span>
+    </div>
+  )
+}
+
+function UserProfile({ user, theme }) {
+  return (
+    <div>
+      <Avatar src={user.avatarUrl} theme={theme} />
+      <Stats followers={user.followers} posts={user.posts} />
+    </div>
+  )
 }
 ```
 
-This applies to all forms: arrow functions, function declarations, and class expressions inside render.
-
-Reference: [Don't define components inside other components](https://react.dev/learn/your-first-component#nesting-and-organizing-components)
+**Symptoms of this bug:**
+- Input fields lose focus on every keystroke
+- Animations restart unexpectedly
+- `useEffect` cleanup/setup runs on every parent render
+- Scroll position resets inside the component

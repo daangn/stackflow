@@ -1,57 +1,45 @@
 ---
-title: Move Interaction Logic from Effects to Event Handlers
+title: Put Interaction Logic in Event Handlers
 impact: MEDIUM
-impactDescription: eliminates unnecessary effect cycles and simplifies data flow
-tags: rerender, useEffect, event-handlers, interaction
+impactDescription: avoids effect re-runs and duplicate side effects
+tags: rerender, useEffect, events, side-effects, dependencies
 ---
 
-## Move Interaction Logic from Effects to Event Handlers
+## Put Interaction Logic in Event Handlers
 
-**Impact: MEDIUM (eliminates unnecessary effect cycles and simplifies data flow)**
+If a side effect is triggered by a specific user action (submit, click, drag), run it in that event handler. Do not model the action as state + effect; it makes effects re-run on unrelated changes and can duplicate the action.
 
-Effects are for synchronizing with external systems, not for responding to user interactions. When logic should run in response to a specific user action, put it in the event handler.
-
-**Incorrect (effect responding to state set by event):**
+**Incorrect (event modeled as state + effect):**
 
 ```tsx
-function SearchPage() {
-  const [query, setQuery] = useState('')
+function Form() {
   const [submitted, setSubmitted] = useState(false)
+  const theme = useContext(ThemeContext)
 
   useEffect(() => {
     if (submitted) {
-      fetchResults(query)
-      setSubmitted(false)
+      post('/api/register')
+      showToast('Registered', theme)
     }
-  }, [submitted, query])
+  }, [submitted, theme])
 
-  return (
-    <form onSubmit={() => setSubmitted(true)}>
-      <input value={query} onChange={e => setQuery(e.target.value)} />
-    </form>
-  )
+  return <button onClick={() => setSubmitted(true)}>Submit</button>
 }
 ```
 
-**Correct (logic in event handler):**
+**Correct (do it in the handler):**
 
 ```tsx
-function SearchPage() {
-  const [query, setQuery] = useState('')
+function Form() {
+  const theme = useContext(ThemeContext)
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault()
-    fetchResults(query)
+  function handleSubmit() {
+    post('/api/register')
+    showToast('Registered', theme)
   }
 
-  return (
-    <form onSubmit={handleSubmit}>
-      <input value={query} onChange={e => setQuery(e.target.value)} />
-    </form>
-  )
+  return <button onClick={handleSubmit}>Submit</button>
 }
 ```
 
-A useful heuristic: if the code runs because the user did something (click, submit, type), it belongs in an event handler. If it runs because something needs to stay in sync (data subscription, DOM measurement), it belongs in an effect.
-
-Reference: [You Might Not Need an Effect](https://react.dev/learn/you-might-not-need-an-effect)
+Reference: [Should this code move to an event handler?](https://react.dev/learn/removing-effect-dependencies#should-this-code-move-to-an-event-handler)

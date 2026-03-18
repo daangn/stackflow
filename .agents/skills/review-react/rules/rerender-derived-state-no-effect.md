@@ -7,8 +7,6 @@ tags: rerender, derived-state, useEffect, state
 
 ## Calculate Derived State During Rendering
 
-**Impact: MEDIUM (avoids redundant renders and state drift)**
-
 If a value can be computed from current props/state, do not store it in state or update it in an effect. Derive it during render to avoid extra renders and state drift. Do not set state in effects solely in response to prop changes; prefer derived values or keyed resets instead.
 
 **Incorrect (redundant state and effect):**
@@ -39,4 +37,4 @@ function Form() {
 }
 ```
 
-Reference: [You Might Not Need an Effect](https://react.dev/learn/you-might-not-need-an-effect)
+References: [You Might Not Need an Effect](https://react.dev/learn/you-might-not-need-an-effect)

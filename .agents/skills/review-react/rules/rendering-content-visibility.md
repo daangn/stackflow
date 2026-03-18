@@ -1,48 +1,33 @@
 ---
-title: Use CSS content-visibility for Long Lists
-impact: MEDIUM
-impactDescription: skips rendering off-screen content, reducing layout and paint cost
-tags: rendering, content-visibility, css, performance, long-lists
+title: CSS content-visibility for Long Lists
+impact: HIGH
+impactDescription: faster initial render
+tags: rendering, css, content-visibility, long-lists
 ---
 
-## Use CSS content-visibility for Long Lists
+## CSS content-visibility for Long Lists
 
-**Impact: MEDIUM (skips rendering off-screen content, reducing layout and paint cost)**
+Apply `content-visibility: auto` to defer off-screen rendering.
 
-For long scrollable lists where virtualization is not feasible, CSS `content-visibility: auto` tells the browser to skip layout and painting of off-screen items.
-
-**Incorrect (all items fully rendered):**
-
-```tsx
-function ActivityList({ activities }) {
-  return (
-    <div>
-      {activities.map(activity => (
-        <div key={activity.id} className="activity-item">
-          <ActivityCard activity={activity} />
-        </div>
-      ))}
-    </div>
-  )
-}
-```
-
-**Correct (off-screen items skip rendering):**
+**CSS:**
 
 ```css
-.activity-item {
+.message-item {
   content-visibility: auto;
-  contain-intrinsic-size: auto 120px; /* estimated height */
+  contain-intrinsic-size: 0 80px;
 }
 ```
 
+**Example:**
+
 ```tsx
-function ActivityList({ activities }) {
+function MessageList({ messages }: { messages: Message[] }) {
   return (
-    <div>
-      {activities.map(activity => (
-        <div key={activity.id} className="activity-item">
-          <ActivityCard activity={activity} />
+    <div className="overflow-y-auto h-screen">
+      {messages.map(msg => (
+        <div key={msg.id} className="message-item">
+          <Avatar user={msg.author} />
+          <div>{msg.content}</div>
         </div>
       ))}
     </div>
@@ -50,6 +35,4 @@ function ActivityList({ activities }) {
 }
 ```
 
-`contain-intrinsic-size` provides an estimated size so the scrollbar behaves correctly before items are rendered. Use `auto` keyword to let the browser remember the actual size after first render.
-
-Reference: [content-visibility (MDN)](https://developer.mozilla.org/en-US/docs/Web/CSS/content-visibility)
+For 1000 messages, browser skips layout/paint for ~990 off-screen items (10× faster initial render).

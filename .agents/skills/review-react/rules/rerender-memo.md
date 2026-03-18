@@ -1,51 +1,44 @@
 ---
-title: Extract Memoized Child Components
+title: Extract to Memoized Components
 impact: MEDIUM
-impactDescription: prevents expensive subtrees from re-rendering unnecessarily
-tags: rerender, memo, React.memo, memoization
+impactDescription: enables early returns
+tags: rerender, memo, useMemo, optimization
 ---
 
-## Extract Memoized Child Components
+## Extract to Memoized Components
 
-**Impact: MEDIUM (prevents expensive subtrees from re-rendering unnecessarily)**
+Extract expensive work into memoized components to enable early returns before computation.
 
-When a parent re-renders, all children re-render too. Extract expensive children into `React.memo()` components so they only re-render when their props actually change.
-
-**Incorrect (expensive child re-renders on every parent update):**
+**Incorrect (computes avatar even when loading):**
 
 ```tsx
-function Dashboard({ data, onRefresh }) {
-  const [filter, setFilter] = useState('')
+function Profile({ user, loading }: Props) {
+  const avatar = useMemo(() => {
+    const id = computeAvatarId(user)
+    return <Avatar id={id} />
+  }, [user])
 
-  return (
-    <div>
-      <input value={filter} onChange={e => setFilter(e.target.value)} />
-      <ExpensiveChart data={data} />
-    </div>
-  )
+  if (loading) return <Skeleton />
+  return <div>{avatar}</div>
 }
 ```
 
-**Correct (wrap expensive child in memo):**
+**Correct (skips computation when loading):**
 
 ```tsx
-const ExpensiveChart = memo(function ExpensiveChart({ data }: { data: Data }) {
-  // Only re-renders when `data` changes
-  return <canvas>{/* heavy rendering */}</canvas>
+const UserAvatar = memo(function UserAvatar({ user }: { user: User }) {
+  const id = useMemo(() => computeAvatarId(user), [user])
+  return <Avatar id={id} />
 })
 
-function Dashboard({ data }) {
-  const [filter, setFilter] = useState('')
-
+function Profile({ user, loading }: Props) {
+  if (loading) return <Skeleton />
   return (
     <div>
-      <input value={filter} onChange={e => setFilter(e.target.value)} />
-      <ExpensiveChart data={data} />
+      <UserAvatar user={user} />
     </div>
   )
 }
 ```
 
-Only use `memo` when profiling shows the child is expensive. Premature memoization adds complexity without benefit.
-
-Reference: [memo](https://react.dev/reference/react/memo)
+**Note:** If your project has [React Compiler](https://react.dev/learn/react-compiler) enabled, manual memoization with `memo()` and `useMemo()` is not necessary. The compiler automatically optimizes re-renders.

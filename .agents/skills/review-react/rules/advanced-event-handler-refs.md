@@ -1,49 +1,55 @@
 ---
-title: Store Event Handlers in Refs for Stable Callbacks
+title: Store Event Handlers in Refs
 impact: LOW
-impactDescription: provides stable function identity without stale closures
-tags: advanced, refs, event-handlers, useRef, stable-callback
+impactDescription: stable subscriptions
+tags: advanced, hooks, refs, event-handlers, optimization
 ---
 
-## Store Event Handlers in Refs for Stable Callbacks
+## Store Event Handlers in Refs
 
-**Impact: LOW (provides stable function identity without stale closures)**
+Store callbacks in refs when used in effects that shouldn't re-subscribe on callback changes.
 
-When you need a callback that always calls the latest version of a function without changing identity, store the handler in a ref. This avoids both stale closures and unnecessary re-renders from changing callback props.
-
-**Incorrect (callback changes identity, causing child re-renders):**
+**Incorrect (re-subscribes on every render):**
 
 ```tsx
-function Chat({ roomId }) {
-  const [message, setMessage] = useState('')
-
-  const handleSend = useCallback(() => {
-    sendMessage(roomId, message)
-  }, [roomId, message]) // Changes on every keystroke
-
-  return <SendButton onClick={handleSend} />
+function useWindowEvent(event: string, handler: (e) => void) {
+  useEffect(() => {
+    window.addEventListener(event, handler)
+    return () => window.removeEventListener(event, handler)
+  }, [event, handler])
 }
 ```
 
-**Correct (ref-based stable callback):**
+**Correct (stable subscription):**
 
 ```tsx
-function Chat({ roomId }) {
-  const [message, setMessage] = useState('')
+function useWindowEvent(event: string, handler: (e) => void) {
+  const handlerRef = useRef(handler)
+  useEffect(() => {
+    handlerRef.current = handler
+  }, [handler])
 
-  const handleSendRef = useRef(() => {})
-  handleSendRef.current = () => {
-    sendMessage(roomId, message)
-  }
-
-  const handleSend = useCallback(() => {
-    handleSendRef.current()
-  }, [])
-
-  return <SendButton onClick={handleSend} />
+  useEffect(() => {
+    const listener = (e) => handlerRef.current(e)
+    window.addEventListener(event, listener)
+    return () => window.removeEventListener(event, listener)
+  }, [event])
 }
 ```
 
-This is the pattern behind `useEffectEvent` (experimental). When `useEffectEvent` stabilizes, prefer it over manual ref management.
+**Alternative: use `useEffectEvent` if you're on latest React:**
 
-Reference: [Separating Events from Effects](https://react.dev/learn/separating-events-from-effects)
+```tsx
+import { useEffectEvent } from 'react'
+
+function useWindowEvent(event: string, handler: (e) => void) {
+  const onEvent = useEffectEvent(handler)
+
+  useEffect(() => {
+    window.addEventListener(event, onEvent)
+    return () => window.removeEventListener(event, onEvent)
+  }, [event])
+}
+```
+
+`useEffectEvent` provides a cleaner API for the same pattern: it creates a stable function reference that always calls the latest version of the handler.

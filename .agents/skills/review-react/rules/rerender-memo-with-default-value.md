@@ -1,43 +1,38 @@
 ---
-title: Hoist Default Non-Primitive Props Outside Memo
+
+title: Extract Default Non-primitive Parameter Value from Memoized Component to Constant
 impact: MEDIUM
-impactDescription: prevents memo from being defeated by new object references
-tags: rerender, memo, default-props, reference-identity
+impactDescription: restores memoization by using a constant for default value
+tags: rerender, memo, optimization
+
 ---
 
-## Hoist Default Non-Primitive Props Outside Memo
+## Extract Default Non-primitive Parameter Value from Memoized Component to Constant
 
-**Impact: MEDIUM (prevents memo from being defeated by new object references)**
+When memoized component has a default value for some non-primitive optional parameter, such as an array, function, or object, calling the component without that parameter results in broken memoization. This is because new value instances are created on every rerender, and they do not pass strict equality comparison in `memo()`.
 
-When a memoized component receives a default value like `{}` or `[]` inline, a new reference is created each render, defeating the memo.
+To address this issue, extract the default value into a constant.
 
-**Incorrect (default value creates new reference each render):**
-
-```tsx
-const List = memo(function List({ items = [], config = {} }) {
-  return <ul>{items.map(i => <li key={i.id}>{i.name}</li>)}</ul>
-})
-
-function Parent() {
-  // items and config will be new refs every render if undefined
-  return <List />
-}
-```
-
-**Correct (hoist defaults to module scope):**
+**Incorrect (`onClick` has different values on every rerender):**
 
 ```tsx
-const EMPTY_ITEMS: Item[] = []
-const DEFAULT_CONFIG: Config = {}
-
-const List = memo(function List({
-  items = EMPTY_ITEMS,
-  config = DEFAULT_CONFIG,
-}) {
-  return <ul>{items.map(i => <li key={i.id}>{i.name}</li>)}</ul>
+const UserAvatar = memo(function UserAvatar({ onClick = () => {} }: { onClick?: () => void }) {
+  // ...
 })
+
+// Used without optional onClick
+<UserAvatar />
 ```
 
-This also applies to callback props. Use `useCallback` or hoist the function to module scope.
+**Correct (stable default value):**
 
-Reference: [memo](https://react.dev/reference/react/memo)
+```tsx
+const NOOP = () => {};
+
+const UserAvatar = memo(function UserAvatar({ onClick = NOOP }: { onClick?: () => void }) {
+  // ...
+})
+
+// Used without optional onClick
+<UserAvatar />
+```
