@@ -1,6 +1,6 @@
 # plugin-sentry
 
-Stackflow plugin for Sentry browser tracing. Automatically creates navigation spans for `push`, `pop`, and `replace` activity transitions.
+Stackflow plugin for Sentry browser tracing. Automatically creates navigation spans and breadcrumbs for activity transitions (`push`, `pop`, `replace`) and step transitions (`stepPush`, `stepPop`, `stepReplace`).
 
 ## Setup
 
