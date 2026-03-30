@@ -11,6 +11,7 @@ type NavigationAction = "push" | "pop" | "replace";
 function startNavigationSpan(
   action: NavigationAction,
   activityName: string,
+  params: Record<string, string | undefined>,
 ): void {
   const client = Sentry.getClient();
   if (!client) return;
@@ -21,6 +22,9 @@ function startNavigationSpan(
       [SEMANTIC_ATTRIBUTE_SENTRY_OP]: "navigation",
       [SEMANTIC_ATTRIBUTE_SENTRY_ORIGIN]: "auto.navigation.stackflow",
       [SEMANTIC_ATTRIBUTE_SENTRY_SOURCE]: "route",
+      "stackflow.action": action,
+      "stackflow.activity": activityName,
+      ...prefixKeys("stackflow.params", params),
     },
   });
 }
@@ -28,28 +32,46 @@ function startNavigationSpan(
 function addNavigationBreadcrumb(
   action: NavigationAction,
   activityName: string,
+  params: Record<string, string | undefined>,
 ): void {
   Sentry.addBreadcrumb({
     category: "navigation",
     message: `${action} ${activityName}`,
     level: "info",
+    data: params,
   });
+}
+
+function prefixKeys(
+  prefix: string,
+  params: Record<string, string | undefined>,
+): Record<string, string> {
+  const result: Record<string, string> = {};
+  for (const [key, value] of Object.entries(params)) {
+    if (value !== undefined) {
+      result[`${prefix}.${key}`] = value;
+    }
+  }
+  return result;
 }
 
 export function sentryPlugin(): StackflowPlugin {
   return () => ({
     key: "plugin-sentry",
     onPushed({ effect }) {
-      startNavigationSpan("push", effect.activity.name);
-      addNavigationBreadcrumb("push", effect.activity.name);
+      const { name, params } = effect.activity;
+      startNavigationSpan("push", name, params);
+      addNavigationBreadcrumb("push", name, params);
     },
     onPopped({ effect }) {
-      startNavigationSpan("pop", effect.activity.name);
-      addNavigationBreadcrumb("pop", effect.activity.name);
+      const { name, params } = effect.activity;
+      startNavigationSpan("pop", name, params);
+      addNavigationBreadcrumb("pop", name, params);
     },
     onReplaced({ effect }) {
-      startNavigationSpan("replace", effect.activity.name);
-      addNavigationBreadcrumb("replace", effect.activity.name);
+      const { name, params } = effect.activity;
+      startNavigationSpan("replace", name, params);
+      addNavigationBreadcrumb("replace", name, params);
     },
   });
 }
