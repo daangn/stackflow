@@ -1,3 +1,5 @@
+const { readdirSync, statSync } = require("fs");
+const { join } = require("path");
 const { context } = require("esbuild");
 const config = require("@stackflow/esbuild-config");
 const {
@@ -12,10 +14,14 @@ const external = Object.keys({
   ...pkg.peerDependencies,
 });
 
+const entryPoints = readdirSync("./src", { recursive: true })
+  .map((f) => join("./src", f))
+  .filter((f) => !f.includes(".spec.") && statSync(f).isFile());
+
 Promise.all([
   context({
     ...config({
-      entryPoints: ["./src/**/*"],
+      entryPoints,
       outdir: "dist",
     }),
     bundle: false,
@@ -27,7 +33,7 @@ Promise.all([
   ),
   context({
     ...config({
-      entryPoints: ["./src/**/*"],
+      entryPoints,
       outdir: "dist",
     }),
     bundle: true,

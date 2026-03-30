@@ -109,10 +109,10 @@ const RAW_RUNTIME_STATE =
     ["@stackflow/plugin-history-sync", ["virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-history-sync", "workspace:extensions/plugin-history-sync"]],\
     ["@stackflow/plugin-map-initial-activity", ["virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-map-initial-activity", "workspace:extensions/plugin-map-initial-activity"]],\
     ["@stackflow/plugin-preload", ["virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-preload", "workspace:extensions/plugin-preload"]],\
-    ["@stackflow/plugin-renderer-basic", ["virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-renderer-basic", "workspace:extensions/plugin-renderer-basic"]],\
+    ["@stackflow/plugin-renderer-basic", ["virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-renderer-basic", "virtual:953894a7c789b2607a0624cdd2fe101ab646f7a48665d6c9514d70b8fe13e6bcc6f5184c4f01b3e7f4d1a067ba4fe9edb93885b270a0c2a5328c3aaac43dadf9#workspace:extensions/plugin-renderer-basic", "virtual:c41768bfd5ee324a3f9a83b254e0b7124a4fcca91fe506bc2a80d72fecb3083480f4644c952d19848553d28a66cb338c740989739f68c017ca74ef4340e9fea2#workspace:extensions/plugin-renderer-basic", "workspace:extensions/plugin-renderer-basic"]],\
     ["@stackflow/plugin-renderer-web", ["workspace:extensions/plugin-renderer-web"]],\
     ["@stackflow/plugin-stack-depth-change", ["virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-stack-depth-change", "workspace:extensions/plugin-stack-depth-change"]],\
-    ["@stackflow/react", ["virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:integrations/react", "workspace:integrations/react"]],\
+    ["@stackflow/react", ["virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:integrations/react", "virtual:529c8a661b5417ff774bc95bf03f7325b4d0d04ab9b64e53f221a654e56c8deae5796080e692602e22c37f65861ea95cc75439afcc3a5ba2190d904c35fc9d04#workspace:integrations/react", "workspace:integrations/react"]],\
     ["@stackflow/react-ui-core", ["virtual:669046a185e83900af978519e5adddf8e8f1f8fed824849248ba56cf8fcd4e4208872f27e14c3c844d3b769f42be1ba6e0aa90f12df9fa6c38a55aedee211f53#workspace:extensions/react-ui-core", "workspace:extensions/react-ui-core"]]\
   ],\
   "fallbackPool": [\
@@ -6751,12 +6751,12 @@ const RAW_RUNTIME_STATE =
           ["@swc/core", "virtual:b327d7e228fba669b88a8bb23bcf526374e46fa67e617b1e6848e8a205357fee5ce94b47c49b5a570fd9e8a44fa218a13cd00e2eca327c99114cbd21d72ecf9c#npm:1.6.6"],\
           ["@swc/jest", "virtual:b327d7e228fba669b88a8bb23bcf526374e46fa67e617b1e6848e8a205357fee5ce94b47c49b5a570fd9e8a44fa218a13cd00e2eca327c99114cbd21d72ecf9c#npm:0.2.36"],\
           ["@testing-library/dom", "npm:10.4.1"],\
-          ["@testing-library/react", "virtual:983596cc6314880cdf5646ccae28a297f9a9d9cc50891bcdd6486e5d19a65321933850dc7adb791ac89d6716f7185d6397520da0ee1852df1d3f86cb026a38fc#npm:16.3.2"],\
+          ["@testing-library/react", "virtual:eeae00ab9cdb4d807ead707d69a05cf69e4e15f4e94e6427b60f23763785847dffc9899221c63493fb7012f64c6d1ead2deba588072b0b1635942f995a9b7033#npm:16.3.2"],\
           ["@types/jest", "npm:29.5.12"],\
           ["@types/react", "npm:18.3.3"],\
           ["esbuild", "npm:0.27.3"],\
           ["jest", "virtual:b327d7e228fba669b88a8bb23bcf526374e46fa67e617b1e6848e8a205357fee5ce94b47c49b5a570fd9e8a44fa218a13cd00e2eca327c99114cbd21d72ecf9c#npm:29.7.0"],\
-          ["jest-environment-jsdom", "virtual:983596cc6314880cdf5646ccae28a297f9a9d9cc50891bcdd6486e5d19a65321933850dc7adb791ac89d6716f7185d6397520da0ee1852df1d3f86cb026a38fc#npm:29.7.0"],\
+          ["jest-environment-jsdom", "virtual:eeae00ab9cdb4d807ead707d69a05cf69e4e15f4e94e6427b60f23763785847dffc9899221c63493fb7012f64c6d1ead2deba588072b0b1635942f995a9b7033#npm:29.7.0"],\
           ["react", "npm:18.3.1"],\
           ["react-dom", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#npm:18.3.1"],\
           ["rimraf", "npm:6.1.3"],\
@@ -7004,13 +7004,63 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "SOFT"\
       }],\
+      ["virtual:953894a7c789b2607a0624cdd2fe101ab646f7a48665d6c9514d70b8fe13e6bcc6f5184c4f01b3e7f4d1a067ba4fe9edb93885b270a0c2a5328c3aaac43dadf9#workspace:extensions/plugin-renderer-basic", {\
+        "packageLocation": "./.yarn/__virtual__/@stackflow-plugin-renderer-basic-virtual-bb2ef0b972/1/extensions/plugin-renderer-basic/",\
+        "packageDependencies": [\
+          ["@stackflow/plugin-renderer-basic", "virtual:953894a7c789b2607a0624cdd2fe101ab646f7a48665d6c9514d70b8fe13e6bcc6f5184c4f01b3e7f4d1a067ba4fe9edb93885b270a0c2a5328c3aaac43dadf9#workspace:extensions/plugin-renderer-basic"],\
+          ["@stackflow/core", "workspace:core"],\
+          ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
+          ["@stackflow/react", "workspace:integrations/react"],\
+          ["@types/react", "npm:18.3.3"],\
+          ["@types/stackflow__core", null],\
+          ["@types/stackflow__react", null],\
+          ["esbuild", "npm:0.23.0"],\
+          ["react", "npm:18.3.1"],\
+          ["rimraf", "npm:3.0.2"],\
+          ["typescript", "patch:typescript@npm%3A5.5.3#optional!builtin<compat/typescript>::version=5.5.3&hash=379a07"]\
+        ],\
+        "packagePeers": [\
+          "@stackflow/core",\
+          "@stackflow/react",\
+          "@types/react",\
+          "@types/stackflow__core",\
+          "@types/stackflow__react",\
+          "react"\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:c41768bfd5ee324a3f9a83b254e0b7124a4fcca91fe506bc2a80d72fecb3083480f4644c952d19848553d28a66cb338c740989739f68c017ca74ef4340e9fea2#workspace:extensions/plugin-renderer-basic", {\
+        "packageLocation": "./.yarn/__virtual__/@stackflow-plugin-renderer-basic-virtual-c766e9fd84/1/extensions/plugin-renderer-basic/",\
+        "packageDependencies": [\
+          ["@stackflow/plugin-renderer-basic", "virtual:c41768bfd5ee324a3f9a83b254e0b7124a4fcca91fe506bc2a80d72fecb3083480f4644c952d19848553d28a66cb338c740989739f68c017ca74ef4340e9fea2#workspace:extensions/plugin-renderer-basic"],\
+          ["@stackflow/core", "workspace:core"],\
+          ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
+          ["@stackflow/react", "virtual:529c8a661b5417ff774bc95bf03f7325b4d0d04ab9b64e53f221a654e56c8deae5796080e692602e22c37f65861ea95cc75439afcc3a5ba2190d904c35fc9d04#workspace:integrations/react"],\
+          ["@types/react", "npm:18.3.3"],\
+          ["@types/stackflow__core", null],\
+          ["@types/stackflow__react", null],\
+          ["esbuild", "npm:0.23.0"],\
+          ["react", "npm:18.3.1"],\
+          ["rimraf", "npm:3.0.2"],\
+          ["typescript", "patch:typescript@npm%3A5.5.3#optional!builtin<compat/typescript>::version=5.5.3&hash=379a07"]\
+        ],\
+        "packagePeers": [\
+          "@stackflow/core",\
+          "@stackflow/react",\
+          "@types/react",\
+          "@types/stackflow__core",\
+          "@types/stackflow__react",\
+          "react"\
+        ],\
+        "linkType": "SOFT"\
+      }],\
       ["workspace:extensions/plugin-renderer-basic", {\
         "packageLocation": "./extensions/plugin-renderer-basic/",\
         "packageDependencies": [\
           ["@stackflow/plugin-renderer-basic", "workspace:extensions/plugin-renderer-basic"],\
           ["@stackflow/core", "workspace:core"],\
           ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
-          ["@stackflow/react", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:integrations/react"],\
+          ["@stackflow/react", "virtual:529c8a661b5417ff774bc95bf03f7325b4d0d04ab9b64e53f221a654e56c8deae5796080e692602e22c37f65861ea95cc75439afcc3a5ba2190d904c35fc9d04#workspace:integrations/react"],\
           ["@types/react", "npm:18.3.3"],\
           ["esbuild", "npm:0.23.0"],\
           ["react", "npm:18.3.1"],\
@@ -7078,18 +7128,62 @@ const RAW_RUNTIME_STATE =
           ["@stackflow/config", "workspace:config"],\
           ["@stackflow/core", "workspace:core"],\
           ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
+          ["@stackflow/plugin-renderer-basic", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-renderer-basic"],\
+          ["@swc/core", "virtual:b327d7e228fba669b88a8bb23bcf526374e46fa67e617b1e6848e8a205357fee5ce94b47c49b5a570fd9e8a44fa218a13cd00e2eca327c99114cbd21d72ecf9c#npm:1.6.6"],\
+          ["@swc/jest", "virtual:b327d7e228fba669b88a8bb23bcf526374e46fa67e617b1e6848e8a205357fee5ce94b47c49b5a570fd9e8a44fa218a13cd00e2eca327c99114cbd21d72ecf9c#npm:0.2.36"],\
+          ["@testing-library/dom", "npm:10.4.1"],\
+          ["@testing-library/react", "virtual:eeae00ab9cdb4d807ead707d69a05cf69e4e15f4e94e6427b60f23763785847dffc9899221c63493fb7012f64c6d1ead2deba588072b0b1635942f995a9b7033#npm:16.3.2"],\
+          ["@types/jest", "npm:29.5.12"],\
           ["@types/react", "npm:18.3.3"],\
           ["@types/stackflow__config", null],\
           ["@types/stackflow__core", null],\
           ["esbuild", "npm:0.23.0"],\
           ["esbuild-plugin-file-path-extensions", "npm:2.1.3"],\
+          ["jest", "virtual:b327d7e228fba669b88a8bb23bcf526374e46fa67e617b1e6848e8a205357fee5ce94b47c49b5a570fd9e8a44fa218a13cd00e2eca327c99114cbd21d72ecf9c#npm:29.7.0"],\
+          ["jest-environment-jsdom", "virtual:eeae00ab9cdb4d807ead707d69a05cf69e4e15f4e94e6427b60f23763785847dffc9899221c63493fb7012f64c6d1ead2deba588072b0b1635942f995a9b7033#npm:29.7.0"],\
           ["react", "npm:18.3.1"],\
+          ["react-dom", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#npm:18.3.1"],\
           ["react-fast-compare", "npm:3.2.2"],\
           ["rimraf", "npm:3.0.2"],\
           ["typescript", "patch:typescript@npm%3A5.5.3#optional!builtin<compat/typescript>::version=5.5.3&hash=379a07"]\
         ],\
         "packagePeers": [\
           "@stackflow/config",\
+          "@stackflow/core",\
+          "@types/react",\
+          "@types/stackflow__config",\
+          "@types/stackflow__core",\
+          "react"\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:529c8a661b5417ff774bc95bf03f7325b4d0d04ab9b64e53f221a654e56c8deae5796080e692602e22c37f65861ea95cc75439afcc3a5ba2190d904c35fc9d04#workspace:integrations/react", {\
+        "packageLocation": "./.yarn/__virtual__/@stackflow-react-virtual-c41768bfd5/1/integrations/react/",\
+        "packageDependencies": [\
+          ["@stackflow/react", "virtual:529c8a661b5417ff774bc95bf03f7325b4d0d04ab9b64e53f221a654e56c8deae5796080e692602e22c37f65861ea95cc75439afcc3a5ba2190d904c35fc9d04#workspace:integrations/react"],\
+          ["@stackflow/config", "workspace:config"],\
+          ["@stackflow/core", "workspace:core"],\
+          ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
+          ["@stackflow/plugin-renderer-basic", "virtual:c41768bfd5ee324a3f9a83b254e0b7124a4fcca91fe506bc2a80d72fecb3083480f4644c952d19848553d28a66cb338c740989739f68c017ca74ef4340e9fea2#workspace:extensions/plugin-renderer-basic"],\
+          ["@swc/core", "virtual:b327d7e228fba669b88a8bb23bcf526374e46fa67e617b1e6848e8a205357fee5ce94b47c49b5a570fd9e8a44fa218a13cd00e2eca327c99114cbd21d72ecf9c#npm:1.6.6"],\
+          ["@swc/jest", "virtual:b327d7e228fba669b88a8bb23bcf526374e46fa67e617b1e6848e8a205357fee5ce94b47c49b5a570fd9e8a44fa218a13cd00e2eca327c99114cbd21d72ecf9c#npm:0.2.36"],\
+          ["@testing-library/dom", "npm:10.4.1"],\
+          ["@testing-library/react", "virtual:eeae00ab9cdb4d807ead707d69a05cf69e4e15f4e94e6427b60f23763785847dffc9899221c63493fb7012f64c6d1ead2deba588072b0b1635942f995a9b7033#npm:16.3.2"],\
+          ["@types/jest", "npm:29.5.12"],\
+          ["@types/react", "npm:18.3.3"],\
+          ["@types/stackflow__config", null],\
+          ["@types/stackflow__core", null],\
+          ["esbuild", "npm:0.23.0"],\
+          ["esbuild-plugin-file-path-extensions", "npm:2.1.3"],\
+          ["jest", "virtual:b327d7e228fba669b88a8bb23bcf526374e46fa67e617b1e6848e8a205357fee5ce94b47c49b5a570fd9e8a44fa218a13cd00e2eca327c99114cbd21d72ecf9c#npm:29.7.0"],\
+          ["jest-environment-jsdom", "virtual:eeae00ab9cdb4d807ead707d69a05cf69e4e15f4e94e6427b60f23763785847dffc9899221c63493fb7012f64c6d1ead2deba588072b0b1635942f995a9b7033#npm:29.7.0"],\
+          ["react", "npm:18.3.1"],\
+          ["react-dom", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#npm:18.3.1"],\
+          ["react-fast-compare", "npm:3.2.2"],\
+          ["rimraf", "npm:3.0.2"],\
+          ["typescript", "patch:typescript@npm%3A5.5.3#optional!builtin<compat/typescript>::version=5.5.3&hash=379a07"]\
+        ],\
+        "packagePeers": [\
           "@stackflow/core",\
           "@types/react",\
           "@types/stackflow__config",\
@@ -7105,10 +7199,19 @@ const RAW_RUNTIME_STATE =
           ["@stackflow/config", "workspace:config"],\
           ["@stackflow/core", "workspace:core"],\
           ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
+          ["@stackflow/plugin-renderer-basic", "virtual:953894a7c789b2607a0624cdd2fe101ab646f7a48665d6c9514d70b8fe13e6bcc6f5184c4f01b3e7f4d1a067ba4fe9edb93885b270a0c2a5328c3aaac43dadf9#workspace:extensions/plugin-renderer-basic"],\
+          ["@swc/core", "virtual:b327d7e228fba669b88a8bb23bcf526374e46fa67e617b1e6848e8a205357fee5ce94b47c49b5a570fd9e8a44fa218a13cd00e2eca327c99114cbd21d72ecf9c#npm:1.6.6"],\
+          ["@swc/jest", "virtual:b327d7e228fba669b88a8bb23bcf526374e46fa67e617b1e6848e8a205357fee5ce94b47c49b5a570fd9e8a44fa218a13cd00e2eca327c99114cbd21d72ecf9c#npm:0.2.36"],\
+          ["@testing-library/dom", "npm:10.4.1"],\
+          ["@testing-library/react", "virtual:eeae00ab9cdb4d807ead707d69a05cf69e4e15f4e94e6427b60f23763785847dffc9899221c63493fb7012f64c6d1ead2deba588072b0b1635942f995a9b7033#npm:16.3.2"],\
+          ["@types/jest", "npm:29.5.12"],\
           ["@types/react", "npm:18.3.3"],\
           ["esbuild", "npm:0.23.0"],\
           ["esbuild-plugin-file-path-extensions", "npm:2.1.3"],\
+          ["jest", "virtual:b327d7e228fba669b88a8bb23bcf526374e46fa67e617b1e6848e8a205357fee5ce94b47c49b5a570fd9e8a44fa218a13cd00e2eca327c99114cbd21d72ecf9c#npm:29.7.0"],\
+          ["jest-environment-jsdom", "virtual:eeae00ab9cdb4d807ead707d69a05cf69e4e15f4e94e6427b60f23763785847dffc9899221c63493fb7012f64c6d1ead2deba588072b0b1635942f995a9b7033#npm:29.7.0"],\
           ["react", "npm:18.3.1"],\
+          ["react-dom", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#npm:18.3.1"],\
           ["react-fast-compare", "npm:3.2.2"],\
           ["rimraf", "npm:3.0.2"],\
           ["typescript", "patch:typescript@npm%3A5.5.3#optional!builtin<compat/typescript>::version=5.5.3&hash=379a07"]\
@@ -7398,10 +7501,10 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "SOFT"\
       }],\
-      ["virtual:983596cc6314880cdf5646ccae28a297f9a9d9cc50891bcdd6486e5d19a65321933850dc7adb791ac89d6716f7185d6397520da0ee1852df1d3f86cb026a38fc#npm:16.3.2", {\
-        "packageLocation": "./.yarn/__virtual__/@testing-library-react-virtual-f767e7b05a/0/cache/@testing-library-react-npm-16.3.2-67b0b894c8-0ca88c6f67.zip/node_modules/@testing-library/react/",\
+      ["virtual:eeae00ab9cdb4d807ead707d69a05cf69e4e15f4e94e6427b60f23763785847dffc9899221c63493fb7012f64c6d1ead2deba588072b0b1635942f995a9b7033#npm:16.3.2", {\
+        "packageLocation": "./.yarn/__virtual__/@testing-library-react-virtual-9ad9598c0b/0/cache/@testing-library-react-npm-16.3.2-67b0b894c8-0ca88c6f67.zip/node_modules/@testing-library/react/",\
         "packageDependencies": [\
-          ["@testing-library/react", "virtual:983596cc6314880cdf5646ccae28a297f9a9d9cc50891bcdd6486e5d19a65321933850dc7adb791ac89d6716f7185d6397520da0ee1852df1d3f86cb026a38fc#npm:16.3.2"],\
+          ["@testing-library/react", "virtual:eeae00ab9cdb4d807ead707d69a05cf69e4e15f4e94e6427b60f23763785847dffc9899221c63493fb7012f64c6d1ead2deba588072b0b1635942f995a9b7033#npm:16.3.2"],\
           ["@babel/runtime", "npm:7.25.0"],\
           ["@testing-library/dom", "npm:10.4.1"],\
           ["@types/react", "npm:18.3.3"],\
@@ -12918,10 +13021,10 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "SOFT"\
       }],\
-      ["virtual:983596cc6314880cdf5646ccae28a297f9a9d9cc50891bcdd6486e5d19a65321933850dc7adb791ac89d6716f7185d6397520da0ee1852df1d3f86cb026a38fc#npm:29.7.0", {\
-        "packageLocation": "./.yarn/__virtual__/jest-environment-jsdom-virtual-03ba513b4a/0/cache/jest-environment-jsdom-npm-29.7.0-0b72dd0e0b-23bbfc9bca.zip/node_modules/jest-environment-jsdom/",\
+      ["virtual:eeae00ab9cdb4d807ead707d69a05cf69e4e15f4e94e6427b60f23763785847dffc9899221c63493fb7012f64c6d1ead2deba588072b0b1635942f995a9b7033#npm:29.7.0", {\
+        "packageLocation": "./.yarn/__virtual__/jest-environment-jsdom-virtual-6ddc26222e/0/cache/jest-environment-jsdom-npm-29.7.0-0b72dd0e0b-23bbfc9bca.zip/node_modules/jest-environment-jsdom/",\
         "packageDependencies": [\
-          ["jest-environment-jsdom", "virtual:983596cc6314880cdf5646ccae28a297f9a9d9cc50891bcdd6486e5d19a65321933850dc7adb791ac89d6716f7185d6397520da0ee1852df1d3f86cb026a38fc#npm:29.7.0"],\
+          ["jest-environment-jsdom", "virtual:eeae00ab9cdb4d807ead707d69a05cf69e4e15f4e94e6427b60f23763785847dffc9899221c63493fb7012f64c6d1ead2deba588072b0b1635942f995a9b7033#npm:29.7.0"],\
           ["@jest/environment", "npm:29.7.0"],\
           ["@jest/fake-timers", "npm:29.7.0"],\
           ["@jest/types", "npm:29.6.3"],\
@@ -12931,7 +13034,7 @@ const RAW_RUNTIME_STATE =
           ["canvas", null],\
           ["jest-mock", "npm:29.7.0"],\
           ["jest-util", "npm:29.7.0"],\
-          ["jsdom", "virtual:03ba513b4a4f2f49a0ee779e0b1da3ef4f41cbf0cff4a27f151a6c11d5162aae67852dc5c3f387d71c020640c3547cdf783b461f72a6ebbd7907fd3300ce6913#npm:20.0.3"]\
+          ["jsdom", "virtual:6ddc26222e8aaaf60dbe5079fb179f32c850d26f7d5eed4ee3b5f965c379e18837e42bec2d87cd2beb06ebc9c2dad24e31837cd2f985431c5ebd8bb747b0202c#npm:20.0.3"]\
         ],\
         "packagePeers": [\
           "@types/canvas",\
@@ -13294,10 +13397,10 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "SOFT"\
       }],\
-      ["virtual:03ba513b4a4f2f49a0ee779e0b1da3ef4f41cbf0cff4a27f151a6c11d5162aae67852dc5c3f387d71c020640c3547cdf783b461f72a6ebbd7907fd3300ce6913#npm:20.0.3", {\
-        "packageLocation": "./.yarn/__virtual__/jsdom-virtual-09fbede01d/0/cache/jsdom-npm-20.0.3-906a2f7005-a4cdcff5b0.zip/node_modules/jsdom/",\
+      ["virtual:6ddc26222e8aaaf60dbe5079fb179f32c850d26f7d5eed4ee3b5f965c379e18837e42bec2d87cd2beb06ebc9c2dad24e31837cd2f985431c5ebd8bb747b0202c#npm:20.0.3", {\
+        "packageLocation": "./.yarn/__virtual__/jsdom-virtual-5cf75f356c/0/cache/jsdom-npm-20.0.3-906a2f7005-a4cdcff5b0.zip/node_modules/jsdom/",\
         "packageDependencies": [\
-          ["jsdom", "virtual:03ba513b4a4f2f49a0ee779e0b1da3ef4f41cbf0cff4a27f151a6c11d5162aae67852dc5c3f387d71c020640c3547cdf783b461f72a6ebbd7907fd3300ce6913#npm:20.0.3"],\
+          ["jsdom", "virtual:6ddc26222e8aaaf60dbe5079fb179f32c850d26f7d5eed4ee3b5f965c379e18837e42bec2d87cd2beb06ebc9c2dad24e31837cd2f985431c5ebd8bb747b0202c#npm:20.0.3"],\
           ["@types/canvas", null],\
           ["abab", "npm:2.0.6"],\
           ["acorn", "npm:8.16.0"],\
@@ -13324,7 +13427,7 @@ const RAW_RUNTIME_STATE =
           ["whatwg-encoding", "npm:2.0.0"],\
           ["whatwg-mimetype", "npm:3.0.0"],\
           ["whatwg-url", "npm:11.0.0"],\
-          ["ws", "virtual:09fbede01d752e610be1714c18909368fe4fa709b16e76a5ed8cde05b6dbb3342f037902ae401113b5bbbb44b9753fbd2ba83c3277f1f798491ade558971e25f#npm:8.19.0"],\
+          ["ws", "virtual:5cf75f356cf180b5d5b0ad15d0e36a731a029955ec8d46ac7c30b389a1d2bf7c50182cc3af071d7a8b19953f6ccd0f184053bdbb7dc9085bb1a85e597b796d4d#npm:8.19.0"],\
           ["xml-name-validator", "npm:4.0.0"]\
         ],\
         "packagePeers": [\
@@ -19345,10 +19448,10 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "SOFT"\
       }],\
-      ["virtual:09fbede01d752e610be1714c18909368fe4fa709b16e76a5ed8cde05b6dbb3342f037902ae401113b5bbbb44b9753fbd2ba83c3277f1f798491ade558971e25f#npm:8.19.0", {\
-        "packageLocation": "./.yarn/__virtual__/ws-virtual-99b0ff26e3/0/cache/ws-npm-8.19.0-c967c046a5-26e4901e93.zip/node_modules/ws/",\
+      ["virtual:5cf75f356cf180b5d5b0ad15d0e36a731a029955ec8d46ac7c30b389a1d2bf7c50182cc3af071d7a8b19953f6ccd0f184053bdbb7dc9085bb1a85e597b796d4d#npm:8.19.0", {\
+        "packageLocation": "./.yarn/__virtual__/ws-virtual-28f7343cc1/0/cache/ws-npm-8.19.0-c967c046a5-26e4901e93.zip/node_modules/ws/",\
         "packageDependencies": [\
-          ["ws", "virtual:09fbede01d752e610be1714c18909368fe4fa709b16e76a5ed8cde05b6dbb3342f037902ae401113b5bbbb44b9753fbd2ba83c3277f1f798491ade558971e25f#npm:8.19.0"],\
+          ["ws", "virtual:5cf75f356cf180b5d5b0ad15d0e36a731a029955ec8d46ac7c30b389a1d2bf7c50182cc3af071d7a8b19953f6ccd0f184053bdbb7dc9085bb1a85e597b796d4d#npm:8.19.0"],\
           ["@types/bufferutil", null],\
           ["@types/utf-8-validate", null],\
           ["bufferutil", null],\
