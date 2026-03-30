@@ -1,3 +1,27 @@
+## 2026.03.30
+
+Add blockerPlugin and useBlocker hook for navigation blocking [`c740c5e`](https://github.com/daangn/stackflow/commit/c740c5e28c30afc23fff8705c405cefa514a1f35)
+
+- `useBlocker({ shouldBlock, onBlocked })` hook to declare blocking policies per activity
+- Blocking set model: multiple blockers can block a navigation, all must `proceed()` for it to execute
+- Only blockers from active (`isActive: true`) activities are evaluated
+- `onBlocked` notifications are serialized in navigation occurrence order (no re-entrancy)
+- Error isolation: one blocker's `onBlocked` throwing does not prevent other blockers from being notified
+- Plugin-level `onError` option for custom error handling (defaults to `console.error`)
+- Blocker cleanup on component unmount; previously captured `proceed` remains callable
+
+Released packages:
+- 📦 [@stackflow/plugin-blocker@0.1.0](https://npmjs.com/package/@stackflow/plugin-blocker/v/0.1.0)
+
+---
+
+feat(plugin-sentry): add Sentry browser tracing plugin for Stackflow navigation events [`7ad3502`](https://github.com/daangn/stackflow/commit/7ad3502f403aac86f0b47d47422f3a89ecb0b7c1)
+
+Released packages:
+- 📦 [@stackflow/plugin-sentry@0.1.0](https://npmjs.com/package/@stackflow/plugin-sentry/v/0.1.0)
+
+---
+
 ## 2026.03.13
 
 fix(core): prevent duplicate setInterval in dispatchEvent [`4d3b294`](https://github.com/daangn/stackflow/commit/4d3b29414aaa42ee405104f9cf7fb9c687fdf54c)
