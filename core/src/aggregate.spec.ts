@@ -1,4 +1,3 @@
-import type { Activity } from "./Stack";
 import { aggregate } from "./aggregate";
 import type {
   ActivityRegisteredEvent,
@@ -10,6 +9,9 @@ import type {
 } from "./event-types";
 import type { BaseDomainEvent } from "./event-types/_base";
 import { makeEvent } from "./event-utils";
+import type { Activity } from "./Stack";
+import { compareBy } from "./utils/compareBy";
+import { uniqBy } from "./utils/uniqBy";
 
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
@@ -46,20 +48,19 @@ const registeredEvent = ({
 const activity = (activity: Activity) => activity;
 
 test("aggregate - InitializedEvent만 존재하는 경우, 빈 스택을 내려줍니다", () => {
-  const output = aggregate(
-    [
-      initializedEvent({
-        transitionDuration: 300,
-      }),
-    ],
-    nowTime(),
-  );
+  const events = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+  ];
+  const output = aggregate(events, nowTime());
 
   expect(output).toStrictEqual({
     activities: [],
     registeredActivities: [],
     transitionDuration: 300,
     globalTransitionState: "idle",
+    events,
   });
 });
 
@@ -98,6 +99,7 @@ test("aggregate - 푸시하면 스택에 추가됩니다", () => {
             id: "a1",
             params: {},
             enteredBy: pushedEvent,
+            zIndex: 0,
           },
         ],
         enteredBy: pushedEvent,
@@ -117,6 +119,7 @@ test("aggregate - 푸시하면 스택에 추가됩니다", () => {
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
+    events,
   });
 });
 
@@ -155,6 +158,7 @@ test("aggregate - PushedEvent에 activityId, activityName이 다른 경우 스�
             id: "a2",
             params: {},
             enteredBy: pushedEvent,
+            zIndex: 0,
           },
         ],
         enteredBy: pushedEvent,
@@ -174,6 +178,7 @@ test("aggregate - PushedEvent에 activityId, activityName이 다른 경우 스�
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
+    events,
   });
 });
 
@@ -218,6 +223,7 @@ test("aggregate - 같은 activityId로 여러번 푸시되는 경우 이전의 �
             id: "a1",
             params: {},
             enteredBy: pushedEvent2,
+            zIndex: 0,
           },
         ],
         enteredBy: pushedEvent2,
@@ -237,6 +243,7 @@ test("aggregate - 같은 activityId로 여러번 푸시되는 경우 이전의 �
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
+    events,
   });
 });
 
@@ -282,6 +289,7 @@ test("aggregate - 다른 activityName으로 두번 푸시하면 스택에 정상
             id: "a1",
             params: {},
             enteredBy: pushedEvent1,
+            zIndex: 0,
           },
         ],
         enteredBy: pushedEvent1,
@@ -300,6 +308,7 @@ test("aggregate - 다른 activityName으로 두번 푸시하면 스택에 정상
             id: "a2",
             params: {},
             enteredBy: pushedEvent2,
+            zIndex: 1,
           },
         ],
         enteredBy: pushedEvent2,
@@ -319,6 +328,7 @@ test("aggregate - 다른 activityName으로 두번 푸시하면 스택에 정상
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
+    events,
   });
 });
 
@@ -364,6 +374,7 @@ test("aggregate - 같은 activityName으로 두번 푸시하면 정상적으로 
             id: "a1",
             params: {},
             enteredBy: pushedEvent1,
+            zIndex: 0,
           },
         ],
         enteredBy: pushedEvent1,
@@ -382,6 +393,7 @@ test("aggregate - 같은 activityName으로 두번 푸시하면 정상적으로 
             id: "a2",
             params: {},
             enteredBy: pushedEvent2,
+            zIndex: 1,
           },
         ],
         enteredBy: pushedEvent2,
@@ -401,6 +413,7 @@ test("aggregate - 같은 activityName으로 두번 푸시하면 정상적으로 
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
+    events,
   });
 });
 
@@ -438,6 +451,7 @@ test("aggregate - 푸시한 직후에는 transition.state가 enter-active 입니
             id: "a1",
             params: {},
             enteredBy: pushedEvent,
+            zIndex: 0,
           },
         ],
         enteredBy: pushedEvent,
@@ -454,6 +468,7 @@ test("aggregate - 푸시한 직후에는 transition.state가 enter-active 입니
     ],
     transitionDuration: 300,
     globalTransitionState: "loading",
+    events,
   });
 });
 
@@ -491,6 +506,7 @@ test("aggregate - 현재 시간과 변화된 시간의 차가 InitializedEvent�
             id: "a1",
             params: {},
             enteredBy: pushedEvent,
+            zIndex: 0,
           },
         ],
         enteredBy: pushedEvent,
@@ -507,6 +523,7 @@ test("aggregate - 현재 시간과 변화된 시간의 차가 InitializedEvent�
     ],
     transitionDuration: 300,
     globalTransitionState: "loading",
+    events,
   });
 });
 
@@ -544,6 +561,7 @@ test("aggregate - 푸시한 이후 InitializedEvent에서 셋팅된 transitionDu
             id: "a1",
             params: {},
             enteredBy: pushedEvent,
+            zIndex: 0,
           },
         ],
         enteredBy: pushedEvent,
@@ -560,6 +578,7 @@ test("aggregate - 푸시한 이후 InitializedEvent에서 셋팅된 transitionDu
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
+    events,
   });
 });
 
@@ -604,6 +623,7 @@ test("aggregate - 여러번 푸시한 경우, transitionDuration 전에 푸시�
             id: "a1",
             params: {},
             enteredBy: pushedEvent1,
+            zIndex: 0,
           },
         ],
         enteredBy: pushedEvent1,
@@ -622,6 +642,7 @@ test("aggregate - 여러번 푸시한 경우, transitionDuration 전에 푸시�
             id: "a2",
             params: {},
             enteredBy: pushedEvent2,
+            zIndex: 1,
           },
         ],
         enteredBy: pushedEvent2,
@@ -638,6 +659,7 @@ test("aggregate - 여러번 푸시한 경우, transitionDuration 전에 푸시�
     ],
     transitionDuration: 300,
     globalTransitionState: "loading",
+    events,
   });
 });
 
@@ -685,6 +707,7 @@ test("aggregate - Pop하면 최상단에 존재하는 Activity가 exit-done 상�
             id: "a1",
             params: {},
             enteredBy: pushedEvent1,
+            zIndex: 0,
           },
         ],
         enteredBy: pushedEvent1,
@@ -703,6 +726,7 @@ test("aggregate - Pop하면 최상단에 존재하는 Activity가 exit-done 상�
             id: "a2",
             params: {},
             enteredBy: pushedEvent2,
+            zIndex: -1,
           },
         ],
         enteredBy: pushedEvent2,
@@ -720,6 +744,7 @@ test("aggregate - Pop하면 최상단에 존재하는 Activity가 exit-done 상�
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
+    events,
   });
 });
 
@@ -758,16 +783,14 @@ test("aggregate - Pop을 여러번하면 차례대로 exit-done 상태가 됩니
       eventDate: enoughPastTime(),
     })),
   ];
+  const o1Events = [
+    ...initEvents,
+    (poppedEvent1 = makeEvent("Popped", {
+      eventDate: enoughPastTime(),
+    })),
+  ];
 
-  const o1 = aggregate(
-    [
-      ...initEvents,
-      (poppedEvent1 = makeEvent("Popped", {
-        eventDate: enoughPastTime(),
-      })),
-    ],
-    nowTime(),
-  );
+  const o1 = aggregate(o1Events, nowTime());
 
   expect(o1).toStrictEqual({
     activities: [
@@ -781,6 +804,7 @@ test("aggregate - Pop을 여러번하면 차례대로 exit-done 상태가 됩니
             id: "a1",
             params: {},
             enteredBy: pushedEvent1,
+            zIndex: 0,
           },
         ],
         enteredBy: pushedEvent1,
@@ -799,6 +823,7 @@ test("aggregate - Pop을 여러번하면 차례대로 exit-done 상태가 됩니
             id: "a2",
             params: {},
             enteredBy: pushedEvent2,
+            zIndex: 1,
           },
         ],
         enteredBy: pushedEvent2,
@@ -817,6 +842,7 @@ test("aggregate - Pop을 여러번하면 차례대로 exit-done 상태가 됩니
             id: "a3",
             params: {},
             enteredBy: pushedEvent3,
+            zIndex: -1,
           },
         ],
         enteredBy: pushedEvent3,
@@ -834,20 +860,19 @@ test("aggregate - Pop을 여러번하면 차례대로 exit-done 상태가 됩니
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
+    events: o1Events,
   });
 
-  const o2 = aggregate(
-    [
-      ...initEvents,
-      (poppedEvent2 = makeEvent("Popped", {
-        eventDate: enoughPastTime(),
-      })),
-      (poppedEvent3 = makeEvent("Popped", {
-        eventDate: enoughPastTime(),
-      })),
-    ],
-    nowTime(),
-  );
+  const o2Events = [
+    ...initEvents,
+    (poppedEvent2 = makeEvent("Popped", {
+      eventDate: enoughPastTime(),
+    })),
+    (poppedEvent3 = makeEvent("Popped", {
+      eventDate: enoughPastTime(),
+    })),
+  ];
+  const o2 = aggregate(o2Events, nowTime());
 
   expect(o2).toStrictEqual({
     activities: [
@@ -861,6 +886,7 @@ test("aggregate - Pop을 여러번하면 차례대로 exit-done 상태가 됩니
             id: "a1",
             params: {},
             enteredBy: pushedEvent1,
+            zIndex: 0,
           },
         ],
         enteredBy: pushedEvent1,
@@ -879,6 +905,7 @@ test("aggregate - Pop을 여러번하면 차례대로 exit-done 상태가 됩니
             id: "a2",
             params: {},
             enteredBy: pushedEvent2,
+            zIndex: -1,
           },
         ],
         enteredBy: pushedEvent2,
@@ -898,6 +925,7 @@ test("aggregate - Pop을 여러번하면 차례대로 exit-done 상태가 됩니
             id: "a3",
             params: {},
             enteredBy: pushedEvent3,
+            zIndex: -1,
           },
         ],
         enteredBy: pushedEvent3,
@@ -915,6 +943,7 @@ test("aggregate - Pop을 여러번하면 차례대로 exit-done 상태가 됩니
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
+    events: o2Events,
   });
 });
 
@@ -945,16 +974,14 @@ test("aggregate - 가장 바닥에 있는 Activity는 Pop 되지 않습니다", 
       eventDate: enoughPastTime(),
     })),
   ];
+  const output1Events = [
+    ...initEvents,
+    (poppedEvent1 = makeEvent("Popped", {
+      eventDate: enoughPastTime(),
+    })),
+  ];
 
-  const output1 = aggregate(
-    [
-      ...initEvents,
-      (poppedEvent1 = makeEvent("Popped", {
-        eventDate: enoughPastTime(),
-      })),
-    ],
-    nowTime(),
-  );
+  const output1 = aggregate(output1Events, nowTime());
 
   expect(output1).toStrictEqual({
     activities: [
@@ -968,6 +995,7 @@ test("aggregate - 가장 바닥에 있는 Activity는 Pop 되지 않습니다", 
             id: "a1",
             params: {},
             enteredBy: pushedEvent1,
+            zIndex: 0,
           },
         ],
         enteredBy: pushedEvent1,
@@ -986,6 +1014,7 @@ test("aggregate - 가장 바닥에 있는 Activity는 Pop 되지 않습니다", 
             id: "a2",
             params: {},
             enteredBy: pushedEvent2,
+            zIndex: -1,
           },
         ],
         enteredBy: pushedEvent2,
@@ -1003,20 +1032,20 @@ test("aggregate - 가장 바닥에 있는 Activity는 Pop 되지 않습니다", 
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
+    events: output1Events,
   });
 
-  const output2 = aggregate(
-    [
-      ...initEvents,
-      (poppedEvent2 = makeEvent("Popped", {
-        eventDate: enoughPastTime(),
-      })),
-      makeEvent("Popped", {
-        eventDate: enoughPastTime(),
-      }),
-    ],
-    nowTime(),
-  );
+  const output2Events = [
+    ...initEvents,
+    (poppedEvent2 = makeEvent("Popped", {
+      eventDate: enoughPastTime(),
+    })),
+    makeEvent("Popped", {
+      eventDate: enoughPastTime(),
+    }),
+  ];
+
+  const output2 = aggregate(output2Events, nowTime());
 
   expect(output2).toStrictEqual({
     activities: [
@@ -1030,6 +1059,7 @@ test("aggregate - 가장 바닥에 있는 Activity는 Pop 되지 않습니다", 
             id: "a1",
             params: {},
             enteredBy: pushedEvent1,
+            zIndex: 0,
           },
         ],
         enteredBy: pushedEvent1,
@@ -1048,6 +1078,7 @@ test("aggregate - 가장 바닥에 있는 Activity는 Pop 되지 않습니다", 
             id: "a2",
             params: {},
             enteredBy: pushedEvent2,
+            zIndex: -1,
           },
         ],
         enteredBy: pushedEvent2,
@@ -1065,6 +1096,7 @@ test("aggregate - 가장 바닥에 있는 Activity는 Pop 되지 않습니다", 
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
+    events: output2Events,
   });
 });
 
@@ -1089,22 +1121,20 @@ test("aggregate - push 후 replace 한 뒤 pop 을 수행하면 pop을 무효화
       eventDate: enoughPastTime(),
     })),
   ];
+  const events = [
+    ...initEvents,
+    (replacedEvent1 = makeEvent("Replaced", {
+      activityId: "a2",
+      activityName: "sample",
+      activityParams: {},
+      eventDate: enoughPastTime(),
+    })),
+    makeEvent("Popped", {
+      eventDate: enoughPastTime(),
+    }),
+  ];
 
-  const output1 = aggregate(
-    [
-      ...initEvents,
-      (replacedEvent1 = makeEvent("Replaced", {
-        activityId: "a2",
-        activityName: "sample",
-        activityParams: {},
-        eventDate: enoughPastTime(),
-      })),
-      makeEvent("Popped", {
-        eventDate: enoughPastTime(),
-      }),
-    ],
-    nowTime(),
-  );
+  const output1 = aggregate(events, nowTime());
 
   expect(output1).toStrictEqual({
     activities: [
@@ -1118,6 +1148,7 @@ test("aggregate - push 후 replace 한 뒤 pop 을 수행하면 pop을 무효화
             id: "a1",
             params: {},
             enteredBy: pushedEvent1,
+            zIndex: -1,
           },
         ],
         enteredBy: pushedEvent1,
@@ -1137,6 +1168,7 @@ test("aggregate - push 후 replace 한 뒤 pop 을 수행하면 pop을 무효화
             id: "a2",
             params: {},
             enteredBy: replacedEvent1,
+            zIndex: 0,
           },
         ],
         enteredBy: replacedEvent1,
@@ -1156,6 +1188,7 @@ test("aggregate - push 후 replace 한 뒤 pop 을 수행하면 pop을 무효화
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
+    events,
   });
 });
 
@@ -1205,6 +1238,7 @@ test("aggregate - transitionDuration 이전에 Pop을 한 경우 exit-active 상
             id: "a1",
             params: {},
             enteredBy: pushedEvent1,
+            zIndex: 0,
           },
         ],
         enteredBy: pushedEvent1,
@@ -1223,6 +1257,7 @@ test("aggregate - transitionDuration 이전에 Pop을 한 경우 exit-active 상
             id: "a2",
             params: {},
             enteredBy: pushedEvent2,
+            zIndex: 1,
           },
         ],
         enteredBy: pushedEvent2,
@@ -1240,6 +1275,7 @@ test("aggregate - transitionDuration 이전에 Pop을 한 경우 exit-active 상
     ],
     transitionDuration: 300,
     globalTransitionState: "loading",
+    events,
   });
 });
 
@@ -1265,8 +1301,9 @@ test("aggregate - 이벤트가 중복되거나 순서가 섞여도 정상적으�
   const e5 = makeEvent("Popped", {
     eventDate: enoughPastTime(),
   });
+  const events = [e5, e1, e4, e3, e5, e1, e1, e2];
 
-  const output = aggregate([e5, e1, e4, e3, e5, e1, e1, e2], nowTime());
+  const output = aggregate(events, nowTime());
 
   expect(output).toStrictEqual({
     activities: [
@@ -1280,6 +1317,7 @@ test("aggregate - 이벤트가 중복되거나 순서가 섞여도 정상적으�
             id: "a1",
             params: {},
             enteredBy: e3,
+            zIndex: 0,
           },
         ],
         enteredBy: e3,
@@ -1298,6 +1336,7 @@ test("aggregate - 이벤트가 중복되거나 순서가 섞여도 정상적으�
             id: "a2",
             params: {},
             enteredBy: e4,
+            zIndex: -1,
           },
         ],
         enteredBy: e4,
@@ -1315,6 +1354,7 @@ test("aggregate - 이벤트가 중복되거나 순서가 섞여도 정상적으�
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
+    events: [e1, e2, e3, e4, e5],
   });
 });
 
@@ -1391,6 +1431,7 @@ test("aggregate - 같은 activity.id로 푸시되는 경우, 기존에 푸시되
             id: "a1",
             params: {},
             enteredBy: pushedEvent1,
+            zIndex: 0,
           },
         ],
         enteredBy: pushedEvent1,
@@ -1409,6 +1450,7 @@ test("aggregate - 같은 activity.id로 푸시되는 경우, 기존에 푸시되
             id: "a2",
             params: {},
             enteredBy: pushedEvent5,
+            zIndex: 1,
           },
         ],
         enteredBy: pushedEvent5,
@@ -1427,6 +1469,7 @@ test("aggregate - 같은 activity.id로 푸시되는 경우, 기존에 푸시되
             id: "a3",
             params: {},
             enteredBy: pushedEvent3,
+            zIndex: -1,
           },
         ],
         enteredBy: pushedEvent3,
@@ -1446,6 +1489,7 @@ test("aggregate - 같은 activity.id로 푸시되는 경우, 기존에 푸시되
             id: "a4",
             params: {},
             enteredBy: pushedEvent4,
+            zIndex: -1,
           },
         ],
         enteredBy: pushedEvent4,
@@ -1463,6 +1507,7 @@ test("aggregate - 같은 activity.id로 푸시되는 경우, 기존에 푸시되
     ],
     transitionDuration: 300,
     globalTransitionState: "loading",
+    events,
   });
 });
 
@@ -1506,6 +1551,7 @@ test("aggregate - PushedEvent에 params가 담겨있는 경우 액티비티에 �
               hello: "world",
             },
             enteredBy: pushedEvent,
+            zIndex: 0,
           },
         ],
         enteredBy: pushedEvent,
@@ -1522,6 +1568,7 @@ test("aggregate - PushedEvent에 params가 담겨있는 경우 액티비티에 �
     ],
     transitionDuration: 300,
     globalTransitionState: "loading",
+    events,
   });
 });
 
@@ -1574,6 +1621,7 @@ test("aggregate - ReplacedEvent가 발생한 직후 최상단의 Activity를 유
               hello: "world",
             },
             enteredBy: pushedEvent,
+            zIndex: 0,
           },
         ],
         enteredBy: pushedEvent,
@@ -1596,6 +1644,7 @@ test("aggregate - ReplacedEvent가 발생한 직후 최상단의 Activity를 유
               hello: "world",
             },
             enteredBy: replacedEvent,
+            zIndex: 1,
           },
         ],
         enteredBy: replacedEvent,
@@ -1612,6 +1661,7 @@ test("aggregate - ReplacedEvent가 발생한 직후 최상단의 Activity를 유
     ],
     transitionDuration: 300,
     globalTransitionState: "loading",
+    events,
   });
 });
 
@@ -1664,6 +1714,7 @@ test("aggregate - ReplacedEvent가 발생한 후 transitionDuration만큼 지난
               hello: "world",
             },
             enteredBy: pushedEvent,
+            zIndex: -1,
           },
         ],
         enteredBy: pushedEvent,
@@ -1687,6 +1738,7 @@ test("aggregate - ReplacedEvent가 발생한 후 transitionDuration만큼 지난
               hello: "world",
             },
             enteredBy: replacedEvent,
+            zIndex: 0,
           },
         ],
         enteredBy: replacedEvent,
@@ -1703,6 +1755,7 @@ test("aggregate - ReplacedEvent가 발생한 후 transitionDuration만큼 지난
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
+    events,
   });
 });
 
@@ -1764,6 +1817,7 @@ test("aggregate - ReplacedEvent가 두 번 발생한 후 transitionDuration만�
               hello: "world",
             },
             enteredBy: pushedEvent,
+            zIndex: -1,
           },
         ],
         enteredBy: pushedEvent,
@@ -1787,6 +1841,7 @@ test("aggregate - ReplacedEvent가 두 번 발생한 후 transitionDuration만�
               hello: "world",
             },
             enteredBy: replacedEvent1,
+            zIndex: -1,
           },
         ],
         enteredBy: replacedEvent1,
@@ -1810,6 +1865,7 @@ test("aggregate - ReplacedEvent가 두 번 발생한 후 transitionDuration만�
               hello: "world",
             },
             enteredBy: replacedEvent2,
+            zIndex: 0,
           },
         ],
         enteredBy: replacedEvent2,
@@ -1826,6 +1882,7 @@ test("aggregate - ReplacedEvent가 두 번 발생한 후 transitionDuration만�
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
+    events,
   });
 });
 
@@ -1870,6 +1927,7 @@ test("aggregate - skipEnterActiveState가 true이면 eventDate가 transitionDura
               hello: "world",
             },
             enteredBy: pushedEvent,
+            zIndex: 0,
           },
         ],
         enteredBy: pushedEvent,
@@ -1886,6 +1944,7 @@ test("aggregate - skipEnterActiveState가 true이면 eventDate가 transitionDura
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
+    events,
   });
 });
 
@@ -1935,6 +1994,7 @@ test("aggregate - skipExitActiveState가 true이면 eventDate가 transitionDurat
             id: "a1",
             params: {},
             enteredBy: pushedEvent1,
+            zIndex: 0,
           },
         ],
         enteredBy: pushedEvent1,
@@ -1953,6 +2013,7 @@ test("aggregate - skipExitActiveState가 true이면 eventDate가 transitionDurat
             id: "a2",
             params: {},
             enteredBy: pushedEvent2,
+            zIndex: -1,
           },
         ],
         enteredBy: pushedEvent2,
@@ -1970,6 +2031,7 @@ test("aggregate - skipExitActiveState가 true이면 eventDate가 transitionDurat
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
+    events,
   });
 });
 
@@ -2023,6 +2085,7 @@ test("aggregate - skipExitActiveState가 true이면 ReplacedEvent가 발생한 �
               hello: "world",
             },
             enteredBy: pushedEvent,
+            zIndex: -1,
           },
         ],
         enteredBy: pushedEvent,
@@ -2046,6 +2109,7 @@ test("aggregate - skipExitActiveState가 true이면 ReplacedEvent가 발생한 �
               hello: "world",
             },
             enteredBy: replacedEvent,
+            zIndex: 0,
           },
         ],
         enteredBy: replacedEvent,
@@ -2062,6 +2126,7 @@ test("aggregate - skipExitActiveState가 true이면 ReplacedEvent가 발생한 �
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
+    events,
   });
 });
 
@@ -2102,6 +2167,7 @@ test("aggregate - PushedEvent에 activityContext가 담겨있는 경우 액티�
             id: "a1",
             params: {},
             enteredBy: pushedEvent,
+            zIndex: 0,
           },
         ],
         context: {
@@ -2121,6 +2187,7 @@ test("aggregate - PushedEvent에 activityContext가 담겨있는 경우 액티�
     ],
     transitionDuration: 300,
     globalTransitionState: "loading",
+    events,
   });
 });
 
@@ -2171,6 +2238,7 @@ test("aggregate - ReplacedEvent에 activityContext가 담겨있는 경우 액티
             id: "a1",
             params: {},
             enteredBy: pushedEvent,
+            zIndex: 0,
           },
         ],
         context: {
@@ -2192,6 +2260,7 @@ test("aggregate - ReplacedEvent에 activityContext가 담겨있는 경우 액티
             id: "a2",
             params: {},
             enteredBy: replacedEvent,
+            zIndex: 1,
           },
         ],
         context: {
@@ -2211,6 +2280,7 @@ test("aggregate - ReplacedEvent에 activityContext가 담겨있는 경우 액티
     ],
     transitionDuration: 300,
     globalTransitionState: "loading",
+    events,
   });
 });
 
@@ -2271,6 +2341,7 @@ test("aggregate - ReplacedEvent에 현재 상단에 존재하는 activityId가 �
               hello: "world",
             },
             enteredBy: pushedEvent,
+            zIndex: 0,
           },
         ],
         enteredBy: pushedEvent,
@@ -2293,6 +2364,7 @@ test("aggregate - ReplacedEvent에 현재 상단에 존재하는 activityId가 �
               hello: "world2",
             },
             enteredBy: replacedEvent,
+            zIndex: 1,
           },
         ],
         enteredBy: replacedEvent,
@@ -2309,6 +2381,7 @@ test("aggregate - ReplacedEvent에 현재 상단에 존재하는 activityId가 �
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
+    events,
   });
 });
 
@@ -2378,6 +2451,7 @@ test("aggregate - ReplacedEvent에 현재 중간에 존재하는 activityId가 �
               hello: "world",
             },
             enteredBy: pushedEvent1,
+            zIndex: 0,
           },
         ],
         enteredBy: pushedEvent1,
@@ -2400,6 +2474,7 @@ test("aggregate - ReplacedEvent에 현재 중간에 존재하는 activityId가 �
               hello: "world2",
             },
             enteredBy: replacedEvent,
+            zIndex: 1,
           },
         ],
         enteredBy: replacedEvent,
@@ -2422,6 +2497,7 @@ test("aggregate - ReplacedEvent에 현재 중간에 존재하는 activityId가 �
               hello: "world",
             },
             enteredBy: pushedEvent3,
+            zIndex: 2,
           },
         ],
         enteredBy: pushedEvent3,
@@ -2438,6 +2514,7 @@ test("aggregate - ReplacedEvent에 현재 중간에 존재하는 activityId가 �
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
+    events,
   });
 });
 
@@ -2507,6 +2584,7 @@ test("aggregate - ReplacedEvent에 현재 중간에 존재하는 activityId가 �
               hello: "world",
             },
             enteredBy: pushedEvent1,
+            zIndex: 0,
           },
         ],
         enteredBy: pushedEvent1,
@@ -2529,6 +2607,7 @@ test("aggregate - ReplacedEvent에 현재 중간에 존재하는 activityId가 �
               hello: "world2",
             },
             enteredBy: replacedEvent,
+            zIndex: 1,
           },
         ],
         enteredBy: replacedEvent,
@@ -2551,6 +2630,7 @@ test("aggregate - ReplacedEvent에 현재 중간에 존재하는 activityId가 �
               hello: "world",
             },
             enteredBy: pushedEvent3,
+            zIndex: 2,
           },
         ],
         enteredBy: pushedEvent3,
@@ -2567,6 +2647,7 @@ test("aggregate - ReplacedEvent에 현재 중간에 존재하는 activityId가 �
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
+    events,
   });
 });
 
@@ -2688,6 +2769,7 @@ test("aggregate - ReplacedEvent가 같은 activityId로 여러번 수행되었�
               activityParams: {},
               activityContext: { path: "/" },
             },
+            zIndex: 0,
           },
         ],
         enteredBy: {
@@ -2730,6 +2812,7 @@ test("aggregate - ReplacedEvent가 같은 activityId로 여러번 수행되었�
                 path: "/articles/02542470/?title=Master&referrer=my",
               },
             },
+            zIndex: 1,
           },
         ],
         enteredBy: {
@@ -2766,6 +2849,10 @@ test("aggregate - ReplacedEvent가 같은 activityId로 여러번 수행되었�
     ],
     transitionDuration: 350,
     globalTransitionState: "loading",
+    events: uniqBy(
+      [...events].sort((a, b) => a.eventDate - b.eventDate),
+      (e) => e.id,
+    ),
   });
 });
 
@@ -2827,6 +2914,7 @@ test("aggregate - 현재 특정 액티비티가 애니메이션 되고 있는 �
               hello: "world",
             },
             enteredBy: pushedEvent1,
+            zIndex: 0,
           },
         ],
         enteredBy: pushedEvent1,
@@ -2849,6 +2937,7 @@ test("aggregate - 현재 특정 액티비티가 애니메이션 되고 있는 �
               hello: "world2",
             },
             enteredBy: replacedEvent,
+            zIndex: 1,
           },
         ],
         enteredBy: replacedEvent,
@@ -2865,6 +2954,7 @@ test("aggregate - 현재 특정 액티비티가 애니메이션 되고 있는 �
     ],
     transitionDuration: 300,
     globalTransitionState: "loading",
+    events,
   });
 });
 
@@ -2925,6 +3015,7 @@ test("aggregate - 현재 특정 액티비티가 애니메이션이 되고 있는
               hello: "world",
             },
             enteredBy: pushedEvent1,
+            zIndex: 0,
           },
         ],
         enteredBy: pushedEvent1,
@@ -2947,6 +3038,7 @@ test("aggregate - 현재 특정 액티비티가 애니메이션이 되고 있는
               hello: "world2",
             },
             enteredBy: replacedEvent,
+            zIndex: 1,
           },
         ],
         enteredBy: replacedEvent,
@@ -2963,6 +3055,7 @@ test("aggregate - 현재 특정 액티비티가 애니메이션이 되고 있는
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
+    events,
   });
 });
 
@@ -3015,6 +3108,7 @@ test("aggregate - StepPushedEvent가 발생하면, 최상단 액티비티의 파
               hello: "world",
             },
             enteredBy: pushedEvent,
+            zIndex: 0,
           },
           {
             id: "s1",
@@ -3022,6 +3116,8 @@ test("aggregate - StepPushedEvent가 발생하면, 최상단 액티비티의 파
               hello: "world2",
             },
             enteredBy: stepPushedEvent,
+            zIndex: 0,
+            hasZIndex: false,
           },
         ],
         isActive: true,
@@ -3037,6 +3133,7 @@ test("aggregate - StepPushedEvent가 발생하면, 최상단 액티비티의 파
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
+    events,
   });
 });
 
@@ -3091,6 +3188,7 @@ test("aggregate - StepPushedEvent가 쌓인 상태에서, StepPoppedEvent가 들
               hello: "world",
             },
             enteredBy: pushedEvent,
+            zIndex: 0,
           },
         ],
         isActive: true,
@@ -3106,6 +3204,7 @@ test("aggregate - StepPushedEvent가 쌓인 상태에서, StepPoppedEvent가 들
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
+    events,
   });
 });
 
@@ -3169,6 +3268,7 @@ test("aggregate - StepPushedEvent가 쌓인 상태에서, PoppedEvent가 들어�
               hello: "a",
             },
             enteredBy: pushedEvent1,
+            zIndex: 0,
           },
         ],
         enteredBy: pushedEvent1,
@@ -3191,6 +3291,7 @@ test("aggregate - StepPushedEvent가 쌓인 상태에서, PoppedEvent가 들어�
               hello: "b",
             },
             enteredBy: pushedEvent2,
+            zIndex: -1,
           },
         ],
         enteredBy: pushedEvent2,
@@ -3208,6 +3309,7 @@ test("aggregate - StepPushedEvent가 쌓인 상태에서, PoppedEvent가 들어�
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
+    events,
   });
 });
 
@@ -3272,6 +3374,7 @@ test("aggregate - StepPushedEvent가 쌓인 상태에서, PoppedEvent가 들어�
               hello: "a",
             },
             enteredBy: pushedEvent1,
+            zIndex: 0,
           },
         ],
         enteredBy: pushedEvent1,
@@ -3294,6 +3397,7 @@ test("aggregate - StepPushedEvent가 쌓인 상태에서, PoppedEvent가 들어�
               hello: "b",
             },
             enteredBy: pushedEvent2,
+            zIndex: 1,
           },
           {
             id: "s1",
@@ -3301,6 +3405,8 @@ test("aggregate - StepPushedEvent가 쌓인 상태에서, PoppedEvent가 들어�
               hello: "c",
             },
             enteredBy: stepPushedEvent,
+            zIndex: 1,
+            hasZIndex: false,
           },
         ],
         enteredBy: pushedEvent2,
@@ -3318,6 +3424,7 @@ test("aggregate - StepPushedEvent가 쌓인 상태에서, PoppedEvent가 들어�
     ],
     transitionDuration: 300,
     globalTransitionState: "loading",
+    events,
   });
 });
 
@@ -3370,6 +3477,8 @@ test("aggregate - StepReplacedEvent가 발생하면, 최상단 액티비티의 �
               hello: "world2",
             },
             enteredBy: stepReplacedEvent,
+            zIndex: 0,
+            hasZIndex: false,
           },
         ],
         isActive: true,
@@ -3385,6 +3494,7 @@ test("aggregate - StepReplacedEvent가 발생하면, 최상단 액티비티의 �
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
+    events,
   });
 });
 
@@ -3440,6 +3550,8 @@ test("aggregate - 만약 StepPoppedEvent를 통해 제거할 수 있는 영역�
               hello: "world2",
             },
             enteredBy: stepReplacedEvent,
+            zIndex: 0,
+            hasZIndex: false,
           },
         ],
         isActive: true,
@@ -3455,6 +3567,7 @@ test("aggregate - 만약 StepPoppedEvent를 통해 제거할 수 있는 영역�
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
+    events,
   });
 });
 
@@ -3499,6 +3612,7 @@ test("aggregate - RegisteredActivityEvent에 paramsSchema가 있다면 registere
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
+    events,
   });
 });
 
@@ -3551,6 +3665,7 @@ test("aggregate - After Push > Replace > Replace (skipped), first pushed activit
             id: "A",
             params: {},
             enteredBy: pushedEvent,
+            zIndex: -1,
           },
         ],
         enteredBy: pushedEvent,
@@ -3570,6 +3685,7 @@ test("aggregate - After Push > Replace > Replace (skipped), first pushed activit
             id: "B",
             params: {},
             enteredBy: replacedEvent1,
+            zIndex: -1,
           },
         ],
         enteredBy: replacedEvent1,
@@ -3589,6 +3705,7 @@ test("aggregate - After Push > Replace > Replace (skipped), first pushed activit
             id: "C",
             params: {},
             enteredBy: replacedEvent2,
+            zIndex: 0,
           },
         ],
         enteredBy: replacedEvent2,
@@ -3605,6 +3722,7 @@ test("aggregate - After Push > Replace > Replace (skipped), first pushed activit
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
+    events,
   });
 });
 
@@ -3663,6 +3781,7 @@ test("aggregate - After Push > Push > Replace > Replace, first pushed activity s
             id: "A",
             params: {},
             enteredBy: pushedEvent1,
+            zIndex: 0,
           },
         ],
         enteredBy: pushedEvent1,
@@ -3681,6 +3800,7 @@ test("aggregate - After Push > Push > Replace > Replace, first pushed activity s
             id: "B",
             params: {},
             enteredBy: pushedEvent2,
+            zIndex: -1,
           },
         ],
         enteredBy: pushedEvent2,
@@ -3700,6 +3820,7 @@ test("aggregate - After Push > Push > Replace > Replace, first pushed activity s
             id: "C",
             params: {},
             enteredBy: replacedEvent1,
+            zIndex: -1,
           },
         ],
         enteredBy: replacedEvent1,
@@ -3719,6 +3840,7 @@ test("aggregate - After Push > Push > Replace > Replace, first pushed activity s
             id: "D",
             params: {},
             enteredBy: replacedEvent2,
+            zIndex: 1,
           },
         ],
         enteredBy: replacedEvent2,
@@ -3735,6 +3857,7 @@ test("aggregate - After Push > Push > Replace > Replace, first pushed activity s
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
+    events,
   });
 });
 
@@ -3790,6 +3913,7 @@ test("aggregate - After Push > Push > Pop > Replace, first pushed activity shoul
             id: "A",
             params: {},
             enteredBy: pushedEvent1,
+            zIndex: -1,
           },
         ],
         enteredBy: pushedEvent1,
@@ -3809,6 +3933,7 @@ test("aggregate - After Push > Push > Pop > Replace, first pushed activity shoul
             id: "B",
             params: {},
             enteredBy: pushedEvent2,
+            zIndex: -1,
           },
         ],
         enteredBy: pushedEvent2,
@@ -3828,6 +3953,7 @@ test("aggregate - After Push > Push > Pop > Replace, first pushed activity shoul
             id: "C",
             params: {},
             enteredBy: replacedEvent1,
+            zIndex: 0,
           },
         ],
         enteredBy: replacedEvent1,
@@ -3844,6 +3970,7 @@ test("aggregate - After Push > Push > Pop > Replace, first pushed activity shoul
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
+    events,
   });
 });
 
@@ -3895,6 +4022,7 @@ test("aggregate - StepPushedEvent must be ignored when top activity is not targe
             id: "A",
             params: {},
             enteredBy: pushedEvent1,
+            zIndex: 0,
           },
         ],
         enteredBy: pushedEvent1,
@@ -3913,6 +4041,7 @@ test("aggregate - StepPushedEvent must be ignored when top activity is not targe
             id: "B",
             params: {},
             enteredBy: pushedEvent2,
+            zIndex: 1,
           },
         ],
         enteredBy: pushedEvent2,
@@ -3929,5 +4058,278 @@ test("aggregate - StepPushedEvent must be ignored when top activity is not targe
     ],
     transitionDuration: 300,
     globalTransitionState: "idle",
+    events,
+  });
+});
+
+test("aggregate - Pause되면 이벤트가 반영되지 않고, globalTransitionState를 paused으로 바꿉니다", () => {
+  let pushedEvent1: PushedEvent;
+  let pushedEvent2: PushedEvent;
+
+  const eventsUntilPausedEvent = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+    registeredEvent({
+      activityName: "a",
+    }),
+    registeredEvent({
+      activityName: "b",
+    }),
+    (pushedEvent1 = makeEvent("Pushed", {
+      activityId: "activity-1",
+      activityName: "a",
+      eventDate: enoughPastTime(),
+      activityParams: {},
+    })),
+    makeEvent("Paused", {}),
+  ];
+  const events = [
+    ...eventsUntilPausedEvent,
+    (pushedEvent2 = makeEvent("Pushed", {
+      activityId: "activity-2",
+      activityName: "b",
+      activityParams: {},
+    })),
+  ];
+
+  const output = aggregate(events, nowTime());
+
+  expect(output).toStrictEqual({
+    activities: [
+      activity({
+        id: "activity-1",
+        name: "a",
+        transitionState: "enter-done",
+        params: {},
+        steps: [
+          {
+            id: "activity-1",
+            params: {},
+            enteredBy: pushedEvent1,
+            zIndex: 0,
+          },
+        ],
+        enteredBy: pushedEvent1,
+        isActive: true,
+        isTop: true,
+        isRoot: true,
+        zIndex: 0,
+      }),
+    ],
+    registeredActivities: [
+      {
+        name: "a",
+      },
+      {
+        name: "b",
+      },
+    ],
+    transitionDuration: 300,
+    globalTransitionState: "paused",
+    pausedEvents: [pushedEvent2],
+    events: eventsUntilPausedEvent,
+  });
+});
+
+test("aggregate - Resumed 되면 해당 시간 이후로 Transition이 정상작동합니다", () => {
+  let pushedEvent1: PushedEvent;
+  let pushedEvent2: PushedEvent;
+
+  const events = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+    registeredEvent({
+      activityName: "a",
+    }),
+    registeredEvent({
+      activityName: "b",
+    }),
+    (pushedEvent1 = makeEvent("Pushed", {
+      activityId: "activity-1",
+      activityName: "a",
+      eventDate: enoughPastTime(),
+      activityParams: {},
+    })),
+    makeEvent("Paused", {
+      eventDate: enoughPastTime(),
+    }),
+    (pushedEvent2 = makeEvent("Pushed", {
+      activityId: "activity-2",
+      activityName: "b",
+      eventDate: enoughPastTime(),
+      activityParams: {},
+    })),
+    makeEvent("Resumed", {
+      eventDate: nowTime() - 150,
+    }),
+  ];
+
+  const output = aggregate(events, nowTime());
+
+  expect(output).toStrictEqual({
+    activities: [
+      activity({
+        id: "activity-1",
+        name: "a",
+        transitionState: "enter-done",
+        params: {},
+        steps: [
+          {
+            id: "activity-1",
+            params: {},
+            enteredBy: expect.anything(),
+            zIndex: 0,
+          },
+        ],
+        enteredBy: expect.anything(),
+        isActive: false,
+        isTop: false,
+        isRoot: true,
+        zIndex: 0,
+      }),
+      activity({
+        id: "activity-2",
+        name: "b",
+        transitionState: "enter-active",
+        params: {},
+        steps: [
+          {
+            id: "activity-2",
+            params: {},
+            enteredBy: expect.anything(),
+            zIndex: 1,
+          },
+        ],
+        enteredBy: expect.anything(),
+        isActive: true,
+        isTop: true,
+        isRoot: false,
+        zIndex: 1,
+      }),
+    ],
+    registeredActivities: [
+      {
+        name: "a",
+      },
+      {
+        name: "b",
+      },
+    ],
+    transitionDuration: 300,
+    globalTransitionState: "loading",
+    events,
+  });
+});
+
+test("aggregate - StepPushedEvent에 hasZIndex 필드가 true이면, Step에 zIndex가 할당되고, 다음 액티비티의 zIndex가 해당 zIndex 다음으로 설정됩니다", () => {
+  const t = nowTime();
+
+  let pushedEvent1: PushedEvent;
+  let stepPushedEvent: StepPushedEvent;
+  let pushedEvent2: PushedEvent;
+
+  const events = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+    registeredEvent({
+      activityName: "sample",
+    }),
+    (pushedEvent1 = makeEvent("Pushed", {
+      activityId: "a1",
+      activityName: "sample",
+      activityParams: {
+        hello: "world",
+      },
+      eventDate: enoughPastTime(),
+    })),
+    (stepPushedEvent = makeEvent("StepPushed", {
+      stepId: "s1",
+      stepParams: {
+        hello: "world2",
+      },
+      eventDate: enoughPastTime(),
+      hasZIndex: true,
+    })),
+    (pushedEvent2 = makeEvent("Pushed", {
+      activityId: "a2",
+      activityName: "sample",
+      activityParams: {
+        hello: "world3",
+      },
+      eventDate: enoughPastTime(),
+    })),
+  ];
+
+  const output = aggregate(events, t);
+
+  expect(output).toStrictEqual({
+    activities: [
+      activity({
+        id: "a1",
+        name: "sample",
+        transitionState: "enter-done",
+        params: {
+          hello: "world2",
+        },
+        enteredBy: pushedEvent1,
+        steps: [
+          {
+            id: "a1",
+            params: {
+              hello: "world",
+            },
+            enteredBy: pushedEvent1,
+            zIndex: 0,
+          },
+          {
+            id: "s1",
+            params: {
+              hello: "world2",
+            },
+            enteredBy: stepPushedEvent,
+            zIndex: 1,
+            hasZIndex: true,
+          },
+        ],
+        isActive: false,
+        isTop: false,
+        isRoot: true,
+        zIndex: 0,
+      }),
+      activity({
+        id: "a2",
+        name: "sample",
+        transitionState: "enter-done",
+        params: {
+          hello: "world3",
+        },
+        enteredBy: pushedEvent2,
+        steps: [
+          {
+            id: "a2",
+            params: {
+              hello: "world3",
+            },
+            enteredBy: pushedEvent2,
+            zIndex: 2,
+          },
+        ],
+        isActive: true,
+        isTop: true,
+        isRoot: false,
+        zIndex: 2,
+      }),
+    ],
+    registeredActivities: [
+      {
+        name: "sample",
+      },
+    ],
+    transitionDuration: 300,
+    globalTransitionState: "idle",
+    events,
   });
 });

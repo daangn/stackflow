@@ -1,5 +1,38 @@
 # @stackflow/docs
 
+## 2.1.0
+
+### Minor Changes
+
+- 89813a6: Add LLMs.txt and changelog section
+
+### Patch Changes
+
+- Updated dependencies [a136f96]
+  - @stackflow/plugin-basic-ui@1.17.0
+
+## 2.0.3
+
+### Patch Changes
+
+- 517b750: fix: add import basicUiPlugin in `get-started -> activity` page
+- Updated dependencies [5c4b96c]
+  - @stackflow/plugin-basic-ui@1.13.1
+
+## 2.0.2
+
+### Patch Changes
+
+- cfa7af8: Edit docs to match updated future api spec
+- Updated dependencies [cfa7af8]
+- Updated dependencies [cfa7af8]
+- Updated dependencies [82b52b0]
+- Updated dependencies [cfa7af8]
+- Updated dependencies [cfa7af8]
+  - @stackflow/plugin-basic-ui@1.12.0
+  - @stackflow/react@1.5.0
+  - @stackflow/core@1.2.0
+
 ## 2.0.1
 
 ### Patch Changes

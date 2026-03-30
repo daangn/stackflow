@@ -3,25 +3,26 @@ import type {
   CoreStore,
   PushedEvent,
   StackflowActions,
-  StepPushedEvent,
 } from "@stackflow/core";
 import { makeCoreStore, makeEvent } from "@stackflow/core";
 import { memo, useMemo } from "react";
-
-import type { ActivityComponentType } from "../__internal__/ActivityComponentType";
-import MainRenderer from "../__internal__/MainRenderer";
-import type { StackflowReactPlugin } from "../__internal__/StackflowReactPlugin";
-import { makeActivityId, makeStepId } from "../__internal__/activity";
+import { ActivityComponentMapProvider } from "../__internal__/ActivityComponentMapProvider";
+import {
+  findActivityById,
+  findLatestActiveActivity,
+  makeActivityId,
+  makeStepId,
+} from "../__internal__/activity";
 import { CoreProvider } from "../__internal__/core";
+import MainRenderer from "../__internal__/MainRenderer";
+import type { MonolithicActivityComponentType } from "../__internal__/MonolithicActivityComponentType";
 import { PluginsProvider } from "../__internal__/plugins";
+import type { StackflowReactPlugin } from "../__internal__/StackflowReactPlugin";
 import { isBrowser, makeRef } from "../__internal__/utils";
 import type { BaseActivities } from "./BaseActivities";
 import type { UseActionsOutputType } from "./useActions";
 import { useActions } from "./useActions";
-import type {
-  UseStepActions,
-  UseStepActionsOutputType,
-} from "./useStepActions";
+import type { UseStepActionsOutputType } from "./useStepActions";
 import { useStepActions } from "./useStepActions";
 
 function parseActionOptions(options?: { animate?: boolean }) {
@@ -90,14 +91,22 @@ export type StackflowOutput<T extends BaseActivities> = {
   /**
    * Created `useStepFlow()` hooks
    */
-  useStepFlow: UseStepActions<T>;
+  useStepFlow: <K extends Extract<keyof T, string>>(
+    activityName: K,
+  ) => UseStepActionsOutputType<
+    T[K] extends
+      | MonolithicActivityComponentType<infer U>
+      | { component: MonolithicActivityComponentType<infer U> }
+      ? U
+      : {}
+  >;
 
   /**
    * Add activity imperatively
    */
   addActivity: (options: {
     name: string;
-    component: ActivityComponentType<any>;
+    component: MonolithicActivityComponentType<any>;
     paramsSchema?: ActivityRegisteredEvent["activityParamsSchema"];
   }) => void;
 
@@ -127,11 +136,10 @@ export function stackflow<T extends BaseActivities>(
   const activityComponentMap = Object.entries(options.activities).reduce(
     (acc, [key, Activity]) => ({
       ...acc,
-      [key]:
-        "component" in Activity ? memo(Activity.component) : memo(Activity),
+      [key]: "component" in Activity ? Activity.component : Activity,
     }),
     {} as {
-      [key: string]: ActivityComponentType;
+      [key: string]: MonolithicActivityComponentType;
     },
   );
 
@@ -192,20 +200,24 @@ export function stackflow<T extends BaseActivities>(
         plugins,
         handlers: {
           onInitialActivityIgnored: (initialPushedEvents) => {
-            console.warn(
-              `Stackflow - Some plugin overrides an "initialActivity" option. The "initialActivity" option you set to "${
-                (initialPushedEvents[0] as PushedEvent).activityName
-              }" in the "stackflow" is ignored.`,
-            );
+            if (isBrowser()) {
+              console.warn(
+                `Stackflow - Some plugin overrides an "initialActivity" option. The "initialActivity" option you set to "${
+                  (initialPushedEvents[0] as PushedEvent).activityName
+                }" in the "stackflow" is ignored.`,
+              );
+            }
           },
           onInitialActivityNotFound: () => {
-            console.warn(
-              "Stackflow -" +
-                " There is no initial activity." +
-                " If you want to set the initial activity," +
-                " add the `initialActivity` option of the `stackflow()` function or" +
-                " add a plugin that sets the initial activity. (e.g. `@stackflow/plugin-history-sync`)",
-            );
+            if (isBrowser()) {
+              console.warn(
+                "Stackflow -" +
+                  " There is no initial activity." +
+                  " If you want to set the initial activity," +
+                  " add the `initialActivity` option of the `stackflow()` function or" +
+                  " add a plugin that sets the initial activity. (e.g. `@stackflow/plugin-history-sync`)",
+              );
+            }
           },
         },
       });
@@ -221,10 +233,9 @@ export function stackflow<T extends BaseActivities>(
     return (
       <PluginsProvider value={coreStore.pluginInstances}>
         <CoreProvider coreStore={coreStore}>
-          <MainRenderer
-            activityComponentMap={activityComponentMap}
-            initialContext={props.initialContext}
-          />
+          <ActivityComponentMapProvider value={activityComponentMap}>
+            <MainRenderer initialContext={props.initialContext} />
+          </ActivityComponentMapProvider>
         </CoreProvider>
       </PluginsProvider>
     );
@@ -338,24 +349,50 @@ export function stackflow<T extends BaseActivities>(
           });
         }
       },
-      stepPush(params) {
+      stepPush(params, options) {
+        const activities = getCoreStore()?.actions.getStack().activities;
+        const findTargetActivity = options?.targetActivityId
+          ? findActivityById(options.targetActivityId)
+          : findLatestActiveActivity;
+        const targetActivity = activities && findTargetActivity(activities);
+
+        if (!targetActivity)
+          throw new Error("The target activity is not found.");
+
+        const stepParams =
+          typeof params === "function" ? params(targetActivity.params) : params;
         const stepId = makeStepId();
 
         return getCoreStore()?.actions.stepPush({
           stepId,
-          stepParams: params,
+          stepParams,
+          targetActivityId: options?.targetActivityId,
         });
       },
-      stepReplace(params) {
+      stepReplace(params, options) {
+        const activities = getCoreStore()?.actions.getStack().activities;
+        const findTargetActivity = options?.targetActivityId
+          ? findActivityById(options.targetActivityId)
+          : findLatestActiveActivity;
+        const targetActivity = activities && findTargetActivity(activities);
+
+        if (!targetActivity)
+          throw new Error("The target activity is not found.");
+
+        const stepParams =
+          typeof params === "function" ? params(targetActivity.params) : params;
         const stepId = makeStepId();
 
         return getCoreStore()?.actions.stepReplace({
           stepId,
-          stepParams: params,
+          stepParams,
+          targetActivityId: options?.targetActivityId,
         });
       },
-      stepPop() {
-        return getCoreStore()?.actions.stepPop({});
+      stepPop(options) {
+        return getCoreStore()?.actions.stepPop({
+          targetActivityId: options?.targetActivityId,
+        });
       },
     },
   };

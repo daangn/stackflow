@@ -1,32 +1,36 @@
 import { useActions } from "@stackflow/react";
-import { assignInlineVars } from "@vanilla-extract/dynamic";
-import { useRef } from "react";
-
 import {
   useLazy,
   useNullableActivity,
+  usePreventTouchDuringTransition,
   useStyleEffect,
   useZIndexBase,
 } from "@stackflow/react-ui-core";
+import { assignInlineVars } from "@vanilla-extract/dynamic";
+import clsx from "clsx";
+import { useRef } from "react";
 import type { GlobalVars } from "../basicUIPlugin.css";
 import { globalVars } from "../basicUIPlugin.css";
 import { compactMap } from "../utils";
 import * as css from "./Modal.css";
 
 export type ModalProps = Partial<
-  Pick<GlobalVars, "backgroundColor" | "dimBackgroundColor">
+  Pick<GlobalVars, "backgroundColor" | "backgroundImage" | "dimBackgroundColor">
 > &
   Partial<GlobalVars["modal"]> & {
     onOutsideClick?: React.MouseEventHandler;
     children: React.ReactNode;
+    className?: string;
   };
 const Modal: React.FC<ModalProps> = ({
   backgroundColor,
+  backgroundImage,
   dimBackgroundColor,
   borderRadius = "1rem",
   maxWidth,
   onOutsideClick,
   children,
+  className,
 }) => {
   const activity = useNullableActivity();
   const { pop } = useActions();
@@ -71,15 +75,23 @@ const Modal: React.FC<ModalProps> = ({
   const zIndexPaper = useZIndexBase() + 4;
   const transitionState = activity?.transitionState ?? "enter-done";
 
+  usePreventTouchDuringTransition({
+    ref: containerRef,
+  });
+
   return (
     <div
-      className={css.container({
-        transitionState: useLazy(transitionState),
-      })}
+      className={clsx(
+        css.container({
+          transitionState: useLazy(transitionState),
+        }),
+        className,
+      )}
       ref={containerRef}
       style={assignInlineVars(
         compactMap({
           [globalVars.backgroundColor]: backgroundColor,
+          [globalVars.backgroundImage]: backgroundImage,
           [globalVars.dimBackgroundColor]: dimBackgroundColor,
           [globalVars.modal.borderRadius]: borderRadius,
           [globalVars.modal.maxWidth]: maxWidth,

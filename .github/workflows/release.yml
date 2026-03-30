@@ -12,6 +12,10 @@ jobs:
   release:
     name: Create PR or release packages
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -19,7 +23,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: "20.x"
+          node-version: 24.x
           registry-url: https://registry.npmjs.org
 
       - uses: actions/cache@v4
@@ -69,8 +73,8 @@ jobs:
           publish: yarn changeset publish
           version: yarn changeset:version
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ secrets.DAANGNBOT_PAT }}
+          NPM_CONFIG_PROVENANCE: true
 
       - name: Continuous release via pkg.pr.new
         if: github.event_name == 'pull_request'

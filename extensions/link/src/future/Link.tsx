@@ -4,9 +4,14 @@ import type {
   InferActivityParams,
   RegisteredActivityName,
 } from "@stackflow/config";
+import type { Route } from "@stackflow/plugin-history-sync";
 import { useConfig, useFlow } from "@stackflow/react/future";
 import { useMemo } from "react";
 import { omit } from "./omit";
+
+function toRoute<T>(route: string | Route<T>): Route<T> {
+  return typeof route === "string" ? { path: route, decode: undefined } : route;
+}
 
 type AnchorProps = Omit<
   React.DetailedHTMLProps<
@@ -32,19 +37,17 @@ export function Link<K extends RegisteredActivityName>(props: LinkProps<K>) {
   const href = useMemo(() => {
     const match = config.activities.find((r) => r.name === props.activityName);
 
-    if (
-      !match ||
-      !match.path ||
-      typeof match.path !== "string" ||
-      !config.historySync
-    ) {
+    if (!match || !match.route || !config.historySync) {
       return undefined;
     }
 
-    const { path } = match;
+    const { path, decode } = Array.isArray(match.route)
+      ? toRoute(match.route[0])
+      : toRoute(match.route);
+
     const { makeTemplate, urlPatternOptions } = config.historySync;
 
-    const template = makeTemplate({ path }, urlPatternOptions);
+    const template = makeTemplate({ path, decode }, urlPatternOptions);
 
     return template.fill(props.activityParams);
   }, [config, props.activityName, props.activityParams]);

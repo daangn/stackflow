@@ -18,7 +18,7 @@
     "dev": "ultra -r --concurrency 100 dev",
     "format": "biome check --write .",
     "lint": "biome lint .",
-    "changeset:version": "changeset version && yarn install --no-immutable",
+    "changeset:version": "yarn workspace @stackflow/docs generate:changelog && changeset version && yarn install --no-immutable",
     "release": "yarn clean && yarn build && changeset && yarn changeset:version && changeset publish",
     "release:canary": "yarn clean && yarn build && changeset pre enter canary && changeset && yarn changeset:version && changeset publish && changeset pre exit",
     "test": "yarn build && ultra -r test",
@@ -28,16 +28,24 @@
   "resolutions": {
     "@mdx-js/react": "3.0.1",
     "@types/react": "18.3.3",
-    "@changesets/assemble-release-plan@npm:^6.0.3": "patch:@changesets/assemble-release-plan@npm%3A6.0.3#~/.yarn/patches/@changesets-assemble-release-plan-npm-6.0.3-29726de363.patch"
+    "@changesets/assemble-release-plan@npm:^6.0.6": "patch:@changesets/assemble-release-plan@npm%3A6.0.6#~/.yarn/patches/@changesets-assemble-release-plan-npm-6.0.6-b2f6e7679e.patch"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.8.3",
-    "@changesets/cli": "^2.27.7",
+    "@biomejs/biome": "^2.1.4",
+    "@changesets/cli": "^2.28.1",
     "@types/jest": "^29.5.12",
     "@types/node": "^20.14.9",
     "@types/react": "^18.3.3",
     "typescript": "^5.5.3",
     "ultra-runner": "^3.10.5"
   },
-  "packageManager": "yarn@4.3.1"
+  "packageManager": "yarn@4.3.1",
+  "dependenciesMeta": {
+    "@opennextjs/cloudflare@1.0.0-beta.3": {
+      "unplugged": true
+    },
+    "wrangler@4.12.1": {
+      "unplugged": true
+    }
+  }
 }

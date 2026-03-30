@@ -45,12 +45,23 @@ export const config = defineConfig({
       name: "HomeActivity",
       
       // You can declare the settings required by the History Sync Plugin in stackflow.config
-      path: "/",
+      route: "/",
     },
     {
       name: "MyProfileActivity",
-      path: "/my-profile",
-    }
+      route: "/my-profile",
+    },
+    {
+      name: "ArticleActivity",
+      route: {
+        path: "/articles/:articleId",
+        decode(params) {
+          return {
+            articleId: Number(params.get("articleId")),
+          };
+        },
+      },
+    },
   ],
   transitionDuration: 270,
 });

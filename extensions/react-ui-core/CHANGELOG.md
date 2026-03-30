@@ -1,5 +1,47 @@
 # @stackflow/react-ui-core
 
+## 1.3.4
+
+### Patch Changes
+
+- b9c1946: fix(react-ui-core): clamp swipe-back dx to prevent left-drag screen movement
+
+## 1.3.3
+
+### Patch Changes
+
+- fe8b8fe: Fix swipe back gesture during push/pop transitions by using capture phase event listeners to prevent touch events from reaching child elements during transitions
+
+## 1.3.2
+
+### Patch Changes
+
+- d2c50f3: fix(react-ui-core): add `preventSwipeBack` into effect dependencies
+
+## 1.3.1
+
+### Patch Changes
+
+- aef952a: fix(react-ui-core): prevent default `touchend` event
+
+## 1.3.0
+
+### Minor Changes
+
+- a7650d4: Support full screen gradient background and introduce new app bar entrance type "cover"
+
+## 1.2.3
+
+### Patch Changes
+
+- 5c4b96c: fix(react-ui-core): consider nullable stack
+
+## 1.2.2
+
+### Patch Changes
+
+- 8593b5a: fix(plugin-basic-ui,react-ui-core): prevent touch events while transitioning
+
 ## 1.2.1
 
 ### Patch Changes

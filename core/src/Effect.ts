@@ -29,4 +29,10 @@ export type Effect =
   | {
       _TAG: "STEP_POPPED";
       activity: Activity;
+    }
+  | {
+      _TAG: "PAUSED";
+    }
+  | {
+      _TAG: "RESUMED";
     };

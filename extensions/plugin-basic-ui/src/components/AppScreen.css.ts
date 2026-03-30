@@ -26,6 +26,7 @@ const dimBackgroundColor = style({
 
 export const background = style({
   backgroundColor: globalVars.backgroundColor,
+  backgroundImage: globalVars.backgroundImage,
 });
 
 export const allTransitions = style({
@@ -48,6 +49,33 @@ export const appScreen = recipe({
       "exit-active": exitActive,
       "exit-done": exitDone,
     },
+    hasAppBar: {
+      true: {
+        vars: {
+          [vars.appBar.topMargin]: globalVars.appBar.height,
+        },
+        /**
+         * When `max()` and `env()` (or `constant()`) supported
+         *
+         * - https://caniuse.com/css-env-function
+         * - https://caniuse.com/css-math-functions
+         */
+        "@supports": {
+          "(padding: max(0px)) and (padding: constant(safe-area-inset-top))": {
+            vars: {
+              [vars.appBar.topMargin]:
+                `calc(${globalVars.appBar.height} + max(${globalVars.appBar.minSafeAreaInsetTop}, constant(safe-area-inset-top)))`,
+            },
+          },
+          "(padding: max(0px)) and (padding: env(safe-area-inset-top))": {
+            vars: {
+              [vars.appBar.topMargin]:
+                `calc(${globalVars.appBar.height} + max(${globalVars.appBar.minSafeAreaInsetTop}, env(safe-area-inset-top)))`,
+            },
+          },
+        },
+      },
+    },
   },
 });
 
@@ -58,9 +86,9 @@ export const dim = style([
   {
     opacity: 0,
     zIndex: vars.zIndexes.dim,
+    height: globalVars.dimHeight,
     selectors: {
       [`${android} &`]: {
-        height: "10rem",
         background: `linear-gradient(${globalVars.dimBackgroundColor}, rgba(0, 0, 0, 0))`,
       },
       [`
@@ -85,15 +113,10 @@ export const paper = recipe({
     background,
     allTransitions,
     {
-      overflowY: "scroll",
-      WebkitOverflowScrolling: "touch",
-      "::-webkit-scrollbar": {
-        display: "none",
-      },
       zIndex: vars.zIndexes.paper,
       selectors: {
         [`${cupertino} &`]: {
-          transform: "translate3d(100%, 0, 0)",
+          transform: `translate3d(${globalVars.defaultTransitionOffSet}, 0, 0)`,
         },
         [`
           ${cupertino} ${enterActive} &,
@@ -103,7 +126,7 @@ export const paper = recipe({
         },
         [`${android} &`]: {
           opacity: 0,
-          transform: "translate3d(0, 10rem, 0)",
+          transform: `translate3d(0, ${globalVars.defaultTransitionOffSet}, 0)`,
         },
         [`
           ${android} ${enterActive} &,
@@ -121,32 +144,7 @@ export const paper = recipe({
         f.borderBox,
         {
           transition: `transform ${vars.transitionDuration}, opacity ${vars.transitionDuration}, margin-top ${globalVars.appBar.heightTransitionDuration}`,
-          marginTop: vars.appBar.topMargin,
-          height: `calc(100% - ${vars.appBar.topMargin})`,
-          vars: {
-            [vars.appBar.topMargin]: globalVars.appBar.height,
-          },
-          /**
-           * When `max()` and `env()` (or `constant()`) supported
-           *
-           * - https://caniuse.com/css-env-function
-           * - https://caniuse.com/css-math-functions
-           */
-          "@supports": {
-            "(padding: max(0px)) and (padding: constant(safe-area-inset-top))":
-              {
-                vars: {
-                  [vars.appBar.topMargin]:
-                    `calc(${globalVars.appBar.height} + max(${globalVars.appBar.minSafeAreaInsetTop}, constant(safe-area-inset-top)))`,
-                },
-              },
-            "(padding: max(0px)) and (padding: env(safe-area-inset-top))": {
-              vars: {
-                [vars.appBar.topMargin]:
-                  `calc(${globalVars.appBar.height} + max(${globalVars.appBar.minSafeAreaInsetTop}, env(safe-area-inset-top)))`,
-              },
-            },
-          },
+          paddingTop: vars.appBar.topMargin,
         },
       ],
     },
@@ -171,6 +169,28 @@ export const paper = recipe({
   },
 });
 
+export const paperContent = recipe({
+  base: [
+    f.posAbsFull,
+    {
+      overflowY: "scroll",
+      WebkitOverflowScrolling: "touch",
+      "::-webkit-scrollbar": {
+        display: "none",
+      },
+    },
+  ],
+
+  variants: {
+    hasAppBar: {
+      true: {
+        marginTop: vars.appBar.topMargin,
+        height: `calc(100% - ${vars.appBar.topMargin})`,
+      },
+    },
+  },
+});
+
 export const edge = recipe({
   base: [
     f.posAbs,
@@ -178,15 +198,15 @@ export const edge = recipe({
     f.left0,
     f.fullHeight,
     {
-      width: "1.25rem",
+      width: globalVars.edge.width,
       zIndex: vars.zIndexes.edge,
     },
   ],
   variants: {
     hasAppBar: {
       true: {
-        top: globalVars.appBar.height,
-        height: `calc(100% - ${globalVars.appBar.height})`,
+        top: vars.appBar.topMargin,
+        height: `calc(100% - ${vars.appBar.topMargin})`,
       },
     },
   },

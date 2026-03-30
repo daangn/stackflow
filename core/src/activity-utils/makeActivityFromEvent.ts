@@ -1,0 +1,28 @@
+import type { PushedEvent, ReplacedEvent } from "../event-types";
+import type { Activity, ActivityTransitionState } from "../Stack";
+
+export function makeActivityFromEvent(
+  event: PushedEvent | ReplacedEvent,
+  transitionState: ActivityTransitionState,
+): Activity {
+  return {
+    id: event.activityId,
+    name: event.activityName,
+    transitionState,
+    params: event.activityParams,
+    context: event.activityContext,
+    steps: [
+      {
+        id: event.activityId,
+        params: event.activityParams,
+        enteredBy: event,
+        zIndex: -1,
+      },
+    ],
+    enteredBy: event,
+    isTop: false,
+    isActive: false,
+    isRoot: false,
+    zIndex: -1,
+  };
+}

@@ -35,10 +35,10 @@ export function makeActions(
       };
     },
     replace(activityName, activityParams, options) {
-      const activityId = makeActivityId();
+      const activityId = options?.activityId ?? makeActivityId();
 
       getCoreActions()?.replace({
-        activityId: options?.activityId ?? makeActivityId(),
+        activityId,
         activityName,
         activityParams,
         skipEnterActiveState: parseActionOptions(options).skipActiveState,

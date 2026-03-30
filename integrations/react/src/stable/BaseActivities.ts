@@ -1,12 +1,11 @@
 import type { ActivityRegisteredEvent } from "@stackflow/core";
-
-import type { ActivityComponentType } from "../__internal__/ActivityComponentType";
+import type { MonolithicActivityComponentType } from "../__internal__/MonolithicActivityComponentType";
 
 export type BaseActivities = {
   [activityName: string]:
-    | ActivityComponentType<any>
+    | MonolithicActivityComponentType<any>
     | {
-        component: ActivityComponentType<any>;
+        component: MonolithicActivityComponentType<any>;
         paramsSchema: NonNullable<
           ActivityRegisteredEvent["activityParamsSchema"]
         >;

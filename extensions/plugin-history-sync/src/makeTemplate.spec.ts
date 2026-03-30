@@ -76,3 +76,20 @@ test("makeTemplate - parse with given decode function", () => {
     articleId: 1234,
   });
 });
+
+test("makeTemplate - fill with encode function using JSON.stringify for object params", () => {
+  const template = makeTemplate({
+    path: "/search",
+    encode: (params) => ({
+      filter: JSON.stringify(params.filter),
+    }),
+  });
+
+  expect(
+    template.fill({
+      filter: { category: "tech", tags: ["javascript", "react"] },
+    }),
+  ).toEqual(
+    "/search/?filter=%7B%22category%22%3A%22tech%22%2C%22tags%22%3A%5B%22javascript%22%2C%22react%22%5D%7D",
+  );
+});

@@ -3,7 +3,7 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import * as css from "./FeedCard.css";
 
 interface FeedCardProps {
-  articleId: string;
+  articleId: number;
   title: string;
   region: string;
   price: number;
@@ -22,7 +22,7 @@ const FeedCard: React.FC<FeedCardProps> = ({
 
   const onClick = () => {
     push("Article", {
-      articleId: String(articleId),
+      articleId,
       title,
     });
   };

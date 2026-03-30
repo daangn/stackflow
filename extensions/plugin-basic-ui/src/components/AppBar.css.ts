@@ -4,10 +4,10 @@ import { recipe } from "@vanilla-extract/recipes";
 import { android, cupertino, globalVars } from "../basicUIPlugin.css";
 import { f } from "../styles";
 import {
-  background,
   enterActive,
   enterDone,
   exitActive,
+  exitDone,
   vars,
 } from "./AppScreen.css";
 
@@ -25,6 +25,7 @@ function transitions(args: { [cssFieldName: string]: string }) {
 }
 const appBarCommonTransition = {
   "background-color": globalVars.appBar.backgroundColorTransitionDuration,
+  "background-image": globalVars.appBar.backgroundImageTransitionDuration,
   "box-shadow": globalVars.appBar.borderColorTransitionDuration,
 };
 
@@ -33,10 +34,10 @@ export const appBar = recipe({
     f.posAbs,
     f.fullWidth,
     f.contentBox,
-    background,
     appBarOverflow,
     {
       backgroundColor: globalVars.appBar.backgroundColor,
+      backgroundImage: globalVars.appBar.backgroundImage,
       zIndex: vars.zIndexes.appBar,
       transition: transitions(appBarCommonTransition),
       selectors: {
@@ -44,7 +45,7 @@ export const appBar = recipe({
           position: "absolute",
         },
         [`${cupertino} ${exitActive} &`]: {
-          transform: "translate3d(100%, 0, 0)",
+          transform: `translate3d(${globalVars.defaultTransitionOffSet}, 0, 0)`,
           transition: transitions({
             ...appBarCommonTransition,
             transform: "0s",
@@ -52,7 +53,7 @@ export const appBar = recipe({
         },
         [`${android} &`]: {
           opacity: 0,
-          transform: "translate3d(0, 10rem, 0)",
+          transform: `translate3d(0, ${globalVars.defaultTransitionOffSet}, 0)`,
           transition: transitions({
             ...appBarCommonTransition,
             transform: vars.transitionDuration,
@@ -70,6 +71,48 @@ export const appBar = recipe({
     },
   ],
   variants: {
+    activityEnterStyle: {
+      slideInLeft: {
+        selectors: {
+          [`${android} &`]: {
+            opacity: 1,
+            transform: "translate3d(0, 0, 0)",
+          },
+          [`${android} ${exitActive} &`]: {
+            transform: "translate3d(100%, 0, 0)",
+            transition: transitions({
+              ...appBarCommonTransition,
+              transform: "0s",
+            }),
+          },
+        },
+      },
+    },
+    enterStyle: {
+      cover: {
+        selectors: {
+          [`${cupertino} &`]: {
+            transform: "translate3d(100%, 0, 0)",
+          },
+          [`${cupertino} ${exitActive} &`]: {
+            transition: transitions({
+              ...appBarCommonTransition,
+              transform: vars.transitionDuration,
+            }),
+          },
+          [`
+            ${cupertino} ${enterActive} &,
+            ${cupertino} ${enterDone} &
+          `]: {
+            transform: "translate3d(0, 0, 0)",
+            transition: transitions({
+              ...appBarCommonTransition,
+              transform: vars.transitionDuration,
+            }),
+          },
+        },
+      },
+    },
     border: {
       true: {
         boxShadow: `inset 0px calc(-1 * ${globalVars.appBar.borderSize}) 0 ${globalVars.appBar.borderColor}`,
@@ -103,24 +146,41 @@ export const appBar = recipe({
         },
       },
     },
-    activityEnterStyle: {
-      slideInLeft: {
+  },
+
+  compoundVariants: [
+    {
+      variants: {
+        activityEnterStyle: "slideInLeft",
+        enterStyle: "cover",
+      },
+      style: {
         selectors: {
-          [`${android} &`]: {
-            opacity: 1,
-            transform: "translate3d(0, 0, 0)",
-          },
-          [`${android} ${exitActive} &`]: {
-            transform: "translate3d(100%, 0, 0)",
+          [`${android} &, 
+            ${android} ${exitActive} &, 
+            ${android} ${exitDone} &`]: {
+            opacity: 0,
+            transform: "translate3d(50%, 0, 0)",
             transition: transitions({
               ...appBarCommonTransition,
-              transform: "0s",
+              transform: vars.transitionDuration,
+              opacity: vars.transitionDuration,
+            }),
+          },
+          [`${android} ${enterActive} &,
+            ${android} ${enterDone} &`]: {
+            opacity: 1,
+            transform: "translate3d(0, 0, 0)",
+            transition: transitions({
+              ...appBarCommonTransition,
+              transform: vars.transitionDuration,
+              opacity: vars.transitionDuration,
             }),
           },
         },
       },
     },
-  },
+  ],
 });
 
 export const safeArea = style({
@@ -140,7 +200,8 @@ export const container = style([
     }),
     selectors: {
       [`${android} &`]: {
-        padding: "0 1rem",
+        paddingLeft: globalVars.appBar.containerPadding,
+        paddingRight: globalVars.appBar.containerPadding,
       },
     },
   },
@@ -151,16 +212,13 @@ export const left = style([
   f.fullHeight,
   appBarMinHeight,
   {
+    paddingRight: globalVars.appBar.itemGap,
     ":empty": {
       display: "none",
     },
     selectors: {
-      [`${android} &`]: {
-        paddingRight: "1rem",
-      },
       [`${cupertino} &`]: {
-        paddingLeft: "1rem",
-        paddingRight: "1rem",
+        paddingLeft: globalVars.appBar.containerPadding,
       },
     },
   },
@@ -177,8 +235,8 @@ export const backButton = style([
       opacity: "300ms",
       color: globalVars.appBar.iconColorTransitionDuration,
     }),
-    padding: ".5rem",
-    margin: "-.5rem",
+    padding: globalVars.appBar.hitSlop,
+    margin: `calc(-1 * ${globalVars.appBar.hitSlop})`,
     ":active": {
       opacity: "0.2",
       transition: transitions({
@@ -194,8 +252,11 @@ export const closeButton = style([backButton]);
 export const center = style([f.flexAlignCenter, f.flex1, appBarMinHeight]);
 
 export const centerMain = style({
-  width: vars.appBar.center.mainWidth,
+  display: "flex",
   color: globalVars.appBar.textColor,
+  fontSize: globalVars.appBar.fontSize,
+  lineHeight: globalVars.appBar.lineHeight,
+  fontWeight: "bold",
   transition: transitions({
     height: globalVars.appBar.heightTransitionDuration,
     color: globalVars.appBar.textColorTransitionDuration,
@@ -204,20 +265,15 @@ export const centerMain = style({
     [`${android} &`]: {
       width: "100%",
       justifyContent: "flex-start",
-      fontSize: "1.125rem",
-      lineHeight: "1.5",
-      fontWeight: "bold",
       boxSizing: "border-box",
     },
     [`${cupertino} &`]: {
+      width: vars.appBar.center.mainWidth,
       position: "absolute",
-      display: "flex",
       alignItems: "center",
       justifyContent: "center",
       textAlign: "center",
       fontFamily: "-apple-system, BlinkMacSystemFont",
-      fontWeight: "bold",
-      fontSize: "1.125rem",
       left: "50%",
       transform: "translate(-50%)",
       height: globalVars.appBar.height,
@@ -236,9 +292,9 @@ export const centerMainEdge = style([
   f.cursorPointer,
   {
     left: "50%",
-    height: "1.25rem",
+    height: globalVars.appBar.fontSize,
     transform: "translate(-50%)",
-    maxWidth: "5rem",
+    maxWidth: `calc(${globalVars.appBar.fontSize} * 5)`,
     display: "none",
     width: vars.appBar.center.mainWidth,
     selectors: {
@@ -266,17 +322,13 @@ export const right = style([
   f.posRel,
   appBarMinHeight,
   {
-    marginLeft: "auto",
+    paddingLeft: globalVars.appBar.itemGap,
     ":empty": {
       display: "none",
     },
     selectors: {
-      [`${android} &`]: {
-        paddingLeft: "1rem",
-      },
       [`${cupertino} &`]: {
-        paddingLeft: "1rem",
-        paddingRight: "1rem",
+        paddingRight: globalVars.appBar.containerPadding,
       },
     },
   },

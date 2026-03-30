@@ -2,36 +2,40 @@ import type {
   ActivityBaseParams,
   ActivityDefinition,
   Config,
+  InferActivityParams,
+  RegisteredActivityName,
 } from "@stackflow/config";
 import {
   type CoreStore,
-  type PushedEvent,
   makeCoreStore,
   makeEvent,
+  type PushedEvent,
 } from "@stackflow/core";
 import React, { useMemo } from "react";
-import MainRenderer from "../__internal__/MainRenderer";
+import { ActivityComponentMapProvider } from "../__internal__/ActivityComponentMapProvider";
+import type { ActivityComponentType } from "../__internal__/ActivityComponentType";
 import { makeActivityId } from "../__internal__/activity";
 import { CoreProvider } from "../__internal__/core";
+import MainRenderer from "../__internal__/MainRenderer";
 import { PluginsProvider } from "../__internal__/plugins";
 import { isBrowser, makeRef } from "../__internal__/utils";
-import type { ActivityComponentType, StackflowReactPlugin } from "../stable";
+import type { StackflowReactPlugin } from "../stable";
 import type { Actions } from "./Actions";
 import { ConfigProvider } from "./ConfigProvider";
-import type { StackComponentType } from "./StackComponentType";
-import type { StepActions } from "./StepActions";
-import { loaderPlugin } from "./loader";
+import { DataLoaderProvider, loaderPlugin } from "./loader";
 import { makeActions } from "./makeActions";
 import { makeStepActions } from "./makeStepActions";
+import type { StackComponentType } from "./StackComponentType";
+import type { StepActions } from "./StepActions";
 
 export type StackflowPluginsEntry =
   | StackflowReactPlugin<never>
   | StackflowPluginsEntry[];
 
 export type StackflowInput<
-  T extends ActivityDefinition<string>,
+  T extends ActivityDefinition<RegisteredActivityName>,
   R extends {
-    [activityName in T["name"]]: ActivityComponentType<any>;
+    [activityName in RegisteredActivityName]: ActivityComponentType<any>;
   },
 > = {
   config: Config<T>;
@@ -46,11 +50,29 @@ export type StackflowOutput = {
 };
 
 export function stackflow<
-  T extends ActivityDefinition<string>,
+  T extends ActivityDefinition<RegisteredActivityName>,
   R extends {
-    [activityName in T["name"]]: ActivityComponentType<any>;
+    [activityName in RegisteredActivityName]: ActivityComponentType<
+      InferActivityParams<activityName>
+    >;
   },
 >(input: StackflowInput<T, R>): StackflowOutput {
+  const loadData = (activityName: string, activityParams: {}) => {
+    const activityConfig = input.config.activities.find(
+      (activity) => activity.name === activityName,
+    );
+
+    if (!activityConfig) {
+      throw new Error(`Activity ${activityName} is not registered.`);
+    }
+
+    const loaderData = activityConfig.loader?.({
+      params: activityParams,
+      config: input.config,
+    });
+
+    return loaderData;
+  };
   const plugins = [
     ...(input.plugins ?? [])
       .flat(Number.POSITIVE_INFINITY as 0)
@@ -59,7 +81,7 @@ export function stackflow<
     /**
      * `loaderPlugin()` must be placed after `historySyncPlugin()`
      */
-    loaderPlugin(input.config),
+    loaderPlugin(input, loadData),
   ];
 
   const enoughPastTime = () =>
@@ -128,20 +150,24 @@ export function stackflow<
         plugins,
         handlers: {
           onInitialActivityIgnored: (initialPushedEvents) => {
-            console.warn(
-              `Stackflow - Some plugin overrides an "initialActivity" option. The "initialActivity" option you set to "${
-                (initialPushedEvents[0] as PushedEvent).activityName
-              }" in the "stackflow" is ignored.`,
-            );
+            if (isBrowser()) {
+              console.warn(
+                `Stackflow - Some plugin overrides an "initialActivity" option. The "initialActivity" option you set to "${
+                  (initialPushedEvents[0] as PushedEvent).activityName
+                }" in the "stackflow" is ignored.`,
+              );
+            }
           },
           onInitialActivityNotFound: () => {
-            console.warn(
-              "Stackflow -" +
-                " There is no initial activity." +
-                " If you want to set the initial activity," +
-                " add the `initialActivity` option of the `stackflow()` function or" +
-                " add a plugin that sets the initial activity. (e.g. `@stackflow/plugin-history-sync`)",
-            );
+            if (isBrowser()) {
+              console.warn(
+                "Stackflow -" +
+                  " There is no initial activity." +
+                  " If you want to set the initial activity," +
+                  " add the `initialActivity` option of the `stackflow()` function or" +
+                  " add a plugin that sets the initial activity. (e.g. `@stackflow/plugin-history-sync`)",
+              );
+            }
           },
         },
       });
@@ -158,10 +184,11 @@ export function stackflow<
       <ConfigProvider value={input.config}>
         <PluginsProvider value={coreStore.pluginInstances}>
           <CoreProvider coreStore={coreStore}>
-            <MainRenderer
-              activityComponentMap={input.components}
-              initialContext={initialContext}
-            />
+            <ActivityComponentMapProvider value={input.components}>
+              <DataLoaderProvider loadData={loadData}>
+                <MainRenderer initialContext={initialContext} />
+              </DataLoaderProvider>
+            </ActivityComponentMapProvider>
           </CoreProvider>
         </PluginsProvider>
       </ConfigProvider>

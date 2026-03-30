@@ -1,14 +1,16 @@
-import type { Stack } from "../Stack";
 import type {
+  PausedEvent,
   PoppedEvent,
   PushedEvent,
   ReplacedEvent,
+  ResumedEvent,
   StepPoppedEvent,
   StepPushedEvent,
   StepReplacedEvent,
 } from "../event-types";
 import type { BaseDomainEvent } from "../event-types/_base";
 import type { DispatchEvent } from "../event-utils";
+import type { Stack } from "../Stack";
 
 export type StackflowActions = {
   /**
@@ -50,4 +52,14 @@ export type StackflowActions = {
    * Remove current step
    */
   stepPop: (params?: Omit<StepPoppedEvent, keyof BaseDomainEvent>) => void;
+
+  /**
+   * Pause stack change
+   */
+  pause: (params?: Omit<PausedEvent, keyof BaseDomainEvent>) => void;
+
+  /**
+   * Resume paused stack
+   */
+  resume: (params?: Omit<ResumedEvent, keyof BaseDomainEvent>) => void;
 };

@@ -1,0 +1,29 @@
+# 코드 스플리팅
+
+액티비티 별로 코드 스플리팅을 한 뒤 올바르게 전환효과를 렌더링하기 위해서는 아래와 같이 설정이 필요해요.
+
+```tsx
+// as-is:
+import { lazy } from "react";
+import { stackflow } from "@stackflow/react/future";
+
+stackflow({
+  // ...
+  components: {
+    MyActivity: lazy(() => import("./activities/MyActivity")),
+  },
+});
+
+// to-be:
+import { stackflow, lazy } from "@stackflow/react/future";
+
+stackflow({
+  // ...
+  components: {
+    // `@stackflow/react/future`의 `lazy()`로 교체
+    MyActivity: lazy(() => import("./activities/MyActivity")),
+  },
+});
+```
+
+이는 해당 JS 애셋을 가져오는 동안 (Promise가 pending 상태인 동안) 스택 상태 변화를 잠시 멈추고, 로딩이 완료되면 다시 상태 변경을 재개하기 위함입니다.

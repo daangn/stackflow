@@ -1,0 +1,29 @@
+# Code Splitting
+
+To properly render transition effects after splitting code by activity, you need to set it up as follows.
+
+```tsx
+// as-is:
+import { lazy } from "react";
+import { stackflow } from "@stackflow/react/future";
+
+stackflow({
+  // ...
+  components: {
+    MyActivity: lazy(() => import("./activities/MyActivity")),
+  },
+});
+
+// to-be:
+import { stackflow, lazy } from "@stackflow/react/future";
+
+stackflow({
+  // ...
+  components: {
+    // replace `lazy()` from `@stackflow/react/future`
+    MyActivity: lazy(() => import("./activities/MyActivity")),
+  },
+});
+```
+
+This is to pause the stack state mutating while fetching the corresponding JS asset (while the Promise is pending), and resume the state mutating again once the loading is complete.

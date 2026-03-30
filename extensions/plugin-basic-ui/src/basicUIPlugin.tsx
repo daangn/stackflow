@@ -53,7 +53,7 @@ export const basicUIPlugin: (
     return (
       <GlobalOptionsProvider
         value={{
-          ...options,
+          ..._options,
           theme: initialContext?.theme ?? _options.theme,
         }}
       >
@@ -61,23 +61,27 @@ export const basicUIPlugin: (
           className={compact([
             css.stackWrapper({
               theme: initialContext?.theme ?? _options.theme,
-              loading: stack.globalTransitionState === "loading",
             }),
             _options.rootClassName,
           ]).join(" ")}
           style={assignInlineVars(
             compactMap({
               [css.globalVars.backgroundColor]: _options.backgroundColor,
+              [css.globalVars.backgroundImage]: _options.backgroundImage,
               [css.globalVars.dimBackgroundColor]: _options.dimBackgroundColor,
+              [css.globalVars.dimHeight]: _options.dimHeight,
               [css.globalVars.transitionDuration]:
                 `${stack.transitionDuration}ms`,
               [css.globalVars.computedTransitionDuration]:
                 stack.globalTransitionState === "loading"
                   ? `${stack.transitionDuration}ms`
                   : "0ms",
+              [css.globalVars.defaultTransitionOffSet]:
+                _options.defaultTransitionOffSet,
               [css.globalVars.appBar.borderColor]: _options.appBar?.borderColor,
               [css.globalVars.appBar.borderSize]: _options.appBar?.borderSize,
               [css.globalVars.appBar.height]: _options.appBar?.height,
+              [css.globalVars.appBar.minHeight]: _options.appBar?.minHeight,
               [css.globalVars.appBar.iconColor]: _options.appBar?.iconColor,
               [css.globalVars.appBar.textColor]: _options.appBar?.textColor,
               [css.globalVars.appBar.minSafeAreaInsetTop]:
@@ -85,6 +89,13 @@ export const basicUIPlugin: (
               [css.globalVars.bottomSheet.borderRadius]:
                 _options.bottomSheet?.borderRadius,
               [css.globalVars.modal.borderRadius]: _options.modal?.borderRadius,
+              [css.globalVars.appBar.containerPadding]:
+                _options.appBar?.containerPadding,
+              [css.globalVars.appBar.fontSize]: _options.appBar?.fontSize,
+              [css.globalVars.appBar.lineHeight]: _options.appBar?.lineHeight,
+              [css.globalVars.appBar.hitSlop]: _options.appBar?.hitSlop,
+              [css.globalVars.appBar.itemGap]: _options.appBar?.itemGap,
+              [css.globalVars.edge.width]: _options.edge?.width,
             }),
           )}
         >

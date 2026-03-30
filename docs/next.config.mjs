@@ -15,3 +15,7 @@ export default withNextra({
     localeDetection: false,
   },
 });
+
+import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
+
+initOpenNextCloudflareForDev();

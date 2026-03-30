@@ -7,9 +7,12 @@ import { recipe } from "@vanilla-extract/recipes";
 
 const GLOBAL_VARS = {
   backgroundColor: "background-color",
+  backgroundImage: "background-image",
   dimBackgroundColor: "dim-background-color",
+  dimHeight: "dim-height",
   transitionDuration: "transition-duration",
   computedTransitionDuration: "computed-transition-duration",
+  defaultTransitionOffSet: "default-transition-off-set",
   appBar: {
     borderColor: "app-bar-border-color",
     borderColorTransitionDuration: "app-bar-border-color-transition-duration",
@@ -24,8 +27,16 @@ const GLOBAL_VARS = {
     backgroundColor: "app-bar-background-color",
     backgroundColorTransitionDuration:
       "app-bar-background-color-transition-duration",
+    backgroundImage: "app-bar-background-image",
+    backgroundImageTransitionDuration:
+      "app-bar-background-image-transition-duration",
     overflow: "app-bar-overflow",
     minSafeAreaInsetTop: "app-bar-min-safe-area-inset-top",
+    containerPadding: "app-bar-container-padding",
+    itemGap: "app-bar-item-gap",
+    fontSize: "app-bar-font-size",
+    lineHeight: "app-bar-line-height",
+    hitSlop: "app-bar-hit-slop",
   },
   bottomSheet: {
     borderRadius: "bottom-sheet-border-radius",
@@ -33,6 +44,9 @@ const GLOBAL_VARS = {
   modal: {
     borderRadius: "modal-border-radius",
     maxWidth: "modal-max-width",
+  },
+  edge: {
+    width: "edge-width",
   },
 };
 
@@ -45,9 +59,12 @@ export type GlobalVars = typeof GLOBAL_VARS;
 
 const androidValues: GlobalVars = {
   backgroundColor: "#fff",
+  backgroundImage: "unset",
   dimBackgroundColor: "rgba(0, 0, 0, 0.15)",
+  dimHeight: "10rem",
   transitionDuration: "0s",
   computedTransitionDuration: "0s",
+  defaultTransitionOffSet: "10rem",
   appBar: {
     borderColor: "rgba(0, 0, 0, 0.07)",
     borderColorTransitionDuration: "0s",
@@ -61,8 +78,15 @@ const androidValues: GlobalVars = {
     textColorTransitionDuration: "0s",
     backgroundColor: "#fff",
     backgroundColorTransitionDuration: "0s",
+    backgroundImage: "unset",
+    backgroundImageTransitionDuration: "0s",
     overflow: "hidden",
     minSafeAreaInsetTop: "0px",
+    containerPadding: "1rem",
+    itemGap: "1rem",
+    fontSize: "1.125rem",
+    hitSlop: "0.5rem",
+    lineHeight: "1.5",
   },
   bottomSheet: {
     borderRadius: "1rem",
@@ -71,15 +95,21 @@ const androidValues: GlobalVars = {
     borderRadius: "1rem",
     maxWidth: "100%",
   },
+  edge: {
+    width: "1.25rem",
+  },
 };
 
 const cupertinoValues: GlobalVars = {
   ...androidValues,
+  dimHeight: "100%",
+  defaultTransitionOffSet: "100%",
   appBar: {
     ...androidValues.appBar,
     height: "2.75rem",
     minHeight: "2.75rem",
     borderSize: "0.5px",
+    lineHeight: "normal",
   },
 };
 
@@ -107,11 +137,6 @@ export const stackWrapper = recipe({
     theme: {
       android,
       cupertino,
-    },
-    loading: {
-      true: {
-        pointerEvents: "none",
-      },
     },
   },
 });

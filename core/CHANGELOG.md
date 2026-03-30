@@ -1,5 +1,30 @@
 # @stackflow/core
 
+## 1.3.1
+
+### Patch Changes
+
+- 4d3b294: fix(core): prevent duplicate setInterval in dispatchEvent
+
+## 1.3.0
+
+### Minor Changes
+
+- 83ee5ed: Expose events used to build a stack via `Stack.events`
+
+## 1.2.0
+
+### Minor Changes
+
+- cfa7af8: Supports dynamic import for activities, and delays transition effects while loading an activity or waiting for a loader response
+- cfa7af8: feat(core, react): add `hasZIndex` option in `useStepFlow()`
+
+## 1.1.1
+
+### Patch Changes
+
+- 5fc54cb: Made `divideBy` to be friendly to type inference.
+
 ## 1.1.0
 
 ### Minor Changes

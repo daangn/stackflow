@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/link",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/daangn/stackflow.git",
@@ -41,12 +41,12 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "@stackflow/config": "^1.2.0",
-    "@stackflow/core": "^1.1.0",
+    "@stackflow/config": "^1.2.1",
+    "@stackflow/core": "^1.1.1",
     "@stackflow/esbuild-config": "^1.0.3",
-    "@stackflow/plugin-history-sync": "^1.7.0",
+    "@stackflow/plugin-history-sync": "^1.7.1",
     "@stackflow/plugin-preload": "^1.4.3",
-    "@stackflow/react": "^1.4.0",
+    "@stackflow/react": "^1.4.2",
     "@types/react": "^18.3.3",
     "esbuild": "^0.23.0",
     "esbuild-plugin-file-path-extensions": "^2.1.3",

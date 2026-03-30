@@ -55,7 +55,7 @@ export type TypeActivities = typeof activities;
 이후 각 액티비티 내에서 `useActivityPreloadRef()` 훅을 통해 해당 `preloadRef` 값을 가져올 수 있어요.
 
 ```tsx showLineNumbers filename="MyActivity.ts" copy
-import { ActivityComponentType } from "@stackflow/react";
+import type { ActivityComponentType } from "@stackflow/react";
 import { useActivityPreloadRef } from "@stackflow/plugin-preload";
 
 const MyActivity: ActivityComponentType = () => {
@@ -82,7 +82,7 @@ export const { usePreloader } = createPreloader<TypeActivities>();
 ```
 
 ```tsx showLineNumbers filename="MyActivity.ts" copy
-import { ActivityComponentType } from "@stackflow/react";
+import type { ActivityComponentType } from "@stackflow/react";
 import { usePreloader } from "./usePreloader";
 
 const MyActivity:  = () => {

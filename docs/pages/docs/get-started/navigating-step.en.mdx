@@ -20,7 +20,7 @@ You can use steps when you want to have a virtual stack state within a single ac
 Use the `useStepFlow()` hook created in `stackflow.ts`. Through the `stepPush()` function within this hook, you can stack a new step as follows.
 
 ```tsx showLineNumbers filename="Article.tsx" copy /stepPush/
-import { ActivityComponentType } from "@stackflow/react";
+import type { ActivityComponentType } from "@stackflow/react";
 import { AppScreen } from "@stackflow/plugin-basic-ui";
 import { useStepFlow } from "./stackflow";
 
@@ -57,7 +57,7 @@ export default Article;
 You can replace the current step using the `stepReplace()` function in `useStepFlow()`.
 
 ```tsx showLineNumbers filename="Article.tsx" copy /stepReplace/
-import { ActivityComponentType } from "@stackflow/react";
+import type { ActivityComponentType } from "@stackflow/react";
 import { AppScreen } from "@stackflow/plugin-basic-ui";
 import { useStepFlow } from "./stackflow";
 
@@ -93,7 +93,7 @@ export default Article;
 You can delete the current step using the `stepPop()` function in `useStepFlow()`.
 
 ```tsx showLineNumbers filename="Article.tsx" copy /stepPop/
-import { ActivityComponentType } from "@stackflow/react";
+import type { ActivityComponentType } from "@stackflow/react";
 import { AppScreen } from "@stackflow/plugin-basic-ui";
 import { useStepFlow } from "./stackflow";
 

@@ -1,4 +1,6 @@
+import type { BaseDomainEvent } from "event-types/_base";
 import type {
+  DomainEvent,
   PoppedEvent,
   PushedEvent,
   ReplacedEvent,
@@ -19,6 +21,8 @@ export type ActivityStep = {
   };
   enteredBy: PushedEvent | ReplacedEvent | StepPushedEvent | StepReplacedEvent;
   exitedBy?: ReplacedEvent | PoppedEvent | StepReplacedEvent | StepPoppedEvent;
+  zIndex: number;
+  hasZIndex?: boolean;
 };
 
 export type Activity = {
@@ -47,5 +51,7 @@ export type Stack = {
   activities: Activity[];
   registeredActivities: RegisteredActivity[];
   transitionDuration: number;
-  globalTransitionState: "idle" | "loading";
+  globalTransitionState: "idle" | "loading" | "paused";
+  pausedEvents?: DomainEvent[];
+  events: DomainEvent[];
 };

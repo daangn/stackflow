@@ -8,5 +8,6 @@ export type StepPushedEvent = BaseDomainEvent<
       [key: string]: string | undefined;
     };
     targetActivityId?: string;
+    hasZIndex?: boolean;
   }
 >;

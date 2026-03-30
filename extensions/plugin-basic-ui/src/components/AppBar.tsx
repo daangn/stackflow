@@ -6,6 +6,7 @@ import {
   useNullableActivity,
 } from "@stackflow/react-ui-core";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
+import clsx from "clsx";
 import { forwardRef, useRef } from "react";
 import { IconBack, IconClose } from "../assets";
 import { useGlobalOptions } from "../basicUIPlugin";
@@ -15,7 +16,7 @@ import { compactMap } from "../utils";
 import * as css from "./AppBar.css";
 import * as appScreenCss from "./AppScreen.css";
 
-type AppBarProps = Partial<
+export type AppBarProps = Partial<
   Pick<
     GlobalVars["appBar"],
     | "borderColor"
@@ -30,6 +31,14 @@ type AppBarProps = Partial<
     | "textColorTransitionDuration"
     | "backgroundColor"
     | "backgroundColorTransitionDuration"
+    | "backgroundImage"
+    | "backgroundImageTransitionDuration"
+    | "minHeight"
+    | "fontSize"
+    | "lineHeight"
+    | "hitSlop"
+    | "containerPadding"
+    | "itemGap"
   >
 > & {
   title?: React.ReactNode;
@@ -58,6 +67,8 @@ type AppBarProps = Partial<
   modalPresentationStyle?: "fullScreen";
   activityEnterStyle?: "slideInLeft";
   onTopClick?: (e: React.MouseEvent) => void;
+  enterStyle?: "cover";
+  className?: string;
 };
 const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
   (
@@ -83,7 +94,17 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
       overflow,
       backgroundColor,
       backgroundColorTransitionDuration,
+      backgroundImage,
+      backgroundImageTransitionDuration,
       onTopClick,
+      enterStyle,
+      className,
+      minHeight,
+      fontSize,
+      lineHeight,
+      hitSlop,
+      containerPadding,
+      itemGap,
     },
     ref,
   ) => {
@@ -104,6 +125,12 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
       innerRef: centerRef,
       enable: globalOptions.theme === "cupertino",
     });
+
+    const isUnderAppBarSlideTransition =
+      ((globalOptions.theme === "cupertino" &&
+        modalPresentationStyle !== "fullScreen") ||
+        activityEnterStyle === "slideInLeft") &&
+      enterStyle !== "cover";
 
     const onBackClick = (e: React.MouseEvent<HTMLButtonElement>) => {
       if (backButton && "onClick" in backButton && backButton.onClick) {
@@ -268,11 +295,15 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
     return (
       <div
         ref={ref}
-        className={css.appBar({
-          border,
-          modalPresentationStyle,
-          activityEnterStyle,
-        })}
+        className={clsx(
+          css.appBar({
+            border,
+            modalPresentationStyle,
+            activityEnterStyle,
+            enterStyle,
+          }),
+          className,
+        )}
         style={assignInlineVars(
           compactMap({
             [globalVars.appBar.iconColor]: iconColor,
@@ -290,10 +321,26 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
               heightTransitionDuration,
             [globalVars.appBar.overflow]: overflow,
             [globalVars.appBar.backgroundColor]:
-              backgroundColor || globalVars.backgroundColor,
+              backgroundColor ??
+              (isUnderAppBarSlideTransition
+                ? globalVars.backgroundColor
+                : "transparent"),
             [globalVars.appBar.backgroundColorTransitionDuration]:
               backgroundColorTransitionDuration,
+            [globalVars.appBar.backgroundImage]:
+              backgroundImage ??
+              (isUnderAppBarSlideTransition
+                ? globalVars.appBar.backgroundImage
+                : "none"),
+            [globalVars.appBar.backgroundImageTransitionDuration]:
+              backgroundImageTransitionDuration,
             [appScreenCss.vars.appBar.center.mainWidth]: `${maxWidth}px`,
+            [globalVars.appBar.minHeight]: minHeight,
+            [globalVars.appBar.containerPadding]: containerPadding,
+            [globalVars.appBar.fontSize]: fontSize,
+            [globalVars.appBar.hitSlop]: hitSlop,
+            [globalVars.appBar.lineHeight]: lineHeight,
+            [globalVars.appBar.itemGap]: itemGap,
           }),
         )}
         data-part="appBar"

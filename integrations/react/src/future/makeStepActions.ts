@@ -1,6 +1,10 @@
 import type { ActivityBaseParams } from "@stackflow/config";
 import type { CoreStore } from "@stackflow/core";
-import { makeStepId } from "../__internal__/activity";
+import {
+  findActivityById,
+  findLatestActiveActivity,
+  makeStepId,
+} from "../__internal__/activity";
 import type { StepActions } from "./StepActions";
 
 export function makeStepActions(
@@ -8,21 +12,57 @@ export function makeStepActions(
 ): StepActions<ActivityBaseParams> {
   return {
     pushStep(stepParams, options) {
+      const coreActions = getCoreActions();
+      const activities = coreActions?.getStack().activities;
+      const findTargetActivity = options?.targetActivityId
+        ? findActivityById(options.targetActivityId)
+        : findLatestActiveActivity;
+      const targetActivity = activities && findTargetActivity(activities);
+
+      if (!targetActivity) {
+        throw new Error(
+          "Cannot push a step. The target activity is not found.",
+        );
+      }
+
+      const nextParams =
+        typeof stepParams === "function"
+          ? stepParams(targetActivity.params)
+          : stepParams;
       const stepId = makeStepId();
 
-      getCoreActions()?.stepPush({
+      coreActions.stepPush({
         stepId,
-        stepParams,
+        stepParams: nextParams,
         targetActivityId: options?.targetActivityId,
+        hasZIndex: options?.hasZIndex,
       });
     },
     replaceStep(stepParams, options) {
+      const coreActions = getCoreActions();
+      const activities = coreActions?.getStack().activities;
+      const findTargetActivity = options?.targetActivityId
+        ? findActivityById(options.targetActivityId)
+        : findLatestActiveActivity;
+      const targetActivity = activities && findTargetActivity(activities);
+
+      if (!targetActivity) {
+        throw new Error(
+          "Cannot push a step. The target activity is not found.",
+        );
+      }
+
+      const nextParams =
+        typeof stepParams === "function"
+          ? stepParams(targetActivity.params)
+          : stepParams;
       const stepId = makeStepId();
 
-      getCoreActions()?.stepReplace({
+      coreActions.stepReplace({
         stepId,
-        stepParams,
+        stepParams: nextParams,
         targetActivityId: options?.targetActivityId,
+        hasZIndex: options?.hasZIndex,
       });
     },
     popStep(options) {

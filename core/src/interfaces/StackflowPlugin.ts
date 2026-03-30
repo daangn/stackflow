@@ -1,7 +1,9 @@
 import type {
+  PausedEvent,
   PoppedEvent,
   PushedEvent,
   ReplacedEvent,
+  ResumedEvent,
   StepPoppedEvent,
   StepPushedEvent,
   StepReplacedEvent,
@@ -67,6 +69,20 @@ export type StackflowPlugin = () => {
   >;
 
   /**
+   * Called before `PausedEvent` dispatched
+   */
+  onBeforePause?: StackflowPluginPreEffectHook<
+    Omit<PausedEvent, keyof BaseDomainEvent>
+  >;
+
+  /**
+   * Called before `ResumedEvent` dispatched
+   */
+  onBeforeResume?: StackflowPluginPreEffectHook<
+    Omit<ResumedEvent, keyof BaseDomainEvent>
+  >;
+
+  /**
    * Called when the `push` procedure is complete and the actual rendering is finished
    */
   onPushed?: StackflowPluginPostEffectHook<"PUSHED">;
@@ -95,6 +111,16 @@ export type StackflowPlugin = () => {
    * Called when the `stepPop` procedure is complete and the actual rendering is finished
    */
   onStepPopped?: StackflowPluginPostEffectHook<"STEP_POPPED">;
+
+  /**
+   * Called when stack paused
+   */
+  onPaused?: StackflowPluginPostEffectHook<"PAUSED">;
+
+  /**
+   * Called when stack resumed
+   */
+  onResumed?: StackflowPluginPostEffectHook<"RESUMED">;
 
   /**
    * Called after any changes to the stack state are reflected in the actual rendering
