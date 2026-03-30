@@ -6,7 +6,13 @@ import {
 } from "@sentry/core";
 import type { StackflowPlugin } from "@stackflow/core";
 
-type NavigationAction = "push" | "pop" | "replace";
+type NavigationAction =
+  | "push"
+  | "pop"
+  | "replace"
+  | "stepPush"
+  | "stepPop"
+  | "stepReplace";
 
 function startNavigationSpan(
   action: NavigationAction,
@@ -72,6 +78,26 @@ export function sentryPlugin(): StackflowPlugin {
       const { name, params } = effect.activity;
       startNavigationSpan("replace", name, params);
       addNavigationBreadcrumb("replace", name, params);
+    },
+    onStepPushed({ effect }) {
+      const { name, params } = effect.activity;
+      const stepParams = effect.step.params;
+      startNavigationSpan("stepPush", name, { ...params, ...stepParams });
+      addNavigationBreadcrumb("stepPush", name, { ...params, ...stepParams });
+    },
+    onStepPopped({ effect }) {
+      const { name, params } = effect.activity;
+      startNavigationSpan("stepPop", name, params);
+      addNavigationBreadcrumb("stepPop", name, params);
+    },
+    onStepReplaced({ effect }) {
+      const { name, params } = effect.activity;
+      const stepParams = effect.step.params;
+      startNavigationSpan("stepReplace", name, { ...params, ...stepParams });
+      addNavigationBreadcrumb("stepReplace", name, {
+        ...params,
+        ...stepParams,
+      });
     },
   });
 }
