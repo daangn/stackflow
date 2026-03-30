@@ -1,9 +1,25 @@
 # plugin-sentry
 
-Add Sentry plugin for analysis tracing activity events
+Stackflow plugin for Sentry browser tracing. Automatically creates navigation spans for `push`, `pop`, and `replace` activity transitions.
 
-## Initialize
+## Setup
 
+1. Initialize Sentry with the `stackflowBrowserTracingIntegration`:
+
+```typescript
+import * as Sentry from "@sentry/browser";
+import { stackflowBrowserTracingIntegration } from "@stackflow/plugin-sentry";
+
+Sentry.init({
+  dsn: "https://xxx.ingest.us.sentry.io/xxx",
+  integrations: [
+    stackflowBrowserTracingIntegration(),
+    // ... other integrations
+  ],
+});
+```
+
+2. Add `sentryPlugin()` to your stackflow configuration:
 
 ```typescript
 import { stackflow } from "@stackflow/react";
@@ -14,12 +30,8 @@ const { Stack, useFlow } = stackflow({
     // ...
   },
   plugins: [
-    sentryPlugin({
-      dsn: "https://xxx.ingest.us.sentry.io/xxx", // Sentry project dsn key
-      // ... 
-      // Additional Options for initiate Sentry
-      // https://docs.sentry.io/platforms/javascript/configuration/options/
-    }),
+    sentryPlugin(),
+    // ... other plugins
   ],
 });
 ```

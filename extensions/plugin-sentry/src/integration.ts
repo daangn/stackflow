@@ -1,5 +1,4 @@
 import {
-  WINDOW,
   browserTracingIntegration as originalBrowserTracingIntegration,
   startBrowserTracingPageLoadSpan,
 } from "@sentry/browser";
@@ -9,11 +8,9 @@ import {
   SEMANTIC_ATTRIBUTE_SENTRY_SOURCE,
 } from "@sentry/core";
 
-import type { Integration } from "@sentry/types";
-
 export function stackflowBrowserTracingIntegration(
   options: Parameters<typeof originalBrowserTracingIntegration>[0] = {},
-): Integration {
+) {
   const browserTracingIntegrationInstance = originalBrowserTracingIntegration({
     ...options,
     instrumentNavigation: false,
@@ -23,10 +20,13 @@ export function stackflowBrowserTracingIntegration(
 
   return {
     ...browserTracingIntegrationInstance,
-    afterAllSetup(client) {
+    afterAllSetup(
+      client: Parameters<typeof browserTracingIntegrationInstance.afterAllSetup>[0],
+    ) {
       browserTracingIntegrationInstance.afterAllSetup(client);
 
-      const initialWindowLocation = WINDOW.location;
+      const initialWindowLocation =
+        typeof window !== "undefined" ? window.location : undefined;
 
       if (instrumentPageLoad && initialWindowLocation) {
         startBrowserTracingPageLoadSpan(client, {

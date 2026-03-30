@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/plugin-sentry",
-  "version": "0,0,0",
+  "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/daangn/stackflow.git",
@@ -29,15 +29,17 @@
     "clean": "rimraf dist",
     "dev": "yarn build:js --watch && yarn build:dts --watch"
   },
+  "peerDependencies": {
+    "@sentry/browser": ">=8.0.0",
+    "@sentry/core": ">=8.0.0",
+    "@stackflow/core": "^1.1.0-canary.0"
+  },
   "devDependencies": {
-    "@sentry/types": "^8.37.1",
+    "@sentry/browser": "^10.46.0",
+    "@sentry/core": "^10.46.0",
     "@stackflow/core": "^1.1.0",
     "@stackflow/esbuild-config": "^1.0.3",
     "esbuild": "^0.23.0",
     "typescript": "^5.5.3"
-  },
-  "dependencies": {
-    "@sentry/browser": "^8.37.1",
-    "@sentry/core": "^8.37.1"
   }
 }

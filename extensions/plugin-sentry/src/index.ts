@@ -1,1 +1,2 @@
-export * from "./sentryPlugin";
+export { sentryPlugin } from "./sentryPlugin";
+export { stackflowBrowserTracingIntegration } from "./integration";
