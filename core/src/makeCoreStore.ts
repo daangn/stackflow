@@ -92,9 +92,10 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
     },
     dispatchEvent(name, params) {
       const newEvent = makeEvent(name, params);
+
       const nextStackValue = aggregate(
         [...events.value, newEvent],
-        new Date().getTime(),
+        Math.max(newEvent.eventDate, new Date().getTime()),
       );
 
       events.value.push(newEvent);
