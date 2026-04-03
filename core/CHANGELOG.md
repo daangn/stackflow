@@ -1,5 +1,11 @@
 # @stackflow/core
 
+## 1.3.2
+
+### Patch Changes
+
+- 0160f82: Fix intermittent incorrect transition state when `transitionDuration` is set to 0 by ensuring `now >= eventDate` in the initial aggregate call within `dispatchEvent`.
+
 ## 1.3.1
 
 ### Patch Changes
