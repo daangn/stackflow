@@ -1,7 +1,7 @@
 import { defineConfig } from "@stackflow/config";
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
 import type { StackflowReactPlugin } from "@stackflow/react";
-import { stackflow } from "@stackflow/react/future";
+import { stackflow, useFlow } from "@stackflow/react/future";
 import { act, render } from "@testing-library/react";
 import React, { useCallback, useState } from "react";
 import { lifecyclePlugin } from "./lifecyclePlugin";
@@ -11,6 +11,7 @@ declare module "@stackflow/config" {
   interface Register {
     ActivityA: {};
     ActivityB: {};
+    ActivityC: {};
   }
 }
 
@@ -393,6 +394,70 @@ describe("lifecyclePlugin", () => {
       });
 
       expect(cleanupB).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe("reentrancy", () => {
+    it("handles navigation inside focus callback without corrupting state", async () => {
+      const cleanupA = jest.fn();
+      const effectC = jest.fn();
+
+      function ActivityA() {
+        useFocusEffect(() => cleanupA);
+        return <div>A</div>;
+      }
+      function ActivityB() {
+        const { replace } = useFlow();
+
+        // On focus, immediately redirect to C
+        useFocusEffect(
+          useCallback(() => {
+            replace("ActivityC", {});
+          }, []),
+        );
+        return <div>B</div>;
+      }
+      function ActivityC() {
+        useFocusEffect(effectC);
+        return <div>C</div>;
+      }
+
+      const config = defineConfig({
+        activities: [
+          { name: "ActivityA" as const },
+          { name: "ActivityB" as const },
+          { name: "ActivityC" as const },
+        ],
+        transitionDuration: 0,
+        initialActivity: () => "ActivityA" as const,
+      });
+
+      const { Stack, actions } = stackflow({
+        config,
+        components: {
+          ActivityA,
+          ActivityB,
+          ActivityC,
+        },
+        plugins: [basicRendererPlugin(), lifecyclePlugin()],
+      });
+
+      await act(async () => {
+        render(<Stack />);
+      });
+
+      // Push B → B focuses → B's callback triggers replace to C
+      await act(async () => {
+        actions.push("ActivityB" as any, {});
+      });
+
+      // A's cleanup should have run (A blurred when B was pushed)
+      expect(cleanupA).toHaveBeenCalled();
+
+      // C should eventually get focused
+      await act(async () => {});
+
+      expect(effectC).toHaveBeenCalled();
     });
   });
 });
