@@ -15,44 +15,20 @@ if ! git show-ref --verify --quiet refs/remotes/origin/"$BASE_BRANCH"; then
   exit 1
 fi
 
-echo "Detecting changed packages compared to $BASE_BRANCH..."
+echo "Detecting changed packages and their dependents compared to $BASE_BRANCH..."
 
-# Get changes from all relevant directories
-CHANGED_PATHS=$(git diff --name-only origin/"$BASE_BRANCH"...HEAD | grep -E '^(config|core|extensions/|integrations/|packages/)' | sort -u)
+# Use Yarn's built-in workspace dependency graph to find changed packages + all transitive dependents
+PUBLISH_PATHS=$(yarn workspaces list --since=origin/"$BASE_BRANCH" --recursive --no-private --json | node -e "
+  const lines = require('fs').readFileSync('/dev/stdin', 'utf8').trim();
+  if (!lines) process.exit(0);
+  const paths = lines.split('\n').map(l => './' + JSON.parse(l).location);
+  console.log(paths.join(' '));
+")
 
-if [ -z "$CHANGED_PATHS" ]; then
+if [ -z "$PUBLISH_PATHS" ]; then
   echo "No changed packages detected."
   exit 0
 fi
 
-# Process each changed path and format it for publishing
-PUBLISH_PATHS=""
-while IFS= read -r path; do
-  case "$path" in
-    config/*|core/*)
-      # For config and core, include the first directory
-      dir=$(echo "$path" | cut -d '/' -f 1)
-      if [[ ! "$PUBLISH_PATHS" =~ "./$dir " ]]; then
-        PUBLISH_PATHS+="./$dir "
-      fi
-      ;;
-    extensions/*|integrations/*|packages/*)
-      # For extensions, integrations, and packages, include the full path up to the second level
-      dir=$(echo "$path" | cut -d '/' -f 1-2)
-      if [[ ! "$PUBLISH_PATHS" =~ "./$dir " ]]; then
-        PUBLISH_PATHS+="./$dir "
-      fi
-      ;;
-  esac
-done <<< "$CHANGED_PATHS"
-
-# Remove trailing space
-PUBLISH_PATHS="${PUBLISH_PATHS% }"
-
-if [ -n "$PUBLISH_PATHS" ]; then
-  echo "Publishing changed packages: $PUBLISH_PATHS"
-  yarn dlx pkg-pr-new publish --compact $PUBLISH_PATHS --packageManager yarn --template './demo'
-else
-  echo "No publishable packages found."
-  exit 0
-fi
+echo "Publishing packages: $PUBLISH_PATHS"
+yarn dlx pkg-pr-new publish --compact $PUBLISH_PATHS --packageManager yarn --template './demo'
