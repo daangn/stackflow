@@ -398,33 +398,29 @@ describe("lifecyclePlugin", () => {
   });
 
   describe("reentrancy", () => {
-    it("handles navigation inside refocus callback (onChanged path) without crash", async () => {
-      // Scenario: A refocuses via pop B → A's onChanged callback pushes C
-      // This triggers dispatchEvent → onChanged reentrantly from within onChanged.
-      const cleanupA = jest.fn();
+    it("refocus 콜백에서 시작된 navigation의 blur는 현재 콜백이 반환된 후 처리된다", async () => {
+      // Scenario: pop B → A refocuses (onChanged) → A's callback pushes C
+      // The push triggers reentrant onChanged. With the reentrancy guard,
+      // the inner transition is deferred until the outer focus completes.
+      const callLog: string[] = [];
       let pushC: (() => void) | null = null;
 
       function ActivityA() {
-        const { push } = useFlow();
-
         useFocusEffect(
           useCallback(() => {
-            // On refocus, push C (triggers reentrant onChanged)
+            callLog.push("A:focus:start");
             if (pushC) {
               const fn = pushC;
               pushC = null;
               fn();
+              // If reentrant blur ran synchronously, "A:cleanup" would appear here
             }
-            return cleanupA;
+            callLog.push("A:focus:end");
+            return () => {
+              callLog.push("A:cleanup");
+            };
           }, []),
         );
-
-        // Expose push for arming
-        pushC = null;
-        React.useEffect(() => {
-          // We'll arm pushC externally before pop
-        }, []);
-
         return <div>A</div>;
       }
       function ActivityB() {
@@ -458,25 +454,33 @@ describe("lifecyclePlugin", () => {
         render(<Stack />);
       });
 
+      // Initial: A focuses
+      expect(callLog).toEqual(["A:focus:start", "A:focus:end"]);
+      callLog.length = 0;
+
       // Push B → A blurs
       await act(async () => {
         actions.push("ActivityB" as any, {});
       });
 
-      expect(cleanupA).toHaveBeenCalledTimes(1);
+      expect(callLog).toEqual(["A:cleanup"]);
+      callLog.length = 0;
 
-      // Arm: when A refocuses via onChanged, push C
+      // Arm: when A refocuses, push C
       pushC = () => actions.push("ActivityC" as any, {});
 
-      // Pop B → A refocuses (onChanged) → callback pushes C (reentrant onChanged)
-      // Should not crash or corrupt state
+      // Pop B → A refocuses → callback pushes C (reentrant) → deferred blur
       await act(async () => {
         actions.pop();
       });
 
-      // A's refocus callback ran and triggered push C.
-      // A should have been blurred again (cleanup 2nd time) due to C being pushed.
-      expect(cleanupA).toHaveBeenCalledTimes(2);
+      // Key assertion: A:focus completes fully before A:cleanup runs again.
+      // Without the reentrancy guard, A:cleanup would be missing (cleanup not yet in store).
+      expect(callLog).toEqual([
+        "A:focus:start",
+        "A:focus:end",
+        "A:cleanup",
+      ]);
     });
   });
 });
