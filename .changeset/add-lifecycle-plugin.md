@@ -1,5 +1,5 @@
 ---
-"@stackflow/react": minor
+"@stackflow/plugin-lifecycle": minor
 ---
 
 Add lifecyclePlugin and useFocusEffect hook for activity focus/blur lifecycle

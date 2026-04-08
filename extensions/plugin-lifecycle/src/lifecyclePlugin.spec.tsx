@@ -1,9 +1,10 @@
 import { defineConfig } from "@stackflow/config";
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
+import type { StackflowReactPlugin } from "@stackflow/react";
+import { stackflow } from "@stackflow/react/future";
 import { act, render } from "@testing-library/react";
 import React, { useState } from "react";
-import type { StackflowReactPlugin } from "../../__internal__/StackflowReactPlugin";
-import { stackflow } from "../stackflow";
+import { lifecyclePlugin } from "./lifecyclePlugin";
 import { useFocusEffect } from "./useFocusEffect";
 
 declare module "@stackflow/config" {
@@ -31,7 +32,7 @@ function setupStack({
   return stackflow({
     config,
     components: { ActivityA, ActivityB },
-    plugins: [basicRendererPlugin(), ...extraPlugins],
+    plugins: [basicRendererPlugin(), lifecyclePlugin(), ...extraPlugins],
   });
 }
 
@@ -247,6 +248,68 @@ describe("lifecyclePlugin", () => {
       });
 
       expect(secondEffect).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe("cleanup called exactly once on pop", () => {
+    it("does not double-invoke cleanup from both onChanged blur and useEffect unmount", async () => {
+      const cleanup = jest.fn();
+
+      function ActivityA() {
+        return <div>A</div>;
+      }
+      function ActivityB() {
+        useFocusEffect(() => cleanup);
+        return <div>B</div>;
+      }
+
+      const { Stack, actions } = setupStack({ ActivityA, ActivityB });
+
+      await act(async () => {
+        render(<Stack />);
+      });
+
+      // Push B
+      await act(async () => {
+        actions.push("ActivityB", {});
+      });
+
+      // Pop B — triggers onChanged blur + useEffect unmount cleanup
+      await act(async () => {
+        actions.pop();
+      });
+
+      expect(cleanup).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe("replace", () => {
+    it("runs cleanup on the replaced activity", async () => {
+      const cleanupA = jest.fn();
+      const effectA = jest.fn(() => cleanupA);
+
+      function ActivityA() {
+        useFocusEffect(effectA);
+        return <div>A</div>;
+      }
+      function ActivityB() {
+        return <div>B</div>;
+      }
+
+      const { Stack, actions } = setupStack({ ActivityA, ActivityB });
+
+      await act(async () => {
+        render(<Stack />);
+      });
+
+      expect(effectA).toHaveBeenCalledTimes(1);
+
+      // Replace A with B — A blurs, B focuses
+      await act(async () => {
+        actions.replace("ActivityB", {});
+      });
+
+      expect(cleanupA).toHaveBeenCalledTimes(1);
     });
   });
 

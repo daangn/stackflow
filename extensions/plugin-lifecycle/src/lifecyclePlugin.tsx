@@ -1,4 +1,4 @@
-import type { StackflowReactPlugin } from "../../__internal__/StackflowReactPlugin";
+import type { StackflowReactPlugin } from "@stackflow/react";
 import { createContext, createElement, useContext } from "react";
 import { runSafely } from "./runSafely";
 

@@ -22,7 +22,6 @@ import { isBrowser, makeRef } from "../__internal__/utils";
 import type { StackflowReactPlugin } from "../stable";
 import type { Actions } from "./Actions";
 import { ConfigProvider } from "./ConfigProvider";
-import { lifecyclePlugin } from "./lifecycle";
 import { DataLoaderProvider, loaderPlugin } from "./loader";
 import { makeActions } from "./makeActions";
 import { makeStepActions } from "./makeStepActions";
@@ -75,8 +74,6 @@ export function stackflow<
     return loaderData;
   };
   const plugins = [
-    lifecyclePlugin(),
-
     ...(input.plugins ?? [])
       .flat(Number.POSITIVE_INFINITY as 0)
       .map((p) => p as StackflowReactPlugin),
