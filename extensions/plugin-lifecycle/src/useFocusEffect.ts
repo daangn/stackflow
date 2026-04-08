@@ -37,6 +37,9 @@ export function useFocusEffect(
   const activity = useActivity();
   const idRef = useRef<symbol>(Symbol());
   const callbackRef = useRef(callback);
+  // Render-phase ref write: ensures onChanged always reads the latest callback,
+  // even if it fires synchronously before useEffect commits. This is an
+  // idempotent assignment (safe under Strict Mode double-render).
   callbackRef.current = callback;
 
   useEffect(() => {
