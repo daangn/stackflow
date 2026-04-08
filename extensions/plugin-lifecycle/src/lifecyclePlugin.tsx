@@ -18,7 +18,7 @@ type LifecycleStore = {
   cleanups: Map<symbol, (() => void) | void>;
   prevActiveActivityId: string | null;
   processing: boolean;
-  pendingTransition: PendingTransition | null;
+  pendingTransitions: PendingTransition[];
 };
 
 const LifecycleStoreContext = createContext<LifecycleStore | null>(null);
@@ -66,7 +66,7 @@ export function lifecyclePlugin(): StackflowReactPlugin {
     cleanups: new Map(),
     prevActiveActivityId: null,
     processing: false,
-    pendingTransition: null,
+    pendingTransitions: [],
   };
 
   return () => ({
@@ -101,7 +101,7 @@ export function lifecyclePlugin(): StackflowReactPlugin {
       // Reentrancy guard: if a callback triggers navigation (push/pop/replace),
       // onChanged fires synchronously again. Defer to avoid corrupted iteration.
       if (store.processing) {
-        store.pendingTransition = { prevActiveId, currentActiveId };
+        store.pendingTransitions.push({ prevActiveId, currentActiveId });
         return;
       }
 
@@ -110,9 +110,8 @@ export function lifecyclePlugin(): StackflowReactPlugin {
         processTransition(store, prevActiveId, currentActiveId);
 
         // Drain queued transitions from reentrant onChanged calls
-        while (store.pendingTransition !== null) {
-          const pending = store.pendingTransition;
-          store.pendingTransition = null;
+        while (store.pendingTransitions.length > 0) {
+          const pending = store.pendingTransitions.shift()!;
           processTransition(
             store,
             pending.prevActiveId,
