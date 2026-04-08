@@ -3,7 +3,7 @@ import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
 import type { StackflowReactPlugin } from "@stackflow/react";
 import { stackflow } from "@stackflow/react/future";
 import { act, render } from "@testing-library/react";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { lifecyclePlugin } from "./lifecyclePlugin";
 import { useFocusEffect } from "./useFocusEffect";
 
@@ -206,7 +206,47 @@ describe("lifecyclePlugin", () => {
     });
   });
 
-  describe("callbackRef pattern", () => {
+  describe("callback change while focused", () => {
+    it("cleanup→re-runs when callback reference changes (useCallback deps)", async () => {
+      const cleanup1 = jest.fn();
+      const effect1 = jest.fn(() => cleanup1);
+      const cleanup2 = jest.fn();
+      const effect2 = jest.fn(() => cleanup2);
+      let setArticleId!: (v: string) => void;
+
+      function ActivityA() {
+        const [articleId, _setArticleId] = useState("1");
+        setArticleId = _setArticleId;
+
+        useFocusEffect(
+          useCallback(() => {
+            return articleId === "1" ? effect1() : effect2();
+          }, [articleId]),
+        );
+        return <div>A</div>;
+      }
+      function ActivityB() {
+        return <div>B</div>;
+      }
+
+      const { Stack } = setupStack({ ActivityA, ActivityB });
+
+      await act(async () => {
+        render(<Stack />);
+      });
+
+      expect(effect1).toHaveBeenCalledTimes(1);
+      expect(effect2).not.toHaveBeenCalled();
+
+      // Change articleId while focused → cleanup old, run new
+      await act(async () => {
+        setArticleId("2");
+      });
+
+      expect(cleanup1).toHaveBeenCalledTimes(1);
+      expect(effect2).toHaveBeenCalledTimes(1);
+    });
+
     it("uses the latest callback on refocus", async () => {
       const firstEffect = jest.fn();
       const secondEffect = jest.fn();
@@ -216,7 +256,11 @@ describe("lifecyclePlugin", () => {
         const [useSecond, _setUseSecond] = useState(false);
         setUseSecond = _setUseSecond;
 
-        useFocusEffect(useSecond ? secondEffect : firstEffect);
+        useFocusEffect(
+          useCallback(() => {
+            return useSecond ? secondEffect() : firstEffect();
+          }, [useSecond]),
+        );
         return <div>A</div>;
       }
       function ActivityB() {
@@ -232,22 +276,24 @@ describe("lifecyclePlugin", () => {
       expect(firstEffect).toHaveBeenCalledTimes(1);
       expect(secondEffect).not.toHaveBeenCalled();
 
-      // Update callback while A is active
+      // Update dep while A is active → cleanup→re-run
       await act(async () => {
         setUseSecond(true);
       });
 
-      // Push B → A blurs
+      expect(secondEffect).toHaveBeenCalledTimes(1);
+
+      // Push B → blur cleanup
       await act(async () => {
         actions.push("ActivityB", {});
       });
 
-      // Pop B → A refocuses → should use secondEffect
+      // Pop B → refocus → secondEffect again
       await act(async () => {
         actions.pop();
       });
 
-      expect(secondEffect).toHaveBeenCalledTimes(1);
+      expect(secondEffect).toHaveBeenCalledTimes(2);
     });
   });
 

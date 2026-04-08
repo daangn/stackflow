@@ -5,7 +5,19 @@ import { useLifecycleStore } from "./lifecyclePlugin";
 
 /**
  * Registers a callback that runs when the activity gains focus (becomes active)
- * and an optional cleanup that runs on blur (loses active status) or unmount.
+ * and an optional cleanup that runs on blur (loses active status), unmount,
+ * or when the callback reference changes.
+ *
+ * Wrap the callback in `React.useCallback` to control when cleanup→re-run occurs:
+ *
+ * ```tsx
+ * useFocusEffect(
+ *   useCallback(() => {
+ *     const sub = subscribe(articleId);
+ *     return () => sub.unsubscribe();
+ *   }, [articleId])
+ * );
+ * ```
  *
  * The callback is invoked from the plugin's `onChanged` handler — outside the
  * React render cycle — so it executes immediately on activity transition without
@@ -25,10 +37,7 @@ export function useFocusEffect(
   const activity = useActivity();
   const idRef = useRef<symbol>(Symbol());
   const callbackRef = useRef(callback);
-
-  useEffect(() => {
-    callbackRef.current = callback;
-  });
+  callbackRef.current = callback;
 
   useEffect(() => {
     const id = idRef.current;
@@ -39,8 +48,8 @@ export function useFocusEffect(
       callbackRef,
     });
 
-    // Initial focus: if activity is already active, run effect immediately.
-    // activity.isActive is intentionally not in deps — onChanged handles subsequent transitions.
+    // If activity is currently active, run effect immediately.
+    // This handles both initial focus and callback changes while focused.
     if (activity.isActive) {
       const cleanup = runSafely(callbackRef.current);
       store.cleanups.set(id, cleanup);
@@ -52,5 +61,8 @@ export function useFocusEffect(
       store.cleanups.delete(id);
       store.entries.delete(id);
     };
-  }, [store, activity.id]);
+    // callback in deps: changes trigger cleanup→re-run (React Navigation pattern)
+    // activity.isActive intentionally excluded — onChanged handles subsequent transitions
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [store, activity.id, callback]);
 }
