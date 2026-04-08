@@ -64,6 +64,22 @@ Reference these guidelines when:
 - `advanced-event-handler-refs` - Store latest event handlers in refs for stable callbacks
 - `advanced-init-once` - Initialize app-level singletons once, not per mount
 
+## Review Discipline
+
+### Never downgrade CRITICAL violations
+
+When a CRITICAL rule violation is detected (e.g., `react-rules-purity`), **fix it — do not rationalize exceptions**. Common rationalizations to reject:
+
+- "It's idempotent, so Strict Mode double-render is fine" — Strict Mode is not the only concern; Concurrent Mode render abandonment is the real danger.
+- "It works in practice" — Concurrent features may not be active today but the code must be correct when they are.
+- "Adding a comment explaining the intent is sufficient" — A comment does not prevent the bug. If the rule says "don't do X", the fix is to stop doing X.
+
+If you detect a violation, move to "fix" before moving to "judge severity." The cost of a false positive (unnecessary refactor) is far lower than the cost of a false negative (shipping a Concurrent Mode bug).
+
+### Re-check after refactors
+
+When a fix for one issue changes the code structure (e.g., adding `callback` to useEffect deps), **re-run the full rule check** on the modified code. A fix for one rule can regress another — e.g., fixing `rerender-dependencies` can reintroduce a `react-rules-purity` violation if it moves code back into render phase.
+
 ## How to Use
 
 Read individual rule files for detailed explanations and code examples:
