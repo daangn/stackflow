@@ -8,10 +8,17 @@ type FocusEffectEntry = {
   callbackRef: { current: () => (() => void) | void };
 };
 
+type PendingTransition = {
+  prevActiveId: string | null;
+  currentActiveId: string | null;
+};
+
 type LifecycleStore = {
   entries: Map<symbol, FocusEffectEntry>;
   cleanups: Map<symbol, (() => void) | void>;
   prevActiveActivityId: string | null;
+  processing: boolean;
+  pendingTransition: PendingTransition | null;
 };
 
 const LifecycleStoreContext = createContext<LifecycleStore | null>(null);
@@ -26,11 +33,40 @@ export function useLifecycleStore(): LifecycleStore {
   return store;
 }
 
+function processTransition(
+  store: LifecycleStore,
+  prevActiveId: string | null,
+  currentActiveId: string | null,
+): void {
+  // 1. Blur: cleanup previous active activity's entries
+  if (prevActiveId !== null) {
+    for (const [entryId, entry] of store.entries) {
+      if (entry.activityId === prevActiveId) {
+        const cleanup = store.cleanups.get(entryId);
+        runSafely(cleanup);
+        store.cleanups.delete(entryId);
+      }
+    }
+  }
+
+  // 2. Focus: run effects for new active activity's entries
+  if (currentActiveId !== null) {
+    for (const [entryId, entry] of store.entries) {
+      if (entry.activityId === currentActiveId) {
+        const cleanup = runSafely(entry.callbackRef.current);
+        store.cleanups.set(entryId, cleanup);
+      }
+    }
+  }
+}
+
 export function lifecyclePlugin(): StackflowReactPlugin {
   const store: LifecycleStore = {
     entries: new Map(),
     cleanups: new Map(),
     prevActiveActivityId: null,
+    processing: false,
+    pendingTransition: null,
   };
 
   return () => ({
@@ -62,25 +98,29 @@ export function lifecyclePlugin(): StackflowReactPlugin {
       const prevActiveId = store.prevActiveActivityId;
       store.prevActiveActivityId = currentActiveId;
 
-      // 1. Blur: cleanup previous active activity's entries
-      if (prevActiveId !== null) {
-        for (const [entryId, entry] of store.entries) {
-          if (entry.activityId === prevActiveId) {
-            const cleanup = store.cleanups.get(entryId);
-            runSafely(cleanup);
-            store.cleanups.delete(entryId);
-          }
-        }
+      // Reentrancy guard: if a callback triggers navigation (push/pop/replace),
+      // onChanged fires synchronously again. Defer to avoid corrupted iteration.
+      if (store.processing) {
+        store.pendingTransition = { prevActiveId, currentActiveId };
+        return;
       }
 
-      // 2. Focus: run effects for new active activity's entries
-      if (currentActiveId !== null) {
-        for (const [entryId, entry] of store.entries) {
-          if (entry.activityId === currentActiveId) {
-            const cleanup = runSafely(entry.callbackRef.current);
-            store.cleanups.set(entryId, cleanup);
-          }
+      store.processing = true;
+      try {
+        processTransition(store, prevActiveId, currentActiveId);
+
+        // Drain queued transitions from reentrant onChanged calls
+        while (store.pendingTransition !== null) {
+          const pending = store.pendingTransition;
+          store.pendingTransition = null;
+          processTransition(
+            store,
+            pending.prevActiveId,
+            pending.currentActiveId,
+          );
         }
+      } finally {
+        store.processing = false;
       }
     },
   });
