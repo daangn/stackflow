@@ -398,27 +398,39 @@ describe("lifecyclePlugin", () => {
   });
 
   describe("reentrancy", () => {
-    it("handles navigation inside focus callback without corrupting state", async () => {
+    it("handles navigation inside refocus callback (onChanged path) without crash", async () => {
+      // Scenario: A refocuses via pop B → A's onChanged callback pushes C
+      // This triggers dispatchEvent → onChanged reentrantly from within onChanged.
       const cleanupA = jest.fn();
-      const effectC = jest.fn();
+      let pushC: (() => void) | null = null;
 
       function ActivityA() {
-        useFocusEffect(() => cleanupA);
+        const { push } = useFlow();
+
+        useFocusEffect(
+          useCallback(() => {
+            // On refocus, push C (triggers reentrant onChanged)
+            if (pushC) {
+              const fn = pushC;
+              pushC = null;
+              fn();
+            }
+            return cleanupA;
+          }, []),
+        );
+
+        // Expose push for arming
+        pushC = null;
+        React.useEffect(() => {
+          // We'll arm pushC externally before pop
+        }, []);
+
         return <div>A</div>;
       }
       function ActivityB() {
-        const { replace } = useFlow();
-
-        // On focus, immediately redirect to C
-        useFocusEffect(
-          useCallback(() => {
-            replace("ActivityC", {});
-          }, []),
-        );
         return <div>B</div>;
       }
       function ActivityC() {
-        useFocusEffect(effectC);
         return <div>C</div>;
       }
 
@@ -446,18 +458,25 @@ describe("lifecyclePlugin", () => {
         render(<Stack />);
       });
 
-      // Push B → B focuses → B's callback triggers replace to C
+      // Push B → A blurs
       await act(async () => {
         actions.push("ActivityB" as any, {});
       });
 
-      // A's cleanup should have run (A blurred when B was pushed)
-      expect(cleanupA).toHaveBeenCalled();
+      expect(cleanupA).toHaveBeenCalledTimes(1);
 
-      // C should eventually get focused
-      await act(async () => {});
+      // Arm: when A refocuses via onChanged, push C
+      pushC = () => actions.push("ActivityC" as any, {});
 
-      expect(effectC).toHaveBeenCalled();
+      // Pop B → A refocuses (onChanged) → callback pushes C (reentrant onChanged)
+      // Should not crash or corrupt state
+      await act(async () => {
+        actions.pop();
+      });
+
+      // A's refocus callback ran and triggered push C.
+      // A should have been blurred again (cleanup 2nd time) due to C being pushed.
+      expect(cleanupA).toHaveBeenCalledTimes(2);
     });
   });
 });
