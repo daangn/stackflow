@@ -53,3 +53,18 @@ function useWindowEvent(event: string, handler: (e) => void) {
 ```
 
 `useEffectEvent` provides a cleaner API for the same pattern: it creates a stable function reference that always calls the latest version of the handler.
+
+### When external code reads your ref: useEffect update is mandatory
+
+The "Correct" pattern above (update ref in `useEffect`) is not just an optimization — it becomes a **correctness requirement** when code outside React reads the ref synchronously.
+
+Examples of external readers:
+- Store/state-manager subscribers (e.g., `store.subscribe()`, Zustand/Redux middleware)
+- Event bus listeners (e.g., `EventEmitter.on()`)
+- Framework lifecycle hooks that fire outside React's render cycle
+
+If you update the ref during render instead of in useEffect, Concurrent Mode can abandon that render. The external reader then sees a callback from a render that never committed — a value that doesn't correspond to any real UI state.
+
+**Rule of thumb:** If anything outside React's tree can call `ref.current`, the ref must only be written in `useEffect`. The one-render staleness between render and commit is the correct trade-off — a stale-but-committed callback is always safer than an uncommitted one.
+
+See also: `react-rules-purity` Rule 6 for the full rationale and examples.
