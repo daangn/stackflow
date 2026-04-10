@@ -5,7 +5,7 @@ To properly render transition effects after splitting code by activity, you need
 ```tsx
 // as-is:
 import { lazy } from "react";
-import { stackflow } from "@stackflow/react/future";
+import { stackflow } from "@stackflow/react";
 
 stackflow({
   // ...
@@ -15,12 +15,12 @@ stackflow({
 });
 
 // to-be:
-import { stackflow, lazy } from "@stackflow/react/future";
+import { stackflow, lazy } from "@stackflow/react";
 
 stackflow({
   // ...
   components: {
-    // replace `lazy()` from `@stackflow/react/future`
+    // replace `lazy()` from `@stackflow/react`
     MyActivity: lazy(() => import("./activities/MyActivity")),
   },
 });

@@ -2,37 +2,31 @@ import { Callout } from "nextra-theme-docs";
 
 # Resolving Circular References with useFlow
 
-<Callout type="info" emoji="💡">
-  You can easily resolve the `useFlow()` circular reference issue by using the [Future API](/api-references/future-api/introduction). We recommend using the [Future API](/api-references/future-api/introduction).
-</Callout>
+In Stackflow 2.0, `useFlow()` and `useStepFlow()` are imported directly from `@stackflow/react`, so circular reference issues no longer occur in most cases.
 
-The `useFlow()` function returned by the `stackflow()` function utilizes the declared activity types. Therefore, `useFlow()` and activity components interlock, causing a circular dependency. By using the `useActions()` hook and importing the types separately, you can eliminate this circular dependency.
+If you are building a custom wrapper around `useActions()` and need to reference activity types, you can export the type from your stackflow setup:
 
 ```tsx showLineNumbers filename="stackflow.ts" copy
 import { stackflow } from "@stackflow/react";
+import { config } from "./stackflow.config";
 
-export const { Stack, activities } = stackflow({
-  activities: {
+export const { Stack } = stackflow({
+  config,
+  components: {
     // ...
   },
-  // ...
 });
-
-// Expose the type of activities like this.
-export type TypeActivities = typeof activities;
 ```
 
-```tsx showLineNumbers filename="stackflow.ts" copy
+```tsx showLineNumbers filename="useMyFlow.ts" copy
 import { useActions } from "@stackflow/react";
-
-// Only import the exposed activity type.
-import type { TypeActivities } from "./stackflow";
+import { config } from "./stackflow.config";
 
 export const useMyFlow = () => {
-  return useActions<TypeActivities>();
+  return useActions(config);
 };
 ```
 
-<Callout emoji="⚡️">
-  `TypeActivities` will be similarly utilized in future utility components/hooks.
+<Callout emoji="💡">
+  For the common case of navigating between activities, simply use `useFlow()` imported directly from `@stackflow/react` — no wrapper needed.
 </Callout>
