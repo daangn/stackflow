@@ -1,7 +1,7 @@
 import type { UrlPatternOptions } from "@stackflow/plugin-history-sync";
 import { makeTemplate, useRoutes } from "@stackflow/plugin-history-sync";
-import type { ActivityComponentType } from "@stackflow/react";
-import { useActions } from "@stackflow/react";
+import type { ActivityComponentTypeByParams } from "@stackflow/react";
+import { useFlow } from "@stackflow/react";
 import { forwardRef, useMemo, useRef } from "react";
 
 import { mergeRefs } from "./mergeRefs";
@@ -26,13 +26,13 @@ export type LinkProps<K, P> = {
 export type TypeLink<T extends { [activityName: string]: unknown } = {}> = <
   K extends Extract<keyof T, string>,
 >(
-  props: LinkProps<K, T[K] extends ActivityComponentType<infer U> ? U : never>,
+  props: LinkProps<K, T[K] extends ActivityComponentTypeByParams<infer U> ? U : never>,
 ) => React.ReactNode | null;
 
 export const Link: TypeLink = forwardRef(
   (props, ref: React.ForwardedRef<HTMLAnchorElement>) => {
     const routes = useRoutes();
-    const { push, replace } = useActions();
+    const { push, replace } = useFlow();
 
     const anchorRef = useRef<HTMLAnchorElement>(null);
 

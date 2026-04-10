@@ -5,7 +5,7 @@ import type {
   RegisteredActivityName,
 } from "@stackflow/config";
 import type { Route } from "@stackflow/plugin-history-sync";
-import { useConfig, useFlow } from "@stackflow/react/future";
+import { useConfig, useFlow } from "@stackflow/react";
 import { useMemo } from "react";
 import { omit } from "./omit";
 

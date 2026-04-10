@@ -1,4 +1,4 @@
-import { useActions } from "@stackflow/react";
+import { useFlow } from "@stackflow/react";
 import {
   useLazy,
   useNullableActivity,
@@ -33,7 +33,7 @@ const Modal: React.FC<ModalProps> = ({
   className,
 }) => {
   const activity = useNullableActivity();
-  const { pop } = useActions();
+  const { pop } = useFlow();
 
   const containerRef = useRef<HTMLDivElement>(null);
   const paperRef = useRef<HTMLDivElement>(null);

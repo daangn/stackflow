@@ -7,6 +7,6 @@ export function createLinkComponent<
   Link: TypeLink<T>;
 } {
   return {
-    Link,
+    Link: Link as TypeLink<T>,
   };
 }

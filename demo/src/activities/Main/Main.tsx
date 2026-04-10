@@ -1,5 +1,5 @@
-import type { ActivityComponentType } from "@stackflow/react/future";
-import { useLoaderData } from "@stackflow/react/future";
+import type { ActivityComponentType } from "@stackflow/react";
+import { useLoaderData } from "@stackflow/react";
 
 import IconBell from "../../assets/IconBell";
 import IconExpandMore from "../../assets/IconExpandMore";
