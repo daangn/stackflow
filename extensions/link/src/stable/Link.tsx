@@ -1,9 +1,8 @@
 import type { UrlPatternOptions } from "@stackflow/plugin-history-sync";
 import { makeTemplate, useRoutes } from "@stackflow/plugin-history-sync";
-import { usePreloader } from "@stackflow/plugin-preload";
 import type { ActivityComponentTypeByParams } from "@stackflow/react";
 import { useFlow } from "@stackflow/react";
-import { forwardRef, useEffect, useMemo, useReducer, useRef } from "react";
+import { forwardRef, useMemo, useRef } from "react";
 
 import { mergeRefs } from "./mergeRefs";
 import { omit } from "./omit";
@@ -33,13 +32,9 @@ export type TypeLink<T extends { [activityName: string]: unknown } = {}> = <
 export const Link: TypeLink = forwardRef(
   (props, ref: React.ForwardedRef<HTMLAnchorElement>) => {
     const routes = useRoutes();
-    const { preload } = usePreloader({
-      urlPatternOptions: props.urlPatternOptions,
-    });
     const { push, replace } = useFlow();
 
     const anchorRef = useRef<HTMLAnchorElement>(null);
-    const [preloaded, flagPreloaded] = useReducer(() => true, false);
 
     const href = useMemo(() => {
       const match = routes.find((r) => r.activityName === props.activityName);
@@ -53,32 +48,6 @@ export const Link: TypeLink = forwardRef(
 
       return path;
     }, [routes, props.activityName, props.activityParams]);
-
-    useEffect(() => {
-      if (preloaded || !anchorRef.current) {
-        return () => {};
-      }
-
-      const $anchor = anchorRef.current;
-
-      const observer = new IntersectionObserver(([{ isIntersecting }]) => {
-        if (isIntersecting) {
-          preload(props.activityName, props.activityParams, {
-            activityContext: {
-              path: href,
-            },
-          });
-          flagPreloaded();
-        }
-      });
-
-      observer.observe($anchor);
-
-      return () => {
-        observer.unobserve($anchor);
-        observer.disconnect();
-      };
-    }, [anchorRef, flagPreloaded]);
 
     const anchorProps = omit(props, [
       // Custom Props
