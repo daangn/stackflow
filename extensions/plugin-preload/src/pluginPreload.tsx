@@ -1,5 +1,5 @@
 import type {
-  ActivityComponentType,
+  ActivityComponentTypeByParams,
   StackflowReactPlugin,
 } from "@stackflow/react";
 
@@ -10,7 +10,7 @@ export type PreloadPluginOptions<
   T extends { [activityName: string]: unknown },
 > = {
   loaders: {
-    [key in Extract<keyof T, string>]?: T[key] extends ActivityComponentType<
+    [key in Extract<keyof T, string>]?: T[key] extends ActivityComponentTypeByParams<
       infer U extends { [key in keyof U]: string | undefined }
     >
       ? Loader<U>

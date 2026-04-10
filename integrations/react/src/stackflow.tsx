@@ -19,7 +19,7 @@ import { CoreProvider } from "./core";
 import MainRenderer from "./MainRenderer";
 import { PluginsProvider } from "./plugins";
 import { isBrowser, makeRef } from "./utils";
-import type { StackflowReactPlugin } from "../stable";
+import type { StackflowReactPlugin } from "./StackflowReactPlugin";
 import type { Actions } from "./Actions";
 import { ConfigProvider } from "./ConfigProvider";
 import { DataLoaderProvider, loaderPlugin } from "./loader";

@@ -9,7 +9,7 @@ interface RoutesProviderProps<T> {
   children: React.ReactNode;
 }
 export const RoutesProvider = <T,>(props: RoutesProviderProps<T>) => (
-  <RoutesContext.Provider value={props.routes}>
+  <RoutesContext.Provider value={props.routes as ActivityRoute<unknown>[]}>
     {props.children}
   </RoutesContext.Provider>
 );

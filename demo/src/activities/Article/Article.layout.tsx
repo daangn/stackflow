@@ -1,4 +1,4 @@
-import { layout } from "@stackflow/react/future";
+import { layout } from "@stackflow/react";
 import Layout from "../../components/Layout";
 
 const ArticleLayout = layout<"Article">(({ params: { title }, children }) => {

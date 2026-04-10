@@ -1,4 +1,4 @@
-import { useActions } from "@stackflow/react";
+import { useFlow } from "@stackflow/react";
 import {
   useLazy,
   useNullableActivity,
@@ -34,7 +34,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
   className,
 }) => {
   const activity = useNullableActivity();
-  const { pop } = useActions();
+  const { pop } = useFlow();
 
   const containerRef = useRef<HTMLDivElement>(null);
   const dimRef = useRef<HTMLDivElement>(null);

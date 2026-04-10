@@ -1,6 +1,6 @@
 import type { UrlPatternOptions } from "@stackflow/plugin-history-sync";
 import { makeTemplate, useRoutes } from "@stackflow/plugin-history-sync";
-import type { ActivityComponentType } from "@stackflow/react";
+import type { ActivityComponentTypeByParams } from "@stackflow/react";
 import { useMemo } from "react";
 
 import { useLoaders } from "./LoadersContext";
@@ -9,7 +9,7 @@ export type PreloadFunc<T extends { [activityName: string]: unknown }> = <
   K extends Extract<keyof T, string>,
 >(
   activityName: K,
-  activityParams: T[K] extends ActivityComponentType<infer U> ? U : {},
+  activityParams: T[K] extends ActivityComponentTypeByParams<infer U> ? U : {},
   options?: {
     activityContext?: {};
   },

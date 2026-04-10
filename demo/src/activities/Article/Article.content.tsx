@@ -2,7 +2,7 @@ import {
   content,
   useActivityParams,
   useLoaderData,
-} from "@stackflow/react/future";
+} from "@stackflow/react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import ArticleCard from "../../components/ArticleCard";
 import ArticleProfile from "../../components/ArticleProfile";

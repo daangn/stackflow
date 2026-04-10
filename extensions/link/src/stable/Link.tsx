@@ -1,8 +1,8 @@
 import type { UrlPatternOptions } from "@stackflow/plugin-history-sync";
 import { makeTemplate, useRoutes } from "@stackflow/plugin-history-sync";
 import { usePreloader } from "@stackflow/plugin-preload";
-import type { ActivityComponentType } from "@stackflow/react";
-import { useActions } from "@stackflow/react";
+import type { ActivityComponentTypeByParams } from "@stackflow/react";
+import { useFlow } from "@stackflow/react";
 import { forwardRef, useEffect, useMemo, useReducer, useRef } from "react";
 
 import { mergeRefs } from "./mergeRefs";
@@ -27,7 +27,7 @@ export type LinkProps<K, P> = {
 export type TypeLink<T extends { [activityName: string]: unknown } = {}> = <
   K extends Extract<keyof T, string>,
 >(
-  props: LinkProps<K, T[K] extends ActivityComponentType<infer U> ? U : never>,
+  props: LinkProps<K, T[K] extends ActivityComponentTypeByParams<infer U> ? U : never>,
 ) => React.ReactNode | null;
 
 export const Link: TypeLink = forwardRef(
@@ -36,7 +36,7 @@ export const Link: TypeLink = forwardRef(
     const { preload } = usePreloader({
       urlPatternOptions: props.urlPatternOptions,
     });
-    const { push, replace } = useActions();
+    const { push, replace } = useFlow();
 
     const anchorRef = useRef<HTMLAnchorElement>(null);
     const [preloaded, flagPreloaded] = useReducer(() => true, false);
