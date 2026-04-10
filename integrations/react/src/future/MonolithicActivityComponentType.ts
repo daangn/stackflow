@@ -1,5 +1,5 @@
 import type { LazyActivityComponentType } from "./LazyActivityComponentType";
-import type { StaticActivityComponentType } from "./StaticActivityComponentType";
+import type { StaticActivityComponentType } from "./BaseStaticActivityComponentType";
 
 export type MonolithicActivityComponentType<T extends {} = {}> =
   | StaticActivityComponentType<T>

@@ -1,12 +1,12 @@
-import type { LazyActivityComponentType } from "../__internal__/LazyActivityComponentType";
-import type { StaticActivityComponentType } from "../__internal__/StaticActivityComponentType";
-import { preloadableLazyComponent } from "../__internal__/utils/PreloadableLazyComponent";
+import type { LazyActivityComponentType } from "./LazyActivityComponentType";
+import type { StaticActivityComponentType } from "./BaseStaticActivityComponentType";
+import { preloadableLazyComponent } from "./utils/PreloadableLazyComponent";
 import {
   inspect,
   PromiseStatus,
   reject,
   resolve,
-} from "../__internal__/utils/SyncInspectablePromise";
+} from "./utils/SyncInspectablePromise";
 
 export function lazy<T extends { [K in keyof T]: any } = {}>(
   load: () => Promise<{ default: StaticActivityComponentType<T> }>,

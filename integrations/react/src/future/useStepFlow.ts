@@ -2,7 +2,7 @@ import type {
   InferActivityParams,
   RegisteredActivityName,
 } from "@stackflow/config";
-import { useCoreActions } from "../__internal__/core";
+import { useCoreActions } from "./core";
 import { makeStepActions } from "./makeStepActions";
 import type { StepActions } from "./StepActions";
 

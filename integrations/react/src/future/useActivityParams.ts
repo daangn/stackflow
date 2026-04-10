@@ -3,7 +3,7 @@ import type {
   RegisteredActivityName,
 } from "@stackflow/config";
 import { useContext } from "react";
-import { ActivityContext } from "../__internal__/activity/ActivityProvider";
+import { ActivityContext } from "./activity/ActivityProvider";
 
 export function useActivityParams<
   ActivityName extends RegisteredActivityName,

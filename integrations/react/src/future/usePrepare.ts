@@ -3,11 +3,11 @@ import type {
   RegisteredActivityName,
 } from "@stackflow/config";
 import { useCallback } from "react";
-import { useActivityComponentMap } from "../__internal__/ActivityComponentMapProvider";
+import { useActivityComponentMap } from "./ActivityComponentMapProvider";
 import {
   getContentComponent,
   isStructuredActivityComponent,
-} from "../__internal__/StructuredActivityComponentType";
+} from "./StructuredActivityComponentType";
 import { useDataLoader } from "./loader";
 import { useConfig } from "./useConfig";
 

@@ -1,8 +1,8 @@
 import { useMemo } from "react";
-import { makeActivityId } from "../__internal__/activity";
-import { useCoreActions } from "../__internal__/core";
-import type { MonolithicActivityComponentType } from "../__internal__/MonolithicActivityComponentType";
-import { useTransition } from "../__internal__/shims";
+import { makeActivityId } from "../future/activity";
+import { useCoreActions } from "../future/core";
+import type { MonolithicActivityComponentType } from "../future/MonolithicActivityComponentType";
+import { useTransition } from "../future/shims";
 import type { BaseActivities } from "./BaseActivities";
 
 function parseActionOptions(options?: { animate?: boolean }) {

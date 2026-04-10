@@ -4,7 +4,7 @@ import {
   findActivityById,
   findLatestActiveActivity,
   makeStepId,
-} from "../__internal__/activity";
+} from "./activity";
 import type { StepActions } from "./StepActions";
 
 export function makeStepActions(

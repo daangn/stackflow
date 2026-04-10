@@ -1,7 +1,7 @@
 import type { ActivityStep } from "@stackflow/core";
 import { useContext } from "react";
 
-import { ActivityContext } from "../__internal__/activity/ActivityProvider";
+import { ActivityContext } from "../future/activity/ActivityProvider";
 
 /**
  * Get current step

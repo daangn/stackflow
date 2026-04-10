@@ -1,6 +1,6 @@
 import type { ActivityLoaderArgs } from "@stackflow/config";
-import { resolve } from "../../__internal__/utils/SyncInspectablePromise";
-import { useThenable } from "../../__internal__/utils/useThenable";
+import { resolve } from "../utils/SyncInspectablePromise";
+import { useThenable } from "../utils/useThenable";
 import { useActivity } from "../../stable";
 
 export function useLoaderData<

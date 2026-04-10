@@ -1,8 +1,8 @@
-export type { ActivityComponentType as ActivityComponentTypeByParams } from "../__internal__/ActivityComponentType";
-export * from "../__internal__/activity/useActivity";
-export * from "../__internal__/StackflowReactPlugin";
-export * from "../__internal__/StructuredActivityComponentType";
-export * from "../__internal__/stack/useStack";
+export type { ActivityComponentType as ActivityComponentTypeByParams } from "./BaseActivityComponentType";
+export * from "./activity/useActivity";
+export * from "./StackflowReactPlugin";
+export * from "./StructuredActivityComponentType";
+export * from "./stack/useStack";
 export * from "./Actions";
 export * from "./ActivityComponentType";
 export * from "./lazy";

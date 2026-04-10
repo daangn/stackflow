@@ -1,5 +1,5 @@
 import type { ActivityRegisteredEvent } from "@stackflow/core";
-import type { MonolithicActivityComponentType } from "../__internal__/MonolithicActivityComponentType";
+import type { MonolithicActivityComponentType } from "../future/MonolithicActivityComponentType";
 
 export type BaseActivities = {
   [activityName: string]:

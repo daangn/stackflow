@@ -1,5 +1,5 @@
 import type { CoreStore } from "@stackflow/core";
-import { makeActivityId } from "../__internal__/activity";
+import { makeActivityId } from "./activity";
 import type { Actions } from "./Actions";
 
 function parseActionOptions(options?: { animate?: boolean }) {
