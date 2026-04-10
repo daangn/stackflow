@@ -1,6 +1,7 @@
 {
   "get-started": "Get Started",
   "advanced": "Advanced Usage",
+  "migration-v2": "Migration Guide (v1 → v2)",
   "ai-integration": "AI Integration",
   "changelog": "Changelog"
 }

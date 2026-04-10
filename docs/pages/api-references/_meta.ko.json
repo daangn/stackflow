@@ -1,4 +1,4 @@
 {
-  "future-api": "퓨처 API",
+  "config": "@stackflow/config",
   "plugins": "플러그인"
 }

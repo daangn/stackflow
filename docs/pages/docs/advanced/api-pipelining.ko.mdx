@@ -1,10 +1,10 @@
 import { APIPipeLiningDiagram } from "../../../components/diagrams/APIPipeLiningDiagram";
 
-# API Pipelining
+# API 파이프라이닝
 
-<APIPipeLiningDiagram locale="en" />
+<APIPipeLiningDiagram locale="ko" />
 
-As shown above, you can reduce the time taken for initial rendering by simultaneously initializing the React app and making API requests in the entry file. By utilizing the Stackflow Future API, you can implement API pipelining in a clean manner.
+위와 같이 엔트리 파일에서 리액트 앱 초기화와 API 요청을 동시에 수행해 초기 렌더링까지 걸리는 시간을 단축할 수 있어요. Stackflow Loader API를 활용하면 API 파이프라이닝을 깔끔한 방법으로 구현할 수 있어요.
 
 ```tsx showLineNumbers filename="entry.ts" copy
 import { makeTemplate } from "@stackflow/plugin-history-sync";
@@ -21,28 +21,28 @@ async function main() {
       continue;
     }
 
-    // 1. Request API data (do not await)
+    // 1. API 데이터를 요청해요 (await하지 않아요)
     initialLoaderData = activity.loader({ params: match as any });
     break;
   }
 
-  // 2. Download the React app simultaneously.
+  // 2. 동시에 리액트 앱을 다운로드 받아요.
   const { renderApp } = await import("./renderApp");
 
-  // 3. Combine them.
+  // 3. 둘을 결합해요.
   renderApp({ initialLoaderData });
 }
 
 main();
 ```
 
-By passing initialLoaderData to Stack, it overrides the result with the received loaderData instead of executing the first loader.
+Stack에 initialLoaderData를 전달하면 첫번째 loader를 실행시키는 대신 받은 loaderData로 결과를 덮어써요.
 ```tsx showLineNumbers filename="renderApp.ts" copy
 export function renderApp({ initialLoaderData }: { initialLoaderData: unknown }) {
   const root = ReactDOM.createRoot(document.getElementById("root")!);
 
   root.render(
-    // Error and loading handling is possible in React
+    // 에러와 로딩 처리는 React에서 가능해요
     <ErrorBoundary>
       <Suspense>
         <Stack initialLoaderData={initialLoaderData} />

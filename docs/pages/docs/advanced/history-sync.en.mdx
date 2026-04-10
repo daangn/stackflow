@@ -11,18 +11,38 @@ Install `@stackflow/plugin-history-sync` using the following command.
 npm install @stackflow/plugin-history-sync
 ```
 
-Once the installation is complete, register the plugin in the `plugins` field of the `stackflow()` function as follows.
+Once the installation is complete, declare routes in `stackflow.config.ts` and register the plugin in `stackflow()`.
+
+```tsx showLineNumbers filename="stackflow.config.ts" copy
+import { defineConfig } from "@stackflow/config";
+
+export const config = defineConfig({
+  activities: [
+    {
+      name: "MyActivity",
+      route: "/my-activity",
+    },
+    {
+      name: "Article",
+      route: "/articles/:articleId",
+    },
+  ],
+  transitionDuration: 350,
+});
+```
 
 ```tsx showLineNumbers filename="stackflow.ts" copy
 import { stackflow } from "@stackflow/react";
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
+import { basicUIPlugin } from "@stackflow/plugin-basic-ui";
 import { historySyncPlugin } from "@stackflow/plugin-history-sync";
+import { config } from "./stackflow.config";
 import MyActivity from "./MyActivity";
 import Article from "./Article";
 
 const { Stack, useFlow } = stackflow({
-  transitionDuration: 350,
-  activities: {
+  config,
+  components: {
     MyActivity,
     Article,
   },
@@ -32,24 +52,19 @@ const { Stack, useFlow } = stackflow({
       theme: "cupertino",
     }),
     historySyncPlugin({
-      routes: {
-        MyActivity: "/my-activity",
-        Article: "/articles/:articleId",
-      },
+      config,
       fallbackActivity: () => "MyActivity",
     }),
   ],
-  // The initialActivity option no longer works because it is overridden by the historySyncPlugin.
-  // initialActivity: () => "MyActivity",
 });
 ```
 
-The `historySyncPlugin` accepts two options: `routes` and `fallbackActivity`.
+The `historySyncPlugin` accepts two options: `config` and `fallbackActivity`.
 
 <APITable>
 |                  |            |                                                                                                                                                                                                                     |
 | ---------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| routes           | `object`   | Connects activities with URL templates. You can represent activity parameters as Path Parameters. If an activity's parameter is not in the URL template, it will automatically be represented as a Query Parameter. |
+| config           | `object`   | The config object created with `defineConfig()`. Routes are read from the `route` field of each activity definition.                                                                                               |
 | fallbackActivity | `function` | Determines which activity to navigate to if there is no matching URL when first entering. Typically, you create a 404 page and assign it here.                                                                      |
 </APITable>
 

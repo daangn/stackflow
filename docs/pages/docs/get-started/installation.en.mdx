@@ -8,20 +8,40 @@ import { Steps } from "nextra/components";
 Install Stackflow in your React project with the following command.
 
 ```sh npm2yarn copy
-npm install @stackflow/core @stackflow/react
+npm install @stackflow/config @stackflow/core @stackflow/react
+```
+
+### Create a Config File
+Create a `stackflow.config.ts` file and define your activities using `defineConfig()`.
+
+```ts showLineNumbers filename="stackflow.config.ts" copy
+import { defineConfig } from "@stackflow/config";
+
+export const config = defineConfig({
+  activities: [
+    {
+      name: "MyActivity",
+    },
+  ],
+  transitionDuration: 350,
+});
 ```
 
 ### Initialize Stackflow
-Create a JavaScript (or TypeScript) file in your project and call the `stackflow()` function to generate the `<Stack />` and `useFlow()` functions.
+Create a JavaScript (or TypeScript) file in your project and call the `stackflow()` function, passing the config and activity components.
 
-And export them so that `<Stack />` and `useFlow()` can be used in other components.
+Export the result so that `<Stack />` and `useFlow()` can be used in other components.
 
 ```ts showLineNumbers filename="stackflow.ts" copy
 import { stackflow } from "@stackflow/react";
+import { config } from "./stackflow.config";
+import MyActivity from "./MyActivity";
 
 export const { Stack, useFlow } = stackflow({
-  transitionDuration: 350,
-  activities: {},
+  config,
+  components: {
+    MyActivity,
+  },
   plugins: [],
 });
 ```
@@ -40,14 +60,18 @@ npm install @stackflow/plugin-renderer-basic @stackflow/plugin-basic-ui
 ### Initialize UI Plugins
 Initialize the `basicRendererPlugin()` from `@stackflow/plugin-renderer-basic` and the `basicUIPlugin()` from `@stackflow/plugin-basic-ui` in the `plugins` field of the `stackflow()` function as follows.
 
-```ts showLineNumbers filename="stackflow.ts" copy {8-13}
+```ts showLineNumbers filename="stackflow.ts" copy {9-14}
 import { stackflow } from "@stackflow/react";
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
 import { basicUIPlugin } from "@stackflow/plugin-basic-ui";
+import { config } from "./stackflow.config";
+import MyActivity from "./MyActivity";
 
 export const { Stack, useFlow } = stackflow({
-  transitionDuration: 350,
-  activities: {},
+  config,
+  components: {
+    MyActivity,
+  },
   plugins: [
     basicRendererPlugin(),
     basicUIPlugin({

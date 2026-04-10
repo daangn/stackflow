@@ -2,38 +2,31 @@ import { Callout } from "nextra-theme-docs";
 
 # useFlow 순환참조 해결하기
 
-<Callout type="info" emoji="💡">
-  [Future API](/api-references/future-api/introduction)를 사용하면 `useFlow()` 순환참조 문제를 쉽게 해결할 수 있어요. [Future API](/api-references/future-api/introduction) 사용을 권장해요. 
-</Callout>
+Stackflow 2.0에서는 `useFlow()`와 `useStepFlow()`를 `@stackflow/react`에서 직접 import하기 때문에 대부분의 경우 순환참조 문제가 더 이상 발생하지 않아요.
 
-`stackflow()` 함수가 반환하는 `useFlow()` 함수는 선언된 액티비티 타입을 활용해요. 따라서 `useFlow()`와 액티비티 컴포넌트는 서로 맞물리면서 순환 참조(Circular Dependency)를 일으켜요.
-`useActions()` 훅을 사용하고 타입을 따로 `import` 받으면 이러한 순환 참조를 제거할 수 있어요.
+만약 `useActions()`를 감싸는 커스텀 래퍼를 만들고 액티비티 타입을 참조해야 한다면, stackflow 설정에서 타입을 export할 수 있어요.
 
 ```tsx showLineNumbers filename="stackflow.ts" copy
 import { stackflow } from "@stackflow/react";
+import { config } from "./stackflow.config";
 
-export const { Stack, activities } = stackflow({
-  activities: {
+export const { Stack } = stackflow({
+  config,
+  components: {
     // ...
   },
-  // ...
 });
-
-// 다음과 같이 액티비티의 타입을 노출해요.
-export type TypeActivities = typeof activities;
 ```
 
-```tsx showLineNumbers filename="stackflow.ts" copy
+```tsx showLineNumbers filename="useMyFlow.ts" copy
 import { useActions } from "@stackflow/react";
-
-// 노출된 액티비티 타입만 가져와서 사용해요.
-import type { TypeActivities } from "./stackflow";
+import { config } from "./stackflow.config";
 
 export const useMyFlow = () => {
-  return useActions<TypeActivities>();
+  return useActions(config);
 };
 ```
 
-<Callout emoji="⚡️">
-  `TypeActivities`는 앞으로 제공될 유틸 컴포넌트/훅 들에 비슷하게 활용돼요.
+<Callout emoji="💡">
+  액티비티 간 탐색이 목적이라면, `@stackflow/react`에서 직접 import한 `useFlow()`를 사용하면 돼요. 별도의 래퍼가 필요 없어요.
 </Callout>

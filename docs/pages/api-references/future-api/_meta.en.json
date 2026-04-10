@@ -1,8 +1,0 @@
-{
-  "introduction": "Introduction",
-  "config": "@stackflow/config",
-  "changes": "API Changes",
-  "loader-api": "Loader API",
-  "code-splitting": "Code Splitting",
-  "api-pipelining": "API Pipelining"
-}

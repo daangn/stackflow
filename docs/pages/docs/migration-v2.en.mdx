@@ -1,0 +1,199 @@
+import { Callout } from "nextra-theme-docs";
+
+# Migration Guide: v1 → v2
+
+This guide covers the breaking changes in Stackflow 2.0 and how to migrate from v1.
+
+## Overview
+
+Stackflow 2.0 introduces a config-first approach that separates activity declarations from React components. This enables better performance through framework-agnostic loading and improved type safety.
+
+## Step 1: Install `@stackflow/config`
+
+```sh npm2yarn copy
+npm install @stackflow/config
+```
+
+## Step 2: Create `stackflow.config.ts`
+
+Extract your activity declarations into a config file.
+
+**Before:**
+```ts filename="stackflow.ts"
+import { stackflow } from "@stackflow/react";
+
+export const { Stack, useFlow } = stackflow({
+  transitionDuration: 350,
+  activities: {
+    HomeActivity,
+    MyProfileActivity,
+  },
+  plugins: [],
+});
+```
+
+**After:**
+```ts filename="stackflow.config.ts"
+import { defineConfig } from "@stackflow/config";
+
+export const config = defineConfig({
+  activities: [
+    { name: "HomeActivity" },
+    { name: "MyProfileActivity" },
+  ],
+  transitionDuration: 350,
+});
+```
+
+```ts filename="stackflow.ts"
+import { stackflow } from "@stackflow/react";
+import { config } from "./stackflow.config";
+
+export const { Stack, useFlow } = stackflow({
+  config,
+  components: {
+    HomeActivity,
+    MyProfileActivity,
+  },
+  plugins: [],
+});
+```
+
+## Step 3: Update `historySyncPlugin`
+
+Routes are now declared in `stackflow.config.ts` instead of the plugin options.
+
+**Before:**
+```ts
+historySyncPlugin({
+  routes: {
+    HomeActivity: "/",
+    MyProfileActivity: "/my-profile",
+  },
+  fallbackActivity: () => "HomeActivity",
+})
+```
+
+**After:**
+
+In `stackflow.config.ts`:
+```ts
+defineConfig({
+  activities: [
+    { name: "HomeActivity", route: "/" },
+    { name: "MyProfileActivity", route: "/my-profile" },
+  ],
+})
+```
+
+In `stackflow.ts`:
+```ts
+historySyncPlugin({
+  config,
+  fallbackActivity: () => "HomeActivity",
+})
+```
+
+## Step 4: Update Activity Types
+
+Types are now registered via module augmentation instead of component Props.
+
+**Before:**
+```ts filename="Article.tsx"
+import type { ActivityComponentType } from "@stackflow/react";
+
+type ArticleParams = {
+  title: string;
+};
+
+const Article: ActivityComponentType<ArticleParams> = ({ params }) => {
+  // ...
+};
+```
+
+**After:**
+```ts filename="Article.tsx"
+import type { ActivityComponentType } from "@stackflow/react";
+
+declare module "@stackflow/config" {
+  interface Register {
+    Article: {
+      title: string;
+    };
+  }
+}
+
+const Article: ActivityComponentType<"Article"> = ({ params }) => {
+  // params.title is typed
+};
+```
+
+## Step 5: Update `useFlow` and `useStepFlow` Imports
+
+Hooks are now imported directly from `@stackflow/react` instead of being created from a factory function.
+
+**Before:**
+```ts
+import { useFlow } from "./stackflow"; // from your stackflow.ts
+```
+
+**After:**
+```ts
+import { useFlow } from "@stackflow/react"; // direct import
+```
+
+## Step 6: Rename `useStepFlow` Functions
+
+The step navigation function names have changed.
+
+| Before | After |
+|--------|-------|
+| `stepPush()` | `pushStep()` |
+| `stepReplace()` | `replaceStep()` |
+| `stepPop()` | `popStep()` |
+
+## Step 7: Update `<Link />` Import
+
+The `<Link />` component is now imported directly.
+
+**Before:**
+```ts filename="Link.ts"
+import { createLinkComponent } from "@stackflow/link";
+import type { TypeActivities } from "./stackflow";
+
+export const { Link } = createLinkComponent<TypeActivities>();
+```
+
+**After:**
+```ts
+import { Link } from "@stackflow/link";
+```
+
+## Step 8: Update Import Paths
+
+Replace all occurrences of the old entry points.
+
+| Before | After |
+|--------|-------|
+| `@stackflow/react/future` | `@stackflow/react` |
+| `@stackflow/link/future` | `@stackflow/link` |
+
+## Removed Packages
+
+The following packages have been removed in v2:
+
+- `@stackflow/plugin-preload` — Use the built-in Loader API instead. See [Preloading](/docs/advanced/preloading).
+- `@stackflow/plugin-map-initial-activity` — Use `initialActivity` in `defineConfig()` instead.
+
+## API Correspondence Table
+
+| v1 | v2 |
+|----|-----|
+| `stackflow({ transitionDuration, activities, plugins })` | `stackflow({ config, components, plugins })` |
+| `ActivityComponentType<Params>` | `ActivityComponentType<"ActivityName">` |
+| `useFlow()` from `./stackflow` | `useFlow()` from `@stackflow/react` |
+| `useStepFlow()` from `./stackflow` | `useStepFlow()` from `@stackflow/react` |
+| `stepPush/stepReplace/stepPop` | `pushStep/replaceStep/popStep` |
+| `createLinkComponent<TypeActivities>()` | `import { Link } from "@stackflow/link"` |
+| `historySyncPlugin({ routes, fallbackActivity })` | `historySyncPlugin({ config, fallbackActivity })` |
+| `preloadPlugin(...)` | Built-in Loader API |

@@ -17,24 +17,24 @@ You can use steps when you want to have a virtual stack state within a single ac
 
 ## Stacking a New Step
 
-Use the `useStepFlow()` hook created in `stackflow.ts`. Through the `stepPush()` function within this hook, you can stack a new step as follows.
+Import `useStepFlow` directly from `@stackflow/react`. Through the `pushStep()` function within this hook, you can stack a new step as follows.
 
-```tsx showLineNumbers filename="Article.tsx" copy /stepPush/
+```tsx showLineNumbers filename="Article.tsx" copy /pushStep/
 import type { ActivityComponentType } from "@stackflow/react";
+import { useStepFlow } from "@stackflow/react";
 import { AppScreen } from "@stackflow/plugin-basic-ui";
-import { useStepFlow } from "./stackflow";
 
 type ArticleParams = {
   title: string;
 };
 
-const Article: ActivityComponentType<ArticleParams> = ({ params }) => {
+const Article: ActivityComponentType<"Article"> = ({ params }) => {
   // For type safety, put the name of the current activity
-  const { stepPush } = useStepFlow("Article");
+  const { pushStep } = useStepFlow("Article");
 
   const onNextClick = () => {
-    // When you call `stepPush()`, `params.title` changes.
-    stepPush({
+    // When you call `pushStep()`, `params.title` changes.
+    pushStep({
       title: "Next Title",
     });
   };
@@ -54,23 +54,23 @@ export default Article;
 
 ## Replacing a Step
 
-You can replace the current step using the `stepReplace()` function in `useStepFlow()`.
+You can replace the current step using the `replaceStep()` function in `useStepFlow()`.
 
-```tsx showLineNumbers filename="Article.tsx" copy /stepReplace/
+```tsx showLineNumbers filename="Article.tsx" copy /replaceStep/
 import type { ActivityComponentType } from "@stackflow/react";
+import { useStepFlow } from "@stackflow/react";
 import { AppScreen } from "@stackflow/plugin-basic-ui";
-import { useStepFlow } from "./stackflow";
 
 type ArticleParams = {
   title: string;
 };
-const Article: ActivityComponentType<ArticleParams> = ({ params }) => {
+const Article: ActivityComponentType<"Article"> = ({ params }) => {
   // For type safety, put the name of the current activity
-  const { stepReplace } = useStepFlow("Article");
+  const { replaceStep } = useStepFlow("Article");
 
   const onChangeClick = () => {
-    // When you call `stepReplace()`, the title changes to "Next Title".
-    stepReplace({
+    // When you call `replaceStep()`, the title changes to "Next Title".
+    replaceStep({
       title: "Next Title",
     });
   };
@@ -90,23 +90,23 @@ export default Article;
 
 ## Deleting a Step
 
-You can delete the current step using the `stepPop()` function in `useStepFlow()`.
+You can delete the current step using the `popStep()` function in `useStepFlow()`.
 
-```tsx showLineNumbers filename="Article.tsx" copy /stepPop/
+```tsx showLineNumbers filename="Article.tsx" copy /popStep/
 import type { ActivityComponentType } from "@stackflow/react";
+import { useStepFlow } from "@stackflow/react";
 import { AppScreen } from "@stackflow/plugin-basic-ui";
-import { useStepFlow } from "./stackflow";
 
 type ArticleParams = {
   title: string;
 };
-const Article: ActivityComponentType<ArticleParams> = ({ params }) => {
+const Article: ActivityComponentType<"Article"> = ({ params }) => {
   // For type safety, put the name of the current activity
-  const { stepPop } = useStepFlow("Article");
+  const { popStep } = useStepFlow("Article");
 
   const onPrevClick = () => {
-    // When you call `stepPop()`, the current step is deleted.
-    stepPop();
+    // When you call `popStep()`, the current step is deleted.
+    popStep();
   };
 
   return (
@@ -123,7 +123,7 @@ export default Article;
 ```
 
 <Callout emoji="💡">
-  If there's no step to delete, nothing happens when you call `stepPop()`.
+  If there's no step to delete, nothing happens when you call `popStep()`.
 </Callout>
 
 <Callout emoji="💡">
