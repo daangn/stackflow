@@ -1,7 +1,7 @@
 import { defineConfig } from "@stackflow/config";
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
 import type { StackflowReactPlugin } from "@stackflow/react";
-import { stackflow, useFlow } from "@stackflow/react/future";
+import { stackflow, useFlow } from "@stackflow/react";
 import { act, render } from "@testing-library/react";
 import React, { useCallback, useState } from "react";
 import { lifecyclePlugin } from "./lifecyclePlugin";
