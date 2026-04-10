@@ -130,33 +130,51 @@ Plugins can hook into various lifecycle events:
 
 ## Common Tasks
 
-### Adding a New Activity
+### Setting Up Navigation
 ```typescript
-export const { Stack, useFlow } = stackflow({
-  transitionDuration: 350,
+import { stackflow } from "@stackflow/react";
+
+export const { Stack, actions } = stackflow({
+  config,
+  components: {
+    Main,
+    Article,
+  },
   plugins: [
     basicRendererPlugin(),
     basicUIPlugin({
       theme: "cupertino",
     }),
+    historySyncPlugin({
+      config,
+      fallbackActivity: () => "Main",
+    }),
   ],
-  activities: {
-    MyActivity,
-  },
 });
 ```
 
-### Navigation
+### Defining an Activity
 ```tsx
-const MyActivity: ActivityComponentType = () => {
+import type { ActivityComponentType } from "@stackflow/react";
+import { useFlow } from "@stackflow/react";
+
+declare module "@stackflow/config" {
+  interface Register {
+    MyActivity: {
+      title: string;
+    };
+  }
+}
+
+const MyActivity: ActivityComponentType<"MyActivity"> = () => {
   const { push } = useFlow();
- 
+
   const onClick = () => {
     push("Article", {
       title: "Hello",
     });
   };
- 
+
   return (
     <AppScreen appBar={{ title: "My Activity" }}>
       <div>
@@ -188,17 +206,15 @@ stackflow({
 });
 ```
 
-## Future API (Stackflow 2.0 Preview)
+## API Design
 
-The Future API (`@stackflow/react/future`) is a preview of Stackflow 2.0 that optimizes initial loading performance through better separation of concerns. Key improvements:
+`@stackflow/react` uses a config-first approach for optimal loading performance:
 
-- **Config-first approach**: Activities and routes defined in `@stackflow/config` using `defineConfig()`, with React components injected separately
-- **Direct imports**: Hooks (`useFlow`, `useStepFlow`) and `<Link>` component imported directly without factory functions
-- **Loader API**: Built-in data loading without React dependencies for better performance
-- **API Pipelining**: Parallel loading of API data and React app initialization
-- **Enhanced type safety**: Types inferred from config rather than component props
-
-The Future API maintains compatibility with existing code while preparing for Stackflow 2.0. Routes are now declared in the config file alongside activities, and the plugin system has been streamlined to work with the centralized configuration.
+- **Config-first approach**: Activities and routes defined in `@stackflow/config` using `defineConfig()`, with React components injected separately via `stackflow()`
+- **Direct imports**: Hooks (`useFlow`, `useStepFlow`) and `<Link>` component imported directly from `@stackflow/react`
+- **Loader API**: Built-in data loading via `useLoaderData` without React dependencies for better performance
+- **Lazy loading**: Code splitting via `lazy()` for activity components
+- **Enhanced type safety**: Types inferred from config via `declare module "@stackflow/config"` register pattern
 
 ## Build System
 
