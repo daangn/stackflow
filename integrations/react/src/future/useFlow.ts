@@ -1,4 +1,4 @@
-import { useCoreActions } from "../__internal__/core";
+import { useCoreActions } from "./core";
 import type { Actions } from "./Actions";
 import { makeActions } from "./makeActions";
 

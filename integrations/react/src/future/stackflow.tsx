@@ -12,13 +12,13 @@ import {
   type PushedEvent,
 } from "@stackflow/core";
 import React, { useMemo } from "react";
-import { ActivityComponentMapProvider } from "../__internal__/ActivityComponentMapProvider";
-import type { ActivityComponentType } from "../__internal__/ActivityComponentType";
-import { makeActivityId } from "../__internal__/activity";
-import { CoreProvider } from "../__internal__/core";
-import MainRenderer from "../__internal__/MainRenderer";
-import { PluginsProvider } from "../__internal__/plugins";
-import { isBrowser, makeRef } from "../__internal__/utils";
+import { ActivityComponentMapProvider } from "./ActivityComponentMapProvider";
+import type { ActivityComponentType } from "./BaseActivityComponentType";
+import { makeActivityId } from "./activity";
+import { CoreProvider } from "./core";
+import MainRenderer from "./MainRenderer";
+import { PluginsProvider } from "./plugins";
+import { isBrowser, makeRef } from "./utils";
 import type { StackflowReactPlugin } from "../stable";
 import type { Actions } from "./Actions";
 import { ConfigProvider } from "./ConfigProvider";

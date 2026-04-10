@@ -6,19 +6,19 @@ import type {
 } from "@stackflow/core";
 import { makeCoreStore, makeEvent } from "@stackflow/core";
 import { memo, useMemo } from "react";
-import { ActivityComponentMapProvider } from "../__internal__/ActivityComponentMapProvider";
+import { ActivityComponentMapProvider } from "../future/ActivityComponentMapProvider";
 import {
   findActivityById,
   findLatestActiveActivity,
   makeActivityId,
   makeStepId,
-} from "../__internal__/activity";
-import { CoreProvider } from "../__internal__/core";
-import MainRenderer from "../__internal__/MainRenderer";
-import type { MonolithicActivityComponentType } from "../__internal__/MonolithicActivityComponentType";
-import { PluginsProvider } from "../__internal__/plugins";
-import type { StackflowReactPlugin } from "../__internal__/StackflowReactPlugin";
-import { isBrowser, makeRef } from "../__internal__/utils";
+} from "../future/activity";
+import { CoreProvider } from "../future/core";
+import MainRenderer from "../future/MainRenderer";
+import type { MonolithicActivityComponentType } from "../future/MonolithicActivityComponentType";
+import { PluginsProvider } from "../future/plugins";
+import type { StackflowReactPlugin } from "../future/StackflowReactPlugin";
+import { isBrowser, makeRef } from "../future/utils";
 import type { BaseActivities } from "./BaseActivities";
 import type { UseActionsOutputType } from "./useActions";
 import { useActions } from "./useActions";
