@@ -1,3 +1,24 @@
+## 2026.04.15
+
+Add lifecyclePlugin and useFocusEffect hook for activity focus/blur lifecycle [`39dbf81`](https://github.com/daangn/stackflow/commit/39dbf81472af06daa5c40da098e232c2fe3b4a92)
+
+- `useFocusEffect(callback)` hook to register per-activity focus/blur callbacks
+- Detection and invocation in plugin `onChanged` (outside React render cycle)
+- `callbackRef` pattern for always-latest callback without `useCallback`
+- Error isolation via `runSafely()` for all user callbacks
+
+Released packages:
+- 📦 [@stackflow/plugin-lifecycle@0.1.0](https://npmjs.com/package/@stackflow/plugin-lifecycle/v/0.1.0)
+
+---
+
+Add README documentation for plugin-lifecycle [`fce2047`](https://github.com/daangn/stackflow/commit/fce204702b876869764076f74246319623fb3e89)
+
+Released packages:
+- 📦 [@stackflow/plugin-lifecycle@0.1.0](https://npmjs.com/package/@stackflow/plugin-lifecycle/v/0.1.0)
+
+---
+
 ## 2026.04.03
 
 Fix intermittent incorrect transition state when `transitionDuration` is set to 0 by ensuring `now >= eventDate` in the initial aggregate call within `dispatchEvent`. [`0160f82`](https://github.com/daangn/stackflow/commit/0160f82738e45932d13715564c4d1da2c4698c18)
