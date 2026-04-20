@@ -4,20 +4,13 @@
 
 ## 목적
 
-Stable API에서만 사용되거나 Future API에 내장된 기능으로 대체된 패키지 3개를 삭제한다.
+Stable API에서만 사용되거나 Future API에 내장된 기능으로 대체된 패키지 2개를 삭제한다.
+
+> `@stackflow/compat-await-push`는 삭제 계획에서 제외됨 (ENvironmentSet 반대, PR #695)
 
 ## 삭제 대상
 
-### 1. `@stackflow/compat-await-push`
-
-- **경로:** `extensions/compat-await-push/`
-- **이유:** Old API의 `await push()` 패턴 호환 레이어. Future API에서는 사용하지 않음
-- **작업:**
-  - `extensions/compat-await-push/` 디렉토리 전체 삭제
-  - 루트 `package.json` 워크스페이스 설정에서 제거 (해당하는 경우)
-  - 다른 패키지의 dependency/peerDependency에서 참조 제거
-
-### 2. `@stackflow/plugin-preload`
+### 1. `@stackflow/plugin-preload`
 
 - **경로:** `extensions/plugin-preload/`
 - **이유:** Future API의 `usePrepare()` 훅으로 대체
@@ -28,7 +21,7 @@ Stable API에서만 사용되거나 Future API에 내장된 기능으로 대체�
   - 플러그인 문서 삭제: `docs/pages/api-references/plugins/plugin-preload.{en,ko}.mdx`
   - `docs/pages/api-references/plugins/_meta.{en,ko}.json`에서 항목 제거
 
-### 3. `@stackflow/plugin-map-initial-activity`
+### 2. `@stackflow/plugin-map-initial-activity`
 
 - **경로:** `extensions/plugin-map-initial-activity/`
 - **이유:** Future API의 `config.initialActivity`로 대체
