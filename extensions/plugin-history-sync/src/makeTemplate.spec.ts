@@ -174,3 +174,52 @@ test("makeTemplate - fill + identity-encode equals fillWithoutEncode(stringified
     template.fillWithoutEncode({ articleId: "1234", count: "5" }),
   );
 });
+
+test("makeTemplate - fillWithoutEncode with empty-string value drops the key from the URL query (falsy guard in _buildUrl)", () => {
+  // `_buildUrl` has a `value ? { [key]: value } : null` reducer which treats
+  // "" as falsy and therefore omits the key from the search params entirely.
+  // This test documents that empty strings are NOT written to the URL query,
+  // even though they are valid `string` values in the store.
+  const template = makeTemplate({ path: "/articles" });
+
+  expect(
+    template.fillWithoutEncode({
+      articleId: "1234",
+      empty: "",
+    }),
+  ).toEqual("/articles/?articleId=1234");
+});
+
+test("makeTemplate - fill propagates synchronous errors from user-supplied encode (does not catch)", () => {
+  const template = makeTemplate({
+    path: "/toggle",
+    encode: () => {
+      throw new Error("encode boom");
+    },
+  });
+
+  // `fill` does not wrap `encode` in try/catch — user errors propagate.
+  expect(() => template.fill({ visible: true })).toThrow("encode boom");
+});
+
+test("makeTemplate - parse with custom decode receives raw URL strings unchanged (decode input is pre-coercion)", () => {
+  const decode = jest.fn((params: Record<string, string | undefined>) => ({
+    articleId: params.articleId,
+    enabled: params.enabled === "y",
+  }));
+  const template = makeTemplate({
+    path: "/articles/:articleId",
+    decode,
+  });
+
+  template.parse("/articles/1234/?enabled=y&empty=");
+
+  // `decode` must be called with the raw URL-derived strings — no prior
+  // type coercion. The empty-string value from the query is preserved as "".
+  expect(decode).toHaveBeenCalledTimes(1);
+  expect(decode).toHaveBeenCalledWith({
+    articleId: "1234",
+    enabled: "y",
+    empty: "",
+  });
+});

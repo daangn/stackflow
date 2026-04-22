@@ -112,6 +112,21 @@ const stackflow = ({
 const activeActivity = (stack: Stack) =>
   stack.activities.find((a) => a.isActive);
 
+// FEP-1061: helper for exercising runtime coercion with intentionally-untyped params.
+// The cast is deliberate — tests must bypass the string-only type to prove the runtime fix.
+const pushUntyped = async (
+  a: PromiseProxy<CoreStore["actions"]>,
+  activityName: string,
+  params: Record<string, unknown>,
+  activityId = `a-${Math.random().toString(36).slice(2)}`,
+) => {
+  await a.push({
+    activityId,
+    activityName,
+    activityParams: params as Record<string, string | undefined>,
+  });
+};
+
 describe("historySyncPlugin", () => {
   let history: MemoryHistory;
   let actions: PromiseProxy<CoreStore["actions"]>;
@@ -1679,5 +1694,342 @@ describe("historySyncPlugin", () => {
      * Successfully queried with relay
      */
     expect(queryResponse.data.hello).toEqual("world");
+  });
+
+  test("historySyncPlugin - FEP-1061: push({ visible: false, count: 0 }) — falsy primitives도 문자열로 강제되어 스토어에 저장됩니다", async () => {
+    await pushUntyped(actions, "Article", {
+      articleId: "1",
+      visible: false,
+      count: 0,
+    });
+
+    const stack = await actions.getStack();
+    const active = activeActivity(stack);
+    expect(active?.params.visible).toEqual("false");
+    expect(active?.params.count).toEqual("0");
+    expect(typeof active?.params.visible).toEqual("string");
+    expect(typeof active?.params.count).toEqual("string");
+  });
+
+  test("historySyncPlugin - FEP-1061: push({ n: NaN, inf: Infinity }) — 비정상 숫자도 문자열로 강제됩니다", async () => {
+    await pushUntyped(actions, "Article", {
+      articleId: "1",
+      n: Number.NaN,
+      inf: Number.POSITIVE_INFINITY,
+    });
+
+    const stack = await actions.getStack();
+    const active = activeActivity(stack);
+    expect(active?.params.n).toEqual("NaN");
+    expect(active?.params.inf).toEqual("Infinity");
+    expect(typeof active?.params.n).toEqual("string");
+    expect(typeof active?.params.inf).toEqual("string");
+  });
+
+  test("historySyncPlugin - FEP-1061: push with nested object — JSON.stringify로 직렬화되어 스토어에 저장됩니다", async () => {
+    await pushUntyped(actions, "Article", {
+      articleId: "1",
+      filter: { tag: "js", pages: [1, 2] },
+    });
+
+    const stack = await actions.getStack();
+    const active = activeActivity(stack);
+    expect(active?.params.filter).toEqual('{"tag":"js","pages":[1,2]}');
+    expect(typeof active?.params.filter).toEqual("string");
+  });
+
+  test("historySyncPlugin - FEP-1061: Risk #6 — history-sync 뒤에 등록된 플러그인이 typed 값을 overrideActionParams로 재주입할 수 있음 (문서화된 한계)", async () => {
+    // NOTE: this test documents Risk #6 from the plan — a later-registered
+    // plugin's overrideActionParams clobbers the coercion. This is a KNOWN
+    // LIMITATION, not desired behavior. Future refactors that resolve this
+    // should flip this assertion.
+    history = createMemoryHistory();
+
+    const laterPlugin: StackflowPlugin = () => ({
+      key: "later-plugin",
+      onBeforePush({ actionParams, actions: { overrideActionParams } }) {
+        overrideActionParams({
+          ...actionParams,
+          activityParams: {
+            ...actionParams.activityParams,
+            injected: 42 as unknown as string,
+          },
+        });
+      },
+    });
+
+    const coreStore = stackflow({
+      activityNames: ["Home", "Article"],
+      plugins: [
+        historySyncPlugin({
+          history,
+          routes: {
+            Home: "/home",
+            Article: "/articles/:articleId",
+          },
+          fallbackActivity: () => "Home",
+        }),
+        laterPlugin,
+      ],
+    });
+
+    const proxyActions = makeActionsProxy({
+      actions: coreStore.actions,
+    });
+
+    await proxyActions.push({
+      activityId: "a1",
+      activityName: "Article",
+      activityParams: {
+        articleId: "1",
+      },
+    });
+
+    const stack = await proxyActions.getStack();
+    const active = activeActivity(stack);
+    // Documented Risk #6: the later plugin's overrideActionParams re-introduces
+    // a typed number AFTER history-sync's coercion, and no further pass
+    // normalizes it. The store ends up with a number at runtime.
+    expect(active?.params.injected).toEqual(42);
+    expect(typeof active?.params.injected).toEqual("number");
+  });
+
+  test("historySyncPlugin - FEP-1061: push → pop → URL navigate — 두 경로 모두 같은 스토어 shape을 만듭니다", async () => {
+    // Path A — in-process push with a boolean param.
+    await pushUntyped(
+      actions,
+      "Article",
+      { articleId: "1234", visible: true },
+      "a-push",
+    );
+    const pushedStack = await actions.getStack();
+    const pushedActive = activeActivity(pushedStack);
+
+    expect(pushedActive?.params.articleId).toEqual("1234");
+    expect(pushedActive?.params.visible).toEqual("true");
+    expect(typeof pushedActive?.params.visible).toEqual("string");
+
+    // Pop back to Home so the next navigation is a clean arrival.
+    await actions.pop();
+
+    // Path B — URL-arrival on a fresh store with the same query.
+    const historyForUrl = createMemoryHistory({
+      initialEntries: ["/articles/1234/?visible=true"],
+    });
+    const urlStore = stackflow({
+      activityNames: ["Home", "Article"],
+      plugins: [
+        historySyncPlugin({
+          history: historyForUrl,
+          routes: {
+            Home: "/home/",
+            Article: "/articles/:articleId",
+          },
+          fallbackActivity: () => "Home",
+        }),
+      ],
+    });
+    const urlActions = makeActionsProxy({ actions: urlStore.actions });
+    const urlStack = await urlActions.getStack();
+    const urlActive = activeActivity(urlStack);
+
+    expect(urlActive?.params.articleId).toEqual("1234");
+    expect(urlActive?.params.visible).toEqual("true");
+    expect(typeof urlActive?.params.visible).toEqual("string");
+
+    // Both paths must produce the same shape for the params we passed.
+    expect({
+      articleId: pushedActive?.params.articleId,
+      visible: pushedActive?.params.visible,
+    }).toStrictEqual({
+      articleId: urlActive?.params.articleId,
+      visible: urlActive?.params.visible,
+    });
+  });
+
+  test("historySyncPlugin - FEP-1061: replace after stepPush — 모든 step params가 스토어에서 문자열로 coerce됩니다", async () => {
+    actions.push({
+      activityId: "a1",
+      activityName: "Article",
+      activityParams: {
+        articleId: "10",
+      },
+    });
+    actions.stepPush({
+      stepId: "s1",
+      stepParams: {
+        articleId: "11",
+        count: 5 as unknown as string,
+      },
+    });
+    await actions.replace({
+      activityId: "a2",
+      activityName: "Article",
+      activityParams: {
+        articleId: "20",
+        visible: true as unknown as string,
+        count: 7 as unknown as string,
+      },
+    });
+
+    const stack = await actions.getStack();
+    const active = activeActivity(stack);
+    expect(active?.params.articleId).toEqual("20");
+    expect(active?.params.visible).toEqual("true");
+    expect(active?.params.count).toEqual("7");
+    expect(typeof active?.params.visible).toEqual("string");
+    expect(typeof active?.params.count).toEqual("string");
+  });
+
+  test("historySyncPlugin - FEP-1061: decode가 boolean을 반환해도 스토어에는 문자열로 저장됩니다", async () => {
+    // Complements the existing CRITICAL decode-parity test by covering
+    // boolean return values (via `=== "y"`). The delta is the return type:
+    // the existing test covers Number coercion; this one covers strict
+    // equality producing a boolean.
+    history = createMemoryHistory({
+      initialEntries: ["/articles/1/?enabled=y"],
+    });
+
+    const coreStore = stackflow({
+      activityNames: ["Home", "Article"],
+      plugins: [
+        historySyncPlugin({
+          history,
+          routes: {
+            Home: "/home",
+            Article: {
+              path: "/articles/:articleId",
+              decode: (params) => ({
+                articleId: params.articleId,
+                enabled: (params.enabled === "y") as unknown as string,
+              }),
+            },
+          },
+          fallbackActivity: () => "Home",
+        }),
+      ],
+    });
+
+    const proxyActions = makeActionsProxy({
+      actions: coreStore.actions,
+    });
+
+    const stack = await proxyActions.getStack();
+    const active = activeActivity(stack);
+    expect(active?.params.enabled).toEqual("true");
+    expect(typeof active?.params.enabled).toEqual("string");
+  });
+
+  test("historySyncPlugin - FEP-1061: per-route encode는 매칭되는 라우트에서만 실행되고, 다른 라우트의 push도 스토어에서 문자열로 정규화됩니다", async () => {
+    history = createMemoryHistory();
+
+    const articleEncode = jest.fn((params: Record<string, any>) => ({
+      articleId: String(params.articleId),
+      visible: params.visible ? "y" : "n",
+    }));
+
+    const coreStore = stackflow({
+      activityNames: ["Home", "Article"],
+      plugins: [
+        historySyncPlugin({
+          history,
+          routes: {
+            // Home has no custom encode.
+            Home: "/home",
+            Article: {
+              path: "/articles/:articleId",
+              encode: articleEncode,
+            },
+          },
+          fallbackActivity: () => "Home",
+        }),
+      ],
+    });
+
+    const proxyActions = makeActionsProxy({
+      actions: coreStore.actions,
+    });
+
+    await proxyActions.push({
+      activityId: "home-1",
+      activityName: "Home",
+      activityParams: {
+        ping: true as unknown as string,
+      },
+    });
+    await proxyActions.push({
+      activityId: "article-1",
+      activityName: "Article",
+      activityParams: {
+        articleId: "42",
+        visible: true as unknown as string,
+      },
+    });
+
+    // encode should have been called only for Article, not for Home.
+    expect(articleEncode).toHaveBeenCalledTimes(1);
+    expect(articleEncode).toHaveBeenCalledWith(
+      expect.objectContaining({ articleId: "42", visible: true }),
+    );
+
+    const stack = await proxyActions.getStack();
+    // Use the specific activity IDs we pushed — the initial fallback
+    // registers a Home activity too, so `find((a) => a.name === "Home")`
+    // would return the wrong one.
+    const homeActivity = stack.activities.find((a) => a.id === "home-1");
+    const articleActivity = stack.activities.find((a) => a.id === "article-1");
+
+    // Both routes' store params are normalized to strings, regardless of
+    // whether the route had a custom encode.
+    expect(homeActivity?.params.ping).toEqual("true");
+    expect(typeof homeActivity?.params.ping).toEqual("string");
+    expect(articleActivity?.params.visible).toEqual("true");
+    expect(typeof articleActivity?.params.visible).toEqual("string");
+  });
+
+  test("historySyncPlugin - FEP-1061: stepPush → stepReplace 사이클 — 각 cycle의 params가 독립적으로 coerce됩니다", async () => {
+    actions.push({
+      activityId: "a1",
+      activityName: "Article",
+      activityParams: {
+        articleId: "10",
+      },
+    });
+    actions.stepPush({
+      stepId: "s1",
+      stepParams: {
+        articleId: "11",
+        tag: { nested: true } as unknown as string,
+      },
+    });
+    actions.stepReplace({
+      stepId: "s2",
+      stepParams: {
+        articleId: "12",
+        other: 42 as unknown as string,
+      },
+    });
+    await actions.stepPush({
+      stepId: "s3",
+      stepParams: {
+        articleId: "13",
+        visible: false as unknown as string,
+      },
+    });
+
+    const stack = await actions.getStack();
+    const active = activeActivity(stack);
+    const steps = active?.steps ?? [];
+    // Each step's params are independently coerced in the store.
+    for (const step of steps) {
+      for (const value of Object.values(step.params)) {
+        if (value !== undefined) {
+          expect(typeof value).toEqual("string");
+        }
+      }
+    }
+    const lastStep = steps[steps.length - 1];
+    expect(lastStep?.params.visible).toEqual("false");
+    expect(lastStep?.params.articleId).toEqual("13");
   });
 });
