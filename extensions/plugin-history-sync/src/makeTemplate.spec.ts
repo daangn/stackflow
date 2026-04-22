@@ -93,3 +93,84 @@ test("makeTemplate - fill with encode function using JSON.stringify for object p
     "/search/?filter=%7B%22category%22%3A%22tech%22%2C%22tags%22%3A%5B%22javascript%22%2C%22react%22%5D%7D",
   );
 });
+
+test("makeTemplate - fill still calls encode with typed params (not pre-stringified)", () => {
+  const encode = jest.fn((params: Record<string, any>) => ({
+    visible: params.visible ? "y" : "n",
+  }));
+  const template = makeTemplate({
+    path: "/toggle",
+    encode,
+  });
+
+  const url = template.fill({ visible: true });
+
+  expect(encode).toHaveBeenCalledTimes(1);
+  // The boolean is preserved into encode — not pre-stringified to "true".
+  expect(encode).toHaveBeenCalledWith({ visible: true });
+  expect(url).toEqual("/toggle/?visible=y");
+});
+
+test("makeTemplate - fillWithoutEncode skips encode entirely", () => {
+  const encode = jest.fn((params: Record<string, any>) => ({
+    visible: params.visible ? "y" : "n",
+  }));
+  const template = makeTemplate({
+    path: "/toggle",
+    encode,
+  });
+
+  const url = template.fillWithoutEncode({ visible: "true" });
+
+  expect(encode).not.toHaveBeenCalled();
+  expect(url).toEqual("/toggle/?visible=true");
+});
+
+test("makeTemplate - fillWithoutEncode interpolates path params", () => {
+  const template = makeTemplate({ path: "/articles/:articleId" });
+
+  expect(
+    template.fillWithoutEncode({
+      articleId: "1234",
+      title: "hello",
+    }),
+  ).toEqual("/articles/1234/?title=hello");
+});
+
+test("makeTemplate - fillWithoutEncode drops undefined values", () => {
+  const template = makeTemplate({ path: "/articles" });
+
+  expect(
+    template.fillWithoutEncode({
+      articleId: "1234",
+      test: undefined,
+    }),
+  ).toEqual("/articles/?articleId=1234");
+});
+
+test("makeTemplate - fill and fillWithoutEncode produce identical URLs with identity encode", () => {
+  const template = makeTemplate({
+    path: "/articles/:articleId",
+    encode: (params: Record<string, any>) =>
+      params as Record<string, string | undefined>,
+  });
+
+  const stringParams = { articleId: "1234", title: "hello" };
+
+  expect(template.fill(stringParams)).toEqual(
+    template.fillWithoutEncode(stringParams),
+  );
+});
+
+test("makeTemplate - fill + identity-encode equals fillWithoutEncode(stringified)", () => {
+  const template = makeTemplate({
+    path: "/articles/:articleId",
+    encode: (params: Record<string, any>) =>
+      params as Record<string, string | undefined>,
+  });
+
+  // encode is identity, so fillWithoutEncode of the same strings must match
+  expect(template.fill({ articleId: "1234", count: "5" })).toEqual(
+    template.fillWithoutEncode({ articleId: "1234", count: "5" }),
+  );
+});

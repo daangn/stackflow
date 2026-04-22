@@ -1413,6 +1413,223 @@ describe("historySyncPlugin", () => {
     expect((topActivity.context as any).promise).toBeInstanceOf(Promise);
   });
 
+  test("historySyncPlugin - FEP-1061: push with boolean param coerces to string in the store", async () => {
+    await actions.push({
+      activityId: "a1",
+      activityName: "Article",
+      activityParams: {
+        articleId: "1",
+        // non-string value — should be coerced to "true" in the store
+        visible: true as unknown as string,
+      },
+    });
+
+    const stack = await actions.getStack();
+    const active = activeActivity(stack);
+    expect(active?.params.visible).toEqual("true");
+    // sanity: type at runtime is string, not boolean
+    expect(typeof active?.params.visible).toEqual("string");
+  });
+
+  test("historySyncPlugin - FEP-1061: push with numeric step param coerces to string", async () => {
+    actions.push({
+      activityId: "a1",
+      activityName: "Article",
+      activityParams: {
+        articleId: "10",
+      },
+    });
+    await actions.stepPush({
+      stepId: "s1",
+      stepParams: {
+        articleId: "11",
+        count: 5 as unknown as string,
+      },
+    });
+
+    const stack = await actions.getStack();
+    const active = activeActivity(stack);
+    const step = active?.steps[active.steps.length - 1];
+    expect(step?.params.count).toEqual("5");
+    expect(typeof step?.params.count).toEqual("string");
+  });
+
+  test("historySyncPlugin - FEP-1061: stepReplace with numeric param coerces to string", async () => {
+    actions.push({
+      activityId: "a1",
+      activityName: "Article",
+      activityParams: {
+        articleId: "10",
+      },
+    });
+    actions.stepPush({
+      stepId: "s1",
+      stepParams: {
+        articleId: "11",
+        count: "1",
+      },
+    });
+    await actions.stepReplace({
+      stepId: "s2",
+      stepParams: {
+        articleId: "12",
+        count: 10 as unknown as string,
+      },
+    });
+
+    const stack = await actions.getStack();
+    const active = activeActivity(stack);
+    const step = active?.steps[active.steps.length - 1];
+    expect(step?.params.count).toEqual("10");
+    expect(typeof step?.params.count).toEqual("string");
+  });
+
+  test("historySyncPlugin - FEP-1061: replace with boolean param coerces to string", async () => {
+    await actions.replace({
+      activityId: "a1",
+      activityName: "Article",
+      activityParams: {
+        articleId: "1",
+        active: false as unknown as string,
+      },
+    });
+
+    const stack = await actions.getStack();
+    const active = activeActivity(stack);
+    expect(active?.params.active).toEqual("false");
+    expect(typeof active?.params.active).toEqual("string");
+  });
+
+  test("historySyncPlugin - FEP-1061: custom encode still receives typed params (not strings)", async () => {
+    history = createMemoryHistory();
+
+    const encode = jest.fn((params: Record<string, any>) => ({
+      articleId: String(params.articleId),
+      visible: params.visible ? "y" : "n",
+    }));
+
+    const coreStore = stackflow({
+      activityNames: ["Home", "Article"],
+      plugins: [
+        historySyncPlugin({
+          history,
+          routes: {
+            Home: "/home",
+            Article: {
+              path: "/articles/:articleId",
+              encode,
+            },
+          },
+          fallbackActivity: () => "Home",
+        }),
+      ],
+    });
+
+    const proxyActions = makeActionsProxy({
+      actions: coreStore.actions,
+    });
+
+    await proxyActions.push({
+      activityId: "a1",
+      activityName: "Article",
+      activityParams: {
+        articleId: "1234",
+        visible: true as unknown as string,
+      },
+    });
+
+    // encode must have received the boolean `true`, not the string "true"
+    const encodeCalls = encode.mock.calls;
+    const pushCall = encodeCalls.find((call) => call[0].articleId === "1234");
+    expect(pushCall).toBeDefined();
+    expect(pushCall?.[0].visible).toEqual(true);
+    expect(typeof pushCall?.[0].visible).toEqual("boolean");
+
+    // store reflects coerced string
+    const stack = await proxyActions.getStack();
+    const active = activeActivity(stack);
+    expect(active?.params.visible).toEqual("true");
+    expect(typeof active?.params.visible).toEqual("string");
+
+    // `activityContext.path` computed in `onBeforePush` DID run encode, so it
+    // reflects the encode output.
+    expect((active?.context as any)?.path).toEqual("/articles/1234/?visible=y");
+  });
+
+  test("historySyncPlugin - FEP-1061: decode-path coerces typed values back to strings in store (CRITICAL)", async () => {
+    // Arrive via URL on a route whose `decode` returns a typed `count` number.
+    history = createMemoryHistory({
+      initialEntries: ["/articles/1234/?count=5"],
+    });
+
+    const coreStore = stackflow({
+      activityNames: ["Home", "Article"],
+      plugins: [
+        historySyncPlugin({
+          history,
+          routes: {
+            Home: "/home",
+            Article: {
+              path: "/articles/:articleId",
+              decode: (params) => ({
+                articleId: params.articleId,
+                // simulate a decode that injects typed numbers into the store
+                count: Number(params.count) as unknown as string,
+              }),
+            },
+          },
+          fallbackActivity: () => "Home",
+        }),
+      ],
+    });
+
+    const proxyActions = makeActionsProxy({
+      actions: coreStore.actions,
+    });
+
+    const urlStack = await proxyActions.getStack();
+    const urlActive = activeActivity(urlStack);
+    // store must contain strings regardless of decode output
+    expect(urlActive?.params.count).toEqual("5");
+    expect(typeof urlActive?.params.count).toEqual("string");
+
+    // Also verify the push path produces the same shape on the same route.
+    const historyForPush = createMemoryHistory();
+    const pushStore = stackflow({
+      activityNames: ["Home", "Article"],
+      plugins: [
+        historySyncPlugin({
+          history: historyForPush,
+          routes: {
+            Home: "/home",
+            Article: {
+              path: "/articles/:articleId",
+              decode: (params) => ({
+                articleId: params.articleId,
+                count: Number(params.count) as unknown as string,
+              }),
+            },
+          },
+          fallbackActivity: () => "Home",
+        }),
+      ],
+    });
+
+    const pushActions = makeActionsProxy({ actions: pushStore.actions });
+    await pushActions.push({
+      activityId: "a1",
+      activityName: "Article",
+      activityParams: {
+        articleId: "1234",
+        count: 5 as unknown as string,
+      },
+    });
+    const pushedStack = await pushActions.getStack();
+    const pushActive = activeActivity(pushedStack);
+    expect(pushActive?.params.count).toEqual("5");
+    expect(typeof pushActive?.params.count).toEqual("string");
+  });
+
   test("historySyncPlugin - activity.context에 relay loadRef가 있어도 정상적으로 로드됩니다", async () => {
     const environment = makeRelayEnvironment();
 

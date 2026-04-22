@@ -18,6 +18,7 @@ import UrlPattern from "url-pattern";
 import { ActivityActivationCountsContext } from "./ActivityActivationCountsContext";
 import type { ActivityActivationMonitor } from "./ActivityActivationMonitor/ActivityActivationMonitor";
 import { DefaultHistoryActivityActivationMonitor } from "./ActivityActivationMonitor/DefaultHistoryActivityActivationMonitor";
+import { coerceParamsToString } from "./coerceParamsToString";
 import { HistoryQueueProvider } from "./HistoryQueueContext";
 import { parseState, pushState, replaceState } from "./historyState";
 import { last } from "./last";
@@ -273,9 +274,7 @@ export function historySyncPlugin<
             id: id(),
             activityId: id(),
             activityName,
-            activityParams: {
-              ...activityParams,
-            },
+            activityParams: coerceParamsToString(activityParams),
             activityContext: {
               path: currentPath,
               lazyActivityComponentRenderContext: {
@@ -291,7 +290,7 @@ export function historySyncPlugin<
               name: "StepPushed",
               id: id(),
               stepId: id(),
-              stepParams,
+              stepParams: coerceParamsToString(stepParams),
               hasZIndex,
             }),
           ),
@@ -304,10 +303,11 @@ export function historySyncPlugin<
           id: id(),
           activityId: id(),
           activityName: targetActivityRoute.activityName,
-          activityParams:
+          activityParams: coerceParamsToString(
             makeTemplate(targetActivityRoute, options.urlPatternOptions).parse(
               currentPath,
             ) ?? urlSearchParamsToMap(pathToUrl(currentPath).searchParams),
+          ),
           activityContext: {
             path: currentPath,
             lazyActivityComponentRenderContext: {
@@ -401,7 +401,7 @@ export function historySyncPlugin<
               if (activity.isRoot) {
                 replaceState({
                   history,
-                  pathname: template.fill(activity.params),
+                  pathname: template.fillWithoutEncode(activity.params),
                   state: {
                     activity: activity,
                   },
@@ -410,7 +410,7 @@ export function historySyncPlugin<
               } else {
                 pushState({
                   history,
-                  pathname: template.fill(activity.params),
+                  pathname: template.fillWithoutEncode(activity.params),
                   state: {
                     activity: activity,
                   },
@@ -422,7 +422,7 @@ export function historySyncPlugin<
                 if (!step.exitedBy && step.enteredBy.name !== "Pushed") {
                   pushState({
                     history,
-                    pathname: template.fill(step.params),
+                    pathname: template.fillWithoutEncode(step.params),
                     state: {
                       activity: activity,
                       step: step,
@@ -588,7 +588,7 @@ export function historySyncPlugin<
           silentFlag = true;
           pushState({
             history,
-            pathname: template.fill(activity.params),
+            pathname: template.fillWithoutEncode(activity.params),
             state: {
               activity,
             },
@@ -612,7 +612,7 @@ export function historySyncPlugin<
           silentFlag = true;
           pushState({
             history,
-            pathname: template.fill(activity.params),
+            pathname: template.fillWithoutEncode(activity.params),
             state: {
               activity,
               step,
@@ -636,7 +636,7 @@ export function historySyncPlugin<
           silentFlag = true;
           replaceState({
             history,
-            pathname: template.fill(activity.params),
+            pathname: template.fillWithoutEncode(activity.params),
             state: {
               activity,
             },
@@ -659,7 +659,7 @@ export function historySyncPlugin<
           silentFlag = true;
           replaceState({
             history,
-            pathname: template.fill(activity.params),
+            pathname: template.fillWithoutEncode(activity.params),
             state: {
               activity,
               step,
@@ -677,6 +677,9 @@ export function historySyncPlugin<
             (r) => r.activityName === actionParams.activityName,
           )!;
           const template = makeTemplate(match, options.urlPatternOptions);
+          // `template.fill` runs `encode` on the typed params U. We must call
+          // it BEFORE coercing so `encode` sees the original typed values
+          // (FEP-1061 contract).
           const path = template.fill(actionParams.activityParams);
 
           overrideActionParams({
@@ -687,6 +690,15 @@ export function historySyncPlugin<
             },
           });
         }
+
+        // FEP-1061: coerce `activityParams` to `string | undefined` AFTER
+        // `encode` consumed the typed params for URL generation. This ensures
+        // the core store only ever sees string-shaped params, matching the
+        // URL-arrival path.
+        overrideActionParams({
+          ...actionParams,
+          activityParams: coerceParamsToString(actionParams.activityParams),
+        });
       },
       onBeforeReplace({
         actionParams,
@@ -700,6 +712,7 @@ export function historySyncPlugin<
             (r) => r.activityName === actionParams.activityName,
           )!;
           const template = makeTemplate(match, options.urlPatternOptions);
+          // See `onBeforePush` — `encode` must run on typed params first.
           const path = template.fill(actionParams.activityParams);
 
           overrideActionParams({
@@ -710,6 +723,13 @@ export function historySyncPlugin<
             },
           });
         }
+
+        // FEP-1061: coerce `activityParams` to strings after `encode` consumed
+        // the typed params above. Mirrors `onBeforePush`.
+        overrideActionParams({
+          ...actionParams,
+          activityParams: coerceParamsToString(actionParams.activityParams),
+        });
 
         const { activities } = getStack();
         const enteredActivities = activities.filter(
@@ -739,6 +759,23 @@ export function historySyncPlugin<
             });
           }
         }
+      },
+      onBeforeStepPush({ actionParams, actions: { overrideActionParams } }) {
+        // FEP-1061: coerce `stepParams` to `string | undefined` before the
+        // event reaches the core store. Step params do not participate in URL
+        // path computation directly (the containing activity's template is
+        // used), so there is no `encode` to preserve here.
+        overrideActionParams({
+          ...actionParams,
+          stepParams: coerceParamsToString(actionParams.stepParams),
+        });
+      },
+      onBeforeStepReplace({ actionParams, actions: { overrideActionParams } }) {
+        // FEP-1061: mirrors `onBeforeStepPush` for the stepReplace path.
+        overrideActionParams({
+          ...actionParams,
+          stepParams: coerceParamsToString(actionParams.stepParams),
+        });
       },
       onBeforeStepPop({ actions: { getStack } }) {
         const { activities } = getStack();

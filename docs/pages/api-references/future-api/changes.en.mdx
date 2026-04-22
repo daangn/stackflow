@@ -126,6 +126,22 @@ declare module "@stackflow/config" {
 }
 ```
 
+### Runtime Coercion of Activity Params (FEP-1061)
+
+Regardless of how an activity is entered — `push()`, `replace()`, `stepPush()`, `stepReplace()`, or URL arrival (with or without a `decode` hook) — the params you receive from `useActivityParams()` are always `string | undefined` at runtime.
+
+```tsx
+// These two paths used to produce different runtime types. They don't anymore.
+push("Article", { visible: true })           // store: { visible: "true" }
+// URL arrival: /articles/1?visible=true      // store: { visible: "true" }
+```
+
+The `encode` hook on a route still receives the original typed params `U` (so you can use `encode: ({ visible }) => ({ visible: visible ? "y" : "n" })` exactly as before). Coercion happens at the `@stackflow/plugin-history-sync` boundary, *after* `encode` has consumed the typed values to build the URL.
+
+<Callout emoji="⚠️">
+  **Migration note for `decode` users**: if you previously relied on `decode` to inject typed values (e.g. `decode: (p) => ({ count: Number(p.count) })`) and read them back via `useActivityParams().count` as a number, that value is now a string in the store. Perform the type coercion at the usage site instead: `Number(params.count)`.
+</Callout>
+
 ## `useFlow()`, `useStepFlow()`
 You no longer need to create hooks like `useFlow()` and `useStepFlow()` using functions like `flow()`. You can import them directly.
 
