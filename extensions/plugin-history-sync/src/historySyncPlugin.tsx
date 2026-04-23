@@ -669,34 +669,37 @@ export function historySyncPlugin<
         });
       },
       onBeforePush({ actionParams, actions: { overrideActionParams } }) {
-        if (
+        const needsPath =
           !actionParams.activityContext ||
-          "path" in actionParams.activityContext === false
-        ) {
+          "path" in actionParams.activityContext === false;
+
+        // `template.fill` runs `encode` on the typed params U. We must call
+        // it BEFORE coercing so `encode` sees the original typed values
+        // (FEP-1061 contract).
+        let path: string | undefined;
+        if (needsPath) {
           const match = activityRoutes.find(
             (r) => r.activityName === actionParams.activityName,
           )!;
           const template = makeTemplate(match, options.urlPatternOptions);
-          // `template.fill` runs `encode` on the typed params U. We must call
-          // it BEFORE coercing so `encode` sees the original typed values
-          // (FEP-1061 contract).
-          const path = template.fill(actionParams.activityParams);
-
-          overrideActionParams({
-            ...actionParams,
-            activityContext: {
-              ...actionParams.activityContext,
-              path,
-            },
-          });
+          path = template.fill(actionParams.activityParams);
         }
 
-        // FEP-1061: coerce `activityParams` to `string | undefined` AFTER
-        // `encode` consumed the typed params for URL generation. This ensures
-        // the core store only ever sees string-shaped params, matching the
-        // URL-arrival path.
+        // FEP-1061: single `overrideActionParams` call so the path set above
+        // survives alongside the coerced `activityParams`. `core`'s
+        // `overrideActionParams` is a spread-merge, so splitting into two
+        // calls where the second spreads the ORIGINAL `actionParams` would
+        // clobber the just-set `activityContext.path`.
         overrideActionParams({
           ...actionParams,
+          ...(needsPath
+            ? {
+                activityContext: {
+                  ...actionParams.activityContext,
+                  path,
+                },
+              }
+            : {}),
           activityParams: coerceParamsToString(actionParams.activityParams),
         });
       },
@@ -704,30 +707,31 @@ export function historySyncPlugin<
         actionParams,
         actions: { overrideActionParams, getStack },
       }) {
-        if (
+        const needsPath =
           !actionParams.activityContext ||
-          "path" in actionParams.activityContext === false
-        ) {
+          "path" in actionParams.activityContext === false;
+
+        // See `onBeforePush` — `encode` must run on typed params first, and
+        // the single-call shape preserves path alongside coerced params.
+        let path: string | undefined;
+        if (needsPath) {
           const match = activityRoutes.find(
             (r) => r.activityName === actionParams.activityName,
           )!;
           const template = makeTemplate(match, options.urlPatternOptions);
-          // See `onBeforePush` — `encode` must run on typed params first.
-          const path = template.fill(actionParams.activityParams);
-
-          overrideActionParams({
-            ...actionParams,
-            activityContext: {
-              ...actionParams.activityContext,
-              path,
-            },
-          });
+          path = template.fill(actionParams.activityParams);
         }
 
-        // FEP-1061: coerce `activityParams` to strings after `encode` consumed
-        // the typed params above. Mirrors `onBeforePush`.
         overrideActionParams({
           ...actionParams,
+          ...(needsPath
+            ? {
+                activityContext: {
+                  ...actionParams.activityContext,
+                  path,
+                },
+              }
+            : {}),
           activityParams: coerceParamsToString(actionParams.activityParams),
         });
 
