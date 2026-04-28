@@ -148,31 +148,71 @@ test("makeTemplate - fillWithoutEncode drops undefined values", () => {
   ).toEqual("/articles/?articleId=1234");
 });
 
-test("makeTemplate - fill and fillWithoutEncode produce identical URLs with identity encode", () => {
+test("makeTemplate - fill and fillWithoutEncode diverge under NON-IDENTITY encode (fillWithoutEncode does NOT call encode) (T-M1)", () => {
+  // Replaces the previous vacuous identity-encode parity test. Identity
+  // encode makes the two paths trivially equal regardless of whether
+  // `fillWithoutEncode` skips encode or not — so the test couldn't catch
+  // a regression that made `fillWithoutEncode` accidentally call encode.
+  // Non-identity encode (boolean → "y"/"n") proves the contract: encode
+  // mutates the URL when called, so its absence is observable.
+  const encode = jest.fn((params: Record<string, any>) => ({
+    articleId: String(params.articleId),
+    visible: params.visible ? "y" : "n",
+  }));
   const template = makeTemplate({
     path: "/articles/:articleId",
-    encode: (params: Record<string, any>) =>
-      params as Record<string, string | undefined>,
+    encode,
   });
 
-  const stringParams = { articleId: "1234", title: "hello" };
+  // fillWithoutEncode receives already-stringified params and MUST skip encode.
+  const urlWithoutEncode = template.fillWithoutEncode({
+    articleId: "1234",
+    visible: "true",
+  });
+  expect(encode).not.toHaveBeenCalled();
+  expect(urlWithoutEncode).toEqual("/articles/1234/?visible=true");
 
-  expect(template.fill(stringParams)).toEqual(
-    template.fillWithoutEncode(stringParams),
-  );
+  // fill on the typed equivalent calls encode and produces a DIFFERENT URL.
+  encode.mockClear();
+  const urlWithEncode = template.fill({ articleId: "1234", visible: true });
+  expect(encode).toHaveBeenCalledTimes(1);
+  expect(urlWithEncode).toEqual("/articles/1234/?visible=y");
+
+  // The two URLs MUST diverge — proving the test is not vacuous.
+  expect(urlWithoutEncode).not.toEqual(urlWithEncode);
 });
 
-test("makeTemplate - fill + identity-encode equals fillWithoutEncode(stringified)", () => {
+test("makeTemplate - fill(typed) === fillWithoutEncode(coerced(encode(typed))) — non-identity drift theorem (T-M1)", () => {
+  // Replaces the second vacuous identity-encode parity test. With a
+  // non-identity encode, `fill(typed)` must equal building a URL from the
+  // already-encoded-and-then-stringified store params via
+  // `fillWithoutEncode`. This is the round-trip property FEP-1061 relies
+  // on for `onPushed` to reproduce the same URL using the coerced store
+  // params.
+  const encode = jest.fn((params: Record<string, any>) => ({
+    articleId: String(params.articleId),
+    visible: params.visible ? "y" : "n",
+  }));
   const template = makeTemplate({
     path: "/articles/:articleId",
-    encode: (params: Record<string, any>) =>
-      params as Record<string, string | undefined>,
+    encode,
   });
 
-  // encode is identity, so fillWithoutEncode of the same strings must match
-  expect(template.fill({ articleId: "1234", count: "5" })).toEqual(
-    template.fillWithoutEncode({ articleId: "1234", count: "5" }),
-  );
+  const typed = { articleId: "1234", visible: true };
+  const fillUrl = template.fill(typed);
+
+  // Mirror what FEP-1061 does at runtime: encode runs on the typed params,
+  // then the encoded values are coerced (here they are already strings,
+  // but we exercise the same shape `fillWithoutEncode` would receive from
+  // the store).
+  const encoded = encode(typed);
+  encode.mockClear();
+  const fillWithoutEncodeUrl = template.fillWithoutEncode(encoded);
+
+  // fillWithoutEncode must NOT have called encode again.
+  expect(encode).not.toHaveBeenCalled();
+  // Both paths must yield the same URL.
+  expect(fillUrl).toEqual(fillWithoutEncodeUrl);
 });
 
 test("makeTemplate - fillWithoutEncode with empty-string value drops the key from the URL query (falsy guard in _buildUrl)", () => {
