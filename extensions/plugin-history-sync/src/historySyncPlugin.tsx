@@ -196,10 +196,19 @@ export function historySyncPlugin<
         const initialState = parseState(history.location.state);
 
         if (initialState) {
+          // FEP-1061: cross-deploy hydration. `initialState` was serialized by
+          // some earlier plugin version (possibly pre-FEP-1061) and may carry
+          // typed values in `activityParams` / `stepParams`. Coerce here so the
+          // 7th entry path (parseState early-return) also enforces the
+          // string-only invariant. Within-deploy this is idempotent — the
+          // writer already coerced.
           return [
             {
               ...initialState.activity.enteredBy,
               name: "Pushed",
+              activityParams: coerceParamsToString(
+                initialState.activity.enteredBy.activityParams,
+              ),
             },
             ...(initialState.step?.enteredBy.name === "StepPushed" ||
             initialState.step?.enteredBy.name === "StepReplaced"
@@ -207,6 +216,9 @@ export function historySyncPlugin<
                   {
                     ...initialState.step.enteredBy,
                     name: "StepPushed" as const,
+                    stepParams: coerceParamsToString(
+                      initialState.step.enteredBy.stepParams,
+                    ),
                   },
                 ]
               : []),
