@@ -175,7 +175,7 @@ describe("historySyncPlugin", () => {
       initialEntries: ["/articles/123"],
     });
 
-    const fallbackActivity = jest.fn(() => "Home");
+    const fallbackActivity = jest.fn((): "Home" => "Home");
 
     stackflow({
       activityNames: ["Home", "Article"],
@@ -199,7 +199,7 @@ describe("historySyncPlugin", () => {
       initialEntries: ["/non-existent-path"],
     });
 
-    const fallbackActivity = jest.fn(() => "Home");
+    const fallbackActivity = jest.fn((): "Home" => "Home");
 
     stackflow({
       activityNames: ["Home", "Article"],
