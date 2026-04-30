@@ -241,23 +241,27 @@ export function historySyncPlugin<
         }
 
         const currentPath = resolveCurrentPath();
-        const fallbackActivityName = options.fallbackActivity({
-          initialContext,
-        });
-        const targetActivityRoute =
-          activityRoutes.find((activityRoute) => {
-            const template = makeTemplate(
-              activityRoute,
-              options.urlPatternOptions,
-            );
-            const activityParams = template.parse(currentPath);
+        const matchedActivityRoute = activityRoutes.find((activityRoute) => {
+          const template = makeTemplate(
+            activityRoute,
+            options.urlPatternOptions,
+          );
+          const activityParams = template.parse(currentPath);
 
-            return activityParams !== null;
-          }) ??
-          activityRoutes.find(
+          return activityParams !== null;
+        });
+        const targetActivityRoute = (() => {
+          if (matchedActivityRoute) {
+            return matchedActivityRoute;
+          }
+          const fallbackActivityName = options.fallbackActivity({
+            initialContext,
+          });
+          return activityRoutes.find(
             (activityRoute) =>
               activityRoute.activityName === fallbackActivityName,
           )!;
+        })();
         const pattern = new UrlPattern(
           `${targetActivityRoute.path}(/)`,
           options.urlPatternOptions,
