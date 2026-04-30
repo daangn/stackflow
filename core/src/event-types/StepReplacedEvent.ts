@@ -7,6 +7,7 @@ export type StepReplacedEvent = BaseDomainEvent<
     stepParams: {
       [key: string]: string | undefined;
     };
+    stepContext?: {};
     targetActivityId?: string;
     hasZIndex?: boolean;
   }
