@@ -2706,7 +2706,7 @@ describe("historySyncPlugin", () => {
   });
 
   test("historySyncPlugin - FEP-1061: store layer that backs useActivityParams() returns string-only params after typed push (F9 — Slack-quote user-facing property)", async () => {
-    // F9 from test-engineer review: the originating Slack quote (Yena, attached
+    // F9 from test-engineer review: the originating user request (an internal consumer, attached
     // to Linear FEP-1061) names `useActivityParams` as the user-facing surface
     // where the type-divergence pain manifests. RTL is not a devDependency of
     // this workspace, so we assert the property at the LAYER BELOW the hook
@@ -3110,14 +3110,14 @@ describe("historySyncPlugin", () => {
   // would require introducing a new dependency, which is out-of-scope per
   // the executor task's constraints. The plugin source DOES exist
   // (`extensions/plugin-map-initial-activity/src/mapInitialActivityPlugin.tsx`),
-  // and `.omc/research/FEP-1061-search-3.md` classifies the cross-plugin
+  // and the cross-plugin interaction analysis classifies the
   // ordering as a `medium` FEP-1061 risk (gap), so the *theoretical* test
   // surface is documented here for a future maintainer who can add the
   // dep. The plugin uses `window.location.href` directly (line 20), making
   // it additionally awkward to drive from a `MemoryHistory` test — a
   // realistic test would need to stub `window.location` or use jsdom.
   test.skip("historySyncPlugin - FEP-1061: mapInitialActivityPlugin × history-sync overrideInitialEvents ordering (T-I-NEW-12, see comment)", () => {
-    // Documented limitation per .omc/research/FEP-1061-search-3.md:
+    // Documented limitation per the cross-plugin interaction analysis:
     //   - When mapInitialActivityPlugin is registered AFTER historySyncPlugin
     //     in the plugins array, its `overrideInitialEvents` runs SECOND and
     //     replaces the entire event array with a single Pushed event whose
@@ -3164,10 +3164,10 @@ describe("historySyncPlugin", () => {
   describe.skip("FEP-1061 — Linear ticket interpretation #1 — type widening (NOT chosen, see INTENT.md)", () => {
     // These assertions PASS only under interpretation #1 (widen
     // ActivityBaseParams to `unknown`). They are intentionally skipped
-    // because the implementation chose interpretation #3 (Yena's Slack
+    // because the implementation chose interpretation #3 (the originating user
     // quote: always-string at plugin boundary). See:
     //   - extensions/plugin-history-sync/INTENT.md
-    //   - https://linear.app/daangn/issue/FEP-1061
+    //   - the project's internal tracker reference
     //   - https://github.com/daangn/stackflow/pull/705
     //
     // To unskip these, ActivityBaseParams must be widened in
@@ -3219,7 +3219,7 @@ describe("historySyncPlugin", () => {
   });
 
   // ──────────────────────────────────────────────────────────────────────
-  // FEP-1061 — Phase A RED tests (orionmiz review v2.1)
+  // FEP-1061 — Phase A RED tests (PR review v2.1)
   //
   // These tests assert the URL surface (path(history.location)) — not just
   // the store surface. They prove Issue #1 (encode-output not written to
