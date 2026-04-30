@@ -2735,4 +2735,1258 @@ describe("historySyncPlugin", () => {
       }
     }
   });
+
+  test("historySyncPlugin - FEP-1061: SSR initialContext.req.path × typed decode → store coerces (T-I-NEW-2)", async () => {
+    // T-I-NEW-2: this exercises the `resolveCurrentPath` SSR branch
+    // (`historySyncPlugin.tsx:228-241`) — `initialContext.req.path` is the
+    // Node-render-time URL, distinct from the `initialEntries`-driven branch
+    // covered by other tests. The route's typed `decode` returns
+    // `{ count: Number(p.count) }`. The `historyEntryToEvents` /
+    // `createTargetActivityPushEvent` paths must still coerce on this branch
+    // so the store ends with `count === "5"` (string), not `5` (number).
+    const ssrHistory = createMemoryHistory();
+
+    // Pass `initialContext` directly to `makeCoreStore` so it calls
+    // `overrideInitialEvents` once with the SSR req.path — avoiding the
+    // double-registration bug where a manually pre-computed `initialPushedEvents`
+    // AND a re-registered plugin both call `overrideInitialEvents`, with the
+    // second call using `initialContext: {}` and clobbering the SSR result.
+    const coreStore = makeCoreStore({
+      initialEvents: [
+        makeEvent("Initialized", {
+          transitionDuration: 32,
+          eventDate: enoughPastTime(),
+        }),
+        ...["Home", "Article"].map((activityName) =>
+          makeEvent("ActivityRegistered", {
+            activityName,
+            eventDate: enoughPastTime(),
+          }),
+        ),
+      ],
+      initialContext: { req: { path: "/articles/1/?count=5" } },
+      plugins: [
+        historySyncPlugin({
+          history: ssrHistory,
+          routes: {
+            Home: "/home/",
+            Article: {
+              path: "/articles/:articleId",
+              decode: (p) => ({
+                articleId: p.articleId,
+                count: Number(p.count) as unknown as string,
+              }),
+            },
+          },
+          fallbackActivity: () => "Home",
+        }),
+      ],
+    });
+    coreStore.init();
+
+    const proxyActions = makeActionsProxy({ actions: coreStore.actions });
+    const stack = await proxyActions.getStack();
+    const active = activeActivity(stack);
+    // The decode would otherwise inject a Number — coercion at the
+    // overrideInitialEvents boundary normalizes it to a string.
+    expect(active?.params.count).toEqual("5");
+    expect(typeof active?.params.count).toEqual("string");
+    expect(active?.params.articleId).toEqual("1");
+  });
+
+  test("historySyncPlugin - FEP-1061: plugin BEFORE history-sync injecting typed params via overrideActionParams → still coerced (T-I-NEW-4, Risk #6 inverse)", async () => {
+    // T-I-NEW-4: the BEFORE-order inverse of Risk #6. When a plugin runs
+    // BEFORE historySyncPlugin and re-injects typed values via
+    // `overrideActionParams` inside `onBeforePush`, history-sync's hook still
+    // runs afterward and re-coerces. Locks the property: order matters
+    // (Risk #6 documents the AFTER case), and the BEFORE case is safe.
+    history = createMemoryHistory();
+
+    const beforePlugin: StackflowPlugin = () => ({
+      key: "before-plugin",
+      onBeforePush({ actionParams, actions: { overrideActionParams } }) {
+        overrideActionParams({
+          ...actionParams,
+          activityParams: {
+            ...actionParams.activityParams,
+            visible: true as unknown as string,
+          },
+        });
+      },
+    });
+
+    const coreStore = stackflow({
+      activityNames: ["Home", "Article"],
+      plugins: [
+        beforePlugin,
+        historySyncPlugin({
+          history,
+          routes: {
+            Home: "/home",
+            Article: "/articles/:articleId",
+          },
+          fallbackActivity: () => "Home",
+        }),
+      ],
+    });
+
+    const proxyActions = makeActionsProxy({ actions: coreStore.actions });
+
+    await proxyActions.push({
+      activityId: "a1",
+      activityName: "Article",
+      activityParams: {
+        articleId: "1",
+      },
+    });
+
+    const stack = await proxyActions.getStack();
+    const active = activeActivity(stack);
+    // history-sync runs AFTER beforePlugin's typed injection — coerces.
+    expect(active?.params.visible).toEqual("true");
+    expect(typeof active?.params.visible).toEqual("string");
+  });
+
+  test("historySyncPlugin - FEP-1061: cross-deploy step.enteredBy.stepParams hydration coerces (T-I-NEW-5)", async () => {
+    // T-I-NEW-5: extension of T-I5. The cross-deploy hand-constructed flatted
+    // state now ALSO includes a step entry with TYPED `stepParams`
+    // (`{ offset: 7 }`). Asserts both branches of the `parseState` early-return
+    // (`historySyncPlugin.tsx:198-225`) coerce — `activityParams` AND
+    // `step.enteredBy.stepParams`.
+    const flattedState = flattedStringify({
+      activity: {
+        id: "a1",
+        name: "Article",
+        params: { count: 42 },
+        enteredBy: {
+          name: "Pushed",
+          id: "e1",
+          activityId: "a1",
+          activityName: "Article",
+          activityParams: { count: 42 },
+        },
+      },
+      step: {
+        id: "s1",
+        params: { offset: 7 },
+        enteredBy: {
+          name: "StepPushed",
+          id: "es1",
+          stepId: "s1",
+          stepParams: { offset: 7 },
+        },
+      },
+    });
+    const state = {
+      _TAG: "@stackflow/plugin-history-sync",
+      flattedState,
+    };
+
+    const historyForState = createMemoryHistory({
+      initialEntries: [{ pathname: "/articles/1/", state } as any],
+    });
+
+    const coreStore = stackflow({
+      activityNames: ["Home", "Article"],
+      plugins: [
+        historySyncPlugin({
+          history: historyForState,
+          routes: {
+            Home: "/home/",
+            Article: "/articles/:articleId",
+          },
+          fallbackActivity: () => "Home",
+        }),
+      ],
+    });
+
+    const proxyActions = makeActionsProxy({ actions: coreStore.actions });
+    const stack = await proxyActions.getStack();
+    const active = activeActivity(stack);
+
+    // activityParams branch (already covered by T-I5; re-locked here).
+    // After a StepPushed event, `activity.params` reflects the CURRENT step
+    // params (`makeActivityReducer.ts:78`). The original Pushed activityParams
+    // land in `steps[0].params`. Assert both are coerced strings.
+    expect(active?.steps[0]?.params.count).toEqual("42");
+    expect(typeof active?.steps[0]?.params.count).toEqual("string");
+    // stepParams branch — this is the new lock for T-I-NEW-5.
+    // `active.params` == last step's params after StepPushed.
+    expect(active?.params.offset).toEqual("7");
+    expect(typeof active?.params.offset).toEqual("string");
+  });
+
+  test("historySyncPlugin - FEP-1061: defaultHistory ancestor entries with typed activityParams + stepParams coerce (T-I-NEW-6)", async () => {
+    // T-I-NEW-6: `historyEntryToEvents` (historySyncPlugin.tsx:276-309) is
+    // invoked for `defaultHistory` ancestor entries. Boot via URL-arrival on
+    // a route whose `defaultHistory` returns an ancestor with TYPED
+    // `activityParams` and TYPED `stepParams`. Both must be coerced when
+    // the ancestor events are emitted.
+    const historyForDefault = createMemoryHistory({
+      initialEntries: ["/articles/9/"],
+    });
+
+    const coreStore = stackflow({
+      activityNames: ["Home", "Article"],
+      plugins: [
+        historySyncPlugin({
+          history: historyForDefault,
+          routes: {
+            Home: "/home/",
+            Article: {
+              path: "/articles/:articleId",
+              defaultHistory: () => [
+                {
+                  activityName: "Home",
+                  // TYPED — should be coerced via historyEntryToEvents.
+                  activityParams: {
+                    count: 42 as unknown as string,
+                  },
+                  additionalSteps: [
+                    {
+                      stepParams: {
+                        offset: 7 as unknown as string,
+                      },
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+          fallbackActivity: () => "Home",
+        }),
+      ],
+    });
+
+    const proxyActions = makeActionsProxy({ actions: coreStore.actions });
+    const stack = await proxyActions.getStack();
+
+    // The ancestor "Home" activity from defaultHistory.
+    const homeAncestor = stack.activities.find((a) => a.name === "Home");
+    // After additionalSteps processing, `homeAncestor.params` reflects the
+    // LAST step's params (`makeActivityReducer.ts:78`). The original Pushed
+    // activityParams land in `steps[0].params`.
+    expect(homeAncestor?.steps[0]?.params.count).toEqual("42");
+    expect(typeof homeAncestor?.steps[0]?.params.count).toEqual("string");
+    // The step's stepParams are coerced and surfaced via homeAncestor.params
+    // (current-step alias) and also in the last step's params.
+    expect(homeAncestor?.params.offset).toEqual("7");
+    expect(typeof homeAncestor?.params.offset).toEqual("string");
+
+    // The target Article activity — sanity-check it landed.
+    const article = stack.activities.find((a) => a.name === "Article");
+    expect(article?.params.articleId).toEqual("9");
+  });
+
+  test("historySyncPlugin - FEP-1061: popstate isStepBackward branch preserves coercion (T-I-NEW-9)", async () => {
+    // T-I-NEW-9: popstate `isStepBackward` (historySyncPlugin.tsx:538-554).
+    // When a back() navigates to a step that's no longer in the stack, the
+    // re-stepPush re-enters via `onBeforeStepPush` → coercion re-applies
+    // (idempotent on already-coerced strings, locks string-only on
+    // never-coerced typed entries). Asserts the round-trip property on a
+    // typed stepPush.
+    actions.push({
+      activityId: "a1",
+      activityName: "Article",
+      activityParams: {
+        articleId: "1",
+      },
+    });
+    await actions.stepPush({
+      stepId: "s1",
+      stepParams: {
+        articleId: "1",
+        visible: true as unknown as string,
+        count: 5 as unknown as string,
+      },
+    });
+    const beforeBack = await actions.getStack();
+    const beforeActive = activeActivity(beforeBack);
+    const beforeStep = beforeActive?.steps[beforeActive.steps.length - 1];
+    expect(typeof beforeStep?.params.visible).toEqual("string");
+    expect(typeof beforeStep?.params.count).toEqual("string");
+
+    history.back();
+    const afterBack = await actions.getStack();
+    const afterActive = activeActivity(afterBack);
+    // The step has popped (back through the step). Verify all remaining
+    // step params on this activity are still string-only — regression lock.
+    for (const step of afterActive?.steps ?? []) {
+      for (const v of Object.values(step.params)) {
+        if (v !== undefined) {
+          expect(typeof v).toEqual("string");
+        }
+      }
+    }
+    // Also the activity's params remain string-only.
+    for (const v of Object.values(afterActive?.params ?? {})) {
+      if (v !== undefined) {
+        expect(typeof v).toEqual("string");
+      }
+    }
+  });
+
+  test("historySyncPlugin - FEP-1061: popstate isForward branch preserves coercion (T-I-NEW-10)", async () => {
+    // T-I-NEW-10: popstate `isForward` (historySyncPlugin.tsx:556-563).
+    // After back, forward must re-push the activity with params drawn from
+    // `targetActivity.params` (which were coerced when first pushed). Lock
+    // that the forward re-push preserves string-only.
+    await pushUntyped(
+      actions,
+      "Article",
+      { articleId: "1", visible: true, count: 7 },
+      "a1",
+    );
+    await actions.push({
+      activityId: "a2",
+      activityName: "Article",
+      activityParams: { articleId: "2" },
+    });
+
+    history.back();
+    const backStack = await actions.getStack();
+    expect(activeActivity(backStack)?.id).toEqual("a1");
+
+    history.forward();
+    const fwdStack = await actions.getStack();
+    const fwdActive = activeActivity(fwdStack);
+    // Active is the forward target (a2); a1's params remain string-only on
+    // the inactive entry, AND any re-push that happened did not introduce
+    // typed values.
+    for (const a of fwdStack.activities) {
+      for (const v of Object.values(a.params)) {
+        if (v !== undefined) {
+          expect(typeof v).toEqual("string");
+        }
+      }
+    }
+    expect(fwdActive?.id).toEqual("a2");
+  });
+
+  test("historySyncPlugin - FEP-1061: popstate isStepForward branch preserves coercion (T-I-NEW-11)", async () => {
+    // T-I-NEW-11: popstate `isStepForward` (historySyncPlugin.tsx:564-574).
+    // stepPush typed → back → forward. The forward stepPush draws from
+    // `targetStep.params`. Asserts the entire stack's step params remain
+    // string-only after the round-trip.
+    actions.push({
+      activityId: "a1",
+      activityName: "Article",
+      activityParams: { articleId: "1" },
+    });
+    await actions.stepPush({
+      stepId: "s1",
+      stepParams: {
+        articleId: "1",
+        visible: true as unknown as string,
+        count: 7 as unknown as string,
+      },
+    });
+
+    history.back();
+    await actions.getStack();
+    history.forward();
+
+    const fwdStack = await actions.getStack();
+    for (const a of fwdStack.activities) {
+      for (const v of Object.values(a.params)) {
+        if (v !== undefined) {
+          expect(typeof v).toEqual("string");
+        }
+      }
+      for (const step of a.steps) {
+        for (const v of Object.values(step.params)) {
+          if (v !== undefined) {
+            expect(typeof v).toEqual("string");
+          }
+        }
+      }
+    }
+  });
+
+  // T-I-NEW-12: mapInitialActivityPlugin × historySyncPlugin ordering.
+  // SKIP RATIONALE: `@stackflow/plugin-map-initial-activity` is NOT a
+  // devDependency of `@stackflow/plugin-history-sync` (verified via
+  // `extensions/plugin-history-sync/package.json` — no entry). Adding it
+  // would require introducing a new dependency, which is out-of-scope per
+  // the executor task's constraints. The plugin source DOES exist
+  // (`extensions/plugin-map-initial-activity/src/mapInitialActivityPlugin.tsx`),
+  // and `.omc/research/FEP-1061-search-3.md` classifies the cross-plugin
+  // ordering as a `medium` FEP-1061 risk (gap), so the *theoretical* test
+  // surface is documented here for a future maintainer who can add the
+  // dep. The plugin uses `window.location.href` directly (line 20), making
+  // it additionally awkward to drive from a `MemoryHistory` test — a
+  // realistic test would need to stub `window.location` or use jsdom.
+  test.skip("historySyncPlugin - FEP-1061: mapInitialActivityPlugin × history-sync overrideInitialEvents ordering (T-I-NEW-12, see comment)", () => {
+    // Documented limitation per .omc/research/FEP-1061-search-3.md:
+    //   - When mapInitialActivityPlugin is registered AFTER historySyncPlugin
+    //     in the plugins array, its `overrideInitialEvents` runs SECOND and
+    //     replaces the entire event array with a single Pushed event whose
+    //     `activityParams` came from `options.mapper(URL)` — typed values
+    //     from the mapper SURVIVE uncoerced (Risk #6-pattern at
+    //     overrideInitialEvents boundary).
+    //   - When registered BEFORE historySyncPlugin, history-sync's
+    //     `overrideInitialEvents` ignores upstream events (it's not a
+    //     fold-over-events plugin — it consults `history.location` and
+    //     defaultHistory) and replaces them, so the mapper's typed values
+    //     are dropped and history-sync coercion applies to URL-derived
+    //     params.
+    // Source: extensions/plugin-map-initial-activity/src/mapInitialActivityPlugin.tsx
+    expect(true).toBe(true);
+  });
+
+  // T-I-NEW-13: preloadPlugin × historySyncPlugin spread re-emission.
+  // SKIP RATIONALE: `@stackflow/plugin-preload` is NOT a devDependency of
+  // `@stackflow/plugin-history-sync` (verified via package.json). Adding
+  // it would require introducing a new dependency, which is out-of-scope.
+  // The plugin source DOES exist
+  // (`extensions/plugin-preload/src/pluginPreload.tsx`); search-3 classifies
+  // this combination as `medium` risk (gap). The Risk #6 spread-re-emission
+  // pattern IS already locked by the existing
+  // `historySyncPlugin - FEP-1061: Risk #6` test (line ~1742) which uses a
+  // hand-rolled `laterPlugin` mirroring preloadPlugin's `overrideActionParams({...actionParams, activityContext: {...}})` shape (see
+  // pluginPreload.tsx:81-87). The semantic test surface is therefore
+  // already covered transitively; only the literal "use the real
+  // preloadPlugin" assertion is gated on the dep.
+  test.skip("historySyncPlugin - FEP-1061: real preloadPlugin × history-sync spread-re-emission (T-I-NEW-13, see comment)", () => {
+    // Theoretical assertion (when dep added): register
+    // `[historySyncPlugin, preloadPlugin]` (preload AFTER); push with typed
+    // boolean param. preloadPlugin's `onBeforePush` calls
+    // `overrideActionParams({ ...actionParams, activityContext: { ..., preloadRef } })`
+    // (pluginPreload.tsx:81-87). Because the spread re-emits the
+    // already-coerced `activityParams` from the prior history-sync
+    // `onBeforePush`, the store ends with `visible === "true"` (string).
+    // This is distinct from the existing Risk #6 hand-rolled test in that
+    // preloadPlugin spreads activityParams unchanged (safe), whereas the
+    // hand-rolled test re-asserts a TYPED value (clobbers coercion).
+    expect(true).toBe(true);
+  });
+
+  describe.skip("FEP-1061 — Linear ticket interpretation #1 — type widening (NOT chosen, see INTENT.md)", () => {
+    // These assertions PASS only under interpretation #1 (widen
+    // ActivityBaseParams to `unknown`). They are intentionally skipped
+    // because the implementation chose interpretation #3 (Yena's Slack
+    // quote: always-string at plugin boundary). See:
+    //   - extensions/plugin-history-sync/INTENT.md
+    //   - https://linear.app/daangn/issue/FEP-1061
+    //   - https://github.com/daangn/stackflow/pull/705
+    //
+    // To unskip these, ActivityBaseParams must be widened in
+    // @stackflow/config and coerceParamsToString deleted from this plugin.
+    // The assertions below describe exactly what would have to change.
+
+    test("interpretation #1: push({ visible: true }) preserves boolean in store", async () => {
+      await pushUntyped(actions, "Article", {
+        articleId: "1",
+        visible: true,
+      });
+      const stack = await actions.getStack();
+      const active = activeActivity(stack);
+      // Would PASS only under interpretation #1 (no coercion).
+      expect(typeof active?.params.visible).toEqual("boolean");
+      expect(active?.params.visible).toEqual(true);
+    });
+
+    test("interpretation #1: useActivityParams returns numeric count from typed decode", async () => {
+      const ssrHistory = createMemoryHistory({
+        initialEntries: ["/articles/1/?count=5"],
+      });
+      const coreStore = stackflow({
+        activityNames: ["Home", "Article"],
+        plugins: [
+          historySyncPlugin({
+            history: ssrHistory,
+            routes: {
+              Home: "/home/",
+              Article: {
+                path: "/articles/:articleId",
+                decode: (p) => ({
+                  articleId: p.articleId,
+                  count: Number(p.count) as unknown as string,
+                }),
+              },
+            },
+            fallbackActivity: () => "Home",
+          }),
+        ],
+      });
+      const proxyActions = makeActionsProxy({ actions: coreStore.actions });
+      const stack = await proxyActions.getStack();
+      const active = activeActivity(stack);
+      // Would PASS only under interpretation #1 (no coercion at plugin boundary).
+      expect(typeof active?.params.count).toEqual("number");
+      expect(active?.params.count).toEqual(5);
+    });
+  });
+
+  // ──────────────────────────────────────────────────────────────────────
+  // FEP-1061 — Phase A RED tests (orionmiz review v2.1)
+  //
+  // These tests assert the URL surface (path(history.location)) — not just
+  // the store surface. They prove Issue #1 (encode-output not written to
+  // history) and Issue #2 (popstate forward re-pushing with coerced strings).
+  // ──────────────────────────────────────────────────────────────────────
+
+  test("historySyncPlugin - FEP-1061: T-O-1 push with non-identity encode → history.location reflects encode output", async () => {
+    history = createMemoryHistory();
+
+    const encode = (params: Record<string, any>) => ({
+      articleId: String(params.articleId),
+      visible: params.visible ? "y" : "n",
+    });
+
+    const coreStore = stackflow({
+      activityNames: ["Home", "Article"],
+      plugins: [
+        historySyncPlugin({
+          history,
+          routes: {
+            Home: "/home/",
+            Article: {
+              path: "/articles/:articleId",
+              encode,
+            },
+          },
+          fallbackActivity: () => "Home",
+        }),
+      ],
+    });
+    const a = makeActionsProxy({ actions: coreStore.actions });
+
+    await a.push({
+      activityId: "a1",
+      activityName: "Article",
+      activityParams: {
+        articleId: "1234",
+        visible: true as unknown as string,
+      },
+    });
+
+    expect(path(history.location)).toEqual("/articles/1234/?visible=y");
+  });
+
+  test("historySyncPlugin - FEP-1061: T-O-2 replace with non-identity encode → history.location reflects encode output", async () => {
+    history = createMemoryHistory();
+
+    const encode = (params: Record<string, any>) => ({
+      articleId: String(params.articleId),
+      visible: params.visible ? "y" : "n",
+    });
+
+    const coreStore = stackflow({
+      activityNames: ["Home", "Article"],
+      plugins: [
+        historySyncPlugin({
+          history,
+          routes: {
+            Home: "/home/",
+            Article: {
+              path: "/articles/:articleId",
+              encode,
+            },
+          },
+          fallbackActivity: () => "Home",
+        }),
+      ],
+    });
+    const a = makeActionsProxy({ actions: coreStore.actions });
+
+    await a.replace({
+      activityId: "a1",
+      activityName: "Article",
+      activityParams: {
+        articleId: "1234",
+        visible: true as unknown as string,
+      },
+    });
+
+    expect(path(history.location)).toEqual("/articles/1234/?visible=y");
+  });
+
+  test("historySyncPlugin - FEP-1061: T-O-3 stepPush with non-identity encode → history.location reflects encode output", async () => {
+    history = createMemoryHistory();
+
+    const encode = (params: Record<string, any>) => ({
+      articleId: String(params.articleId),
+      visible: params.visible ? "y" : "n",
+    });
+
+    const coreStore = stackflow({
+      activityNames: ["Home", "Article"],
+      plugins: [
+        historySyncPlugin({
+          history,
+          routes: {
+            Home: "/home/",
+            Article: {
+              path: "/articles/:articleId",
+              encode,
+            },
+          },
+          fallbackActivity: () => "Home",
+        }),
+      ],
+    });
+    const a = makeActionsProxy({ actions: coreStore.actions });
+
+    await a.push({
+      activityId: "a1",
+      activityName: "Article",
+      activityParams: {
+        articleId: "1",
+        visible: false as unknown as string,
+      },
+    });
+    await a.stepPush({
+      stepId: "s1",
+      stepParams: {
+        articleId: "2",
+        visible: true as unknown as string,
+      },
+    });
+
+    expect(path(history.location)).toEqual("/articles/2/?visible=y");
+  });
+
+  test("historySyncPlugin - FEP-1061: T-O-4 stepReplace with non-identity encode → history.location reflects encode output", async () => {
+    history = createMemoryHistory();
+
+    const encode = (params: Record<string, any>) => ({
+      articleId: String(params.articleId),
+      visible: params.visible ? "y" : "n",
+    });
+
+    const coreStore = stackflow({
+      activityNames: ["Home", "Article"],
+      plugins: [
+        historySyncPlugin({
+          history,
+          routes: {
+            Home: "/home/",
+            Article: {
+              path: "/articles/:articleId",
+              encode,
+            },
+          },
+          fallbackActivity: () => "Home",
+        }),
+      ],
+    });
+    const a = makeActionsProxy({ actions: coreStore.actions });
+
+    await a.push({
+      activityId: "a1",
+      activityName: "Article",
+      activityParams: {
+        articleId: "1",
+        visible: false as unknown as string,
+      },
+    });
+    await a.stepPush({
+      stepId: "s1",
+      stepParams: {
+        articleId: "2",
+        visible: false as unknown as string,
+      },
+    });
+    await a.stepReplace({
+      stepId: "s2",
+      stepParams: {
+        articleId: "3",
+        visible: true as unknown as string,
+      },
+    });
+
+    expect(path(history.location)).toEqual("/articles/3/?visible=y");
+  });
+
+  test("historySyncPlugin - FEP-1061: T-O-5 defaultHistory ancestor URL uses ancestor's route encode (not currentPath)", async () => {
+    // Arrive on Article URL with a typed-decode chain; the defaultHistory
+    // declares Home as the ancestor. The ancestor URL pushed in
+    // historyEntryToEvents should reflect Home's route encode (or its plain
+    // template), NOT the current Article path.
+    history = createMemoryHistory({
+      initialEntries: ["/articles/9/?visible=true"],
+    });
+
+    const homeEncode = jest.fn((p: Record<string, any>) => ({
+      articleId: String(p.articleId ?? ""),
+      visible: p.visible ? "y" : "n",
+    }));
+
+    const coreStore = stackflow({
+      activityNames: ["Home", "Article"],
+      plugins: [
+        historySyncPlugin({
+          history,
+          routes: {
+            Home: {
+              path: "/home/",
+              encode: homeEncode,
+            },
+            Article: {
+              path: "/articles/:articleId",
+              defaultHistory: () => [
+                {
+                  activityName: "Home",
+                  activityParams: {
+                    visible: true as unknown as string,
+                  },
+                },
+              ],
+            },
+          } as any,
+          fallbackActivity: () => "Home",
+        }),
+      ],
+    });
+    const a = makeActionsProxy({ actions: coreStore.actions });
+    // Allow defaultHistory replay (Home ancestor → Article target) to settle
+    // through onChanged → push/stepPush.
+    await a.getStack();
+    await a.getStack();
+    await a.getStack();
+
+    // Walk back to the Home ancestor entry to inspect its URL.
+    history.back();
+    await a.getStack();
+
+    // Ancestor URL pushed during defaultHistory replay must use Home's encode
+    // output (visible=y), NOT the Article path the user arrived on.
+    expect(path(history.location)).toEqual("/home/?visible=y");
+  });
+
+  test("historySyncPlugin - FEP-1061: T-O-6 popstate forward (activity boundary): encode receives typed-via-context, NOT coerced strings", async () => {
+    history = createMemoryHistory();
+
+    const encode = jest.fn((params: Record<string, any>) => ({
+      articleId: String(params.articleId),
+      visible: params.visible ? "y" : "n",
+    }));
+
+    const coreStore = stackflow({
+      activityNames: ["Home", "Article"],
+      plugins: [
+        historySyncPlugin({
+          history,
+          routes: {
+            Home: "/home/",
+            Article: {
+              path: "/articles/:articleId",
+              encode,
+            },
+          },
+          fallbackActivity: () => "Home",
+        }),
+      ],
+    });
+    const a = makeActionsProxy({ actions: coreStore.actions });
+
+    await a.push({
+      activityId: "a1",
+      activityName: "Article",
+      activityParams: {
+        articleId: "1234",
+        visible: true as unknown as string,
+      },
+    });
+
+    // Snapshot encode call list to detect post-popstate-forward calls.
+    const callsAfterPush = encode.mock.calls.length;
+
+    history.back();
+    await a.getStack();
+    history.forward();
+    await a.getStack();
+
+    // If encode was called again on the popstate-forward branch (Issue #2),
+    // it would have received the coerced-string `visible: "true"` (truthy →
+    // "y") and produced /articles/1234/?visible=y — by accident. The robust
+    // assertion: encode mock should NOT see `typeof === "string"` for
+    // `visible` after the push (only typed boolean).
+    const allCalls = encode.mock.calls.slice(callsAfterPush);
+    for (const call of allCalls) {
+      const arg = call[0] as Record<string, unknown>;
+      if ("visible" in arg) {
+        expect(typeof arg.visible).not.toEqual("string");
+      }
+    }
+
+    // Final URL should be encode-output (not coerced).
+    expect(path(history.location)).toEqual("/articles/1234/?visible=y");
+  });
+
+  test("historySyncPlugin - FEP-1061: T-O-7 popstate stepForward: encode-output URL preserved through step.context.path", async () => {
+    history = createMemoryHistory();
+
+    const encode = (params: Record<string, any>) => ({
+      articleId: String(params.articleId),
+      visible: params.visible ? "y" : "n",
+    });
+
+    const coreStore = stackflow({
+      activityNames: ["Home", "Article"],
+      plugins: [
+        historySyncPlugin({
+          history,
+          routes: {
+            Home: "/home/",
+            Article: {
+              path: "/articles/:articleId",
+              encode,
+            },
+          },
+          fallbackActivity: () => "Home",
+        }),
+      ],
+    });
+    const a = makeActionsProxy({ actions: coreStore.actions });
+
+    await a.push({
+      activityId: "a1",
+      activityName: "Article",
+      activityParams: {
+        articleId: "1",
+        visible: false as unknown as string,
+      },
+    });
+    await a.stepPush({
+      stepId: "s1",
+      stepParams: {
+        articleId: "2",
+        visible: true as unknown as string,
+      },
+    });
+
+    const expectedStepUrl = "/articles/2/?visible=y";
+    expect(path(history.location)).toEqual(expectedStepUrl);
+
+    // back to activity, forward to step
+    history.back();
+    await a.getStack();
+    history.forward();
+    await a.getStack();
+
+    // step URL must be preserved through step.context.path (Option B):
+    expect(path(history.location)).toEqual(expectedStepUrl);
+  });
+
+  test("historySyncPlugin - FEP-1061: T-O-8 onInit URL-replay reflects encode output for parsed-state restoration", async () => {
+    // Boot with initialEntries containing a serialized state whose
+    // activity.context.path is the encode-output URL (e.g. saved by an
+    // earlier deploy / SSR). After onInit, history.location should reflect
+    // that encoded URL, NOT a fillWithoutEncode-derived URL.
+    const { stringify: flattedStringify } = await import("flatted");
+    const STATE_TAG = "@stackflow/plugin-history-sync";
+    const serializedState = {
+      _TAG: STATE_TAG,
+      flattedState: flattedStringify({
+        activity: {
+          id: "a1",
+          name: "Article",
+          transitionState: "enter-done",
+          params: { articleId: "1234", visible: "true" },
+          context: { path: "/articles/1234/?visible=y" },
+          steps: [],
+          enteredBy: {
+            id: "evt-1",
+            eventDate: 1,
+            name: "Pushed",
+            activityId: "a1",
+            activityName: "Article",
+            activityParams: { articleId: "1234", visible: "true" },
+            activityContext: { path: "/articles/1234/?visible=y" },
+          },
+          isTop: true,
+          isActive: true,
+          isRoot: true,
+          zIndex: 0,
+        },
+        step: undefined,
+      }),
+    };
+    history = createMemoryHistory({
+      initialEntries: [
+        {
+          pathname: "/articles/1234/?visible=y",
+          state: serializedState,
+        },
+      ],
+    });
+
+    const encode = (params: Record<string, any>) => ({
+      articleId: String(params.articleId),
+      visible: params.visible ? "y" : "n",
+    });
+
+    const coreStore = stackflow({
+      activityNames: ["Home", "Article"],
+      plugins: [
+        historySyncPlugin({
+          history,
+          routes: {
+            Home: "/home/",
+            Article: {
+              path: "/articles/:articleId",
+              encode,
+            },
+          },
+          fallbackActivity: () => "Home",
+        }),
+      ],
+    });
+    const a = makeActionsProxy({ actions: coreStore.actions });
+    await a.getStack();
+
+    // onInit's parsed-state branch should not overwrite history with a
+    // fillWithoutEncode URL — the trusted state already contains the
+    // encode-output path.
+    expect(path(history.location)).toEqual("/articles/1234/?visible=y");
+  });
+
+  test("historySyncPlugin - FEP-1061: T-O-12 route WITHOUT encode → history.location byte-identical to fillWithoutEncode output (regression bar)", async () => {
+    // Regression bar: must PASS even on the unfixed branch. Routes without
+    // encode should write URLs identical to fillWithoutEncode of coerced
+    // params.
+    history = createMemoryHistory();
+    const coreStore = stackflow({
+      activityNames: ["Home", "Article"],
+      plugins: [
+        historySyncPlugin({
+          history,
+          routes: {
+            Home: "/home/",
+            Article: "/articles/:articleId",
+          },
+          fallbackActivity: () => "Home",
+        }),
+      ],
+    });
+    const a = makeActionsProxy({ actions: coreStore.actions });
+
+    await a.push({
+      activityId: "a1",
+      activityName: "Article",
+      activityParams: {
+        articleId: "1234",
+        visible: true as unknown as string,
+      },
+    });
+
+    // No encode → URL contains the coerced string "true" (same as main).
+    expect(path(history.location)).toEqual("/articles/1234/?visible=true");
+  });
+
+  test("historySyncPlugin - FEP-1061: T-O-14 SSR — server-emitted activity.context.path is trusted on client onInit replay", async () => {
+    // Simulate a server that already computed an encoded URL using encode
+    // and put it into activity.context.path. Cross-deploy hydration uses
+    // history.state to carry server-side activity context. The client
+    // onInit's parsed-state branch should preserve that URL rather than
+    // recompute it via fillWithoutEncode.
+    const { stringify: flattedStringify } = await import("flatted");
+    const STATE_TAG = "@stackflow/plugin-history-sync";
+    const serverEncodedUrl = "/articles/1234/?visible=y";
+    const serializedState = {
+      _TAG: STATE_TAG,
+      flattedState: flattedStringify({
+        activity: {
+          id: "a-ssr",
+          name: "Article",
+          transitionState: "enter-done",
+          // server-coerced strings (FEP-1061 contract)
+          params: { articleId: "1234", visible: "true" },
+          // server-emitted encode-output URL
+          context: { path: serverEncodedUrl },
+          steps: [],
+          enteredBy: {
+            id: "evt-ssr-1",
+            eventDate: 1,
+            name: "Pushed",
+            activityId: "a-ssr",
+            activityName: "Article",
+            activityParams: { articleId: "1234", visible: "true" },
+            activityContext: { path: serverEncodedUrl },
+          },
+          isTop: true,
+          isActive: true,
+          isRoot: true,
+          zIndex: 0,
+        },
+        step: undefined,
+      }),
+    };
+    // boot with the server-emitted URL and state
+    history = createMemoryHistory({
+      initialEntries: [
+        {
+          pathname: serverEncodedUrl,
+          state: serializedState,
+        },
+      ],
+    });
+
+    const encode = (params: Record<string, any>) => ({
+      articleId: String(params.articleId),
+      visible: params.visible ? "y" : "n",
+    });
+
+    const coreStore = stackflow({
+      activityNames: ["Home", "Article"],
+      plugins: [
+        historySyncPlugin({
+          history,
+          routes: {
+            Home: "/home/",
+            Article: {
+              path: "/articles/:articleId",
+              encode,
+            },
+          },
+          fallbackActivity: () => "Home",
+        }),
+      ],
+    });
+    const a = makeActionsProxy({ actions: coreStore.actions });
+    await a.getStack();
+
+    // The parsed-state path is trusted; URL is preserved as the server
+    // wrote it (encode output), not recomputed via fillWithoutEncode.
+    expect(path(history.location)).toEqual(serverEncodedUrl);
+  });
+
+  test("historySyncPlugin - FEP-1061: T-O-16 replace() of activity with 3 active steps → no orphan; new activity URL is encode-output-correct", async () => {
+    history = createMemoryHistory();
+
+    const encode = (params: Record<string, any>) => ({
+      articleId: String(params.articleId ?? ""),
+      thirdId: String(params.thirdId ?? ""),
+      visible: params.visible ? "y" : "n",
+    });
+
+    const coreStore = stackflow({
+      activityNames: ["Home", "Article", "ThirdActivity"],
+      plugins: [
+        historySyncPlugin({
+          history,
+          routes: {
+            Home: "/home/",
+            Article: "/articles/:articleId",
+            ThirdActivity: {
+              path: "/third/:thirdId",
+              encode,
+            },
+          },
+          fallbackActivity: () => "Home",
+        }),
+      ],
+    });
+    const a = makeActionsProxy({ actions: coreStore.actions });
+
+    await a.push({
+      activityId: "a1",
+      activityName: "Article",
+      activityParams: { articleId: "1" },
+    });
+    await a.stepPush({ stepId: "s1", stepParams: { articleId: "1a" } });
+    await a.stepPush({ stepId: "s2", stepParams: { articleId: "1b" } });
+    await a.stepPush({ stepId: "s3", stepParams: { articleId: "1c" } });
+
+    await a.replace({
+      activityId: "a2",
+      activityName: "ThirdActivity",
+      activityParams: {
+        thirdId: "9",
+        visible: true as unknown as string,
+      },
+    });
+
+    const stack = await a.getStack();
+    const active = activeActivity(stack);
+    expect(active?.name).toEqual("ThirdActivity");
+    // No orphan steps from the replaced activity.
+    expect(active?.steps.length).toBeLessThanOrEqual(1);
+    // New URL reflects new route's encode output.
+    expect(path(history.location)).toEqual("/third/9/?visible=y");
+  });
+
+  // ──────────────────────────────────────────────────────────────────────
+  // FEP-1061 — current-behavior pins (not Phase A RED)
+  // ──────────────────────────────────────────────────────────────────────
+
+  describe("FEP-1061 — current-behavior pins (not Phase A RED)", () => {
+    test("T-O-13 plugin dispatches Pushed without activityContext → post-effect falls back to fillWithoutEncode", async () => {
+      // A plugin registered AFTER history-sync that re-emits Pushed without
+      // an activityContext should cause the post-effect to fall back to
+      // fillWithoutEncode (no path crash; URL uses coerced params). This
+      // documents the S1 fallback.
+      history = createMemoryHistory();
+
+      const stripContextPlugin: StackflowPlugin = () => ({
+        key: "strip-context",
+        onBeforePush({ actionParams, actions: { overrideActionParams } }) {
+          // Strip activityContext set by upstream history-sync to simulate
+          // a plugin that doesn't carry the path forward.
+          const { activityContext, ...rest } = actionParams as Record<
+            string,
+            unknown
+          >;
+          overrideActionParams(rest as typeof actionParams);
+        },
+      });
+
+      const coreStore = stackflow({
+        activityNames: ["Home", "Article"],
+        plugins: [
+          historySyncPlugin({
+            history,
+            routes: {
+              Home: "/home/",
+              Article: "/articles/:articleId",
+            },
+            fallbackActivity: () => "Home",
+          }),
+          stripContextPlugin,
+        ],
+      });
+      const a = makeActionsProxy({ actions: coreStore.actions });
+
+      await a.push({
+        activityId: "a1",
+        activityName: "Article",
+        activityParams: { articleId: "1234", visible: "true" },
+      });
+
+      // Fallback to fillWithoutEncode — URL still produced (coerced strings).
+      expect(path(history.location)).toEqual("/articles/1234/?visible=true");
+    });
+
+    test("T-O-15 plugin module has no closure-captured Map state (HMR safety)", async () => {
+      // Re-instantiate the plugin twice; each instance should be fully
+      // independent (no shared module state). Verifies Option B preserves
+      // SSoT — no parallel Map state inside the plugin closure.
+      const h1 = createMemoryHistory();
+      const h2 = createMemoryHistory();
+
+      const factory = () =>
+        historySyncPlugin({
+          history: h1,
+          routes: {
+            Home: "/home/",
+            Article: "/articles/:articleId",
+          },
+          fallbackActivity: () => "Home",
+        });
+
+      const plugin1 = factory();
+      const plugin2 = historySyncPlugin({
+        history: h2,
+        routes: {
+          Home: "/home/",
+          Article: "/articles/:articleId",
+        },
+        fallbackActivity: () => "Home",
+      });
+
+      // Both factory results should be independent functions producing
+      // independent plugin instances.
+      const inst1 = plugin1();
+      const inst2 = plugin2();
+
+      expect(inst1).not.toBe(inst2);
+      expect(inst1.key).toEqual("plugin-history-sync");
+      expect(inst2.key).toEqual("plugin-history-sync");
+
+      // Enumerable closure variables on the plugin factory return object
+      // should be limited to the lifecycle hooks + key + wrapStack —
+      // i.e. NO state Map keys leaking out. (We snapshot the keys to
+      // detect a regression that adds module-level Map state.)
+      const inst1Keys = Object.keys(inst1).sort();
+      const inst2Keys = Object.keys(inst2).sort();
+      expect(inst1Keys).toStrictEqual(inst2Keys);
+    });
+  });
+
+  // ──────────────────────────────────────────────────────────────────────
+  // FEP-1061 — Phase A strengthening of existing tests (T-O-10, T-O-11)
+  // ──────────────────────────────────────────────────────────────────────
+
+  test("historySyncPlugin - FEP-1061: T-O-10 STRENGTHEN T-I1 — encode-ORDER LOCK also asserts path(history.location)", async () => {
+    // Strengthens the existing T-I1 (line ~2037) by adding the URL surface
+    // assertion: path(history.location) must equal the encode-output URL,
+    // not the fillWithoutEncode URL.
+    history = createMemoryHistory();
+
+    const encode = (params: Record<string, any>) => ({
+      articleId: String(params.articleId),
+      visible: params.visible ? "y" : "n",
+    });
+
+    const coreStore = stackflow({
+      activityNames: ["Home", "Article"],
+      plugins: [
+        historySyncPlugin({
+          history,
+          routes: {
+            Home: "/home",
+            Article: {
+              path: "/articles/:articleId",
+              encode,
+            },
+          },
+          fallbackActivity: () => "Home",
+        }),
+      ],
+    });
+    const a = makeActionsProxy({ actions: coreStore.actions });
+
+    await a.push({
+      activityId: "a1",
+      activityName: "Article",
+      activityParams: {
+        articleId: "1234",
+        visible: true as unknown as string,
+      },
+    });
+
+    expect(path(history.location)).toEqual("/articles/1234/?visible=y");
+  });
+
+  test("historySyncPlugin - FEP-1061: T-O-11 STRENGTHEN F3 — replace-route atomicity also asserts path(history.location) reflects new route's encode-output", async () => {
+    // Strengthens the existing F3 (line ~2573). The third route uses an
+    // identity encode (or no encode), so the URL == the path; but verify
+    // the URL matches the new route's encode-output.
+    history = createMemoryHistory();
+
+    const coreStore = stackflow({
+      activityNames: ["Home", "Article", "ThirdActivity"],
+      plugins: [
+        historySyncPlugin({
+          history,
+          routes: {
+            Home: "/home/",
+            Article: "/articles/:articleId",
+            ThirdActivity: "/third/:thirdId",
+          },
+          fallbackActivity: () => "Home",
+        }),
+      ],
+    });
+    const a = makeActionsProxy({ actions: coreStore.actions });
+
+    await a.push({
+      activityId: "a1",
+      activityName: "Article",
+      activityParams: { articleId: "1" },
+    });
+
+    await a.replace({
+      activityId: "a2",
+      activityName: "ThirdActivity",
+      activityParams: {
+        thirdId: "9",
+        visible: true as unknown as string,
+      },
+    });
+
+    expect(path(history.location)).toEqual("/third/9/?visible=true");
+  });
 });

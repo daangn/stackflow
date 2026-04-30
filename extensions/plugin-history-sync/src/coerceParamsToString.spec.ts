@@ -138,6 +138,38 @@ test("coerceParamsToString - is idempotent for all covered input types", () => {
   const twice = coerceParamsToString(once);
 
   expect(twice).toStrictEqual(once);
+
+  // T-U-NEW-9: post-coerce typeof for every key must be "string" or
+  // "undefined". Deep-equality alone permits a regression where one branch
+  // produces a non-string (e.g. a number) AND idempotently maps to itself.
+  // This loop closes that gap: the post-condition of `coerceParamsToString`
+  // is that every emitted value satisfies the `string | undefined` contract,
+  // not just that running coerce twice produces the same shape.
+  for (const k of Object.keys(once)) {
+    const v = (once as Record<string, unknown>)[k];
+    expect(typeof v === "string" || typeof v === "undefined").toBe(true);
+  }
+});
+
+test("coerceParamsToString - circular ref forces String() fallback (deterministic, T-U-NEW-8)", () => {
+  // T-U-NEW-8: the original circular-ref test relied on `JSON.stringify`
+  // genuinely throwing on a self-referential object (which it does in V8),
+  // but that behavior is engine-dependent and the test's coverage of the
+  // catch branch is implicit. This deterministically forces the catch path
+  // by stubbing `JSON.stringify` to throw, then asserts the `String(value)`
+  // fallback was actually taken on a normal object input.
+  const spy = jest.spyOn(JSON, "stringify").mockImplementationOnce(() => {
+    throw new Error("forced");
+  });
+  try {
+    const value = { a: 1 };
+    const result = coerceParamsToString({ obj: value });
+    expect(result.obj).toBe(String(value)); // "[object Object]"
+    expect(typeof result.obj).toBe("string");
+    expect(spy).toHaveBeenCalled();
+  } finally {
+    spy.mockRestore();
+  }
 });
 
 test("coerceParamsToString - handles a 1000-key record with mixed types: spot-checks every cycle branch with typeof assertions (T-U3)", () => {
