@@ -194,28 +194,29 @@ describe("historySyncPlugin", () => {
     expect(fallbackActivity).not.toHaveBeenCalled();
   });
 
-  test("historySyncPlugin - 초기에 매칭하는 라우트가 없으면 fallbackActivity 콜백을 호출합니다", async () => {
+  test("historySyncPlugin - 초기에 매칭하는 라우트가 없으면 fallbackActivity 콜백을 plugin instance당 한 번만 호출합니다", async () => {
     history = createMemoryHistory({
       initialEntries: ["/non-existent-path"],
     });
 
     const fallbackActivity = jest.fn((): "Home" => "Home");
 
-    stackflow({
-      activityNames: ["Home", "Article"],
-      plugins: [
-        historySyncPlugin({
-          history,
-          routes: {
-            Home: "/home",
-            Article: "/articles/:articleId",
-          },
-          fallbackActivity,
-        }),
-      ],
+    const plugin = historySyncPlugin({
+      history,
+      routes: {
+        Home: "/home",
+        Article: "/articles/:articleId",
+      },
+      fallbackActivity,
     });
 
-    expect(fallbackActivity).toHaveBeenCalled();
+    const pluginInstance = plugin();
+    pluginInstance.overrideInitialEvents?.({
+      initialEvents: [],
+      initialContext: {},
+    });
+
+    expect(fallbackActivity).toHaveBeenCalledTimes(1);
   });
 
   test("historySyncPlugin - actions.push() 후에, URL 상태가 알맞게 바뀝니다", async () => {
