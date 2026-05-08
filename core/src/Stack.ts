@@ -1,4 +1,3 @@
-import type { BaseDomainEvent } from "event-types/_base";
 import type {
   DomainEvent,
   PoppedEvent,
@@ -19,6 +18,7 @@ export type ActivityStep = {
   params: {
     [key: string]: string | undefined;
   };
+  context?: {};
   enteredBy: PushedEvent | ReplacedEvent | StepPushedEvent | StepReplacedEvent;
   exitedBy?: ReplacedEvent | PoppedEvent | StepReplacedEvent | StepPoppedEvent;
   zIndex: number;
