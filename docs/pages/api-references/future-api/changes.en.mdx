@@ -132,7 +132,7 @@ Regardless of how an activity is entered — `push()`, `replace()`, `stepPush()`
 
 ```tsx
 // These two paths used to produce different runtime types. They don't anymore.
-push("Article", { visible: true })           // store: { visible: "true" }
+push("ArticleActivity", { visible: true })   // store: { visible: "true" }
 // URL arrival: /articles/1?visible=true      // store: { visible: "true" }
 ```
 
