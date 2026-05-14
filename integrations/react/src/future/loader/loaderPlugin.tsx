@@ -2,7 +2,6 @@ import type {
   ActivityDefinition,
   RegisteredActivityName,
 } from "@stackflow/config";
-import type { ActivityComponentType } from "../../__internal__/ActivityComponentType";
 import type { StackflowReactPlugin } from "../../__internal__/StackflowReactPlugin";
 import {
   getContentComponent,
@@ -14,6 +13,7 @@ import {
   PromiseStatus,
   resolve,
 } from "../../__internal__/utils/SyncInspectablePromise";
+import type { ActivityComponentType } from "../ActivityComponentType";
 import type { StackflowInput } from "../stackflow";
 
 export function loaderPlugin<

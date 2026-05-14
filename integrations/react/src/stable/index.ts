@@ -1,8 +1,8 @@
 export * from "../__internal__/activity/useActivity";
 export * from "../__internal__/activity/useActivityParams";
-export type { MonolithicActivityComponentType as ActivityComponentType } from "../__internal__/MonolithicActivityComponentType";
 export * from "../__internal__/StackflowReactPlugin";
 export * from "../__internal__/stack/useStack";
+export type { ActivityComponentType } from "./ActivityComponentType";
 export * from "./stackflow";
 export * from "./useActions";
 export * from "./useActiveEffect";

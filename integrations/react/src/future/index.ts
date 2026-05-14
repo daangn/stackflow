@@ -1,5 +1,6 @@
 export type { ActivityComponentType as ActivityComponentTypeByParams } from "../__internal__/ActivityComponentType";
 export * from "../__internal__/activity/useActivity";
+export * from "../__internal__/MonolithicActivityComponentType";
 export * from "../__internal__/StackflowReactPlugin";
 export * from "../__internal__/StructuredActivityComponentType";
 export * from "../__internal__/stack/useStack";
