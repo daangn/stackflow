@@ -72,6 +72,22 @@ The `historySyncPlugin` accepts two options: `config` and `fallbackActivity`.
   **Warning** - When mapping activity parameters to path parameters, ensure that the parameter values are URL-safe. If special characters that are not URL-safe are used, query parameters may appear duplicated.
 </Callout>
 
+## Runtime Coercion of Activity Params
+
+Regardless of how an activity is entered, including `push()`, `replace()`, `pushStep()`, `replaceStep()`, or URL arrival with or without a `decode` hook, the params you receive from `useActivityParams()` are always `string | undefined` at runtime.
+
+```tsx
+// These two paths used to produce different runtime types. They don't anymore.
+push("ArticleActivity", { visible: true })   // store: { visible: "true" }
+// URL arrival: /articles/1?visible=true      // store: { visible: "true" }
+```
+
+The `encode` hook on a route still receives the original typed params, so you can use `encode: ({ visible }) => ({ visible: visible ? "y" : "n" })` exactly as before. Coercion happens at the `@stackflow/plugin-history-sync` boundary, after `encode` has consumed the typed values to build the URL.
+
+<Callout emoji="⚠️">
+  **Migration note for `decode` users**: if you previously relied on `decode` to inject typed values, such as `decode: (p) => ({ count: Number(p.count) })`, and read them back via `useActivityParams().count` as a number, that value is now a string in the store. Perform the type coercion at the usage site instead: `Number(params.count)`.
+</Callout>
+
 <Callout emoji="⚡️">
   In a server-side rendering environment, the `window.location` value is not available, so the initial activity cannot be determined. To set the initial activity, add the path value to the `req.path` field in the `initialContext` of the Stack as follows:
 
