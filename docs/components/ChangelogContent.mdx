@@ -1,3 +1,12 @@
+## 2026.04.30
+
+Fix `fallbackActivity` callback being invoked on every initialization regardless of route matching outcome. Restored the pre-1.8.0 contract: the callback is now called only when no route matches `currentPath`. Apps that perform side effects in this callback (e.g. Sentry logging for unknown deep links) no longer fire on successful matches. [`2c5786a`](https://github.com/daangn/stackflow/commit/2c5786a2934c3d2b74c20e8c57465ae03b3d3416)
+
+Released packages:
+- 📦 [@stackflow/plugin-history-sync@1.10.1](https://npmjs.com/package/@stackflow/plugin-history-sync/v/1.10.1)
+
+---
+
 ## 2026.04.15
 
 Add lifecyclePlugin and useFocusEffect hook for activity focus/blur lifecycle [`39dbf81`](https://github.com/daangn/stackflow/commit/39dbf81472af06daa5c40da098e232c2fe3b4a92)

@@ -7,6 +7,7 @@ export type StepPushedEvent = BaseDomainEvent<
     stepParams: {
       [key: string]: string | undefined;
     };
+    stepContext?: {};
     targetActivityId?: string;
     hasZIndex?: boolean;
   }
