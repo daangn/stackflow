@@ -31,6 +31,10 @@ const RAW_RUNTIME_STATE =
       "reference": "workspace:docs"\
     },\
     {\
+      "name": "@stackflow/compat-await-push",\
+      "reference": "workspace:extensions/compat-await-push"\
+    },\
+    {\
       "name": "@stackflow/link",\
       "reference": "workspace:extensions/link"\
     },\
@@ -90,6 +94,7 @@ const RAW_RUNTIME_STATE =
   "enableTopLevelFallback": true,\
   "ignorePatternData": "(^(?:\\\\.yarn\\\\/sdks(?:\\\\/(?!\\\\.{1,2}(?:\\\\/|$))(?:(?:(?!(?:^|\\\\/)\\\\.{1,2}(?:\\\\/|$)).)*?)|$))$)",\
   "fallbackExclusionList": [\
+    ["@stackflow/compat-await-push", ["workspace:extensions/compat-await-push"]],\
     ["@stackflow/config", ["workspace:config"]],\
     ["@stackflow/core", ["workspace:core"]],\
     ["@stackflow/demo", ["workspace:demo"]],\
@@ -6494,6 +6499,23 @@ const RAW_RUNTIME_STATE =
           ["tslib", "npm:2.8.1"]\
         ],\
         "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@stackflow/compat-await-push", [\
+      ["workspace:extensions/compat-await-push", {\
+        "packageLocation": "./extensions/compat-await-push/",\
+        "packageDependencies": [\
+          ["@stackflow/compat-await-push", "workspace:extensions/compat-await-push"],\
+          ["@stackflow/core", "workspace:core"],\
+          ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
+          ["@stackflow/react", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:integrations/react"],\
+          ["@types/react", "npm:18.3.3"],\
+          ["esbuild", "npm:0.23.0"],\
+          ["react", "npm:18.3.1"],\
+          ["rimraf", "npm:3.0.2"],\
+          ["typescript", "patch:typescript@npm%3A5.5.3#optional!builtin<compat/typescript>::version=5.5.3&hash=379a07"]\
+        ],\
+        "linkType": "SOFT"\
       }]\
     ]],\
     ["@stackflow/config", [\

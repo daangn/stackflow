@@ -23,7 +23,6 @@ Promote Future API to default entry point and remove legacy Stable API
 **`@stackflow/config`, `@stackflow/core`** — Major version bump for ecosystem alignment. No API changes.
 
 **Removed packages**
-- `@stackflow/compat-await-push` — Use event-based patterns instead.
 - `@stackflow/plugin-preload` — Use `usePrepare()` from `@stackflow/react` instead.
 - `@stackflow/plugin-map-initial-activity` — Use `config.initialActivity` instead.
 
