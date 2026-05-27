@@ -28,16 +28,16 @@ export const config = defineConfig({
 ```
 
 ### Stackflow 초기화하기
-프로젝트 내에 JavaScript(TypeScript) 파일을 하나 생성하고, `stackflow()` 함수에 config와 액티비티 컴포넌트를 전달해 `<Stack />`과 `useFlow()` 함수를 생성해요.
+프로젝트 내에 JavaScript(TypeScript) 파일을 하나 생성하고, `stackflow()` 함수에 config와 액티비티 컴포넌트를 전달해 `<Stack />`을 생성해요.
 
-다른 컴포넌트에서 `<Stack />`과 `useFlow()`를 활용할 수 있도록 `export ...` 해줘요.
+다른 컴포넌트에서 `<Stack />`을 활용할 수 있도록 `export ...` 해줘요. `useFlow()` 같은 훅은 사용하는 컴포넌트에서 `@stackflow/react`로부터 직접 import해요.
 
 ```ts showLineNumbers filename="stackflow.ts" copy
 import { stackflow } from "@stackflow/react";
 import { config } from "./stackflow.config";
 import MyActivity from "./MyActivity";
 
-export const { Stack, useFlow } = stackflow({
+export const { Stack } = stackflow({
   config,
   components: {
     MyActivity,
@@ -68,7 +68,7 @@ import { basicUIPlugin } from "@stackflow/plugin-basic-ui";
 import { config } from "./stackflow.config";
 import MyActivity from "./MyActivity";
 
-export const { Stack, useFlow } = stackflow({
+export const { Stack } = stackflow({
   config,
   components: {
     MyActivity,

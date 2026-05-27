@@ -1,5 +1,3 @@
-import { Callout } from "nextra-theme-docs";
-
 # Structured Activity
 
 A **Structured Activity** separates an activity into four distinct concerns: content, layout, loading state, and error handling. This makes it easy to apply code splitting, Suspense-based loading, and error boundaries — without wiring them up manually.
@@ -54,11 +52,9 @@ export const Article = structuredActivityComponent<"Article">({
 `Article.content.tsx` exports a `content()` helper:
 
 ```tsx showLineNumbers filename="Article.content.tsx" copy
-import { content, useActivityParams } from "@stackflow/react";
+import { content } from "@stackflow/react";
 
-const ArticleContent = content<"Article">(() => {
-  const { title } = useActivityParams<"Article">();
-
+const ArticleContent = content<"Article">(({ params: { title } }) => {
   return (
     <div>
       <h1>{title}</h1>
@@ -68,10 +64,6 @@ const ArticleContent = content<"Article">(() => {
 
 export default ArticleContent;
 ```
-
-<Callout emoji="💡">
-  `useActivityParams()` reads the current activity's params. It's a convenient alternative to receiving `params` as a prop inside `content()`.
-</Callout>
 
 ## Loading State
 
@@ -87,7 +79,7 @@ const ArticleLoading = loading<"Article">(() => {
 export default ArticleLoading;
 ```
 
-```tsx showLineNumbers filename="Article.tsx" copy {3,7}
+```tsx showLineNumbers filename="Article.tsx" copy {2,6}
 import { structuredActivityComponent } from "@stackflow/react";
 import ArticleLoading from "./Article.loading";
 
@@ -116,7 +108,7 @@ const ArticleLayout = layout<"Article">(({ params: { title }, children }) => {
 export default ArticleLayout;
 ```
 
-```tsx showLineNumbers filename="Article.tsx" copy {3,4,8,9}
+```tsx showLineNumbers filename="Article.tsx" copy {2,7}
 import { structuredActivityComponent } from "@stackflow/react";
 import ArticleLayout from "./Article.layout";
 import ArticleLoading from "./Article.loading";
@@ -174,7 +166,7 @@ const ArticleError = errorHandler<"Article">(
 
 ## With Loader API
 
-Structured activities work seamlessly with the [Loader API](/docs/advanced/loader-api). Define the loader in `stackflow.config.ts` and use `useLoaderData()` inside `content()`.
+Structured activities work seamlessly with the [Loader API](/docs/advanced/preloading). Define the loader in `stackflow.config.ts` and use `useLoaderData()` inside `content()`.
 
 ```tsx showLineNumbers filename="Article.loader.ts" copy
 import type { ActivityLoaderArgs } from "@stackflow/config";
@@ -185,7 +177,7 @@ export async function articleLoader({ params }: ActivityLoaderArgs<"Article">) {
 }
 ```
 
-```tsx showLineNumbers filename="stackflow.config.ts" copy {8}
+```tsx showLineNumbers filename="stackflow.config.ts" copy {2,9}
 import { defineConfig } from "@stackflow/config";
 import { articleLoader } from "./Article.loader";
 
@@ -202,11 +194,10 @@ export const config = defineConfig({
 ```
 
 ```tsx showLineNumbers filename="Article.content.tsx" copy
-import { content, useActivityParams, useLoaderData } from "@stackflow/react";
+import { content, useLoaderData } from "@stackflow/react";
 import type { articleLoader } from "./Article.loader";
 
-const ArticleContent = content<"Article">(() => {
-  const { title } = useActivityParams<"Article">();
+const ArticleContent = content<"Article">(({ params: { title } }) => {
   const { data } = useLoaderData<typeof articleLoader>();
 
   return (
@@ -233,23 +224,3 @@ activities/
     ├── Article.loading.tsx  # loading()
     └── Article.loader.ts    # loader
 ```
-
-## API Reference
-
-### `structuredActivityComponent<ActivityName>(options)`
-
-| Option | Type | Description |
-|--------|------|-------------|
-| `content` | `Content \| (() => Promise<{ default: Content }>)` | Main content component, or an async import for code splitting |
-| `layout` | `Layout` (optional) | Wraps the content and loading/error states |
-| `loading` | `Loading` (optional) | Rendered as the Suspense fallback |
-| `errorHandler` | `ErrorHandler` (optional) | Rendered when content throws |
-
-### Helper Functions
-
-| Function | Description |
-|----------|-------------|
-| `content<ActivityName>(component)` | Creates a content descriptor |
-| `layout<ActivityName>(component)` | Creates a layout descriptor; receives `params` and `children` |
-| `loading<ActivityName>(component)` | Creates a loading descriptor; receives `params` |
-| `errorHandler<ActivityName>(component, options?)` | Creates an error handler descriptor; receives `params`, `error`, `reset` |

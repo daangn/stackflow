@@ -30,14 +30,14 @@ export const config = defineConfig({
 ### Initialize Stackflow
 Create a JavaScript (or TypeScript) file in your project and call the `stackflow()` function, passing the config and activity components.
 
-Export the result so that `<Stack />` and `useFlow()` can be used in other components.
+Export `<Stack />` from the result. Hooks such as `useFlow()` are imported directly from `@stackflow/react` in the components that use them.
 
 ```ts showLineNumbers filename="stackflow.ts" copy
 import { stackflow } from "@stackflow/react";
 import { config } from "./stackflow.config";
 import MyActivity from "./MyActivity";
 
-export const { Stack, useFlow } = stackflow({
+export const { Stack } = stackflow({
   config,
   components: {
     MyActivity,
@@ -67,7 +67,7 @@ import { basicUIPlugin } from "@stackflow/plugin-basic-ui";
 import { config } from "./stackflow.config";
 import MyActivity from "./MyActivity";
 
-export const { Stack, useFlow } = stackflow({
+export const { Stack } = stackflow({
   config,
   components: {
     MyActivity,

@@ -1,5 +1,3 @@
-import { Callout } from "nextra-theme-docs";
-
 # 마이그레이션 가이드: v1 → v2
 
 이 가이드는 Stackflow 2.0의 주요 변경 사항과 v1에서 마이그레이션하는 방법을 다뤄요.
@@ -49,7 +47,7 @@ export const config = defineConfig({
 import { stackflow } from "@stackflow/react";
 import { config } from "./stackflow.config";
 
-export const { Stack, useFlow } = stackflow({
+export const { Stack } = stackflow({
   config,
   components: {
     HomeActivity,
@@ -133,8 +131,21 @@ const Article: ActivityComponentType<"Article"> = ({ params }) => {
 훅은 이제 팩토리 함수로 생성하는 대신 `@stackflow/react`에서 직접 import해요.
 
 **변경 전:**
-```ts
-import { useFlow } from "./stackflow"; // stackflow.ts에서 import
+```ts filename="stackflow.ts"
+import { stackflow } from "@stackflow/react";
+
+export const { Stack, useFlow } = stackflow({
+  transitionDuration: 350,
+  activities: {
+    HomeActivity,
+    MyProfileActivity,
+  },
+  plugins: [],
+});
+```
+
+```ts filename="HomeActivity.tsx"
+import { useFlow } from "./stackflow"; // stackflow() 팩토리에서 import
 ```
 
 **변경 후:**
@@ -182,7 +193,7 @@ import { Link } from "@stackflow/link";
 
 v2에서 다음 패키지들이 삭제됐어요.
 
-- `@stackflow/plugin-preload` — 빌트인 Loader API를 사용하세요. [프리로딩](/docs/advanced/preloading) 참고.
+- `@stackflow/plugin-preload` — 빌트인 Loader API를 사용하세요. [Loader API](/docs/advanced/preloading) 참고.
 - `@stackflow/plugin-map-initial-activity` — `defineConfig()`의 `initialActivity`를 사용하세요.
 
 ## API 대응표
@@ -191,8 +202,8 @@ v2에서 다음 패키지들이 삭제됐어요.
 |----|-----|
 | `stackflow({ transitionDuration, activities, plugins })` | `stackflow({ config, components, plugins })` |
 | `ActivityComponentType<Params>` | `ActivityComponentType<"ActivityName">` |
-| `useFlow()` from `./stackflow` | `useFlow()` from `@stackflow/react` |
-| `useStepFlow()` from `./stackflow` | `useStepFlow()` from `@stackflow/react` |
+| `stackflow()` 팩토리의 `useFlow()` | `@stackflow/react`의 `useFlow()` |
+| `stackflow()` 팩토리의 `useStepFlow()` | `@stackflow/react`의 `useStepFlow()` |
 | `stepPush/stepReplace/stepPop` | `pushStep/replaceStep/popStep` |
 | `createLinkComponent<TypeActivities>()` | `import { Link } from "@stackflow/link"` |
 | `historySyncPlugin({ routes, fallbackActivity })` | `historySyncPlugin({ config, fallbackActivity })` |

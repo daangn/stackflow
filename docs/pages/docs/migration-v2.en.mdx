@@ -1,5 +1,3 @@
-import { Callout } from "nextra-theme-docs";
-
 # Migration Guide: v1 → v2
 
 This guide covers the breaking changes in Stackflow 2.0 and how to migrate from v1.
@@ -49,7 +47,7 @@ export const config = defineConfig({
 import { stackflow } from "@stackflow/react";
 import { config } from "./stackflow.config";
 
-export const { Stack, useFlow } = stackflow({
+export const { Stack } = stackflow({
   config,
   components: {
     HomeActivity,
@@ -133,8 +131,21 @@ const Article: ActivityComponentType<"Article"> = ({ params }) => {
 Hooks are now imported directly from `@stackflow/react` instead of being created from a factory function.
 
 **Before:**
-```ts
-import { useFlow } from "./stackflow"; // from your stackflow.ts
+```ts filename="stackflow.ts"
+import { stackflow } from "@stackflow/react";
+
+export const { Stack, useFlow } = stackflow({
+  transitionDuration: 350,
+  activities: {
+    HomeActivity,
+    MyProfileActivity,
+  },
+  plugins: [],
+});
+```
+
+```ts filename="HomeActivity.tsx"
+import { useFlow } from "./stackflow"; // from the stackflow() factory
 ```
 
 **After:**
@@ -182,7 +193,7 @@ Replace all occurrences of the old entry points.
 
 The following packages have been removed in v2:
 
-- `@stackflow/plugin-preload` — Use the built-in Loader API instead. See [Preloading](/docs/advanced/preloading).
+- `@stackflow/plugin-preload` — Use the built-in Loader API instead. See [Loader API](/docs/advanced/preloading).
 - `@stackflow/plugin-map-initial-activity` — Use `initialActivity` in `defineConfig()` instead.
 
 ## API Correspondence Table
@@ -191,8 +202,8 @@ The following packages have been removed in v2:
 |----|-----|
 | `stackflow({ transitionDuration, activities, plugins })` | `stackflow({ config, components, plugins })` |
 | `ActivityComponentType<Params>` | `ActivityComponentType<"ActivityName">` |
-| `useFlow()` from `./stackflow` | `useFlow()` from `@stackflow/react` |
-| `useStepFlow()` from `./stackflow` | `useStepFlow()` from `@stackflow/react` |
+| `useFlow()` from the `stackflow()` factory | `useFlow()` from `@stackflow/react` |
+| `useStepFlow()` from the `stackflow()` factory | `useStepFlow()` from `@stackflow/react` |
 | `stepPush/stepReplace/stepPop` | `pushStep/replaceStep/popStep` |
 | `createLinkComponent<TypeActivities>()` | `import { Link } from "@stackflow/link"` |
 | `historySyncPlugin({ routes, fallbackActivity })` | `historySyncPlugin({ config, fallbackActivity })` |

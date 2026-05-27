@@ -1,5 +1,3 @@
-import { Callout } from "nextra-theme-docs";
-
 # 구조화된 액티비티 (Structured Activity)
 
 **구조화된 액티비티**는 하나의 액티비티를 콘텐츠, 레이아웃, 로딩 상태, 에러 처리 네 가지 관심사로 분리해요. 코드 스플리팅, Suspense 기반 로딩, 에러 바운더리를 별도로 연결하지 않아도 자연스럽게 적용돼요.
@@ -54,11 +52,9 @@ export const Article = structuredActivityComponent<"Article">({
 `Article.content.tsx`는 `content()` 헬퍼를 사용해 export해요.
 
 ```tsx showLineNumbers filename="Article.content.tsx" copy
-import { content, useActivityParams } from "@stackflow/react";
+import { content } from "@stackflow/react";
 
-const ArticleContent = content<"Article">(() => {
-  const { title } = useActivityParams<"Article">();
-
+const ArticleContent = content<"Article">(({ params: { title } }) => {
   return (
     <div>
       <h1>{title}</h1>
@@ -68,10 +64,6 @@ const ArticleContent = content<"Article">(() => {
 
 export default ArticleContent;
 ```
-
-<Callout emoji="💡">
-  `useActivityParams()`는 현재 액티비티의 params를 가져와요. `content()` 내부에서 props로 받는 것의 편리한 대안이에요.
-</Callout>
 
 ## 로딩 상태
 
@@ -87,7 +79,7 @@ const ArticleLoading = loading<"Article">(() => {
 export default ArticleLoading;
 ```
 
-```tsx showLineNumbers filename="Article.tsx" copy {3,7}
+```tsx showLineNumbers filename="Article.tsx" copy {2,6}
 import { structuredActivityComponent } from "@stackflow/react";
 import ArticleLoading from "./Article.loading";
 
@@ -116,7 +108,7 @@ const ArticleLayout = layout<"Article">(({ params: { title }, children }) => {
 export default ArticleLayout;
 ```
 
-```tsx showLineNumbers filename="Article.tsx" copy {3,4,8,9}
+```tsx showLineNumbers filename="Article.tsx" copy {2,7}
 import { structuredActivityComponent } from "@stackflow/react";
 import ArticleLayout from "./Article.layout";
 import ArticleLoading from "./Article.loading";
@@ -174,7 +166,7 @@ const ArticleError = errorHandler<"Article">(
 
 ## Loader API와 함께 사용하기
 
-구조화된 액티비티는 [Loader API](/docs/advanced/loader-api)와 자연스럽게 연동돼요. `stackflow.config.ts`에 로더를 정의하고 `content()` 내부에서 `useLoaderData()`로 가져와요.
+구조화된 액티비티는 [Loader API](/docs/advanced/preloading)와 자연스럽게 연동돼요. `stackflow.config.ts`에 로더를 정의하고 `content()` 내부에서 `useLoaderData()`로 가져와요.
 
 ```tsx showLineNumbers filename="Article.loader.ts" copy
 import type { ActivityLoaderArgs } from "@stackflow/config";
@@ -185,7 +177,7 @@ export async function articleLoader({ params }: ActivityLoaderArgs<"Article">) {
 }
 ```
 
-```tsx showLineNumbers filename="stackflow.config.ts" copy {8}
+```tsx showLineNumbers filename="stackflow.config.ts" copy {2,9}
 import { defineConfig } from "@stackflow/config";
 import { articleLoader } from "./Article.loader";
 
@@ -202,11 +194,10 @@ export const config = defineConfig({
 ```
 
 ```tsx showLineNumbers filename="Article.content.tsx" copy
-import { content, useActivityParams, useLoaderData } from "@stackflow/react";
+import { content, useLoaderData } from "@stackflow/react";
 import type { articleLoader } from "./Article.loader";
 
-const ArticleContent = content<"Article">(() => {
-  const { title } = useActivityParams<"Article">();
+const ArticleContent = content<"Article">(({ params: { title } }) => {
   const { data } = useLoaderData<typeof articleLoader>();
 
   return (
@@ -233,23 +224,3 @@ activities/
     ├── Article.loading.tsx  # loading()
     └── Article.loader.ts    # loader
 ```
-
-## API 레퍼런스
-
-### `structuredActivityComponent<ActivityName>(options)`
-
-| 옵션 | 타입 | 설명 |
-|------|------|------|
-| `content` | `Content \| (() => Promise<{ default: Content }>)` | 메인 콘텐츠 컴포넌트, 또는 코드 스플리팅을 위한 async import |
-| `layout` | `Layout` (선택) | 콘텐츠와 로딩/에러 상태를 감싸는 래퍼 |
-| `loading` | `Loading` (선택) | Suspense fallback으로 렌더링되는 컴포넌트 |
-| `errorHandler` | `ErrorHandler` (선택) | 콘텐츠에서 에러 발생 시 렌더링되는 컴포넌트 |
-
-### 헬퍼 함수
-
-| 함수 | 설명 |
-|------|------|
-| `content<ActivityName>(component)` | content 디스크립터 생성 |
-| `layout<ActivityName>(component)` | layout 디스크립터 생성; `params`와 `children`을 받아요 |
-| `loading<ActivityName>(component)` | loading 디스크립터 생성; `params`를 받아요 |
-| `errorHandler<ActivityName>(component, options?)` | error handler 디스크립터 생성; `params`, `error`, `reset`을 받아요 |

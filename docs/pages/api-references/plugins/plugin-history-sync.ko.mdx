@@ -13,15 +13,38 @@ npm install @stackflow/plugin-history-sync
 
 ## 사용법
 
+```ts showLineNumbers filename="stackflow.config.ts" copy
+import { defineConfig } from "@stackflow/config";
+
+export const config = defineConfig({
+  activities: [
+    {
+      name: "MyHome",
+      route: "/",
+    },
+    {
+      name: "MyArticle",
+      route: "/articles/:articleId",
+    },
+    {
+      name: "NotFoundPage",
+      route: "/404",
+    },
+  ],
+});
+```
+
 ```ts showLineNumbers filename="stackflow.ts" copy
 import { stackflow } from "@stackflow/react";
 import { historySyncPlugin } from "@stackflow/plugin-history-sync";
+import { config } from "./stackflow.config";
 import { MyHome } from "./MyHome";
 import { MyArticle } from "./MyArticle";
 import { NotFoundPage } from "./NotFoundPage";
 
-const { Stack, useFlow } = stackflow({
-  activities: {
+const { Stack } = stackflow({
+  config,
+  components: {
     MyHome,
     MyArticle,
     NotFoundPage,
@@ -29,20 +52,13 @@ const { Stack, useFlow } = stackflow({
   plugins: [
     // ...
     historySyncPlugin({
-      routes: {
-        /**
-         * You can link the registered activity with the URL template.
-         */
-        MyHome: "/",
-        MyArticle: "/articles/:articleId",
-        NotFoundPage: "/404",
-      },
+      config,
       /**
-       * If a URL that does not correspond to the URL template is given, it moves to the `fallbackActivity`.
+       * URL 템플릿에 대응하지 않는 URL이 주어지면 `fallbackActivity`로 이동해요.
        */
-      fallbackActivity: ({ context }) => "NotFoundPage",
+      fallbackActivity: ({ initialContext }) => "NotFoundPage",
       /**
-       * Uses the hash portion of the URL (i.e. window.location.hash)
+       * URL의 hash 부분을 사용해요. (예: window.location.hash)
        */
       useHash: false,
     }),
@@ -55,7 +71,7 @@ const { Stack, useFlow } = stackflow({
 <APITable>
 |                  |            |                                                                                                                                                 |
 | ---------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------  |
-| routes           | `object`   | 액티비티와 URL 템플릿을 연결해요. 액티비티의 파라미터를 Path Parameter로 표현할 수 있어요. 만약 액티비티의 파라미터가 해당 URL 템플릿에 없다면 자동으로 Query Parameter로 표현돼요. |
+| config           | `object`   | `defineConfig()`로 생성한 config 객체에요. 각 액티비티 정의의 `route` 필드에서 라우트를 읽어요. |
 | fallbackActivity | `(args: { initialContext: any }) => K` | 첫 진입시에 현재 URL과 매핑되는 URL이 없는 경우 어떤 액티비티로 보낼지 결정해요. 일반적으로 404 페이지를 만들고 여기에 할당해요.                                              |
 | useHash           | `boolean` (optional)                                        | 해시 기반 라우팅을 사용할지를 결정해요. 기본값은 false예요.                                         |
 | history           | `History` (optional)                                        | 네비게이션 상태를 관리하는 데 사용되는 사용자 정의 히스토리 객체예요. 기본적으로 브라우저나 메모리 히스토리예요. |

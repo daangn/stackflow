@@ -259,16 +259,16 @@ Pre-effect 훅에는 `onBeforePush`, `onBeforeReplace`, `onBeforePop`이 있어�
 |                        |            |                               |
 | ---------------------- | ---------- | ----------------------------- |
 | actions.preventDefault | `function` | (추가) 기본 동작을 취소해요.         |
-| actions.getStack       | `function` | G현재 스택의 상태를 가져올 수 있어요.  |
+| actions.getStack       | `function` | 현재 스택의 상태를 가져올 수 있어요.  |
 | actions.dispatchEvent  | `function` | 코어에 새 이벤트를 추가해요.         |
 | effect                 | `object`   | 해당 이펙트 훅을 촉발시킨 이펙트에요.   |
 </APITable>
 
 ## 첫 액티비티 결정하기
 
-`initialPushedEvent` API를 통해 기존에 존재하는 `initialActivity` 동작을 덮어쓸 수 있어요.
+`overrideInitialEvents` API를 통해 기존에 존재하는 `initialActivity` 동작을 덮어쓸 수 있어요.
 
-```tsx showLineNumbers filename="stackflow.ts" copy {1, 9-13}
+```tsx showLineNumbers filename="stackflow.ts" copy {1, 9-19}
 import { makeEvent } from "@stackflow/core";
 
 stackflow({
@@ -277,14 +277,19 @@ stackflow({
     () => {
       return {
         key: "my-plugin",
-        initialPushedEvent() {
-          return makeEvent("Pushed", {
-            // ...
-          });
+        overrideInitialEvents({ initialEvents }) {
+          if (initialEvents.length > 0) {
+            return initialEvents;
+          }
+
+          return [
+            makeEvent("Pushed", {
+              // ...
+            }),
+          ];
         },
       };
     },
   ],
 });
 ```
-

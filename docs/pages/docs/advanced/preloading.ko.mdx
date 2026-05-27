@@ -1,15 +1,13 @@
-import { Callout } from "nextra-theme-docs";
-
-# 프리로딩
+# Loader API
 
 액티비티로 이동하기 전에 데이터를 미리 불러와 초기 렌더링 시간을 단축할 수 있어요. Stackflow의 빌트인 Loader API를 사용하면 깔끔하게 구현할 수 있어요.
 
-## Loader API
+## 로더 정의하기
 
 `stackflow.config.ts`에서 액티비티에 로더를 정의해요. 로더는 액티비티가 렌더링되기 전에 실행되고, 그 데이터는 `useLoaderData()`로 가져올 수 있어요.
 
 ```tsx showLineNumbers filename="HomeActivity.loader.ts" copy
-import type { ActivityLoaderArgs } from "@stackflow/react";
+import type { ActivityLoaderArgs } from "@stackflow/config";
 
 export async function homeActivityLoader({ params }: ActivityLoaderArgs<"HomeActivity">) {
   const data = await fetchData(params);

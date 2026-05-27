@@ -258,9 +258,9 @@ Pre-effect hooks include `onBeforePush`, `onBeforeReplace`, and `onBeforePop`. P
 
 ## Determining initial activity
 
-You can override the existing `initialActivity` behavior through the `initialPushedEvent` API.
+You can override the existing `initialActivity` behavior through the `overrideInitialEvents` API.
 
-```ts showLineNumbers filename="stackflow.ts" copy {1, 9-13}
+```ts showLineNumbers filename="stackflow.ts" copy {1, 9-19}
 import { makeEvent } from "@stackflow/core";
 
 stackflow({
@@ -269,14 +269,19 @@ stackflow({
     () => {
       return {
         key: "my-plugin",
-        initialPushedEvent() {
-          return makeEvent("Pushed", {
-            // ...
-          });
+        overrideInitialEvents({ initialEvents }) {
+          if (initialEvents.length > 0) {
+            return initialEvents;
+          }
+
+          return [
+            makeEvent("Pushed", {
+              // ...
+            }),
+          ];
         },
       };
     },
   ],
 });
 ```
-

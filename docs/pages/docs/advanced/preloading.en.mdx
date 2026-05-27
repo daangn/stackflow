@@ -1,15 +1,13 @@
-import { Callout } from "nextra-theme-docs";
-
-# Preloading
+# Loader API
 
 You can reduce the time taken for initial rendering by preloading data before navigating to an activity. Stackflow's built-in Loader API makes this straightforward.
 
-## Loader API
+## Defining a Loader
 
 Define a loader for your activity in `stackflow.config.ts`. The loader runs before the activity renders and its data is accessible via `useLoaderData()`.
 
 ```tsx showLineNumbers filename="HomeActivity.loader.ts" copy
-import type { ActivityLoaderArgs } from "@stackflow/react";
+import type { ActivityLoaderArgs } from "@stackflow/config";
 
 export async function homeActivityLoader({ params }: ActivityLoaderArgs<"HomeActivity">) {
   const data = await fetchData(params);
