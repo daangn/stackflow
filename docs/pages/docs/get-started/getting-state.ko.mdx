@@ -21,7 +21,18 @@ import { APITable } from "../../../components/APITable";
 import { useStack, useFlow, type ActivityComponentType } from "@stackflow/react";
 import { AppScreen } from "@stackflow/plugin-basic-ui";
 
-const MyActivity: ActivityComponentType = () => {
+declare module "@stackflow/config" {
+  interface Register {
+    MyActivity: {
+      // 파라미터가 없는 액티비티
+    };
+    Article: {
+      title: string;
+    };
+  }
+}
+
+const MyActivity: ActivityComponentType<"MyActivity"> = () => {
   const stack = useStack();
   const { replace } = useFlow();
 
@@ -71,7 +82,18 @@ export default MyActivity;
 import { useActivity, useFlow, type ActivityComponentType } from "@stackflow/react";
 import { AppScreen } from "@stackflow/plugin-basic-ui";
 
-const MyActivity: ActivityComponentType = () => {
+declare module "@stackflow/config" {
+  interface Register {
+    MyActivity: {
+      // 파라미터가 없는 액티비티
+    };
+    Article: {
+      title: string;
+    };
+  }
+}
+
+const MyActivity: ActivityComponentType<"MyActivity"> = () => {
   const activity = useActivity();
   const { replace } = useFlow();
 

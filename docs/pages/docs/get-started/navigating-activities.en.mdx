@@ -18,7 +18,18 @@ import type { ActivityComponentType } from "@stackflow/react";
 import { useFlow } from "@stackflow/react";
 import { AppScreen } from "@stackflow/plugin-basic-ui";
 
-const MyActivity: ActivityComponentType = () => {
+declare module "@stackflow/config" {
+  interface Register {
+    MyActivity: {
+      // activity has no parameters
+    };
+    Article: {
+      title: string;
+    };
+  }
+}
+
+const MyActivity: ActivityComponentType<"MyActivity"> = () => {
   const { push } = useFlow();
 
   const onClick = () => {
@@ -80,7 +91,18 @@ import type { ActivityComponentType } from "@stackflow/react";
 import { useFlow } from "@stackflow/react";
 import { AppScreen } from "@stackflow/plugin-basic-ui";
 
-const MyActivity: ActivityComponentType = () => {
+declare module "@stackflow/config" {
+  interface Register {
+    MyActivity: {
+      // activity has no parameters
+    };
+    Article: {
+      title: string;
+    };
+  }
+}
+
+const MyActivity: ActivityComponentType<"MyActivity"> = () => {
   const { replace } = useFlow();
 
   const onClick = () => {
