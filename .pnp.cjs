@@ -6507,9 +6507,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@stackflow/compat-await-push", "workspace:extensions/compat-await-push"],\
           ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
-          ["@types/react", "npm:18.3.3"],\
           ["esbuild", "npm:0.23.0"],\
-          ["react", "npm:18.3.1"],\
           ["rimraf", "npm:3.0.2"],\
           ["typescript", "patch:typescript@npm%3A5.5.3#optional!builtin<compat/typescript>::version=5.5.3&hash=379a07"]\
         ],\

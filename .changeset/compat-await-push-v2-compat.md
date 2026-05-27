@@ -2,4 +2,4 @@
 "@stackflow/compat-await-push": minor
 ---
 
-Remove unused `@stackflow/core` and `@stackflow/react` peer dependencies. The package is a pure Promise-based utility and does not import Stackflow internals, so it works in any environment regardless of the installed Stackflow major version.
+Remove unused peer dependencies (`@stackflow/core`, `@stackflow/react`, `react`, `@types/react`) — pure Promise-based utility with no React or Stackflow imports.

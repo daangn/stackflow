@@ -5594,14 +5594,9 @@ __metadata:
   resolution: "@stackflow/compat-await-push@workspace:extensions/compat-await-push"
   dependencies:
     "@stackflow/esbuild-config": "npm:^1.0.3"
-    "@types/react": "npm:^18.3.3"
     esbuild: "npm:^0.23.0"
-    react: "npm:^18.3.1"
     rimraf: "npm:^3.0.2"
     typescript: "npm:^5.5.3"
-  peerDependencies:
-    "@types/react": ">=16.8.0"
-    react: ">=16.8.0"
   languageName: unknown
   linkType: soft
 
