@@ -153,6 +153,8 @@ import { useFlow } from "./stackflow"; // from the stackflow() factory
 import { useFlow } from "@stackflow/react"; // direct import
 ```
 
+References to the old `useActions()` helper should also be updated to `useFlow()` imported directly from `@stackflow/react`.
+
 ## Step 6: Rename `useStepFlow` Functions
 
 The step navigation function names have changed.
@@ -202,6 +204,7 @@ The following packages have been removed in v2:
 |----|-----|
 | `stackflow({ transitionDuration, activities, plugins })` | `stackflow({ config, components, plugins })` |
 | `ActivityComponentType<Params>` | `ActivityComponentType<"ActivityName">` |
+| `useActions()` | `useFlow()` from `@stackflow/react` |
 | `useFlow()` from the `stackflow()` factory | `useFlow()` from `@stackflow/react` |
 | `useStepFlow()` from the `stackflow()` factory | `useStepFlow()` from `@stackflow/react` |
 | `stepPush/stepReplace/stepPop` | `pushStep/replaceStep/popStep` |

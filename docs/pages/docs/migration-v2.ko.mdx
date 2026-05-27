@@ -153,6 +153,8 @@ import { useFlow } from "./stackflow"; // stackflow() 팩토리에서 import
 import { useFlow } from "@stackflow/react"; // 직접 import
 ```
 
+이전 `useActions()` 헬퍼를 참조하던 코드는 `@stackflow/react`에서 직접 import한 `useFlow()`로 교체하세요.
+
 ## 6단계: `useStepFlow` 함수명 변경
 
 스텝 탐색 함수명이 변경됐어요.
@@ -202,6 +204,7 @@ v2에서 다음 패키지들이 삭제됐어요.
 |----|-----|
 | `stackflow({ transitionDuration, activities, plugins })` | `stackflow({ config, components, plugins })` |
 | `ActivityComponentType<Params>` | `ActivityComponentType<"ActivityName">` |
+| `useActions()` | `@stackflow/react`의 `useFlow()` |
 | `stackflow()` 팩토리의 `useFlow()` | `@stackflow/react`의 `useFlow()` |
 | `stackflow()` 팩토리의 `useStepFlow()` | `@stackflow/react`의 `useStepFlow()` |
 | `stepPush/stepReplace/stepPop` | `pushStep/replaceStep/popStep` |
