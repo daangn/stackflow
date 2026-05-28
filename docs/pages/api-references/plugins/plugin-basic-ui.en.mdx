@@ -13,12 +13,36 @@ npm install @stackflow/plugin-basic-ui
 ## Usage
 
 Provides components in the form of application app bars.
+```ts showLineNumbers filename="stackflow.config.ts" copy
+import { defineConfig } from "@stackflow/config";
+
+export const config = defineConfig({
+  activities: [
+    {
+      name: "MyHome",
+      route: "/",
+    },
+    {
+      name: "MyArticle",
+      route: "/articles/:articleId",
+    },
+  ],
+});
+```
+
 ```tsx showLineNumbers filename="stackflow.ts" copy
 import { stackflow } from "@stackflow/react";
 import { basicUIPlugin } from "@stackflow/plugin-basic-ui";
+import { config } from "./stackflow.config";
+import { MyHome } from "./MyHome";
+import { MyArticle } from "./MyArticle";
 
-const { Stack, useFlow } = stackflow({
-  // ...
+const { Stack } = stackflow({
+  config,
+  components: {
+    MyHome,
+    MyArticle,
+  },
   plugins: [
     // ...
     basicUIPlugin({
