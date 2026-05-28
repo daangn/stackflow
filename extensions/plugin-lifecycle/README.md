@@ -7,12 +7,33 @@ Stackflow plugin that provides `useFocusEffect`, a hook for running side-effects
 Add `lifecyclePlugin()` to your stackflow configuration:
 
 ```typescript
+import { defineConfig } from "@stackflow/config";
+
+export const config = defineConfig({
+  activities: [
+    {
+      name: "MyHome",
+    },
+    {
+      name: "MyArticle",
+    },
+  ],
+  transitionDuration: 350,
+});
+```
+
+```typescript
 import { stackflow } from "@stackflow/react";
 import { lifecyclePlugin } from "@stackflow/plugin-lifecycle";
+import { config } from "./stackflow.config";
+import { MyHome } from "./MyHome";
+import { MyArticle } from "./MyArticle";
 
-const { Stack, useFlow } = stackflow({
-  activities: {
-    // ...
+const { Stack } = stackflow({
+  config,
+  components: {
+    MyHome,
+    MyArticle,
   },
   plugins: [
     lifecyclePlugin(),
@@ -58,6 +79,6 @@ function ArticleActivity({ articleId }) {
 ## When to use
 
 - **`useFocusEffect`** — External side-effects that should fire immediately on activity transition: query invalidation, analytics events, cache warming.
-- **`useActiveEffect`** (`@stackflow/react`) — Effects that depend on a settled React tree: DOM manipulation, scroll restoration.
+- **React effects** — Effects that depend on a settled React tree: DOM manipulation, scroll restoration.
 
 The key difference is timing: `useFocusEffect` runs from the plugin's `onChanged` handler (outside the React render cycle), so it executes immediately without waiting for React's deferred rendering.
