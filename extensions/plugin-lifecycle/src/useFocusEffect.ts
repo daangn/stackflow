@@ -28,7 +28,7 @@ import { useLifecycleStore } from "./lifecyclePlugin";
  * reflect the previous stack state at invocation time.
  *
  * For effects that depend on a settled React tree (DOM manipulation, scroll
- * restoration), use `useActiveEffect` from `@stackflow/react` instead.
+ * restoration), use React effects instead.
  */
 export function useFocusEffect(
   callback: () => (() => void) | void,
