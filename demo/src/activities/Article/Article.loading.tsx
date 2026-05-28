@@ -1,4 +1,4 @@
-import { loading } from "@stackflow/react/future";
+import { loading } from "@stackflow/react";
 import LoadingSpinner from "../../components/LoadingSpinner";
 
 import * as css from "./Article.loading.css";

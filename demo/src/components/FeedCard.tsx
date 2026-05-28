@@ -1,4 +1,4 @@
-import { useFlow } from "@stackflow/react/future";
+import { useFlow } from "@stackflow/react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import * as css from "./FeedCard.css";
 

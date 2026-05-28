@@ -1,0 +1,226 @@
+# Structured Activity
+
+A **Structured Activity** separates an activity into four distinct concerns: content, layout, loading state, and error handling. This makes it easy to apply code splitting, Suspense-based loading, and error boundaries — without wiring them up manually.
+
+## Basic Usage
+
+Use `structuredActivityComponent()` instead of a plain React component when registering an activity.
+
+```tsx showLineNumbers filename="Article.tsx" copy
+import { structuredActivityComponent } from "@stackflow/react";
+
+declare module "@stackflow/config" {
+  interface Register {
+    Article: {
+      articleId: number;
+      title?: string;
+    };
+  }
+}
+
+export const Article = structuredActivityComponent<"Article">({
+  content: ArticleContent,
+});
+```
+
+Then register it in `stackflow()` the same way as a regular component:
+
+```tsx showLineNumbers filename="stackflow.ts" copy
+import { stackflow } from "@stackflow/react";
+import { config } from "./stackflow.config";
+import { Article } from "./Article";
+
+export const { Stack } = stackflow({
+  config,
+  components: {
+    Article,
+  },
+  plugins: [...],
+});
+```
+
+## Code Splitting
+
+Pass an async import as `content` to code-split the activity. Stackflow pauses stack state updates while the bundle loads, then resumes once it's ready — so transitions always feel correct.
+
+```tsx showLineNumbers filename="Article.tsx" copy {5}
+export const Article = structuredActivityComponent<"Article">({
+  content: () => import("./Article.content"),
+});
+```
+
+`Article.content.tsx` exports a `content()` helper:
+
+```tsx showLineNumbers filename="Article.content.tsx" copy
+import { content } from "@stackflow/react";
+
+const ArticleContent = content<"Article">(({ params: { title } }) => {
+  return (
+    <div>
+      <h1>{title}</h1>
+    </div>
+  );
+});
+
+export default ArticleContent;
+```
+
+## Loading State
+
+Provide a `loading` component to show while the content bundle or loader data is being fetched. It renders as the Suspense fallback.
+
+```tsx showLineNumbers filename="Article.loading.tsx" copy
+import { loading } from "@stackflow/react";
+
+const ArticleLoading = loading<"Article">(() => {
+  return <div>Loading...</div>;
+});
+
+export default ArticleLoading;
+```
+
+```tsx showLineNumbers filename="Article.tsx" copy {2,6}
+import { structuredActivityComponent } from "@stackflow/react";
+import ArticleLoading from "./Article.loading";
+
+export const Article = structuredActivityComponent<"Article">({
+  content: () => import("./Article.content"),
+  loading: ArticleLoading,
+});
+```
+
+## Layout
+
+Provide a `layout` component to wrap the content. It receives `params` and `children`, making it easy to build consistent app bars or shell UIs that are available immediately — even while content is still loading.
+
+```tsx showLineNumbers filename="Article.layout.tsx" copy
+import { layout } from "@stackflow/react";
+import { AppScreen } from "@stackflow/plugin-basic-ui";
+
+const ArticleLayout = layout<"Article">(({ params: { title }, children }) => {
+  return (
+    <AppScreen appBar={{ title }}>
+      {children}
+    </AppScreen>
+  );
+});
+
+export default ArticleLayout;
+```
+
+```tsx showLineNumbers filename="Article.tsx" copy {2,7}
+import { structuredActivityComponent } from "@stackflow/react";
+import ArticleLayout from "./Article.layout";
+import ArticleLoading from "./Article.loading";
+
+export const Article = structuredActivityComponent<"Article">({
+  content: () => import("./Article.content"),
+  layout: ArticleLayout,
+  loading: ArticleLoading,
+});
+```
+
+The render order is: `Layout` wraps `ErrorHandler` wraps `Suspense(Loading)` wraps `Content`.
+
+## Error Handling
+
+Provide an `errorHandler` component to show when content throws. It receives the error and a `reset()` function to retry.
+
+```tsx showLineNumbers filename="Article.tsx" copy
+import { structuredActivityComponent, errorHandler } from "@stackflow/react";
+import ArticleLayout from "./Article.layout";
+import ArticleLoading from "./Article.loading";
+
+const ArticleError = errorHandler<"Article">(({ error, reset }) => {
+  return (
+    <div>
+      <p>Something went wrong.</p>
+      <button onClick={reset}>Retry</button>
+    </div>
+  );
+});
+
+export const Article = structuredActivityComponent<"Article">({
+  content: () => import("./Article.content"),
+  layout: ArticleLayout,
+  loading: ArticleLoading,
+  errorHandler: ArticleError,
+});
+```
+
+If you need a custom error boundary implementation (e.g. to integrate with an error reporting service), pass it via the `boundary` option:
+
+```tsx
+import { errorHandler } from "@stackflow/react";
+import type { CustomErrorBoundary } from "@stackflow/react";
+
+const MyErrorBoundary: CustomErrorBoundary = ({ children, renderFallback }) => {
+  // your custom boundary logic
+};
+
+const ArticleError = errorHandler<"Article">(
+  ({ error, reset }) => <div>...</div>,
+  { boundary: MyErrorBoundary },
+);
+```
+
+## With Loader API
+
+Structured activities work seamlessly with the [Loader API](/docs/advanced/preloading). Define the loader in `stackflow.config.ts` and use `useLoaderData()` inside `content()`.
+
+```tsx showLineNumbers filename="Article.loader.ts" copy
+import type { ActivityLoaderArgs } from "@stackflow/config";
+
+export async function articleLoader({ params }: ActivityLoaderArgs<"Article">) {
+  const data = await fetchArticle(params.articleId);
+  return { data };
+}
+```
+
+```tsx showLineNumbers filename="stackflow.config.ts" copy {2,9}
+import { defineConfig } from "@stackflow/config";
+import { articleLoader } from "./Article.loader";
+
+export const config = defineConfig({
+  activities: [
+    {
+      name: "Article",
+      route: "/articles/:articleId",
+      loader: articleLoader,
+    },
+  ],
+  transitionDuration: 350,
+});
+```
+
+```tsx showLineNumbers filename="Article.content.tsx" copy
+import { content, useLoaderData } from "@stackflow/react";
+import type { articleLoader } from "./Article.loader";
+
+const ArticleContent = content<"Article">(({ params: { title } }) => {
+  const { data } = useLoaderData<typeof articleLoader>();
+
+  return (
+    <div>
+      <h1>{title}</h1>
+      {/* use data */}
+    </div>
+  );
+});
+
+export default ArticleContent;
+```
+
+## Recommended File Structure
+
+Co-locating the pieces by activity keeps things easy to navigate:
+
+```
+activities/
+└── Article/
+    ├── Article.tsx          # structuredActivityComponent definition
+    ├── Article.content.tsx  # content()
+    ├── Article.layout.tsx   # layout()
+    ├── Article.loading.tsx  # loading()
+    └── Article.loader.ts    # loader
+```

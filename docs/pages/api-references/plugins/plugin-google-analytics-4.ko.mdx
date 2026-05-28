@@ -13,13 +13,35 @@ npm install @stackflow/plugin-google-analytics-4
 ## 사용법
 ### 초기화
 
+```ts showLineNumbers filename="stackflow.config.ts" copy
+import { defineConfig } from "@stackflow/config";
+
+export const config = defineConfig({
+  activities: [
+    {
+      name: "MyHome",
+      route: "/",
+    },
+    {
+      name: "MyArticle",
+      route: "/articles/:articleId",
+    },
+  ],
+});
+```
+
 ```tsx showLineNumbers filename="stackflow.ts" copy
 import { stackflow } from "@stackflow/react";
 import { googleAnalyticsPlugin } from "@stackflow/plugin-google-analytics-4";
+import { config } from "./stackflow.config";
+import { MyHome } from "./MyHome";
+import { MyArticle } from "./MyArticle";
 
-const { Stack, useFlow } = stackflow({
-  activities: {
-    // ...
+const { Stack } = stackflow({
+  config,
+  components: {
+    MyHome,
+    MyArticle,
   },
   plugins: [
     googleAnalyticsPlugin({
@@ -42,6 +64,7 @@ const { Stack, useFlow } = stackflow({
 ### config 세팅
 
 ```tsx showLineNumbers filename="App.tsx" copy
+import { useEffect } from "react";
 import { useGoogleAnalyticsContext } from "@stackflow/plugin-google-analytics-4";
 
 const App = () => {
@@ -57,7 +80,7 @@ const App = () => {
       //  GA4 config values.
       // https://bit.ly/3Y7IXhV
     });
-  }, []);
+  }, [setConfig]);
 
   return <div>...</div>;
 };

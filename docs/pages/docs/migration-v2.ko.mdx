@@ -1,0 +1,223 @@
+# 마이그레이션 가이드: v1 → v2
+
+이 가이드는 Stackflow 2.0의 주요 변경 사항과 v1에서 마이그레이션하는 방법을 다뤄요.
+
+## 개요
+
+Stackflow 2.0은 액티비티 선언을 React 컴포넌트에서 분리하는 config-first 접근 방식을 도입해요. 이를 통해 프레임워크에 독립적인 로딩과 향상된 타입 안정성을 통해 더 나은 성능을 제공해요.
+
+## 1단계: `@stackflow/config` 설치
+
+```sh npm2yarn copy
+npm install @stackflow/config
+```
+
+## 2단계: `stackflow.config.ts` 파일 생성
+
+액티비티 선언을 config 파일로 분리해요.
+
+**변경 전:**
+```ts filename="stackflow.ts"
+import { stackflow } from "@stackflow/react";
+
+export const { Stack, useFlow } = stackflow({
+  transitionDuration: 350,
+  activities: {
+    HomeActivity,
+    MyProfileActivity,
+  },
+  plugins: [],
+});
+```
+
+**변경 후:**
+```ts filename="stackflow.config.ts"
+import { defineConfig } from "@stackflow/config";
+
+export const config = defineConfig({
+  activities: [
+    { name: "HomeActivity" },
+    { name: "MyProfileActivity" },
+  ],
+  transitionDuration: 350,
+});
+```
+
+```ts filename="stackflow.ts"
+import { stackflow } from "@stackflow/react";
+import { config } from "./stackflow.config";
+
+export const { Stack } = stackflow({
+  config,
+  components: {
+    HomeActivity,
+    MyProfileActivity,
+  },
+  plugins: [],
+});
+```
+
+## 3단계: `historySyncPlugin` 업데이트
+
+라우트는 이제 플러그인 옵션 대신 `stackflow.config.ts`에 선언해요.
+
+**변경 전:**
+```ts
+historySyncPlugin({
+  routes: {
+    HomeActivity: "/",
+    MyProfileActivity: "/my-profile",
+  },
+  fallbackActivity: () => "HomeActivity",
+})
+```
+
+**변경 후:**
+
+`stackflow.config.ts`에서:
+```ts
+defineConfig({
+  activities: [
+    { name: "HomeActivity", route: "/" },
+    { name: "MyProfileActivity", route: "/my-profile" },
+  ],
+})
+```
+
+`stackflow.ts`에서:
+```ts
+historySyncPlugin({
+  config,
+  fallbackActivity: () => "HomeActivity",
+})
+```
+
+## 4단계: 액티비티 타입 업데이트
+
+타입은 이제 컴포넌트 Props 대신 모듈 augmentation으로 등록해요.
+
+**변경 전:**
+```ts filename="Article.tsx"
+import type { ActivityComponentType } from "@stackflow/react";
+
+type ArticleParams = {
+  title: string;
+};
+
+const Article: ActivityComponentType<ArticleParams> = ({ params }) => {
+  // ...
+};
+```
+
+**변경 후:**
+```ts filename="Article.tsx"
+import type { ActivityComponentType } from "@stackflow/react";
+
+declare module "@stackflow/config" {
+  interface Register {
+    Article: {
+      title: string;
+    };
+  }
+}
+
+const Article: ActivityComponentType<"Article"> = ({ params }) => {
+  // params.title의 타입이 자동으로 추론돼요
+};
+```
+
+## 5단계: `useFlow`, `useStepFlow` 임포트 업데이트
+
+훅은 이제 팩토리 함수로 생성하는 대신 `@stackflow/react`에서 직접 import해요.
+
+**변경 전:**
+```ts filename="stackflow.ts"
+import { stackflow } from "@stackflow/react";
+
+export const { Stack, useFlow } = stackflow({
+  transitionDuration: 350,
+  activities: {
+    HomeActivity,
+    MyProfileActivity,
+  },
+  plugins: [],
+});
+```
+
+```ts filename="HomeActivity.tsx"
+import { useFlow } from "./stackflow"; // stackflow() 팩토리에서 import
+```
+
+**변경 후:**
+```ts
+import { useFlow } from "@stackflow/react"; // 직접 import
+```
+
+이전 `useActions()` 헬퍼를 참조하던 코드는 `@stackflow/react`에서 직접 import한 `useFlow()`로 교체하세요.
+
+## 6단계: step 내비게이션 메서드 이름 변경
+
+스텝 탐색 함수명이 변경됐어요.
+
+| 변경 전 | 변경 후 |
+|---------|---------|
+| `stepPush()` | `pushStep()` |
+| `stepReplace()` | `replaceStep()` |
+| `stepPop()` | `popStep()` |
+
+## 7단계: `<Link />` 임포트 업데이트
+
+`<Link />` 컴포넌트는 이제 직접 import해요.
+
+**변경 전:**
+```ts filename="Link.ts"
+import { createLinkComponent } from "@stackflow/link";
+import type { TypeActivities } from "./stackflow";
+
+export const { Link } = createLinkComponent<TypeActivities>();
+```
+
+**변경 후:**
+```ts
+import { Link } from "@stackflow/link";
+```
+
+## 8단계: 임포트 경로 업데이트
+
+기존 엔트리 포인트를 모두 교체해요.
+
+| 변경 전 | 변경 후 |
+|---------|---------|
+| `@stackflow/react/future` | `@stackflow/react` |
+| `@stackflow/link/future` | `@stackflow/link` |
+
+## 삭제된 패키지
+
+v2에서 다음 패키지들이 삭제됐어요.
+
+- `@stackflow/plugin-preload` — 빌트인 Loader API를 사용하세요. [Loader API](/docs/advanced/preloading) 참고.
+- `@stackflow/plugin-map-initial-activity` — `defineConfig()`의 `initialActivity`를 사용하세요.
+
+## 삭제된 훅
+
+다음 훅은 더 이상 `@stackflow/react`에서 export되지 않아요.
+
+| v1 훅 | v2 대체 |
+|-------|---------|
+| `useActiveEffect(effect)` | React `useEffect`에서 `useActivity().isActive`를 확인하세요. 포커스 전환 시 즉시 실행해야 하는 외부 side-effect는 `@stackflow/plugin-lifecycle`의 `useFocusEffect()`를 사용하세요. |
+| `useEnterDoneEffect(effect, deps)` | React `useEffect`에서 `useActivity().isTop`과 `transitionState === "enter-done"`를 확인하세요. |
+| `useStep()` | `useActivity()`로 `activity.steps`를 읽어 루트가 아닌 마지막 step을 계산하세요 (`activity.steps.filter((step) => step.id !== activity.id).at(-1) ?? null`). 현재 step params만 필요하면 activity/component의 `params`를 사용하세요. |
+
+## API 대응표
+
+| v1 | v2 |
+|----|-----|
+| `stackflow({ transitionDuration, activities, plugins })` | `stackflow({ config, components, plugins })` |
+| `ActivityComponentType<Params>` | `ActivityComponentType<"ActivityName">` |
+| `useActions()` | `@stackflow/react`의 `useFlow()` |
+| `stackflow()` 팩토리의 `useFlow()` | `@stackflow/react`의 `useFlow()` |
+| `stackflow()` 팩토리의 `useStepFlow()` | `@stackflow/react`의 `useStepFlow()` |
+| `stepPush/stepReplace/stepPop` | `pushStep/replaceStep/popStep` |
+| `createLinkComponent<TypeActivities>()` | `import { Link } from "@stackflow/link"` |
+| `historySyncPlugin({ routes, fallbackActivity })` | `historySyncPlugin({ config, fallbackActivity })` |
+| `preloadPlugin(...)` | 빌트인 Loader API |

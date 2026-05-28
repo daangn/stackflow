@@ -2,15 +2,15 @@ import type {
   RegisteredActivityName,
   RegisteredActivityParamTypes,
 } from "@stackflow/config";
-import type { ActivityComponentType } from "@stackflow/react";
+import type { ActivityComponentTypeByParams } from "@stackflow/react";
 
 export type Route<ComponentType> = {
   path: string;
   decode?: (
     params: Record<string, string>,
-  ) => ComponentType extends ActivityComponentType<infer U> ? U : {};
+  ) => ComponentType extends ActivityComponentTypeByParams<infer U> ? U : {};
   encode?: (
-    params: ComponentType extends ActivityComponentType<infer U>
+    params: ComponentType extends ActivityComponentTypeByParams<infer U>
       ? U
       : Record<string, any>,
   ) => Record<string, string | undefined>;

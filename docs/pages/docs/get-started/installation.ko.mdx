@@ -8,20 +8,40 @@ import { Steps } from "nextra/components";
 React 프로젝트 내에서 다음 명령어로 **Stackflow**를 설치해요.
 
 ```sh npm2yarn copy
-npm install @stackflow/core @stackflow/react
+npm install @stackflow/config @stackflow/core @stackflow/react
+```
+
+### 설정 파일 만들기
+`stackflow.config.ts` 파일을 만들고 `defineConfig()`를 사용해 액티비티를 정의해요.
+
+```ts showLineNumbers filename="stackflow.config.ts" copy
+import { defineConfig } from "@stackflow/config";
+
+export const config = defineConfig({
+  activities: [
+    {
+      name: "MyActivity",
+    },
+  ],
+  transitionDuration: 350,
+});
 ```
 
 ### Stackflow 초기화하기
-프로젝트 내에 JavaScript(TypeScript) 파일을 하나 생성하고, stackflow() 함수를 호출해 `<Stack />`과 `useFlow()` 함수를 생성해요.
+프로젝트 내에 JavaScript(TypeScript) 파일을 하나 생성하고, `stackflow()` 함수에 config와 액티비티 컴포넌트를 전달해 `<Stack />`을 생성해요.
 
-그리고 다른 컴포넌트에서 `<Stack />`과 `useFlow()`를 활용할 수 있도록 `export ...` 해줘요.
+다른 컴포넌트에서 `<Stack />`을 활용할 수 있도록 `export ...` 해줘요. `useFlow()` 같은 훅은 사용하는 컴포넌트에서 `@stackflow/react`로부터 직접 import해요.
 
 ```ts showLineNumbers filename="stackflow.ts" copy
 import { stackflow } from "@stackflow/react";
+import { config } from "./stackflow.config";
+import MyActivity from "./MyActivity";
 
-export const { Stack, useFlow } = stackflow({
-  transitionDuration: 350,
-  activities: {},
+export const { Stack } = stackflow({
+  config,
+  components: {
+    MyActivity,
+  },
   plugins: [],
 });
 ```
@@ -41,14 +61,18 @@ npm install @stackflow/plugin-renderer-basic @stackflow/plugin-basic-ui
 
 다음과 같이 `stackflow()` 함수의 `plugins` 필드에 `@stackflow/plugin-renderer-basic`에 들어있는 `basicRendererPlugin()` 플러그인과 `@stackflow/plugin-basic-ui`의 `basicUIPlugin()` 플러그인을 초기화해줘요.
 
-```ts showLineNumbers filename="stackflow.ts" copy {8-13}
+```ts showLineNumbers filename="stackflow.ts" copy {9-14}
 import { stackflow } from "@stackflow/react";
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
 import { basicUIPlugin } from "@stackflow/plugin-basic-ui";
+import { config } from "./stackflow.config";
+import MyActivity from "./MyActivity";
 
-export const { Stack, useFlow } = stackflow({
-  transitionDuration: 350,
-  activities: {},
+export const { Stack } = stackflow({
+  config,
+  components: {
+    MyActivity,
+  },
   plugins: [
     basicRendererPlugin(),
     basicUIPlugin({

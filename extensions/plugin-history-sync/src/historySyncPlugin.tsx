@@ -10,7 +10,7 @@ import {
   type StepPushedEvent,
 } from "@stackflow/core";
 import type { StackflowReactPlugin } from "@stackflow/react";
-import type { ActivityComponentType } from "@stackflow/react/future";
+import type { ActivityComponentType } from "@stackflow/react";
 import type { History, Listener } from "history";
 import { createBrowserHistory, createMemoryHistory } from "history";
 import { useSyncExternalStore } from "react";

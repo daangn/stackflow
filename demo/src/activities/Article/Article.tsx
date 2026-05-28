@@ -1,4 +1,4 @@
-import { structuredActivityComponent } from "@stackflow/react/future";
+import { structuredActivityComponent } from "@stackflow/react";
 import ArticleLayout from "./Article.layout";
 import ArticleLoading from "./Article.loading";
 

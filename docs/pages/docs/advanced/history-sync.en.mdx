@@ -11,18 +11,38 @@ Install `@stackflow/plugin-history-sync` using the following command.
 npm install @stackflow/plugin-history-sync
 ```
 
-Once the installation is complete, register the plugin in the `plugins` field of the `stackflow()` function as follows.
+Once the installation is complete, declare routes in `stackflow.config.ts` and register the plugin in `stackflow()`.
+
+```tsx showLineNumbers filename="stackflow.config.ts" copy
+import { defineConfig } from "@stackflow/config";
+
+export const config = defineConfig({
+  activities: [
+    {
+      name: "MyActivity",
+      route: "/my-activity",
+    },
+    {
+      name: "Article",
+      route: "/articles/:articleId",
+    },
+  ],
+  transitionDuration: 350,
+});
+```
 
 ```tsx showLineNumbers filename="stackflow.ts" copy
 import { stackflow } from "@stackflow/react";
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
+import { basicUIPlugin } from "@stackflow/plugin-basic-ui";
 import { historySyncPlugin } from "@stackflow/plugin-history-sync";
+import { config } from "./stackflow.config";
 import MyActivity from "./MyActivity";
 import Article from "./Article";
 
-const { Stack, useFlow } = stackflow({
-  transitionDuration: 350,
-  activities: {
+const { Stack } = stackflow({
+  config,
+  components: {
     MyActivity,
     Article,
   },
@@ -32,29 +52,40 @@ const { Stack, useFlow } = stackflow({
       theme: "cupertino",
     }),
     historySyncPlugin({
-      routes: {
-        MyActivity: "/my-activity",
-        Article: "/articles/:articleId",
-      },
+      config,
       fallbackActivity: () => "MyActivity",
     }),
   ],
-  // The initialActivity option no longer works because it is overridden by the historySyncPlugin.
-  // initialActivity: () => "MyActivity",
 });
 ```
 
-The `historySyncPlugin` accepts two options: `routes` and `fallbackActivity`.
+The `historySyncPlugin` accepts two options: `config` and `fallbackActivity`.
 
 <APITable>
 |                  |            |                                                                                                                                                                                                                     |
 | ---------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| routes           | `object`   | Connects activities with URL templates. You can represent activity parameters as Path Parameters. If an activity's parameter is not in the URL template, it will automatically be represented as a Query Parameter. |
+| config           | `object`   | The config object created with `defineConfig()`. Routes are read from the `route` field of each activity definition.                                                                                               |
 | fallbackActivity | `function` | Determines which activity to navigate to if there is no matching URL when first entering. Typically, you create a 404 page and assign it here.                                                                      |
 </APITable>
 
 <Callout type="warning" emoji="⚠️">
   **Warning** - When mapping activity parameters to path parameters, ensure that the parameter values are URL-safe. If special characters that are not URL-safe are used, query parameters may appear duplicated.
+</Callout>
+
+## Runtime Coercion of Activity Params
+
+Regardless of how an activity is entered, including `push()`, `replace()`, `pushStep()`, `replaceStep()`, or URL arrival with or without a `decode` hook, the params you receive from `useActivityParams()` are always `string | undefined` at runtime.
+
+```tsx
+// These two paths used to produce different runtime types. They don't anymore.
+push("ArticleActivity", { visible: true })   // store: { visible: "true" }
+// URL arrival: /articles/1?visible=true      // store: { visible: "true" }
+```
+
+The `encode` hook on a route still receives the original typed params, so you can use `encode: ({ visible }) => ({ visible: visible ? "y" : "n" })` exactly as before. Coercion happens at the `@stackflow/plugin-history-sync` boundary, after `encode` has consumed the typed values to build the URL.
+
+<Callout emoji="⚠️">
+  **Migration note for `decode` users**: if you previously relied on `decode` to inject typed values, such as `decode: (p) => ({ count: Number(p.count) })`, and read them back via `useActivityParams().count` as a number, that value is now a string in the store. Perform the type coercion at the usage site instead: `Number(params.count)`.
 </Callout>
 
 <Callout emoji="⚡️">

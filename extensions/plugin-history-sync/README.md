@@ -7,14 +7,38 @@ Synchronizes the stack state with the current browser's history
 ## Usage
 
 ```typescript
+import { defineConfig } from "@stackflow/config";
+
+export const config = defineConfig({
+  activities: [
+    {
+      name: "MyHome",
+      route: "/",
+    },
+    {
+      name: "MyArticle",
+      route: "/articles/:articleId",
+    },
+    {
+      name: "NotFoundPage",
+      route: "/404",
+    },
+  ],
+  transitionDuration: 350,
+});
+```
+
+```typescript
 import { stackflow } from "@stackflow/react";
 import { historySyncPlugin } from "@stackflow/plugin-history-sync";
+import { config } from "./stackflow.config";
 import { MyHome } from "./MyHome";
 import { MyArticle } from "./MyArticle";
 import { NotFoundPage } from "./NotFoundPage";
 
-const { Stack, useFlow } = stackflow({
-  activities: {
+const { Stack } = stackflow({
+  config,
+  components: {
     MyHome,
     MyArticle,
     NotFoundPage,
@@ -22,18 +46,11 @@ const { Stack, useFlow } = stackflow({
   plugins: [
     // ...
     historySyncPlugin({
-      routes: {
-        /**
-         * You can link the registered activity with the URL template.
-         */
-        MyHome: "/",
-        MyArticle: "/articles/:articleId",
-        NotFoundPage: "/404",
-      },
+      config,
       /**
        * If a URL that does not correspond to the URL template is given, it moves to the `fallbackActivity`.
        */
-      fallbackActivity: ({ context }) => "NotFoundPage",
+      fallbackActivity: ({ initialContext }) => "NotFoundPage",
       /**
        * Uses the hash portion of the URL (i.e. window.location.hash)
        */

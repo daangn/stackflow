@@ -11,18 +11,38 @@ import { APITable } from "../../../components/APITable";
 npm install @stackflow/plugin-history-sync
 ```
 
-설치가 완료되면 다음과 같이 `stackflow()` 함수의 `plugins` 필드에 플러그인을 등록해요.
+설치가 완료되면 `stackflow.config.ts`에 라우트를 선언하고, `stackflow()`에 플러그인을 등록해요.
+
+```tsx showLineNumbers filename="stackflow.config.ts" copy
+import { defineConfig } from "@stackflow/config";
+
+export const config = defineConfig({
+  activities: [
+    {
+      name: "MyActivity",
+      route: "/my-activity",
+    },
+    {
+      name: "Article",
+      route: "/articles/:articleId",
+    },
+  ],
+  transitionDuration: 350,
+});
+```
 
 ```tsx showLineNumbers filename="stackflow.ts" copy
 import { stackflow } from "@stackflow/react";
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
+import { basicUIPlugin } from "@stackflow/plugin-basic-ui";
 import { historySyncPlugin } from "@stackflow/plugin-history-sync";
+import { config } from "./stackflow.config";
 import MyActivity from "./MyActivity";
 import Article from "./Article";
 
-const { Stack, useFlow } = stackflow({
-  transitionDuration: 350,
-  activities: {
+const { Stack } = stackflow({
+  config,
+  components: {
     MyActivity,
     Article,
   },
@@ -32,25 +52,20 @@ const { Stack, useFlow } = stackflow({
       theme: "cupertino",
     }),
     historySyncPlugin({
-      routes: {
-        MyActivity: "/my-activity",
-        Article: "/articles/:articleId",
-      },
+      config,
       fallbackActivity: () => "MyActivity",
     }),
   ],
-  // historySyncPlugin이 해당 옵션을 덮어쓰므로 initialActivity는 더 이상 작동하지 않아요.
-  // initialActivity: () => "MyActivity",
 });
 ```
 
-`historySyncPlugin`은 `routes`와 `fallbackActivity` 두 옵션을 받아요.
+`historySyncPlugin`은 `config`와 `fallbackActivity` 두 옵션을 받아요.
 
 <APITable>
 |                  |            |                                                                                                                                                 |
 | ---------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------  |
-| routes           | `object`   | 액티비티와 URL 템플릿을 연결해요. 액티비티의 파라미터를 Path Parameter로 표현할 수 있어요. 만약 액티비티의 파라미터가 해당 URL 템플릿에 없다면 자동으로 Query Parameter로 표현돼요. |
-| fallbackActivity | `function` | 첫 진입시에 현재 URL과 매핑되는 URL이 없는 경우 어떤 액티비티로 보낼지 결정해요. 일반적으로 404 페이지를 만들고 여기에 할당해요.                                              |
+| config           | `object`   | `defineConfig()`로 생성한 config 객체에요. 각 액티비티 정의의 `route` 필드에서 라우트를 읽어요.                                                    |
+| fallbackActivity | `function` | 첫 진입시에 현재 URL과 매핑되는 URL이 없는 경우 어떤 액티비티로 보낼지 결정해요. 일반적으로 404 페이지를 만들고 여기에 할당해요.                       |
 </APITable>
 
 
@@ -58,6 +73,22 @@ const { Stack, useFlow } = stackflow({
   **주의** - Activity parameter가 Path parameter와 매핑할때, 넘어갈 수 있는
   파라미터 값들이 URL-safe 한지 확인이 필요해요. 만약 URL-safe 하지 않은
   특수문자를 사용하는 경우 query parameter가 중복해서 나타날 수 있어요.
+</Callout>
+
+## 액티비티 파라미터의 런타임 강제 변환
+
+액티비티에 어떻게 진입했는지와 관계없이, `push()`, `replace()`, `pushStep()`, `replaceStep()`, 또는 `decode` 훅 유무와 무관한 URL 직접 진입 모두에서 `useActivityParams()`로 받는 파라미터는 런타임에 항상 `string | undefined`예요.
+
+```tsx
+// 이전에는 두 경로가 런타임에 서로 다른 타입을 반환했지만, 이제는 동일해요.
+push("ArticleActivity", { visible: true })   // 스토어: { visible: "true" }
+// URL 진입: /articles/1?visible=true         // 스토어: { visible: "true" }
+```
+
+라우트의 `encode` 훅은 여전히 원본의 타입이 적용된 파라미터를 받아요. 예를 들어 `encode: ({ visible }) => ({ visible: visible ? "y" : "n" })`는 이전과 동일하게 동작해요. 문자열화는 `encode`가 URL 생성을 위해 타입이 적용된 값을 소비한 이후에, `@stackflow/plugin-history-sync` 경계에서 이뤄져요.
+
+<Callout emoji="⚠️">
+  **`decode` 사용자를 위한 마이그레이션 안내**: 이전에 `decode`로 타입이 적용된 값을 주입해서, 예를 들어 `decode: (p) => ({ count: Number(p.count) })`, `useActivityParams().count`를 숫자로 사용하셨다면, 이제 해당 값은 스토어에서 문자열이에요. 사용 지점에서 타입 변환을 해주세요: `Number(params.count)`.
 </Callout>
 
 <Callout emoji="⚡️">
