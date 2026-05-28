@@ -1,5 +1,11 @@
 # @stackflow/config
 
+## 2.0.0
+
+### Major Changes
+
+- 273d45f: Major version bump for ecosystem alignment. No API changes.
+
 ## 1.2.2
 
 ### Patch Changes

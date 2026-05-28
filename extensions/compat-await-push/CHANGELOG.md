@@ -1,5 +1,11 @@
 # @stackflow/compat-await-push
 
+## 1.1.14
+
+### Patch Changes
+
+- 273d45f: Remove unused peer dependencies (`@stackflow/core`, `@stackflow/react`, `react`, `@types/react`) — pure Promise-based utility with no React or Stackflow imports.
+
 ## 1.1.13
 
 ## 1.1.13-canary.0
