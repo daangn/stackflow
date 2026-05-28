@@ -1,5 +1,23 @@
 # @stackflow/link
 
+## 2.0.0
+
+### Major Changes
+
+- 273d45f: Promote Future API to the default entry point and remove the legacy Stable API.
+
+  - `@stackflow/link/future` and `@stackflow/link/stable` sub-paths removed. Import from `@stackflow/link` directly.
+  - `createLinkComponent()` removed. Use `import { Link } from "@stackflow/link"` directly.
+  - `LinkProps.urlPatternOptions` removed. Link URL generation now uses `config.historySync.urlPatternOptions`.
+
+### Patch Changes
+
+- Updated dependencies [273d45f]
+- Updated dependencies [273d45f]
+- Updated dependencies [cef9c62]
+  - @stackflow/core@2.0.0
+  - @stackflow/react@2.0.0
+
 ## 1.6.1
 
 ### Patch Changes
