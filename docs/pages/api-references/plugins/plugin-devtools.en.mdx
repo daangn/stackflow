@@ -11,13 +11,35 @@ npm install @stackflow/plugin-devtools
 ## Usage
 
 To utilize the plugin, integrate it within your Stackflow setup as shown:
+```ts showLineNumbers filename="stackflow.config.ts" copy
+import { defineConfig } from "@stackflow/config";
+
+export const config = defineConfig({
+  activities: [
+    {
+      name: "MyHome",
+      route: "/",
+    },
+    {
+      name: "MyArticle",
+      route: "/articles/:articleId",
+    },
+  ],
+});
+```
+
 ```tsx showLineNumbers filename="stackflow.ts" copy
 import { stackflow } from "@stackflow/react";
 import { devtoolsPlugin } from "@stackflow/plugin-devtools";
+import { config } from "./stackflow.config";
+import { MyHome } from "./MyHome";
+import { MyArticle } from "./MyArticle";
 
-const { Stack, useFlow } = stackflow({
-  activities: {
-    // ...
+const { Stack } = stackflow({
+  config,
+  components: {
+    MyHome,
+    MyArticle,
   },
   plugins: [
     devtoolsPlugin(),
@@ -25,4 +47,3 @@ const { Stack, useFlow } = stackflow({
   ],
 });
 ```
-
