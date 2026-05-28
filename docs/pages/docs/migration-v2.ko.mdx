@@ -198,6 +198,16 @@ v2에서 다음 패키지들이 삭제됐어요.
 - `@stackflow/plugin-preload` — 빌트인 Loader API를 사용하세요. [Loader API](/docs/advanced/preloading) 참고.
 - `@stackflow/plugin-map-initial-activity` — `defineConfig()`의 `initialActivity`를 사용하세요.
 
+## 삭제된 훅
+
+다음 훅은 더 이상 `@stackflow/react`에서 export되지 않아요.
+
+| v1 훅 | v2 대체 |
+|-------|---------|
+| `useActiveEffect(effect)` | React `useEffect`에서 `useActivity().isActive`를 확인하세요. 포커스 전환 시 즉시 실행해야 하는 외부 side-effect는 `@stackflow/plugin-lifecycle`의 `useFocusEffect()`를 사용하세요. |
+| `useEnterDoneEffect(effect, deps)` | React `useEffect`에서 `useActivity().isTop`과 `transitionState === "enter-done"`를 확인하세요. |
+| `useStep()` | `useActivity()`로 `activity.steps`를 읽어 루트가 아닌 마지막 step을 계산하세요 (`activity.steps.filter((step) => step.id !== activity.id).at(-1) ?? null`). 현재 step params만 필요하면 activity/component의 `params`를 사용하세요. |
+
 ## API 대응표
 
 | v1 | v2 |

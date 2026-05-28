@@ -198,6 +198,16 @@ The following packages have been removed in v2:
 - `@stackflow/plugin-preload` — Use the built-in Loader API instead. See [Loader API](/docs/advanced/preloading).
 - `@stackflow/plugin-map-initial-activity` — Use `initialActivity` in `defineConfig()` instead.
 
+## Removed Hooks
+
+The following hooks are no longer exported from `@stackflow/react`:
+
+| v1 hook | v2 replacement |
+|---------|----------------|
+| `useActiveEffect(effect)` | Use React's `useEffect` with `useActivity().isActive`. For external side-effects that should run immediately on focus transitions, use `useFocusEffect()` from `@stackflow/plugin-lifecycle`. |
+| `useEnterDoneEffect(effect, deps)` | Use React's `useEffect` with `useActivity().isTop` and `transitionState === "enter-done"`. |
+| `useStep()` | Use `useActivity()` and derive the latest non-root step from `activity.steps` (`activity.steps.filter((step) => step.id !== activity.id).at(-1) ?? null`). If you only need current step params, use the activity/component `params`. |
+
 ## API Correspondence Table
 
 | v1 | v2 |
