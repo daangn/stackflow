@@ -1,6 +1,6 @@
 # @stackflow/react
 
-An integration layer for using Stackflow in React applications. Returns a `<Stack />` component for rendering the application. Hooks such as `useFlow` are imported directly from `@stackflow/react`.
+An integration layer for using Stackflow in React applications. Returns a `<Stack />` component for rendering the application.
 
 - [Documentation](https://stackflow.so)
 
