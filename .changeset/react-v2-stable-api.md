@@ -13,5 +13,4 @@ Promote Future API to the default entry point and remove the legacy Stable API.
 - `stackflow().actions` no longer exposes `getStack()` or `dispatchEvent()`; it now exposes only `push`, `replace`, and `pop`.
 - `__internal__` directory removed; shared utilities are inlined into the main source.
 - New default exports: `useLoaderData()`, `useConfig()`, `usePrepare()`, `lazy()`, and `structuredActivityComponent()`.
-- `@stackflow/plugin-preload` package removed. Use `usePrepare()` from `@stackflow/react` instead; replace preload calls with `const prepare = usePrepare(); prepare(activityName, activityParams)`.
 - Activity params now use `declare module "@stackflow/config" { interface Register { ... } }` instead of component props inference.
