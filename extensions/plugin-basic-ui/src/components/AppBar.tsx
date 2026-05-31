@@ -1,4 +1,4 @@
-import { useActions } from "@stackflow/react";
+import { useFlow } from "@stackflow/react";
 import {
   useActivityDataAttributes,
   useAppBarTitleMaxWidth,
@@ -108,7 +108,7 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
     },
     ref,
   ) => {
-    const actions = useActions();
+    const actions = useFlow();
     const activity = useNullableActivity();
     const activityDataAttributes = useActivityDataAttributes();
 

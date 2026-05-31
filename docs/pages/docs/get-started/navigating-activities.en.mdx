@@ -11,14 +11,25 @@ If you have successfully registered an activity, it's time to navigate between a
 
 ## Stacking a New Activity
 
-We use the `useFlow()` hook created in `stackflow.ts`. Through the `push()` function within this hook, we can stack a new activity as follows.
+Import `useFlow` directly from `@stackflow/react`. Through the `push()` function within this hook, we can stack a new activity as follows.
 
 ```tsx showLineNumbers filename="MyActivity.tsx" copy /push/
 import type { ActivityComponentType } from "@stackflow/react";
+import { useFlow } from "@stackflow/react";
 import { AppScreen } from "@stackflow/plugin-basic-ui";
-import { useFlow } from "./stackflow";
 
-const MyActivity: ActivityComponentType = () => {
+declare module "@stackflow/config" {
+  interface Register {
+    MyActivity: {
+      // activity has no parameters
+    };
+    Article: {
+      title: string;
+    };
+  }
+}
+
+const MyActivity: ActivityComponentType<"MyActivity"> = () => {
   const { push } = useFlow();
 
   const onClick = () => {
@@ -73,14 +84,25 @@ The third parameter of the `push()` function, additional options, includes the f
 
 ## Replacing the Current Activity
 
-Next, let's look at how to replace the current activity without adding a new activity to the stack. Using the `replace()` function from the `useFlow()` hook created in `stackflow.ts`, you can replace the current activity as follows.
+Next, let's look at how to replace the current activity without adding a new activity to the stack. Using the `replace()` function from the `useFlow()` hook, you can replace the current activity as follows.
 
 ```tsx showLineNumbers filename="MyActivity.tsx" copy /replace/
 import type { ActivityComponentType } from "@stackflow/react";
+import { useFlow } from "@stackflow/react";
 import { AppScreen } from "@stackflow/plugin-basic-ui";
-import { useFlow } from "./stackflow";
 
-const MyActivity: ActivityComponentType = () => {
+declare module "@stackflow/config" {
+  interface Register {
+    MyActivity: {
+      // activity has no parameters
+    };
+    Article: {
+      title: string;
+    };
+  }
+}
+
+const MyActivity: ActivityComponentType<"MyActivity"> = () => {
   const { replace } = useFlow();
 
   const onClick = () => {
@@ -131,18 +153,22 @@ The third parameter of the `replace()` function, additional options, includes th
 
 ## Deleting the Current Activity
 
-Finally, let's look at how to delete the current activity and return to the previous activity. Using the `pop()` function from the `useFlow()` hook created in `stackflow.ts`, you can delete the current activity as follows.
+Finally, let's look at how to delete the current activity and return to the previous activity. Using the `pop()` function from the `useFlow()` hook, you can delete the current activity as follows.
 
 ```tsx showLineNumbers filename="Article.tsx" copy /pop/
 import type { ActivityComponentType } from "@stackflow/react";
+import { useFlow } from "@stackflow/react";
 import { AppScreen } from "@stackflow/plugin-basic-ui";
-import { useFlow } from "./stackflow";
 
-type ArticleParams = {
-  title: string;
-};
+declare module "@stackflow/config" {
+  interface Register {
+    Article: {
+      title: string;
+    };
+  }
+}
 
-const Article: ActivityComponentType<ArticleParams> = ({ params }) => {
+const Article: ActivityComponentType<"Article"> = ({ params }) => {
   const { pop } = useFlow();
 
   const goBack = () => {

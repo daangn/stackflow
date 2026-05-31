@@ -1,4 +1,5 @@
 /** @jest-environment jsdom */
+import { defineConfig } from "@stackflow/config";
 import {
   type CoreStore,
   makeCoreStore,
@@ -6,7 +7,7 @@ import {
   type Stack,
 } from "@stackflow/core";
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
-import { type ActivityComponentType, stackflow } from "@stackflow/react";
+import { stackflow } from "@stackflow/react";
 import { act } from "@testing-library/react";
 import { createMemoryHistory } from "history";
 import { hydrateRoot } from "react-dom/client";
@@ -24,6 +25,13 @@ import { historySyncPlugin } from "./historySyncPlugin";
  * after hydration.
  */
 
+declare module "@stackflow/config" {
+  interface Register {
+    Home: {};
+    Article: { articleId: string };
+  }
+}
+
 const TRANSITION_DURATION = 32;
 
 const SSR_INITIAL_CONTEXT = { req: { path: "/articles/1" } };
@@ -39,8 +47,12 @@ const liveActivityNames = (stack: Stack) =>
     .filter((activity) => activity.transitionState !== "exit-done")
     .map((activity) => activity.name);
 
-function makeHistorySyncPlugin(options: { withDefaultHistory: boolean }) {
-  return historySyncPlugin({
+/**
+ * Core-level wiring (no React), mirroring how the integration builds the store:
+ * apply the plugin's `overrideInitialEvents` via `makeCoreStore`, then `init()`.
+ */
+function buildCoreStore(options: { withDefaultHistory: boolean }): CoreStore {
+  const plugin = historySyncPlugin({
     history: createMemoryHistory({ initialEntries: ["/articles/1"] }),
     routes: {
       Home: "/",
@@ -55,9 +67,7 @@ function makeHistorySyncPlugin(options: { withDefaultHistory: boolean }) {
     },
     fallbackActivity: () => "Home",
   });
-}
 
-function buildCoreStore(options: { withDefaultHistory: boolean }): CoreStore {
   return makeCoreStore({
     initialEvents: [
       makeEvent("Initialized", {
@@ -74,22 +84,46 @@ function buildCoreStore(options: { withDefaultHistory: boolean }): CoreStore {
       }),
     ],
     initialContext: SSR_INITIAL_CONTEXT,
-    plugins: [makeHistorySyncPlugin(options)],
+    plugins: [plugin],
   });
 }
 
-const Home: ActivityComponentType = () => <div data-testid="home">home</div>;
-const Article: ActivityComponentType = () => (
-  <div data-testid="article">article</div>
-);
+function Home() {
+  return <div data-testid="home">home</div>;
+}
+function Article() {
+  return <div data-testid="article">article</div>;
+}
 
+/**
+ * React-level wiring (v2 config API). The destination (`Article`) declares a
+ * non-empty `defaultHistory` so the staged setup process is exercised.
+ */
 function makeApp() {
-  return stackflow({
+  const config = defineConfig({
     transitionDuration: TRANSITION_DURATION,
-    activities: { Home, Article },
+    activities: [
+      { name: "Home", route: "/" },
+      {
+        name: "Article",
+        route: {
+          path: "/articles/:articleId",
+          defaultHistory: () => [{ activityName: "Home", activityParams: {} }],
+        },
+      },
+    ],
+  });
+
+  return stackflow({
+    config,
+    components: { Home, Article },
     plugins: [
       basicRendererPlugin(),
-      makeHistorySyncPlugin({ withDefaultHistory: true }),
+      historySyncPlugin({
+        config,
+        history: createMemoryHistory({ initialEntries: ["/articles/1"] }),
+        fallbackActivity: () => "Home",
+      }),
     ],
   });
 }
@@ -111,13 +145,9 @@ describe("historySyncPlugin - SSR hydration with defaultHistory", () => {
   test("an empty defaultHistory still resolves directly to the destination (unchanged)", () => {
     const coreStore = buildCoreStore({ withDefaultHistory: false });
 
-    expect(liveActivityNames(coreStore.actions.getStack())).toEqual([
-      "Article",
-    ]);
+    expect(liveActivityNames(coreStore.actions.getStack())).toEqual(["Article"]);
     coreStore.init();
-    expect(liveActivityNames(coreStore.actions.getStack())).toEqual([
-      "Article",
-    ]);
+    expect(liveActivityNames(coreStore.actions.getStack())).toEqual(["Article"]);
   });
 
   test("the destination is not rendered during SSR (it is deferred to a post-commit effect)", () => {

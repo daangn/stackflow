@@ -1,3 +1,89 @@
+## 2026.05.28
+
+Coerce activity/step params to `string | undefined` at the plugin boundary. [`9b02adb`](https://github.com/daangn/stackflow/commit/9b02adb64b9c97d801d7867cbc35c8343c79c66a)
+
+Before this change, `push("X", { visible: true })` would store the boolean `true` in the core store while URL-arrival parsed the same URL as `{ visible: "true" }`, so `useActivityParams()` (with generic parameter `K`) returned different runtime types depending on how the user reached the activity. This PR coerces non-string values to strings inside `plugin-history-sync`'s `onBeforePush` / `onBeforeReplace` / `onBeforeStepPush` / `onBeforeStepReplace` hooks (after `encode` consumes the typed params to build the URL), and on the `decode`-path in `overrideInitialEvents`, so the core store always contains `{ [key: string]: string | undefined }`. `encode` still receives the typed params `U` from `template.fill`. Post-effect hooks (`onPushed`, `onReplaced`, `onStepPushed`, `onStepReplaced`, `onInit`) now use the new `fillWithoutEncode` to avoid re-running `encode` on already-coerced store values.
+
+This is a behavioral change for consumers that relied on internal push preserving non-string values in the store (a pre-existing divergence from URL-arrival behavior). See the docs update for the migration note.
+
+Migration notes:
+
+- If you authored a `decode` hook that returns typed values (e.g. `decode: (p) => ({ count: Number(p.count) })`), those return values are now coerced back to strings in the store to match the declared `ActivityBaseParams` contract. Move runtime type coercion to the usage site (`Number(useActivityParams().count)`).
+- If your app registers a plugin AFTER `historySyncPlugin` in the plugins array and that plugin re-injects typed values via `overrideActionParams`, those values will NOT be coerced by this plugin. Register `historySyncPlugin` last among plugins that mutate `activityParams` to preserve the string-only invariant.
+- Cross-deploy hydration: when a user reloads on a deploy that includes this fix after a previous deploy serialized typed values into `history.state`, the params are coerced to strings at hydration time inside the `parseState` early-return. No consumer change required — the post-fix runtime contract (`useActivityParams()` returns `string | undefined`) holds across version boundaries.
+
+Released packages:
+- 📦 [@stackflow/plugin-history-sync@2.0.0](https://npmjs.com/package/@stackflow/plugin-history-sync/v/2.0.0)
+
+---
+
+Remove unused peer dependencies (`@stackflow/core`, `@stackflow/react`, `react`, `@types/react`) — pure Promise-based utility with no React or Stackflow imports. [`273d45f`](https://github.com/daangn/stackflow/commit/273d45f23ed3152d834f16a1adb58a1b0fc8c43c)
+
+Released packages:
+- 📦 [@stackflow/compat-await-push@1.1.14](https://npmjs.com/package/@stackflow/compat-await-push/v/1.1.14)
+
+---
+
+Major version bump for ecosystem alignment. No API changes. [`273d45f`](https://github.com/daangn/stackflow/commit/273d45f23ed3152d834f16a1adb58a1b0fc8c43c)
+
+Released packages:
+- 📦 [@stackflow/config@2.0.0](https://npmjs.com/package/@stackflow/config/v/2.0.0)
+- 📦 [@stackflow/core@2.0.0](https://npmjs.com/package/@stackflow/core/v/2.0.0)
+
+---
+
+Promote Future API to the default entry point and remove the legacy Stable API. [`273d45f`](https://github.com/daangn/stackflow/commit/273d45f23ed3152d834f16a1adb58a1b0fc8c43c)
+
+- `@stackflow/link/future` and `@stackflow/link/stable` sub-paths removed. Import from `@stackflow/link` directly.
+- `createLinkComponent()` removed. Use `import { Link } from "@stackflow/link"` directly.
+- `LinkProps.urlPatternOptions` removed. Link URL generation now uses `config.historySync.urlPatternOptions`.
+
+Released packages:
+- 📦 [@stackflow/link@2.0.0](https://npmjs.com/package/@stackflow/link/v/2.0.0)
+
+---
+
+Promote Future API to the default entry point and remove the legacy Stable API. [`273d45f`](https://github.com/daangn/stackflow/commit/273d45f23ed3152d834f16a1adb58a1b0fc8c43c)
+
+- `@stackflow/react/future` and `@stackflow/react/stable` sub-paths removed. Import from `@stackflow/react` directly.
+- `stackflow()` signature changed from `{ activities, transitionDuration }` to `{ config, components }`. Use `defineConfig()` from `@stackflow/config` for activity and route definitions.
+- `useActions()` removed in favor of direct `useFlow()` imports, and `useStepActions()` removed in favor of direct `useStepFlow()` imports.
+- `useActiveEffect()`, `useEnterDoneEffect()`, and `useStep()` are no longer exported from the default API.
+- Step actions moved from `stackflow().actions` to the separate `stackflow().stepActions` object, with renamed methods: `stepPush` -> `pushStep`, `stepReplace` -> `replaceStep`, and `stepPop` -> `popStep`.
+- `stackflow()` no longer returns the `activities` field, `useFlow`, `useStepFlow`, `addActivity`, or `addPlugin`. Hooks are now direct imports and activities are defined in `@stackflow/config`.
+- `stackflow().actions` no longer exposes `getStack()` or `dispatchEvent()`; it now exposes only `push`, `replace`, and `pop`.
+- `__internal__` directory removed; shared utilities are inlined into the main source.
+- New default exports: `useLoaderData()`, `useConfig()`, `usePrepare()`, `lazy()`, and `structuredActivityComponent()`.
+- Activity params now use `declare module "@stackflow/config" { interface Register { ... } }` instead of component props inference.
+
+Released packages:
+- 📦 [@stackflow/react@2.0.0](https://npmjs.com/package/@stackflow/react/v/2.0.0)
+
+---
+
+Add optional `stepContext.path?: string` to `StepPushedEvent` and `StepReplacedEvent` (purely additive, no breaking change). `@stackflow/plugin-history-sync` uses this to preserve `encode`-output URLs through the store across every step navigation path — including `popstate` forward across step boundaries — instead of relying on plugin-internal state. [`cef9c62`](https://github.com/daangn/stackflow/commit/cef9c62700eeda32fa7698b991281e8506df670e)
+
+This addresses three regressions surfaced in PR review:
+
+1. **`encode` output not in `history.location`** — post-effect hooks (`onPushed` / `onReplaced` / `onStepPushed` / `onStepReplaced` / `onInit`) called `template.fillWithoutEncode(activity.params)` against the post-coercion strings, skipping `encode` and writing coerced values into the URL. Now they read the encoded URL pre-computed in pre-effect hooks (`activityContext.path` / `stepContext.path`), with `fillWithoutEncode` as a defensive fallback only.
+2. **`encode` called with coerced strings on popstate forward re-push** — the popstate `isForward` and `isStepForward` branches reconstructed push events without preserving `activityContext` / `stepContext`, causing `onBeforePush` / `onBeforeStepPush` to call `template.fill` with already-coerced strings. Now those branches pass `activityContext: targetActivity.context` / `stepContext: targetStep.context`, and the pre-effect hooks short-circuit when the path is already present (`"path" in actionParams.activityContext`).
+3. **Test gap: `path(history.location)` was never asserted under non-identity `encode`** — every existing test asserted `activity.context.path` only. Added 15 new tests asserting the URL surface under non-identity encode, including popstate-forward across activity AND step boundaries, `defaultHistory` ancestor URLs, SSR replay, and `replace`-with-active-steps.
+
+Released packages:
+- 📦 [@stackflow/core@2.0.0](https://npmjs.com/package/@stackflow/core/v/2.0.0)
+- 📦 [@stackflow/plugin-history-sync@2.0.0](https://npmjs.com/package/@stackflow/plugin-history-sync/v/2.0.0)
+
+---
+
+## 2026.04.30
+
+Fix `fallbackActivity` callback being invoked on every initialization regardless of route matching outcome. Restored the pre-1.8.0 contract: the callback is now called only when no route matches `currentPath`. Apps that perform side effects in this callback (e.g. Sentry logging for unknown deep links) no longer fire on successful matches. [`2c5786a`](https://github.com/daangn/stackflow/commit/2c5786a2934c3d2b74c20e8c57465ae03b3d3416)
+
+Released packages:
+- 📦 [@stackflow/plugin-history-sync@1.10.1](https://npmjs.com/package/@stackflow/plugin-history-sync/v/1.10.1)
+
+---
+
 ## 2026.04.15
 
 Add lifecyclePlugin and useFocusEffect hook for activity focus/blur lifecycle [`39dbf81`](https://github.com/daangn/stackflow/commit/39dbf81472af06daa5c40da098e232c2fe3b4a92)

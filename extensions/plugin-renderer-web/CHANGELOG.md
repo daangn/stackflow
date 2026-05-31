@@ -1,5 +1,15 @@
 # @stackflow/plugin-renderer-web
 
+## 1.1.14
+
+### Patch Changes
+
+- Updated dependencies [273d45f]
+- Updated dependencies [273d45f]
+- Updated dependencies [cef9c62]
+  - @stackflow/core@2.0.0
+  - @stackflow/react@2.0.0
+
 ## 1.1.13
 
 ## 1.1.13-canary.0

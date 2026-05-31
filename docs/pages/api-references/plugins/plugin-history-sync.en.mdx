@@ -12,15 +12,38 @@ npm install @stackflow/plugin-history-sync
 
 ## Usage
 
+```ts showLineNumbers filename="stackflow.config.ts" copy
+import { defineConfig } from "@stackflow/config";
+
+export const config = defineConfig({
+  activities: [
+    {
+      name: "MyHome",
+      route: "/",
+    },
+    {
+      name: "MyArticle",
+      route: "/articles/:articleId",
+    },
+    {
+      name: "NotFoundPage",
+      route: "/404",
+    },
+  ],
+});
+```
+
 ```ts showLineNumbers filename="stackflow.ts" copy
 import { stackflow } from "@stackflow/react";
 import { historySyncPlugin } from "@stackflow/plugin-history-sync";
+import { config } from "./stackflow.config";
 import { MyHome } from "./MyHome";
 import { MyArticle } from "./MyArticle";
 import { NotFoundPage } from "./NotFoundPage";
 
-const { Stack, useFlow } = stackflow({
-  activities: {
+const { Stack } = stackflow({
+  config,
+  components: {
     MyHome,
     MyArticle,
     NotFoundPage,
@@ -28,18 +51,11 @@ const { Stack, useFlow } = stackflow({
   plugins: [
     // ...
     historySyncPlugin({
-      routes: {
-        /**
-         * You can link the registered activity with the URL template.
-         */
-        MyHome: "/",
-        MyArticle: "/articles/:articleId",
-        NotFoundPage: "/404",
-      },
+      config,
       /**
        * If a URL that does not correspond to the URL template is given, it moves to the `fallbackActivity`.
        */
-      fallbackActivity: ({ context }) => "NotFoundPage",
+      fallbackActivity: ({ initialContext }) => "NotFoundPage",
       /**
        * Uses the hash portion of the URL (i.e. window.location.hash)
        */
@@ -54,7 +70,7 @@ const { Stack, useFlow } = stackflow({
 <APITable>
 |                  |            |                                                                                                                                                                                                                     |
 | ---------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| routes           | `object`   | Connects activities with URL templates. You can represent activity parameters as Path Parameters. If an activity's parameter is not in the URL template, it will automatically be represented as a Query Parameter. |
+| config           | `object`   | The config object created with `defineConfig()`. Routes are read from the `route` field of each activity definition.                                                                                               |
 | fallbackActivity | `(args: { initialContext: any }) => K` | Determines which activity to navigate to if there is no matching URL when first entering. Typically, you create a 404 page and assign it here.                                                                      |
 | useHash           | `boolean` (optional)                                         | Determines if hash-based routing should be used. Defaults to false.                                          |
 | history           | `History` (optional)                                         | A custom history object used for managing navigation state. Defaults to browser or memory history.           |

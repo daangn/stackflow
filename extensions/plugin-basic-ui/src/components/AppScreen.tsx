@@ -1,4 +1,4 @@
-import { useActions, useStack } from "@stackflow/react";
+import { useFlow, useStack } from "@stackflow/react";
 import {
   useActivityDataAttributes,
   useLazy,
@@ -68,7 +68,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
   const activityDataAttributes = useActivityDataAttributes();
   const mounted = useMounted();
 
-  const { pop } = useActions();
+  const { pop } = useFlow();
 
   const appScreenRef = useRef<HTMLDivElement>(null);
   const dimRef = useRef<HTMLDivElement>(null);

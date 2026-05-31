@@ -35,19 +35,34 @@ So, what advantages does **Stackflow** have compared to the existing navigation 
 ## Getting Started
 
 ```bash
-$ yarn add @stackflow/core @stackflow/react
+$ yarn add @stackflow/config @stackflow/core @stackflow/react
 ```
 
 ```tsx
-import ReactDOM from 'react-dom'
+import ReactDOM from "react-dom";
+import { defineConfig } from "@stackflow/config";
+import { stackflow } from "@stackflow/react";
+import MyActivity from "./MyActivity";
 
-import { stackflow } from '@stackflow/react';
-
-const { Stack, useFlow } = stackflow({
-  // ...
+const config = defineConfig({
+  activities: [
+    {
+      name: "MyActivity",
+    },
+  ],
+  initialActivity: () => "MyActivity",
+  transitionDuration: 350,
 });
 
-const App: React.FC = () => {
+const { Stack } = stackflow({
+  config,
+  components: {
+    MyActivity,
+  },
+  plugins: [],
+});
+
+const App = () => {
   return (
     <Stack />
   );

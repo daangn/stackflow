@@ -18,13 +18,27 @@ import { APITable } from "../../../components/APITable";
 
 ## Registering an Activity
 
-To actually use an activity, you need to register it with the `stackflow()` function before using it. An activity is a React component declared with the type `ActivityComponentType`.
+To use an activity, first declare it in `stackflow.config.ts` and register the React component in `stackflow()`.
+
+Declare the activity's parameter types using module augmentation:
+
+```typescript showLineNumbers filename="MyActivity.tsx" copy
+declare module "@stackflow/config" {
+  interface Register {
+    MyActivity: {
+      // activity has no parameters
+    };
+  }
+}
+```
+
+An activity is a React component declared with the type `ActivityComponentType`.
 
 ```tsx showLineNumbers filename="MyActivity.tsx" copy
 import type { ActivityComponentType } from "@stackflow/react";
 import { AppScreen } from "@stackflow/plugin-basic-ui";
 
-const MyActivity: ActivityComponentType = () => {
+const MyActivity: ActivityComponentType<"MyActivity"> = () => {
   return (
     <AppScreen appBar={{ title: "My Activity" }}>
       <div>My Activity</div>
@@ -42,50 +56,57 @@ export default MyActivity;
   **Stackflow** does not provide a default UI. Instead, it offers basic iOS (`cupertino`) and Android (`android`) UIs through the `@stackflow/plugin-basic-ui`.
 </Callout>
 
-If you have declared the activity correctly, register it in the `activities` field of the `stackflow()` function as follows.
+Register the activity in `stackflow.config.ts` and inject the component in `stackflow()`:
+
+```tsx showLineNumbers filename="stackflow.config.ts" copy
+import { defineConfig } from "@stackflow/config";
+
+export const config = defineConfig({
+  activities: [
+    {
+      name: "MyActivity",
+    },
+  ],
+  transitionDuration: 350,
+});
+```
 
 ```tsx showLineNumbers filename="stackflow.ts" copy
 import { stackflow } from "@stackflow/react";
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
 import { basicUIPlugin } from "@stackflow/plugin-basic-ui";
+import { config } from "./stackflow.config";
 import MyActivity from "./MyActivity";
 
-export const { Stack, useFlow } = stackflow({
-  transitionDuration: 350,
+export const { Stack } = stackflow({
+  config,
+  components: {
+    MyActivity,
+  },
   plugins: [
     basicRendererPlugin(),
     basicUIPlugin({
       theme: "cupertino",
     }),
   ],
-  activities: {
-    MyActivity,
-  },
 });
 ```
 
 ## Registering initial Activity
 
-Have you successfully registered the activity? However, the `<Stack />` component that you initialized earlier might not be rendering anything. This is because you haven't set an initial activity. If you want to load a specific activity initially, add the `initialActivity` option as follows.
+Have you successfully registered the activity? However, the `<Stack />` component that you initialized earlier might not be rendering anything. This is because you haven't set an initial activity. Add the `initialActivity` option to `defineConfig()` as follows.
 
-```ts showLineNumbers {16} filename="stackflow.ts" copy
-import { stackflow } from "@stackflow/react";
-import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
-import { basicUIPlugin } from "@stackflow/plugin-basic-ui";
-import MyActivity from "./MyActivity";
+```ts showLineNumbers {9} filename="stackflow.config.ts" copy
+import { defineConfig } from "@stackflow/config";
 
-export const { Stack, useFlow } = stackflow({
-  transitionDuration: 350,
-  plugins: [
-    basicRendererPlugin(),
-    basicUIPlugin({
-      theme: "cupertino",
-    }),
+export const config = defineConfig({
+  activities: [
+    {
+      name: "MyActivity",
+    },
   ],
-  activities: {
-    MyActivity,
-  },
   initialActivity: () => "MyActivity",
+  transitionDuration: 350,
 });
 ```
 
@@ -98,45 +119,25 @@ If you have successfully registered the initial activity, you can see the render
 
 ## Registering Activity with Parameters
 
-Some activities require specific parameters when used. In such cases, declare the parameter as the activity's Props.
+Some activities require specific parameters when used. Declare the parameter types using module augmentation and use them in the component:
 
 ```tsx showLineNumbers filename="Article.tsx" copy
 import type { ActivityComponentType } from "@stackflow/react";
 import { AppScreen } from "@stackflow/plugin-basic-ui";
 
-type ArticleParams = {
-  title: string;
-};
+declare module "@stackflow/config" {
+  interface Register {
+    Article: {
+      title: string;
+    };
+  }
+}
 
-const Article: ActivityComponentType<ArticleParams> = ({ params }) => {
+const Article: ActivityComponentType<"Article"> = ({ params }) => {
   return (
     <AppScreen appBar={{ title: "Article" }}>
       <div>
         <h1>{params.title}</h1>
-      </div>
-    </AppScreen>
-  );
-};
-
-export default Article;
-```
-
-Or,
-
-```tsx showLineNumbers filename="Article.tsx" copy
-import { AppScreen } from "@stackflow/plugin-basic-ui";
-
-type ArticleParams = {
-  params: {
-    title: string;
-  };
-};
-
-const Article: React.FC<ArticleParams> = ({ params: { title } }) => {
-  return (
-    <AppScreen appBar={{ title: "Article" }}>
-      <div>
-        <h1>{title}</h1>
       </div>
     </AppScreen>
   );

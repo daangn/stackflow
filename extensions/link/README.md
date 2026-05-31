@@ -4,12 +4,30 @@ It mimics the `<Link />` component behavior provided by Gatsby or Next.js.
 
 ## Dependencies
 
-It can be used only when both `@stackflow/plugin-history-sync` and `@stackflow/plugin-preload` are set.
+It can be used only when `@stackflow/plugin-history-sync` is set.
 
 - `@stackflow/plugin-history-sync`
-- `@stackflow/plugin-preload`
 
 ## Usage
+
+Import `Link` directly from `@stackflow/link`.
+
+```typescript
+/**
+ * stackflow.config.ts
+ */
+import { defineConfig } from "@stackflow/config";
+
+export const config = defineConfig({
+  activities: [
+    {
+      name: "MyActivity",
+      route: "/my-activity",
+    },
+  ],
+  transitionDuration: 350,
+});
+```
 
 ```typescript
 /**
@@ -17,41 +35,29 @@ It can be used only when both `@stackflow/plugin-history-sync` and `@stackflow/p
  */
 import { stackflow } from "@stackflow/react";
 import { historySyncPlugin } from "@stackflow/plugin-history-sync";
-import { preloadPlugin } from "@stackflow/plugin-preload";
+import { config } from "./stackflow.config";
+import { MyActivity } from "./MyActivity";
 
-const { Stack, useFlow, activities } = stackflow({
-  activities: {
-    // ...
+const { Stack } = stackflow({
+  config,
+  components: {
+    MyActivity,
   },
   plugins: [
     historySyncPlugin({
-      //...
-    }),
-    preloadPlugin({
-      // ...
+      config,
+      fallbackActivity: () => "MyActivity",
     }),
     // ...
   ],
 });
-
-export type TypeActivities = typeof activities;
-```
-
-```typescript
-/**
- * Link.ts
- */
-import { createLinkComponent } from "@stackflow/link";
-import type { TypeActivities } from "./stackflow";
-
-export const { Link } = createLinkComponent<TypeActivities>();
 ```
 
 ```tsx
 /**
  * MyComponent.ts
  */
-import { Link } from './Link'
+import { Link } from "@stackflow/link";
 
 const MyComponent = () => {
   return (

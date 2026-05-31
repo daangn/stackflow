@@ -1,6 +1,8 @@
 {
   "write-plugin": "Writing Your Own Plugin",
   "history-sync": "Synchronizing with History",
-  "resolving-circular-reference": "Resolving Circular Reference in useFlow",
-  "preloading": "Preloading"
+  "preloading": "Loader API",
+  "structured-activity": "Structured Activity",
+  "code-splitting": "Code Splitting",
+  "api-pipelining": "API Pipelining"
 }

@@ -1,5 +1,44 @@
 # @stackflow/plugin-history-sync
 
+## 1.11.0
+
+### Minor Changes
+
+- cef9c62: Coerce activity/step params to `string | undefined` at the plugin boundary.
+
+  Before this change, `push("X", { visible: true })` would store the boolean `true` in the core store while URL-arrival parsed the same URL as `{ visible: "true" }`, so `useActivityParams()` (with generic parameter `K`) returned different runtime types depending on how the user reached the activity. This PR coerces non-string values to strings inside `plugin-history-sync`'s `onBeforePush` / `onBeforeReplace` / `onBeforeStepPush` / `onBeforeStepReplace` hooks (after `encode` consumes the typed params to build the URL), and on the `decode`-path in `overrideInitialEvents`, so the core store always contains `{ [key: string]: string | undefined }`. `encode` still receives the typed params `U` from `template.fill`. Post-effect hooks (`onPushed`, `onReplaced`, `onStepPushed`, `onStepReplaced`, `onInit`) now use the new `fillWithoutEncode` to avoid re-running `encode` on already-coerced store values.
+
+  This is a behavioral change for consumers that relied on internal push preserving non-string values in the store (a pre-existing divergence from URL-arrival behavior). See the docs update for the migration note.
+
+  Migration notes:
+
+  - If you authored a `decode` hook that returns typed values (e.g. `decode: (p) => ({ count: Number(p.count) })`), those return values are now coerced back to strings in the store to match the declared `ActivityBaseParams` contract. Move runtime type coercion to the usage site (`Number(useActivityParams().count)`).
+  - If your app registers a plugin AFTER `historySyncPlugin` in the plugins array and that plugin re-injects typed values via `overrideActionParams`, those values will NOT be coerced by this plugin. Register `historySyncPlugin` last among plugins that mutate `activityParams` to preserve the string-only invariant.
+  - Cross-deploy hydration: when a user reloads on a deploy that includes this fix after a previous deploy serialized typed values into `history.state`, the params are coerced to strings at hydration time inside the `parseState` early-return. No consumer change required — the post-fix runtime contract (`useActivityParams()` returns `string | undefined`) holds across version boundaries.
+
+### Patch Changes
+
+- cef9c62: Add optional `stepContext.path?: string` to `StepPushedEvent` and `StepReplacedEvent` (purely additive, no breaking change). `@stackflow/plugin-history-sync` uses this to preserve `encode`-output URLs through the store across every step navigation path — including `popstate` forward across step boundaries — instead of relying on plugin-internal state.
+
+  This addresses three regressions surfaced in PR review:
+
+  1. **`encode` output not in `history.location`** — post-effect hooks (`onPushed` / `onReplaced` / `onStepPushed` / `onStepReplaced` / `onInit`) called `template.fillWithoutEncode(activity.params)` against the post-coercion strings, skipping `encode` and writing coerced values into the URL. Now they read the encoded URL pre-computed in pre-effect hooks (`activityContext.path` / `stepContext.path`), with `fillWithoutEncode` as a defensive fallback only.
+  2. **`encode` called with coerced strings on popstate forward re-push** — the popstate `isForward` and `isStepForward` branches reconstructed push events without preserving `activityContext` / `stepContext`, causing `onBeforePush` / `onBeforeStepPush` to call `template.fill` with already-coerced strings. Now those branches pass `activityContext: targetActivity.context` / `stepContext: targetStep.context`, and the pre-effect hooks short-circuit when the path is already present (`"path" in actionParams.activityContext`).
+  3. **Test gap: `path(history.location)` was never asserted under non-identity `encode`** — every existing test asserted `activity.context.path` only. Added 15 new tests asserting the URL surface under non-identity encode, including popstate-forward across activity AND step boundaries, `defaultHistory` ancestor URLs, SSR replay, and `replace`-with-active-steps.
+
+- Updated dependencies [273d45f]
+- Updated dependencies [273d45f]
+- Updated dependencies [cef9c62]
+  - @stackflow/config@2.0.0
+  - @stackflow/core@2.0.0
+  - @stackflow/react@2.0.0
+
+## 1.10.1
+
+### Patch Changes
+
+- 2c5786a: Fix `fallbackActivity` callback being invoked on every initialization regardless of route matching outcome. Restored the pre-1.8.0 contract: the callback is now called only when no route matches `currentPath`. Apps that perform side effects in this callback (e.g. Sentry logging for unknown deep links) no longer fire on successful matches.
+
 ## 1.10.0
 
 ### Minor Changes

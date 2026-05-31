@@ -8,13 +8,39 @@ Render the UI within the activity using the global stack state. It provides `cup
 
 ```typescript
 /**
+ * stackflow.config.ts
+ */
+import { defineConfig } from "@stackflow/config";
+
+export const config = defineConfig({
+  activities: [
+    {
+      name: "MyHome",
+    },
+    {
+      name: "MyArticle",
+    },
+  ],
+  transitionDuration: 350,
+});
+```
+
+```typescript
+/**
  * stackflow.ts
  */
 import { stackflow } from "@stackflow/react";
 import { basicUIPlugin } from "@stackflow/plugin-basic-ui";
+import { config } from "./stackflow.config";
+import { MyHome } from "./MyHome";
+import { MyArticle } from "./MyArticle";
 
-const { Stack, useFlow } = stackflow({
-  // ...
+const { Stack } = stackflow({
+  config,
+  components: {
+    MyHome,
+    MyArticle,
+  },
   plugins: [
     // ...
     basicUIPlugin({
