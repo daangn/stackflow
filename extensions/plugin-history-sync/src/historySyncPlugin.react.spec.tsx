@@ -3,7 +3,7 @@ import { defineConfig } from "@stackflow/config";
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
 import { stackflow, useActivity } from "@stackflow/react";
 import { act, render, screen, waitFor } from "@testing-library/react";
-import type { Location, MemoryHistory } from "history";
+import type { MemoryHistory } from "history";
 import { createMemoryHistory } from "history";
 import { hydrateRoot } from "react-dom/client";
 import { renderToString } from "react-dom/server";
@@ -28,9 +28,6 @@ declare module "@stackflow/config" {
 const TRANSITION_DURATION = 32;
 
 const SSR_INITIAL_CONTEXT = { req: { path: "/articles/1" } };
-
-const path = (location: Location) =>
-  location.pathname + location.search + location.hash;
 
 type DefaultHistoryOption = "non-empty" | "empty" | "none";
 
@@ -333,8 +330,10 @@ describe("historySyncPlugin - defaultHistory setup through React rendering", () 
     });
 
     await waitFor(() => {
+      const { pathname, search, hash } = history.location;
+
       expect(screen.getByTestId("home").dataset.active).toEqual("true");
-      expect(path(history.location)).toEqual("/home/?visible=y");
+      expect(`${pathname}${search}${hash}`).toEqual("/home/?visible=y");
     });
   });
 });
