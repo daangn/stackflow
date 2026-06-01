@@ -3509,11 +3509,21 @@ describe("historySyncPlugin", () => {
       ],
     });
     const a = makeActionsProxy({ actions: coreStore.actions });
+
+    // The destination push is render-driven (the plugin's `wrapStack` effect);
+    // trigger it explicitly since this is a core-level test.
+    kickOffDefaultHistorySetup(coreStore);
+
     // Allow defaultHistory replay (Home ancestor → Article target) to settle
     // through onChanged → push/stepPush.
     await a.getStack();
     await a.getStack();
-    await a.getStack();
+    const stack = await a.getStack();
+
+    // The Article target must actually land before we exercise history.back();
+    // otherwise back() is a no-op at index 0 and this test silently stops
+    // exercising the ancestor-URL replay it claims to cover.
+    expect(activeActivity(stack)?.name).toEqual("Article");
 
     // Walk back to the Home ancestor entry to inspect its URL.
     history.back();

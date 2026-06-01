@@ -51,19 +51,33 @@ const liveActivityNames = (stack: Stack) =>
  * Core-level wiring (no React), mirroring how the integration builds the store:
  * apply the plugin's `overrideInitialEvents` via `makeCoreStore`, then `init()`.
  */
-function buildCoreStore(options: { withDefaultHistory: boolean }): CoreStore {
+function buildCoreStore(options: {
+  defaultHistory: "non-empty" | "empty" | "none";
+}): CoreStore {
+  const articleRoute = (() => {
+    switch (options.defaultHistory) {
+      case "non-empty":
+        return {
+          path: "/articles/:articleId",
+          defaultHistory: () => [
+            { activityName: "Home", activityParams: {} },
+          ],
+        };
+      case "empty":
+        return {
+          path: "/articles/:articleId",
+          defaultHistory: () => [],
+        };
+      case "none":
+        return "/articles/:articleId";
+    }
+  })();
+
   const plugin = historySyncPlugin({
     history: createMemoryHistory({ initialEntries: ["/articles/1"] }),
     routes: {
       Home: "/",
-      Article: options.withDefaultHistory
-        ? {
-            path: "/articles/:articleId",
-            defaultHistory: () => [
-              { activityName: "Home", activityParams: {} },
-            ],
-          }
-        : "/articles/:articleId",
+      Article: articleRoute,
     },
     fallbackActivity: () => "Home",
   });
@@ -130,7 +144,7 @@ function makeApp() {
 
 describe("historySyncPlugin - SSR hydration with defaultHistory", () => {
   test("store.init() no longer advances a non-empty defaultHistory setup (the server renders frame 0)", () => {
-    const coreStore = buildCoreStore({ withDefaultHistory: true });
+    const coreStore = buildCoreStore({ defaultHistory: "non-empty" });
 
     // The constructor releases only the first (underlay) entry. The server,
     // which never calls init(), renders exactly this frame.
@@ -142,9 +156,20 @@ describe("historySyncPlugin - SSR hydration with defaultHistory", () => {
     expect(liveActivityNames(coreStore.actions.getStack())).toEqual(["Home"]);
   });
 
-  test("an empty defaultHistory still resolves directly to the destination (unchanged)", () => {
-    const coreStore = buildCoreStore({ withDefaultHistory: false });
+  test("a route with no defaultHistory still resolves directly to the destination (unchanged)", () => {
+    const coreStore = buildCoreStore({ defaultHistory: "none" });
 
+    expect(liveActivityNames(coreStore.actions.getStack())).toEqual(["Article"]);
+    coreStore.init();
+    expect(liveActivityNames(coreStore.actions.getStack())).toEqual(["Article"]);
+  });
+
+  test("an explicit empty defaultHistory resolves directly to the destination (unchanged)", () => {
+    const coreStore = buildCoreStore({ defaultHistory: "empty" });
+
+    // `defaultHistory: () => []` and a missing `defaultHistory` both yield no
+    // ancestor entries, so the destination lands immediately with no staged
+    // setup to defer — there is nothing for the post-commit effect to advance.
     expect(liveActivityNames(coreStore.actions.getStack())).toEqual(["Article"]);
     coreStore.init();
     expect(liveActivityNames(coreStore.actions.getStack())).toEqual(["Article"]);
@@ -153,9 +178,18 @@ describe("historySyncPlugin - SSR hydration with defaultHistory", () => {
   test("the destination is not rendered during SSR (it is deferred to a post-commit effect)", () => {
     const app = makeApp();
 
-    const html = renderToString(
-      <app.Stack initialContext={SSR_INITIAL_CONTEXT} />,
-    );
+    // Simulate a real non-browser runtime by removing `window`, exactly as on a
+    // server. Otherwise jsdom's `window` lets browser-only paths run and this
+    // would no longer reflect SSR fidelity.
+    const originalWindow = global.window;
+    let html = "";
+    try {
+      // biome-ignore lint/performance/noDelete: simulate a non-browser runtime
+      delete (global as { window?: unknown }).window;
+      html = renderToString(<app.Stack initialContext={SSR_INITIAL_CONTEXT} />);
+    } finally {
+      (global as { window?: unknown }).window = originalWindow;
+    }
 
     expect(html).toContain('data-testid="home"');
     expect(html).not.toContain('data-testid="article"');
@@ -187,32 +221,37 @@ describe("historySyncPlugin - SSR hydration with defaultHistory", () => {
     container.innerHTML = serverHTML;
     document.body.appendChild(container);
 
-    const recoverableErrors: unknown[] = [];
-    const clientApp = makeApp();
+    // `finally` guarantees DOM + timer cleanup even if an assertion throws,
+    // so a failure here cannot leak fake timers or a stray container into
+    // later tests.
+    try {
+      const recoverableErrors: unknown[] = [];
+      const clientApp = makeApp();
 
-    await act(async () => {
-      hydrateRoot(
-        container,
-        <clientApp.Stack initialContext={SSR_INITIAL_CONTEXT} />,
-        {
-          onRecoverableError: (error: unknown) => {
-            recoverableErrors.push(error);
+      await act(async () => {
+        hydrateRoot(
+          container,
+          <clientApp.Stack initialContext={SSR_INITIAL_CONTEXT} />,
+          {
+            onRecoverableError: (error: unknown) => {
+              recoverableErrors.push(error);
+            },
           },
-        },
-      );
-    });
+        );
+      });
 
-    // The client's first render equalled the server's frame 0 → no mismatch.
-    expect(recoverableErrors).toEqual([]);
+      // The client's first render equalled the server's frame 0 → no mismatch.
+      expect(recoverableErrors).toEqual([]);
 
-    // The staged setup navigation ran in the post-commit effect, so the
-    // destination mounts after hydration — the stacking animation plays.
-    await act(async () => {
-      jest.advanceTimersByTime(TRANSITION_DURATION * 2);
-    });
-    expect(container.querySelector('[data-testid="article"]')).not.toBeNull();
-
-    document.body.removeChild(container);
-    jest.useRealTimers();
+      // The staged setup navigation ran in the post-commit effect, so the
+      // destination mounts after hydration — the stacking animation plays.
+      await act(async () => {
+        jest.advanceTimersByTime(TRANSITION_DURATION * 2);
+      });
+      expect(container.querySelector('[data-testid="article"]')).not.toBeNull();
+    } finally {
+      document.body.removeChild(container);
+      jest.useRealTimers();
+    }
   });
 });
