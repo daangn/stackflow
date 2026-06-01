@@ -33,12 +33,6 @@ const TRANSITION_DURATION = 32;
 
 const SSR_INITIAL_CONTEXT = { req: { path: "/articles/1" } };
 
-let eventDateOffset = 0;
-const pastEventDate = () => {
-  eventDateOffset += 1;
-  return new Date(Date.now() - 60 * 1000).getTime() + eventDateOffset;
-};
-
 const liveActivityNames = (stack: Stack) =>
   stack.activities
     .filter((activity) => activity.transitionState !== "exit-done")
@@ -83,15 +77,15 @@ function buildCoreStore(options: {
     initialEvents: [
       makeEvent("Initialized", {
         transitionDuration: TRANSITION_DURATION,
-        eventDate: pastEventDate(),
+        eventDate: 1,
       }),
       makeEvent("ActivityRegistered", {
         activityName: "Home",
-        eventDate: pastEventDate(),
+        eventDate: 2,
       }),
       makeEvent("ActivityRegistered", {
         activityName: "Article",
-        eventDate: pastEventDate(),
+        eventDate: 3,
       }),
     ],
     initialContext: SSR_INITIAL_CONTEXT,
