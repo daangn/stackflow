@@ -223,9 +223,6 @@ describe("historySyncPlugin - SSR hydration with defaultHistory", () => {
 
 describe("historySyncPlugin - defaultHistory setup through React rendering", () => {
   test("historySyncPlugin - FEP-1061: defaultHistory ancestor entries with typed activityParams + stepParams coerce (T-I-NEW-6)", async () => {
-    // T-I-NEW-6: `historyEntryToEvents` is invoked for `defaultHistory`
-    // ancestor entries. Exercise it through the real React `<Stack />` path
-    // because the destination only lands after the rendered setup flow runs.
     const history = createMemoryHistory({
       initialEntries: ["/articles/9/"],
     });
