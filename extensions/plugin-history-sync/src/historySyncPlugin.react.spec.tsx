@@ -66,8 +66,20 @@ function ArticleActivity() {
 
 function makeApp({
   defaultHistory = "non-empty",
+  history = createMemoryHistory({ initialEntries: ["/articles/1"] }),
+  routes,
+  components = { Home, Article },
 }: {
   defaultHistory?: DefaultHistoryOption;
+  history?: MemoryHistory;
+  routes?: {
+    Home: RouteLike<any>;
+    Article: RouteLike<any>;
+  };
+  components?: {
+    Home: typeof Home;
+    Article: typeof Article;
+  };
 } = {}) {
   const articleRoute = (() => {
     switch (defaultHistory) {
@@ -87,26 +99,30 @@ function makeApp({
         return "/articles/:articleId";
     }
   })();
+  const appRoutes = routes ?? {
+    Home: "/",
+    Article: articleRoute,
+  };
 
   const config = defineConfig({
     transitionDuration: TRANSITION_DURATION,
     activities: [
-      { name: "Home", route: "/" },
+      { name: "Home", route: appRoutes.Home },
       {
         name: "Article",
-        route: articleRoute,
+        route: appRoutes.Article,
       },
     ],
   });
 
   return stackflow({
     config,
-    components: { Home, Article },
+    components,
     plugins: [
       basicRendererPlugin(),
       historySyncPlugin({
         config,
-        history: createMemoryHistory({ initialEntries: ["/articles/1"] }),
+        history,
         fallbackActivity: () => "Home",
       }),
     ],
@@ -122,43 +138,6 @@ function renderServerHTML(app: ReturnType<typeof makeApp>) {
     (global as { window?: unknown }).window = originalWindow;
   }
 }
-
-const renderHistorySyncStack = ({
-  history,
-  routes,
-}: {
-  history: MemoryHistory;
-  routes: {
-    Home: RouteLike<any>;
-    Article: RouteLike<any>;
-  };
-}) => {
-  const config = defineConfig({
-    transitionDuration: TRANSITION_DURATION,
-    activities: [
-      { name: "Home", route: routes.Home },
-      { name: "Article", route: routes.Article },
-    ],
-  });
-
-  const app = stackflow({
-    config,
-    components: {
-      Home: HomeActivity,
-      Article: ArticleActivity,
-    },
-    plugins: [
-      basicRendererPlugin(),
-      historySyncPlugin({
-        config,
-        history,
-        fallbackActivity: () => "Home",
-      }),
-    ],
-  });
-
-  render(<app.Stack />);
-};
 
 describe("historySyncPlugin - SSR hydration with defaultHistory", () => {
   test("a route with no defaultHistory still resolves directly to the destination (unchanged)", () => {
@@ -251,7 +230,7 @@ describe("historySyncPlugin - defaultHistory setup through React rendering", () 
       initialEntries: ["/articles/9/"],
     });
 
-    renderHistorySyncStack({
+    const app = makeApp({
       history,
       routes: {
         Home: "/home/",
@@ -274,7 +253,12 @@ describe("historySyncPlugin - defaultHistory setup through React rendering", () 
           ],
         },
       },
+      components: {
+        Home: HomeActivity,
+        Article: ArticleActivity,
+      },
     });
+    render(<app.Stack />);
 
     await waitFor(() => {
       expect(screen.getByTestId("article").dataset.active).toEqual("true");
@@ -299,7 +283,7 @@ describe("historySyncPlugin - defaultHistory setup through React rendering", () 
       visible: p.visible ? "y" : "n",
     }));
 
-    renderHistorySyncStack({
+    const app = makeApp({
       history,
       routes: {
         Home: {
@@ -318,7 +302,12 @@ describe("historySyncPlugin - defaultHistory setup through React rendering", () 
           ],
         },
       },
+      components: {
+        Home: HomeActivity,
+        Article: ArticleActivity,
+      },
     });
+    render(<app.Stack />);
 
     await waitFor(() => {
       expect(screen.getByTestId("article").dataset.active).toEqual("true");
