@@ -15,14 +15,11 @@ import { renderToString } from "react-dom/server";
 import { historySyncPlugin } from "./historySyncPlugin";
 
 /**
- * Regression tests for the SSR hydration mismatch that occurred when an
- * activity declared a non-empty `defaultHistory`.
+ * Regression tests for SSR hydration mismatch with non-empty `defaultHistory`.
  *
- * The server renders the "frame 0" stack (the first `defaultHistory` entry),
- * because the staged setup navigation is now kicked off from a post-commit
- * effect that never runs during SSR. The client's first render must therefore
- * match that frame, and the staged "stacking" setup animation must still play
- * after hydration.
+ * Server HTML and the client's first render must both contain only the initial
+ * `defaultHistory` frame, avoiding hydration mismatch. After hydration, the
+ * destination activity should still appear.
  */
 
 declare module "@stackflow/config" {
