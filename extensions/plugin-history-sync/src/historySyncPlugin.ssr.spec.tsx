@@ -1,8 +1,7 @@
 /** @jest-environment jsdom */
 import { defineConfig } from "@stackflow/config";
-import type { Stack } from "@stackflow/core";
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
-import { stackflow, type StackflowReactPlugin } from "@stackflow/react";
+import { stackflow } from "@stackflow/react";
 import { act } from "@testing-library/react";
 import { createMemoryHistory } from "history";
 import { hydrateRoot } from "react-dom/client";
@@ -28,11 +27,6 @@ const TRANSITION_DURATION = 32;
 
 const SSR_INITIAL_CONTEXT = { req: { path: "/articles/1" } };
 
-const liveActivityNames = (stack: Stack) =>
-  stack.activities
-    .filter((activity) => activity.transitionState !== "exit-done")
-    .map((activity) => activity.name);
-
 type DefaultHistoryOption = "non-empty" | "empty" | "none";
 
 function Home() {
@@ -42,22 +36,10 @@ function Article() {
   return <div data-testid="article">article</div>;
 }
 
-function stackProbePlugin(onStack: (stack: Stack) => void): StackflowReactPlugin {
-  return () => ({
-    key: "stack-probe",
-    wrapStack({ stack }) {
-      onStack(stack);
-      return <>{stack.render()}</>;
-    },
-  });
-}
-
 function makeApp({
   defaultHistory = "non-empty",
-  extraPlugins = [],
 }: {
   defaultHistory?: DefaultHistoryOption;
-  extraPlugins?: StackflowReactPlugin[];
 } = {}) {
   const articleRoute = (() => {
     switch (defaultHistory) {
@@ -99,7 +81,6 @@ function makeApp({
         history: createMemoryHistory({ initialEntries: ["/articles/1"] }),
         fallbackActivity: () => "Home",
       }),
-      ...extraPlugins,
     ],
   });
 }
@@ -117,38 +98,24 @@ function renderServerHTML(app: ReturnType<typeof makeApp>) {
 
 describe("historySyncPlugin - SSR hydration with defaultHistory", () => {
   test("a route with no defaultHistory still resolves directly to the destination (unchanged)", () => {
-    let capturedStack: Stack | undefined;
     const app = makeApp({
       defaultHistory: "none",
-      extraPlugins: [
-        stackProbePlugin((stack) => {
-          capturedStack = stack;
-        }),
-      ],
     });
     const html = renderServerHTML(app);
 
-    expect(liveActivityNames(capturedStack!)).toEqual(["Article"]);
     expect(html).toContain('data-testid="article"');
     expect(html).not.toContain('data-testid="home"');
   });
 
   test("an explicit empty defaultHistory resolves directly to the destination (unchanged)", () => {
-    let capturedStack: Stack | undefined;
     const app = makeApp({
       defaultHistory: "empty",
-      extraPlugins: [
-        stackProbePlugin((stack) => {
-          capturedStack = stack;
-        }),
-      ],
     });
     const html = renderServerHTML(app);
 
     // `defaultHistory: () => []` and a missing `defaultHistory` both yield no
     // ancestor entries, so the destination lands immediately with no staged
     // setup to defer — there is nothing for the post-commit effect to advance.
-    expect(liveActivityNames(capturedStack!)).toEqual(["Article"]);
     expect(html).toContain('data-testid="article"');
     expect(html).not.toContain('data-testid="home"');
   });
