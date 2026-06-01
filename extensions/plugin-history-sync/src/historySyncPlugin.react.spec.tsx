@@ -311,17 +311,16 @@ describe("historySyncPlugin - defaultHistory setup through React rendering", () 
       articleActivities.push(activity);
     };
 
-    const homeEncode = jest.fn((params: unknown) => {
-      const record =
+    const homeEncode = (params: unknown) => {
+      const visible =
         typeof params === "object" && params !== null
-          ? (params as Record<string, unknown>)
-          : {};
+          ? (params as { visible?: unknown }).visible
+          : undefined;
 
       return {
-        articleId: String(record.articleId ?? ""),
-        visible: record.visible ? "y" : "n",
+        visible: visible ? "y" : "n",
       };
-    });
+    };
 
     const config = defineConfig({
       transitionDuration: TRANSITION_DURATION,
