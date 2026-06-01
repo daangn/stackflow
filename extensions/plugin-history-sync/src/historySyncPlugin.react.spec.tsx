@@ -117,6 +117,38 @@ function makeApp({
   });
 }
 
+function renderHistorySyncStack({
+  config,
+  initialEntry,
+}: {
+  config: Parameters<typeof stackflow>[0]["config"];
+  initialEntry: string;
+}) {
+  const history = createMemoryHistory({
+    initialEntries: [initialEntry],
+  });
+
+  const app = stackflow({
+    config,
+    components: {
+      Home: HomeActivity,
+      Article: ArticleActivity,
+    },
+    plugins: [
+      basicRendererPlugin(),
+      historySyncPlugin({
+        config,
+        history,
+        fallbackActivity: () => "Home",
+      }),
+    ],
+  });
+
+  render(<app.Stack />);
+
+  return history;
+}
+
 function renderServerHTML(app: ReturnType<typeof makeApp>) {
   const originalWindow = global.window;
   try {
@@ -211,9 +243,6 @@ describe("historySyncPlugin - SSR hydration with defaultHistory", () => {
 
 describe("historySyncPlugin - defaultHistory setup through React rendering", () => {
   test("historySyncPlugin - FEP-1061: defaultHistory ancestor entries with typed activityParams + stepParams coerce (T-I-NEW-6)", async () => {
-    const history = createMemoryHistory({
-      initialEntries: ["/articles/9/"],
-    });
     const homeActivities: ActivitySnapshot[] = [];
     const articleActivities: ActivitySnapshot[] = [];
     recordHomeActivity = (activity) => {
@@ -251,22 +280,10 @@ describe("historySyncPlugin - defaultHistory setup through React rendering", () 
       ],
     });
 
-    const app = stackflow({
+    renderHistorySyncStack({
       config,
-      components: {
-        Home: HomeActivity,
-        Article: ArticleActivity,
-      },
-      plugins: [
-        basicRendererPlugin(),
-        historySyncPlugin({
-          config,
-          history,
-          fallbackActivity: () => "Home",
-        }),
-      ],
+      initialEntry: "/articles/9/",
     });
-    render(<app.Stack />);
 
     await waitFor(() => {
       const article = articleActivities.find((activity) => activity.isActive);
@@ -285,9 +302,6 @@ describe("historySyncPlugin - defaultHistory setup through React rendering", () 
     // Arrive on Article URL with a typed defaultHistory chain. The ancestor
     // URL pushed during setup must use Home's route encode, not the current
     // Article path.
-    const history = createMemoryHistory({
-      initialEntries: ["/articles/9/?visible=true"],
-    });
     const homeActivities: ActivitySnapshot[] = [];
     const articleActivities: ActivitySnapshot[] = [];
     recordHomeActivity = (activity) => {
@@ -297,10 +311,17 @@ describe("historySyncPlugin - defaultHistory setup through React rendering", () 
       articleActivities.push(activity);
     };
 
-    const homeEncode = jest.fn((p: Record<string, any>) => ({
-      articleId: String(p.articleId ?? ""),
-      visible: p.visible ? "y" : "n",
-    }));
+    const homeEncode = jest.fn((params: unknown) => {
+      const record =
+        typeof params === "object" && params !== null
+          ? (params as Record<string, unknown>)
+          : {};
+
+      return {
+        articleId: String(record.articleId ?? ""),
+        visible: record.visible ? "y" : "n",
+      };
+    });
 
     const config = defineConfig({
       transitionDuration: TRANSITION_DURATION,
@@ -329,22 +350,10 @@ describe("historySyncPlugin - defaultHistory setup through React rendering", () 
       ],
     });
 
-    const app = stackflow({
+    const history = renderHistorySyncStack({
       config,
-      components: {
-        Home: HomeActivity,
-        Article: ArticleActivity,
-      },
-      plugins: [
-        basicRendererPlugin(),
-        historySyncPlugin({
-          config,
-          history,
-          fallbackActivity: () => "Home",
-        }),
-      ],
+      initialEntry: "/articles/9/?visible=true",
     });
-    render(<app.Stack />);
 
     await waitFor(() => {
       const article = articleActivities.find((activity) => activity.isActive);
