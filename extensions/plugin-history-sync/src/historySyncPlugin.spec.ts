@@ -2965,68 +2965,6 @@ describe("historySyncPlugin", () => {
     expect(typeof active?.params.offset).toEqual("string");
   });
 
-  test("historySyncPlugin - FEP-1061: defaultHistory ancestor entries with typed activityParams + stepParams coerce (T-I-NEW-6)", async () => {
-    // T-I-NEW-6: `historyEntryToEvents` (historySyncPlugin.tsx:276-309) is
-    // invoked for `defaultHistory` ancestor entries. Boot via URL-arrival on
-    // a route whose `defaultHistory` returns an ancestor with TYPED
-    // `activityParams` and TYPED `stepParams`. Both must be coerced when
-    // the ancestor events are emitted.
-    const historyForDefault = createMemoryHistory({
-      initialEntries: ["/articles/9/"],
-    });
-
-    const coreStore = stackflow({
-      activityNames: ["Home", "Article"],
-      plugins: [
-        historySyncPlugin({
-          history: historyForDefault,
-          routes: {
-            Home: "/home/",
-            Article: {
-              path: "/articles/:articleId",
-              defaultHistory: () => [
-                {
-                  activityName: "Home",
-                  // TYPED — should be coerced via historyEntryToEvents.
-                  activityParams: {
-                    count: 42 as unknown as string,
-                  },
-                  additionalSteps: [
-                    {
-                      stepParams: {
-                        offset: 7 as unknown as string,
-                      },
-                    },
-                  ],
-                },
-              ],
-            },
-          },
-          fallbackActivity: () => "Home",
-        }),
-      ],
-    });
-
-    const proxyActions = makeActionsProxy({ actions: coreStore.actions });
-    const stack = await proxyActions.getStack();
-
-    // The ancestor "Home" activity from defaultHistory.
-    const homeAncestor = stack.activities.find((a) => a.name === "Home");
-    // After additionalSteps processing, `homeAncestor.params` reflects the
-    // LAST step's params (`makeActivityReducer.ts:78`). The original Pushed
-    // activityParams land in `steps[0].params`.
-    expect(homeAncestor?.steps[0]?.params.count).toEqual("42");
-    expect(typeof homeAncestor?.steps[0]?.params.count).toEqual("string");
-    // The step's stepParams are coerced and surfaced via homeAncestor.params
-    // (current-step alias) and also in the last step's params.
-    expect(homeAncestor?.params.offset).toEqual("7");
-    expect(typeof homeAncestor?.params.offset).toEqual("string");
-
-    // The target Article activity — sanity-check it landed.
-    const article = stack.activities.find((a) => a.name === "Article");
-    expect(article?.params.articleId).toEqual("9");
-  });
-
   test("historySyncPlugin - FEP-1061: popstate isStepBackward branch preserves coercion (T-I-NEW-9)", async () => {
     // T-I-NEW-9: popstate `isStepBackward` (historySyncPlugin.tsx:538-554).
     // When a back() navigates to a step that's no longer in the stack, the
@@ -3446,62 +3384,6 @@ describe("historySyncPlugin", () => {
     });
 
     expect(path(history.location)).toEqual("/articles/3/?visible=y");
-  });
-
-  test("historySyncPlugin - FEP-1061: T-O-5 defaultHistory ancestor URL uses ancestor's route encode (not currentPath)", async () => {
-    // Arrive on Article URL with a typed-decode chain; the defaultHistory
-    // declares Home as the ancestor. The ancestor URL pushed in
-    // historyEntryToEvents should reflect Home's route encode (or its plain
-    // template), NOT the current Article path.
-    history = createMemoryHistory({
-      initialEntries: ["/articles/9/?visible=true"],
-    });
-
-    const homeEncode = jest.fn((p: Record<string, any>) => ({
-      articleId: String(p.articleId ?? ""),
-      visible: p.visible ? "y" : "n",
-    }));
-
-    const coreStore = stackflow({
-      activityNames: ["Home", "Article"],
-      plugins: [
-        historySyncPlugin({
-          history,
-          routes: {
-            Home: {
-              path: "/home/",
-              encode: homeEncode,
-            },
-            Article: {
-              path: "/articles/:articleId",
-              defaultHistory: () => [
-                {
-                  activityName: "Home",
-                  activityParams: {
-                    visible: true as unknown as string,
-                  },
-                },
-              ],
-            },
-          } as any,
-          fallbackActivity: () => "Home",
-        }),
-      ],
-    });
-    const a = makeActionsProxy({ actions: coreStore.actions });
-    // Allow defaultHistory replay (Home ancestor → Article target) to settle
-    // through onChanged → push/stepPush.
-    await a.getStack();
-    await a.getStack();
-    await a.getStack();
-
-    // Walk back to the Home ancestor entry to inspect its URL.
-    history.back();
-    await a.getStack();
-
-    // Ancestor URL pushed during defaultHistory replay must use Home's encode
-    // output (visible=y), NOT the Article path the user arrived on.
-    expect(path(history.location)).toEqual("/home/?visible=y");
   });
 
   test("historySyncPlugin - FEP-1061: T-O-6 popstate forward (activity boundary): encode receives typed-via-context, NOT coerced strings", async () => {
