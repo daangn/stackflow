@@ -1,13 +1,8 @@
 /** @jest-environment jsdom */
 import { defineConfig } from "@stackflow/config";
-import {
-  type CoreStore,
-  makeCoreStore,
-  makeEvent,
-  type Stack,
-} from "@stackflow/core";
+import type { Stack } from "@stackflow/core";
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
-import { stackflow } from "@stackflow/react";
+import { stackflow, type StackflowReactPlugin } from "@stackflow/react";
 import { act } from "@testing-library/react";
 import { createMemoryHistory } from "history";
 import { hydrateRoot } from "react-dom/client";
@@ -38,20 +33,39 @@ const liveActivityNames = (stack: Stack) =>
     .filter((activity) => activity.transitionState !== "exit-done")
     .map((activity) => activity.name);
 
-/**
- * Core-level wiring (no React), mirroring how the integration builds the store:
- * apply the plugin's `overrideInitialEvents` via `makeCoreStore`, then `init()`.
- */
-function buildCoreStore(options: {
-  defaultHistory: "non-empty" | "empty" | "none";
-}): CoreStore {
+type DefaultHistoryOption = "non-empty" | "empty" | "none";
+
+function Home() {
+  return <div data-testid="home">home</div>;
+}
+function Article() {
+  return <div data-testid="article">article</div>;
+}
+
+function stackProbePlugin(onStack: (stack: Stack) => void): StackflowReactPlugin {
+  return () => ({
+    key: "stack-probe",
+    wrapStack({ stack }) {
+      onStack(stack);
+      return <>{stack.render()}</>;
+    },
+  });
+}
+
+function makeApp({
+  defaultHistory = "non-empty",
+  extraPlugins = [],
+}: {
+  defaultHistory?: DefaultHistoryOption;
+  extraPlugins?: StackflowReactPlugin[];
+} = {}) {
   const articleRoute = (() => {
-    switch (options.defaultHistory) {
+    switch (defaultHistory) {
       case "non-empty":
         return {
           path: "/articles/:articleId",
           defaultHistory: () => [
-            { activityName: "Home", activityParams: {} },
+            { activityName: "Home" as const, activityParams: {} },
           ],
         };
       case "empty":
@@ -64,57 +78,13 @@ function buildCoreStore(options: {
     }
   })();
 
-  const plugin = historySyncPlugin({
-    history: createMemoryHistory({ initialEntries: ["/articles/1"] }),
-    routes: {
-      Home: "/",
-      Article: articleRoute,
-    },
-    fallbackActivity: () => "Home",
-  });
-
-  return makeCoreStore({
-    initialEvents: [
-      makeEvent("Initialized", {
-        transitionDuration: TRANSITION_DURATION,
-        eventDate: 1,
-      }),
-      makeEvent("ActivityRegistered", {
-        activityName: "Home",
-        eventDate: 2,
-      }),
-      makeEvent("ActivityRegistered", {
-        activityName: "Article",
-        eventDate: 3,
-      }),
-    ],
-    initialContext: SSR_INITIAL_CONTEXT,
-    plugins: [plugin],
-  });
-}
-
-function Home() {
-  return <div data-testid="home">home</div>;
-}
-function Article() {
-  return <div data-testid="article">article</div>;
-}
-
-/**
- * React-level wiring (v2 config API). The destination (`Article`) declares a
- * non-empty `defaultHistory` so the staged setup process is exercised.
- */
-function makeApp() {
   const config = defineConfig({
     transitionDuration: TRANSITION_DURATION,
     activities: [
       { name: "Home", route: "/" },
       {
         name: "Article",
-        route: {
-          path: "/articles/:articleId",
-          defaultHistory: () => [{ activityName: "Home", activityParams: {} }],
-        },
+        route: articleRoute,
       },
     ],
   });
@@ -129,58 +99,64 @@ function makeApp() {
         history: createMemoryHistory({ initialEntries: ["/articles/1"] }),
         fallbackActivity: () => "Home",
       }),
+      ...extraPlugins,
     ],
   });
 }
 
+function renderServerHTML(app: ReturnType<typeof makeApp>) {
+  const originalWindow = global.window;
+  try {
+    // biome-ignore lint/performance/noDelete: simulate a non-browser runtime
+    delete (global as { window?: unknown }).window;
+    return renderToString(<app.Stack initialContext={SSR_INITIAL_CONTEXT} />);
+  } finally {
+    (global as { window?: unknown }).window = originalWindow;
+  }
+}
+
 describe("historySyncPlugin - SSR hydration with defaultHistory", () => {
-  test("store.init() no longer advances a non-empty defaultHistory setup (the server renders frame 0)", () => {
-    const coreStore = buildCoreStore({ defaultHistory: "non-empty" });
-
-    // The constructor releases only the first (underlay) entry. The server,
-    // which never calls init(), renders exactly this frame.
-    expect(liveActivityNames(coreStore.actions.getStack())).toEqual(["Home"]);
-
-    // init() must NOT push the destination anymore — that now happens in a
-    // post-commit effect — so the client's first render matches the server.
-    coreStore.init();
-    expect(liveActivityNames(coreStore.actions.getStack())).toEqual(["Home"]);
-  });
-
   test("a route with no defaultHistory still resolves directly to the destination (unchanged)", () => {
-    const coreStore = buildCoreStore({ defaultHistory: "none" });
+    let capturedStack: Stack | undefined;
+    const app = makeApp({
+      defaultHistory: "none",
+      extraPlugins: [
+        stackProbePlugin((stack) => {
+          capturedStack = stack;
+        }),
+      ],
+    });
+    const html = renderServerHTML(app);
 
-    expect(liveActivityNames(coreStore.actions.getStack())).toEqual(["Article"]);
-    coreStore.init();
-    expect(liveActivityNames(coreStore.actions.getStack())).toEqual(["Article"]);
+    expect(liveActivityNames(capturedStack!)).toEqual(["Article"]);
+    expect(html).toContain('data-testid="article"');
+    expect(html).not.toContain('data-testid="home"');
   });
 
   test("an explicit empty defaultHistory resolves directly to the destination (unchanged)", () => {
-    const coreStore = buildCoreStore({ defaultHistory: "empty" });
+    let capturedStack: Stack | undefined;
+    const app = makeApp({
+      defaultHistory: "empty",
+      extraPlugins: [
+        stackProbePlugin((stack) => {
+          capturedStack = stack;
+        }),
+      ],
+    });
+    const html = renderServerHTML(app);
 
     // `defaultHistory: () => []` and a missing `defaultHistory` both yield no
     // ancestor entries, so the destination lands immediately with no staged
     // setup to defer — there is nothing for the post-commit effect to advance.
-    expect(liveActivityNames(coreStore.actions.getStack())).toEqual(["Article"]);
-    coreStore.init();
-    expect(liveActivityNames(coreStore.actions.getStack())).toEqual(["Article"]);
+    expect(liveActivityNames(capturedStack!)).toEqual(["Article"]);
+    expect(html).toContain('data-testid="article"');
+    expect(html).not.toContain('data-testid="home"');
   });
 
-  test("the destination is not rendered during SSR (it is deferred to a post-commit effect)", () => {
+  test("the destination is not rendered during SSR", () => {
     const app = makeApp();
 
-    // Simulate a real non-browser runtime by removing `window`, exactly as on a
-    // server. Otherwise jsdom's `window` lets browser-only paths run and this
-    // would no longer reflect SSR fidelity.
-    const originalWindow = global.window;
-    let html = "";
-    try {
-      // biome-ignore lint/performance/noDelete: simulate a non-browser runtime
-      delete (global as { window?: unknown }).window;
-      html = renderToString(<app.Stack initialContext={SSR_INITIAL_CONTEXT} />);
-    } finally {
-      (global as { window?: unknown }).window = originalWindow;
-    }
+    const html = renderServerHTML(app);
 
     expect(html).toContain('data-testid="home"');
     expect(html).not.toContain('data-testid="article"');
@@ -189,20 +165,9 @@ describe("historySyncPlugin - SSR hydration with defaultHistory", () => {
   test("hydration produces no mismatch and the staged setup animation plays afterwards", async () => {
     jest.useFakeTimers();
 
-    // --- Server render: simulate a non-browser runtime so `store.init()` is
-    // skipped, exactly as it is on a real server. The server commits frame 0.
-    const serverApp = makeApp();
-    const originalWindow = global.window;
-    let serverHTML = "";
-    try {
-      // biome-ignore lint/performance/noDelete: simulate a non-browser runtime
-      delete (global as { window?: unknown }).window;
-      serverHTML = renderToString(
-        <serverApp.Stack initialContext={SSR_INITIAL_CONTEXT} />,
-      );
-    } finally {
-      (global as { window?: unknown }).window = originalWindow;
-    }
+    // --- Server render: simulate a non-browser runtime. The server commits
+    // the same initial frame that the client must hydrate from.
+    const serverHTML = renderServerHTML(makeApp());
 
     expect(serverHTML).toContain('data-testid="home"');
     expect(serverHTML).not.toContain('data-testid="article"');
@@ -234,8 +199,7 @@ describe("historySyncPlugin - SSR hydration with defaultHistory", () => {
       // The client's first render equalled the server's frame 0 → no mismatch.
       expect(recoverableErrors).toEqual([]);
 
-      // The staged setup navigation ran in the post-commit effect, so the
-      // destination mounts after hydration — the stacking animation plays.
+      // The destination still mounts after hydration.
       await act(async () => {
         jest.advanceTimersByTime(TRANSITION_DURATION * 2);
       });
