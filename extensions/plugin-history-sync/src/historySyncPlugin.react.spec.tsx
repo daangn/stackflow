@@ -1,14 +1,14 @@
 /** @jest-environment jsdom */
 import { defineConfig } from "@stackflow/config";
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
+import type { ActivityComponentType } from "@stackflow/react";
 import { stackflow, useActivity } from "@stackflow/react";
-import { act, render, screen, waitFor } from "@testing-library/react";
-import type { MemoryHistory } from "history";
+import { act, render, waitFor } from "@testing-library/react";
 import { createMemoryHistory } from "history";
+import { useEffect } from "react";
 import { hydrateRoot } from "react-dom/client";
 import { renderToString } from "react-dom/server";
 import { historySyncPlugin } from "./historySyncPlugin";
-import type { RouteLike } from "./RouteLike";
 
 /**
  * Regression tests for SSR hydration mismatch with non-empty `defaultHistory`.
@@ -38,48 +38,40 @@ function Article() {
   return <div data-testid="article">article</div>;
 }
 
-function HomeActivity() {
+type ActivitySnapshot = ReturnType<typeof useActivity>;
+
+let recordHomeActivity: ((activity: ActivitySnapshot) => void) | undefined;
+let recordArticleActivity: ((activity: ActivitySnapshot) => void) | undefined;
+
+afterEach(() => {
+  recordHomeActivity = undefined;
+  recordArticleActivity = undefined;
+});
+
+const HomeActivity: ActivityComponentType<"Home"> = () => {
   const activity = useActivity();
 
-  return (
-    <div
-      data-testid="home"
-      data-active={String(activity.isActive)}
-      data-count={activity.steps[0]?.params.count ?? ""}
-      data-offset={activity.params.offset ?? ""}
-      data-visible={activity.params.visible ?? ""}
-    />
-  );
-}
+  useEffect(() => {
+    recordHomeActivity?.(activity);
+  }, [activity]);
 
-function ArticleActivity() {
+  return null;
+};
+
+const ArticleActivity: ActivityComponentType<"Article"> = () => {
   const activity = useActivity();
 
-  return (
-    <div
-      data-testid="article"
-      data-active={String(activity.isActive)}
-      data-article-id={activity.params.articleId ?? ""}
-    />
-  );
-}
+  useEffect(() => {
+    recordArticleActivity?.(activity);
+  }, [activity]);
+
+  return null;
+};
 
 function makeApp({
   defaultHistory = "non-empty",
-  history = createMemoryHistory({ initialEntries: ["/articles/1"] }),
-  routes,
-  components = { Home, Article },
 }: {
   defaultHistory?: DefaultHistoryOption;
-  history?: MemoryHistory;
-  routes?: {
-    Home: RouteLike<any>;
-    Article: RouteLike<any>;
-  };
-  components?: {
-    Home: typeof Home;
-    Article: typeof Article;
-  };
 } = {}) {
   const articleRoute = (() => {
     switch (defaultHistory) {
@@ -99,30 +91,26 @@ function makeApp({
         return "/articles/:articleId";
     }
   })();
-  const appRoutes = routes ?? {
-    Home: "/",
-    Article: articleRoute,
-  };
 
   const config = defineConfig({
     transitionDuration: TRANSITION_DURATION,
     activities: [
-      { name: "Home", route: appRoutes.Home },
+      { name: "Home", route: "/" },
       {
         name: "Article",
-        route: appRoutes.Article,
+        route: articleRoute,
       },
     ],
   });
 
   return stackflow({
     config,
-    components,
+    components: { Home, Article },
     plugins: [
       basicRendererPlugin(),
       historySyncPlugin({
         config,
-        history,
+        history: createMemoryHistory({ initialEntries: ["/articles/1"] }),
         fallbackActivity: () => "Home",
       }),
     ],
@@ -226,45 +214,71 @@ describe("historySyncPlugin - defaultHistory setup through React rendering", () 
     const history = createMemoryHistory({
       initialEntries: ["/articles/9/"],
     });
+    const homeActivities: ActivitySnapshot[] = [];
+    const articleActivities: ActivitySnapshot[] = [];
+    recordHomeActivity = (activity) => {
+      homeActivities.push(activity);
+    };
+    recordArticleActivity = (activity) => {
+      articleActivities.push(activity);
+    };
 
-    const app = makeApp({
-      history,
-      routes: {
-        Home: "/home/",
-        Article: {
-          path: "/articles/:articleId",
-          defaultHistory: () => [
-            {
-              activityName: "Home",
-              activityParams: {
-                count: 42 as unknown as string,
-              },
-              additionalSteps: [
-                {
-                  stepParams: {
-                    offset: 7 as unknown as string,
-                  },
+    const config = defineConfig({
+      transitionDuration: TRANSITION_DURATION,
+      activities: [
+        { name: "Home", route: "/home/" },
+        {
+          name: "Article",
+          route: {
+            path: "/articles/:articleId",
+            defaultHistory: () => [
+              {
+                activityName: "Home",
+                activityParams: {
+                  count: 42 as unknown as string,
                 },
-              ],
-            },
-          ],
+                additionalSteps: [
+                  {
+                    stepParams: {
+                      offset: 7 as unknown as string,
+                    },
+                  },
+                ],
+              },
+            ],
+          },
         },
-      },
+      ],
+    });
+
+    const app = stackflow({
+      config,
       components: {
         Home: HomeActivity,
         Article: ArticleActivity,
       },
+      plugins: [
+        basicRendererPlugin(),
+        historySyncPlugin({
+          config,
+          history,
+          fallbackActivity: () => "Home",
+        }),
+      ],
     });
     render(<app.Stack />);
 
     await waitFor(() => {
-      expect(screen.getByTestId("article").dataset.active).toEqual("true");
-      expect(screen.getByTestId("article").dataset.articleId).toEqual("9");
+      const article = articleActivities.find((activity) => activity.isActive);
+
+      expect(article?.params.articleId).toEqual("9");
     });
 
-    const home = screen.getByTestId("home");
-    expect(home.dataset.count).toEqual("42");
-    expect(home.dataset.offset).toEqual("7");
+    const home = homeActivities.at(-1);
+    expect(home?.steps[0]?.params.count).toEqual("42");
+    expect(typeof home?.steps[0]?.params.count).toEqual("string");
+    expect(home?.params.offset).toEqual("7");
+    expect(typeof home?.params.offset).toEqual("string");
   });
 
   test("historySyncPlugin - FEP-1061: T-O-5 defaultHistory ancestor URL uses ancestor's route encode (not currentPath)", async () => {
@@ -274,41 +288,68 @@ describe("historySyncPlugin - defaultHistory setup through React rendering", () 
     const history = createMemoryHistory({
       initialEntries: ["/articles/9/?visible=true"],
     });
+    const homeActivities: ActivitySnapshot[] = [];
+    const articleActivities: ActivitySnapshot[] = [];
+    recordHomeActivity = (activity) => {
+      homeActivities.push(activity);
+    };
+    recordArticleActivity = (activity) => {
+      articleActivities.push(activity);
+    };
 
     const homeEncode = jest.fn((p: Record<string, any>) => ({
       articleId: String(p.articleId ?? ""),
       visible: p.visible ? "y" : "n",
     }));
 
-    const app = makeApp({
-      history,
-      routes: {
-        Home: {
-          path: "/home/",
-          encode: homeEncode,
+    const config = defineConfig({
+      transitionDuration: TRANSITION_DURATION,
+      activities: [
+        {
+          name: "Home",
+          route: {
+            path: "/home/",
+            encode: homeEncode,
+          },
         },
-        Article: {
-          path: "/articles/:articleId",
-          defaultHistory: () => [
-            {
-              activityName: "Home",
-              activityParams: {
-                visible: true as unknown as string,
+        {
+          name: "Article",
+          route: {
+            path: "/articles/:articleId",
+            defaultHistory: () => [
+              {
+                activityName: "Home",
+                activityParams: {
+                  visible: true as unknown as string,
+                },
               },
-            },
-          ],
+            ],
+          },
         },
-      },
+      ],
+    });
+
+    const app = stackflow({
+      config,
       components: {
         Home: HomeActivity,
         Article: ArticleActivity,
       },
+      plugins: [
+        basicRendererPlugin(),
+        historySyncPlugin({
+          config,
+          history,
+          fallbackActivity: () => "Home",
+        }),
+      ],
     });
     render(<app.Stack />);
 
     await waitFor(() => {
-      expect(screen.getByTestId("article").dataset.active).toEqual("true");
-      expect(screen.getByTestId("article").dataset.articleId).toEqual("9");
+      const article = articleActivities.find((activity) => activity.isActive);
+
+      expect(article?.params.articleId).toEqual("9");
     });
 
     await act(async () => {
@@ -318,7 +359,9 @@ describe("historySyncPlugin - defaultHistory setup through React rendering", () 
     await waitFor(() => {
       const { pathname, search, hash } = history.location;
 
-      expect(screen.getByTestId("home").dataset.active).toEqual("true");
+      expect(homeActivities.some((activity) => activity.isActive)).toEqual(
+        true,
+      );
       expect(`${pathname}${search}${hash}`).toEqual("/home/?visible=y");
     });
   });
