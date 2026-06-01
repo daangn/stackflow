@@ -7,13 +7,14 @@ import {
   id,
   type PushedEvent,
   type Stack,
+  type StackflowActions,
   type StepPushedEvent,
 } from "@stackflow/core";
 import type { StackflowReactPlugin } from "@stackflow/react";
 import type { ActivityComponentType } from "@stackflow/react";
 import type { History, Listener } from "history";
 import { createBrowserHistory, createMemoryHistory } from "history";
-import { useSyncExternalStore } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import UrlPattern from "url-pattern";
 import { ActivityActivationCountsContext } from "./ActivityActivationCountsContext";
 import type { ActivityActivationMonitor } from "./ActivityActivationMonitor/ActivityActivationMonitor";
@@ -171,6 +172,46 @@ export function historySyncPlugin<
       }
     };
 
+    /**
+     * The `defaultHistory` setup kickoff (see `dispatchInitialSetupNavigation`)
+     * needs the core `actions` to dispatch navigation, but it runs inside
+     * `wrapStack`'s post-commit effect, which is not passed `actions`. So we
+     * capture them here from `onInit` — the earliest hook that receives
+     * `actions` — and read them back in that effect.
+     *
+     * The ordering is guaranteed: `onInit` runs synchronously via `store.init()`
+     * during the first client render (before any effect), while the effect that
+     * reads `coreActions` runs after the first commit. `onInit` is browser-only,
+     * so on the server neither the capture nor the effect runs.
+     */
+    let coreActions: StackflowActions | null = null;
+
+    /**
+     * Guards the one-time initial kickoff so React StrictMode's double-invoked
+     * effect does not advance the setup process twice.
+     */
+    let hasDispatchedInitialSetupNavigation = false;
+
+    /**
+     * Advances the `defaultHistory` setup process by one step: dispatches the
+     * next pending navigation (if any) and refreshes the activation monitors.
+     * Used for the initial kickoff (from `wrapStack`'s post-commit effect) and
+     * for every subsequent step (from `onChanged`).
+     */
+    const dispatchInitialSetupNavigation = (actions: StackflowActions) => {
+      const stack = actions.getStack();
+
+      initialSetupProcess
+        ?.captureNavigationOpportunity(stack)
+        .forEach((event) =>
+          event.name === "Pushed"
+            ? actions.push(event)
+            : actions.stepPush(event),
+        );
+
+      runActivityActivationMonitors(stack);
+    };
+
     return {
       key: "plugin-history-sync",
       wrapStack({ stack }) {
@@ -179,6 +220,23 @@ export function historySyncPlugin<
           getActivityActivationCounts,
           getActivityActivationCounts,
         );
+
+        /**
+         * Kick off the `defaultHistory` setup navigation in a post-commit
+         * effect instead of synchronously in `onInit`. This keeps the first
+         * client render identical to the server-rendered output (frame 0),
+         * eliminating the hydration mismatch, while the staged "stacking" setup
+         * animation still plays — just after the first paint. (`coreActions` is
+         * captured in `onInit`, which always runs before this effect.)
+         */
+        useEffect(() => {
+          if (hasDispatchedInitialSetupNavigation || !coreActions) {
+            return;
+          }
+
+          hasDispatchedInitialSetupNavigation = true;
+          dispatchInitialSetupNavigation(coreActions);
+        }, []);
 
         return (
           <HistoryQueueProvider requestHistoryTick={requestHistoryTick}>
@@ -435,7 +493,12 @@ export function historySyncPlugin<
           };
         });
       },
-      onInit({ actions: { getStack, dispatchEvent, push, stepPush } }) {
+      onInit({ actions }) {
+        // Capture core actions for the post-commit `wrapStack` effect that
+        // kicks off the staged `defaultHistory` setup (see `coreActions`).
+        coreActions = actions;
+
+        const { getStack, dispatchEvent, push, stepPush } = actions;
         const stack = getStack();
 
         if (parseState(history.location.state) === null) {
@@ -634,14 +697,6 @@ export function historySyncPlugin<
         };
 
         history.listen(onPopState);
-
-        initialSetupProcess
-          ?.captureNavigationOpportunity(stack)
-          .forEach((event) =>
-            event.name === "Pushed" ? push(event) : stepPush(event),
-          );
-
-        runActivityActivationMonitors(stack);
       },
       onPushed({ effect: { activity } }) {
         if (pushFlag) {
@@ -994,16 +1049,8 @@ export function historySyncPlugin<
           }
         }
       },
-      onChanged({ actions: { getStack, push, stepPush } }) {
-        const stack = getStack();
-
-        initialSetupProcess
-          ?.captureNavigationOpportunity(stack)
-          .forEach((event) =>
-            event.name === "Pushed" ? push(event) : stepPush(event),
-          );
-
-        runActivityActivationMonitors(stack);
+      onChanged({ actions }) {
+        dispatchInitialSetupNavigation(actions);
       },
     };
   };

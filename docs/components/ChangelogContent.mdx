@@ -1,3 +1,16 @@
+## 2026.06.01
+
+Fix an SSR hydration mismatch that occurred when an activity declared a non-empty `defaultHistory`. [`b7724e9`](https://github.com/daangn/stackflow/commit/b7724e910b24c5cf188b45dc0e58cae1913248fd)
+
+The staged `defaultHistory` setup navigation was kicked off synchronously inside the `onInit` hook, which runs during the first client render. As a result, the client's first render contained more activities than the server-rendered output, producing a React hydration mismatch.
+
+The setup navigation is now kicked off from a post-commit effect instead, so the server and the client's first render produce identical output (eliminating the mismatch) while the staged "stacking" setup animation still plays after hydration.
+
+Released packages:
+- 📦 [@stackflow/plugin-history-sync@1.11.1](https://npmjs.com/package/@stackflow/plugin-history-sync/v/1.11.1)
+
+---
+
 ## 2026.05.28
 
 Coerce activity/step params to `string | undefined` at the plugin boundary. [`9b02adb`](https://github.com/daangn/stackflow/commit/9b02adb64b9c97d801d7867cbc35c8343c79c66a)

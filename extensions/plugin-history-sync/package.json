@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/plugin-history-sync",
-  "version": "1.11.0",
+  "version": "1.11.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/daangn/stackflow.git",
@@ -36,8 +36,22 @@
       "index.ts",
       "index.tsx"
     ],
+    "setupFiles": [
+      "<rootDir>/jest.setup.js"
+    ],
     "transform": {
-      "^.+\\.(t|j)sx?$": "@swc/jest"
+      "^.+\\.(t|j)sx?$": [
+        "@swc/jest",
+        {
+          "jsc": {
+            "transform": {
+              "react": {
+                "runtime": "automatic"
+              }
+            }
+          }
+        }
+      ]
     }
   },
   "dependencies": {
@@ -51,18 +65,24 @@
     "@stackflow/config": "^2.0.0",
     "@stackflow/core": "^2.0.0",
     "@stackflow/esbuild-config": "^1.0.3",
+    "@stackflow/plugin-renderer-basic": "^1.1.14",
     "@stackflow/react": "^2.0.0",
     "@swc/core": "^1.6.6",
     "@swc/jest": "^0.2.36",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/react": "^16.3.2",
     "@types/jest": "^29.5.12",
     "@types/node": "^20.14.9",
     "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
     "@types/react-relay": "^16.0.6",
     "@types/relay-runtime": "^17",
     "esbuild": "^0.23.0",
     "graphql": "^16.9.0",
     "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
     "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "react-relay": "^17.0.0",
     "relay-compiler": "^17.0.0",
     "relay-runtime": "^17.0.0",
@@ -70,9 +90,9 @@
     "typescript": "^5.5.3"
   },
   "peerDependencies": {
-    "@stackflow/config": "^2.0.0",
-    "@stackflow/core": "^2.0.0",
-    "@stackflow/react": "^2.0.0",
+    "@stackflow/config": "^1.1.0 || ^2.0.0",
+    "@stackflow/core": "^1.0.0 || ^2.0.0",
+    "@stackflow/react": "^1.0.0 || ^2.0.0",
     "@types/react": ">=16.8.0",
     "react": ">=16.8.0"
   },
