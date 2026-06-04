@@ -1,3 +1,4 @@
+import type { RegisteredActivityName } from "@stackflow/config";
 import React, { Component, type ReactNode, Suspense } from "react";
 import { useActivityComponentMap } from "./ActivityComponentMapProvider";
 import { ActivityProvider } from "./activity";
@@ -37,7 +38,11 @@ const PluginRenderer: React.FC<PluginRendererProps> = ({
             ...activity,
             key: activity.id,
             render(overrideActivity) {
-              const Activity = activityComponentMap[activity.name];
+              // `activity.name` is a plain `string` at the core level, while the
+              // component map is keyed by `RegisteredActivityName`. The cast keeps
+              // this file type-checkable when `Register` is augmented (e.g. in specs).
+              const Activity =
+                activityComponentMap[activity.name as RegisteredActivityName];
 
               let output: React.ReactNode = isStructuredActivityComponent(
                 Activity,

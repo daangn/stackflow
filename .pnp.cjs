@@ -7077,12 +7077,21 @@ const RAW_RUNTIME_STATE =
           ["@stackflow/config", "workspace:config"],\
           ["@stackflow/core", "workspace:core"],\
           ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
+          ["@swc/core", "virtual:b327d7e228fba669b88a8bb23bcf526374e46fa67e617b1e6848e8a205357fee5ce94b47c49b5a570fd9e8a44fa218a13cd00e2eca327c99114cbd21d72ecf9c#npm:1.6.6"],\
+          ["@swc/jest", "virtual:b327d7e228fba669b88a8bb23bcf526374e46fa67e617b1e6848e8a205357fee5ce94b47c49b5a570fd9e8a44fa218a13cd00e2eca327c99114cbd21d72ecf9c#npm:0.2.36"],\
+          ["@testing-library/dom", "npm:10.4.1"],\
+          ["@testing-library/react", "virtual:991015ceb8acca106af7e64cf676369bf8fb98370003b1af0559fb22931c330c3a09d064107412d6cc26ef286f0afdd26340443bd43177eeda3558644ba5f206#npm:16.3.2"],\
+          ["@types/jest", "npm:29.5.12"],\
           ["@types/react", "npm:18.3.3"],\
+          ["@types/react-dom", "npm:18.3.0"],\
           ["@types/stackflow__config", null],\
           ["@types/stackflow__core", null],\
           ["esbuild", "npm:0.23.0"],\
           ["esbuild-plugin-file-path-extensions", "npm:2.1.3"],\
+          ["jest", "virtual:b327d7e228fba669b88a8bb23bcf526374e46fa67e617b1e6848e8a205357fee5ce94b47c49b5a570fd9e8a44fa218a13cd00e2eca327c99114cbd21d72ecf9c#npm:29.7.0"],\
+          ["jest-environment-jsdom", "virtual:991015ceb8acca106af7e64cf676369bf8fb98370003b1af0559fb22931c330c3a09d064107412d6cc26ef286f0afdd26340443bd43177eeda3558644ba5f206#npm:29.7.0"],\
           ["react", "npm:18.3.1"],\
+          ["react-dom", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#npm:18.3.1"],\
           ["react-fast-compare", "npm:3.2.2"],\
           ["rimraf", "npm:3.0.2"],\
           ["typescript", "patch:typescript@npm%3A5.5.3#optional!builtin<compat/typescript>::version=5.5.3&hash=379a07"]\
@@ -7104,10 +7113,19 @@ const RAW_RUNTIME_STATE =
           ["@stackflow/config", "workspace:config"],\
           ["@stackflow/core", "workspace:core"],\
           ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
+          ["@swc/core", "virtual:b327d7e228fba669b88a8bb23bcf526374e46fa67e617b1e6848e8a205357fee5ce94b47c49b5a570fd9e8a44fa218a13cd00e2eca327c99114cbd21d72ecf9c#npm:1.6.6"],\
+          ["@swc/jest", "virtual:b327d7e228fba669b88a8bb23bcf526374e46fa67e617b1e6848e8a205357fee5ce94b47c49b5a570fd9e8a44fa218a13cd00e2eca327c99114cbd21d72ecf9c#npm:0.2.36"],\
+          ["@testing-library/dom", "npm:10.4.1"],\
+          ["@testing-library/react", "virtual:991015ceb8acca106af7e64cf676369bf8fb98370003b1af0559fb22931c330c3a09d064107412d6cc26ef286f0afdd26340443bd43177eeda3558644ba5f206#npm:16.3.2"],\
+          ["@types/jest", "npm:29.5.12"],\
           ["@types/react", "npm:18.3.3"],\
+          ["@types/react-dom", "npm:18.3.0"],\
           ["esbuild", "npm:0.23.0"],\
           ["esbuild-plugin-file-path-extensions", "npm:2.1.3"],\
+          ["jest", "virtual:b327d7e228fba669b88a8bb23bcf526374e46fa67e617b1e6848e8a205357fee5ce94b47c49b5a570fd9e8a44fa218a13cd00e2eca327c99114cbd21d72ecf9c#npm:29.7.0"],\
+          ["jest-environment-jsdom", "virtual:991015ceb8acca106af7e64cf676369bf8fb98370003b1af0559fb22931c330c3a09d064107412d6cc26ef286f0afdd26340443bd43177eeda3558644ba5f206#npm:29.7.0"],\
           ["react", "npm:18.3.1"],\
+          ["react-dom", "virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#npm:18.3.1"],\
           ["react-fast-compare", "npm:3.2.2"],\
           ["rimraf", "npm:3.0.2"],\
           ["typescript", "patch:typescript@npm%3A5.5.3#optional!builtin<compat/typescript>::version=5.5.3&hash=379a07"]\
