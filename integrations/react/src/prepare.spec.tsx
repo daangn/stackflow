@@ -7,11 +7,13 @@
  *
  * - params 생략 → chunk만, params 전달 → chunk + loader 발사
  * - 반환 Promise는 발사한 모든 작업 완료 시에만 resolve (중간 상태 미노출)
- * - React 트리 부재 상태에서 완전 동작하고 이후 <Stack> 마운트를 방해하지 않음
+ * - stackflow() core store 초기화 이전(React 트리 부재 상태)에도 prepare를
+ *   사용할 수 있고, 이후 <Stack> 마운트를 방해하지 않음
  * - 모든 실패는 동기 throw가 아닌 원본 reason 그대로의 reject로 전달되고,
- *   chunk 실패는 재-prepare 시 재시도되며, prepare는 core store를 건드리지
- *   않는다(스택 상태·내비게이션 이벤트 불변)
- * - loaderData 주입·lazy 렌더 등 기존 내비게이션 경로와의 책임 분리
+ *   chunk 실패는 재-prepare 시 재시도된다
+ * - prepare는 발사만 담당하며, 결과 소비(loaderData 주입·lazy 렌더)는 기존
+ *   내비게이션 경로가 그대로 담당한다 — prepare → push가 일반 push와 동일하게
+ *   동작
  *
  * loader 디듀프, chunk import 중복 발사, 부분 발사 원자성/취소는 계약이 아닌
  * 구현 상세로 남겨둔 동작이므로, 어느 방향으로도 단언하지 않는다.
@@ -855,10 +857,11 @@ describe("prepare — stackflow() 출력", () => {
     });
   });
 
-  describe("loaderPlugin과의 책임 분리", () => {
+  describe("발사/소비 분리 — prepare 이후 push는 일반 push와 동일하게 동작", () => {
     // 주의: 이 절은 호출 횟수를 단언하지 않는다. loader 디듀프·chunk 중복 발사
-    // 여부는 계약이 아니며, 여기서는 "prepare가 기존 내비게이션 경로
-    // (loaderData 주입·lazy 렌더)를 방해하지 않는다"는 책임 분리만 검증한다.
+    // 여부는 계약이 아니며, 여기서는 prepare의 책임이 발사에서 끝나고 결과
+    // 소비(loaderData 주입은 loaderPlugin, chunk 렌더는 lazy 경로)는 기존
+    // 내비게이션 경로가 그대로 담당한다는 것만 검증한다.
 
     it("prepare 후 push해도 loaderData 주입은 loaderPlugin 경로로 정상 동작한다", async () => {
       // given: 동기 데이터를 반환하는 loader의 activity,
