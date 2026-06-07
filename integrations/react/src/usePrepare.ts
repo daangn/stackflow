@@ -9,12 +9,8 @@ import {
   isStructuredActivityComponent,
 } from "./StructuredActivityComponentType";
 import { useDataLoader } from "./loader";
+import type { Prepare } from "./Prepare";
 import { useConfig } from "./useConfig";
-
-export type Prepare = <K extends RegisteredActivityName>(
-  activityName: K,
-  activityParams?: InferActivityParams<K>,
-) => Promise<void>;
 
 export function usePrepare(): Prepare {
   const config = useConfig();
