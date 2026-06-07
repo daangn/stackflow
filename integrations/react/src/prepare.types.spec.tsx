@@ -1,16 +1,16 @@
 /**
- * FEP-2357 — `prepare` 타입 안전성 (G) + A1 (Linear FEP-2357)
+ * `prepare` 타입 안전성
  *
  * 잘못된 activity 이름·파라미터는 컴파일 타임에 차단되어야 한다
  * (`RegisteredActivityName` · `InferActivityParams<K>` 제네릭 흐름).
  *
- * - G절은 `yarn workspace @stackflow/react typecheck`(tsconfig.test.json)로
- *   검증된다. 모든 타입 단언은 절대 호출되지 않는 함수 본문 안에 배치한다
+ * - 타입 단언은 `yarn workspace @stackflow/react typecheck`(tsconfig.test.json)로
+ *   검증된다. 모두 절대 호출되지 않는 함수 본문 안에 배치한다
  *   (@swc/jest는 타입을 검사하지 않으므로 런타임 실행을 막기 위함).
  * - `@ts-expect-error`는 "다음 줄에 컴파일 에러가 있어야 통과" 시맨틱이므로,
  *   규약이 깨지면 typecheck가 실패한다.
- * - Jest는 spec 파일에 최소 1개 테스트를 요구하므로 런타임 항목 A1을 이
- *   파일에 함께 둔다.
+ * - Jest는 spec 파일에 최소 1개 테스트를 요구하므로 런타임 항목(출력 형태
+ *   확인)을 이 파일에 함께 둔다.
  * - import는 public entry(`./index`)에서만 한다 — 패키지명 import는 dist(빌드
  *   산출물)를 가리킨다.
  *
@@ -58,8 +58,8 @@ const output = stackflow({
   components: baseComponents,
 });
 
-describe("prepare — A. 기본 규약 (출력 형태)", () => {
-  it("A1. stackflow() 출력에 prepare 함수가 포함된다", () => {
+describe("prepare — 출력 형태", () => {
+  it("stackflow() 출력에 prepare 함수가 포함된다", () => {
     // given: defineConfig + components로 stackflow()를 호출한다 (모듈 상단 픽스처)
     // when: 반환 객체를 확인한다
     // then: prepare가 함수다
@@ -67,35 +67,35 @@ describe("prepare — A. 기본 규약 (출력 형태)", () => {
   });
 });
 
-// --- G. 타입 안전성 ---
+// --- 타입 안전성 ---
 // 아래 함수들은 typecheck 전용이며 절대 호출되지 않는다.
 
-/** G1. 미등록 activity 이름은 컴파일 에러다 */
-function _typecheckG1() {
+/** 미등록 activity 이름은 컴파일 에러다 */
+function _typecheckUnregisteredActivityName() {
   // @ts-expect-error Register에 증강되지 않은 이름은 거부된다
   output.prepare("NotRegistered");
 }
 
-/** G2. 잘못된 params 타입은 컴파일 에러다 */
-function _typecheckG2() {
+/** 잘못된 params 타입은 컴파일 에러다 */
+function _typecheckInvalidParams() {
   // @ts-expect-error params 값 타입 불일치(string 자리에 number)는 거부된다
   output.prepare("PrepareActivityA", { id: 123 });
   // @ts-expect-error 정의되지 않은 params 키는 거부된다
   output.prepare("PrepareActivityA", { wrong: "x" });
 }
 
-/** G3. params는 생략 가능하고 반환 타입은 Promise<void>다 */
-function _typecheckG3() {
+/** params는 생략 가능하고 반환 타입은 Promise<void>다 */
+function _typecheckOptionalParamsAndReturnType() {
   const r1: Promise<void> = output.prepare("PrepareActivityA");
   const r2: Promise<void> = output.prepare("PrepareActivityA", { id: "1" });
   return [r1, r2];
 }
 
 /**
- * G4. stackflow() 출력 prepare와 usePrepare 반환값은 모두 Prepare 타입과
+ * stackflow() 출력 prepare와 usePrepare 반환값은 모두 Prepare 타입과
  * 상호 할당 가능하다 — 두 진입점이 동일한 공개 시그니처를 공유한다
  */
-function _typecheckG4(up: ReturnType<typeof usePrepare>) {
+function _typecheckPrepareTypeEquivalence(up: ReturnType<typeof usePrepare>) {
   // 정방향: 두 진입점 → Prepare
   const a: Prepare = output.prepare;
   const b: Prepare = up;

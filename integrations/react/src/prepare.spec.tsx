@@ -1,22 +1,22 @@
 /**
- * FEP-2357 — `prepare` 런타임 규약 (Linear FEP-2357)
+ * `prepare` 런타임 규약
  *
  * `stackflow()` 출력의 `prepare(activityName, activityParams?)`는 React 렌더링
  * 트리 밖에서(렌더 이전 포함) activity component chunk와 data loader를 미리
  * 발사한다. 이 파일이 고정하는 계약:
  *
- * - A. params 생략 → chunk만, params 전달 → chunk + loader 발사
- * - B. 반환 Promise는 발사한 모든 작업 완료 시에만 resolve (중간 상태 미노출)
- * - C. React 트리 부재 상태에서 완전 동작하고 이후 <Stack> 마운트를 방해하지 않음
- * - E. 모든 실패는 동기 throw가 아닌 원본 reason 그대로의 reject로 전달되고,
- *      chunk 실패는 재-prepare 시 재시도되며, prepare는 core store를 건드리지
- *      않는다(스택 상태·내비게이션 이벤트 불변)
- * - F. loaderData 주입·lazy 렌더 등 기존 내비게이션 경로와의 책임 분리
+ * - params 생략 → chunk만, params 전달 → chunk + loader 발사
+ * - 반환 Promise는 발사한 모든 작업 완료 시에만 resolve (중간 상태 미노출)
+ * - React 트리 부재 상태에서 완전 동작하고 이후 <Stack> 마운트를 방해하지 않음
+ * - 모든 실패는 동기 throw가 아닌 원본 reason 그대로의 reject로 전달되고,
+ *   chunk 실패는 재-prepare 시 재시도되며, prepare는 core store를 건드리지
+ *   않는다(스택 상태·내비게이션 이벤트 불변)
+ * - loaderData 주입·lazy 렌더 등 기존 내비게이션 경로와의 책임 분리
  *
- * 스펙이 구현 상세로 남긴 동작(loader 디듀프, chunk import 중복 발사, 부분 발사
- * 원자성/취소)은 어느 방향으로도 단언하지 않는다 — "스펙 미규정"으로 표기.
+ * loader 디듀프, chunk import 중복 발사, 부분 발사 원자성/취소는 계약이 아닌
+ * 구현 상세로 남겨둔 동작이므로, 어느 방향으로도 단언하지 않는다.
  *
- * usePrepare 래퍼 동등성(D)은 usePrepare.spec.tsx에, 타입 안전성(G)과 A1은
+ * usePrepare 래퍼 동등성은 usePrepare.spec.tsx에, 타입 안전성은
  * prepare.types.spec.tsx에 있다.
  *
  * import는 public entry(`./index`)에서만 한다 — `"@stackflow/react"` 패키지명
@@ -115,8 +115,8 @@ const testRendererPlugin: StackflowReactPlugin = () => ({
 });
 
 /**
- * E4용 Suspense 래핑 변형 — lazy 컴포넌트가 pending chunk에서 suspend하므로
- * `<React.Suspense fallback>`으로 감싼다.
+ * Suspense 래핑 변형 — pending chunk의 lazy 컴포넌트를 마운트하는 테스트는
+ * 렌더가 suspend하므로 `<React.Suspense fallback>`으로 감싼다.
  */
 const suspenseTestRendererPlugin: StackflowReactPlugin = () => ({
   key: "test-renderer",
@@ -150,8 +150,8 @@ const baseComponents = {
 };
 
 describe("prepare — stackflow() 출력", () => {
-  describe("A. 기본 규약 (렌더 없이 호출)", () => {
-    it("A2. params 생략 시 component chunk 로드만 발사하고 data loader는 호출하지 않는다", async () => {
+  describe("기본 규약 (렌더 없이 호출)", () => {
+    it("params 생략 시 component chunk 로드만 발사하고 data loader는 호출하지 않는다", async () => {
       // given: loader와 lazy 컴포넌트(import jest.fn)가 설정된 activity
       const loader = jest.fn(() => ({ data: "x" }));
       const importFn = jest.fn(() =>
@@ -174,7 +174,7 @@ describe("prepare — stackflow() 출력", () => {
       expect(loader).not.toHaveBeenCalled();
     });
 
-    it("A3. params 전달 시 chunk 로드와 data loader를 모두 발사한다", async () => {
+    it("params 전달 시 chunk 로드와 data loader를 모두 발사한다", async () => {
       // given: loader + lazy 컴포넌트(import jest.fn)인 activity
       const loader = jest.fn(() => ({ data: "x" }));
       const importFn = jest.fn(() =>
@@ -203,7 +203,7 @@ describe("prepare — stackflow() 출력", () => {
       expect(importFn).toHaveBeenCalled();
     });
 
-    it("A4. loader가 없는 activity에 params를 전달해도 에러 없이 resolve된다", async () => {
+    it("loader가 없는 activity에 params를 전달해도 에러 없이 resolve된다", async () => {
       // given: loader 없는 config + lazy 컴포넌트
       const importFn = jest.fn(() =>
         Promise.resolve({ default: () => <div>A content</div> }),
@@ -220,11 +220,11 @@ describe("prepare — stackflow() 출력", () => {
       // when: params를 전달해 호출한다
       const p = prepare("PrepareActivityA", { id: "1" });
 
-      // then: 반환 Promise가 에러 없이 resolve된다 (chunk 발사 검증은 A2의 규약)
+      // then: 반환 Promise가 에러 없이 resolve된다 (chunk 발사 검증은 위 테스트들의 규약)
       await expect(p).resolves.toBeUndefined();
     });
 
-    it("A5. lazy도 structured도 아닌 일반 컴포넌트는 아무 작업도 발사하지 않고 resolve된다", async () => {
+    it("lazy도 structured도 아닌 일반 컴포넌트는 아무 작업도 발사하지 않고 resolve된다", async () => {
       // given: 일반 함수 컴포넌트, loader 없는 activity
       const config = defineConfig({
         activities: [{ name: "PrepareHomeActivity" }],
@@ -242,7 +242,7 @@ describe("prepare — stackflow() 출력", () => {
       await expect(p).resolves.toBeUndefined();
     });
 
-    it("A6. structuredActivityComponent의 dynamic content는 content import를 발사한다", async () => {
+    it("structuredActivityComponent의 dynamic content는 content import를 발사한다", async () => {
       // given: content가 dynamic import 함수인 structured component
       const contentImportFn = jest.fn(() =>
         Promise.resolve({
@@ -273,7 +273,7 @@ describe("prepare — stackflow() 출력", () => {
       expect(contentImportFn).toHaveBeenCalled();
     });
 
-    it("A7. structuredActivityComponent의 정적 content는 추가 로드 없이 resolve된다", async () => {
+    it("structuredActivityComponent의 정적 content는 추가 로드 없이 resolve된다", async () => {
       // given: content가 함수가 아닌 정적 값인 structured component
       const config = defineConfig({
         activities: [{ name: "PrepareStructuredActivity" }],
@@ -300,7 +300,7 @@ describe("prepare — stackflow() 출력", () => {
       await expect(p).resolves.toBeUndefined();
     });
 
-    it("A8. 미등록 activity 이름으로 호출하면 `Activity <name> is not registered.` 에러로 reject된다", async () => {
+    it("미등록 activity 이름으로 호출하면 `Activity <name> is not registered.` 에러로 reject된다", async () => {
       // given: 등록된 activity만 있는 stackflow 인스턴스
       const config = defineConfig({
         activities: [{ name: "PrepareHomeActivity" }],
@@ -311,8 +311,8 @@ describe("prepare — stackflow() 출력", () => {
         components: { ...baseComponents },
       });
 
-      // when: 미등록 이름으로 호출한다 (타입은 G1이 컴파일 타임에 차단하므로
-      //       런타임 테스트는 as any로 우회한다)
+      // when: 미등록 이름으로 호출한다 (타입은 prepare.types.spec.tsx가 컴파일
+      //       타임에 차단하므로 런타임 테스트는 as any로 우회한다)
       //       동기 throw라면 이 줄에서 테스트가 실패하므로, 아래 단언이
       //       "throw가 아닌 reject" 계약을 함께 고정한다
       const p = prepare("Unknown" as any);
@@ -321,7 +321,7 @@ describe("prepare — stackflow() 출력", () => {
       await expect(p).rejects.toThrow("Activity Unknown is not registered.");
     });
 
-    it('A9. 빈 객체 params도 "params 전달"로 취급되어 loader가 호출된다', async () => {
+    it('빈 객체 params도 "params 전달"로 취급되어 loader가 호출된다', async () => {
       // given: 파라미터가 없는({} 타입) activity + loader
       const loader = jest.fn(() => ({ data: "x" }));
       const config = defineConfig({
@@ -336,13 +336,13 @@ describe("prepare — stackflow() 출력", () => {
       // when: 빈 객체 params로 호출한다
       await prepare("PrepareHomeActivity", {});
 
-      // then: loader가 호출된다 (생략한 경우(A2)와 달리)
+      // then: loader가 호출된다 (params를 생략한 경우와 달리)
       expect(loader).toHaveBeenCalled();
     });
   });
 
-  describe("B. 반환 Promise 의미 — 모든 작업 완료 시에만 resolve", () => {
-    it("B1. chunk 로드가 완료되기 전에는 resolve되지 않고, 완료되면 resolve된다", async () => {
+  describe("반환 Promise 의미 — 모든 작업 완료 시에만 resolve", () => {
+    it("chunk 로드가 완료되기 전에는 resolve되지 않고, 완료되면 resolve된다", async () => {
       // given: deferred로 제어되는 lazy import 함수
       const chunkDeferred = createDeferred<ActivityModule>();
       const importFn = jest.fn(() => chunkDeferred.promise);
@@ -368,7 +368,7 @@ describe("prepare — stackflow() 출력", () => {
       await expect(p).resolves.toBeUndefined();
     });
 
-    it("B2. loader만 완료되고 chunk가 미완료인 동안에는 resolve되지 않는다 (중간 상태 미노출)", async () => {
+    it("loader만 완료되고 chunk가 미완료인 동안에는 resolve되지 않는다 (중간 상태 미노출)", async () => {
       // given: loader와 lazy import 각각을 제어하는 deferred 2개
       const loaderDeferred = createDeferred<{ data: string }>();
       const chunkDeferred = createDeferred<ActivityModule>();
@@ -397,8 +397,8 @@ describe("prepare — stackflow() 출력", () => {
       await expect(p).resolves.toBeUndefined();
     });
 
-    it("B3. chunk만 완료되고 loader가 미완료인 동안에는 resolve되지 않는다 (B2의 대칭)", async () => {
-      // given: B2와 동일한 픽스처
+    it("chunk만 완료되고 loader가 미완료인 동안에는 resolve되지 않는다", async () => {
+      // given: loader와 lazy import 각각을 제어하는 deferred 2개 (위 테스트의 대칭)
       const loaderDeferred = createDeferred<{ data: string }>();
       const chunkDeferred = createDeferred<ActivityModule>();
       const loader = jest.fn(() => loaderDeferred.promise);
@@ -427,8 +427,8 @@ describe("prepare — stackflow() 출력", () => {
     });
   });
 
-  describe("C. React 밖 / 렌더 전 호출 가능성", () => {
-    it("C1. <Stack> 렌더 없이(React 트리 부재) prepare가 완전한 동작을 한다", async () => {
+  describe("React 밖 / 렌더 전 호출 가능성", () => {
+    it("<Stack> 렌더 없이(React 트리 부재) prepare가 완전한 동작을 한다", async () => {
       // given: stackflow() 호출 직후, 어떤 컴포넌트도 렌더하지 않은 상태
       //        (loader + lazy activity)
       const loader = jest.fn(() => ({ data: "x" }));
@@ -452,7 +452,7 @@ describe("prepare — stackflow() 출력", () => {
       expect(importFn).toHaveBeenCalled();
     });
 
-    it("C2. 렌더 전 prepare 호출이 이후 <Stack> 마운트를 방해하지 않는다", async () => {
+    it("렌더 전 prepare 호출이 이후 <Stack> 마운트를 방해하지 않는다", async () => {
       // given: lazy activity에 대한 prepare 완료, initialActivity는 일반 컴포넌트
       function HomeActivity() {
         return <div>home</div>;
@@ -487,8 +487,8 @@ describe("prepare — stackflow() 출력", () => {
     });
   });
 
-  describe("E. 동시성 · 경쟁 상태 · 실패", () => {
-    it("E1. 동일 activity에 대한 동시 중복 prepare — 두 Promise 모두 작업 완료 후 각각 resolve된다", async () => {
+  describe("동시성 · 경쟁 상태 · 실패", () => {
+    it("동일 activity에 대한 동시 중복 prepare — 두 Promise 모두 작업 완료 후 각각 resolve된다", async () => {
       // given: deferred chunk를 가진 lazy activity. import 함수는 호출마다
       //        동일한 deferred.promise를 반환한다 — 구현이 디듀프하든 안 하든
       //        테스트 결과가 같도록(디듀프-불가지 픽스처)
@@ -515,12 +515,12 @@ describe("prepare — stackflow() 출력", () => {
       chunkDeferred.resolve({ default: () => <div>A content</div> });
 
       // then: 두 Promise 모두 resolve된다
-      //       (import 함수/loader의 호출 횟수는 단언하지 않는다 — 스펙 미규정)
+      //       (import 함수/loader의 호출 횟수는 계약이 아니므로 단언하지 않는다)
       await expect(p1).resolves.toBeUndefined();
       await expect(p2).resolves.toBeUndefined();
     });
 
-    it("E2. 서로 다른 activity의 동시 prepare는 서로 간섭하지 않는다", async () => {
+    it("서로 다른 activity의 동시 prepare는 서로 간섭하지 않는다", async () => {
       // given: 각각 deferred chunk를 가진 lazy activity 2개
       const chunkADeferred = createDeferred<ActivityModule>();
       const chunkBDeferred = createDeferred<ActivityModule>();
@@ -558,7 +558,7 @@ describe("prepare — stackflow() 출력", () => {
       await expect(pA).resolves.toBeUndefined();
     });
 
-    it("E3. prepare 진행 중 같은 activity로 push가 발생해도 push는 정상 완료된다", async () => {
+    it("prepare 진행 중 같은 activity로 push가 발생해도 push는 정상 완료된다", async () => {
       // given: <Stack> 렌더(initial: 일반 Home), deferred chunk의 lazy activity,
       //        spy 플러그인(getStack), 미완료 prepare 발사
       let getStack!: () => CoreStack;
@@ -611,7 +611,7 @@ describe("prepare — stackflow() 출력", () => {
       expect(activities[activities.length - 1].enteredBy.name).toBe("Pushed");
     });
 
-    it("E4. prepare 진행 중 <Stack> 마운트(부트스트랩 시나리오)도 정상 동작한다", async () => {
+    it("prepare 진행 중 <Stack> 마운트(부트스트랩 시나리오)도 정상 동작한다", async () => {
       // given: deferred chunk의 lazy activity(loader 없음)가 initialActivity,
       //        Suspense 래핑 인라인 렌더러, prepare 발사 직후(미완료)
       const chunkDeferred = createDeferred<ActivityModule>();
@@ -640,7 +640,7 @@ describe("prepare — stackflow() 출력", () => {
       expect(await screen.findByText("A content")).toBeTruthy();
     });
 
-    it("E5. loader가 동기 throw하면 반환 Promise는 해당 에러로 reject된다", async () => {
+    it("loader가 동기 throw하면 반환 Promise는 해당 에러로 reject된다", async () => {
       // given: 동기 throw하는 loader인 activity (+ lazy 컴포넌트)
       const err = new Error("loader sync throw");
       const loader = jest.fn(() => {
@@ -662,11 +662,11 @@ describe("prepare — stackflow() 출력", () => {
       const p = prepare("PrepareActivityA", { id: "1" });
 
       // then: 해당 에러로 reject된다
-      //       (chunk 발사 여부는 단언하지 않는다 — 부분 발사 원자성은 스펙 미규정)
+      //       (부분 발사 원자성은 계약이 아니므로 chunk 발사 여부는 단언하지 않는다)
       await expect(p).rejects.toBe(err);
     });
 
-    it("E6. loader가 비동기 reject하면 반환 Promise는 해당 reason으로 reject된다", async () => {
+    it("loader가 비동기 reject하면 반환 Promise는 해당 reason으로 reject된다", async () => {
       // given: reject하는 loader인 activity
       const err = new Error("loader async reject");
       const loader = jest.fn(() => Promise.reject(err));
@@ -686,7 +686,7 @@ describe("prepare — stackflow() 출력", () => {
       await expect(p).rejects.toBe(err);
     });
 
-    it("E7. chunk 로드가 reject하면 반환 Promise는 해당 reason으로 reject된다", async () => {
+    it("chunk 로드가 reject하면 반환 Promise는 해당 reason으로 reject된다", async () => {
       // given: import가 reject하는 lazy activity
       const err = new Error("chunk load failed");
       const importFn = jest.fn(() => Promise.reject<ActivityModule>(err));
@@ -706,7 +706,7 @@ describe("prepare — stackflow() 출력", () => {
       await expect(p).rejects.toBe(err);
     });
 
-    it("E8. chunk 로드 실패 후 같은 activity를 다시 prepare하면 로드를 재시도한다", async () => {
+    it("chunk 로드 실패 후 같은 activity를 다시 prepare하면 로드를 재시도한다", async () => {
       // given: 첫 호출은 reject, 두 번째 호출은 resolve하는 lazy import
       const err = new Error("chunk load failed");
       const importFn = jest
@@ -735,7 +735,7 @@ describe("prepare — stackflow() 출력", () => {
       expect(importFn).toHaveBeenCalledTimes(2);
     });
 
-    it("E9. prepare 실패가 이후 내비게이션과 다른 prepare를 오염시키지 않는다 (오류 격리 invariant)", async () => {
+    it("prepare 실패가 이후 내비게이션과 다른 prepare를 오염시키지 않는다 (오류 격리 invariant)", async () => {
       // given: loader가 reject하는 A, 정상 lazy + loader의 B,
       //        <Stack> 렌더 + spy 플러그인
       let getStack!: () => CoreStack;
@@ -794,7 +794,7 @@ describe("prepare — stackflow() 출력", () => {
       expect(activities[activities.length - 1].name).toBe("PrepareActivityB");
     });
 
-    it("E10. prepare는 스택 상태를 변경하지 않으며 내비게이션 이벤트를 발생시키지 않는다", async () => {
+    it("prepare는 스택 상태를 변경하지 않으며 내비게이션 이벤트를 발생시키지 않는다", async () => {
       // given: <Stack> 렌더, spy 플러그인(getStack + onChanged/onBeforePush/onPushed
       //        기록), loader + lazy의 activity
       let getStack!: () => CoreStack;
@@ -856,12 +856,12 @@ describe("prepare — stackflow() 출력", () => {
     });
   });
 
-  describe("F. loaderPlugin과의 책임 분리", () => {
+  describe("loaderPlugin과의 책임 분리", () => {
     // 주의: 이 절은 호출 횟수를 단언하지 않는다. loader 디듀프·chunk 중복 발사
-    // 여부는 스펙 미규정이며, 여기서는 "prepare가 기존 내비게이션 경로
+    // 여부는 계약이 아니며, 여기서는 "prepare가 기존 내비게이션 경로
     // (loaderData 주입·lazy 렌더)를 방해하지 않는다"는 책임 분리만 검증한다.
 
-    it("F1. prepare 후 push해도 loaderData 주입은 loaderPlugin 경로로 정상 동작한다", async () => {
+    it("prepare 후 push해도 loaderData 주입은 loaderPlugin 경로로 정상 동작한다", async () => {
       // given: 동기 데이터를 반환하는 loader의 activity,
       //        해당 컴포넌트는 useLoaderData() 값을 렌더. <Stack> 렌더(initial: Home)
       function HomeActivity() {
@@ -903,7 +903,7 @@ describe("prepare — stackflow() 출력", () => {
       expect(await screen.findByText("loaded")).toBeTruthy();
     });
 
-    it("F2. prepare 완료 후 push하면 lazy activity가 정상 렌더된다", async () => {
+    it("prepare 완료 후 push하면 lazy activity가 정상 렌더된다", async () => {
       // given: resolve되는 lazy의 activity, <Stack> 렌더(initial: Home)
       function HomeActivity() {
         return <div>home</div>;
@@ -939,7 +939,7 @@ describe("prepare — stackflow() 출력", () => {
 
       // then: activity의 콘텐츠가 렌더된다 — 워밍된 chunk가 이후 내비게이션
       //       렌더를 방해하지 않는다
-      //       (import 호출 횟수는 단언하지 않는다 — 스펙 미규정)
+      //       (import 호출 횟수는 계약이 아니므로 단언하지 않는다)
       expect(await screen.findByText("A content")).toBeTruthy();
     });
   });

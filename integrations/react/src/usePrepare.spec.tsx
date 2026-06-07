@@ -1,10 +1,10 @@
 /**
- * FEP-2357 — `usePrepare` 래퍼 동등성 (Linear FEP-2357)
+ * `usePrepare` 래퍼 동등성
  *
  * `usePrepare`는 stackflow() 출력 `prepare`와 동일 로직을 감싸는 얇은 래퍼다.
  * 반환 함수는 prepare.spec.tsx가 고정한 것과 동일한 관찰 결과(chunk + loader
  * 발사, 미등록 activity reject)를 보여야 한다.
- * 이 절은 현행 동작 기준이므로 prepare 구현 이전에도 green이어야 한다.
+ * 이 파일은 현행 동작 기준이므로 prepare 구현 이전에도 green이어야 한다.
  *
  * import는 public entry(`./index`)에서만 한다 — 패키지명 import는 dist(빌드
  * 산출물)를 가리킨다.
@@ -56,8 +56,8 @@ const baseComponents = {
   PrepareStructuredActivity: PlainActivity,
 };
 
-describe("usePrepare — D. 래퍼 동등성", () => {
-  it("D1. usePrepare가 반환한 함수도 chunk + data를 동일하게 발사한다", async () => {
+describe("usePrepare — 래퍼 동등성", () => {
+  it("usePrepare가 반환한 함수도 chunk + data를 동일하게 발사한다", async () => {
     // given: <Stack> 렌더 — 초기 activity 내부에서 usePrepare() 반환값을
     //        외부 변수로 캡처. 별도의 lazy + loader activity B.
     let capturedPrepare!: Prepare;
@@ -92,15 +92,15 @@ describe("usePrepare — D. 래퍼 동등성", () => {
     await capturedPrepare("PrepareActivityB", { id: "1" });
 
     // then: loader가 params 인자로 호출되고, import 함수가 호출된다
-    //       — A3과 동일한 관찰 결과
+    //       — stackflow() 출력 prepare와 동일한 관찰 결과
     expect(loader).toHaveBeenCalledWith(
       expect.objectContaining({ params: { id: "1" } }),
     );
     expect(importFn).toHaveBeenCalled();
   });
 
-  it("D2. usePrepare가 반환한 함수도 미등록 activity에 동일 에러로 reject된다", async () => {
-    // given: D1과 동일하게 캡처한 함수
+  it("usePrepare가 반환한 함수도 미등록 activity에 동일 에러로 reject된다", async () => {
+    // given: 초기 activity 내부에서 usePrepare() 반환값을 외부 변수로 캡처
     let capturedPrepare!: Prepare;
     function HomeActivity() {
       capturedPrepare = usePrepare();
@@ -118,11 +118,11 @@ describe("usePrepare — D. 래퍼 동등성", () => {
     });
     render(<Stack />);
 
-    // when: 미등록 이름으로 호출한다 (타입은 G1이 컴파일 타임에 차단하므로
-    //       런타임 테스트는 as any로 우회한다)
+    // when: 미등록 이름으로 호출한다 (타입은 prepare.types.spec.tsx가 컴파일
+    //       타임에 차단하므로 런타임 테스트는 as any로 우회한다)
     const p = capturedPrepare("Unknown" as any);
 
-    // then: A8과 동일한 에러로 reject된다
+    // then: stackflow() 출력 prepare와 동일한 에러로 reject된다
     await expect(p).rejects.toThrow("Activity Unknown is not registered.");
   });
 });
