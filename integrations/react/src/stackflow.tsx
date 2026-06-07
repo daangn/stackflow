@@ -27,6 +27,7 @@ import { makeActions } from "./makeActions";
 import { makeStepActions } from "./makeStepActions";
 import type { StackComponentType } from "./StackComponentType";
 import type { StepActions } from "./StepActions";
+import type { Prepare } from "./usePrepare";
 
 export type StackflowPluginsEntry =
   | StackflowReactPlugin<never>
@@ -47,6 +48,7 @@ export type StackflowOutput = {
   Stack: StackComponentType;
   actions: Actions;
   stepActions: StepActions<ActivityBaseParams>;
+  prepare: Prepare;
 };
 
 export function stackflow<
@@ -201,5 +203,10 @@ export function stackflow<
     Stack,
     actions: makeActions(() => getCoreStore()?.actions),
     stepActions: makeStepActions(() => getCoreStore()?.actions),
+    prepare: () => {
+      // TODO: Implement by reusing `usePrepare`'s logic outside the React
+      // context. The contract is pinned by prepare.spec.tsx.
+      throw new Error("stackflow().prepare is not implemented yet.");
+    },
   };
 }
