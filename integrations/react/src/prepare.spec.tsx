@@ -1,11 +1,27 @@
 /**
- * FEP-2357 — `prepare` 런타임 규약 (FEP-2357-TEST-PLAN.md §3의 A·B·C·E·F)
+ * FEP-2357 — `prepare` 런타임 규약 (Linear FEP-2357)
  *
- * - A1은 prepare.types.spec.tsx에 배치한다 (계획서 §1).
- * - D(usePrepare 래퍼 동등성)는 usePrepare.spec.tsx에 있다.
- * - 스펙이 명시적 미규정으로 남긴 동작(loader 디듀프, chunk 중복 발사,
- *   부분 발사 원자성/취소)은 어느 방향으로도 단언하지 않는다 (계획서 §5).
- * - import는 public entry(`./index`)에서만 한다 (계획서 §0 import 경계).
+ * `stackflow()` 출력의 `prepare(activityName, activityParams?)`는 React 렌더링
+ * 트리 밖에서(렌더 이전 포함) activity component chunk와 data loader를 미리
+ * 발사한다. 이 파일이 고정하는 계약:
+ *
+ * - A. params 생략 → chunk만, params 전달 → chunk + loader 발사
+ * - B. 반환 Promise는 발사한 모든 작업 완료 시에만 resolve (중간 상태 미노출)
+ * - C. React 트리 부재 상태에서 완전 동작하고 이후 <Stack> 마운트를 방해하지 않음
+ * - E. 모든 실패는 동기 throw가 아닌 원본 reason 그대로의 reject로 전달되고,
+ *      chunk 실패는 재-prepare 시 재시도되며, prepare는 core store를 건드리지
+ *      않는다(스택 상태·내비게이션 이벤트 불변)
+ * - F. loaderData 주입·lazy 렌더 등 기존 내비게이션 경로와의 책임 분리
+ *
+ * 스펙이 구현 상세로 남긴 동작(loader 디듀프, chunk import 중복 발사, 부분 발사
+ * 원자성/취소)은 어느 방향으로도 단언하지 않는다 — "스펙 미규정"으로 표기.
+ *
+ * usePrepare 래퍼 동등성(D)은 usePrepare.spec.tsx에, 타입 안전성(G)과 A1은
+ * prepare.types.spec.tsx에 있다.
+ *
+ * import는 public entry(`./index`)에서만 한다 — `"@stackflow/react"` 패키지명
+ * import는 dist(빌드 산출물)를 가리키므로 src 변경 대신 stale artifact를
+ * 검증하게 된다.
  */
 import { defineConfig } from "@stackflow/config";
 import type { Stack as CoreStack } from "@stackflow/core";
@@ -23,7 +39,7 @@ import {
 /**
  * `Register` 증강은 패키지 전역으로 병합되므로, 모든 spec 파일이 동일한
  * 멤버를 선언한다(동일 타입 재선언은 declaration merging으로 허용된다).
- * 이름 충돌 방지를 위해 `Prepare` 접두사를 사용한다 (계획서 §1).
+ * 다른 spec과의 이름 충돌 방지를 위해 `Prepare` 접두사를 사용한다.
  *
  * 주의: 필수 params(예: `{ id: string }`)를 등록하면 패키지 내부 소스
  * (`stackflow.tsx`의 ActivityComponentMapProvider, `useStepFlow.ts`)의
@@ -41,7 +57,7 @@ declare module "@stackflow/config" {
 
 type ActivityModule = { default: () => JSX.Element };
 
-/** 제어 가능한 비동기 작업 (계획서 §2) */
+/** 제어 가능한 비동기 작업 */
 function createDeferred<T>(): {
   promise: Promise<T>;
   resolve: (v: T) => void;
@@ -63,7 +79,7 @@ function flushMicrotasks(): Promise<void> {
 
 /**
  * pending 검사: then-플래그 + 마이크로태스크 flush.
- * Promise 내부 구조에 의존하지 않는다 (계획서 §2).
+ * Promise 내부 구조에 의존하지 않는다.
  */
 async function isSettled(p: Promise<unknown>): Promise<boolean> {
   let settled = false;
@@ -81,7 +97,7 @@ async function isSettled(p: Promise<unknown>): Promise<boolean> {
 
 /**
  * 인라인 렌더러 플러그인 — `@stackflow/plugin-renderer-basic`은 워크스페이스
- * 순환 의존이라 사용할 수 없다 (계획서 §0).
+ * 순환 의존이라 사용할 수 없다.
  */
 const testRendererPlugin: StackflowReactPlugin = () => ({
   key: "test-renderer",
@@ -100,7 +116,7 @@ const testRendererPlugin: StackflowReactPlugin = () => ({
 
 /**
  * E4용 Suspense 래핑 변형 — lazy 컴포넌트가 pending chunk에서 suspend하므로
- * `<React.Suspense fallback>`으로 감싼다 (계획서 §2).
+ * `<React.Suspense fallback>`으로 감싼다.
  */
 const suspenseTestRendererPlugin: StackflowReactPlugin = () => ({
   key: "test-renderer",
@@ -296,7 +312,7 @@ describe("prepare — stackflow() 출력", () => {
       });
 
       // when: 미등록 이름으로 호출한다 (타입은 G1이 컴파일 타임에 차단하므로
-      //       런타임 테스트는 as any로 우회한다 — 계획서 §2)
+      //       런타임 테스트는 as any로 우회한다)
       //       동기 throw라면 이 줄에서 테스트가 실패하므로, 아래 단언이
       //       "throw가 아닌 reject" 계약을 함께 고정한다
       const p = prepare("Unknown" as any);
@@ -474,7 +490,8 @@ describe("prepare — stackflow() 출력", () => {
   describe("E. 동시성 · 경쟁 상태 · 실패", () => {
     it("E1. 동일 activity에 대한 동시 중복 prepare — 두 Promise 모두 작업 완료 후 각각 resolve된다", async () => {
       // given: deferred chunk를 가진 lazy activity. import 함수는 호출마다
-      //        동일한 deferred.promise를 반환한다(디듀프-불가지 픽스처 — 계획서 §2)
+      //        동일한 deferred.promise를 반환한다 — 구현이 디듀프하든 안 하든
+      //        테스트 결과가 같도록(디듀프-불가지 픽스처)
       const chunkDeferred = createDeferred<ActivityModule>();
       const importFn = jest.fn(() => chunkDeferred.promise);
       const config = defineConfig({
@@ -498,7 +515,7 @@ describe("prepare — stackflow() 출력", () => {
       chunkDeferred.resolve({ default: () => <div>A content</div> });
 
       // then: 두 Promise 모두 resolve된다
-      //       (import 함수/loader의 호출 횟수는 단언하지 않는다 — 스펙 미규정, 계획서 §5)
+      //       (import 함수/loader의 호출 횟수는 단언하지 않는다 — 스펙 미규정)
       await expect(p1).resolves.toBeUndefined();
       await expect(p2).resolves.toBeUndefined();
     });
@@ -645,7 +662,7 @@ describe("prepare — stackflow() 출력", () => {
       const p = prepare("PrepareActivityA", { id: "1" });
 
       // then: 해당 에러로 reject된다
-      //       (chunk 발사 여부는 단언하지 않는다 — 부분 발사 원자성은 스펙 미규정, 계획서 §5)
+      //       (chunk 발사 여부는 단언하지 않는다 — 부분 발사 원자성은 스펙 미규정)
       await expect(p).rejects.toBe(err);
     });
 
@@ -841,8 +858,8 @@ describe("prepare — stackflow() 출력", () => {
 
   describe("F. loaderPlugin과의 책임 분리", () => {
     // 주의: 이 절은 호출 횟수를 단언하지 않는다. loader 디듀프·chunk 중복 발사
-    // 여부는 스펙 미규정(계획서 §5)이며, 여기서는 "prepare가 기존 내비게이션
-    // 경로(loaderData 주입·lazy 렌더)를 방해하지 않는다"는 책임 분리만 검증한다.
+    // 여부는 스펙 미규정이며, 여기서는 "prepare가 기존 내비게이션 경로
+    // (loaderData 주입·lazy 렌더)를 방해하지 않는다"는 책임 분리만 검증한다.
 
     it("F1. prepare 후 push해도 loaderData 주입은 loaderPlugin 경로로 정상 동작한다", async () => {
       // given: 동기 데이터를 반환하는 loader의 activity,
@@ -922,7 +939,7 @@ describe("prepare — stackflow() 출력", () => {
 
       // then: activity의 콘텐츠가 렌더된다 — 워밍된 chunk가 이후 내비게이션
       //       렌더를 방해하지 않는다
-      //       (import 호출 횟수는 단언하지 않는다 — 스펙 미규정, 계획서 §5)
+      //       (import 호출 횟수는 단언하지 않는다 — 스펙 미규정)
       expect(await screen.findByText("A content")).toBeTruthy();
     });
   });

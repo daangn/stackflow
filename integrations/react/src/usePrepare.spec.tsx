@@ -1,11 +1,13 @@
 /**
- * FEP-2357 — `usePrepare` 래퍼 동등성 (FEP-2357-TEST-PLAN.md §3의 D)
+ * FEP-2357 — `usePrepare` 래퍼 동등성 (Linear FEP-2357)
  *
- * usePrepare가 반환한 함수는 stackflow() 출력 `prepare`와 동일한 관찰 결과를
- * 보여야 한다 (스펙 §3 "동일 로직을 감싸는 얇은 래퍼").
+ * `usePrepare`는 stackflow() 출력 `prepare`와 동일 로직을 감싸는 얇은 래퍼다.
+ * 반환 함수는 prepare.spec.tsx가 고정한 것과 동일한 관찰 결과(chunk + loader
+ * 발사, 미등록 activity reject)를 보여야 한다.
  * 이 절은 현행 동작 기준이므로 prepare 구현 이전에도 green이어야 한다.
  *
- * - import는 public entry(`./index`)에서만 한다 (계획서 §0 import 경계).
+ * import는 public entry(`./index`)에서만 한다 — 패키지명 import는 dist(빌드
+ * 산출물)를 가리킨다.
  */
 import { defineConfig } from "@stackflow/config";
 import { render } from "@testing-library/react";
@@ -26,7 +28,7 @@ declare module "@stackflow/config" {
   }
 }
 
-/** 인라인 렌더러 플러그인 (계획서 §0 — plugin-renderer-basic은 순환 의존) */
+/** 인라인 렌더러 플러그인 — plugin-renderer-basic은 워크스페이스 순환 의존 */
 const testRendererPlugin: StackflowReactPlugin = () => ({
   key: "test-renderer",
   render({ stack }) {
@@ -117,7 +119,7 @@ describe("usePrepare — D. 래퍼 동등성", () => {
     render(<Stack />);
 
     // when: 미등록 이름으로 호출한다 (타입은 G1이 컴파일 타임에 차단하므로
-    //       런타임 테스트는 as any로 우회한다 — 계획서 §2)
+    //       런타임 테스트는 as any로 우회한다)
     const p = capturedPrepare("Unknown" as any);
 
     // then: A8과 동일한 에러로 reject된다

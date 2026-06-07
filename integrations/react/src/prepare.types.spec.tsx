@@ -1,14 +1,18 @@
 /**
- * FEP-2357 — `prepare` 타입 안전성 (FEP-2357-TEST-PLAN.md §3의 G) + A1
+ * FEP-2357 — `prepare` 타입 안전성 (G) + A1 (Linear FEP-2357)
+ *
+ * 잘못된 activity 이름·파라미터는 컴파일 타임에 차단되어야 한다
+ * (`RegisteredActivityName` · `InferActivityParams<K>` 제네릭 흐름).
  *
  * - G절은 `yarn workspace @stackflow/react typecheck`(tsconfig.test.json)로
  *   검증된다. 모든 타입 단언은 절대 호출되지 않는 함수 본문 안에 배치한다
- *   (@swc/jest는 타입을 검사하지 않으므로 런타임 실행을 막기 위함 — 계획서 §1).
+ *   (@swc/jest는 타입을 검사하지 않으므로 런타임 실행을 막기 위함).
  * - `@ts-expect-error`는 "다음 줄에 컴파일 에러가 있어야 통과" 시맨틱이므로,
  *   규약이 깨지면 typecheck가 실패한다.
  * - Jest는 spec 파일에 최소 1개 테스트를 요구하므로 런타임 항목 A1을 이
- *   파일에 함께 둔다 (계획서 §1).
- * - import는 public entry(`./index`)에서만 한다 (계획서 §0 import 경계).
+ *   파일에 함께 둔다.
+ * - import는 public entry(`./index`)에서만 한다 — 패키지명 import는 dist(빌드
+ *   산출물)를 가리킨다.
  *
  * [TDD 상태 주의] `prepare`가 stackflow() 출력에 아직 없으므로, 이 파일은
  * 구현 전까지 `output.prepare` 접근(TS2339)과 그에 따른 `@ts-expect-error`
