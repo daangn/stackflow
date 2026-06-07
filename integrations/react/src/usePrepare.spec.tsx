@@ -118,8 +118,8 @@ describe("usePrepare — 래퍼 동등성", () => {
     });
     render(<Stack />);
 
-    // when: 미등록 이름으로 호출한다 (타입은 prepare.types.spec.tsx가 컴파일
-    //       타임에 차단하므로 런타임 테스트는 as any로 우회한다)
+    // when: 미등록 이름으로 호출한다 (미등록 이름은 타입이 거부하므로
+    //       런타임 테스트는 as any로 우회한다)
     const p = capturedPrepare("Unknown" as any);
 
     // then: stackflow() 출력 prepare와 동일한 에러로 reject된다

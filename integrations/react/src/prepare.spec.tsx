@@ -16,8 +16,7 @@
  * loader 디듀프, chunk import 중복 발사, 부분 발사 원자성/취소는 계약이 아닌
  * 구현 상세로 남겨둔 동작이므로, 어느 방향으로도 단언하지 않는다.
  *
- * usePrepare 래퍼 동등성은 usePrepare.spec.tsx에, 타입 안전성은
- * prepare.types.spec.tsx에 있다.
+ * usePrepare 래퍼 동등성은 usePrepare.spec.tsx에 있다.
  *
  * import는 public entry(`./index`)에서만 한다 — `"@stackflow/react"` 패키지명
  * import는 dist(빌드 산출물)를 가리키므로 src 변경 대신 stale artifact를
@@ -311,8 +310,8 @@ describe("prepare — stackflow() 출력", () => {
         components: { ...baseComponents },
       });
 
-      // when: 미등록 이름으로 호출한다 (타입은 prepare.types.spec.tsx가 컴파일
-      //       타임에 차단하므로 런타임 테스트는 as any로 우회한다)
+      // when: 미등록 이름으로 호출한다 (미등록 이름은 타입이 거부하므로
+      //       런타임 테스트는 as any로 우회한다)
       //       동기 throw라면 이 줄에서 테스트가 실패하므로, 아래 단언이
       //       "throw가 아닌 reject" 계약을 함께 고정한다
       const p = prepare("Unknown" as any);
