@@ -19,15 +19,6 @@ export type MakePrepareInput = {
   };
 };
 
-/**
- * `prepare` 구현 코어.
- *
- * React Context에 의존하지 않고, `stackflow()` 입력에서 직접 파생되는 세 가지
- * (`config`, `loadData`, `activityComponentMap`)만 받아 `prepare` 함수를 만든다.
- * 따라서 React 렌더링 트리 밖(모듈 평가 시점 포함)에서도 호출할 수 있다.
- *
- * `stackflow()` 출력의 `prepare`와 `usePrepare` 래퍼가 이 단일 구현을 공유한다.
- */
 export function makePrepare({
   config,
   loadData,
