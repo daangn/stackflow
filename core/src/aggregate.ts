@@ -75,7 +75,6 @@ export function aggregate(inputEvents: DomainEvent[], now: number): Stack {
             {
               ...step,
               zIndex: lastStepZIndex + (step.hasZIndex ? 1 : 0),
-              ...(step.context ? { context: step.context } : null),
             },
           ];
         }, []);
