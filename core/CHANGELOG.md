@@ -1,5 +1,12 @@
 # @stackflow/core
 
+## 2.0.1
+
+### Patch Changes
+
+- 416b65d: Remove the internal optional `stepContext` event fields and `ActivityStep.context`
+  storage that were added for plugin-history-sync URL preservation.
+
 ## 2.0.0
 
 ### Major Changes

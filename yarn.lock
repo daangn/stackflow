@@ -5612,7 +5612,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/core@npm:^2.0.0, @stackflow/core@workspace:core":
+"@stackflow/core@npm:^2.0.0, @stackflow/core@npm:^2.0.1, @stackflow/core@workspace:core":
   version: 0.0.0-use.local
   resolution: "@stackflow/core@workspace:core"
   dependencies:
@@ -5861,10 +5861,10 @@ __metadata:
   dependencies:
     "@graphql-tools/schema": "npm:^10.0.5"
     "@stackflow/config": "npm:^2.0.0"
-    "@stackflow/core": "npm:^2.0.0"
+    "@stackflow/core": "npm:^2.0.1"
     "@stackflow/esbuild-config": "npm:^1.0.3"
     "@stackflow/plugin-renderer-basic": "npm:^1.1.14"
-    "@stackflow/react": "npm:^2.0.0"
+    "@stackflow/react": "npm:^2.1.0"
     "@swc/core": "npm:^1.6.6"
     "@swc/jest": "npm:^0.2.36"
     "@testing-library/dom": "npm:^10.4.0"
@@ -6020,12 +6020,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/react@npm:^2.0.0, @stackflow/react@workspace:integrations/react":
+"@stackflow/react@npm:^2.0.0, @stackflow/react@npm:^2.1.0, @stackflow/react@workspace:integrations/react":
   version: 0.0.0-use.local
   resolution: "@stackflow/react@workspace:integrations/react"
   dependencies:
     "@stackflow/config": "npm:^2.0.0"
-    "@stackflow/core": "npm:^2.0.0"
+    "@stackflow/core": "npm:^2.0.1"
     "@stackflow/esbuild-config": "npm:^1.0.3"
     "@types/react": "npm:^18.3.3"
     esbuild: "npm:^0.23.0"
