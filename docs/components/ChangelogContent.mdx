@@ -1,3 +1,42 @@
+## 2026.06.08
+
+Expose `prepare` on the `stackflow()` output to preload an activity's component chunk and data loader from outside the React render tree (e.g. at app bootstrap, before the first render), without depending on React Context. [`510a287`](https://github.com/daangn/stackflow/commit/510a28705ef44dd153cef895cf88a341eb351ad3)
+
+```ts
+const { Stack, actions, stepActions, prepare } = stackflow({ config, components, plugins });
+
+prepare("Article", { articleId: "123" }); // warm chunk + fire data loader
+prepare("Article");                        // warm chunk only
+```
+
+The signature matches the existing `usePrepare` hook (omitting params warms the chunk only; passing params also fires the loader), and `usePrepare` is now a thin wrapper over the same implementation, so in-tree callers are unchanged. Failures are delivered as a rejection of the returned promise rather than a synchronous throw.
+
+Released packages:
+- 📦 [@stackflow/react@2.1.0](https://npmjs.com/package/@stackflow/react/v/2.1.0)
+
+---
+
+`publishConfig: { access: "public" }` 추가는 공개 API/런타임 변경이 없는 릴리스 메타데이터 수정이므로 버전 bump 없이 처리합니다. (PR `changeset status` 게이트 통과용 empty changeset) [`78e7b84`](https://github.com/daangn/stackflow/commit/78e7b848a9f9f1d5c6d5065e4a993e792e026866)
+
+---
+
+Remove the internal optional `stepContext` event fields and `ActivityStep.context` [`416b65d`](https://github.com/daangn/stackflow/commit/416b65da5c23bfbbb81c14f1d307898912bf7ca2)
+storage that were added for plugin-history-sync URL preservation.
+
+Released packages:
+- 📦 [@stackflow/core@2.0.1](https://npmjs.com/package/@stackflow/core/v/2.0.1)
+
+---
+
+Withdraw the activity and step param string coercion introduced in `1.11.0`. [`416b65d`](https://github.com/daangn/stackflow/commit/416b65da5c23bfbbb81c14f1d307898912bf7ca2)
+Internal navigation now preserves non-string param values at runtime again, while
+URL arrivals continue to use decoded URL params as before.
+
+Released packages:
+- 📦 [@stackflow/plugin-history-sync@1.11.2](https://npmjs.com/package/@stackflow/plugin-history-sync/v/1.11.2)
+
+---
+
 ## 2026.06.01
 
 Fix an SSR hydration mismatch that occurred when an activity declared a non-empty `defaultHistory`. [`b7724e9`](https://github.com/daangn/stackflow/commit/b7724e910b24c5cf188b45dc0e58cae1913248fd)
