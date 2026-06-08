@@ -1,5 +1,3 @@
-const fs = require("node:fs");
-const path = require("node:path");
 const { context } = require("esbuild");
 const config = require("@stackflow/esbuild-config");
 const {
@@ -14,28 +12,10 @@ const external = Object.keys({
   ...pkg.peerDependencies,
 });
 
-/**
- * Equivalent to the `./src/**\/*` glob, except that test files (`*.spec.*`)
- * are excluded from the build output.
- */
-function listEntryPoints(dir) {
-  return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
-    const fullPath = path.join(dir, entry.name);
-
-    if (entry.isDirectory()) {
-      return listEntryPoints(fullPath);
-    }
-
-    return entry.name.includes(".spec.") ? [] : [fullPath];
-  });
-}
-
-const entryPoints = listEntryPoints("./src");
-
 Promise.all([
   context({
     ...config({
-      entryPoints,
+      entryPoints: ["./src/**/*"],
       outdir: "dist",
     }),
     bundle: false,
@@ -47,7 +27,7 @@ Promise.all([
   ),
   context({
     ...config({
-      entryPoints,
+      entryPoints: ["./src/**/*"],
       outdir: "dist",
     }),
     bundle: true,
