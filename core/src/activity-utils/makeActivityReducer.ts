@@ -68,7 +68,6 @@ export function makeActivityReducer(context: {
       const newRoute = {
         id: event.stepId,
         params: event.stepParams,
-        ...(event.stepContext ? { context: event.stepContext } : null),
         enteredBy: event,
         zIndex: activity.zIndex,
         hasZIndex: event.hasZIndex ?? false,
@@ -89,7 +88,6 @@ export function makeActivityReducer(context: {
       const newRoute = {
         id: event.stepId,
         params: event.stepParams,
-        ...(event.stepContext ? { context: event.stepContext } : null),
         enteredBy: event,
         zIndex: activity.zIndex,
         hasZIndex: event.hasZIndex ?? false,
@@ -109,7 +107,7 @@ export function makeActivityReducer(context: {
      * Pop the last step
      * If there are params in the previous step, set them as the new params
      */
-    StepPopped: (activity: Activity, _event: StepPoppedEvent): Activity => {
+    StepPopped: (activity: Activity, event: StepPoppedEvent): Activity => {
       activity.steps.pop();
 
       const beforeActivityParams = last(activity.steps)?.params;

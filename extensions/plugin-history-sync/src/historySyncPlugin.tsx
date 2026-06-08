@@ -19,7 +19,6 @@ import UrlPattern from "url-pattern";
 import { ActivityActivationCountsContext } from "./ActivityActivationCountsContext";
 import type { ActivityActivationMonitor } from "./ActivityActivationMonitor/ActivityActivationMonitor";
 import { DefaultHistoryActivityActivationMonitor } from "./ActivityActivationMonitor/DefaultHistoryActivityActivationMonitor";
-import { coerceParamsToString } from "./coerceParamsToString";
 import { HistoryQueueProvider } from "./HistoryQueueContext";
 import { parseState, pushState, replaceState } from "./historyState";
 import { last } from "./last";
@@ -254,19 +253,10 @@ export function historySyncPlugin<
         const initialState = parseState(history.location.state);
 
         if (initialState) {
-          // FEP-1061: cross-deploy hydration. `initialState` was serialized by
-          // some earlier plugin version (possibly pre-FEP-1061) and may carry
-          // typed values in `activityParams` / `stepParams`. Coerce here so the
-          // 7th entry path (parseState early-return) also enforces the
-          // string-only invariant. Within-deploy this is idempotent — the
-          // writer already coerced.
           return [
             {
               ...initialState.activity.enteredBy,
               name: "Pushed",
-              activityParams: coerceParamsToString(
-                initialState.activity.enteredBy.activityParams,
-              ),
             },
             ...(initialState.step?.enteredBy.name === "StepPushed" ||
             initialState.step?.enteredBy.name === "StepReplaced"
@@ -274,9 +264,6 @@ export function historySyncPlugin<
                   {
                     ...initialState.step.enteredBy,
                     name: "StepPushed" as const,
-                    stepParams: coerceParamsToString(
-                      initialState.step.enteredBy.stepParams,
-                    ),
                   },
                 ]
               : []),
@@ -342,88 +329,54 @@ export function historySyncPlugin<
         }: HistoryEntry): (
           | Omit<PushedEvent, "eventDate">
           | Omit<StepPushedEvent, "eventDate">
-        )[] => {
-          // FEP-1061 (Option B, B8): per-ancestor URL via the ancestor's
-          // own route encode (was previously `currentPath`, which leaked
-          // the URL the user arrived on into all ancestor entries).
-          const ancestorRoute = activityRoutes.find(
-            (r) => r.activityName === activityName,
-          );
-          const ancestorTemplate = ancestorRoute
-            ? makeTemplate(ancestorRoute, options.urlPatternOptions)
-            : null;
-          const ancestorActivityPath = ancestorTemplate
-            ? ancestorTemplate.fill(activityParams)
-            : currentPath;
-
-          return [
-            {
-              name: "Pushed",
-              id: id(),
-              activityId: id(),
-              activityName,
-              activityParams: coerceParamsToString(activityParams),
-              activityContext: {
-                path: ancestorActivityPath,
-                lazyActivityComponentRenderContext: {
-                  shouldRenderImmediately: true,
-                },
-              },
-            },
-            ...additionalSteps.map(
-              ({
-                stepParams,
-                hasZIndex,
-              }): Omit<StepPushedEvent, "eventDate"> => ({
-                name: "StepPushed",
-                id: id(),
-                stepId: id(),
-                stepParams: coerceParamsToString(stepParams),
-                ...(ancestorTemplate
-                  ? {
-                      stepContext: {
-                        path: ancestorTemplate.fill(stepParams),
-                      },
-                    }
-                  : {}),
-                hasZIndex,
-              }),
-            ),
-          ];
-        };
-        const createTargetActivityPushEvent = (): Omit<
-          PushedEvent,
-          "eventDate"
-        > => {
-          const targetTemplate = makeTemplate(
-            targetActivityRoute,
-            options.urlPatternOptions,
-          );
-          const matched = targetTemplate.parse(currentPath);
-          const targetParams =
-            matched ?? urlSearchParamsToMap(pathToUrl(currentPath).searchParams);
-          // FEP-1061 (Option B, B8): when the URL matched the target route,
-          // use currentPath (the user's URL); when fallback was triggered
-          // (no match), compute the target route's URL from its template
-          // so onInit writes a route-correct URL (was previously
-          // currentPath, e.g. "/" instead of "/home/").
-          const targetPath = matched
-            ? currentPath
-            : targetTemplate.fill(targetParams);
-          return {
+        )[] => [
+          {
             name: "Pushed",
             id: id(),
             activityId: id(),
-            activityName: targetActivityRoute.activityName,
-            activityParams: coerceParamsToString(targetParams),
+            activityName,
+            activityParams: {
+              ...activityParams,
+            },
             activityContext: {
-              path: targetPath,
+              path: currentPath,
               lazyActivityComponentRenderContext: {
                 shouldRenderImmediately: true,
               },
             },
-          };
-        };
+          },
+          ...additionalSteps.map(
+            ({
+              stepParams,
+              hasZIndex,
+            }): Omit<StepPushedEvent, "eventDate"> => ({
+              name: "StepPushed",
+              id: id(),
+              stepId: id(),
+              stepParams,
+              hasZIndex,
+            }),
+          ),
+        ];
+        const createTargetActivityPushEvent = (): Omit<
+          PushedEvent,
+          "eventDate"
+        > => ({
+          name: "Pushed",
+          id: id(),
+          activityId: id(),
+          activityName: targetActivityRoute.activityName,
+          activityParams:
+            makeTemplate(targetActivityRoute, options.urlPatternOptions).parse(
+              currentPath,
+            ) ?? urlSearchParamsToMap(pathToUrl(currentPath).searchParams),
+          activityContext: {
+            path: currentPath,
+            lazyActivityComponentRenderContext: {
+              shouldRenderImmediately: true,
+            },
+          },
+        });
 
         if (defaultHistory.skipDefaultHistorySetupTransition) {
           initialSetupProcess = new SerialNavigationProcess([
@@ -512,17 +465,10 @@ export function historySyncPlugin<
               )!;
               const template = makeTemplate(match, options.urlPatternOptions);
 
-              // FEP-1061 (Option B): trust activity.context.path (computed by
-              // onBeforePush from typed params before coercion, or set by SSR)
-              // and fall back to fillWithoutEncode only when missing.
-              const activityPath =
-                (activity.context as { path?: string } | undefined)?.path ??
-                template.fillWithoutEncode(activity.params);
-
               if (activity.isRoot) {
                 replaceState({
                   history,
-                  pathname: activityPath,
+                  pathname: template.fill(activity.params),
                   state: {
                     activity: activity,
                   },
@@ -531,7 +477,7 @@ export function historySyncPlugin<
               } else {
                 pushState({
                   history,
-                  pathname: activityPath,
+                  pathname: template.fill(activity.params),
                   state: {
                     activity: activity,
                   },
@@ -541,14 +487,9 @@ export function historySyncPlugin<
 
               for (const step of activity.steps) {
                 if (!step.exitedBy && step.enteredBy.name !== "Pushed") {
-                  // FEP-1061 (Option B): trust step.context.path (set by
-                  // onBeforeStepPush from typed params), fall back otherwise.
-                  const stepPath =
-                    (step.context as { path?: string } | undefined)?.path ??
-                    template.fillWithoutEncode(step.params);
                   pushState({
                     history,
-                    pathname: stepPath,
+                    pathname: template.fill(step.params),
                     state: {
                       activity: activity,
                       step: step,
@@ -673,11 +614,6 @@ export function historySyncPlugin<
               activityId: targetActivity.id,
               activityName: targetActivity.name,
               activityParams: targetActivity.params,
-              // FEP-1061 (Option B, B4): preserve the encoded path through
-              // popstate-forward re-push so onBeforePush's "skip when path
-              // already present" branch fires and encode is NOT re-run on
-              // the coerced strings.
-              activityContext: targetActivity.context,
             });
           }
           if (isStepForward()) {
@@ -689,9 +625,6 @@ export function historySyncPlugin<
             stepPush({
               stepId: targetStep.id,
               stepParams: targetStep.params,
-              // FEP-1061 (Option B, B7): preserve the encoded step path
-              // through popstate-stepForward re-push.
-              stepContext: targetStep.context,
             });
           }
         };
@@ -710,20 +643,11 @@ export function historySyncPlugin<
 
         const template = makeTemplate(match, options.urlPatternOptions);
 
-        // FEP-1061 (Option B, B3): trust activity.context.path written by
-        // onBeforePush (which ran encode on the typed params before
-        // coercion). Fall back to fillWithoutEncode only when missing
-        // (e.g. plugin re-emits Pushed without activityContext — see
-        // T-O-13 pin).
-        const pathname =
-          (activity.context as { path?: string } | undefined)?.path ??
-          template.fillWithoutEncode(activity.params);
-
         requestHistoryTick(() => {
           silentFlag = true;
           pushState({
             history,
-            pathname,
+            pathname: template.fill(activity.params),
             state: {
               activity,
             },
@@ -743,20 +667,11 @@ export function historySyncPlugin<
 
         const template = makeTemplate(match, options.urlPatternOptions);
 
-        // FEP-1061 (Option B, B6): trust step.context.path written by
-        // onBeforeStepPush. Fall back to fillWithoutEncode(activity.params)
-        // when missing — note this matches the pre-fix shape, which used
-        // activity.params (the latest set, often equal to step params),
-        // preserving behavior on the fallback path.
-        const pathname =
-          (step.context as { path?: string } | undefined)?.path ??
-          template.fillWithoutEncode(activity.params);
-
         requestHistoryTick(() => {
           silentFlag = true;
           pushState({
             history,
-            pathname,
+            pathname: template.fill(activity.params),
             state: {
               activity,
               step,
@@ -776,16 +691,11 @@ export function historySyncPlugin<
 
         const template = makeTemplate(match, options.urlPatternOptions);
 
-        // FEP-1061 (Option B, B3): see onPushed — same pattern.
-        const pathname =
-          (activity.context as { path?: string } | undefined)?.path ??
-          template.fillWithoutEncode(activity.params);
-
         requestHistoryTick(() => {
           silentFlag = true;
           replaceState({
             history,
-            pathname,
+            pathname: template.fill(activity.params),
             state: {
               activity,
             },
@@ -804,16 +714,11 @@ export function historySyncPlugin<
 
         const template = makeTemplate(match, options.urlPatternOptions);
 
-        // FEP-1061 (Option B, B6): see onStepPushed — same pattern.
-        const pathname =
-          (step.context as { path?: string } | undefined)?.path ??
-          template.fillWithoutEncode(activity.params);
-
         requestHistoryTick(() => {
           silentFlag = true;
           replaceState({
             history,
-            pathname,
+            pathname: template.fill(activity.params),
             state: {
               activity,
               step,
@@ -823,71 +728,47 @@ export function historySyncPlugin<
         });
       },
       onBeforePush({ actionParams, actions: { overrideActionParams } }) {
-        const needsPath =
+        if (
           !actionParams.activityContext ||
-          "path" in actionParams.activityContext === false;
-
-        // `template.fill` runs `encode` on the typed params U. We must call
-        // it BEFORE coercing so `encode` sees the original typed values
-        // (FEP-1061 contract).
-        let path: string | undefined;
-        if (needsPath) {
+          "path" in actionParams.activityContext === false
+        ) {
           const match = activityRoutes.find(
             (r) => r.activityName === actionParams.activityName,
           )!;
           const template = makeTemplate(match, options.urlPatternOptions);
-          path = template.fill(actionParams.activityParams);
-        }
+          const path = template.fill(actionParams.activityParams);
 
-        // FEP-1061: single `overrideActionParams` call so the path set above
-        // survives alongside the coerced `activityParams`. `core`'s
-        // `overrideActionParams` is a spread-merge, so splitting into two
-        // calls where the second spreads the ORIGINAL `actionParams` would
-        // clobber the just-set `activityContext.path`.
-        overrideActionParams({
-          ...actionParams,
-          ...(needsPath
-            ? {
-                activityContext: {
-                  ...actionParams.activityContext,
-                  path,
-                },
-              }
-            : {}),
-          activityParams: coerceParamsToString(actionParams.activityParams),
-        });
+          overrideActionParams({
+            ...actionParams,
+            activityContext: {
+              ...actionParams.activityContext,
+              path,
+            },
+          });
+        }
       },
       onBeforeReplace({
         actionParams,
         actions: { overrideActionParams, getStack },
       }) {
-        const needsPath =
+        if (
           !actionParams.activityContext ||
-          "path" in actionParams.activityContext === false;
-
-        // See `onBeforePush` — `encode` must run on typed params first, and
-        // the single-call shape preserves path alongside coerced params.
-        let path: string | undefined;
-        if (needsPath) {
+          "path" in actionParams.activityContext === false
+        ) {
           const match = activityRoutes.find(
             (r) => r.activityName === actionParams.activityName,
           )!;
           const template = makeTemplate(match, options.urlPatternOptions);
-          path = template.fill(actionParams.activityParams);
-        }
+          const path = template.fill(actionParams.activityParams);
 
-        overrideActionParams({
-          ...actionParams,
-          ...(needsPath
-            ? {
-                activityContext: {
-                  ...actionParams.activityContext,
-                  path,
-                },
-              }
-            : {}),
-          activityParams: coerceParamsToString(actionParams.activityParams),
-        });
+          overrideActionParams({
+            ...actionParams,
+            activityContext: {
+              ...actionParams.activityContext,
+              path,
+            },
+          });
+        }
 
         const { activities } = getStack();
         const enteredActivities = activities.filter(
@@ -917,96 +798,6 @@ export function historySyncPlugin<
             });
           }
         }
-      },
-      onBeforeStepPush({
-        actionParams,
-        actions: { getStack, overrideActionParams },
-      }) {
-        // FEP-1061 (Option B, B5): if the caller already supplied a
-        // stepContext.path (e.g. popstate stepForward branch), preserve it.
-        // Otherwise compute it via the active activity's route template
-        // running encode on the TYPED params before coercion. If no active
-        // activity exists at dispatch time (initial boot / cross-deploy
-        // hydration before the parent Pushed materializes), gracefully
-        // skip path computation — the post-effect will fall back to
-        // fillWithoutEncode (Architect N3/N4).
-        const ctx = actionParams.stepContext as
-          | { path?: string }
-          | undefined;
-        const hasExistingPath = !!ctx && "path" in ctx;
-
-        let path: string | undefined;
-        if (hasExistingPath) {
-          path = ctx?.path;
-        } else {
-          const stack = getStack();
-          const activeActivity = stack.activities.find((a) => a.isActive);
-          if (activeActivity) {
-            const match = activityRoutes.find(
-              (r) => r.activityName === activeActivity.name,
-            );
-            if (match) {
-              const template = makeTemplate(match, options.urlPatternOptions);
-              path = template.fill(actionParams.stepParams);
-            }
-          }
-          // else: no active activity (initial boot / cross-deploy
-          // hydration before parent Pushed). Leave path undefined; the
-          // post-effect fallback applies (fillWithoutEncode).
-        }
-
-        overrideActionParams({
-          ...actionParams,
-          ...(path !== undefined
-            ? {
-                stepContext: {
-                  ...(actionParams.stepContext as Record<string, unknown>),
-                  path,
-                },
-              }
-            : {}),
-          stepParams: coerceParamsToString(actionParams.stepParams),
-        });
-      },
-      onBeforeStepReplace({
-        actionParams,
-        actions: { getStack, overrideActionParams },
-      }) {
-        // FEP-1061 (Option B, B5): mirror onBeforeStepPush.
-        const ctx = actionParams.stepContext as
-          | { path?: string }
-          | undefined;
-        const hasExistingPath = !!ctx && "path" in ctx;
-
-        let path: string | undefined;
-        if (hasExistingPath) {
-          path = ctx?.path;
-        } else {
-          const stack = getStack();
-          const activeActivity = stack.activities.find((a) => a.isActive);
-          if (activeActivity) {
-            const match = activityRoutes.find(
-              (r) => r.activityName === activeActivity.name,
-            );
-            if (match) {
-              const template = makeTemplate(match, options.urlPatternOptions);
-              path = template.fill(actionParams.stepParams);
-            }
-          }
-        }
-
-        overrideActionParams({
-          ...actionParams,
-          ...(path !== undefined
-            ? {
-                stepContext: {
-                  ...(actionParams.stepContext as Record<string, unknown>),
-                  path,
-                },
-              }
-            : {}),
-          stepParams: coerceParamsToString(actionParams.stepParams),
-        });
       },
       onBeforeStepPop({ actions: { getStack } }) {
         const { activities } = getStack();
