@@ -24,6 +24,7 @@ import type { Actions } from "./Actions";
 import { ConfigProvider } from "./ConfigProvider";
 import { DataLoaderProvider, loaderPlugin } from "./loader";
 import { makeActions } from "./makeActions";
+import { makePrepare } from "./makePrepare";
 import { makeStepActions } from "./makeStepActions";
 import type { StackComponentType } from "./StackComponentType";
 import type { StepActions } from "./StepActions";
@@ -203,8 +204,10 @@ export function stackflow<
     Stack,
     actions: makeActions(() => getCoreStore()?.actions),
     stepActions: makeStepActions(() => getCoreStore()?.actions),
-    prepare: () => {
-      throw new Error("stackflow().prepare is not implemented yet.");
-    },
+    prepare: makePrepare({
+      config: input.config,
+      loadData,
+      activityComponentMap: input.components,
+    }),
   };
 }
