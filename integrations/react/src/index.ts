@@ -7,6 +7,7 @@ export * from "./Actions";
 export * from "./ActivityComponentType";
 export * from "./lazy";
 export * from "./loader/useLoaderData";
+export * from "./Prepare";
 export * from "./StackComponentType";
 export * from "./StaticActivityComponentType";
 export * from "./StepActions";

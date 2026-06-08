@@ -24,9 +24,11 @@ import type { Actions } from "./Actions";
 import { ConfigProvider } from "./ConfigProvider";
 import { DataLoaderProvider, loaderPlugin } from "./loader";
 import { makeActions } from "./makeActions";
+import { makePrepare } from "./makePrepare";
 import { makeStepActions } from "./makeStepActions";
 import type { StackComponentType } from "./StackComponentType";
 import type { StepActions } from "./StepActions";
+import type { Prepare } from "./Prepare";
 
 export type StackflowPluginsEntry =
   | StackflowReactPlugin<never>
@@ -47,6 +49,7 @@ export type StackflowOutput = {
   Stack: StackComponentType;
   actions: Actions;
   stepActions: StepActions<ActivityBaseParams>;
+  prepare: Prepare;
 };
 
 export function stackflow<
@@ -201,5 +204,10 @@ export function stackflow<
     Stack,
     actions: makeActions(() => getCoreStore()?.actions),
     stepActions: makeStepActions(() => getCoreStore()?.actions),
+    prepare: makePrepare({
+      config: input.config,
+      loadData,
+      activityComponentMap: input.components,
+    }),
   };
 }
