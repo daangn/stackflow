@@ -351,197 +351,182 @@ describe("historySyncPlugin - deterministic browser harness", () => {
   });
 
   describe("plugin-blocker interop", () => {
-    it.failing(
-      "browser back passes through blocker hooks and restores URL/stack when blocked",
-      async () => {
-        const onBlocked = jest.fn();
-        const shouldBlock = jest.fn(
-          (action: NavigationAction) => action.name === "Popped",
-        );
-        const harness = await renderHarness({
-          blocker: {
-            shouldBlock,
-            onBlocked,
-          },
-        });
-        await pushArticle(harness, "1");
-        await pushArticle(harness, "2");
+    it("browser back passes through blocker hooks and restores URL/stack when blocked", async () => {
+      const onBlocked = jest.fn();
+      const shouldBlock = jest.fn(
+        (action: NavigationAction) => action.name === "Popped",
+      );
+      const harness = await renderHarness({
+        blocker: {
+          shouldBlock,
+          onBlocked,
+        },
+      });
+      await pushArticle(harness, "1");
+      await pushArticle(harness, "2");
 
-        const before = harness.snapshot();
-        expect(before).toMatchObject({
-          url: "/articles/2/",
-          active: {
-            name: "Article",
-            params: { articleId: "2" },
-            activityCount: 3,
-          },
-        });
-
-        await act(async () => {
-          harness.history.back();
-        });
-        await harness.settle(() => ({
-          snapshot: harness.snapshot(),
-          shouldBlockCalls: shouldBlock.mock.calls.length,
-          onBlockedCalls: onBlocked.mock.calls.length,
-        }));
-
-        expect(shouldBlock).toHaveBeenCalledWith(
-          expect.objectContaining({ name: "Popped" }),
-        );
-        expect(onBlocked).toHaveBeenCalledTimes(1);
-        expect(harness.snapshot()).toEqual(before);
-      },
-    );
-
-    it.failing(
-      "browser back proceed replays the blocked navigation and syncs browser history",
-      async () => {
-        let proceed: (() => void) | null = null;
-        const harness = await renderHarness({
-          blocker: {
-            shouldBlock: (action) => action.name === "Popped",
-            onBlocked: (_, actions) => {
-              proceed = actions.proceed;
-            },
-          },
-        });
-        await pushArticle(harness, "1");
-        await pushArticle(harness, "2");
-
-        await act(async () => {
-          harness.history.back();
-        });
-        await harness.settle(() => ({
-          snapshot: harness.snapshot(),
-          hasProceed: proceed !== null,
-        }));
-        expect(proceed).toEqual(expect.any(Function));
-
-        await act(async () => {
-          proceed?.();
-        });
-        await harness.settle();
-
-        expect(harness.currentPath()).toBe("/articles/1/");
-        expect(activeSnapshot(harness.getStack)).toMatchObject({
+      const before = harness.snapshot();
+      expect(before).toMatchObject({
+        url: "/articles/2/",
+        active: {
           name: "Article",
-          params: { articleId: "1" },
-          stepParams: { articleId: "1" },
-        });
-      },
-    );
+          params: { articleId: "2" },
+          activityCount: 3,
+        },
+      });
 
-    it.failing(
-      "rapid browser back attempts while blocked converge without losing the top activity",
-      async () => {
-        const onBlocked = jest.fn();
-        const harness = await renderHarness({
-          blocker: {
-            shouldBlock: (action) => action.name === "Popped",
-            onBlocked,
+      await act(async () => {
+        harness.history.back();
+      });
+      await harness.settle(() => ({
+        snapshot: harness.snapshot(),
+        shouldBlockCalls: shouldBlock.mock.calls.length,
+        onBlockedCalls: onBlocked.mock.calls.length,
+      }));
+
+      expect(shouldBlock).toHaveBeenCalledWith(
+        expect.objectContaining({ name: "Popped" }),
+      );
+      expect(onBlocked).toHaveBeenCalledTimes(1);
+      expect(harness.snapshot()).toEqual(before);
+    });
+
+    it("browser back proceed replays the blocked navigation and syncs browser history", async () => {
+      let proceed: (() => void) | null = null;
+      const harness = await renderHarness({
+        blocker: {
+          shouldBlock: (action) => action.name === "Popped",
+          onBlocked: (_, actions) => {
+            proceed = actions.proceed;
           },
-        });
-        await pushArticle(harness, "1");
-        await pushArticle(harness, "2");
-        await pushArticle(harness, "3");
+        },
+      });
+      await pushArticle(harness, "1");
+      await pushArticle(harness, "2");
 
-        const before = harness.snapshot();
-        expect(before).toMatchObject({
-          url: "/articles/3/",
-          active: {
-            name: "Article",
-            params: { articleId: "3" },
-            activityCount: 4,
-          },
-        });
+      await act(async () => {
+        harness.history.back();
+      });
+      await harness.settle(() => ({
+        snapshot: harness.snapshot(),
+        hasProceed: proceed !== null,
+      }));
+      expect(proceed).toEqual(expect.any(Function));
 
-        await act(async () => {
-          harness.history.back();
-          harness.history.back();
-        });
-        await harness.settle(() => ({
-          snapshot: harness.snapshot(),
-          blockedCount: onBlocked.mock.calls.length,
-        }));
+      await act(async () => {
+        proceed?.();
+      });
+      await harness.settle();
 
-        expect(onBlocked).toHaveBeenCalled();
-        expect(harness.snapshot()).toEqual(before);
-      },
-    );
+      expect(harness.currentPath()).toBe("/articles/1/");
+      expect(activeSnapshot(harness.getStack)).toMatchObject({
+        name: "Article",
+        params: { articleId: "1" },
+        stepParams: { articleId: "1" },
+      });
+    });
 
-    it.failing(
-      "blocked browser step back restores the current step URL and stack",
-      async () => {
-        const onBlocked = jest.fn();
-        const harness = await renderHarness({
-          blocker: {
-            shouldBlock: (action) => action.name === "StepPopped",
-            onBlocked,
-          },
-        });
-        await pushArticle(harness, "1");
-        await pushArticleStep(harness, { articleId: "1", tab: "comments" });
+    it("rapid browser back attempts while blocked converge without losing the top activity", async () => {
+      const onBlocked = jest.fn();
+      const harness = await renderHarness({
+        blocker: {
+          shouldBlock: (action) => action.name === "Popped",
+          onBlocked,
+        },
+      });
+      await pushArticle(harness, "1");
+      await pushArticle(harness, "2");
+      await pushArticle(harness, "3");
 
-        const before = harness.snapshot();
+      const before = harness.snapshot();
+      expect(before).toMatchObject({
+        url: "/articles/3/",
+        active: {
+          name: "Article",
+          params: { articleId: "3" },
+          activityCount: 4,
+        },
+      });
 
-        await act(async () => {
-          harness.history.back();
-        });
-        await harness.settle(() => ({
-          snapshot: harness.snapshot(),
-          blockedCount: onBlocked.mock.calls.length,
-        }));
+      await act(async () => {
+        harness.history.back();
+        harness.history.back();
+      });
+      await harness.settle(() => ({
+        snapshot: harness.snapshot(),
+        blockedCount: onBlocked.mock.calls.length,
+      }));
 
-        expect(onBlocked).toHaveBeenCalledWith(
-          expect.objectContaining({
-            action: expect.objectContaining({ name: "StepPopped" }),
-          }),
-          expect.anything(),
-        );
-        expect(harness.snapshot()).toEqual(before);
-      },
-    );
+      expect(onBlocked).toHaveBeenCalled();
+      expect(harness.snapshot()).toEqual(before);
+    });
 
-    it.failing(
-      "blocked programmatic pop/stepPop do not mutate URL or browser entries",
-      async () => {
-        const onBlocked = jest.fn();
-        const harness = await renderHarness({
-          blocker: {
-            shouldBlock: (action) =>
-              action.name === "Popped" || action.name === "StepPopped",
-            onBlocked,
-          },
-        });
-        await pushArticle(harness, "1");
-        await pushArticleStep(harness, { articleId: "1", tab: "comments" });
+    it("blocked browser step back restores the current step URL and stack", async () => {
+      const onBlocked = jest.fn();
+      const harness = await renderHarness({
+        blocker: {
+          shouldBlock: (action) => action.name === "StepPopped",
+          onBlocked,
+        },
+      });
+      await pushArticle(harness, "1");
+      await pushArticleStep(harness, { articleId: "1", tab: "comments" });
 
-        const beforeStepPop = harness.snapshot();
+      const before = harness.snapshot();
 
-        await act(async () => {
-          harness.stepActions.popStep();
-        });
-        await harness.settle(() => ({
-          snapshot: harness.snapshot(),
-          blockedCount: onBlocked.mock.calls.length,
-        }));
+      await act(async () => {
+        harness.history.back();
+      });
+      await harness.settle(() => ({
+        snapshot: harness.snapshot(),
+        blockedCount: onBlocked.mock.calls.length,
+      }));
 
-        expect(harness.snapshot()).toEqual(beforeStepPop);
+      expect(onBlocked).toHaveBeenCalledWith(
+        expect.objectContaining({
+          action: expect.objectContaining({ name: "StepPopped" }),
+        }),
+        expect.anything(),
+      );
+      expect(harness.snapshot()).toEqual(before);
+    });
 
-        const beforePop = harness.snapshot();
+    it("blocked programmatic pop/stepPop do not mutate URL or browser entries", async () => {
+      const onBlocked = jest.fn();
+      const harness = await renderHarness({
+        blocker: {
+          shouldBlock: (action) =>
+            action.name === "Popped" || action.name === "StepPopped",
+          onBlocked,
+        },
+      });
+      await pushArticle(harness, "1");
+      await pushArticleStep(harness, { articleId: "1", tab: "comments" });
 
-        await act(async () => {
-          harness.actions.pop();
-        });
-        await harness.settle(() => ({
-          snapshot: harness.snapshot(),
-          blockedCount: onBlocked.mock.calls.length,
-        }));
+      const beforeStepPop = harness.snapshot();
 
-        expect(harness.snapshot()).toEqual(beforePop);
-      },
-    );
+      await act(async () => {
+        harness.stepActions.popStep();
+      });
+      await harness.settle(() => ({
+        snapshot: harness.snapshot(),
+        blockedCount: onBlocked.mock.calls.length,
+      }));
+
+      expect(harness.snapshot()).toEqual(beforeStepPop);
+
+      const beforePop = harness.snapshot();
+
+      await act(async () => {
+        harness.actions.pop();
+      });
+      await harness.settle(() => ({
+        snapshot: harness.snapshot(),
+        blockedCount: onBlocked.mock.calls.length,
+      }));
+
+      expect(harness.snapshot()).toEqual(beforePop);
+    });
 
     it("blocked programmatic push/replace/stepPush/stepReplace leave URL and browser entries unchanged", async () => {
       const onBlocked = jest.fn();
@@ -591,80 +576,74 @@ describe("historySyncPlugin - deterministic browser harness", () => {
       expect(onBlocked).toHaveBeenCalledTimes(4);
     });
 
-    it.failing(
-      "programmatic blocked pop completes and syncs history after proceed",
-      async () => {
-        let proceed: (() => void) | null = null;
-        const harness = await renderHarness({
-          blocker: {
-            shouldBlock: (action) => action.name === "Popped",
-            onBlocked: (_, actions) => {
-              proceed = actions.proceed;
-            },
+    it("programmatic blocked pop completes and syncs history after proceed", async () => {
+      let proceed: (() => void) | null = null;
+      const harness = await renderHarness({
+        blocker: {
+          shouldBlock: (action) => action.name === "Popped",
+          onBlocked: (_, actions) => {
+            proceed = actions.proceed;
           },
-        });
-        await pushArticle(harness, "1");
-        await pushArticle(harness, "2");
+        },
+      });
+      await pushArticle(harness, "1");
+      await pushArticle(harness, "2");
 
-        await act(async () => {
-          harness.actions.pop();
-        });
-        await harness.settle(() => ({
-          snapshot: harness.snapshot(),
-          hasProceed: proceed !== null,
-        }));
-        expect(activeSnapshot(harness.getStack)).toMatchObject({
-          name: "Article",
-          params: { articleId: "2" },
-        });
+      await act(async () => {
+        harness.actions.pop();
+      });
+      await harness.settle(() => ({
+        snapshot: harness.snapshot(),
+        hasProceed: proceed !== null,
+      }));
+      expect(activeSnapshot(harness.getStack)).toMatchObject({
+        name: "Article",
+        params: { articleId: "2" },
+      });
 
-        await act(async () => {
-          proceed?.();
-        });
-        await harness.settle();
+      await act(async () => {
+        proceed?.();
+      });
+      await harness.settle();
 
-        expect(harness.currentPath()).toBe("/articles/1/");
-        expect(activeSnapshot(harness.getStack)).toMatchObject({
-          name: "Article",
-          params: { articleId: "1" },
-        });
-      },
-    );
+      expect(harness.currentPath()).toBe("/articles/1/");
+      expect(activeSnapshot(harness.getStack)).toMatchObject({
+        name: "Article",
+        params: { articleId: "1" },
+      });
+    });
 
-    it.failing(
-      "navigation started inside a browser-back blocker hook converges URL and stack",
-      async () => {
-        let actions: Harness["actions"] | null = null;
-        const onBlocked = jest.fn(() => {
-          actions?.push("Article", { articleId: "3" });
-        });
-        const harness = await renderHarness({
-          blocker: {
-            shouldBlock: (action) => action.name === "Popped",
-            onBlocked,
-          },
-        });
-        actions = harness.actions;
-        await pushArticle(harness, "1");
-        await pushArticle(harness, "2");
+    it("navigation started inside a browser-back blocker hook converges URL and stack", async () => {
+      let actions: Harness["actions"] | null = null;
+      const onBlocked = jest.fn(() => {
+        actions?.push("Article", { articleId: "3" });
+      });
+      const harness = await renderHarness({
+        blocker: {
+          shouldBlock: (action) => action.name === "Popped",
+          onBlocked,
+        },
+      });
+      actions = harness.actions;
+      await pushArticle(harness, "1");
+      await pushArticle(harness, "2");
 
-        await act(async () => {
-          harness.history.back();
-        });
-        await harness.settle(() => ({
-          snapshot: harness.snapshot(),
-          blockedCount: onBlocked.mock.calls.length,
-        }));
+      await act(async () => {
+        harness.history.back();
+      });
+      await harness.settle(() => ({
+        snapshot: harness.snapshot(),
+        blockedCount: onBlocked.mock.calls.length,
+      }));
 
-        expect(onBlocked).toHaveBeenCalledTimes(1);
-        expect(harness.currentPath()).toBe("/articles/3/");
-        expect(activeSnapshot(harness.getStack)).toMatchObject({
-          name: "Article",
-          params: { articleId: "3" },
-          stepParams: { articleId: "3" },
-        });
-      },
-    );
+      expect(onBlocked).toHaveBeenCalledTimes(1);
+      expect(harness.currentPath()).toBe("/articles/3/");
+      expect(activeSnapshot(harness.getStack)).toMatchObject({
+        name: "Article",
+        params: { articleId: "3" },
+        stepParams: { articleId: "3" },
+      });
+    });
   });
 
   describe("browser history to stackflow state", () => {
@@ -731,7 +710,7 @@ describe("historySyncPlugin - deterministic browser harness", () => {
       );
     });
 
-    it.failing("go(n) converges through activity entries", async () => {
+    it("go(n) converges through activity entries", async () => {
       const harness = await renderHarness();
       await pushArticle(harness, "10");
       await pushArticle(harness, "20");
@@ -894,5 +873,126 @@ describe("historySyncPlugin - deterministic browser harness", () => {
         },
       );
     });
+
+    it("push after browser back truncates the stale forward branch", async () => {
+      const harness = await renderHarness();
+      await pushArticle(harness, "10");
+      await pushArticle(harness, "20");
+      await pushArticle(harness, "30");
+
+      await act(async () => {
+        harness.history.back();
+      });
+      await harness.settle();
+      await act(async () => {
+        harness.history.back();
+      });
+      await harness.settle();
+
+      expect(harness.snapshot()).toMatchObject({
+        url: "/articles/10/",
+        historyLengthDelta: 3,
+        active: { name: "Article", params: { articleId: "10" } },
+      });
+
+      await pushArticle(harness, "99");
+
+      expect(harness.snapshot()).toMatchObject({
+        url: "/articles/99/",
+        historyLengthDelta: 2,
+        active: {
+          name: "Article",
+          params: { articleId: "99" },
+          activityCount: 3,
+        },
+      });
+
+      const afterPush = harness.snapshot();
+
+      await act(async () => {
+        harness.history.forward();
+      });
+      await harness.settle();
+
+      expect(harness.snapshot()).toEqual(afterPush);
+    });
+
+    it("replace that shrinks step entries truncates the stale forward branch", async () => {
+      const harness = await renderHarness();
+      await pushArticle(harness, "10");
+      await pushArticleStep(harness, { articleId: "11", tab: "one" });
+      await pushArticleStep(harness, { articleId: "12", tab: "two" });
+
+      expect(harness.snapshot()).toMatchObject({
+        url: "/articles/12/?tab=two",
+        historyLengthDelta: 3,
+      });
+
+      await act(async () => {
+        harness.actions.replace("Article", { articleId: "99" });
+      });
+      await harness.settle();
+
+      expect(harness.snapshot()).toMatchObject({
+        url: "/articles/99/",
+        historyLengthDelta: 1,
+        active: {
+          name: "Article",
+          params: { articleId: "99" },
+          activityCount: 2,
+        },
+      });
+
+      const afterReplace = harness.snapshot();
+
+      await act(async () => {
+        harness.history.forward();
+      });
+      await harness.settle();
+
+      expect(harness.snapshot()).toEqual(afterReplace);
+    });
+
+    it("in-place replace (reused activityId) rewrites only its own entry and keeps ancestors", async () => {
+      const harness = await renderHarness();
+
+      let activityId = "";
+      await act(async () => {
+        activityId = harness.actions.push("Article", {
+          articleId: "10",
+        }).activityId;
+      });
+      await harness.settle();
+
+      expect(harness.snapshot()).toMatchObject({
+        url: "/articles/10/",
+        historyLengthDelta: 1,
+      });
+
+      await act(async () => {
+        harness.actions.replace("Article", { articleId: "99" }, { activityId });
+      });
+      await harness.settle();
+
+      expect(harness.snapshot()).toMatchObject({
+        url: "/articles/99/",
+        historyLengthDelta: 1,
+        active: {
+          name: "Article",
+          params: { articleId: "99" },
+          activityCount: 2,
+        },
+      });
+
+      await expectLocationAfterBrowserMove(
+        harness,
+        () => harness.history.back(),
+        {
+          url: "/home/",
+          activeName: "Home",
+        },
+      );
+    });
+
   });
 });

@@ -4,25 +4,31 @@ import type {
   RegisteredActivityName,
 } from "@stackflow/config";
 import {
+  type Activity,
+  type ActivityStep,
   id,
   type PushedEvent,
   type Stack,
   type StackflowActions,
   type StepPushedEvent,
 } from "@stackflow/core";
-import type { StackflowReactPlugin } from "@stackflow/react";
-import type { ActivityComponentType } from "@stackflow/react";
-import type { History, Listener } from "history";
+import type {
+  ActivityComponentType,
+  StackflowReactPlugin,
+} from "@stackflow/react";
+import type { History } from "history";
 import { createBrowserHistory, createMemoryHistory } from "history";
 import { useEffect, useSyncExternalStore } from "react";
 import UrlPattern from "url-pattern";
 import { ActivityActivationCountsContext } from "./ActivityActivationCountsContext";
 import type { ActivityActivationMonitor } from "./ActivityActivationMonitor/ActivityActivationMonitor";
 import { DefaultHistoryActivityActivationMonitor } from "./ActivityActivationMonitor/DefaultHistoryActivityActivationMonitor";
+import { identityOfState } from "./BrowserHistoryEntryModel";
+import { computeDesiredHistoryEntries } from "./desiredHistoryEntries";
 import { HistoryQueueProvider } from "./HistoryQueueContext";
-import { parseState, pushState, replaceState } from "./historyState";
+import { HistoryReconciler } from "./HistoryReconciler";
+import { getStateStepId, parseState, type State } from "./historyState";
 import { last } from "./last";
-import { makeHistoryTaskQueue } from "./makeHistoryTaskQueue";
 import type { UrlPatternOptions } from "./makeTemplate";
 import { makeTemplate, pathToUrl, urlSearchParamsToMap } from "./makeTemplate";
 import type { NavigationProcess } from "./NavigationProcess/NavigationProcess";
@@ -68,6 +74,50 @@ type HistorySyncPluginOptions<T, K extends Extract<keyof T, string>> = (
   urlPatternOptions?: UrlPatternOptions;
 };
 
+/**
+ * Defensive bound on navigation dispatch loops driven by a single popstate.
+ * A loop that does not shrink the stack (the core refused an event the model
+ * predicted it would accept) must bail out instead of spinning; the follow-up
+ * reconcile pass restores consistency.
+ */
+const MAX_NAVIGATION_DISPATCHES = 100;
+
+function isEnteredActivity(activity: Activity): boolean {
+  return (
+    activity.transitionState === "enter-active" ||
+    activity.transitionState === "enter-done"
+  );
+}
+
+/**
+ * Entered activities in navigation order (`enteredBy.eventDate`). Note that
+ * the core's `isActive`/render order follows the `activities` array slot
+ * order instead; the two agree for every navigation this plugin dispatches —
+ * see the ordering note in `desiredHistoryEntries.ts`.
+ */
+function enteredActivitiesOf(stack: Stack): Activity[] {
+  return stack.activities
+    .filter(isEnteredActivity)
+    .sort((a, b) => a.enteredBy.eventDate - b.enteredBy.eventDate);
+}
+
+function activeActivityOf(stack: Stack): Activity | undefined {
+  return last(enteredActivitiesOf(stack));
+}
+
+function liveStepsOf(activity: Activity): ActivityStep[] {
+  return activity.steps.filter((step) => !step.exitedBy);
+}
+
+function isStepEnteredBy(
+  step: ActivityStep,
+): step is ActivityStep & { enteredBy: StepPushedEvent } {
+  return (
+    step.enteredBy.name === "StepPushed" ||
+    step.enteredBy.name === "StepReplaced"
+  );
+}
+
 export function historySyncPlugin<
   T extends { [activityName: string]: unknown },
   K extends Extract<keyof T, string>,
@@ -100,13 +150,9 @@ export function historySyncPlugin<
   const activityRoutes = sortActivityRoutes(normalizeActivityRouteMap(routes));
 
   return () => {
-    let pushFlag = 0;
-    let silentFlag = false;
     let initialSetupProcess: NavigationProcess | null = null;
     const activityActivationMonitors: ActivityActivationMonitor[] = [];
     const activityActivationCountsChangeNotifier = new Publisher<void>();
-
-    const { requestHistoryTick } = makeHistoryTaskQueue(history);
 
     const subscribeActivityActivationCountsChange = (
       subscriber: () => void,
@@ -211,6 +257,387 @@ export function historySyncPlugin<
       runActivityActivationMonitors(stack);
     };
 
+    const computeDesired = () => {
+      if (!coreActions) {
+        return [];
+      }
+
+      return computeDesiredHistoryEntries({
+        stack: coreActions.getStack(),
+        activityRoutes,
+        urlPatternOptions: options.urlPatternOptions,
+      });
+    };
+
+    const reconciler = new HistoryReconciler({
+      history,
+      useHash: options.useHash,
+      computeDesired,
+      onExternalPopState: (state) => handleExternalPopState(state),
+    });
+
+    /**
+     * Dispatches a navigation action and reports whether it actually reached
+     * the core (i.e. was not prevented by a pre-effect hook). The check works
+     * by observing the recorded event log: every checked dispatch here uses a
+     * fresh event date, so an accepted event always lands at the end of the
+     * sorted log. Re-entrant dispatches made by other plugins' hooks (e.g. a
+     * blocker pushing inside `onBlocked`) append events of *different* names
+     * and do not produce false positives.
+     *
+     * Note: while the stack is paused, the core defers events instead of
+     * recording them, so dispatches during pause read as "prevented". That is
+     * the intended behavior — a frozen stack must not be navigated, and the
+     * follow-up reconcile pass restores the browser to the frozen stack.
+     */
+    const dispatchChecked = (
+      actions: StackflowActions,
+      eventName: string,
+      dispatch: () => void,
+    ): boolean => {
+      const eventCountBefore = actions.getStack().events.length;
+
+      dispatch();
+
+      return actions
+        .getStack()
+        .events.slice(eventCountBefore)
+        .some((event) => event.name === eventName);
+    };
+
+    /**
+     * Resolves the absolute entry index a popstate landed on. New-format
+     * states carry it explicitly; states serialized by older plugin versions
+     * fall back to the legacy direction inference (compare the target
+     * activity/step against the active one) and assume a single-entry move.
+     */
+    const resolveEntryIndex = (
+      state: State,
+      fromIndex: number,
+      actions: StackflowActions,
+    ): number => {
+      if (typeof state.entryIndex === "number") {
+        return state.entryIndex;
+      }
+
+      const active = activeActivityOf(actions.getStack());
+
+      if (!active) {
+        return fromIndex;
+      }
+
+      if (state.activity.id !== active.id) {
+        return state.activity.id < active.id ? fromIndex - 1 : fromIndex + 1;
+      }
+
+      if (!state.step) {
+        return fromIndex - 1;
+      }
+
+      const currentStep = last(liveStepsOf(active));
+
+      if (!currentStep || currentStep.id === state.step.id) {
+        return fromIndex;
+      }
+
+      return state.step.id < currentStep.id ? fromIndex - 1 : fromIndex + 1;
+    };
+
+    /**
+     * Backward navigation: pop down to the target entry through the formal
+     * action path, so that every plugin's pre-effect hooks (including
+     * `preventDefault`) participate. If any pop is prevented the dispatch
+     * loop stops immediately — the unconditional reconcile pass that follows
+     * every popstate then restores the browser to the (unchanged) stack.
+     *
+     * Entries the stack no longer knows (written before a reload) are
+     * restored by re-dispatching their original entry events: `makeEvent`
+     * preserves the snapshot's `id`/`eventDate`, so the events re-aggregate
+     * at their historical position and the trailing pop events settle the
+     * stack exactly on the target entry.
+     */
+    const handleBackwardNavigation = (
+      state: State,
+      toIndex: number,
+      actions: StackflowActions,
+    ): boolean => {
+      const targetActivityId = state.activity.id;
+      const targetStepId = getStateStepId(state);
+      const isTargetActivityEntered = enteredActivitiesOf(
+        actions.getStack(),
+      ).some((activity) => activity.id === targetActivityId);
+
+      if (!isTargetActivityEntered) {
+        if (!dispatchChecked(actions, "Popped", () => actions.pop())) {
+          return false;
+        }
+
+        actions.dispatchEvent("Pushed", {
+          ...state.activity.enteredBy,
+        });
+
+        if (state.step && isStepEnteredBy(state.step)) {
+          actions.dispatchEvent("StepPushed", {
+            ...state.step.enteredBy,
+          });
+        }
+
+        return true;
+      }
+
+      for (let i = 0; i <= MAX_NAVIGATION_DISPATCHES; i++) {
+        if (i === MAX_NAVIGATION_DISPATCHES) {
+          // Exhausting the bound means the stack keeps changing faster than
+          // we pop towards the target — abnormal, even though the follow-up
+          // reconcile pass converges the browser either way.
+          console.error(
+            `[plugin-history-sync] backward navigation did not reach the target activity within ${MAX_NAVIGATION_DISPATCHES} pops; converging via reconciliation instead`,
+          );
+          return false;
+        }
+
+        const active = activeActivityOf(actions.getStack());
+
+        if (!active || active.id === targetActivityId) {
+          break;
+        }
+
+        if (!dispatchChecked(actions, "Popped", () => actions.pop())) {
+          return false;
+        }
+
+        if (activeActivityOf(actions.getStack())?.id === active.id) {
+          // The core refused to pop further (e.g. only the root is left
+          // while the model predicted more entries) — bail out and let the
+          // reconcile pass converge.
+          return false;
+        }
+      }
+
+      const active = activeActivityOf(actions.getStack());
+
+      if (!active || active.id !== targetActivityId) {
+        return false;
+      }
+
+      if (liveStepsOf(active).some((step) => step.id === targetStepId)) {
+        for (let i = 0; i <= MAX_NAVIGATION_DISPATCHES; i++) {
+          if (i === MAX_NAVIGATION_DISPATCHES) {
+            console.error(
+              `[plugin-history-sync] backward navigation did not reach the target step within ${MAX_NAVIGATION_DISPATCHES} step pops; converging via reconciliation instead`,
+            );
+            return false;
+          }
+
+          const currentActive = activeActivityOf(actions.getStack());
+
+          if (!currentActive) {
+            return false;
+          }
+
+          const liveSteps = liveStepsOf(currentActive);
+
+          if (last(liveSteps)?.id === targetStepId) {
+            break;
+          }
+
+          if (
+            !dispatchChecked(actions, "StepPopped", () => actions.stepPop())
+          ) {
+            return false;
+          }
+
+          if (
+            liveStepsOf(activeActivityOf(actions.getStack())!).length ===
+            liveSteps.length
+          ) {
+            return false;
+          }
+        }
+
+        return true;
+      }
+
+      // The target step is not part of the current stack (its entry predates
+      // a reload): pop the entries above it, then restore it at its
+      // historical position.
+      const stepsToPop =
+        computeDesired().length - 1 - (toIndex - reconciler.model.anchorIndex);
+
+      for (let i = 0; i < stepsToPop; i++) {
+        const activeBefore = activeActivityOf(actions.getStack());
+
+        if (!activeBefore) {
+          return false;
+        }
+
+        const liveStepCountBefore = liveStepsOf(activeBefore).length;
+
+        if (!dispatchChecked(actions, "StepPopped", () => actions.stepPop())) {
+          return false;
+        }
+
+        const activeAfter = activeActivityOf(actions.getStack());
+
+        if (
+          !activeAfter ||
+          liveStepsOf(activeAfter).length === liveStepCountBefore
+        ) {
+          // The core refused the step pop (a recorded no-op — e.g. only one
+          // live step left while the entry distance predicted more). Treating
+          // it as progress would land the restoration on the wrong step.
+          return false;
+        }
+      }
+
+      if (state.step && isStepEnteredBy(state.step)) {
+        actions.dispatchEvent("StepPushed", {
+          ...state.step.enteredBy,
+        });
+      }
+
+      return true;
+    };
+
+    /**
+     * Forward navigation: re-enter the target entry (and any known
+     * intermediate entries skipped over by a multi-entry jump) through the
+     * formal action path. Forward entries always reference activities/steps
+     * the stack has already popped, so they are re-pushed as fresh events
+     * that keep the original `activityId`/`stepId` — entry identity stays
+     * stable while the event lands at the end of the log (a re-dispatch of
+     * the original event would be deduplicated away).
+     */
+    const handleForwardNavigation = (
+      state: State,
+      fromIndex: number,
+      toIndex: number,
+      actions: StackflowActions,
+    ): boolean => {
+      for (let index = fromIndex + 1; index <= toIndex; index++) {
+        const entryState =
+          index === toIndex ? state : reconciler.model.getEntry(index)?.state;
+
+        if (!entryState) {
+          // Unknown intermediate entry (previous session) — skip it; its own
+          // popstate will restore it if the user ever lands on it.
+          continue;
+        }
+
+        const active = activeActivityOf(actions.getStack());
+
+        if (!active) {
+          return false;
+        }
+
+        const entryActivityId = entryState.activity.id;
+        const entryStepId = getStateStepId(entryState);
+
+        if (active.id === entryActivityId) {
+          if (liveStepsOf(active).some((step) => step.id === entryStepId)) {
+            continue;
+          }
+
+          const stepParams =
+            entryState.step?.params ?? entryState.activity.params;
+
+          if (
+            !dispatchChecked(actions, "StepPushed", () =>
+              actions.stepPush({
+                stepId: entryStepId,
+                stepParams,
+              }),
+            )
+          ) {
+            return false;
+          }
+
+          continue;
+        }
+
+        if (
+          !dispatchChecked(actions, "Pushed", () =>
+            actions.push({
+              activityId: entryActivityId,
+              activityName: entryState.activity.name,
+              activityParams: entryState.activity.params,
+            }),
+          )
+        ) {
+          return false;
+        }
+
+        const entryStep = entryState.step;
+
+        if (entryStep) {
+          if (
+            !dispatchChecked(actions, "StepPushed", () =>
+              actions.stepPush({
+                stepId: entryStep.id,
+                stepParams: entryStep.params,
+              }),
+            )
+          ) {
+            return false;
+          }
+        }
+      }
+
+      return true;
+    };
+
+    /**
+     * Interprets a popstate the reconciler did not cause itself (browser
+     * back/forward/go or a restored entry) and translates it into formal
+     * navigation actions. The reconciler requests a reconcile pass after this
+     * handler returns, no matter what was (or was not) dispatched.
+     */
+    const handleExternalPopState = (state: State | null) => {
+      const actions = coreActions;
+
+      if (!actions) {
+        return;
+      }
+
+      if (!state) {
+        // The cursor left the app's entries (e.g. back past the first app
+        // entry, where a real browser would unload the page). There is
+        // nothing to navigate to; reconciliation stays suspended until a
+        // popstate brings the cursor back onto an app entry.
+        reconciler.model.markOutOfApp();
+        return;
+      }
+
+      const model = reconciler.model;
+      const fromIndex = model.currentIndex;
+      const toIndex = resolveEntryIndex(state, fromIndex, actions);
+
+      model.learnEntry(toIndex, {
+        identity: identityOfState(state),
+        state,
+      });
+      model.moveCursor(toIndex);
+
+      if (toIndex === fromIndex) {
+        // Rapid successive navigations can coalesce: the browser reports the
+        // same final entry more than once. The first event already
+        // dispatched the navigation.
+        return;
+      }
+
+      const completed =
+        toIndex < fromIndex
+          ? handleBackwardNavigation(state, toIndex, actions)
+          : handleForwardNavigation(state, fromIndex, toIndex, actions);
+
+      if (completed && toIndex < fromIndex) {
+        // The desired entries now end at the landed entry; re-derive the
+        // anchor so that entries restored from previous sessions extend the
+        // coordinate system downwards.
+        model.setAnchorIndex(toIndex - (computeDesired().length - 1));
+      }
+    };
+
     return {
       key: "plugin-history-sync",
       wrapStack({ stack }) {
@@ -237,8 +664,23 @@ export function historySyncPlugin<
           dispatchInitialSetupNavigation(coreActions);
         }, []);
 
+        /**
+         * Ties the reconciler's history listener to the `<Stack />`
+         * lifecycle so unmounting the app stops it from interpreting
+         * popstates (and fixes the listener leak of previous versions).
+         */
+        useEffect(() => {
+          reconciler.retain();
+
+          return () => {
+            reconciler.release();
+          };
+        }, []);
+
         return (
-          <HistoryQueueProvider requestHistoryTick={requestHistoryTick}>
+          <HistoryQueueProvider
+            requestHistoryTick={reconciler.requestHistoryTick}
+          >
             <RoutesProvider routes={activityRoutes}>
               <ActivityActivationCountsContext.Provider
                 value={activityActivationCounts}
@@ -448,284 +890,19 @@ export function historySyncPlugin<
       },
       onInit({ actions }) {
         // Capture core actions for the post-commit `wrapStack` effect that
-        // kicks off the staged `defaultHistory` setup (see `coreActions`).
+        // kicks off the staged `defaultHistory` setup (see `coreActions`) and
+        // for the popstate navigation handlers above.
         coreActions = actions;
 
-        const { getStack, dispatchEvent, push, stepPush } = actions;
-        const stack = getStack();
+        const initialState = parseState(history.location.state);
 
-        if (parseState(history.location.state) === null) {
-          for (const activity of stack.activities) {
-            if (
-              activity.transitionState === "enter-active" ||
-              activity.transitionState === "enter-done"
-            ) {
-              const match = activityRoutes.find(
-                (r) => r.activityName === activity.name,
-              )!;
-              const template = makeTemplate(match, options.urlPatternOptions);
-
-              if (activity.isRoot) {
-                replaceState({
-                  history,
-                  pathname: template.fill(activity.params),
-                  state: {
-                    activity: activity,
-                  },
-                  useHash: options.useHash,
-                });
-              } else {
-                pushState({
-                  history,
-                  pathname: template.fill(activity.params),
-                  state: {
-                    activity: activity,
-                  },
-                  useHash: options.useHash,
-                });
-              }
-
-              for (const step of activity.steps) {
-                if (!step.exitedBy && step.enteredBy.name !== "Pushed") {
-                  pushState({
-                    history,
-                    pathname: template.fill(step.params),
-                    state: {
-                      activity: activity,
-                      step: step,
-                    },
-                    useHash: options.useHash,
-                  });
-                }
-              }
-            }
-          }
+        if (initialState === null) {
+          reconciler.initializeFreshBoot(computeDesired());
+        } else {
+          reconciler.initializeRestored(initialState, computeDesired());
         }
 
-        const onPopState: Listener = (e) => {
-          if (silentFlag) {
-            silentFlag = false;
-            return;
-          }
-
-          const state = parseState(e.location.state);
-
-          if (!state) {
-            return;
-          }
-
-          const targetActivity = state.activity;
-          const targetActivityId = state.activity.id;
-          const targetStep = state.step;
-
-          const { activities } = getStack();
-          const currentActivity = activities.find(
-            (activity) => activity.isActive,
-          );
-
-          if (!currentActivity) {
-            return;
-          }
-
-          const currentStep = last(currentActivity.steps);
-
-          const nextActivity = activities.find(
-            (activity) => activity.id === targetActivityId,
-          );
-          const nextStep = currentActivity.steps.find(
-            (step) => step.id === targetStep?.id,
-          );
-
-          const isBackward = () => currentActivity.id > targetActivityId;
-          const isForward = () => currentActivity.id < targetActivityId;
-          const isStep = () => currentActivity.id === targetActivityId;
-
-          const isStepBackward = () => {
-            if (!isStep()) {
-              return false;
-            }
-
-            if (!targetStep) {
-              return true;
-            }
-            if (currentStep && currentStep.id > targetStep.id) {
-              return true;
-            }
-
-            return false;
-          };
-          const isStepForward = () => {
-            if (!isStep()) {
-              return false;
-            }
-
-            if (!currentStep) {
-              return true;
-            }
-            if (targetStep && currentStep.id < targetStep.id) {
-              return true;
-            }
-
-            return false;
-          };
-
-          if (isBackward()) {
-            dispatchEvent("Popped", {});
-
-            if (!nextActivity) {
-              pushFlag += 1;
-              push({
-                ...targetActivity.enteredBy,
-              });
-
-              if (
-                targetStep?.enteredBy.name === "StepPushed" ||
-                targetStep?.enteredBy.name === "StepReplaced"
-              ) {
-                const { enteredBy } = targetStep;
-                pushFlag += 1;
-                stepPush({
-                  ...enteredBy,
-                });
-              }
-            }
-          }
-          if (isStepBackward()) {
-            if (
-              !nextStep &&
-              targetStep &&
-              (targetStep?.enteredBy.name === "StepPushed" ||
-                targetStep?.enteredBy.name === "StepReplaced")
-            ) {
-              const { enteredBy } = targetStep;
-
-              pushFlag += 1;
-              stepPush({
-                ...enteredBy,
-              });
-            }
-
-            dispatchEvent("StepPopped", {});
-          }
-
-          if (isForward()) {
-            pushFlag += 1;
-            push({
-              activityId: targetActivity.id,
-              activityName: targetActivity.name,
-              activityParams: targetActivity.params,
-            });
-          }
-          if (isStepForward()) {
-            if (!targetStep) {
-              return;
-            }
-
-            pushFlag += 1;
-            stepPush({
-              stepId: targetStep.id,
-              stepParams: targetStep.params,
-            });
-          }
-        };
-
-        history.listen(onPopState);
-      },
-      onPushed({ effect: { activity } }) {
-        if (pushFlag) {
-          pushFlag -= 1;
-          return;
-        }
-
-        const match = activityRoutes.find(
-          (r) => r.activityName === activity.name,
-        )!;
-
-        const template = makeTemplate(match, options.urlPatternOptions);
-
-        requestHistoryTick(() => {
-          silentFlag = true;
-          pushState({
-            history,
-            pathname: template.fill(activity.params),
-            state: {
-              activity,
-            },
-            useHash: options.useHash,
-          });
-        });
-      },
-      onStepPushed({ effect: { activity, step } }) {
-        if (pushFlag) {
-          pushFlag -= 1;
-          return;
-        }
-
-        const match = activityRoutes.find(
-          (r) => r.activityName === activity.name,
-        )!;
-
-        const template = makeTemplate(match, options.urlPatternOptions);
-
-        requestHistoryTick(() => {
-          silentFlag = true;
-          pushState({
-            history,
-            pathname: template.fill(activity.params),
-            state: {
-              activity,
-              step,
-            },
-            useHash: options.useHash,
-          });
-        });
-      },
-      onReplaced({ effect: { activity } }) {
-        if (!activity.isActive) {
-          return;
-        }
-
-        const match = activityRoutes.find(
-          (r) => r.activityName === activity.name,
-        )!;
-
-        const template = makeTemplate(match, options.urlPatternOptions);
-
-        requestHistoryTick(() => {
-          silentFlag = true;
-          replaceState({
-            history,
-            pathname: template.fill(activity.params),
-            state: {
-              activity,
-            },
-            useHash: options.useHash,
-          });
-        });
-      },
-      onStepReplaced({ effect: { activity, step } }) {
-        if (!activity.isActive) {
-          return;
-        }
-
-        const match = activityRoutes.find(
-          (r) => r.activityName === activity.name,
-        )!;
-
-        const template = makeTemplate(match, options.urlPatternOptions);
-
-        requestHistoryTick(() => {
-          silentFlag = true;
-          replaceState({
-            history,
-            pathname: template.fill(activity.params),
-            state: {
-              activity,
-              step,
-            },
-            useHash: options.useHash,
-          });
-        });
+        reconciler.start();
       },
       onBeforePush({ actionParams, actions: { overrideActionParams } }) {
         if (
@@ -747,10 +924,7 @@ export function historySyncPlugin<
           });
         }
       },
-      onBeforeReplace({
-        actionParams,
-        actions: { overrideActionParams, getStack },
-      }) {
+      onBeforeReplace({ actionParams, actions: { overrideActionParams } }) {
         if (
           !actionParams.activityContext ||
           "path" in actionParams.activityContext === false
@@ -769,79 +943,10 @@ export function historySyncPlugin<
             },
           });
         }
-
-        const { activities } = getStack();
-        const enteredActivities = activities.filter(
-          (currentActivity) =>
-            currentActivity.transitionState === "enter-active" ||
-            currentActivity.transitionState === "enter-done",
-        );
-        const previousActivity =
-          enteredActivities.length > 0
-            ? enteredActivities[enteredActivities.length - 1]
-            : null;
-
-        if (previousActivity) {
-          for (let i = 0; i < previousActivity.steps.length - 1; i += 1) {
-            requestHistoryTick((resolve) => {
-              if (!parseState(history.location.state)) {
-                silentFlag = true;
-                history.back();
-              } else {
-                resolve();
-              }
-            });
-
-            requestHistoryTick(() => {
-              silentFlag = true;
-              history.back();
-            });
-          }
-        }
-      },
-      onBeforeStepPop({ actions: { getStack } }) {
-        const { activities } = getStack();
-        const currentActivity = activities.find(
-          (activity) => activity.isActive,
-        );
-
-        if ((currentActivity?.steps.length ?? 0) > 1) {
-          requestHistoryTick(() => {
-            silentFlag = true;
-            history.back();
-          });
-        }
-      },
-      onBeforePop({ actions: { getStack } }) {
-        const { activities } = getStack();
-        const currentActivity = activities.find(
-          (activity) => activity.isActive,
-        );
-
-        if (currentActivity) {
-          const { isRoot, steps } = currentActivity;
-
-          const popCount = isRoot ? 0 : steps.length;
-
-          for (let i = 0; i < popCount; i += 1) {
-            requestHistoryTick((resolve) => {
-              if (!parseState(history.location.state)) {
-                silentFlag = true;
-                history.back();
-              } else {
-                resolve();
-              }
-            });
-
-            requestHistoryTick(() => {
-              silentFlag = true;
-              history.back();
-            });
-          }
-        }
       },
       onChanged({ actions }) {
         dispatchInitialSetupNavigation(actions);
+        reconciler.requestReconcile();
       },
     };
   };

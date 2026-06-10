@@ -1433,5 +1433,4 @@ describe("historySyncPlugin", () => {
 
     expect((topActivity.context as any).promise).toBeInstanceOf(Promise);
   });
-
 });
