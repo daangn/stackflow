@@ -5741,7 +5741,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/plugin-blocker@workspace:extensions/plugin-blocker":
+"@stackflow/plugin-blocker@workspace:^, @stackflow/plugin-blocker@workspace:extensions/plugin-blocker":
   version: 0.0.0-use.local
   resolution: "@stackflow/plugin-blocker@workspace:extensions/plugin-blocker"
   dependencies:
@@ -5813,6 +5813,7 @@ __metadata:
     "@stackflow/config": "npm:^2.0.0"
     "@stackflow/core": "npm:^2.0.1"
     "@stackflow/esbuild-config": "npm:^1.0.3"
+    "@stackflow/plugin-blocker": "workspace:^"
     "@stackflow/plugin-renderer-basic": "npm:^1.1.14"
     "@stackflow/react": "npm:^2.1.0"
     "@swc/core": "npm:^1.6.6"

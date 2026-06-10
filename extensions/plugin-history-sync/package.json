@@ -64,6 +64,7 @@
     "@stackflow/config": "^2.0.0",
     "@stackflow/core": "^2.0.1",
     "@stackflow/esbuild-config": "^1.0.3",
+    "@stackflow/plugin-blocker": "workspace:^",
     "@stackflow/plugin-renderer-basic": "^1.1.14",
     "@stackflow/react": "^2.1.0",
     "@swc/core": "^1.6.6",
