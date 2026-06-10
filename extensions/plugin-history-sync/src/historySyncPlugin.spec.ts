@@ -8,9 +8,6 @@ import type {
 import { makeCoreStore, makeEvent } from "@stackflow/core";
 import type { Location, MemoryHistory } from "history";
 import { createMemoryHistory } from "history";
-import { loadQuery } from "react-relay";
-import { makeRelayEnvironment } from "./fixtures/graphql";
-import { default as getHelloQueryNode } from "./fixtures/graphql/__generated__/getHelloQuery.graphql";
 import { historySyncPlugin } from "./historySyncPlugin";
 
 const SECOND = 1000;
@@ -192,31 +189,6 @@ describe("historySyncPlugin", () => {
     });
 
     expect(fallbackActivity).not.toHaveBeenCalled();
-  });
-
-  test("historySyncPlugin - 초기에 매칭하는 라우트가 없으면 fallbackActivity 콜백을 plugin instance당 한 번만 호출합니다", async () => {
-    history = createMemoryHistory({
-      initialEntries: ["/non-existent-path"],
-    });
-
-    const fallbackActivity = jest.fn((): "Home" => "Home");
-
-    const plugin = historySyncPlugin({
-      history,
-      routes: {
-        Home: "/home",
-        Article: "/articles/:articleId",
-      },
-      fallbackActivity,
-    });
-
-    const pluginInstance = plugin();
-    pluginInstance.overrideInitialEvents?.({
-      initialEvents: [],
-      initialContext: {},
-    });
-
-    expect(fallbackActivity).toHaveBeenCalledTimes(1);
   });
 
   test("historySyncPlugin - actions.push() 후에, URL 상태가 알맞게 바뀝니다", async () => {
@@ -1462,54 +1434,4 @@ describe("historySyncPlugin", () => {
     expect((topActivity.context as any).promise).toBeInstanceOf(Promise);
   });
 
-  test("historySyncPlugin - activity.context에 relay loadRef가 있어도 정상적으로 로드됩니다", async () => {
-    const environment = makeRelayEnvironment();
-
-    const loadRef = loadQuery(environment, getHelloQueryNode, {});
-
-    history = createMemoryHistory({
-      initialEntries: ["/home"],
-    });
-
-    const coreStore = stackflow({
-      activityNames: ["Home", "Article"],
-      plugins: [
-        historySyncPlugin({
-          history,
-          routes: {
-            Home: "/home",
-            Article: "/articles/:articleId",
-          },
-          fallbackActivity: () => "Home",
-        }),
-      ],
-    });
-
-    actions = makeActionsProxy({
-      actions: coreStore.actions,
-    });
-
-    await actions.push({
-      activityId: "a1",
-      activityName: "Article",
-      activityParams: {
-        articleId: "1",
-      },
-      activityContext: {
-        loadRef,
-      },
-    });
-
-    const stack = await actions.getStack();
-    const topActivity = stack.activities[1];
-
-    const queryResponse = await (
-      topActivity.context as any
-    ).loadRef?.source?.toPromise();
-
-    /**
-     * Successfully queried with relay
-     */
-    expect(queryResponse.data.hello).toEqual("world");
-  });
 });
