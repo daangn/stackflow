@@ -33,8 +33,15 @@ type BlockerControls = {
 
 type Harness = Awaited<ReturnType<typeof renderHarness>>;
 type FallbackActivity = (args: { initialContext: unknown }) => "Home";
+type SessionStorageFault = "getItem" | "setItem" | "removeItem" | "clear";
+
+type SessionStorageShim = Storage & {
+  setFaults: (faults: SessionStorageFault[]) => void;
+};
+type SessionStorageAccess = SessionStorageShim | null | "throw";
 
 let currentBlocker: BlockerControls | null = null;
+let restoreSessionStorage: (() => void) | null = null;
 
 function Home() {
   return <div data-testid="activity">home</div>;
@@ -59,7 +66,89 @@ function path(browserWindow: Window) {
   );
 }
 
-function makeBrowserWindow(initialPath: string): Window {
+function makeSessionStorageShim({
+  initialEntries = {},
+  faults = [],
+}: {
+  initialEntries?: Record<string, string>;
+  faults?: SessionStorageFault[];
+} = {}): SessionStorageShim {
+  const entries = new Map(Object.entries(initialEntries));
+  let activeFaults = new Set(faults);
+  const assertAvailable = (operation: SessionStorageFault) => {
+    if (activeFaults.has(operation)) {
+      throw new DOMException(
+        `sessionStorage ${operation} failed`,
+        "QuotaExceededError",
+      );
+    }
+  };
+
+  return {
+    get length() {
+      return entries.size;
+    },
+    clear() {
+      assertAvailable("clear");
+      entries.clear();
+    },
+    getItem(key: string) {
+      assertAvailable("getItem");
+      return entries.get(key) ?? null;
+    },
+    key(index: number) {
+      return Array.from(entries.keys())[index] ?? null;
+    },
+    removeItem(key: string) {
+      assertAvailable("removeItem");
+      entries.delete(key);
+    },
+    setFaults(faults: SessionStorageFault[]) {
+      activeFaults = new Set(faults);
+    },
+    setItem(key: string, value: string) {
+      assertAvailable("setItem");
+      entries.set(key, value);
+    },
+  };
+}
+
+function readSessionStorageAccess(sessionStorage: SessionStorageAccess) {
+  if (sessionStorage === "throw") {
+    throw new DOMException("sessionStorage access denied", "SecurityError");
+  }
+
+  return sessionStorage ?? undefined;
+}
+
+function installSessionStorageShim(
+  sessionStorage: SessionStorageAccess,
+): () => void {
+  const descriptor = Object.getOwnPropertyDescriptor(window, "sessionStorage");
+
+  Object.defineProperty(window, "sessionStorage", {
+    configurable: true,
+    get() {
+      return readSessionStorageAccess(sessionStorage);
+    },
+  });
+
+  return () => {
+    if (descriptor) {
+      Object.defineProperty(window, "sessionStorage", descriptor);
+    } else {
+      Reflect.deleteProperty(window, "sessionStorage");
+    }
+  };
+}
+
+function makeBrowserWindow({
+  initialPath,
+  sessionStorage,
+}: {
+  initialPath: string;
+  sessionStorage: SessionStorageAccess;
+}): Window {
   const eventTarget = new EventTarget();
   const entries: Array<{ path: string; state: unknown }> = [
     { path: initialPath, state: null },
@@ -137,12 +226,21 @@ function makeBrowserWindow(initialPath: string): Window {
 
   setLocation(initialPath);
 
-  return {
+  const browserWindow = {
     history: historyApi,
     location: locationState,
     addEventListener: eventTarget.addEventListener.bind(eventTarget),
     removeEventListener: eventTarget.removeEventListener.bind(eventTarget),
   } as unknown as Window;
+
+  Object.defineProperty(browserWindow, "sessionStorage", {
+    configurable: true,
+    get() {
+      return readSessionStorageAccess(sessionStorage);
+    },
+  });
+
+  return browserWindow;
 }
 
 function activeActivity(stack: Stack) {
@@ -158,6 +256,7 @@ function activeSnapshot(getStack: () => Stack) {
     name: active?.name,
     params: active?.params ?? {},
     stepParams: activeStep?.params ?? {},
+    stepCount: liveSteps.length,
     activityCount: getStack().activities.filter(
       (activity) => !activity.exitedBy,
     ).length,
@@ -213,17 +312,31 @@ async function settleUntilStable(
 
 async function renderHarness({
   initialPath = "/",
+  browserWindow,
+  baseHistoryLength,
+  sessionStorage = makeSessionStorageShim(),
   blocker,
   fallbackActivity = () => "Home",
 }: {
   initialPath?: string;
+  browserWindow?: Window;
+  baseHistoryLength?: number;
+  sessionStorage?: SessionStorageAccess;
   blocker?: BlockerControls;
   fallbackActivity?: FallbackActivity;
 } = {}) {
   currentBlocker = blocker ?? null;
-  const browserWindow = makeBrowserWindow(initialPath);
-  const baseHistoryLength = browserWindow.history.length;
-  const history = createBrowserHistory({ window: browserWindow });
+  restoreSessionStorage?.();
+  restoreSessionStorage = installSessionStorageShim(sessionStorage);
+  const targetBrowserWindow =
+    browserWindow ??
+    makeBrowserWindow({
+      initialPath,
+      sessionStorage,
+    });
+  const targetBaseHistoryLength =
+    baseHistoryLength ?? targetBrowserWindow.history.length;
+  const history = createBrowserHistory({ window: targetBrowserWindow });
   const captured: { actions?: StackflowActions } = {};
 
   const captureActionsPlugin: StackflowReactPlugin = () => ({
@@ -274,15 +387,24 @@ async function renderHarness({
     stepActions,
     coreActions: captured.actions,
     history,
-    baseHistoryLength,
-    browserWindow,
+    baseHistoryLength: targetBaseHistoryLength,
+    browserWindow: targetBrowserWindow,
+    sessionStorage,
     getStack,
-    currentPath: () => path(browserWindow),
+    currentPath: () => path(targetBrowserWindow),
     snapshot: () =>
-      serializableSnapshot({ baseHistoryLength, browserWindow, getStack }),
+      serializableSnapshot({
+        baseHistoryLength: targetBaseHistoryLength,
+        browserWindow: targetBrowserWindow,
+        getStack,
+      }),
     settle: (selectSnapshot?: () => unknown) =>
       settleUntilStable(
-        { baseHistoryLength, browserWindow, getStack },
+        {
+          baseHistoryLength: targetBaseHistoryLength,
+          browserWindow: targetBrowserWindow,
+          getStack,
+        },
         selectSnapshot,
       ),
     view,
@@ -291,6 +413,31 @@ async function renderHarness({
   await harness.settle();
 
   return harness;
+}
+
+async function reloadHarness(
+  harness: Harness,
+  options: {
+    blocker?: BlockerControls;
+    fallbackActivity?: FallbackActivity;
+    sessionStorage?: SessionStorageAccess;
+  } = {},
+) {
+  await act(async () => {
+    harness.view.unmount();
+    await Promise.resolve();
+  });
+
+  return renderHarness({
+    browserWindow: harness.browserWindow,
+    baseHistoryLength: harness.baseHistoryLength,
+    sessionStorage:
+      "sessionStorage" in options
+        ? options.sessionStorage!
+        : harness.sessionStorage,
+    blocker: options.blocker,
+    fallbackActivity: options.fallbackActivity,
+  });
 }
 
 async function pushArticle(harness: Harness, articleId: string) {
@@ -338,6 +485,44 @@ async function expectLocationAfterBrowserMove(
   });
 }
 
+async function createReloadedStepBoundaryHarness({
+  blocker,
+  sessionStorage = makeSessionStorageShim(),
+}: {
+  blocker?: BlockerControls;
+  sessionStorage?: SessionStorageAccess;
+} = {}) {
+  const harness = await renderHarness({ sessionStorage });
+
+  await pushArticle(harness, "root");
+  await pushArticleStep(harness, {
+    articleId: "middle",
+    tab: "comments",
+  });
+  await pushArticleStep(harness, {
+    articleId: "top",
+    tab: "details",
+  });
+
+  return reloadHarness(harness, { blocker, sessionStorage });
+}
+
+async function createReloadedActivityChainHarness({
+  blocker,
+  sessionStorage = makeSessionStorageShim(),
+}: {
+  blocker?: BlockerControls;
+  sessionStorage?: SessionStorageAccess;
+} = {}) {
+  const harness = await renderHarness({ blocker, sessionStorage });
+
+  await pushArticle(harness, "10");
+  await pushArticle(harness, "20");
+  await pushArticle(harness, "30");
+
+  return reloadHarness(harness, { blocker, sessionStorage });
+}
+
 describe("historySyncPlugin - deterministic browser harness", () => {
   beforeEach(() => {
     jest.useFakeTimers();
@@ -347,6 +532,8 @@ describe("historySyncPlugin - deterministic browser harness", () => {
   afterEach(() => {
     cleanup();
     currentBlocker = null;
+    restoreSessionStorage?.();
+    restoreSessionStorage = null;
     jest.useRealTimers();
   });
 
@@ -799,6 +986,347 @@ describe("historySyncPlugin - deterministic browser harness", () => {
     });
   });
 
+  describe("cross-reload journal acceptance", () => {
+    it.failing(
+      "preserves an observed-only step entry after blocked cross-reload back in journal mode",
+      async () => {
+        let shouldPreventStepPop = true;
+        const onBlocked = jest.fn();
+        const shouldBlock = jest.fn(
+          (action: NavigationAction) =>
+            shouldPreventStepPop && action.name === "StepPopped",
+        );
+        const harness = await createReloadedStepBoundaryHarness({
+          blocker: {
+            shouldBlock,
+            onBlocked,
+          },
+        });
+
+        expect(harness.snapshot()).toMatchObject({
+          url: "/articles/top/?tab=details",
+          active: {
+            name: "Article",
+            params: { articleId: "top", tab: "details" },
+            stepParams: { articleId: "top", tab: "details" },
+            stepCount: 2,
+          },
+        });
+        const beforeBlockedBack = harness.snapshot();
+
+        await act(async () => {
+          harness.history.back();
+        });
+        await harness.settle(() => ({
+          snapshot: harness.snapshot(),
+          blockedCount: onBlocked.mock.calls.length,
+        }));
+
+        expect(onBlocked).toHaveBeenCalledWith(
+          expect.objectContaining({
+            action: expect.objectContaining({ name: "StepPopped" }),
+          }),
+          expect.anything(),
+        );
+        expect(harness.snapshot()).toEqual(beforeBlockedBack);
+
+        shouldPreventStepPop = false;
+
+        await expectLocationAfterBrowserMove(
+          harness,
+          () => harness.history.back(),
+          {
+            url: "/articles/middle/?tab=comments",
+            activeName: "Article",
+            articleId: "middle",
+            tab: "comments",
+          },
+        );
+        expect(activeSnapshot(harness.getStack)).toMatchObject({
+          stepParams: { articleId: "middle", tab: "comments" },
+        });
+      },
+    );
+
+    it.failing(
+      "preserves an observed-only step entry after blocked cross-reload back without sessionStorage",
+      async () => {
+        let shouldPreventStepPop = true;
+        const onBlocked = jest.fn();
+        const harness = await createReloadedStepBoundaryHarness({
+          sessionStorage: null,
+          blocker: {
+            shouldBlock: (action) =>
+              shouldPreventStepPop && action.name === "StepPopped",
+            onBlocked,
+          },
+        });
+        const beforeBlockedBack = harness.snapshot();
+
+        await act(async () => {
+          harness.history.back();
+        });
+        await harness.settle(() => ({
+          snapshot: harness.snapshot(),
+          blockedCount: onBlocked.mock.calls.length,
+        }));
+
+        expect(onBlocked).toHaveBeenCalledTimes(1);
+        expect(harness.snapshot()).toEqual(beforeBlockedBack);
+
+        shouldPreventStepPop = false;
+
+        await expectLocationAfterBrowserMove(
+          harness,
+          () => harness.history.back(),
+          {
+            url: "/articles/middle/?tab=comments",
+            activeName: "Article",
+            articleId: "middle",
+            tab: "comments",
+          },
+        );
+        expect(activeSnapshot(harness.getStack)).toMatchObject({
+          stepParams: { articleId: "middle", tab: "comments" },
+        });
+      },
+    );
+
+    it.failing(
+      "reconstructs ancestor stack fidelity after a cross-reload backward go(-n)",
+      async () => {
+        const harness = await createReloadedActivityChainHarness();
+
+        await expectLocationAfterBrowserMove(
+          harness,
+          () => harness.history.go(-2),
+          {
+            url: "/articles/10/",
+            activeName: "Article",
+            articleId: "10",
+          },
+        );
+
+        expect(activeSnapshot(harness.getStack)).toMatchObject({
+          activityCount: 2,
+        });
+
+        await act(async () => {
+          harness.actions.pop();
+        });
+        await harness.settle();
+
+        expect(harness.currentPath()).toBe("/home/");
+        expect(activeSnapshot(harness.getStack)).toMatchObject({
+          name: "Home",
+        });
+      },
+    );
+
+    it.failing(
+      "reconstructs skipped intermediate entries during cross-reload forward go(+n)",
+      async () => {
+        const harness = await createReloadedActivityChainHarness();
+
+        await expectLocationAfterBrowserMove(
+          harness,
+          () => harness.history.go(-2),
+          {
+            url: "/articles/10/",
+            activeName: "Article",
+            articleId: "10",
+          },
+        );
+        await expectLocationAfterBrowserMove(
+          harness,
+          () => harness.history.go(2),
+          {
+            url: "/articles/30/",
+            activeName: "Article",
+            articleId: "30",
+          },
+        );
+
+        expect(activeSnapshot(harness.getStack)).toMatchObject({
+          activityCount: 4,
+        });
+
+        await act(async () => {
+          harness.actions.pop();
+        });
+        await harness.settle();
+
+        expect(harness.currentPath()).toBe("/articles/20/");
+        expect(activeSnapshot(harness.getStack)).toMatchObject({
+          name: "Article",
+          params: { articleId: "20" },
+        });
+      },
+    );
+
+    it("restores the original entry when a cross-reload multi-entry jump is blocked", async () => {
+      const onBlocked = jest.fn();
+      const harness = await createReloadedActivityChainHarness({
+        blocker: {
+          shouldBlock: (action) => action.name === "Popped",
+          onBlocked,
+        },
+      });
+      const beforeBlockedJump = harness.snapshot();
+
+      await act(async () => {
+        harness.history.go(-2);
+      });
+      await harness.settle(() => ({
+        snapshot: harness.snapshot(),
+        blockedCount: onBlocked.mock.calls.length,
+      }));
+
+      expect(onBlocked).toHaveBeenCalledWith(
+        expect.objectContaining({
+          action: expect.objectContaining({ name: "Popped" }),
+        }),
+        expect.anything(),
+      );
+      expect(harness.snapshot()).toEqual(beforeBlockedJump);
+    });
+
+    it("restores the original entry when a cross-reload forward multi-entry replay is blocked", async () => {
+      let shouldPreventForwardPush = false;
+      const onBlocked = jest.fn();
+      const harness = await createReloadedActivityChainHarness({
+        blocker: {
+          shouldBlock: (action) =>
+            shouldPreventForwardPush && action.name === "Pushed",
+          onBlocked,
+        },
+      });
+
+      await expectLocationAfterBrowserMove(
+        harness,
+        () => harness.history.go(-2),
+        {
+          url: "/articles/10/",
+          activeName: "Article",
+          articleId: "10",
+        },
+      );
+
+      const beforeBlockedForwardJump = harness.snapshot();
+      shouldPreventForwardPush = true;
+
+      await act(async () => {
+        harness.history.go(2);
+      });
+      await harness.settle(() => ({
+        snapshot: harness.snapshot(),
+        blockedCount: onBlocked.mock.calls.length,
+      }));
+
+      expect(onBlocked).toHaveBeenCalledWith(
+        expect.objectContaining({
+          action: expect.objectContaining({ name: "Pushed" }),
+        }),
+        expect.anything(),
+      );
+      expect(harness.snapshot()).toEqual(beforeBlockedForwardJump);
+    });
+
+    it("keeps a second instance usable on the same browser window and sessionStorage", async () => {
+      const sessionStorage = makeSessionStorageShim();
+      const first = await renderHarness({ sessionStorage });
+      await pushArticle(first, "first");
+
+      const second = await renderHarness({
+        browserWindow: first.browserWindow,
+        baseHistoryLength: first.baseHistoryLength,
+        sessionStorage,
+      });
+
+      expect(second.currentPath()).toBe("/articles/first/");
+      expect(activeSnapshot(second.getStack)).toMatchObject({
+        name: "Article",
+        params: { articleId: "first" },
+        stepParams: { articleId: "first" },
+      });
+
+      await pushArticle(second, "second");
+
+      expect(second.currentPath()).toBe("/articles/second/");
+      expect(activeSnapshot(second.getStack)).toMatchObject({
+        name: "Article",
+        params: { articleId: "second" },
+        stepParams: { articleId: "second" },
+      });
+    });
+
+    it("falls back to the current history state when sessionStorage has unrelated data", async () => {
+      const sessionStorage = makeSessionStorageShim({
+        initialEntries: {
+          "unrelated-history-journal": "not this app instance",
+        },
+      });
+      const harness = await renderHarness({ sessionStorage });
+      await pushArticle(harness, "stored");
+
+      const reloaded = await reloadHarness(harness, { sessionStorage });
+
+      expect(reloaded.currentPath()).toBe("/articles/stored/");
+      expect(activeSnapshot(reloaded.getStack)).toMatchObject({
+        name: "Article",
+        params: { articleId: "stored" },
+        stepParams: { articleId: "stored" },
+      });
+    });
+
+    it("falls back to the current history state when sessionStorage is unavailable", async () => {
+      const harness = await renderHarness({ sessionStorage: null });
+      await pushArticle(harness, "no-storage");
+
+      const reloaded = await reloadHarness(harness, { sessionStorage: null });
+
+      expect(reloaded.currentPath()).toBe("/articles/no-storage/");
+      expect(activeSnapshot(reloaded.getStack)).toMatchObject({
+        name: "Article",
+        params: { articleId: "no-storage" },
+        stepParams: { articleId: "no-storage" },
+      });
+    });
+
+    it("falls back to the current history state when accessing sessionStorage throws", async () => {
+      const harness = await renderHarness({ sessionStorage: "throw" });
+      await pushArticle(harness, "blocked-storage-access");
+
+      const reloaded = await reloadHarness(harness, {
+        sessionStorage: "throw",
+      });
+
+      expect(reloaded.currentPath()).toBe("/articles/blocked-storage-access/");
+      expect(activeSnapshot(reloaded.getStack)).toMatchObject({
+        name: "Article",
+        params: { articleId: "blocked-storage-access" },
+        stepParams: { articleId: "blocked-storage-access" },
+      });
+    });
+
+    it("falls back to the current history state when sessionStorage operations throw", async () => {
+      const sessionStorage = makeSessionStorageShim({
+        faults: ["getItem", "setItem", "removeItem", "clear"],
+      });
+      const harness = await renderHarness({ sessionStorage });
+      await pushArticle(harness, "faulty-storage");
+
+      const reloaded = await reloadHarness(harness, { sessionStorage });
+
+      expect(reloaded.currentPath()).toBe("/articles/faulty-storage/");
+      expect(activeSnapshot(reloaded.getStack)).toMatchObject({
+        name: "Article",
+        params: { articleId: "faulty-storage" },
+        stepParams: { articleId: "faulty-storage" },
+      });
+    });
+  });
+
   describe("stackflow actions to browser history", () => {
     it("push, replace, and pop update URL and preserve observable browser entries", async () => {
       const harness = await renderHarness();
@@ -993,6 +1521,5 @@ describe("historySyncPlugin - deterministic browser harness", () => {
         },
       );
     });
-
   });
 });
