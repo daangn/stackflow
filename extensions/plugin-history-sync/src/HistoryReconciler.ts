@@ -6,6 +6,7 @@ import {
   identityOfState,
 } from "./BrowserHistoryEntryModel";
 import type { DesiredHistoryEntry } from "./desiredHistoryEntries";
+import type { HistoryEntryJournal } from "./HistoryEntryJournal";
 import type { HistoryQueueContextValue } from "./HistoryQueueContext";
 import {
   parseState,
@@ -72,6 +73,7 @@ export class HistoryReconciler {
   private useHash?: boolean;
   private computeDesired: () => DesiredHistoryEntry[];
   private onExternalPopState: (state: State | null) => void;
+  private journal: HistoryEntryJournal;
 
   readonly model = new BrowserHistoryEntryModel();
 
@@ -88,16 +90,19 @@ export class HistoryReconciler {
     useHash,
     computeDesired,
     onExternalPopState,
+    journal,
   }: {
     history: History;
     useHash?: boolean;
     computeDesired: () => DesiredHistoryEntry[];
     onExternalPopState: (state: State | null) => void;
+    journal: HistoryEntryJournal;
   }) {
     this.history = history;
     this.useHash = useHash;
     this.computeDesired = computeDesired;
     this.onExternalPopState = onExternalPopState;
+    this.journal = journal;
   }
 
   /**
@@ -108,6 +113,11 @@ export class HistoryReconciler {
    */
   initializeFreshBoot(desired: DesiredHistoryEntry[]): void {
     this.model.seed({ currentIndex: 0, anchorIndex: 0 });
+    // A fresh boot re-bases the coordinate system on the current physical
+    // entry, so a journal left behind by a previous session (the user
+    // navigated away and back without a restorable state) describes stale
+    // coordinates and must not survive.
+    this.journal.resetForFreshBoot();
 
     desired.forEach((entry, index) => {
       if (index === 0) {
@@ -124,6 +134,13 @@ export class HistoryReconciler {
    * entries from previous sessions; nothing is written. States serialized by
    * older plugin versions carry no `entryIndex` — the coordinate system is
    * then re-based on the current entry, which is upgraded in place.
+   *
+   * When the persisted journal validates against the current entry, the
+   * model is seeded with the journaled knowledge of previous sessions'
+   * entries (provenance `"journal"` — protected restoration targets). Only
+   * the model is seeded: stack restoration stays based on the current
+   * entry's snapshot alone, so boot UX and loader behavior are unchanged. An
+   * invalid/absent journal falls back to the plain optimistic boot.
    */
   initializeRestored(state: State, desired: DesiredHistoryEntry[]): void {
     const hasEntryIndex = typeof state.entryIndex === "number";
@@ -133,6 +150,28 @@ export class HistoryReconciler {
       currentIndex,
       anchorIndex: currentIndex - Math.max(desired.length - 1, 0),
     });
+
+    if (hasEntryIndex) {
+      const journalEntries = this.journal.loadValidated({
+        expectedIndex: currentIndex,
+        expectedIdentity: identityOfState(state),
+      });
+
+      if (journalEntries) {
+        for (const [index, record] of journalEntries) {
+          this.model.restoreJournalEntry(index, {
+            identity: identityOfState(record.state),
+            state: record.state,
+            path: record.path,
+          });
+        }
+      }
+    } else {
+      // Legacy states carry no coordinates, so the journal's indexes cannot
+      // be mapped onto this boot's re-based coordinate system.
+      this.journal.resetForFreshBoot();
+    }
+
     this.model.learnEntry(currentIndex, {
       identity: identityOfState(state),
       state,
@@ -413,28 +452,41 @@ export class HistoryReconciler {
 
       const known = this.model.getEntry(index);
 
-      // Unknown entries (written by previous sessions) are treated as
-      // matching — they are restoration targets and must never be rewritten.
-      // Known entries diverge on identity, or on path when the identity is
-      // unchanged but the entry was rewritten with different params (e.g. an
-      // in-place replace reusing the activityId). A `null` known path means
-      // the entry was only observed, never written — observed entries are
-      // never rewritten for path-only differences, with one exception: the
-      // *current* entry is rewritten when its recorded entry event differs
-      // from the desired one (an in-place replace right after a reload, when
-      // nothing has been written yet). Rewriting the entry the cursor rests
-      // on never destroys a restoration target.
-      const diverges =
+      // Unknown entries (written by previous sessions, not yet re-learned)
+      // are treated as matching — they are restoration targets and must
+      // never be rewritten. The same protection extends to *known* entries
+      // this session did not write itself: journal-restored and
+      // observed-only entries stay restoration targets no matter how they
+      // diverge from the (possibly fictitious) boot mapping — being visited
+      // or journaled never lifts the protection. Only entries this session
+      // wrote are its own product: they diverge on identity, or on path when
+      // the identity is unchanged but the entry was rewritten with different
+      // params (e.g. an in-place replace reusing the activityId).
+      //
+      // One exception for protected entries: the *current* entry is
+      // rewritten when its recorded entry event differs from the desired one
+      // (an in-place replace right after a reload before anything was
+      // written, or a forward replay that re-entered the entry with a fresh
+      // event). Rewriting the entry the cursor rests on never destroys a
+      // restoration target. This refresh must always resolve as an in-place
+      // replace: it is only visible while the cursor rests on the entry, so
+      // routing it through a cursor-moving rebuild would flip the plan back
+      // and forth instead of converging.
+      const divergesAsOwnWrite =
         known !== undefined &&
+        known.provenance === "session-write" &&
         (!identityEquals(known.identity, {
           activityId: desired[j].activityId,
           stepId: desired[j].stepId,
         }) ||
-          (known.path !== null && known.path !== desired[j].path) ||
-          (known.path === null &&
-            index === this.model.currentIndex &&
-            known.state.activity.enteredBy.id !==
-              desired[j].state.activity.enteredBy.id));
+          (known.path !== null && known.path !== desired[j].path));
+      const divergesAsCurrentEntryRefresh =
+        known !== undefined &&
+        known.provenance !== "session-write" &&
+        index === this.model.currentIndex &&
+        known.state.activity.enteredBy.id !==
+          desired[j].state.activity.enteredBy.id;
+      const diverges = divergesAsOwnWrite || divergesAsCurrentEntryRefresh;
 
       if (diverges) {
         const targetCursor = anchorIndex + desired.length - 1;
@@ -444,10 +496,11 @@ export class HistoryReconciler {
         // branch our own navigation produced (e.g. a replace that shrank the
         // entry list). Rebuild the entry with a push so the browser
         // truncates the whole branch. Observed-only/previous-session
-        // suffixes (no recorded path) keep the optimistic invariant and the
-        // in-place rewrite below — they are restoration targets. The root
-        // entry can only be rewritten in place (nothing to push from).
+        // suffixes keep the optimistic invariant and the in-place rewrite
+        // below — they are restoration targets. The root entry can only be
+        // rewritten in place (nothing to push from).
         const mustTruncateStaleSuffix =
+          divergesAsOwnWrite &&
           index === targetCursor &&
           index > anchorIndex &&
           this.model.hasWrittenEntriesAbove(index);
@@ -576,6 +629,11 @@ export class HistoryReconciler {
       state,
       path: entry.path,
     });
+    this.journal.recordWrite(
+      index,
+      { state, path: entry.path },
+      { truncateAbove: true },
+    );
   }
 
   private writeReplace(entry: DesiredHistoryEntry, index: number): void {
@@ -592,5 +650,10 @@ export class HistoryReconciler {
       state,
       path: entry.path,
     });
+    this.journal.recordWrite(
+      index,
+      { state, path: entry.path },
+      { truncateAbove: false },
+    );
   }
 }

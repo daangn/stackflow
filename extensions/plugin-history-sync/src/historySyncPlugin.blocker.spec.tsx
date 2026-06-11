@@ -987,182 +987,170 @@ describe("historySyncPlugin - deterministic browser harness", () => {
   });
 
   describe("cross-reload journal acceptance", () => {
-    it.failing(
-      "preserves an observed-only step entry after blocked cross-reload back in journal mode",
-      async () => {
-        let shouldPreventStepPop = true;
-        const onBlocked = jest.fn();
-        const shouldBlock = jest.fn(
-          (action: NavigationAction) =>
-            shouldPreventStepPop && action.name === "StepPopped",
-        );
-        const harness = await createReloadedStepBoundaryHarness({
-          blocker: {
-            shouldBlock,
-            onBlocked,
-          },
-        });
+    it("preserves an observed-only step entry after blocked cross-reload back in journal mode", async () => {
+      let shouldPreventStepPop = true;
+      const onBlocked = jest.fn();
+      const shouldBlock = jest.fn(
+        (action: NavigationAction) =>
+          shouldPreventStepPop && action.name === "StepPopped",
+      );
+      const harness = await createReloadedStepBoundaryHarness({
+        blocker: {
+          shouldBlock,
+          onBlocked,
+        },
+      });
 
-        expect(harness.snapshot()).toMatchObject({
-          url: "/articles/top/?tab=details",
-          active: {
-            name: "Article",
-            params: { articleId: "top", tab: "details" },
-            stepParams: { articleId: "top", tab: "details" },
-            stepCount: 2,
-          },
-        });
-        const beforeBlockedBack = harness.snapshot();
-
-        await act(async () => {
-          harness.history.back();
-        });
-        await harness.settle(() => ({
-          snapshot: harness.snapshot(),
-          blockedCount: onBlocked.mock.calls.length,
-        }));
-
-        expect(onBlocked).toHaveBeenCalledWith(
-          expect.objectContaining({
-            action: expect.objectContaining({ name: "StepPopped" }),
-          }),
-          expect.anything(),
-        );
-        expect(harness.snapshot()).toEqual(beforeBlockedBack);
-
-        shouldPreventStepPop = false;
-
-        await expectLocationAfterBrowserMove(
-          harness,
-          () => harness.history.back(),
-          {
-            url: "/articles/middle/?tab=comments",
-            activeName: "Article",
-            articleId: "middle",
-            tab: "comments",
-          },
-        );
-        expect(activeSnapshot(harness.getStack)).toMatchObject({
-          stepParams: { articleId: "middle", tab: "comments" },
-        });
-      },
-    );
-
-    it.failing(
-      "preserves an observed-only step entry after blocked cross-reload back without sessionStorage",
-      async () => {
-        let shouldPreventStepPop = true;
-        const onBlocked = jest.fn();
-        const harness = await createReloadedStepBoundaryHarness({
-          sessionStorage: null,
-          blocker: {
-            shouldBlock: (action) =>
-              shouldPreventStepPop && action.name === "StepPopped",
-            onBlocked,
-          },
-        });
-        const beforeBlockedBack = harness.snapshot();
-
-        await act(async () => {
-          harness.history.back();
-        });
-        await harness.settle(() => ({
-          snapshot: harness.snapshot(),
-          blockedCount: onBlocked.mock.calls.length,
-        }));
-
-        expect(onBlocked).toHaveBeenCalledTimes(1);
-        expect(harness.snapshot()).toEqual(beforeBlockedBack);
-
-        shouldPreventStepPop = false;
-
-        await expectLocationAfterBrowserMove(
-          harness,
-          () => harness.history.back(),
-          {
-            url: "/articles/middle/?tab=comments",
-            activeName: "Article",
-            articleId: "middle",
-            tab: "comments",
-          },
-        );
-        expect(activeSnapshot(harness.getStack)).toMatchObject({
-          stepParams: { articleId: "middle", tab: "comments" },
-        });
-      },
-    );
-
-    it.failing(
-      "reconstructs ancestor stack fidelity after a cross-reload backward go(-n)",
-      async () => {
-        const harness = await createReloadedActivityChainHarness();
-
-        await expectLocationAfterBrowserMove(
-          harness,
-          () => harness.history.go(-2),
-          {
-            url: "/articles/10/",
-            activeName: "Article",
-            articleId: "10",
-          },
-        );
-
-        expect(activeSnapshot(harness.getStack)).toMatchObject({
-          activityCount: 2,
-        });
-
-        await act(async () => {
-          harness.actions.pop();
-        });
-        await harness.settle();
-
-        expect(harness.currentPath()).toBe("/home/");
-        expect(activeSnapshot(harness.getStack)).toMatchObject({
-          name: "Home",
-        });
-      },
-    );
-
-    it.failing(
-      "reconstructs skipped intermediate entries during cross-reload forward go(+n)",
-      async () => {
-        const harness = await createReloadedActivityChainHarness();
-
-        await expectLocationAfterBrowserMove(
-          harness,
-          () => harness.history.go(-2),
-          {
-            url: "/articles/10/",
-            activeName: "Article",
-            articleId: "10",
-          },
-        );
-        await expectLocationAfterBrowserMove(
-          harness,
-          () => harness.history.go(2),
-          {
-            url: "/articles/30/",
-            activeName: "Article",
-            articleId: "30",
-          },
-        );
-
-        expect(activeSnapshot(harness.getStack)).toMatchObject({
-          activityCount: 4,
-        });
-
-        await act(async () => {
-          harness.actions.pop();
-        });
-        await harness.settle();
-
-        expect(harness.currentPath()).toBe("/articles/20/");
-        expect(activeSnapshot(harness.getStack)).toMatchObject({
+      expect(harness.snapshot()).toMatchObject({
+        url: "/articles/top/?tab=details",
+        active: {
           name: "Article",
-          params: { articleId: "20" },
-        });
-      },
-    );
+          params: { articleId: "top", tab: "details" },
+          stepParams: { articleId: "top", tab: "details" },
+          stepCount: 2,
+        },
+      });
+      const beforeBlockedBack = harness.snapshot();
+
+      await act(async () => {
+        harness.history.back();
+      });
+      await harness.settle(() => ({
+        snapshot: harness.snapshot(),
+        blockedCount: onBlocked.mock.calls.length,
+      }));
+
+      expect(onBlocked).toHaveBeenCalledWith(
+        expect.objectContaining({
+          action: expect.objectContaining({ name: "StepPopped" }),
+        }),
+        expect.anything(),
+      );
+      expect(harness.snapshot()).toEqual(beforeBlockedBack);
+
+      shouldPreventStepPop = false;
+
+      await expectLocationAfterBrowserMove(
+        harness,
+        () => harness.history.back(),
+        {
+          url: "/articles/middle/?tab=comments",
+          activeName: "Article",
+          articleId: "middle",
+          tab: "comments",
+        },
+      );
+      expect(activeSnapshot(harness.getStack)).toMatchObject({
+        stepParams: { articleId: "middle", tab: "comments" },
+      });
+    });
+
+    it("preserves an observed-only step entry after blocked cross-reload back without sessionStorage", async () => {
+      let shouldPreventStepPop = true;
+      const onBlocked = jest.fn();
+      const harness = await createReloadedStepBoundaryHarness({
+        sessionStorage: null,
+        blocker: {
+          shouldBlock: (action) =>
+            shouldPreventStepPop && action.name === "StepPopped",
+          onBlocked,
+        },
+      });
+      const beforeBlockedBack = harness.snapshot();
+
+      await act(async () => {
+        harness.history.back();
+      });
+      await harness.settle(() => ({
+        snapshot: harness.snapshot(),
+        blockedCount: onBlocked.mock.calls.length,
+      }));
+
+      expect(onBlocked).toHaveBeenCalledTimes(1);
+      expect(harness.snapshot()).toEqual(beforeBlockedBack);
+
+      shouldPreventStepPop = false;
+
+      await expectLocationAfterBrowserMove(
+        harness,
+        () => harness.history.back(),
+        {
+          url: "/articles/middle/?tab=comments",
+          activeName: "Article",
+          articleId: "middle",
+          tab: "comments",
+        },
+      );
+      expect(activeSnapshot(harness.getStack)).toMatchObject({
+        stepParams: { articleId: "middle", tab: "comments" },
+      });
+    });
+
+    it("reconstructs ancestor stack fidelity after a cross-reload backward go(-n)", async () => {
+      const harness = await createReloadedActivityChainHarness();
+
+      await expectLocationAfterBrowserMove(
+        harness,
+        () => harness.history.go(-2),
+        {
+          url: "/articles/10/",
+          activeName: "Article",
+          articleId: "10",
+        },
+      );
+
+      expect(activeSnapshot(harness.getStack)).toMatchObject({
+        activityCount: 2,
+      });
+
+      await act(async () => {
+        harness.actions.pop();
+      });
+      await harness.settle();
+
+      expect(harness.currentPath()).toBe("/home/");
+      expect(activeSnapshot(harness.getStack)).toMatchObject({
+        name: "Home",
+      });
+    });
+
+    it("reconstructs skipped intermediate entries during cross-reload forward go(+n)", async () => {
+      const harness = await createReloadedActivityChainHarness();
+
+      await expectLocationAfterBrowserMove(
+        harness,
+        () => harness.history.go(-2),
+        {
+          url: "/articles/10/",
+          activeName: "Article",
+          articleId: "10",
+        },
+      );
+      await expectLocationAfterBrowserMove(
+        harness,
+        () => harness.history.go(2),
+        {
+          url: "/articles/30/",
+          activeName: "Article",
+          articleId: "30",
+        },
+      );
+
+      expect(activeSnapshot(harness.getStack)).toMatchObject({
+        activityCount: 4,
+      });
+
+      await act(async () => {
+        harness.actions.pop();
+      });
+      await harness.settle();
+
+      expect(harness.currentPath()).toBe("/articles/20/");
+      expect(activeSnapshot(harness.getStack)).toMatchObject({
+        name: "Article",
+        params: { articleId: "20" },
+      });
+    });
 
     it("restores the original entry when a cross-reload multi-entry jump is blocked", async () => {
       const onBlocked = jest.fn();

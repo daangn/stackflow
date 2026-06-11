@@ -25,6 +25,7 @@ import type { ActivityActivationMonitor } from "./ActivityActivationMonitor/Acti
 import { DefaultHistoryActivityActivationMonitor } from "./ActivityActivationMonitor/DefaultHistoryActivityActivationMonitor";
 import { identityOfState } from "./BrowserHistoryEntryModel";
 import { computeDesiredHistoryEntries } from "./desiredHistoryEntries";
+import { HistoryEntryJournal } from "./HistoryEntryJournal";
 import { HistoryQueueProvider } from "./HistoryQueueContext";
 import { HistoryReconciler } from "./HistoryReconciler";
 import { getStateStepId, parseState, type State } from "./historyState";
@@ -269,11 +270,27 @@ export function historySyncPlugin<
       });
     };
 
+    const journal = new HistoryEntryJournal({
+      // Memory histories (SSR, tests) have no tab session to journal into;
+      // `index` is the one field history v5 exposes on memory histories
+      // only. `sessionStorage` shares its lifetime with the tab's browser
+      // history, which is exactly the journal's validity window. The
+      // property access is evaluated lazily inside the journal so that
+      // environments where it throws (e.g. hardened iframes) degrade to a
+      // no-op instead of crashing.
+      enabled: !("index" in history) && typeof window !== "undefined",
+      getStorage: () =>
+        typeof window === "undefined"
+          ? undefined
+          : (window.sessionStorage ?? undefined),
+    });
+
     const reconciler = new HistoryReconciler({
       history,
       useHash: options.useHash,
       computeDesired,
       onExternalPopState: (state) => handleExternalPopState(state),
+      journal,
     });
 
     /**
@@ -344,6 +361,30 @@ export function historySyncPlugin<
     };
 
     /**
+     * The contiguous run of model-known entry states ending at `toIndex`, in
+     * ascending index order. After a backward jump beyond this session's
+     * stack, this is the chain of ancestor entries that can be restored with
+     * historical fidelity: with a validated journal it spans the previous
+     * sessions' entries, without one it degrades to just the landing entry
+     * (which the surrounding popstate handler always learns first).
+     */
+    const collectKnownChainEndingAt = (toIndex: number): State[] => {
+      const chain: State[] = [];
+
+      for (let index = toIndex; ; index--) {
+        const entry = reconciler.model.getEntry(index);
+
+        if (!entry) {
+          break;
+        }
+
+        chain.push(entry.state);
+      }
+
+      return chain.reverse();
+    };
+
+    /**
      * Backward navigation: pop down to the target entry through the formal
      * action path, so that every plugin's pre-effect hooks (including
      * `preventDefault`) participate. If any pop is prevented the dispatch
@@ -368,21 +409,107 @@ export function historySyncPlugin<
       ).some((activity) => activity.id === targetActivityId);
 
       if (!isTargetActivityEntered) {
-        if (!dispatchChecked(actions, "Popped", () => actions.pop())) {
-          return false;
+        // The landing entry predates this session's stack, so every entered
+        // activity lies above it and leaves through a formal (preventable)
+        // pop. The final pop on the root is a recorded no-op that settles
+        // against the restored ancestors during re-aggregation: the replayed
+        // chain re-enters at its historical position (earlier event dates),
+        // so the now-dated pop events exit exactly the activities above the
+        // landing entry.
+        const activitiesToPop = enteredActivitiesOf(actions.getStack()).length;
+
+        for (
+          let i = 0;
+          i < activitiesToPop && i < MAX_NAVIGATION_DISPATCHES;
+          i++
+        ) {
+          if (!dispatchChecked(actions, "Popped", () => actions.pop())) {
+            return false;
+          }
         }
 
-        actions.dispatchEvent("Pushed", {
-          ...state.activity.enteredBy,
-        });
+        // Restore the known ancestor chain — not just the landing snapshot —
+        // so that back/forward granularity around the landing entry survives
+        // the jump (journal mode); without journal knowledge the chain is
+        // the landing entry alone.
+        const knownEventIds = new Set(
+          actions.getStack().events.map((event) => event.id),
+        );
+        const chain = collectKnownChainEndingAt(toIndex);
+        const replayedActivityEventIds = new Set<string>();
 
-        if (state.step && isStepEnteredBy(state.step)) {
-          actions.dispatchEvent("StepPushed", {
-            ...state.step.enteredBy,
+        for (const entryState of chain) {
+          const activityEnteredBy = entryState.activity.enteredBy;
+
+          if (
+            !replayedActivityEventIds.has(activityEnteredBy.id) &&
+            !knownEventIds.has(activityEnteredBy.id)
+          ) {
+            replayedActivityEventIds.add(activityEnteredBy.id);
+            actions.dispatchEvent("Pushed", {
+              ...activityEnteredBy,
+            });
+          }
+
+          if (
+            entryState.step &&
+            isStepEnteredBy(entryState.step) &&
+            !knownEventIds.has(entryState.step.enteredBy.id)
+          ) {
+            actions.dispatchEvent("StepPushed", {
+              ...entryState.step.enteredBy,
+            });
+          }
+        }
+
+        // Materialize slots for known activities *ahead* of the landing
+        // entry as well (historical enter + immediate transition-less exit).
+        // The core derives the active activity from the reducer's slot
+        // order, and a later forward replay re-enters an exited activity in
+        // its existing slot — without these slots a forward replay that
+        // appends a previous-session intermediate would interleave the slot
+        // order against navigation order and activate the wrong activity.
+        let materializedSlotCount = 0;
+
+        for (let index = toIndex + 1; ; index++) {
+          const entry = reconciler.model.getEntry(index);
+
+          if (!entry) {
+            break;
+          }
+
+          if (entry.state.step) {
+            // Step entries live inside their activity's slot.
+            continue;
+          }
+
+          const activityEnteredBy = entry.state.activity.enteredBy;
+
+          if (
+            replayedActivityEventIds.has(activityEnteredBy.id) ||
+            knownEventIds.has(activityEnteredBy.id)
+          ) {
+            continue;
+          }
+
+          replayedActivityEventIds.add(activityEnteredBy.id);
+          actions.dispatchEvent("Pushed", {
+            ...activityEnteredBy,
+          });
+          materializedSlotCount += 1;
+        }
+
+        for (let i = 0; i < materializedSlotCount; i++) {
+          actions.dispatchEvent("Popped", {
+            skipExitActiveState: true,
           });
         }
 
-        return true;
+        // The replay reconstructs state outside the formal action path, so
+        // double-check it actually settled on the landing activity before
+        // reporting the navigation complete (anchor re-derivation depends on
+        // it); the follow-up reconcile pass restores the browser otherwise.
+        return activeActivityOf(actions.getStack())?.id === targetActivityId;
       }
 
       for (let i = 0; i <= MAX_NAVIGATION_DISPATCHES; i++) {
@@ -460,9 +587,15 @@ export function historySyncPlugin<
 
       // The target step is not part of the current stack (its entry predates
       // a reload): pop the entries above it, then restore it at its
-      // historical position.
-      const stepsToPop =
-        computeDesired().length - 1 - (toIndex - reconciler.model.anchorIndex);
+      // historical position. The entry-distance estimate overcounts when
+      // steps lost on restore sit between the target and the live steps (the
+      // boot mapping is a fiction there), so it is clamped to the steps that
+      // can actually leave — the activity's first step never pops.
+      const liveStepCount = liveStepsOf(active).length;
+      const stepsToPop = Math.min(
+        computeDesired().length - 1 - (toIndex - reconciler.model.anchorIndex),
+        liveStepCount - 1,
+      );
 
       for (let i = 0; i < stepsToPop; i++) {
         const activeBefore = activeActivityOf(actions.getStack());
@@ -490,10 +623,41 @@ export function historySyncPlugin<
         }
       }
 
-      if (state.step && isStepEnteredBy(state.step)) {
-        actions.dispatchEvent("StepPushed", {
-          ...state.step.enteredBy,
-        });
+      // Restore the known step chain of this activity up to the landing
+      // entry — with a validated journal this includes intermediate steps
+      // skipped over by a multi-entry jump; without one it is the landing
+      // step alone (learned from the popstate).
+      const remainingActive = activeActivityOf(actions.getStack());
+      const remainingStepIds = new Set(
+        remainingActive
+          ? liveStepsOf(remainingActive).map((step) => step.id)
+          : [],
+      );
+      const stepStatesToReplay: State[] = [];
+
+      for (let index = toIndex; ; index--) {
+        const entry = reconciler.model.getEntry(index);
+        const entryStep = entry?.state.step;
+
+        if (
+          !entry ||
+          entry.state.activity.id !== targetActivityId ||
+          !entryStep ||
+          !isStepEnteredBy(entryStep) ||
+          remainingStepIds.has(entryStep.id)
+        ) {
+          break;
+        }
+
+        stepStatesToReplay.push(entry.state);
+      }
+
+      for (const stepState of stepStatesToReplay.reverse()) {
+        if (stepState.step && isStepEnteredBy(stepState.step)) {
+          actions.dispatchEvent("StepPushed", {
+            ...stepState.step.enteredBy,
+          });
+        }
       }
 
       return true;
