@@ -7,6 +7,13 @@ const STATE_TAG = "@stackflow/plugin-history-sync";
 interface State {
   activity: Activity;
   step?: ActivityStep;
+  /**
+   * The plugin-owned linear position of this entry in the browser history
+   * sequence. This coordinate — not the core activity id ordering — is what the
+   * sync pass uses to decide direction and distance. See the solution plan's
+   * "entry ordinal".
+   */
+  ordinal?: number;
 }
 
 interface SerializedState {
@@ -20,6 +27,7 @@ function serializeState(state: State): SerializedState {
     flattedState: stringify({
       activity: state.activity,
       step: state.step,
+      ordinal: state.ordinal,
     }),
   };
 }
@@ -42,6 +50,16 @@ export function parseState(input: unknown): State | null {
   } catch {
     return null;
   }
+}
+
+/**
+ * The entry ordinal stamped on the browser's current entry, or `null` when the
+ * current entry was not stamped by this plugin (e.g. before initial setup, or an
+ * entry below the bottom app entry).
+ */
+export function readBrowserOrdinal(history: History): number | null {
+  const state = parseState(history.location.state);
+  return state && typeof state.ordinal === "number" ? state.ordinal : null;
 }
 
 export function pushState({
