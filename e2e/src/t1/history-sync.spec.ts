@@ -70,6 +70,11 @@ describe("history-sync baseline (both plugins applied, blocker disarmed)", () =>
     await h.replaceArticle("1234", "hello");
     await expectScreen(h, "Article", "/articles/1234/?title=hello");
     expect((await h.readStack()).activities).toHaveLength(1);
+    // Replace must not have added a browser entry: browser back leaves the app
+    // (no earlier app entry below the replaced initial activity). This catches
+    // an implementation that pushState'd while replacing — the public depth
+    // would still read 1 but a stray back entry would survive.
+    await h.expectNoEarlierAppEntry();
   });
 
   test("repeated push then pop walks the URL back down", async () => {

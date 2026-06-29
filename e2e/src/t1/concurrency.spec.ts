@@ -43,13 +43,17 @@ describe("concurrency and reentrancy", () => {
 
   test("a user nav during a self-induced multi-step shrink settles consistently", async () => {
     // A base entry below the activity being popped so the injected back stays
-    // in the app while the self-induced multi-step shrink is in flight.
-    const h = await open();
+    // in the app while the self-induced multi-step shrink is in flight. A wider
+    // transition keeps the shrink window open long enough to enter positively.
+    const h = await open({ transitionDuration: 200 });
     await h.pushArticle("0");
     await h.pushArticle("1");
     await h.stepPushId("2");
     await h.stepPushId("3");
     await h.click("pop");
+    // Inject the user back only after the self-induced shrink window is open;
+    // if it never opens the wait times out (failure), not a trivial green.
+    await h.waitForNonIdle();
     await h.rapidBack(1);
     await h.settle();
     await h.expectBrowserStack();

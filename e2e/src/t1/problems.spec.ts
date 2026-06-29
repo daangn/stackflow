@@ -37,6 +37,10 @@ describe("problem 1 — a blocked browser back keeps the user in place", () => {
   });
 
   test("proceeding the blocked browser back completes the pop", async () => {
+    // On the unfixed product the browser back is never vetoed, so no dialog
+    // appears and `waitForDialog` times out — that timeout is the red. On the
+    // fixed product the dialog appears, the proceed commits, and this is a fast
+    // green.
     const h = await open({ block: "Article:Popped" });
     await h.pushArticle("1");
     await h.browserBack();
@@ -67,6 +71,14 @@ describe("problem 2 — a blocked programmatic navigation does not desync", () =
     await h.browserForward();
     await h.settle();
     await expectAt(h, "Article", "/articles/1/");
+    // The back entry is intact: dismiss the dialog, disarm, and browser back
+    // must still reach Home. Catches an implementation that restored the
+    // visible position but lost or rewrote the real back entry.
+    await h.cancelBlock("b1");
+    await h.toggleArm("b1");
+    await h.browserBack();
+    await h.settle();
+    await expectAt(h, "Home", "/");
   });
 
   test("a blocked stepPop leaves URL and stack at the current step", async () => {
@@ -93,6 +105,11 @@ describe("problem 2 — a blocked programmatic navigation does not desync", () =
   });
 
   test("proceeding a blocked pop completes it consistently", async () => {
+    // On the unfixed product the blocked pop already moved the browser (the
+    // queued history.back ran), and the proceed runs a second back that
+    // underflows the app history — the bridge reports "navigated away" and that
+    // is the red. On the fixed product no spurious back occurs, the proceed
+    // commits cleanly, and this is a fast green.
     const h = await open({ block: "Article:Popped" });
     await h.pushArticle("1");
     await h.attemptPop();

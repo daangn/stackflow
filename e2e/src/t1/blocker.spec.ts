@@ -192,6 +192,10 @@ describe("plugin-blocker × history-sync (real browser)", () => {
   });
 
   // --- proceed ---
+  // Proceeding a blocked pop is red on the unfixed product: the blocked pop
+  // already moved the browser, so the proceed's commit runs a second back that
+  // navigates the app away (the bridge reports "navigated away"). On the fixed
+  // product the proceed commits cleanly — a fast green.
 
   test("a single blocker's proceed runs the blocked navigation", async () => {
     const h = await open({ block: "Article:Popped" });

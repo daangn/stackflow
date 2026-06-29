@@ -37,6 +37,10 @@ describe("blocker × history-sync coexistence contract", () => {
     expect(await h.hasDialog("b1")).toBe(true);
   });
 
+  // The proceed cases below are red on the unfixed product because the blocked
+  // pop already moved the browser (queued history.back), so a proceed either
+  // can't complete the commit (the wait times out) or runs a second back that
+  // navigates the app away. On the fixed product they are fast greens.
   test("proceeding across an async gap commits and a later push syncs exactly", async () => {
     const h = await open({ block: "Article:Popped", blockAsync: true });
     await h.pushArticle("1");
@@ -77,12 +81,23 @@ describe("blocker × history-sync coexistence contract", () => {
   });
 
   test("proceeding twice runs the action once", async () => {
+    // Two levels above Home so a second (erroneous) pop would be observable:
+    // one pop lands on Article(1); a double execution would reach Home.
     const h = await open({ block: "Article:Popped" });
     await h.pushArticle("1");
+    await h.pushArticle("2");
     await h.attemptPop();
     await h.waitForDialog("b1");
     await h.confirm("b1");
     await h.confirm("b1");
+    await h.settle();
+    // Exactly one pop happened: still at Article(1), not Home.
+    await expectAt(h, "Article", "/articles/1/");
+    // And it left clean browser entries: disarm and browser back reaches Home
+    // once (proving we sit on a single Article(1) entry above Home, not on Home
+    // from a duplicated pop).
+    await h.toggleArm("b1");
+    await h.browserBack();
     await h.settle();
     await expectAt(h, "Home", "/");
   });

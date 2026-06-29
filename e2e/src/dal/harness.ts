@@ -226,6 +226,22 @@ export class Harness {
     return this.page.isVisible(sel(tid));
   }
 
+  /** Whether the page is still on the harness app (vs left it via back). */
+  isOnHarness(): Promise<boolean> {
+    return this.page.evaluate(() => Boolean(window.__harness__));
+  }
+
+  /**
+   * Navigability witness that the current entry is the bottom app entry: a
+   * `browserBack()` leaves the app entirely (there is no earlier app entry).
+   * Catches a broken implementation that created an extra browser entry where
+   * the public stack stayed shallow.
+   */
+  async expectNoEarlierAppEntry(): Promise<void> {
+    await this.browserBack();
+    expect(await this.isOnHarness()).toBe(false);
+  }
+
   // --- composite navigation (commit + settle); use raw click for
   //     blocked/race scenarios where the navigation must not settle ---
 
