@@ -1,0 +1,26 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "jsx": "react-jsx",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "types": ["node", "jest"],
+    "noEmit": true,
+    "paths": {
+      "@stackflow/core": ["../core/src/index.ts"],
+      "@stackflow/react": ["../integrations/react/src/index.ts"],
+      "@stackflow/config": ["../config/src/index.ts"],
+      "@stackflow/plugin-history-sync": [
+        "../extensions/plugin-history-sync/src/index.ts"
+      ],
+      "@stackflow/plugin-blocker": [
+        "../extensions/plugin-blocker/src/index.ts"
+      ],
+      "@stackflow/plugin-renderer-basic": [
+        "../extensions/plugin-renderer-basic/src/index.ts"
+      ]
+    }
+  },
+  "include": ["src/app", "src/dal", "src/shared", "vite.config.ts"]
+}
