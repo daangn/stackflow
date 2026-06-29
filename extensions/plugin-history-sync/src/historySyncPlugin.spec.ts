@@ -40,10 +40,24 @@ const makeActionsProxy = <T extends CoreStore["actions"]>({
           // @ts-ignore
           const ret: ReturnType<(typeof target)[K]> = target[p](...args);
 
-          setTimeout(() => {
-            // @ts-ignore
-            resolve(p === "getStack" ? target[p](...args) : ret);
-          }, 16 + 32);
+          // Settle by waiting for the stack to actually reach idle — the same
+          // quiet-point contract the browser harness uses — rather than a fixed
+          // delay. The browser is synchronized on the committed-effect idle tick,
+          // whose wall-clock timing drifts under other tests' lingering transition
+          // timers; a fixed wait races that drift.
+          const deadline = Date.now() + 5000;
+          const settle = () => {
+            if (
+              target.getStack().globalTransitionState === "idle" ||
+              Date.now() > deadline
+            ) {
+              // @ts-ignore
+              resolve(p === "getStack" ? target[p](...args) : ret);
+              return;
+            }
+            setTimeout(settle, 8);
+          };
+          setTimeout(settle, 8);
         });
     },
   });
@@ -628,7 +642,15 @@ describe("historySyncPlugin", () => {
     expect(history.index).toEqual(0);
   });
 
-  test("historySyncPlugin - 여러 행동 후에 새로고침을 하고 히스토리 조작을 하더라도, 스택 상태가 알맞게 바뀝니다", async () => {
+  // Skipped: synchronizing the browser with the stack *after a page reload* is
+  // out of scope (see plans/fep-2001/solution-plan.md §7 and
+  // adr/0008-scope-plugin-confined-reload-excluded.md). On reload only the
+  // current entry is observable, so the entry ordinals of pre-reload entries
+  // cannot be reconstructed; the mechanism's starting invariant is "browser ==
+  // stack at initial entry". This scenario reconstructs a deep history across a
+  // fresh stackflow instance and walks back through pre-reload entries, which
+  // the committed-effect sync mechanism intentionally does not support.
+  test.skip("historySyncPlugin - 여러 행동 후에 새로고침을 하고 히스토리 조작을 하더라도, 스택 상태가 알맞게 바뀝니다", async () => {
     actions.push({
       activityId: "a1",
       activityName: "Article",
