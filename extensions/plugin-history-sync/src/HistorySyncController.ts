@@ -165,7 +165,7 @@ export class HistorySyncController {
   private syncPass(stack: Stack): void {
     const entries = committedEntries(stack);
     if (entries.length === 0) {
-      return;
+      throw new Error("invariant: empty entered stack");
     }
 
     const browserState = parseState(this.history.location.state);
