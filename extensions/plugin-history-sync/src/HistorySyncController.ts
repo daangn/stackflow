@@ -14,12 +14,12 @@ export interface ControllerActions {
     activityName: string;
     activityParams: { [key: string]: string | undefined };
   }) => void;
-  stepPush: (params: {
+  pushStep: (params: {
     stepId: string;
     stepParams: { [key: string]: string | undefined };
   }) => void;
   pop: () => void;
-  stepPop: () => void;
+  popStep: () => void;
 }
 
 export interface HistorySyncControllerOptions {
@@ -236,7 +236,7 @@ export class HistorySyncController {
       }
 
       if (active.steps.length > 1) {
-        this.actions.stepPop();
+        this.actions.popStep();
       } else {
         this.actions.pop();
       }
@@ -256,7 +256,7 @@ export class HistorySyncController {
     const active = activeActivity(this.actions.getStack());
 
     if (targetState.step && active && targetState.activity.id === active.id) {
-      this.actions.stepPush({
+      this.actions.pushStep({
         stepId: targetState.step.id,
         stepParams: targetState.step.params,
       });
