@@ -134,11 +134,11 @@ export class HistorySyncController {
   dispose(): void {
     this.unlisten?.();
     this.unlisten = null;
+    this.inFlight = false;
   }
 
   scheduleSync(): void {
     this.syncPass();
-    this.inFlight = false;
   }
 
   // --- the sync pass: the only browser mutation authority ---
