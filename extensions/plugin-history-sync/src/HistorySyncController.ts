@@ -158,10 +158,11 @@ export class HistorySyncController {
       return;
     }
 
-    const browserOrdinal = readBrowserOrdinal(this.history);
-    if (browserOrdinal === null) {
-      return;
+    const browserState = parseState(this.history.location.state);
+    if (!browserState || typeof browserState.ordinal !== "number") {
+      throw new Error("invariant: current browser entry has no ordinal");
     }
+    const browserOrdinal = browserState.ordinal;
 
     const stackOrdinal = entries.length - 1;
     const delta = stackOrdinal - browserOrdinal;
@@ -180,9 +181,8 @@ export class HistorySyncController {
       this.browserCursor = stackOrdinal;
       this.history.go(delta);
     } else {
-      const browserState = parseState(this.history.location.state);
       const top = entries[stackOrdinal];
-      if (!browserState || stateIdentity(browserState) !== entryIdentity(top)) {
+      if (stateIdentity(browserState) !== entryIdentity(top)) {
         this.stampReplace(top, stackOrdinal);
       }
       this.browserCursor = stackOrdinal;
