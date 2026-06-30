@@ -134,6 +134,7 @@ export class HistorySyncController {
 
   scheduleSync(): void {
     this.syncPass();
+    this.inFlight = false;
   }
 
   // --- the sync pass: the only browser mutation authority ---
