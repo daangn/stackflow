@@ -87,7 +87,7 @@ function stateIdentity(state: {
 
 export class HistorySyncController {
   private readonly history: History;
-  private readonly useHash?: boolean;
+  private readonly useHash: boolean;
   private readonly actions: ControllerActions;
   private readonly makePath: HistorySyncControllerOptions["makePath"];
 
@@ -99,7 +99,7 @@ export class HistorySyncController {
 
   constructor(options: HistorySyncControllerOptions) {
     this.history = options.history;
-    this.useHash = options.useHash;
+    this.useHash = options.useHash ?? false;
     this.actions = options.actions;
     this.makePath = options.makePath;
   }
