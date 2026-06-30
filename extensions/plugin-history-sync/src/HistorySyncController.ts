@@ -105,6 +105,10 @@ export class HistorySyncController {
   }
 
   start(): void {
+    if (this.unlisten) {
+      throw new Error("HistorySyncController.start() called twice");
+    }
+
     const existing = parseState(this.history.location.state);
 
     if (existing === null) {
