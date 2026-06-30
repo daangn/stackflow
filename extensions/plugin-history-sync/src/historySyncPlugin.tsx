@@ -489,9 +489,6 @@ export function historySyncPlugin<
           makePath,
         });
 
-        // Stamp the initial committed stack onto the browser entries and start
-        // following user navigation. From here the controller is the sole
-        // authority over browser history.
         controller.start();
       },
       onBeforePush({ actionParams, actions: { overrideActionParams } }) {

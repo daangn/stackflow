@@ -7,12 +7,6 @@ import {
   replaceState,
 } from "./historyState";
 
-/**
- * The actions this controller drives. Backward/forward user navigations are
- * translated into these pipeline calls (so other plugins' `onBefore*` run and a
- * `preventDefault` is respected); the controller itself never dispatches events
- * directly past the hooks.
- */
 export interface ControllerActions {
   getStack: () => Stack;
   push: (params: {
@@ -32,14 +26,12 @@ export interface HistorySyncControllerOptions {
   history: History;
   useHash?: boolean;
   actions: ControllerActions;
-  /** Builds the URL pathname an activity/step occupies, from the route template. */
   makePath: (
     activityName: string,
     params: { [key: string]: string | undefined },
   ) => string;
 }
 
-/** One browser entry's worth of the committed stack, bottom-to-top. */
 interface CommittedEntry {
   activity: Activity;
   step: ActivityStep;
@@ -93,23 +85,6 @@ function stateIdentity(state: {
   return state.step?.id ?? state.activity.id;
 }
 
-/**
- * The single authority that mutates the browser history. It anchors every
- * browser change to the *committed* stack (post-effect), reacting to commit
- * notifications and to user popstates:
- *
- * - A committed stack change schedules a sync pass.
- * - A user popstate is translated into the corresponding pipeline action and
- *   then schedules a sync pass — it never touches the browser directly.
- *
- * The sync pass is a pure, idempotent function of `(committed stack, current
- * entry)`: it compares the stack ordinal to the browser ordinal and pushes,
- * steps back, replaces, or does nothing. It runs only at idle (so buffered and
- * delayed async commits are absorbed) and coalesces repeated reservations into
- * one. A single in-flight suppression token keeps the self-induced backward move
- * — the one operation that produces its own popstate — from being mistaken for a
- * user navigation; no token is taken for a move that does not happen.
- */
 export class HistorySyncController {
   private readonly history: History;
   private readonly useHash?: boolean;
@@ -129,12 +104,6 @@ export class HistorySyncController {
     this.makePath = options.makePath;
   }
 
-  /**
-   * Stamp the initial committed stack onto the browser entries (the starting
-   * invariant is browser == stack at entry), then start following user
-   * navigation. Skips re-stamping when the entry already carries plugin state
-   * (a reload — out of scope), only adopting its ordinal.
-   */
   start(): void {
     const existing = parseState(this.history.location.state);
 
@@ -163,11 +132,6 @@ export class HistorySyncController {
     this.unlisten = null;
   }
 
-  /**
-   * Reserve a sync pass in reaction to a committed stack change. The pass itself
-   * is idle-gated and idempotent, so reservations made while transitioning
-   * naturally coalesce into the single pass that runs once the stack settles.
-   */
   scheduleSync(): void {
     this.syncPass();
   }
@@ -226,14 +190,10 @@ export class HistorySyncController {
     action: Action;
     location: History["location"];
   }): void {
-    // Push/Replace are this plugin's own synchronous, sole-author mutations.
     if (update.action !== Action.Pop) {
       return;
     }
 
-    // A POP while a self-induced backward move is in flight is suppressed: it is
-    // that move's own callback, or a user navigation that lands in the same
-    // window and is dropped (the following sync pass realigns the browser).
     if (this.inFlight) {
       this.inFlight = false;
       const landed = readBrowserOrdinal(this.history);
