@@ -39,10 +39,7 @@ interface CommittedEntry {
 }
 
 function isEntered(activity: Activity): boolean {
-  return (
-    activity.transitionState === "enter-active" ||
-    activity.transitionState === "enter-done"
-  );
+  return activity.transitionState === "enter-done";
 }
 
 /**
