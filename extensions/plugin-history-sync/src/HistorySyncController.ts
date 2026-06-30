@@ -91,6 +91,12 @@ export class HistorySyncController {
 
   /** Set while a self-induced backward move awaits its own popstate. */
   private inFlight = false;
+  /**
+   * A reserved sync pass kept (not consumed) while a self-induced move is in
+   * flight or the stack is mid-transition, so a reservation made during an
+   * in-flight move is flushed afterward rather than lost.
+   */
+  private pendingSync = false;
   /** This controller's belief of the browser's current ordinal. */
   private browserCursor = 0;
   private unlisten: (() => void) | null = null;
@@ -136,13 +142,12 @@ export class HistorySyncController {
   }
 
   scheduleSync(): void {
-    this.syncPass();
+    this.pendingSync = true;
+    this.flushSync();
   }
 
-  // --- the sync pass: the only browser mutation authority ---
-
-  private syncPass(): void {
-    if (this.inFlight) {
+  private flushSync(): void {
+    if (this.inFlight || !this.pendingSync) {
       return;
     }
 
@@ -151,6 +156,13 @@ export class HistorySyncController {
       return;
     }
 
+    this.pendingSync = false;
+    this.syncPass(stack);
+  }
+
+  // --- the sync pass: the only browser mutation authority ---
+
+  private syncPass(stack: Stack): void {
     const entries = committedEntries(stack);
     if (entries.length === 0) {
       return;
