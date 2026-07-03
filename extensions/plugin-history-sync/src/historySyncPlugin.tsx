@@ -477,9 +477,9 @@ export function historySyncPlugin<
         const controllerActions: ControllerActions = {
           getStack: actions.getStack,
           push: (params) => actions.push(params),
-          pushStep: (params) => actions.stepPush(params),
+          stepPush: (params) => actions.stepPush(params),
           pop: () => actions.pop(),
-          popStep: () => actions.stepPop(),
+          stepPop: () => actions.stepPop(),
         };
 
         controller = new HistorySyncController({
