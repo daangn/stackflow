@@ -5,7 +5,7 @@
 ## Language
 
 **Entry ordinal**:
-브라우저 history 엔트리 하나의 선형 위치 인덱스로, 이 플러그인이 소유하고 각 엔트리의 history `state`에 직접 기록하는 좌표. 동기화의 방향·거리는 전적으로 이 좌표로 정한다.
+브라우저 history 엔트리 하나의 선형 위치 인덱스로, 이 플러그인이 소유하고 각 엔트리의 history `state`에 직접 기록하는 좌표. 동기화의 방향·거리는 전적으로 이 좌표로 정한다. 이 플러그인이 발행하는 모든 엔트리는 ordinal을 **항상** 싣는다(그래서 `state`의 필수 필드다). 반대로 이 플러그인의 태그가 없는 외부 엔트리는 미인식(파싱 결과 null)으로 걸러지므로, "우리 엔트리인데 ordinal이 없다"는 상태는 존재하지 않는다.
 _Avoid_: index, depth, position id, 활동 id(순서 용도로)
 
 **Stack ordinal**:
