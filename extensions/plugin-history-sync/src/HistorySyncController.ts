@@ -218,9 +218,9 @@ export class HistorySyncController {
 
     const targetState = parseState(update.location.state);
     if (!targetState) {
-      // Navigated to an entry this plugin did not stamp (e.g. below the bottom
-      // app entry); there is nothing to translate.
-      return;
+      throw new Error(
+        "invariant: received a popstate for an entry not stamped by this plugin",
+      );
     }
 
     const to = targetState.ordinal;
