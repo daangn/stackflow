@@ -165,7 +165,9 @@ export class HistorySyncController {
   private syncPass(stack: Stack): void {
     const entries = committedEntries(stack);
     if (entries.length === 0) {
-      throw new Error("invariant: empty entered stack");
+      throw new Error(
+        "At least one active activity was expected but empty stack is found",
+      );
     }
 
     const browserState = parseState(this.history.location.state);
