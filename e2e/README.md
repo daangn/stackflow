@@ -35,7 +35,7 @@ yarn workspace @stackflow/e2e-history-sync-blocker browser:install
 #   (or set HARNESS_BROWSER_CHANNEL=chrome to use a system Chrome)
 
 # both tiers
-yarn workspace @stackflow/e2e-history-sync-blocker test
+yarn workspace @stackflow/e2e-history-sync-blocker test:e2e
 
 # one tier
 yarn workspace @stackflow/e2e-history-sync-blocker test:t1
@@ -47,6 +47,13 @@ yarn workspace @stackflow/e2e-history-sync-blocker app:dev
 
 T1 builds the app and serves it automatically (jest `globalSetup`); no separate
 server step is needed.
+
+This harness is deliberately excluded from the monorepo unit-CI sweep
+(`ultra -r test` / `ultra -r typecheck`): T1 needs a real Chromium the unit
+runners don't have, and the package type-checks the plugins' aliased **source**
+(not this package's own code), which is not a meaningful per-package `tsc`
+target. So it exposes `test:e2e` (not `test`) and no `typecheck` script — run it
+explicitly with the commands above.
 
 ## Expected red on the unfixed product
 
@@ -99,8 +106,9 @@ The app is configured entirely by URL query knobs (`order`, `hash`, `lazyDelay`,
 `block`, `blockers`, `blockAsync`, `probe`, …), so each scenario is a pure
 function of how the driver opened it. See `src/shared/contract.ts`.
 
-> Note: `yarn typecheck` covers the harness's own code (`src/app`, `src/dal`,
-> `src/shared`). Because the harness compiles the plugins' current **source**,
-> `tsc` additionally surfaces a few strict-mode diagnostics inside that aliased
-> product source; those are not harness-code issues. The gate is the test suites
-> and the production build.
+> Note: this package exposes no `typecheck` script. Because it aliases the
+> plugins' current **source**, a per-package `tsc` pulls that product source in
+> and surfaces strict-mode diagnostics that are not harness-code issues — so it
+> is not a meaningful `tsc` target. The harness's guarantees come from the test
+> suites (`test:e2e` / `test:t1` / `test:t2i`) and the production build; each
+> plugin type-checks itself in its own package.

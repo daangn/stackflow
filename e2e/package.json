@@ -10,10 +10,9 @@
     "app:build": "vite build",
     "app:preview": "vite preview",
     "browser:install": "playwright install chromium",
-    "test": "jest",
+    "test:e2e": "jest",
     "test:t1": "jest --selectProjects t1",
     "test:t2i": "jest --selectProjects t2i",
-    "typecheck": "tsc --noEmit",
     "clean": "rimraf dist node_modules/.vite"
   },
   "devDependencies": {
