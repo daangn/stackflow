@@ -166,7 +166,7 @@ export class HistorySyncController {
     }
 
     const browserState = parseState(this.history.location.state);
-    if (!browserState || typeof browserState.ordinal !== "number") {
+    if (!browserState) {
       throw new Error("invariant: current browser entry has no ordinal");
     }
     const browserOrdinal = browserState.ordinal;
@@ -217,7 +217,7 @@ export class HistorySyncController {
     }
 
     const targetState = parseState(update.location.state);
-    if (!targetState || typeof targetState.ordinal !== "number") {
+    if (!targetState) {
       // Navigated to an entry this plugin did not stamp (e.g. below the bottom
       // app entry); there is nothing to translate.
       return;
