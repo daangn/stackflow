@@ -45,11 +45,14 @@ function isEntered(activity: Activity): boolean {
 /**
  * The linear sequence of browser entries the committed stack should occupy,
  * bottom-to-top. One entry per step; the first step of an activity is its base
- * entry. The bottom-to-top order is `stack.activities`' own order; direction and
- * distance come from the entry ordinal, never from comparing core activity ids.
+ * entry. The bottom-to-top order is by `enteredBy.eventDate` (a later entry sits
+ * higher), matching the core's own ordering; direction and distance come from
+ * the entry ordinal, never from comparing core activity ids.
  */
 function committedEntries(stack: Stack): CommittedEntry[] {
-  const entered = stack.activities.filter(isEntered);
+  const entered = stack.activities
+    .filter(isEntered)
+    .sort((a, b) => a.enteredBy.eventDate - b.enteredBy.eventDate);
 
   const entries: CommittedEntry[] = [];
   for (const activity of entered) {
