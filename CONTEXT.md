@@ -2,10 +2,10 @@
 
 ## Terms
 
-### 초기화 (Init)
+### 생성 (Create)
 
-새 Stack을 처음부터 만들어내는 진입 경로. 보존된 탐색 맥락이 없는 상태에서 시작한다.
-defaultActivity 진입과 deep link(URL) 진입이 여기에 속하며, 둘 다 의미상 push다 —
+새 Stack을 처음부터(from scratch) 만들어내는 진입 경로. 보존된 탐색 맥락이 없는 상태에서
+시작한다. defaultActivity 진입과 deep link(URL) 진입이 여기에 속하며, 둘 다 의미상 push다 —
 따라서 activity 진입 가드의 적용 대상이다.
 
 ### 복원 (Load)
@@ -17,7 +17,7 @@ defaultActivity 진입과 deep link(URL) 진입이 여기에 속하며, 둘 다 
 
 ### 진입 (Entry)
 
-Activity가 Stack에 나타나게 되는 사건. Init 경로의 최초 진입은 의미상 push이며,
+Activity가 Stack에 나타나게 되는 사건. Create 경로의 최초 진입은 의미상 push이며,
 플러그인이 가로챌(검사·차단·변경) 수 있어야 한다. Load 경로의 진입은 push가
 아니다 — 이미 검증된 맥락의 재구성이므로 가로채기 대상이 아니다.
 
@@ -51,8 +51,8 @@ Stack의 불변식(invariants)이 모두 충족된 상태. stackflow core + plug
 
 ## Relationships
 
-- Stack은 Init 또는 Load 중 정확히 하나의 경로로 만들어진다.
-- Init ↔ Load 구분은 core가 표현한다 — 플러그인(guard, persister, history-sync)이
+- Stack은 Create 또는 Load 중 정확히 하나의 경로로 만들어진다.
+- Create ↔ Load 구분은 core가 표현한다 — 플러그인(guard, persister, history-sync)이
   진입 경로별 정책을 세우는 근거가 된다.
 - Load는 Stack 생성 시점에만 일어난다. 스냅샷은 생성 시점에 동기적으로 주어져야
   하며, 생성된 Stack은 그 순간부터 항상 정상 상태다 — "복원 대기 중" 같은 중간
@@ -62,9 +62,9 @@ Stack의 불변식(invariants)이 모두 충족된 상태. stackflow core + plug
   명시적 에러다. 유효하지 않은 스냅샷으로부터 정상 상태 Stack이 몰래 만들어지는
   일은 없다.
 - Load 실패 에러의 1차 처리 책임은 스냅샷 공급자(persister 등)에게 있다.
-  공급자가 복구 정책(스냅샷 폐기, init 재시도 등)을 결정하며, 앱 개발자는
+  공급자가 복구 정책(스냅샷 폐기, create 재시도 등)을 결정하며, 앱 개발자는
   기본적으로 이 에러를 다루지 않는다.
-- Init ↔ Load 구분은 Stack 생성 시점의 일회성 신호다. 구분이 Stack 상태에 지속
+- Create ↔ Load 구분은 Stack 생성 시점의 일회성 신호다. 구분이 Stack 상태에 지속
   속성으로 남지는 않는다 — 이를 알아야 하는 소비자는 생성 시점에 부착되어 있어야
   한다.
 - Stack 생성은 스냅샷을 최대 하나만 받는다. 복수 복원 후보의 선택·조정은 Stack
