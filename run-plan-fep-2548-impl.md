@@ -88,14 +88,14 @@ run 한정 오버라이드: 없음. 중간 사용자 확인 없이 최종 산출
 
 | 논리 세션명 | 슬롯 | role | 런타임 | 모델 | 세부 지침 | lens |
 |---|---|---|---|---|---|---|
-| hplan-worker-claude | harness-plan-worker | worker | Claude | fable-5[1m] | 기획 중심은 설계서 §3 공개 계약·§4 생성 시퀀스·§5 불변식(§1 "검증 항목의 원천"). 항목마다 given-when-then과 "이 항목이 잡는 결함 구현"을 명시(판별력). 기존 스위트 담당 축과 신규 하니스 담당 축의 경계를 기획서에 명시 | test, problem |
-| hplan-reviewer-claude | harness-plan-reviewer | reviewer | Claude | fable-5[1m] | 전담 섹션: **§3 공개 계약·§5 불변식** — 담당 섹션(3.1–3.6 전수·C1–C4·N1–N2·L1–L6 전수)이 판별력 있는 하니스로 온전히 기획되었는지 확인(누락 항목 적발, 항목이 결함 구현에 실제로 red를 내는지) | test, problem |
+| hplan-worker-claude | harness-plan-worker | worker | Claude | opus-4.8[1m] | 기획 중심은 설계서 §3 공개 계약·§4 생성 시퀀스·§5 불변식(§1 "검증 항목의 원천"). 항목마다 given-when-then과 "이 항목이 잡는 결함 구현"을 명시(판별력). 기존 스위트 담당 축과 신규 하니스 담당 축의 경계를 기획서에 명시 | test, problem |
+| hplan-reviewer-claude | harness-plan-reviewer | reviewer | Claude | opus-4.8[1m] | 전담 섹션: **§3 공개 계약·§5 불변식** — 담당 섹션(3.1–3.6 전수·C1–C4·N1–N2·L1–L6 전수)이 판별력 있는 하니스로 온전히 기획되었는지 확인(누락 항목 적발, 항목이 결함 구현에 실제로 red를 내는지) | test, problem |
 | hplan-reviewer-codex | harness-plan-reviewer | reviewer | Codex | 기본 | 전담 섹션: **§4 생성 시퀀스** — 담당 섹션(§4.1 create·§4.2 load 각 스텝, 재기저 RB1–RB5, §4.3 기존 경로 관계)이 판별력 있는 하니스로 온전히 기획되었는지 확인(누락 스텝·엣지 적발, 항목의 판별력) | test, problem |
-| himpl-worker-claude | harness-impl-worker | worker | Claude | fable-5[1m] | 기획서와 1:1(누락·초과 없음) 스위트 구현. 신규 표면은 설계서 §3 시그니처의 스텁(본문 throw)으로 컴파일 확보 — 인도 상태: 신규 하니스 red(올바른 지점에서 실패)·기존 스위트 green. 타입 주장은 tsc 실측 | test, implementation, architecture |
-| himpl-reviewer-claude | harness-impl-reviewer | reviewer | Claude | fable-5[1m] | 전담 축: 기획 1:1 대응·테스트 질 — 각 테스트가 기획 항목의 검증 의도를 실제로 검사하는가, red가 올바른 이유의 red인가(스텁 throw가 아닌 단언 실패로 오인되는 항목 적발) | test, implementation, architecture |
+| himpl-worker-claude | harness-impl-worker | worker | Claude | opus-4.8[1m] | 기획서와 1:1(누락·초과 없음) 스위트 구현. 신규 표면은 설계서 §3 시그니처의 스텁(본문 throw)으로 컴파일 확보 — 인도 상태: 신규 하니스 red(올바른 지점에서 실패)·기존 스위트 green. 타입 주장은 tsc 실측 | test, implementation, architecture |
+| himpl-reviewer-claude | harness-impl-reviewer | reviewer | Claude | opus-4.8[1m] | 전담 축: 기획 1:1 대응·테스트 질 — 각 테스트가 기획 항목의 검증 의도를 실제로 검사하는가, red가 올바른 이유의 red인가(스텁 throw가 아닌 단언 실패로 오인되는 항목 적발) | test, implementation, architecture |
 | himpl-reviewer-codex | harness-impl-reviewer | reviewer | Codex | 기본 | 전담 축: 실측 — 스위트를 실제 구동해 red 상태·실패 지점 확인, 기존 스위트·typecheck 무회귀를 실행으로 확인. 추론 단정 금지 | test, implementation, architecture |
-| impl-worker-claude | impl-worker | worker | Claude | fable-5[1m] | 설계서가 스펙 정본 — 괴리·모호는 에스컬레이션(임의 해석 금지). 하니스 우회·약화 금지(결함 시 harness-first 절차). 금지 목록(§1) 준수. 타입 주장은 tsc 실측. changeset 포함. yarn(Berry)·Biome 등 레포 규율 준수 | implementation, design, architecture |
-| impl-reviewer-claude | impl-reviewer | reviewer | Claude | fable-5[1m] | 전담 축: 설계 정합 — 구현 ↔ 설계서 §3 계약·§4 시퀀스·§5 불변식 대조, §6 R8 구조 논증의 코드 성립(신규 표면 전부 additive·미공급 시 기존 경로 무변경·금지 목록 0건) | implementation, design, architecture |
+| impl-worker-claude | impl-worker | worker | Claude | opus-4.8[1m] | 설계서가 스펙 정본 — 괴리·모호는 에스컬레이션(임의 해석 금지). 하니스 우회·약화 금지(결함 시 harness-first 절차). 금지 목록(§1) 준수. 타입 주장은 tsc 실측. changeset 포함. yarn(Berry)·Biome 등 레포 규율 준수 | implementation, design, architecture |
+| impl-reviewer-claude | impl-reviewer | reviewer | Claude | opus-4.8[1m] | 전담 축: 설계 정합 — 구현 ↔ 설계서 §3 계약·§4 시퀀스·§5 불변식 대조, §6 R8 구조 논증의 코드 성립(신규 표면 전부 additive·미공급 시 기존 경로 무변경·금지 목록 0건) | implementation, design, architecture |
 | impl-reviewer-codex | impl-reviewer | reviewer | Codex | 기본 | 전담 축: 실측 — 하니스 전 통과·기존 풀 스위트·typecheck·lint를 실제 실행으로 확인. 경계 시나리오(미등록 Replaced load·R9 이중 공급·시계역행 재기저)를 직접 재현. 추론 단정 금지 | implementation, architecture |
 
 ## 4. 인라인 자산 정의
@@ -104,7 +104,7 @@ run 한정 오버라이드: 없음. 중간 사용자 확인 없이 최종 산출
 
 ## 5. 설계 메타
 
-- **사용자 명시(디폴트보다 우선)**: ① 전 Claude 세션 모델 fable-5[1m](Codex는
+- **사용자 명시(디폴트보다 우선)**: ① 전 Claude 세션 모델 opus-4.8[1m](Codex는
   기본 유지). ② 하니스 기획 중심 = 설계서 §3 공개 계약·§4 생성 시퀀스·§5 불변식.
   ③ 1단계 리뷰어 분담은 섹션 기준 — Claude 리뷰어가 §3·§5, Codex 리뷰어가 §4를
   전담해 "담당 섹션이 판별력 있는 하니스로 온전히 기획되었는가"를 확인(스킬이
