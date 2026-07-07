@@ -9,6 +9,8 @@ import type {
   StepReplacedEvent,
 } from "../event-types";
 import type { BaseDomainEvent } from "../event-types/_base";
+import type { SnapshotLoadError } from "../SnapshotLoadError";
+import type { StackSnapshot } from "../StackSnapshot";
 import type {
   StackflowPluginHook,
   StackflowPluginPostEffectHook,
@@ -134,4 +136,25 @@ export type StackflowPlugin = () => {
     initialEvents: (PushedEvent | StepPushedEvent)[];
     initialContext: any;
   }) => (PushedEvent | StepPushedEvent)[];
+
+  /**
+   * Called synchronously at stack creation time to provide a snapshot to load
+   * from. Returning `null` (or `undefined`) means "nothing to provide" and the
+   * create path continues. If more than one plugin returns a non-null snapshot,
+   * core throws a creation error naming the conflicting keys — it does not
+   * arbitrate (R9).
+   */
+  provideSnapshot?: (args: { initialContext: any }) => StackSnapshot | null;
+
+  /**
+   * Called — only on the plugin that provided the failing snapshot (R5) — when
+   * that snapshot fails to load. Returning `{ recover: "create" }` resumes the
+   * create path without re-polling; returning nothing (or having no handler)
+   * throws the `SnapshotLoadError` out of `makeCoreStore` (R4).
+   */
+  onLoadError?: (args: {
+    error: SnapshotLoadError;
+    initialContext: any;
+    // biome-ignore lint/suspicious/noConfusingVoidType: `void` is intentional — it lets a handler return nothing to signal "throw the error". Narrowing to `undefined` would reject the common void-returning handler implementation.
+  }) => { recover: "create" } | void;
 };

@@ -90,6 +90,9 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
     getStack() {
       return stack.value;
     },
+    captureSnapshot() {
+      throw new Error("captureSnapshot is not implemented yet");
+    },
     dispatchEvent(name, params) {
       const newEvent = makeEvent(name, params);
 
@@ -153,6 +156,9 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
       pluginInstances.forEach((pluginInstance) => {
         pluginInstance.onInit?.({
           actions,
+          // Placeholder until the create/load distinction is wired in. The
+          // load path and the real signal are implemented separately.
+          initializedBy: "create",
         });
       });
     }),
