@@ -85,3 +85,58 @@ test("load - load 직후 captureSnapshot이 같은 탐색 기록을 재구성하
   expect(b?.steps.map((s) => s.id)).toEqual(["b1", "s2"]);
   expect(b?.steps[1].params.step).toEqual("2");
 });
+
+test("load - pause 중 캡처한 스냅샷은 큐잉됐던 항해가 전부 적용된 정착 상태로 복원됩니다", () => {
+  const source = makeCoreStore({
+    initialEvents: [
+      ...config(["A", "B"]),
+      makeEvent("Pushed", {
+        activityId: "a1",
+        activityName: "A",
+        activityParams: {},
+        eventDate: enoughPastTime(),
+      }),
+    ],
+    plugins: [],
+  });
+
+  source.actions.pause();
+  source.actions.push({
+    activityId: "b1",
+    activityName: "B",
+    activityParams: {},
+  });
+
+  // At capture time the queued push is not yet a visible activity — the
+  // contract is that replay applies queued navigation as if the pause never
+  // happened, so the restore below must nonetheless materialize it.
+  expect(source.actions.getStack().activities.some((x) => x.id === "b1")).toBe(
+    false,
+  );
+
+  let captured: StackSnapshot;
+  try {
+    captured = source.actions.captureSnapshot();
+  } finally {
+    // Resume so the paused source store settles and its polling interval
+    // clears, even when the capture above throws.
+    source.actions.resume();
+  }
+
+  const restored = makeCoreStore({
+    initialEvents: config(["A", "B"]),
+    plugins: [provideSnapshotPlugin(captured)],
+  });
+
+  const stack = restored.actions.getStack();
+  const a = stack.activities.find((x) => x.id === "a1");
+  const b = stack.activities.find((x) => x.id === "b1");
+
+  // The queued activity materialized, settled, on top of the pre-pause one.
+  expect(b?.transitionState).toEqual("enter-done");
+  expect(b?.isTop).toBe(true);
+  expect(a?.transitionState).toEqual("enter-done");
+  expect((a?.zIndex ?? -1) < (b?.zIndex ?? -1)).toBe(true);
+  // No pause survives the round-trip: the restored stack is idle.
+  expect(stack.globalTransitionState).toEqual("idle");
+});
