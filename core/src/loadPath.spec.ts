@@ -602,6 +602,78 @@ test("load - 재생 후 enter 상태 activity가 0개인 스냅샷은 empty-navi
 });
 
 // ---------------------------------------------------------------------------
+// consumer-transformed snapshot boundaries — accepted edges, pinned
+// ---------------------------------------------------------------------------
+
+test("load - 중복 id 스냅샷은 거부되지 않고 마지막 출현이 이깁니다(last-wins)", () => {
+  // Duplicate event ids can only come from a consumer-transformed snapshot
+  // (capture dedupes). They are an accepted boundary, not a rejection case,
+  // and dedup keeps the LAST occurrence — pinned so the direction doesn't
+  // silently flip.
+  const { actions } = makeCoreStore({
+    initialEvents: config(["A", "B"]),
+    plugins: [
+      provideSnapshotPlugin(
+        snapshot([
+          makeEvent("Pushed", {
+            id: "dup",
+            activityId: "a1",
+            activityName: "A",
+            activityParams: {},
+            eventDate: enoughPastTime(),
+          }),
+          makeEvent("Pushed", {
+            id: "dup",
+            activityId: "b1",
+            activityName: "B",
+            activityParams: {},
+            eventDate: enoughPastTime(),
+          }),
+        ]),
+      ),
+    ],
+  });
+
+  // The later entry survived; the earlier one was dropped.
+  const ids = actions.getStack().activities.map((x) => x.id);
+  expect(ids).toEqual(["b1"]);
+  expect(actions.getStack().activities[0].transitionState).toEqual(
+    "enter-done",
+  );
+});
+
+test("load - 스냅샷과 이벤트 항목의 미지 프로퍼티를 수용합니다(전방 호환)", () => {
+  // A snapshot written by a newer version may carry fields this version does
+  // not know. The structure check validates what it needs and tolerates the
+  // rest — pinned so the tolerance isn't tightened by accident.
+  const { actions } = makeCoreStore({
+    initialEvents: config(["A"]),
+    plugins: [
+      provideSnapshotPlugin(
+        rawSnapshot({
+          $schema: "stackflow.snapshot.v1",
+          futureField: { anything: true },
+          events: [
+            {
+              ...makeEvent("Pushed", {
+                activityId: "a1",
+                activityName: "A",
+                activityParams: {},
+                eventDate: enoughPastTime(),
+              }),
+              futureEventField: "tolerated",
+            },
+          ],
+        }),
+      ),
+    ],
+  });
+
+  const a = actions.getStack().activities.find((x) => x.id === "a1");
+  expect(a?.transitionState).toEqual("enter-done");
+});
+
+// ---------------------------------------------------------------------------
 // onLoadError routing
 // ---------------------------------------------------------------------------
 
@@ -731,6 +803,31 @@ test("load - onLoadError가 void를 반환하면 SnapshotLoadError를 makeCoreSt
         provideSnapshotPlugin(
           rawSnapshot({ $schema: "stackflow.snapshot.v2", events: [] }),
           { onLoadError: () => undefined },
+        ),
+      ],
+    });
+  } catch (error) {
+    caught = error;
+  }
+
+  expect(caught).toBeInstanceOf(SnapshotLoadError);
+});
+
+test('load - onLoadError가 {recover:"create"} 아닌 truthy 값을 반환하면 SnapshotLoadError를 그대로 던집니다', () => {
+  // Recovery takes the exact { recover: "create" } decision. A JS consumer
+  // returning some other truthy shape must not be mistaken for it — pinned so
+  // the check never loosens into truthiness.
+  let caught: unknown;
+  try {
+    makeCoreStore({
+      initialEvents: config(["A"]),
+      plugins: [
+        provideSnapshotPlugin(
+          rawSnapshot({ $schema: "stackflow.snapshot.v2", events: [] }),
+          {
+            onLoadError: () =>
+              ({ recover: "retry" }) as unknown as { recover: "create" },
+          },
         ),
       ],
     });
