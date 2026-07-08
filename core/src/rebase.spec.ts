@@ -189,6 +189,68 @@ test("load - 원본 이벤트의 id·activityId·stepId를 바이트 보존하�
   expect(a?.steps[1].enteredBy.eventDate).not.toEqual(originalStepDate);
 });
 
+test("load - 이벤트 수가 transitionDuration(ms)을 넘어도 재기저 date가 정적 이벤트 뒤의 창 안에 배치됩니다", () => {
+  // The react integration backdates static events by only 2×transitionDuration,
+  // leaving a window of transitionDuration ms after them. A fixed 1ms integer
+  // spacing would push ≥350 events out of that window, folding the earliest
+  // snapshot events before Initialized/ActivityRegistered — fractional
+  // spacing must fit any history length inside the window.
+  const transitionDuration = 350;
+  const staticBackdate = Date.now() - 2 * transitionDuration;
+  const staticEvents: DomainEvent[] = [
+    makeEvent("Initialized", {
+      transitionDuration,
+      eventDate: staticBackdate,
+    }),
+    makeEvent("ActivityRegistered", {
+      activityName: "A",
+      eventDate: staticBackdate + 1,
+    }),
+  ];
+  const snapshotEvents = Array.from({ length: 400 }, (_, index) =>
+    makeEvent("Pushed", {
+      activityId: `a${index}`,
+      activityName: "A",
+      activityParams: {},
+      eventDate: enoughPastTime(),
+    }),
+  );
+
+  const store = makeCoreStore({
+    initialEvents: staticEvents,
+    plugins: [provideSnapshotPlugin(snapshotEvents)],
+  });
+
+  const log = store.pullEvents();
+  const staticDates = log
+    .filter((e) => e.name === "Initialized" || e.name === "ActivityRegistered")
+    .map((e) => e.eventDate);
+  const rebasedDates = log
+    .filter((e) => e.name === "Pushed")
+    .map((e) => e.eventDate);
+
+  expect(rebasedDates).toHaveLength(400);
+  // Every rebased date lies inside the window: after every static event...
+  expect(Math.min(...rebasedDates)).toBeGreaterThan(Math.max(...staticDates));
+  // ...and at or before creation time − transitionDuration (settled).
+  expect(Math.max(...rebasedDates)).toBeLessThanOrEqual(
+    Date.now() - transitionDuration,
+  );
+  // Strictly increasing in array order.
+  expect(
+    rebasedDates.every((date, i) => i === 0 || date > rebasedDates[i - 1]),
+  ).toBe(true);
+
+  // The replay itself settled: every restored activity folded to enter-done,
+  // with the last snapshot event on top.
+  const stack = store.actions.getStack();
+  expect(stack.globalTransitionState).toEqual("idle");
+  expect(
+    stack.activities.every((x) => x.transitionState === "enter-done"),
+  ).toBe(true);
+  expect(stack.activities.find((x) => x.isTop)?.id).toEqual("a399");
+});
+
 test("load - load 후 pop이 복원 최상단을 exit 전환시키고 아래 복원 activity를 재노출합니다", () => {
   const { actions } = makeCoreStore({
     initialEvents: config(["A", "B"], 350),

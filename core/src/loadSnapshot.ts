@@ -47,6 +47,10 @@ export function loadSnapshot(
   const rebasedEvents = rebaseNavigationEvents(snapshot.events, {
     now,
     transitionDuration,
+    latestStaticEventDate: staticEvents.reduce(
+      (latest, event) => Math.max(latest, event.eventDate),
+      Number.NEGATIVE_INFINITY,
+    ),
   });
 
   const events = [...staticEvents, ...rebasedEvents];
@@ -108,22 +112,34 @@ function assertSnapshotStructure(snapshot: StackSnapshot): void {
 /**
  * Re-date snapshot events so replay settles deterministically (RB1–RB5):
  * assign strictly increasing dates in array order (array order is the replay
- * order), all far enough in the past (`≤ now − transitionDuration`) that every
- * reducer folds to a settled state, while preserving every other field
- * byte-for-byte (id/activityId/stepId included). Basing the new dates on
- * capture order rather than the original values keeps a clock skew between the
- * capture and load sessions from disturbing intra-snapshot order, and makes
- * post-load navigation (dispatched at the current time) always sort after the
- * restored events.
+ * order), placed inside the window after the static events and far enough in
+ * the past (`≤ now − transitionDuration`) that every reducer folds to a
+ * settled state. Fractional spacing fits any number of events inside the
+ * window, so snapshot events fold after the static events regardless of
+ * history length. Every other field is preserved byte-for-byte
+ * (id/activityId/stepId included). Basing the new dates on capture order
+ * rather than the original values keeps a clock skew between the capture and
+ * load sessions from disturbing intra-snapshot order, and makes post-load
+ * navigation (dispatched at the current time) always sort after the restored
+ * events.
  */
 function rebaseNavigationEvents(
   events: NavigationEvent[],
-  context: { now: number; transitionDuration: number },
+  context: {
+    now: number;
+    transitionDuration: number;
+    latestStaticEventDate: number;
+  },
 ): NavigationEvent[] {
   const settledUpperBound = context.now - context.transitionDuration;
+  const window = settledUpperBound - context.latestStaticEventDate;
+  // A degenerate window (static events dated at or past the settled bound —
+  // e.g. a direct core embedding dating them near creation time) falls back
+  // to settledness alone: fold semantics are safe without the placement.
+  const spacing = window > 0 ? Math.min(1, window / (events.length + 1)) : 1;
 
   return events.map((event, index) => ({
     ...event,
-    eventDate: settledUpperBound - (events.length - index),
+    eventDate: settledUpperBound - (events.length - index) * spacing,
   }));
 }
