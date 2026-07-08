@@ -144,7 +144,10 @@ export type StackflowPlugin = () => {
    * core throws a creation error naming the conflicting keys — it does not
    * arbitrate (R9).
    */
-  provideSnapshot?: (args: { initialContext: any }) => StackSnapshot | null;
+  provideSnapshot?: (args: {
+    initialContext: any;
+    // biome-ignore lint/suspicious/noConfusingVoidType: `void` is intentional — it lets a provider `return;` to signal "nothing to provide", as the JSDoc above promises. Narrowing to `undefined` would reject the common void-returning provider implementation.
+  }) => StackSnapshot | null | void;
 
   /**
    * Called — only on the plugin that provided the failing snapshot (R5) — when
