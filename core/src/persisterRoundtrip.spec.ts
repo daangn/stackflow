@@ -35,6 +35,27 @@ const initialHome = () =>
     eventDate: enoughPastTime(),
   });
 
+/**
+ * The reference decode shape for persister authors. Decoding happens inside
+ * `provideSnapshot`, so a stored value that cannot even be decoded never
+ * reaches core — the codec is the supplier's responsibility (R13) and decode
+ * failures are outside core's `onLoadError` contract. Self-handle them:
+ * discard the stored value and return null, falling back to the create path.
+ */
+const decodeOrDiscard = (memory: {
+  value: string | null;
+}): StackSnapshot | null => {
+  if (!memory.value) {
+    return null;
+  }
+  try {
+    return JSON.parse(memory.value) as StackSnapshot;
+  } catch {
+    memory.value = null;
+    return null;
+  }
+};
+
 test("persister 왕복 - 캡처(onChanged)→JSON 보존→다음 생성의 provideSnapshot load가 core API만으로 닫힙니다", () => {
   // A persister mimic: capture on change, JSON codec, in-memory storage.
   const memory: { value: string | null } = { value: null };
@@ -47,8 +68,7 @@ test("persister 왕복 - 캡처(onChanged)→JSON 보존→다음 생성의 prov
       onChanged({ actions }) {
         memory.value = JSON.stringify(actions.captureSnapshot());
       },
-      provideSnapshot: () =>
-        memory.value ? (JSON.parse(memory.value) as StackSnapshot) : null,
+      provideSnapshot: () => decodeOrDiscard(memory),
       onInit,
     });
   };
@@ -94,8 +114,7 @@ test("persister 왕복 - 손상 스냅샷을 onLoadError가 폐기하고 recover
   const onInit = jest.fn();
   const persister: StackflowPlugin = () => ({
     key: "persister",
-    provideSnapshot: () =>
-      memory.value ? (JSON.parse(memory.value) as StackSnapshot) : null,
+    provideSnapshot: () => decodeOrDiscard(memory),
     onLoadError: () => {
       memory.value = null;
       return { recover: "create" };
@@ -120,6 +139,35 @@ test("persister 왕복 - 손상 스냅샷을 onLoadError가 폐기하고 recover
     "home1",
   ]);
   // The corrupt snapshot was discarded by the supplier.
+  expect(memory.value).toBeNull();
+  expect(onInit.mock.calls[0][0].initializedBy).toEqual("create");
+});
+
+test("persister 왕복 - 디코드 불가한 보존물(잘린 write)은 공급자가 스스로 폐기하고 create로 기동합니다", () => {
+  // Storage holds a truncated write (quota eviction, interrupted write) —
+  // undecodable, so core never sees a snapshot and onLoadError has nothing
+  // to route. The supplier's decode shape must absorb this itself.
+  const memory: { value: string | null } = {
+    value: '{"$schema":"stackflow.snapshot.v1","ev',
+  };
+
+  const onInit = jest.fn();
+  const persister: StackflowPlugin = () => ({
+    key: "persister",
+    provideSnapshot: () => decodeOrDiscard(memory),
+    onInit,
+  });
+
+  const store = makeCoreStore({
+    initialEvents: [...config(["Home"]), initialHome()],
+    plugins: [persister],
+  });
+  store.init();
+
+  expect(store.actions.getStack().activities.map((x) => x.id)).toEqual([
+    "home1",
+  ]);
+  // The undecodable stored value was discarded by the supplier.
   expect(memory.value).toBeNull();
   expect(onInit.mock.calls[0][0].initializedBy).toEqual("create");
 });

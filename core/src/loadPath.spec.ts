@@ -754,3 +754,62 @@ test("load - provideSnapshot·onLoadError는 생성 시 options.initialContext�
     expect.objectContaining({ initialContext: { foo: "bar" } }),
   );
 });
+
+// ---------------------------------------------------------------------------
+// hook-thrown errors — characterization (undefined behavior, pinned)
+// ---------------------------------------------------------------------------
+
+test("load - provideSnapshot이 throw하면 에러가 makeCoreStore 밖으로 그대로 전파되고 onLoadError는 호출되지 않습니다", () => {
+  // Characterization, not contract: a throwing hook is undefined behavior.
+  // Pinned so that changing today's raw propagation (e.g. routing provider
+  // failures into onLoadError) is a conscious contract decision, not a slip.
+  const decodeFailure = new SyntaxError("Unexpected end of JSON input");
+  const onLoadError = jest.fn();
+
+  let caught: unknown;
+  try {
+    makeCoreStore({
+      initialEvents: config(["A"]),
+      plugins: [
+        () => ({
+          key: "provider",
+          provideSnapshot: () => {
+            throw decodeFailure;
+          },
+          onLoadError,
+        }),
+      ],
+    });
+  } catch (error) {
+    caught = error;
+  }
+
+  expect(caught).toBe(decodeFailure);
+  expect(onLoadError).toHaveBeenCalledTimes(0);
+});
+
+test("load - onLoadError가 throw하면 그 에러가 SnapshotLoadError 대신 makeCoreStore 밖으로 그대로 전파됩니다", () => {
+  // Characterization, not contract — same rationale as above.
+  const handlerFailure = new Error("storage cleanup failed");
+
+  let caught: unknown;
+  try {
+    makeCoreStore({
+      initialEvents: config(["A"]),
+      plugins: [
+        provideSnapshotPlugin(
+          rawSnapshot({ $schema: "stackflow.snapshot.v2", events: [] }),
+          {
+            onLoadError: () => {
+              throw handlerFailure;
+            },
+          },
+        ),
+      ],
+    });
+  } catch (error) {
+    caught = error;
+  }
+
+  expect(caught).toBe(handlerFailure);
+});
