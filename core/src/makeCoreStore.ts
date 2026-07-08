@@ -129,6 +129,7 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
     stepPop: () => {},
     pause: () => {},
     resume: () => {},
+    prune: () => {},
   };
 
   const setStackValue = (nextStackValue: Stack) => {
@@ -144,6 +145,11 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
       dispatchEvent: actions.dispatchEvent,
       pluginInstances,
       actions,
+      store: {
+        getStack: actions.getStack,
+        events,
+        setStackValue,
+      },
     }),
   );
 
