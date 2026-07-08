@@ -64,10 +64,8 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
   };
 
   /**
-   * Build the stack via the create path: run the `overrideInitialEvents` chain
-   * and the initial-activity handlers, then aggregate. Unchanged from the
-   * pre-snapshot behavior — a store with no snapshot provider is observably
-   * identical to before.
+   * The create path is unchanged from the pre-snapshot behavior — a store
+   * with no snapshot provider is observably identical to before.
    */
   const createStack = (): Stack => {
     const initialPushedEvents = pluginInstances.reduce(

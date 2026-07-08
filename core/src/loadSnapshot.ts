@@ -10,18 +10,6 @@ import type { NavigationEvent, StackSnapshot } from "./StackSnapshot";
  * events through the existing aggregate machinery. Static information
  * (transitionDuration, the registered-activity set) is re-derived from the
  * current config's static events, never from the snapshot.
- *
- * The four checks a snapshot must pass, each mapped to a `SnapshotLoadError`
- * cause:
- * - structure → `incompatible-schema`
- * - registration (every activity-introducing event's name is registered now) →
- *   `invalid-events`
- * - replay validity (existing `validateEvents`) → `invalid-events`
- * - postcondition (at least one activity ends in an enter state) →
- *   `empty-navigation`
- *
- * On success it returns the replay event log (static events followed by the
- * rebased snapshot events) and the settled stack.
  */
 export function loadSnapshot(
   snapshot: StackSnapshot,
@@ -91,9 +79,8 @@ export function loadSnapshot(
 }
 
 /**
- * Verify the value is a core-known v1 snapshot before any replay: the schema
- * tag matches, `events` is an array, and every item is a navigation event
- * carrying an `id` and `name`. Anything else is `incompatible-schema`.
+ * A value that is not a core-known v1 snapshot must fail loudly before any
+ * replay (`incompatible-schema`) instead of folding into a corrupt stack.
  */
 function assertSnapshotStructure(snapshot: StackSnapshot): void {
   if (snapshot?.$schema !== "stackflow.snapshot.v1") {
