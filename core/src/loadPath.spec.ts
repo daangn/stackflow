@@ -1,4 +1,8 @@
-import type { DomainEvent } from "./event-types";
+import type {
+  DomainEvent,
+  PushedEvent,
+  StepPushedEvent,
+} from "./event-types";
 import { makeEvent } from "./event-utils";
 import type { StackflowPlugin } from "./interfaces";
 import { makeCoreStore } from "./makeCoreStore";
@@ -629,6 +633,62 @@ test('load - 실패 시 onLoadError가 {recover:"create"}를 반환하면 throw 
   expect(onLoadError).toHaveBeenCalledTimes(1);
   expect(store.actions.getStack().activities.map((x) => x.id)).toEqual([
     "home1",
+  ]);
+  expect(onInit.mock.calls[0][0].initializedBy).toEqual("create");
+});
+
+test('load - recover:"create" 재개가 overrideInitialEvents 체인과 initial-activity 핸들러를 포함한 create 파이프라인을 온전히 태웁니다', () => {
+  const onInit = jest.fn();
+  const onInitialActivityIgnored = jest.fn();
+  const overrideInitialEvents = jest.fn(
+    (_args: {
+      initialEvents: (PushedEvent | StepPushedEvent)[];
+      initialContext: any;
+    }) => [
+      makeEvent("Pushed", {
+        activityId: "redirect1",
+        activityName: "Redirect",
+        activityParams: {},
+        eventDate: enoughPastTime(),
+      }),
+    ],
+  );
+
+  const store = makeCoreStore({
+    initialEvents: [
+      ...config(["Home", "Redirect"]),
+      makeEvent("Pushed", {
+        activityId: "home1",
+        activityName: "Home",
+        activityParams: {},
+        eventDate: enoughPastTime(),
+      }),
+    ],
+    plugins: [
+      provideSnapshotPlugin(
+        rawSnapshot({ $schema: "stackflow.snapshot.v2", events: [] }),
+        { onLoadError: () => ({ recover: "create" as const }), onInit },
+      ),
+      () => ({ key: "redirector", overrideInitialEvents }),
+    ],
+    handlers: { onInitialActivityIgnored },
+  });
+  store.init();
+
+  // The chain ran, over the option's initial events (not snapshot leftovers).
+  expect(overrideInitialEvents).toHaveBeenCalledTimes(1);
+  expect(overrideInitialEvents.mock.calls[0][0].initialEvents).toMatchObject([
+    { name: "Pushed", activityId: "home1" },
+  ]);
+  // The chain's substitution is what the stack is built from...
+  expect(store.actions.getStack().activities.map((x) => x.id)).toEqual([
+    "redirect1",
+  ]);
+  // ...and the initial-activity handler judged that substitution, as on any
+  // create.
+  expect(onInitialActivityIgnored).toHaveBeenCalledTimes(1);
+  expect(onInitialActivityIgnored.mock.calls[0][0]).toMatchObject([
+    { name: "Pushed", activityId: "redirect1" },
   ]);
   expect(onInit.mock.calls[0][0].initializedBy).toEqual("create");
 });
