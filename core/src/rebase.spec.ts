@@ -188,3 +188,74 @@ test("load - 원본 이벤트의 id·activityId·stepId를 바이트 보존하�
   expect(a?.enteredBy.eventDate).not.toEqual(originalPushDate);
   expect(a?.steps[1].enteredBy.eventDate).not.toEqual(originalStepDate);
 });
+
+test("load - load 후 pop이 복원 최상단을 exit 전환시키고 아래 복원 activity를 재노출합니다", () => {
+  const { actions } = makeCoreStore({
+    initialEvents: config(["A", "B"], 350),
+    plugins: [
+      provideSnapshotPlugin([
+        makeEvent("Pushed", {
+          activityId: "a1",
+          activityName: "A",
+          activityParams: {},
+          eventDate: enoughPastTime(),
+        }),
+        makeEvent("Pushed", {
+          activityId: "b1",
+          activityName: "B",
+          activityParams: {},
+          eventDate: enoughPastTime(),
+        }),
+      ]),
+    ],
+  });
+
+  actions.pop();
+
+  const stack = actions.getStack();
+  const a = stack.activities.find((x) => x.id === "a1");
+  const b = stack.activities.find((x) => x.id === "b1");
+
+  // Pop targeted the restored top: it began its exit transition (the Popped
+  // event, dispatched at the current time, sorted after the rebased events)...
+  expect(b?.transitionState).toEqual("exit-active");
+  expect(b?.exitedBy?.name).toEqual("Popped");
+  // ...and the restored activity below is re-exposed as the active one.
+  expect(a?.transitionState).toEqual("enter-done");
+  expect(a?.isActive).toBe(true);
+});
+
+test("load - load 후 stepPush가 최신 활성 activity(복원 최상단)를 타깃합니다", () => {
+  const { actions } = makeCoreStore({
+    initialEvents: config(["A", "B"], 350),
+    plugins: [
+      provideSnapshotPlugin([
+        makeEvent("Pushed", {
+          activityId: "a1",
+          activityName: "A",
+          activityParams: {},
+          eventDate: enoughPastTime(),
+        }),
+        makeEvent("Pushed", {
+          activityId: "b1",
+          activityName: "B",
+          activityParams: {},
+          eventDate: enoughPastTime(),
+        }),
+      ]),
+    ],
+  });
+
+  actions.stepPush({ stepId: "s1", stepParams: { step: "1" } });
+
+  const stack = actions.getStack();
+  const a = stack.activities.find((x) => x.id === "a1");
+  const b = stack.activities.find((x) => x.id === "b1");
+
+  // StepPushed resolves its target by eventDate (latest active activity) —
+  // it must land on the restored top, which only holds if rebased dates kept
+  // the restored order below the new event.
+  expect(b?.steps.map((s) => s.id)).toEqual(["b1", "s1"]);
+  expect(b?.params.step).toEqual("1");
+  expect(a?.steps.map((s) => s.id)).toEqual(["a1"]);
+});
