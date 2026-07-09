@@ -86,7 +86,7 @@ test("load - load 직후 captureSnapshot이 같은 탐색 기록을 재구성하
   expect(b?.steps[1].params.step).toEqual("2");
 });
 
-test("load - pause 중 캡처한 스냅샷은 큐잉됐던 항해가 전부 적용된 정착 상태로 복원됩니다", () => {
+test("load - pause 중 큐잉되어 resume되지 않은 항해는 스냅샷에서 제외되어 복원되지 않습니다", () => {
   const source = makeCoreStore({
     initialEvents: [
       ...config(["A", "B"]),
@@ -107,9 +107,9 @@ test("load - pause 중 캡처한 스냅샷은 큐잉됐던 항해가 전부 적�
     activityParams: {},
   });
 
-  // At capture time the queued push is not yet a visible activity — the
-  // contract is that replay applies queued navigation as if the pause never
-  // happened, so the restore below must nonetheless materialize it.
+  // Queued behind the pause, b1 never became a visible activity — the live
+  // session never committed it, and a reload must reflect what the session
+  // showed, not resurrect the pending push as a settled activity.
   expect(source.actions.getStack().activities.some((x) => x.id === "b1")).toBe(
     false,
   );
@@ -123,20 +123,22 @@ test("load - pause 중 캡처한 스냅샷은 큐잉됐던 항해가 전부 적�
     source.actions.resume();
   }
 
+  // The uncommitted queued push is excluded from the snapshot.
+  expect(
+    captured.events.some((e) => e.name === "Pushed" && e.activityId === "b1"),
+  ).toBe(false);
+
   const restored = makeCoreStore({
     initialEvents: config(["A", "B"]),
     plugins: [provideSnapshotPlugin(captured)],
   });
 
   const stack = restored.actions.getStack();
-  const a = stack.activities.find((x) => x.id === "a1");
-  const b = stack.activities.find((x) => x.id === "b1");
 
-  // The queued activity materialized, settled, on top of the pre-pause one.
-  expect(b?.transitionState).toEqual("enter-done");
-  expect(b?.isTop).toBe(true);
-  expect(a?.transitionState).toEqual("enter-done");
-  expect((a?.zIndex ?? -1) < (b?.zIndex ?? -1)).toBe(true);
-  // No pause survives the round-trip: the restored stack is idle.
+  // Only the pre-pause activity is restored; b1 is not resurrected.
+  expect(stack.activities.map((x) => x.id)).toEqual(["a1"]);
+  expect(stack.activities.find((x) => x.id === "a1")?.transitionState).toEqual(
+    "enter-done",
+  );
   expect(stack.globalTransitionState).toEqual("idle");
 });

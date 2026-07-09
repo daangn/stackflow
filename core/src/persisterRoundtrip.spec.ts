@@ -14,9 +14,12 @@ const enoughPastTime = () => {
   return new Date(Date.now() - MINUTE).getTime() + dt;
 };
 
-const config = (activityNames: string[]): DomainEvent[] => [
+const config = (
+  activityNames: string[],
+  transitionDuration = 350,
+): DomainEvent[] => [
   makeEvent("Initialized", {
-    transitionDuration: 350,
+    transitionDuration,
     eventDate: enoughPastTime(),
   }),
   ...activityNames.map((activityName) =>
@@ -73,9 +76,12 @@ test("persister 왕복 - 캡처(onChanged)→JSON 보존→다음 생성의 prov
     });
   };
 
+  // transitionDuration 0 so the Article push commits instantly and the
+  // onChanged capture persists it — a snapshot carries only committed
+  // navigation, so a mid-transition push would persist once it settles.
   // Session 1: create Home, then navigate to Article (each change persists).
   const session1 = makeCoreStore({
-    initialEvents: [...config(["Home", "Article"]), initialHome()],
+    initialEvents: [...config(["Home", "Article"], 0), initialHome()],
     plugins: [persister(() => {})],
   });
   session1.actions.push({
@@ -87,7 +93,7 @@ test("persister 왕복 - 캡처(onChanged)→JSON 보존→다음 생성의 prov
   // Session 2: same config + plugin; storage now holds the snapshot.
   const onInit2 = jest.fn();
   const session2 = makeCoreStore({
-    initialEvents: [...config(["Home", "Article"]), initialHome()],
+    initialEvents: [...config(["Home", "Article"], 0), initialHome()],
     plugins: [persister(onInit2)],
   });
   session2.init();
