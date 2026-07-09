@@ -1,17 +1,24 @@
 /**
- * Why a snapshot load failed, in three kinds:
- * - `incompatible-schema`: the value is not a core-known v1 snapshot structure
- *   (`$schema` mismatch, `events` not an array, an item that is not one of the
- *   six navigation events, or a missing `id`/`name`).
- * - `invalid-events`: the structure is valid but the event sequence is not
- *   valid against the current config (e.g. an event that materializes an
- *   unregistered activity).
- * - `empty-navigation`: replay succeeded but no activity is in an enter state.
+ * Why a snapshot load failed, in three kinds that read as the
+ * snapshot → events → stack pipeline:
+ * - `unrecognized-snapshot`: the value is not a snapshot structure core
+ *   recognizes — a catch-all over the structural checks (`$schema` mismatch,
+ *   `events` not being an array, or an item that is not one of the six
+ *   navigation events, including a missing `id`/`name`). `detail` names the
+ *   check that failed.
+ * - `incompatible-events`: the structure is recognized but the event sequence
+ *   is incompatible with the current config (e.g. it materializes an
+ *   unregistered activity) — a relational failure against the config, not a
+ *   defect intrinsic to the events.
+ * - `empty-stack`: replay succeeded but left zero activities in an enter
+ *   state, so there is nothing to show. Note the condition is "zero
+ *   enter-state activities", not an empty `activities` array — exit-done
+ *   activities may remain.
  */
 export type SnapshotLoadErrorCause =
-  | { kind: "incompatible-schema" }
-  | { kind: "invalid-events"; detail: unknown }
-  | { kind: "empty-navigation" };
+  | { kind: "unrecognized-snapshot"; detail: string }
+  | { kind: "incompatible-events"; detail: unknown }
+  | { kind: "empty-stack" };
 
 /**
  * Thrown when loading a provided snapshot fails. Routed to the providing

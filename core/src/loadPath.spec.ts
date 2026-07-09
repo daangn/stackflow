@@ -382,10 +382,10 @@ test("load - makeCoreStore 반환 시점에 복원된 스택이 동기적으로 
 });
 
 // ---------------------------------------------------------------------------
-// structure check → incompatible-schema
+// structure check → unrecognized-snapshot
 // ---------------------------------------------------------------------------
 
-test("load - $schema 불일치 스냅샷은 SnapshotLoadError{incompatible-schema}로 실패합니다", () => {
+test("load - $schema 불일치 스냅샷은 SnapshotLoadError{unrecognized-snapshot}로 실패합니다", () => {
   const caught = catchLoad(
     rawSnapshot({
       $schema: "stackflow.snapshot.v2",
@@ -402,24 +402,26 @@ test("load - $schema 불일치 스냅샷은 SnapshotLoadError{incompatible-schem
   );
 
   expect(caught).toBeInstanceOf(SnapshotLoadError);
-  expect((caught as SnapshotLoadError).cause.kind).toEqual(
-    "incompatible-schema",
-  );
+  expect((caught as SnapshotLoadError).cause).toEqual({
+    kind: "unrecognized-snapshot",
+    detail: "$schema mismatch",
+  });
 });
 
-test("load - events가 배열이 아닌 스냅샷은 incompatible-schema로 실패합니다", () => {
+test("load - events가 배열이 아닌 스냅샷은 unrecognized-snapshot로 실패합니다", () => {
   const caught = catchLoad(
     rawSnapshot({ $schema: "stackflow.snapshot.v1", events: "nope" }),
     config(["A"]),
   );
 
   expect(caught).toBeInstanceOf(SnapshotLoadError);
-  expect((caught as SnapshotLoadError).cause.kind).toEqual(
-    "incompatible-schema",
-  );
+  expect((caught as SnapshotLoadError).cause).toEqual({
+    kind: "unrecognized-snapshot",
+    detail: "events is not an array",
+  });
 });
 
-test("load - events에 탐색 이벤트가 아닌 항목이 있으면 incompatible-schema로 실패합니다", () => {
+test("load - events에 탐색 이벤트가 아닌 항목이 있으면 unrecognized-snapshot로 실패합니다", () => {
   const caught = catchLoad(
     rawSnapshot({
       $schema: "stackflow.snapshot.v1",
@@ -442,12 +444,15 @@ test("load - events에 탐색 이벤트가 아닌 항목이 있으면 incompatib
   );
 
   expect(caught).toBeInstanceOf(SnapshotLoadError);
-  expect((caught as SnapshotLoadError).cause.kind).toEqual(
-    "incompatible-schema",
-  );
+  // The offending item's position is named for diagnosis (the valid Pushed at
+  // index 0 passes; the non-navigation item sits at index 1).
+  expect((caught as SnapshotLoadError).cause).toEqual({
+    kind: "unrecognized-snapshot",
+    detail: "event item at index 1 is not a navigation event",
+  });
 });
 
-test("load - events 항목에 id가 결손되면 incompatible-schema로 실패합니다", () => {
+test("load - events 항목에 id가 결손되면 unrecognized-snapshot로 실패합니다", () => {
   const caught = catchLoad(
     rawSnapshot({
       $schema: "stackflow.snapshot.v1",
@@ -465,12 +470,13 @@ test("load - events 항목에 id가 결손되면 incompatible-schema로 실패�
   );
 
   expect(caught).toBeInstanceOf(SnapshotLoadError);
-  expect((caught as SnapshotLoadError).cause.kind).toEqual(
-    "incompatible-schema",
-  );
+  expect((caught as SnapshotLoadError).cause).toEqual({
+    kind: "unrecognized-snapshot",
+    detail: "event item at index 0 is not a navigation event",
+  });
 });
 
-test("load - events 항목에 name이 결손되면 incompatible-schema로 실패합니다", () => {
+test("load - events 항목에 name이 결손되면 unrecognized-snapshot로 실패합니다", () => {
   const caught = catchLoad(
     rawSnapshot({
       $schema: "stackflow.snapshot.v1",
@@ -488,16 +494,17 @@ test("load - events 항목에 name이 결손되면 incompatible-schema로 실패
   );
 
   expect(caught).toBeInstanceOf(SnapshotLoadError);
-  expect((caught as SnapshotLoadError).cause.kind).toEqual(
-    "incompatible-schema",
-  );
+  expect((caught as SnapshotLoadError).cause).toEqual({
+    kind: "unrecognized-snapshot",
+    detail: "event item at index 0 is not a navigation event",
+  });
 });
 
 // ---------------------------------------------------------------------------
-// registration check → invalid-events · L6
+// registration check → incompatible-events · L6
 // ---------------------------------------------------------------------------
 
-test("load - 미등록 activity를 물화하는 Pushed는 SnapshotLoadError{invalid-events}로 실패합니다", () => {
+test("load - 미등록 activity를 물화하는 Pushed는 SnapshotLoadError{incompatible-events}로 실패합니다", () => {
   const caught = catchLoad(
     snapshot([
       makeEvent("Pushed", {
@@ -512,13 +519,13 @@ test("load - 미등록 activity를 물화하는 Pushed는 SnapshotLoadError{inva
 
   expect(caught).toBeInstanceOf(SnapshotLoadError);
   const cause = (caught as SnapshotLoadError).cause;
-  expect(cause.kind).toEqual("invalid-events");
-  if (cause.kind === "invalid-events") {
+  expect(cause.kind).toEqual("incompatible-events");
+  if (cause.kind === "incompatible-events") {
     expect(cause.detail).toBeDefined();
   }
 });
 
-test("load - 미등록 activity를 물화하는 Replaced는 SnapshotLoadError{invalid-events}로 실패합니다", () => {
+test("load - 미등록 activity를 물화하는 Replaced는 SnapshotLoadError{incompatible-events}로 실패합니다", () => {
   const caught = catchLoad(
     snapshot([
       makeEvent("Pushed", {
@@ -538,7 +545,7 @@ test("load - 미등록 activity를 물화하는 Replaced는 SnapshotLoadError{in
   );
 
   expect(caught).toBeInstanceOf(SnapshotLoadError);
-  expect((caught as SnapshotLoadError).cause.kind).toEqual("invalid-events");
+  expect((caught as SnapshotLoadError).cause.kind).toEqual("incompatible-events");
 });
 
 test("load - 등록된 activity를 물화하는 Replaced는 정상 load됩니다", () => {
@@ -574,17 +581,17 @@ test("load - 등록된 activity를 물화하는 Replaced는 정상 load됩니다
 });
 
 // ---------------------------------------------------------------------------
-// postcondition → empty-navigation · L3
+// postcondition → empty-stack · L3
 // ---------------------------------------------------------------------------
 
-test("load - events가 빈 스냅샷은 SnapshotLoadError{empty-navigation}로 실패합니다", () => {
+test("load - events가 빈 스냅샷은 SnapshotLoadError{empty-stack}로 실패합니다", () => {
   const caught = catchLoad(snapshot([]), config(["A"]));
 
   expect(caught).toBeInstanceOf(SnapshotLoadError);
-  expect((caught as SnapshotLoadError).cause.kind).toEqual("empty-navigation");
+  expect((caught as SnapshotLoadError).cause.kind).toEqual("empty-stack");
 });
 
-test("load - 재생 후 enter 상태 activity가 0개인 스냅샷은 empty-navigation으로 실패합니다", () => {
+test("load - 재생 후 enter 상태 activity가 0개인 스냅샷은 empty-stack으로 실패합니다", () => {
   // A pop with no activity to pop replays to zero activities: non-empty events
   // but zero enter-state activities. (Core cannot pop the root, so a
   // Pushed→Popped sequence never reaches zero — a pops-only history does.)
@@ -598,7 +605,7 @@ test("load - 재생 후 enter 상태 activity가 0개인 스냅샷은 empty-navi
   );
 
   expect(caught).toBeInstanceOf(SnapshotLoadError);
-  expect((caught as SnapshotLoadError).cause.kind).toEqual("empty-navigation");
+  expect((caught as SnapshotLoadError).cause.kind).toEqual("empty-stack");
 });
 
 // ---------------------------------------------------------------------------

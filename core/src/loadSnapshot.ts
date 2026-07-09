@@ -34,7 +34,7 @@ export function loadSnapshot(
       !registeredActivityNames.has(event.activityName)
     ) {
       throw new SnapshotLoadError({
-        kind: "invalid-events",
+        kind: "incompatible-events",
         detail: `activity "${event.activityName}" is not registered in the current config`,
       });
     }
@@ -60,9 +60,9 @@ export function loadSnapshot(
     stack = aggregate(events, now);
   } catch (error) {
     // A structurally-valid event sequence that the replay machinery rejects
-    // (e.g. `validateEvents`) is an invalid-events failure, not a crash.
+    // (e.g. `validateEvents`) is an incompatible-events failure, not a crash.
     throw new SnapshotLoadError({
-      kind: "invalid-events",
+      kind: "incompatible-events",
       detail: error instanceof Error ? error.message : error,
     });
   }
@@ -74,9 +74,10 @@ export function loadSnapshot(
   );
 
   if (!hasEnteredActivity) {
-    // Replay succeeded but left no visible activity (empty events, or a history
-    // that pops everything). A blank screen is a silent failure — surface it.
-    throw new SnapshotLoadError({ kind: "empty-navigation" });
+    // Replay succeeded but left zero enter-state activities (empty events, or
+    // a history that pops everything — exit-done activities may remain). A
+    // blank screen is a silent failure — surface it.
+    throw new SnapshotLoadError({ kind: "empty-stack" });
   }
 
   return { events, stack };
@@ -84,27 +85,37 @@ export function loadSnapshot(
 
 /**
  * A value that is not a core-known v1 snapshot must fail loudly before any
- * replay (`incompatible-schema`) instead of folding into a corrupt stack.
+ * replay (`unrecognized-snapshot`) instead of folding into a corrupt stack.
+ * `detail` names which structural check failed, for diagnosis.
  */
 function assertSnapshotStructure(snapshot: StackSnapshot): void {
   if (snapshot?.$schema !== "stackflow.snapshot.v1") {
-    throw new SnapshotLoadError({ kind: "incompatible-schema" });
+    throw new SnapshotLoadError({
+      kind: "unrecognized-snapshot",
+      detail: "$schema mismatch",
+    });
   }
 
   const events: unknown = snapshot.events;
 
   if (!Array.isArray(events)) {
-    throw new SnapshotLoadError({ kind: "incompatible-schema" });
+    throw new SnapshotLoadError({
+      kind: "unrecognized-snapshot",
+      detail: "events is not an array",
+    });
   }
 
-  for (const event of events) {
+  for (const [index, event] of events.entries()) {
     if (
       !event ||
       typeof event !== "object" ||
       typeof (event as { id?: unknown }).id !== "string" ||
       !isNavigationEventName((event as { name?: unknown }).name)
     ) {
-      throw new SnapshotLoadError({ kind: "incompatible-schema" });
+      throw new SnapshotLoadError({
+        kind: "unrecognized-snapshot",
+        detail: `event item at index ${index} is not a navigation event`,
+      });
     }
   }
 }
