@@ -29,29 +29,6 @@ export function loadSnapshot(
   const navigationEvents =
     overrideNavigationEvents?.(snapshot.events) ?? snapshot.events;
 
-  const registeredActivityNames = new Set(
-    filterEvents(staticEvents, "ActivityRegistered").map(
-      (event) => event.activityName,
-    ),
-  );
-
-  // Registration check (L6). The current config is the source of truth for
-  // which activities exist. Unlike the runtime `validateEvents` — which checks
-  // only Pushed — this also covers Replaced, since Replaced materializes an
-  // activity by name too. An unregistered name here means the config changed
-  // out from under a stale snapshot: fail loudly rather than resurrect it.
-  for (const event of navigationEvents) {
-    if (
-      (event.name === "Pushed" || event.name === "Replaced") &&
-      !registeredActivityNames.has(event.activityName)
-    ) {
-      throw new SnapshotLoadError({
-        kind: "incompatible-events",
-        detail: `activity "${event.activityName}" is not registered in the current config`,
-      });
-    }
-  }
-
   const transitionDuration =
     filterEvents(staticEvents, "Initialized")[0]?.transitionDuration ?? 0;
 
