@@ -32,9 +32,5 @@ export class SnapshotLoadError extends Error {
     super(message ?? `failed to load snapshot: ${cause.kind}`);
     this.name = "SnapshotLoadError";
     this.cause = cause;
-
-    // Restore the prototype chain so `instanceof` holds after down-level
-    // transpilation of a built-in subclass.
-    Object.setPrototypeOf(this, SnapshotLoadError.prototype);
   }
 }
