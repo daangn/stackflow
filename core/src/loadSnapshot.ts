@@ -33,16 +33,10 @@ export function loadSnapshot(
     filterEvents(staticEvents, "Initialized")[0]?.transitionDuration ?? 0;
 
   const now = Date.now();
-  const rebasedEvents = rebaseNavigationEvents(navigationEvents, {
+  const events = rebaseEvents([...staticEvents, ...navigationEvents], {
     now,
     transitionDuration,
-    latestStaticEventDate: staticEvents.reduce(
-      (latest, event) => Math.max(latest, event.eventDate),
-      Number.NEGATIVE_INFINITY,
-    ),
   });
-
-  const events = [...staticEvents, ...rebasedEvents];
 
   let stack: Stack;
   try {
@@ -110,36 +104,32 @@ function assertSnapshotStructure(snapshot: StackSnapshot): void {
 }
 
 /**
- * Re-date snapshot events so replay settles deterministically (RB1–RB5):
- * assign strictly increasing dates in array order (array order is the replay
- * order), placed inside the window after the static events and far enough in
- * the past (`≤ now − transitionDuration`) that every reducer folds to a
- * settled state. Fractional spacing fits any number of events inside the
- * window, so snapshot events fold after the static events regardless of
- * history length. Every other field is preserved byte-for-byte
- * (id/activityId/stepId included). Basing the new dates on capture order
- * rather than the original values keeps a clock skew between the capture and
- * load sessions from disturbing intra-snapshot order, and makes post-load
- * navigation (dispatched at the current time) always sort after the restored
- * events.
+ * Re-date the load events so replay settles deterministically: assign strictly
+ * increasing dates in array order (array order is the replay order), every one
+ * at or before `now − transitionDuration` so every reducer folds to a settled
+ * state. Static events lead the array, so this single backward walk keeps them
+ * ahead of the navigation events without dating them specially — static events
+ * are navigation-inert (aggregate reads their `eventDate` only as a sort key,
+ * and a re-captured snapshot never persists them), so they need only stay
+ * ordered before navigation, which the shared re-dating guarantees at any
+ * `transitionDuration` (td=0 included, where static and navigation would
+ * otherwise share a timestamp). Every other field is preserved byte-for-byte
+ * (id/activityId/stepId included). Dating by replay order rather than the
+ * original values keeps a capture/load clock skew from disturbing order, and
+ * makes post-load navigation (dispatched at the current time) sort after the
+ * restored events.
  */
-function rebaseNavigationEvents(
-  events: NavigationEvent[],
+function rebaseEvents(
+  events: DomainEvent[],
   context: {
     now: number;
     transitionDuration: number;
-    latestStaticEventDate: number;
   },
-): NavigationEvent[] {
+): DomainEvent[] {
   const settledUpperBound = context.now - context.transitionDuration;
-  const window = settledUpperBound - context.latestStaticEventDate;
-  // A degenerate window (static events dated at or past the settled bound —
-  // e.g. a direct core embedding dating them near creation time) falls back
-  // to settledness alone: fold semantics are safe without the placement.
-  const spacing = window > 0 ? Math.min(1, window / (events.length + 1)) : 1;
 
   return events.map((event, index) => ({
     ...event,
-    eventDate: settledUpperBound - (events.length - index) * spacing,
+    eventDate: settledUpperBound - (events.length - index),
   }));
 }

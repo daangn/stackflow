@@ -189,22 +189,19 @@ test("load - 원본 이벤트의 id·activityId·stepId를 바이트 보존하�
   expect(a?.steps[1].enteredBy.eventDate).not.toEqual(originalStepDate);
 });
 
-test("load - 이벤트 수가 transitionDuration(ms)을 넘어도 재기저 date가 정적 이벤트 뒤의 창 안에 배치됩니다", () => {
-  // The react integration backdates static events by only 2×transitionDuration,
-  // leaving a window of transitionDuration ms after them. A fixed 1ms integer
-  // spacing would push ≥350 events out of that window, folding the earliest
-  // snapshot events before Initialized/ActivityRegistered — fractional
-  // spacing must fit any history length inside the window.
+test("load - 정적 이벤트와 복원 이벤트를 함께 재기저해, 이벤트 수와 무관하게 정적 이벤트가 복원 이벤트보다 앞에 정렬되고 전부 정착합니다", () => {
+  // Static and navigation events are re-dated in one backward walk from
+  // now − transitionDuration, so static-before-navigation is structural for
+  // any history length — no window to overflow, whatever the count.
   const transitionDuration = 350;
-  const staticBackdate = Date.now() - 2 * transitionDuration;
   const staticEvents: DomainEvent[] = [
     makeEvent("Initialized", {
       transitionDuration,
-      eventDate: staticBackdate,
+      eventDate: enoughPastTime(),
     }),
     makeEvent("ActivityRegistered", {
       activityName: "A",
-      eventDate: staticBackdate + 1,
+      eventDate: enoughPastTime(),
     }),
   ];
   const snapshotEvents = Array.from({ length: 400 }, (_, index) =>
@@ -230,7 +227,8 @@ test("load - 이벤트 수가 transitionDuration(ms)을 넘어도 재기저 date
     .map((e) => e.eventDate);
 
   expect(rebasedDates).toHaveLength(400);
-  // Every rebased date lies inside the window: after every static event...
+  // Every navigation date sorts strictly after every (also re-dated) static
+  // event...
   expect(Math.min(...rebasedDates)).toBeGreaterThan(Math.max(...staticDates));
   // ...and at or before creation time − transitionDuration (settled).
   expect(Math.max(...rebasedDates)).toBeLessThanOrEqual(
@@ -249,6 +247,61 @@ test("load - 이벤트 수가 transitionDuration(ms)을 넘어도 재기저 date
     stack.activities.every((x) => x.transitionState === "enter-done"),
   ).toBe(true);
   expect(stack.activities.find((x) => x.isTop)?.id).toEqual("a399");
+});
+
+test("load - transitionDuration이 0이어도 정적 이벤트가 복원 이벤트보다 앞에 정렬됩니다", () => {
+  // With td=0 the react integration backdates static by 2·td = 0, colliding
+  // with freshly created navigation dates; the old window degenerated and
+  // fell back to placement that ignored the static lower bound, sorting
+  // navigation before static. Re-dating static and navigation together makes
+  // the ordering hold structurally at td=0 too.
+  const staticEvents: DomainEvent[] = [
+    makeEvent("Initialized", {
+      transitionDuration: 0,
+      eventDate: Date.now(),
+    }),
+    makeEvent("ActivityRegistered", {
+      activityName: "A",
+      eventDate: Date.now(),
+    }),
+  ];
+  const snapshotEvents = [
+    makeEvent("Pushed", {
+      activityId: "a1",
+      activityName: "A",
+      activityParams: {},
+      eventDate: enoughPastTime(),
+    }),
+    makeEvent("Pushed", {
+      activityId: "a2",
+      activityName: "A",
+      activityParams: {},
+      eventDate: enoughPastTime(),
+    }),
+  ];
+
+  const store = makeCoreStore({
+    initialEvents: staticEvents,
+    plugins: [provideSnapshotPlugin(snapshotEvents)],
+  });
+
+  const log = store.pullEvents();
+  const staticDates = log
+    .filter((e) => e.name === "Initialized" || e.name === "ActivityRegistered")
+    .map((e) => e.eventDate);
+  const rebasedDates = log
+    .filter((e) => e.name === "Pushed")
+    .map((e) => e.eventDate);
+
+  // Navigation still sorts strictly after static, with no window to lean on.
+  expect(Math.min(...rebasedDates)).toBeGreaterThan(Math.max(...staticDates));
+
+  const stack = store.actions.getStack();
+  expect(stack.globalTransitionState).toEqual("idle");
+  expect(
+    stack.activities.every((x) => x.transitionState === "enter-done"),
+  ).toBe(true);
+  expect(stack.activities.find((x) => x.isTop)?.id).toEqual("a2");
 });
 
 test("load - load 후 pop이 복원 최상단을 exit 전환시키고 아래 복원 activity를 재노출합니다", () => {
