@@ -1,13 +1,17 @@
 import isEqual from "react-fast-compare";
 import { aggregate } from "./aggregate";
-import type { DomainEvent, PushedEvent, StepPushedEvent } from "./event-types";
+import type { DomainEvent } from "./event-types";
 import { isNavigationEvent, makeEvent } from "./event-utils";
-import type { StackflowActions, StackflowPlugin } from "./interfaces";
+import type {
+  StackflowActions,
+  StackflowPlugin,
+  StackInitInfo,
+} from "./interfaces";
 import { loadSnapshot } from "./loadSnapshot";
 import { produceEffects } from "./produceEffects";
 import { SnapshotLoadError } from "./SnapshotLoadError";
 import type { Stack } from "./Stack";
-import type { StackSnapshot } from "./StackSnapshot";
+import type { NavigationEvent, StackSnapshot } from "./StackSnapshot";
 import { divideBy, once, uniqBy } from "./utils";
 import { makeActions } from "./utils/makeActions";
 import { triggerPostEffectHooks } from "./utils/triggerPostEffectHooks";
@@ -23,7 +27,7 @@ export type MakeCoreStoreOptions = {
   plugins: StackflowPlugin[];
   handlers?: {
     onInitialActivityIgnored?: (
-      initialPushedEvents: (PushedEvent | StepPushedEvent)[],
+      initialPushedEvents: NavigationEvent[],
     ) => void;
     onInitialActivityNotFound?: () => void;
   };
@@ -63,18 +67,32 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
     value: [],
   };
 
+  // One chain for both paths: each plugin sees the previous plugin's return,
+  // with initInfo telling which path is running. On load the return is the
+  // replay sequence, so it goes back through the load validation afterwards.
+  const overrideInitialEvents = (
+    initialEvents: NavigationEvent[],
+    initInfo: StackInitInfo,
+  ): NavigationEvent[] =>
+    pluginInstances.reduce(
+      (events, pluginInstance) =>
+        pluginInstance.overrideInitialEvents?.({
+          initialEvents: events,
+          initialContext,
+          initInfo,
+        }) ?? events,
+      initialEvents,
+    );
+
   /**
-   * The create path is unchanged from the pre-snapshot behavior — a store
-   * with no snapshot provider is observably identical to before.
+   * The create path keeps the pre-snapshot pipeline — with no snapshot
+   * provider the store is built exactly as before; the only addition the
+   * chain sees is the initInfo signal.
    */
   const createStack = (): Stack => {
-    const initialPushedEvents = pluginInstances.reduce(
-      (initialEvents, pluginInstance) =>
-        pluginInstance.overrideInitialEvents?.({
-          initialEvents,
-          initialContext,
-        }) ?? initialEvents,
+    const initialPushedEvents = overrideInitialEvents(
       initialPushedEventsByOption,
+      { kind: "create" },
     );
 
     const isInitialActivityIgnored =
@@ -129,7 +147,9 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
     const { pluginInstance, snapshot } = suppliedSnapshots[0];
 
     try {
-      const loaded = loadSnapshot(snapshot, initialRemainingEvents);
+      const loaded = loadSnapshot(snapshot, initialRemainingEvents, (events) =>
+        overrideInitialEvents(events, { kind: "load" }),
+      );
       events.value = loaded.events;
       stackValue = loaded.stack;
       initInfo = { kind: "load" };

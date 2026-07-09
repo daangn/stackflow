@@ -10,12 +10,24 @@ import type { NavigationEvent, StackSnapshot } from "./StackSnapshot";
  * events through the existing aggregate machinery. Static information
  * (transitionDuration, the registered-activity set) is re-derived from the
  * current config's static events, never from the snapshot.
+ *
+ * `overrideNavigationEvents` is the plugins' `overrideInitialEvents` chain:
+ * its return is adopted as the replay sequence. It runs after the structure
+ * check (hooks never see an unrecognizable value) and before every other
+ * step, so validation and rebasing apply to the sequence that actually
+ * replays — whether it came straight from the snapshot or was reshaped by a
+ * plugin. An error thrown by the chain itself is a plugin bug, not a snapshot
+ * defect, and propagates raw instead of becoming a `SnapshotLoadError`.
  */
 export function loadSnapshot(
   snapshot: StackSnapshot,
   staticEvents: DomainEvent[],
+  overrideNavigationEvents?: (events: NavigationEvent[]) => NavigationEvent[],
 ): { events: DomainEvent[]; stack: Stack } {
   assertSnapshotStructure(snapshot);
+
+  const navigationEvents =
+    overrideNavigationEvents?.(snapshot.events) ?? snapshot.events;
 
   const registeredActivityNames = new Set(
     filterEvents(staticEvents, "ActivityRegistered").map(
@@ -28,7 +40,7 @@ export function loadSnapshot(
   // only Pushed — this also covers Replaced, since Replaced materializes an
   // activity by name too. An unregistered name here means the config changed
   // out from under a stale snapshot: fail loudly rather than resurrect it.
-  for (const event of snapshot.events) {
+  for (const event of navigationEvents) {
     if (
       (event.name === "Pushed" || event.name === "Replaced") &&
       !registeredActivityNames.has(event.activityName)
@@ -44,7 +56,7 @@ export function loadSnapshot(
     filterEvents(staticEvents, "Initialized")[0]?.transitionDuration ?? 0;
 
   const now = Date.now();
-  const rebasedEvents = rebaseNavigationEvents(snapshot.events, {
+  const rebasedEvents = rebaseNavigationEvents(navigationEvents, {
     now,
     transitionDuration,
     latestStaticEventDate: staticEvents.reduce(

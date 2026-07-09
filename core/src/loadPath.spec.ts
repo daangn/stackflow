@@ -1,10 +1,6 @@
-import type {
-  DomainEvent,
-  PushedEvent,
-  StepPushedEvent,
-} from "./event-types";
+import type { DomainEvent } from "./event-types";
 import { makeEvent } from "./event-utils";
-import type { StackflowPlugin } from "./interfaces";
+import type { StackflowPlugin, StackInitInfo } from "./interfaces";
 import { makeCoreStore } from "./makeCoreStore";
 import { SnapshotLoadError } from "./SnapshotLoadError";
 import type { NavigationEvent, StackSnapshot } from "./StackSnapshot";
@@ -227,12 +223,140 @@ test("load - 현행 config에서 transitionDuration·등록집합을 재파생�
 });
 
 // ---------------------------------------------------------------------------
-// L1 · no interception
+// load interception — the override chain runs on the replay sequence
 // ---------------------------------------------------------------------------
 
-test("load - overrideInitialEvents 체인을 호출하지 않습니다", () => {
-  const overrideInitialEvents = jest.fn(() => []);
+test('load - overrideInitialEvents 체인이 스냅샷 재생열 전체와 initInfo { kind: "load" }로 호출됩니다', () => {
+  const overrideInitialEvents = jest.fn(
+    (args: {
+      initialEvents: NavigationEvent[];
+      initialContext: any;
+      initInfo: StackInitInfo;
+    }) => args.initialEvents,
+  );
 
+  const { actions } = makeCoreStore({
+    initialEvents: config(["A", "B"]),
+    plugins: [
+      provideSnapshotPlugin(
+        snapshot([
+          makeEvent("Pushed", {
+            id: "e1",
+            activityId: "a1",
+            activityName: "A",
+            activityParams: {},
+            eventDate: enoughPastTime(),
+          }),
+          makeEvent("Pushed", {
+            id: "e2",
+            activityId: "b1",
+            activityName: "B",
+            activityParams: {},
+            eventDate: enoughPastTime(),
+          }),
+          makeEvent("Popped", {
+            id: "e3",
+            eventDate: enoughPastTime(),
+          }),
+        ]),
+        { overrideInitialEvents },
+      ),
+    ],
+  });
+
+  expect(overrideInitialEvents).toHaveBeenCalledTimes(1);
+  const args = overrideInitialEvents.mock.calls[0][0];
+  // The full replay sequence flows through — including events (Popped) that
+  // are not initial-entry vocabulary — with original ids.
+  expect(args.initialEvents.map((e) => ({ name: e.name, id: e.id }))).toEqual([
+    { name: "Pushed", id: "e1" },
+    { name: "Pushed", id: "e2" },
+    { name: "Popped", id: "e3" },
+  ]);
+  // The same one-shot record shape onInit receives.
+  expect(args.initInfo).toEqual({ kind: "load" });
+  // An identity return reconstructs the default faithful result: the Popped
+  // still applies, so a1 is back on top.
+  const top = actions.getStack().activities.find((x) => x.isTop);
+  expect(top?.id).toEqual("a1");
+});
+
+test("load - 체인의 반환이 재생열로 채택됩니다 — 이벤트를 걸러내면 탐색 기록이 그에 맞게 재구성됩니다", () => {
+  const { actions } = makeCoreStore({
+    initialEvents: config(["A", "B"]),
+    plugins: [
+      provideSnapshotPlugin(
+        snapshot([
+          makeEvent("Pushed", {
+            activityId: "a1",
+            activityName: "A",
+            activityParams: {},
+            eventDate: enoughPastTime(),
+          }),
+          makeEvent("Pushed", {
+            activityId: "b1",
+            activityName: "B",
+            activityParams: {},
+            eventDate: enoughPastTime(),
+          }),
+          makeEvent("Popped", {
+            eventDate: enoughPastTime(),
+          }),
+        ]),
+        {
+          overrideInitialEvents: ({ initialEvents }) =>
+            initialEvents.filter((e) => e.name !== "Popped"),
+        },
+      ),
+    ],
+  });
+
+  // With the Popped dropped from the replay sequence, b1 is alive and on top.
+  const b = actions.getStack().activities.find((x) => x.id === "b1");
+  expect(b?.transitionState).toEqual("enter-done");
+  expect(b?.isTop).toBe(true);
+});
+
+test("load - 체인이 추가한 이벤트도 배열 순서대로 재기저되어 정착 상태로 복원됩니다", () => {
+  const { actions } = makeCoreStore({
+    initialEvents: config(["A", "C"]),
+    plugins: [
+      provideSnapshotPlugin(
+        snapshot([
+          makeEvent("Pushed", {
+            activityId: "a1",
+            activityName: "A",
+            activityParams: {},
+            eventDate: enoughPastTime(),
+          }),
+        ]),
+        {
+          overrideInitialEvents: ({ initialEvents }) => [
+            ...initialEvents,
+            // Appended with a fresh (now) eventDate — the rebase must still
+            // settle it inside the window, ordered after the snapshot events.
+            makeEvent("Pushed", {
+              activityId: "c1",
+              activityName: "C",
+              activityParams: {},
+            }),
+          ],
+        },
+      ),
+    ],
+  });
+
+  const stack = actions.getStack();
+  const c = stack.activities.find((x) => x.id === "c1");
+  expect(c?.transitionState).toEqual("enter-done");
+  expect(c?.isTop).toBe(true);
+  expect(stack.globalTransitionState).toEqual("idle");
+});
+
+test("load - 낡은 스냅샷을 체인이 수선하면 검증은 수선된 재생열에 적용되어 load가 성공합니다", () => {
+  // The snapshot materializes unregistered "B" — on its own this fails as
+  // incompatible-events. A plugin that strips the dead activity's events
+  // repairs the sequence: validation applies to what actually replays.
   const { actions } = makeCoreStore({
     initialEvents: config(["A"]),
     plugins: [
@@ -244,15 +368,151 @@ test("load - overrideInitialEvents 체인을 호출하지 않습니다", () => {
             activityParams: {},
             eventDate: enoughPastTime(),
           }),
+          makeEvent("Replaced", {
+            activityId: "b1",
+            activityName: "B",
+            activityParams: {},
+            eventDate: enoughPastTime(),
+          }),
         ]),
-        { overrideInitialEvents },
+        {
+          overrideInitialEvents: ({ initialEvents }) =>
+            initialEvents.filter(
+              (e) => !("activityName" in e && e.activityName === "B"),
+            ),
+        },
       ),
     ],
   });
 
-  expect(overrideInitialEvents).toHaveBeenCalledTimes(0);
-  // The strip attempt had no effect — the restored activity survives.
-  expect(actions.getStack().activities.some((x) => x.id === "a1")).toBe(true);
+  const a = actions.getStack().activities.find((x) => x.id === "a1");
+  expect(a?.transitionState).toEqual("enter-done");
+  expect(a?.isTop).toBe(true);
+});
+
+test("load - 체인 반환이 미등록 activity를 물화하면 incompatible-events로 실패합니다", () => {
+  let caught: unknown;
+  try {
+    makeCoreStore({
+      initialEvents: config(["A"]),
+      plugins: [
+        provideSnapshotPlugin(
+          snapshot([
+            makeEvent("Pushed", {
+              activityId: "a1",
+              activityName: "A",
+              activityParams: {},
+              eventDate: enoughPastTime(),
+            }),
+          ]),
+          {
+            overrideInitialEvents: ({ initialEvents }) => [
+              ...initialEvents,
+              makeEvent("Pushed", {
+                activityId: "x1",
+                activityName: "X",
+                activityParams: {},
+                eventDate: enoughPastTime(),
+              }),
+            ],
+          },
+        ),
+      ],
+    });
+  } catch (error) {
+    caught = error;
+  }
+
+  expect(caught).toBeInstanceOf(SnapshotLoadError);
+  expect((caught as SnapshotLoadError).cause.kind).toEqual(
+    "incompatible-events",
+  );
+});
+
+test("load - 체인이 재생열을 비우면 empty-stack으로 실패하고 공급자의 onLoadError로 라우팅됩니다", () => {
+  const onLoadError = jest.fn(
+    (_args: { error: SnapshotLoadError; initialContext: any }) => ({
+      recover: "create" as const,
+    }),
+  );
+
+  const store = makeCoreStore({
+    initialEvents: [
+      ...config(["Home", "A"]),
+      makeEvent("Pushed", {
+        activityId: "home1",
+        activityName: "Home",
+        activityParams: {},
+        eventDate: enoughPastTime(),
+      }),
+    ],
+    plugins: [
+      provideSnapshotPlugin(
+        snapshot([
+          makeEvent("Pushed", {
+            activityId: "a1",
+            activityName: "A",
+            activityParams: {},
+            eventDate: enoughPastTime(),
+          }),
+        ]),
+        { onLoadError },
+      ),
+      () => ({
+        key: "emptier",
+        // A load-only policy — the create run after recovery passes through.
+        overrideInitialEvents: ({ initialEvents, initInfo }) =>
+          initInfo.kind === "load" ? [] : initialEvents,
+      }),
+    ],
+  });
+
+  expect(onLoadError).toHaveBeenCalledTimes(1);
+  expect(onLoadError.mock.calls[0][0].error.cause.kind).toEqual("empty-stack");
+  // Recovery resumed the create path with the option's initial entry.
+  expect(store.actions.getStack().activities.map((x) => x.id)).toEqual([
+    "home1",
+  ]);
+});
+
+test("load - 체인 훅이 throw하면 그 에러가 그대로 전파되고 onLoadError는 호출되지 않습니다", () => {
+  // Characterization, not contract: a throwing hook is a plugin bug, not a
+  // snapshot defect — it is not dressed up as a SnapshotLoadError nor routed
+  // to the provider. Same rationale as the provideSnapshot/onLoadError throw
+  // pins below.
+  const hookFailure = new Error("override hook failed");
+  const onLoadError = jest.fn();
+
+  let caught: unknown;
+  try {
+    makeCoreStore({
+      initialEvents: config(["A"]),
+      plugins: [
+        provideSnapshotPlugin(
+          snapshot([
+            makeEvent("Pushed", {
+              activityId: "a1",
+              activityName: "A",
+              activityParams: {},
+              eventDate: enoughPastTime(),
+            }),
+          ]),
+          { onLoadError },
+        ),
+        () => ({
+          key: "thrower",
+          overrideInitialEvents: () => {
+            throw hookFailure;
+          },
+        }),
+      ],
+    });
+  } catch (error) {
+    caught = error;
+  }
+
+  expect(caught).toBe(hookFailure);
+  expect(onLoadError).toHaveBeenCalledTimes(0);
 });
 
 test("load - 초기 activity 핸들러를 호출하지 않습니다", () => {
@@ -721,8 +981,9 @@ test('load - recover:"create" 재개가 overrideInitialEvents 체인과 initial-
   const onInitialActivityIgnored = jest.fn();
   const overrideInitialEvents = jest.fn(
     (_args: {
-      initialEvents: (PushedEvent | StepPushedEvent)[];
+      initialEvents: NavigationEvent[];
       initialContext: any;
+      initInfo: StackInitInfo;
     }) => [
       makeEvent("Pushed", {
         activityId: "redirect1",
@@ -755,10 +1016,15 @@ test('load - recover:"create" 재개가 overrideInitialEvents 체인과 initial-
   store.init();
 
   // The chain ran, over the option's initial events (not snapshot leftovers).
+  // It ran only once: the load attempt failed at the structure check, before
+  // the chain — so this single call is the recovery's create run.
   expect(overrideInitialEvents).toHaveBeenCalledTimes(1);
   expect(overrideInitialEvents.mock.calls[0][0].initialEvents).toMatchObject([
     { name: "Pushed", activityId: "home1" },
   ]);
+  expect(overrideInitialEvents.mock.calls[0][0].initInfo).toEqual({
+    kind: "create",
+  });
   // The chain's substitution is what the stack is built from...
   expect(store.actions.getStack().activities.map((x) => x.id)).toEqual([
     "redirect1",

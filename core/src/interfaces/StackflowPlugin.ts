@@ -10,11 +10,12 @@ import type {
 } from "../event-types";
 import type { BaseDomainEvent } from "../event-types/_base";
 import type { SnapshotLoadError } from "../SnapshotLoadError";
-import type { StackSnapshot } from "../StackSnapshot";
+import type { NavigationEvent, StackSnapshot } from "../StackSnapshot";
 import type {
   StackflowPluginHook,
   StackflowPluginPostEffectHook,
   StackflowPluginPreEffectHook,
+  StackInitInfo,
 } from "./StackflowPluginHook";
 
 export type StackflowPlugin = () => {
@@ -130,12 +131,28 @@ export type StackflowPlugin = () => {
   onChanged?: StackflowPluginPostEffectHook<"%SOMETHING_CHANGED%">;
 
   /**
-   * Specifies the first `PushedEvent`, `StepPushedEvent` (Overrides the `initialActivity` option specified in the `stackflow()` function)
+   * Intercept the navigation-event sequence a stack is built from. Chained
+   * across plugins in array order — each plugin receives the previous one's
+   * return. `initInfo` says which path is running, in the same record shape
+   * `onInit` receives:
+   * - `{ kind: "create" }`: `initialEvents` holds the initial entry events
+   *   (`PushedEvent`/`StepPushedEvent`, from the `initialActivity` option or
+   *   earlier plugins). The return decides the initial entries.
+   * - `{ kind: "load" }`: `initialEvents` holds the provided snapshot's full
+   *   replay sequence (structure-validated, original field values). The
+   *   return is adopted as the replay sequence — re-dated in array order so
+   *   the restored stack settles, then run through the same load validation
+   *   as the snapshot itself (activity registration, replay, at least one
+   *   enter-state activity), so a failing return surfaces as a
+   *   `SnapshotLoadError` to the snapshot provider. Reshaping the sequence
+   *   reshapes the reconstructed navigation history — a plugin with no load
+   *   policy must return `initialEvents` unchanged.
    */
   overrideInitialEvents?: (args: {
-    initialEvents: (PushedEvent | StepPushedEvent)[];
+    initialEvents: NavigationEvent[];
     initialContext: any;
-  }) => (PushedEvent | StepPushedEvent)[];
+    initInfo: StackInitInfo;
+  }) => NavigationEvent[];
 
   /**
    * Called synchronously at stack creation time to provide a snapshot to load

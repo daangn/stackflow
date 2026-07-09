@@ -1,8 +1,8 @@
 import type { PushedEvent, StepPushedEvent } from "./event-types";
 import { makeEvent } from "./event-utils";
-import type { StackflowPlugin } from "./interfaces";
+import type { StackflowPlugin, StackInitInfo } from "./interfaces";
 import { makeCoreStore } from "./makeCoreStore";
-import type { StackSnapshot } from "./StackSnapshot";
+import type { NavigationEvent, StackSnapshot } from "./StackSnapshot";
 
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
@@ -79,6 +79,41 @@ test('create - provideSnapshot 전원 null이면 create 경로를 타고 initInf
   expect(store.actions.getStack().activities.map((a) => a.id)).toEqual(["a1"]);
   expect(onInit).toHaveBeenCalledTimes(1);
   expect(onInit.mock.calls[0][0].initInfo).toEqual({ kind: "create" });
+});
+
+test('create - overrideInitialEvents가 onInit과 동일한 형태의 initInfo { kind: "create" }를 전달받습니다', () => {
+  const overrideInitialEvents = jest.fn(
+    (args: {
+      initialEvents: NavigationEvent[];
+      initialContext: any;
+      initInfo: StackInitInfo;
+    }) => args.initialEvents,
+  );
+
+  makeCoreStore({
+    initialEvents: [
+      makeEvent("Initialized", {
+        transitionDuration: 350,
+        eventDate: enoughPastTime(),
+      }),
+      makeEvent("ActivityRegistered", {
+        activityName: "hello",
+        eventDate: enoughPastTime(),
+      }),
+      makeEvent("Pushed", {
+        activityId: "a1",
+        activityName: "hello",
+        activityParams: {},
+        eventDate: enoughPastTime(),
+      }),
+    ],
+    plugins: [() => ({ key: "observer", overrideInitialEvents })],
+  });
+
+  expect(overrideInitialEvents).toHaveBeenCalledTimes(1);
+  expect(overrideInitialEvents.mock.calls[0][0].initInfo).toEqual({
+    kind: "create",
+  });
 });
 
 test("create - overrideInitialEvents가 초기 진입을 전부 strip하면 onInitialActivityNotFound가 발화하고 빈 스택입니다", () => {
