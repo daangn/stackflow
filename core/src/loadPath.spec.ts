@@ -290,7 +290,7 @@ test("load - 초기 activity 핸들러를 호출하지 않습니다", () => {
 // §3.6 signal on load · §4.3 timing
 // ---------------------------------------------------------------------------
 
-test('load - onInit이 init()에서 정확히 1회 initializedBy "load"로 발화합니다', () => {
+test('load - onInit이 init()에서 정확히 1회 initInfo { kind: "load" }로 발화합니다', () => {
   const onInit = jest.fn();
 
   const store = makeCoreStore({
@@ -316,7 +316,7 @@ test('load - onInit이 init()에서 정확히 1회 initializedBy "load"로 발�
   store.init();
 
   expect(onInit).toHaveBeenCalledTimes(1);
-  expect(onInit.mock.calls[0][0].initializedBy).toEqual("load");
+  expect(onInit.mock.calls[0][0].initInfo).toEqual({ kind: "load" });
 });
 
 test("load - 재생 중 post-effect 훅(onPushed·onReplaced·onChanged)이 발화하지 않습니다", () => {
@@ -713,7 +713,7 @@ test('load - 실패 시 onLoadError가 {recover:"create"}를 반환하면 throw 
   expect(store.actions.getStack().activities.map((x) => x.id)).toEqual([
     "home1",
   ]);
-  expect(onInit.mock.calls[0][0].initializedBy).toEqual("create");
+  expect(onInit.mock.calls[0][0].initInfo).toEqual({ kind: "create" });
 });
 
 test('load - recover:"create" 재개가 overrideInitialEvents 체인과 initial-activity 핸들러를 포함한 create 파이프라인을 온전히 태웁니다', () => {
@@ -769,7 +769,7 @@ test('load - recover:"create" 재개가 overrideInitialEvents 체인과 initial-
   expect(onInitialActivityIgnored.mock.calls[0][0]).toMatchObject([
     { name: "Pushed", activityId: "redirect1" },
   ]);
-  expect(onInit.mock.calls[0][0].initializedBy).toEqual("create");
+  expect(onInit.mock.calls[0][0].initInfo).toEqual({ kind: "create" });
 });
 
 test("load - recover:create 재개 시 provideSnapshot을 재폴링하지 않습니다", () => {

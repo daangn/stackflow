@@ -55,7 +55,7 @@ const DOMAIN_EVENT_NAMES = new Set([
   "Resumed",
 ]);
 
-test('initializedBy - create 경로에서 onInit의 initializedBy가 "create"입니다', () => {
+test('initInfo - create 경로에서 onInit의 initInfo.kind가 "create"입니다', () => {
   const onInit = jest.fn();
 
   const store = makeCoreStore({
@@ -73,10 +73,10 @@ test('initializedBy - create 경로에서 onInit의 initializedBy가 "create"입
 
   store.init();
 
-  expect(onInit.mock.calls[0][0].initializedBy).toEqual("create");
+  expect(onInit.mock.calls[0][0].initInfo).toEqual({ kind: "create" });
 });
 
-test("initializedBy - load 후 구분 신호가 Stack 상태·이벤트 로그에 남지 않고 복원 activity의 enteredBy는 원본 이벤트입니다", () => {
+test("initInfo - load 후 구분 신호가 Stack 상태·이벤트 로그에 남지 않고 복원 activity의 enteredBy는 원본 이벤트입니다", () => {
   const store = makeCoreStore({
     initialEvents: config(["A", "B"]),
     plugins: [

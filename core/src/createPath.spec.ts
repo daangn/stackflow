@@ -51,7 +51,7 @@ test("create - 스냅샷 공급자가 없으면 initialEvents로 create 경로�
   expect(stack.globalTransitionState).toEqual("idle");
 });
 
-test('create - provideSnapshot 전원 null이면 create 경로를 타고 initializedBy가 "create"입니다', () => {
+test('create - provideSnapshot 전원 null이면 create 경로를 타고 initInfo.kind가 "create"입니다', () => {
   const onInit = jest.fn();
 
   const store = makeCoreStore({
@@ -78,7 +78,7 @@ test('create - provideSnapshot 전원 null이면 create 경로를 타고 initial
 
   expect(store.actions.getStack().activities.map((a) => a.id)).toEqual(["a1"]);
   expect(onInit).toHaveBeenCalledTimes(1);
-  expect(onInit.mock.calls[0][0].initializedBy).toEqual("create");
+  expect(onInit.mock.calls[0][0].initInfo).toEqual({ kind: "create" });
 });
 
 test("create - overrideInitialEvents가 초기 진입을 전부 strip하면 onInitialActivityNotFound가 발화하고 빈 스택입니다", () => {

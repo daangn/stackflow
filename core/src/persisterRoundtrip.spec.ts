@@ -102,7 +102,7 @@ test("persister 왕복 - 캡처(onChanged)→JSON 보존→다음 생성의 prov
   expect(article?.transitionState).toEqual("enter-done");
   expect(article?.isTop).toBe(true);
   expect((home?.zIndex ?? -1) < (article?.zIndex ?? -1)).toBe(true);
-  expect(onInit2.mock.calls[0][0].initializedBy).toEqual("load");
+  expect(onInit2.mock.calls[0][0].initInfo).toEqual({ kind: "load" });
 });
 
 test("persister 왕복 - 손상 스냅샷을 onLoadError가 폐기하고 recover:create로 초기 화면 기동합니다", () => {
@@ -140,7 +140,7 @@ test("persister 왕복 - 손상 스냅샷을 onLoadError가 폐기하고 recover
   ]);
   // The corrupt snapshot was discarded by the supplier.
   expect(memory.value).toBeNull();
-  expect(onInit.mock.calls[0][0].initializedBy).toEqual("create");
+  expect(onInit.mock.calls[0][0].initInfo).toEqual({ kind: "create" });
 });
 
 test("persister 왕복 - 디코드 불가한 보존물(잘린 write)은 공급자가 스스로 폐기하고 create로 기동합니다", () => {
@@ -169,5 +169,5 @@ test("persister 왕복 - 디코드 불가한 보존물(잘린 write)은 공급�
   ]);
   // The undecodable stored value was discarded by the supplier.
   expect(memory.value).toBeNull();
-  expect(onInit.mock.calls[0][0].initializedBy).toEqual("create");
+  expect(onInit.mock.calls[0][0].initInfo).toEqual({ kind: "create" });
 });

@@ -122,7 +122,7 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
     );
   }
 
-  let initializedBy: "create" | "load";
+  let initInfo: { kind: "create" | "load" };
   let stackValue: Stack;
 
   if (suppliedSnapshots.length === 1) {
@@ -132,7 +132,7 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
       const loaded = loadSnapshot(snapshot, initialRemainingEvents);
       events.value = loaded.events;
       stackValue = loaded.stack;
-      initializedBy = "load";
+      initInfo = { kind: "load" };
     } catch (error) {
       if (!(error instanceof SnapshotLoadError)) {
         throw error;
@@ -151,11 +151,11 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
       }
 
       stackValue = createStack();
-      initializedBy = "create";
+      initInfo = { kind: "create" };
     }
   } else {
     stackValue = createStack();
-    initializedBy = "create";
+    initInfo = { kind: "create" };
   }
 
   const stack = {
@@ -246,7 +246,7 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
       pluginInstances.forEach((pluginInstance) => {
         pluginInstance.onInit?.({
           actions,
-          initializedBy,
+          initInfo,
         });
       });
     }),
