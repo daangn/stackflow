@@ -29,3 +29,5 @@ const persisterPlugin = ({ storage, codec }) => () => ({
 ```
 
 A load reconstructs the stack by replaying the snapshot's navigation events — as passed through the plugins' `overrideInitialEvents` chain — through the existing aggregate machinery: it re-derives static information (transition duration, the registered-activity set) from the current config, re-dates the events so the restored stack settles synchronously, and preserves each event's `id`/`activityId`/`stepId` byte-for-byte. No new domain events or stack state properties are introduced.
+
+The snapshot load's registration check is unified into `validateEvents` (run by `aggregate` on every path), which now rejects a `Replaced` that materializes an unregistered activity, matching its long-standing check for `Pushed`. In config-first usage a replace only targets registered activities, so this added check does not fire on the live path.
