@@ -1,4 +1,6 @@
 import isEqual from "react-fast-compare";
+import { findTargetActivityIndices } from "./activity-utils/findTargetActivityIndices";
+import { makeStackReducer } from "./activity-utils/makeStackReducer";
 import { aggregate } from "./aggregate";
 import type { DomainEvent } from "./event-types";
 import { isNavigationEvent, makeEvent } from "./event-utils";
@@ -40,6 +42,97 @@ export type CoreStore = {
   subscribe: (listener: () => void) => () => void;
   pluginInstances: ReturnType<StackflowPlugin>[];
 };
+
+/**
+ * The navigation events a snapshot should carry: those whose transition has
+ * committed. A snapshot is the last committed navigation history — load is
+ * effect-silent (it assigns the reconstructed stack directly, replaying no
+ * PUSHED/onChanged effect) and the rebase drives every restored event to done,
+ * so carrying an uncommitted event would resurrect on reload a state the live
+ * session never committed and never fired its done-effect for.
+ *
+ * Fold the log once (the way aggregate does), attributing each event to the
+ * activity it enters (Pushed/Replaced) or targets (Popped/Step*) — resolving
+ * step and pop targets against the running stack exactly as the reducer does,
+ * so a step's parent is known even after the step is superseded. An event is
+ * then dropped iff the activity it belongs to did not commit: the whole span of
+ * an activity still mid-enter (its steps included, so no step outlives its
+ * parent and grafts onto another activity on reload), the Popped of an exit
+ * still in flight (the activity's last committed state is preserved), and
+ * anything queued behind a pause that never resumed.
+ */
+function collectCommittedNavigationEvents(
+  log: DomainEvent[],
+): NavigationEvent[] {
+  // Floor now at the latest event date the way dispatchEvent does, so a
+  // just-committed event reads as settled rather than future-dated.
+  const now = log.reduce(
+    (latest, event) => Math.max(latest, event.eventDate),
+    Date.now(),
+  );
+
+  const normalized = uniqBy(
+    [...log].sort((a, b) => a.eventDate - b.eventDate),
+    (event) => event.id,
+  );
+
+  const attributedActivityId = new Map<string, string>();
+  const reducer = makeStackReducer({ now });
+  let stack: Stack = {
+    activities: [],
+    globalTransitionState: "idle",
+    registeredActivities: [],
+    transitionDuration: 0,
+    events: [],
+  };
+
+  for (const event of normalized) {
+    if (event.name === "Pushed" || event.name === "Replaced") {
+      attributedActivityId.set(event.id, event.activityId);
+    } else if (
+      event.name === "Popped" ||
+      event.name === "StepPushed" ||
+      event.name === "StepReplaced" ||
+      event.name === "StepPopped"
+    ) {
+      const [targetIndex] = findTargetActivityIndices(stack.activities, event, {
+        now,
+        transitionDuration: stack.transitionDuration,
+      });
+      const target =
+        targetIndex === undefined ? undefined : stack.activities[targetIndex];
+
+      if (target) {
+        attributedActivityId.set(event.id, target.id);
+      }
+    }
+
+    stack = reducer(stack, event);
+  }
+
+  const committedActivityIds = new Set(
+    stack.activities
+      .filter((activity) => activity.transitionState !== "enter-active")
+      .map((activity) => activity.id),
+  );
+  const rolledBackExitEventIds = new Set<string>();
+  for (const activity of stack.activities) {
+    if (activity.transitionState === "exit-active" && activity.exitedBy) {
+      rolledBackExitEventIds.add(activity.exitedBy.id);
+    }
+  }
+  const pausedEventIds = new Set(
+    (stack.pausedEvents ?? []).map((event) => event.id),
+  );
+
+  return normalized.filter(isNavigationEvent).filter((event) => {
+    if (pausedEventIds.has(event.id) || rolledBackExitEventIds.has(event.id)) {
+      return false;
+    }
+    const activityId = attributedActivityId.get(event.id);
+    return activityId !== undefined && committedActivityIds.has(activityId);
+  });
+}
 
 export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
   const storeListeners: Array<() => void> = [];
@@ -189,57 +282,9 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
       return stack.value;
     },
     captureSnapshot() {
-      // A snapshot is the last committed navigation history: it carries only
-      // events whose own transition has settled. Load is effect-silent (it
-      // assigns the reconstructed stack directly and replays no
-      // PUSHED/onChanged effect) and the rebase drives every restored event to
-      // done — so an event still mid-transition, or queued behind a pause that
-      // never resumed, would reappear on reload as a settled state the live
-      // session never committed and never fired its done-effect for. Re-
-      // aggregate the raw log to read each event's committed state, flooring
-      // now at the latest event date the way dispatchEvent does so a
-      // just-committed event is read as settled rather than future-dated.
-      const now = events.value.reduce(
-        (latest, event) => Math.max(latest, event.eventDate),
-        Date.now(),
-      );
-      const stack = aggregate(events.value, now);
-
-      const uncommittedEventIds = new Set<string>();
-      for (const activity of stack.activities) {
-        // Drop the entering event of an activity still mid-enter (the activity
-        // has not committed) and the exiting event of one still mid-exit (its
-        // last committed state is preserved). Per-event, not per-activity: a
-        // settled Pushed and an unsettled Popped can point at the same
-        // activity, and only the Popped drops.
-        if (activity.transitionState === "enter-active") {
-          uncommittedEventIds.add(activity.enteredBy.id);
-        } else if (
-          activity.transitionState === "exit-active" &&
-          activity.exitedBy
-        ) {
-          uncommittedEventIds.add(activity.exitedBy.id);
-        }
-      }
-      for (const pausedEvent of stack.pausedEvents ?? []) {
-        // Queued behind a pause that never resumed — never applied, so never
-        // committed.
-        uncommittedEventIds.add(pausedEvent.id);
-      }
-
-      // Normalize the raw log the way aggregate pre-processes — sort by
-      // eventDate ascending, dedupe by id — keep only committed navigation
-      // events. The resulting array order is the replay order.
-      const navigationEvents = uniqBy(
-        [...events.value].sort((a, b) => a.eventDate - b.eventDate),
-        (e) => e.id,
-      )
-        .filter(isNavigationEvent)
-        .filter((event) => !uncommittedEventIds.has(event.id));
-
       return {
         $schema: "stackflow.snapshot.v1",
-        events: navigationEvents,
+        events: collectCommittedNavigationEvents(events.value),
       };
     },
     dispatchEvent(name, params) {

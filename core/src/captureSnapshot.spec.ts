@@ -466,3 +466,150 @@ test("captureSnapshot - 같은 액티비티의 정착 Pushed는 남기고 미정
   ).toEqual("enter-done");
   expect(restoredStack.activities.find((a) => a.isTop)?.id).toEqual("b1");
 });
+
+test("captureSnapshot - 미커밋(enter-active) 액티비티에 얹힌 step은 부모와 함께 제외되어 고아가 되지 않습니다", () => {
+  // a1 restored settled; push a2 mid-enter, then step onto a2. The step's own
+  // transition settles instantly, but its parent a2 has not committed — so the
+  // step must drop with a2. Otherwise reload replays an orphan step that,
+  // lacking a target activity, grafts onto the committed activity below.
+  const store = makeCoreStore({
+    initialEvents: [
+      makeEvent("Initialized", {
+        transitionDuration: 350,
+        eventDate: enoughPastTime(),
+      }),
+      makeEvent("ActivityRegistered", {
+        activityName: "A",
+        eventDate: enoughPastTime(),
+      }),
+      makeEvent("ActivityRegistered", {
+        activityName: "B",
+        eventDate: enoughPastTime(),
+      }),
+    ],
+    plugins: [
+      provideSnapshot({
+        $schema: "stackflow.snapshot.v1",
+        events: [
+          makeEvent("Pushed", {
+            activityId: "a1",
+            activityName: "A",
+            activityParams: {},
+            eventDate: enoughPastTime(),
+          }),
+        ],
+      }),
+    ],
+  });
+
+  store.actions.push({ activityId: "a2", activityName: "B", activityParams: {} });
+  store.actions.stepPush({ stepId: "s1", stepParams: { step: "1" } });
+  expect(
+    store.actions.getStack().activities.find((a) => a.id === "a2")
+      ?.transitionState,
+  ).toEqual("enter-active");
+
+  const snapshot = store.actions.captureSnapshot();
+
+  // a2's push and its step both drop — no orphan step survives.
+  expect(snapshot.events.map((e) => e.name)).toEqual(["Pushed"]);
+
+  const restored = makeCoreStore({
+    initialEvents: [
+      makeEvent("Initialized", {
+        transitionDuration: 350,
+        eventDate: enoughPastTime(),
+      }),
+      makeEvent("ActivityRegistered", {
+        activityName: "A",
+        eventDate: enoughPastTime(),
+      }),
+      makeEvent("ActivityRegistered", {
+        activityName: "B",
+        eventDate: enoughPastTime(),
+      }),
+    ],
+    plugins: [provideSnapshot(snapshot)],
+  });
+  const restoredStack = restored.actions.getStack();
+
+  // The committed activity below is untouched — no grafted step, a2 absent.
+  expect(restoredStack.activities.map((a) => a.id)).toEqual(["a1"]);
+  expect(
+    restoredStack.activities.find((a) => a.id === "a1")?.steps.map((s) => s.id),
+  ).toEqual(["a1"]);
+});
+
+test("captureSnapshot - 미커밋 액티비티에서 supersede된 step 이벤트도 부모와 함께 제외됩니다", () => {
+  // A subtler orphan: a step on the mid-enter a2 is replaced, so the original
+  // StepPushed no longer survives in a2's steps. A predicate that dropped only
+  // an activity's *surviving* steps would leave that superseded StepPushed
+  // behind. Attribution binds every step to its parent, so it drops too.
+  const store = makeCoreStore({
+    initialEvents: [
+      makeEvent("Initialized", {
+        transitionDuration: 350,
+        eventDate: enoughPastTime(),
+      }),
+      makeEvent("ActivityRegistered", {
+        activityName: "A",
+        eventDate: enoughPastTime(),
+      }),
+      makeEvent("ActivityRegistered", {
+        activityName: "B",
+        eventDate: enoughPastTime(),
+      }),
+    ],
+    plugins: [
+      provideSnapshot({
+        $schema: "stackflow.snapshot.v1",
+        events: [
+          makeEvent("Pushed", {
+            activityId: "a1",
+            activityName: "A",
+            activityParams: {},
+            eventDate: enoughPastTime(),
+          }),
+        ],
+      }),
+    ],
+  });
+
+  store.actions.push({ activityId: "a2", activityName: "B", activityParams: {} });
+  store.actions.stepPush({ stepId: "s1", stepParams: { step: "1" } });
+  store.actions.stepReplace({ stepId: "s1b", stepParams: { step: "1b" } });
+  expect(
+    store.actions.getStack().activities.find((a) => a.id === "a2")
+      ?.transitionState,
+  ).toEqual("enter-active");
+
+  const snapshot = store.actions.captureSnapshot();
+
+  // Nothing from a2 survives — not its push, not the surviving step, not the
+  // superseded one.
+  expect(snapshot.events.map((e) => e.name)).toEqual(["Pushed"]);
+
+  const restored = makeCoreStore({
+    initialEvents: [
+      makeEvent("Initialized", {
+        transitionDuration: 350,
+        eventDate: enoughPastTime(),
+      }),
+      makeEvent("ActivityRegistered", {
+        activityName: "A",
+        eventDate: enoughPastTime(),
+      }),
+      makeEvent("ActivityRegistered", {
+        activityName: "B",
+        eventDate: enoughPastTime(),
+      }),
+    ],
+    plugins: [provideSnapshot(snapshot)],
+  });
+  const restoredStack = restored.actions.getStack();
+
+  expect(restoredStack.activities.map((a) => a.id)).toEqual(["a1"]);
+  expect(
+    restoredStack.activities.find((a) => a.id === "a1")?.steps.map((s) => s.id),
+  ).toEqual(["a1"]);
+});
