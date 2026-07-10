@@ -10,7 +10,7 @@ import type {
 } from "../event-types";
 import type { BaseDomainEvent } from "../event-types/_base";
 import type { SnapshotLoadError } from "../SnapshotLoadError";
-import type { NavigationEvent, StackSnapshot } from "../StackSnapshot";
+import type { SnapshotEvent, StackSnapshot } from "../StackSnapshot";
 import type {
   StackflowPluginHook,
   StackflowPluginPostEffectHook,
@@ -131,15 +131,16 @@ export type StackflowPlugin = () => {
   onChanged?: StackflowPluginPostEffectHook<"%SOMETHING_CHANGED%">;
 
   /**
-   * Intercept the navigation-event sequence a stack is built from. Chained
-   * across plugins in array order — each plugin receives the previous one's
+   * Intercept the event sequence a stack is built from. Chained across
+   * plugins in array order — each plugin receives the previous one's
    * return. `initInfo` says which path is running, in the same record shape
    * `onInit` receives:
    * - `{ kind: "create" }`: `initialEvents` holds the initial entry events
    *   (`PushedEvent`/`StepPushedEvent`, from the `initialActivity` option or
    *   earlier plugins). The return decides the initial entries.
    * - `{ kind: "load" }`: `initialEvents` holds the provided snapshot's full
-   *   replay sequence (structure-validated, original field values). The
+   *   replay sequence (structure-validated, original field values) —
+   *   `Paused`/`Resumed` included when the snapshot recorded them. The
    *   return is adopted as the replay sequence — re-dated in array order so
    *   the restored stack settles, then run through the same load validation
    *   as the snapshot itself (activity registration, replay, at least one
@@ -149,10 +150,10 @@ export type StackflowPlugin = () => {
    *   policy must return `initialEvents` unchanged.
    */
   overrideInitialEvents?: (args: {
-    initialEvents: NavigationEvent[];
+    initialEvents: SnapshotEvent[];
     initialContext: any;
     initInfo: StackInitInfo;
-  }) => NavigationEvent[];
+  }) => SnapshotEvent[];
 
   /**
    * Called synchronously at stack creation time to provide a snapshot to load

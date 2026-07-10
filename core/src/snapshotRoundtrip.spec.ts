@@ -86,7 +86,7 @@ test("load - load 직후 captureSnapshot이 같은 탐색 기록을 재구성하
   expect(b?.steps[1].params.step).toEqual("2");
 });
 
-test("load - pause 중 큐잉되어 resume되지 않은 항해는 스냅샷에서 제외되어 복원되지 않습니다", () => {
+test("load - pause 중 캡처한 스냅샷은 paused 스택으로 복원되고 resume하면 큐잉된 항해가 적용됩니다", () => {
   const source = makeCoreStore({
     initialEvents: [
       ...config(["A", "B"]),
@@ -107,9 +107,7 @@ test("load - pause 중 큐잉되어 resume되지 않은 항해는 스냅샷에�
     activityParams: {},
   });
 
-  // Queued behind the pause and never resumed, b1 is quarantined out of the
-  // aggregate — not part of the recorded history, so a reload must not
-  // resurrect the pending push as a settled activity.
+  // Queued behind the pause, b1 is not applied to the live stack.
   expect(source.actions.getStack().activities.some((x) => x.id === "b1")).toBe(
     false,
   );
@@ -123,22 +121,30 @@ test("load - pause 중 큐잉되어 resume되지 않은 항해는 스냅샷에�
     source.actions.resume();
   }
 
-  // The uncommitted queued push is excluded from the snapshot.
-  expect(
-    captured.events.some((e) => e.name === "Pushed" && e.activityId === "b1"),
-  ).toBe(false);
+  // The snapshot records the paused stack as-is: the Paused marker together
+  // with the queued push.
+  expect(captured.events.map((e) => e.name)).toEqual([
+    "Pushed",
+    "Paused",
+    "Pushed",
+  ]);
 
   const restored = makeCoreStore({
     initialEvents: config(["A", "B"]),
     plugins: [provideSnapshotPlugin(captured)],
   });
 
+  // The paused stack round-trips as a paused stack: b1 stays quarantined, so
+  // the restored visible state matches what was visible at capture time.
   const stack = restored.actions.getStack();
-
-  // Only the pre-pause activity is restored; b1 is not resurrected.
+  expect(stack.globalTransitionState).toEqual("paused");
   expect(stack.activities.map((x) => x.id)).toEqual(["a1"]);
-  expect(stack.activities.find((x) => x.id === "a1")?.transitionState).toEqual(
-    "enter-done",
-  );
-  expect(stack.globalTransitionState).toEqual("idle");
+
+  // Resuming the restored session applies the queued navigation — the pending
+  // push survived the reload instead of being lost or force-applied. The
+  // previous session's pauser is gone, so resuming is the new session's call.
+  restored.actions.resume();
+  expect(
+    restored.actions.getStack().activities.map((x) => x.id),
+  ).toEqual(["a1", "b1"]);
 });

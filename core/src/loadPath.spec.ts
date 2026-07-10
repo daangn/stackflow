@@ -3,7 +3,11 @@ import { makeEvent } from "./event-utils";
 import type { StackflowPlugin, StackInitInfo } from "./interfaces";
 import { makeCoreStore } from "./makeCoreStore";
 import { SnapshotLoadError } from "./SnapshotLoadError";
-import type { NavigationEvent, StackSnapshot } from "./StackSnapshot";
+import type {
+  NavigationEvent,
+  SnapshotEvent,
+  StackSnapshot,
+} from "./StackSnapshot";
 
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
@@ -229,7 +233,7 @@ test("load - 현행 config에서 transitionDuration·등록집합을 재파생�
 test('load - overrideInitialEvents 체인이 스냅샷 재생열 전체와 initInfo { kind: "load" }로 호출됩니다', () => {
   const overrideInitialEvents = jest.fn(
     (args: {
-      initialEvents: NavigationEvent[];
+      initialEvents: SnapshotEvent[];
       initialContext: any;
       initInfo: StackInitInfo;
     }) => args.initialEvents,
@@ -681,7 +685,7 @@ test("load - events가 배열이 아닌 스냅샷은 unrecognized-snapshot로 �
   });
 });
 
-test("load - events에 탐색 이벤트가 아닌 항목이 있으면 unrecognized-snapshot로 실패합니다", () => {
+test("load - events에 스냅샷이 나를 수 없는 항목(static event)이 있으면 unrecognized-snapshot로 실패합니다", () => {
   const caught = catchLoad(
     rawSnapshot({
       $schema: "stackflow.snapshot.v1",
@@ -692,8 +696,9 @@ test("load - events에 탐색 이벤트가 아닌 항목이 있으면 unrecogniz
           activityParams: {},
           eventDate: enoughPastTime(),
         }),
-        // A non-navigation event embedded in the snapshot. Without a structure
-        // check this would be silently registered and the load would succeed.
+        // A static event embedded in the snapshot. Statics are re-derived from
+        // the current config at load time — without a structure check this
+        // would be silently registered and the load would succeed.
         makeEvent("ActivityRegistered", {
           activityName: "B",
           eventDate: enoughPastTime(),
@@ -705,10 +710,10 @@ test("load - events에 탐색 이벤트가 아닌 항목이 있으면 unrecogniz
 
   expect(caught).toBeInstanceOf(SnapshotLoadError);
   // The offending item's position is named for diagnosis (the valid Pushed at
-  // index 0 passes; the non-navigation item sits at index 1).
+  // index 0 passes; the static item sits at index 1).
   expect((caught as SnapshotLoadError).cause).toEqual({
     kind: "unrecognized-snapshot",
-    detail: "event item at index 1 is not a navigation event",
+    detail: "event item at index 1 is not a snapshot event",
   });
 });
 
@@ -732,7 +737,7 @@ test("load - events 항목에 id가 결손되면 unrecognized-snapshot로 실패
   expect(caught).toBeInstanceOf(SnapshotLoadError);
   expect((caught as SnapshotLoadError).cause).toEqual({
     kind: "unrecognized-snapshot",
-    detail: "event item at index 0 is not a navigation event",
+    detail: "event item at index 0 is not a snapshot event",
   });
 });
 
@@ -756,7 +761,7 @@ test("load - events 항목에 name이 결손되면 unrecognized-snapshot로 실�
   expect(caught).toBeInstanceOf(SnapshotLoadError);
   expect((caught as SnapshotLoadError).cause).toEqual({
     kind: "unrecognized-snapshot",
-    detail: "event item at index 0 is not a navigation event",
+    detail: "event item at index 0 is not a snapshot event",
   });
 });
 
@@ -981,7 +986,7 @@ test('load - recover:"create" 재개가 overrideInitialEvents 체인과 initial-
   const onInitialActivityIgnored = jest.fn();
   const overrideInitialEvents = jest.fn(
     (_args: {
-      initialEvents: NavigationEvent[];
+      initialEvents: SnapshotEvent[];
       initialContext: any;
       initInfo: StackInitInfo;
     }) => [

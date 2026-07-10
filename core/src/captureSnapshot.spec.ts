@@ -78,7 +78,7 @@ test("captureSnapshot - 스냅샷 events에서 Initialized·ActivityRegistered�
   ).toBe(true);
 });
 
-test("captureSnapshot - 스냅샷 events에서 Paused·Resumed를 제외합니다", () => {
+test("captureSnapshot - Paused·Resumed도 기록된 그대로 스냅샷 events에 포함합니다", () => {
   const { actions } = makeCoreStore({
     initialEvents: [
       makeEvent("Initialized", {
@@ -105,9 +105,10 @@ test("captureSnapshot - 스냅샷 events에서 Paused·Resumed를 제외합니�
 
   const snapshot = actions.captureSnapshot();
 
+  // The pause markers are runtime history like any other event — replaying
+  // them reproduces the same pause/resume sequence, so they are carried as-is.
   const names = snapshot.events.map((e) => e.name);
-  expect(names).not.toContain("Paused");
-  expect(names).not.toContain("Resumed");
+  expect(names).toEqual(["Pushed", "Paused", "Pushed", "Resumed"]);
 });
 
 test("captureSnapshot - 6종 탐색 이벤트를 모두 보존합니다", () => {
@@ -263,7 +264,7 @@ test("captureSnapshot - 생성 이후 디스패치된 탐색 이벤트를 포함
   expect(pushedIds).toContain("a2");
 });
 
-test("captureSnapshot - pause 중 큐잉되어 resume되지 않은 탐색 이벤트는 제외합니다", () => {
+test("captureSnapshot - pause 중 캡처하면 Paused 마커와 큐잉된 탐색 이벤트가 그대로 담깁니다", () => {
   const { actions } = makeCoreStore({
     initialEvents: [
       makeEvent("Initialized", {
@@ -287,29 +288,21 @@ test("captureSnapshot - pause 중 큐잉되어 resume되지 않은 탐색 이벤
   actions.pause();
   actions.push({ activityId: "a2", activityName: "hello", activityParams: {} });
 
-  // Queued behind the pause and never resumed, a2 is quarantined out of the
-  // aggregate — not part of the recorded history, so it is the one navigation
-  // event capture excludes.
-  expect(
-    actions.getStack().activities.some((a) => a.id === "a2"),
-  ).toBe(false);
+  // Queued behind the pause, a2 is not applied to the live stack — and the
+  // snapshot records exactly that: the queued push together with the Paused
+  // marker that quarantines it, so a reload reproduces the same paused stack.
+  expect(actions.getStack().activities.some((a) => a.id === "a2")).toBe(false);
 
   try {
     const snapshot = actions.captureSnapshot();
     const names = snapshot.events.map((e) => e.name);
 
+    expect(names).toEqual(["Pushed", "Paused", "Pushed"]);
     expect(
       snapshot.events.some(
         (e) => e.name === "Pushed" && e.activityId === "a2",
       ),
-    ).toBe(false);
-    // a1, recorded before the pause, is still captured.
-    expect(
-      snapshot.events.some(
-        (e) => e.name === "Pushed" && e.activityId === "a1",
-      ),
     ).toBe(true);
-    expect(names).not.toContain("Paused");
   } finally {
     // Resume so the paused store settles and its polling interval clears,
     // even when the capture above throws.

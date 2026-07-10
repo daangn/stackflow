@@ -1,7 +1,7 @@
 import isEqual from "react-fast-compare";
 import { aggregate } from "./aggregate";
 import type { DomainEvent } from "./event-types";
-import { isNavigationEvent, makeEvent } from "./event-utils";
+import { isSnapshotEvent, makeEvent } from "./event-utils";
 import type {
   StackflowActions,
   StackflowPlugin,
@@ -11,7 +11,7 @@ import { loadSnapshot } from "./loadSnapshot";
 import { produceEffects } from "./produceEffects";
 import { SnapshotLoadError } from "./SnapshotLoadError";
 import type { Stack } from "./Stack";
-import type { NavigationEvent, StackSnapshot } from "./StackSnapshot";
+import type { SnapshotEvent, StackSnapshot } from "./StackSnapshot";
 import { divideBy, once, uniqBy } from "./utils";
 import { makeActions } from "./utils/makeActions";
 import { triggerPostEffectHooks } from "./utils/triggerPostEffectHooks";
@@ -27,7 +27,7 @@ export type MakeCoreStoreOptions = {
   plugins: StackflowPlugin[];
   handlers?: {
     onInitialActivityIgnored?: (
-      initialPushedEvents: NavigationEvent[],
+      initialPushedEvents: SnapshotEvent[],
     ) => void;
     onInitialActivityNotFound?: () => void;
   };
@@ -71,9 +71,9 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
   // with initInfo telling which path is running. On load the return is the
   // replay sequence, so it goes back through the load validation afterwards.
   const overrideInitialEvents = (
-    initialEvents: NavigationEvent[],
+    initialEvents: SnapshotEvent[],
     initInfo: StackInitInfo,
-  ): NavigationEvent[] =>
+  ): SnapshotEvent[] =>
     pluginInstances.reduce(
       (events, pluginInstance) =>
         pluginInstance.overrideInitialEvents?.({
@@ -189,30 +189,24 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
       return stack.value;
     },
     captureSnapshot() {
-      // A snapshot carries every navigation event the stack has recorded. A
-      // transition is only a visual effect and its navigation effect hook fires
-      // in the active state already, so an event counts as taken the moment it
-      // enters the aggregate — settled or not. The sole exception is an event
-      // queued behind a pause that never resumed: it is quarantined out of the
-      // aggregate (never applied), so it is not part of the recorded history.
-      const stack = aggregate(events.value, Date.now());
-      const unresumedPausedEventIds = new Set(
-        (stack.pausedEvents ?? []).map((event) => event.id),
-      );
-
-      // Normalize the raw log the way aggregate pre-processes — sort by
-      // eventDate ascending, dedupe by id. The resulting array order is the
-      // replay order.
-      const navigationEvents = uniqBy(
+      // A snapshot is the recorded event log as-is, minus the static events
+      // (`Initialized`/`ActivityRegistered`) the current config re-derives at
+      // load time. Core holds no opinion beyond that vocabulary split:
+      // `Paused`/`Resumed` and events queued behind a pause are exported
+      // exactly as recorded, so a paused stack round-trips as a paused stack.
+      // Whether to capture at such a moment is the caller's timing choice.
+      //
+      // Normalize the log the way aggregate pre-processes — sort by eventDate
+      // ascending, dedupe by id. Dates are preserved, so this changes no
+      // replay semantics; it only makes the array order the replay order.
+      const snapshotEvents = uniqBy(
         [...events.value].sort((a, b) => a.eventDate - b.eventDate),
         (event) => event.id,
-      )
-        .filter(isNavigationEvent)
-        .filter((event) => !unresumedPausedEventIds.has(event.id));
+      ).filter(isSnapshotEvent);
 
       return {
         $schema: "stackflow.snapshot.v1",
-        events: navigationEvents,
+        events: snapshotEvents,
       };
     },
     dispatchEvent(name, params) {

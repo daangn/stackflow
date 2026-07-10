@@ -1,17 +1,17 @@
 import { aggregate } from "./aggregate";
 import type { DomainEvent } from "./event-types";
-import { filterEvents, isNavigationEventName } from "./event-utils";
+import { filterEvents, isSnapshotEventName } from "./event-utils";
 import { SnapshotLoadError } from "./SnapshotLoadError";
 import type { Stack } from "./Stack";
-import type { NavigationEvent, StackSnapshot } from "./StackSnapshot";
+import type { SnapshotEvent, StackSnapshot } from "./StackSnapshot";
 
 /**
- * Reconstruct a stack from a provided snapshot by replaying its navigation
- * events through the existing aggregate machinery. Static information
+ * Reconstruct a stack from a provided snapshot by replaying its events
+ * through the existing aggregate machinery. Static information
  * (transitionDuration, the registered-activity set) is re-derived from the
  * current config's static events, never from the snapshot.
  *
- * `overrideNavigationEvents` is the plugins' `overrideInitialEvents` chain:
+ * `overrideSnapshotEvents` is the plugins' `overrideInitialEvents` chain:
  * its return is adopted as the replay sequence. It runs after the structure
  * check (hooks never see an unrecognizable value) and before every other
  * step, so validation and rebasing apply to the sequence that actually
@@ -22,18 +22,18 @@ import type { NavigationEvent, StackSnapshot } from "./StackSnapshot";
 export function loadSnapshot(
   snapshot: StackSnapshot,
   staticEvents: DomainEvent[],
-  overrideNavigationEvents?: (events: NavigationEvent[]) => NavigationEvent[],
+  overrideSnapshotEvents?: (events: SnapshotEvent[]) => SnapshotEvent[],
 ): { events: DomainEvent[]; stack: Stack } {
   assertSnapshotStructure(snapshot);
 
-  const navigationEvents =
-    overrideNavigationEvents?.(snapshot.events) ?? snapshot.events;
+  const snapshotEvents =
+    overrideSnapshotEvents?.(snapshot.events) ?? snapshot.events;
 
   const transitionDuration =
     filterEvents(staticEvents, "Initialized")[0]?.transitionDuration ?? 0;
 
   const now = Date.now();
-  const events = rebaseEvents([...staticEvents, ...navigationEvents], {
+  const events = rebaseEvents([...staticEvents, ...snapshotEvents], {
     now,
     transitionDuration,
   });
@@ -93,11 +93,11 @@ function assertSnapshotStructure(snapshot: StackSnapshot): void {
       !event ||
       typeof event !== "object" ||
       typeof (event as { id?: unknown }).id !== "string" ||
-      !isNavigationEventName((event as { name?: unknown }).name)
+      !isSnapshotEventName((event as { name?: unknown }).name)
     ) {
       throw new SnapshotLoadError({
         kind: "unrecognized-snapshot",
-        detail: `event item at index ${index} is not a navigation event`,
+        detail: `event item at index ${index} is not a snapshot event`,
       });
     }
   }

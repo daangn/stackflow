@@ -1,6 +1,6 @@
 import type {
   CoreStore,
-  NavigationEvent,
+  SnapshotEvent,
   Stack,
   StackflowPlugin,
 } from "@stackflow/core";
@@ -69,7 +69,7 @@ const stackflow = ({
    * `@stackflow/react`에서 복사됨
    */
   const pluginInstances = plugins.map((plugin) => plugin());
-  const initialPushedEvents = pluginInstances.reduce<NavigationEvent[]>(
+  const initialPushedEvents = pluginInstances.reduce<SnapshotEvent[]>(
     (initialEvents, pluginInstance) =>
       pluginInstance.overrideInitialEvents?.({
         initialEvents,

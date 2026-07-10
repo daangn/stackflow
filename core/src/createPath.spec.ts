@@ -2,7 +2,7 @@ import type { PushedEvent, StepPushedEvent } from "./event-types";
 import { makeEvent } from "./event-utils";
 import type { StackflowPlugin, StackInitInfo } from "./interfaces";
 import { makeCoreStore } from "./makeCoreStore";
-import type { NavigationEvent, StackSnapshot } from "./StackSnapshot";
+import type { SnapshotEvent, StackSnapshot } from "./StackSnapshot";
 
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
@@ -84,7 +84,7 @@ test('create - provideSnapshot 전원 null이면 create 경로를 타고 initInf
 test('create - overrideInitialEvents가 onInit과 동일한 형태의 initInfo { kind: "create" }를 전달받습니다', () => {
   const overrideInitialEvents = jest.fn(
     (args: {
-      initialEvents: NavigationEvent[];
+      initialEvents: SnapshotEvent[];
       initialContext: any;
       initInfo: StackInitInfo;
     }) => args.initialEvents,

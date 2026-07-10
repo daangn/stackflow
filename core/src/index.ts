@@ -13,5 +13,9 @@ export {
   RegisteredActivity,
   Stack,
 } from "./Stack";
-export { NavigationEvent, StackSnapshot } from "./StackSnapshot";
+export {
+  NavigationEvent,
+  SnapshotEvent,
+  StackSnapshot,
+} from "./StackSnapshot";
 export { id } from "./utils";
