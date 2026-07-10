@@ -113,10 +113,8 @@ test("captureSnapshot - 스냅샷 events에서 Paused·Resumed를 제외합니�
 test("captureSnapshot - 6종 탐색 이벤트를 모두 보존합니다", () => {
   const { actions } = makeCoreStore({
     initialEvents: [
-      // transitionDuration 0 so each dispatched event commits (settles)
-      // instantly — the capture predicate keeps only committed navigation.
       makeEvent("Initialized", {
-        transitionDuration: 0,
+        transitionDuration: 350,
         eventDate: enoughPastTime(),
       }),
       makeEvent("ActivityRegistered", {
@@ -233,13 +231,11 @@ test("captureSnapshot - 동일 id 이벤트를 중복 제거합니다", () => {
   );
 });
 
-test("captureSnapshot - 생성 이후 커밋된 탐색 이벤트를 포함합니다", () => {
+test("captureSnapshot - 생성 이후 디스패치된 탐색 이벤트를 포함합니다", () => {
   const { actions } = makeCoreStore({
     initialEvents: [
-      // transitionDuration 0 so the post-create push commits instantly and is
-      // captured — capture keeps committed navigation, not mid-transition.
       makeEvent("Initialized", {
-        transitionDuration: 0,
+        transitionDuration: 350,
         eventDate: enoughPastTime(),
       }),
       makeEvent("ActivityRegistered", {
@@ -291,8 +287,9 @@ test("captureSnapshot - pause 중 큐잉되어 resume되지 않은 탐색 이벤
   actions.pause();
   actions.push({ activityId: "a2", activityName: "hello", activityParams: {} });
 
-  // Queued behind the pause, a2 never became a visible activity — the live
-  // session never committed it, so the snapshot must not resurrect it.
+  // Queued behind the pause and never resumed, a2 is quarantined out of the
+  // aggregate — not part of the recorded history, so it is the one navigation
+  // event capture excludes.
   expect(
     actions.getStack().activities.some((a) => a.id === "a2"),
   ).toBe(false);
@@ -306,7 +303,7 @@ test("captureSnapshot - pause 중 큐잉되어 resume되지 않은 탐색 이벤
         (e) => e.name === "Pushed" && e.activityId === "a2",
       ),
     ).toBe(false);
-    // a1, committed before the pause, is still captured.
+    // a1, recorded before the pause, is still captured.
     expect(
       snapshot.events.some(
         (e) => e.name === "Pushed" && e.activityId === "a1",
@@ -320,7 +317,7 @@ test("captureSnapshot - pause 중 큐잉되어 resume되지 않은 탐색 이벤
   }
 });
 
-test("captureSnapshot - 전환이 진행 중인(미정착) 탐색 이벤트는 제외되어, load 시 직전 커밋 상태로 복원됩니다", () => {
+test("captureSnapshot - 전환이 진행 중인 탐색 이벤트도 포함되어 load 시 그대로 재생됩니다", () => {
   const source = makeCoreStore({
     initialEvents: [
       makeEvent("Initialized", {
@@ -351,10 +348,11 @@ test("captureSnapshot - 전환이 진행 중인(미정착) 탐색 이벤트는 �
 
   const snapshot = source.actions.captureSnapshot();
 
-  // The mid-transition push is uncommitted, so it is not captured...
+  // A transition is only visual — a2 is recorded in the stack, so it is
+  // captured despite being mid-transition.
   expect(
     snapshot.events.some((e) => e.name === "Pushed" && e.activityId === "a2"),
-  ).toBe(false);
+  ).toBe(true);
   expect(
     snapshot.events.some((e) => e.name === "Pushed" && e.activityId === "a1"),
   ).toBe(true);
@@ -375,20 +373,19 @@ test("captureSnapshot - 전환이 진행 중인(미정착) 탐색 이벤트는 �
 
   const restoredStack = restored.actions.getStack();
 
-  // ...so the restore reflects the last committed state: a1 alone, settled.
-  expect(restoredStack.activities.map((a) => a.id)).toEqual(["a1"]);
+  // Both restore; the rebase settles the once-mid-transition push.
+  expect(restoredStack.activities.map((a) => a.id)).toEqual(["a1", "a2"]);
+  expect(restoredStack.activities.find((a) => a.isTop)?.id).toEqual("a2");
   expect(restoredStack.activities.find((a) => a.isTop)?.transitionState).toEqual(
     "enter-done",
   );
   expect(restoredStack.globalTransitionState).toEqual("idle");
 });
 
-test("captureSnapshot - 같은 액티비티의 정착 Pushed는 남기고 미정착 Popped만 제외합니다", () => {
-  // A and B restored settled (load rebases them into the past); a pop at the
-  // current time is mid-transition. The pop targets B, whose Pushed already
-  // committed — so capture keeps both Pushes and drops only the unsettled
-  // Popped. Per-event, not per-activity: a "B is exiting" rule would wrongly
-  // drop B entirely.
+test("captureSnapshot - 전환 중 pop한 이벤트도 Pushed·Popped가 모두 담겨 load 시 pop이 반영됩니다", () => {
+  // a1 restored settled; push b1, then pop it while both transitions are in
+  // flight. The push and the pop are both recorded, so both are captured, and
+  // the reload replays them — the pop takes effect (b1 exits, a1 active again).
   const store = makeCoreStore({
     initialEvents: [
       makeEvent("Initialized", {
@@ -414,18 +411,12 @@ test("captureSnapshot - 같은 액티비티의 정착 Pushed는 남기고 미정
             activityParams: {},
             eventDate: enoughPastTime(),
           }),
-          makeEvent("Pushed", {
-            activityId: "b1",
-            activityName: "B",
-            activityParams: {},
-            eventDate: enoughPastTime(),
-          }),
         ],
       }),
     ],
   });
 
-  // Both restored settled; pop B so its exit is mid-transition.
+  store.actions.push({ activityId: "b1", activityName: "B", activityParams: {} });
   store.actions.pop();
   expect(
     store.actions.getStack().activities.find((a) => a.id === "b1")
@@ -434,10 +425,12 @@ test("captureSnapshot - 같은 액티비티의 정착 Pushed는 남기고 미정
 
   const snapshot = store.actions.captureSnapshot();
 
-  // The unsettled Popped is dropped; both settled Pushes remain.
-  expect(snapshot.events.map((e) => e.name)).toEqual(["Pushed", "Pushed"]);
+  // Both the mid-transition push and the mid-transition pop are captured.
+  expect(
+    snapshot.events.some((e) => e.name === "Pushed" && e.activityId === "b1"),
+  ).toBe(true);
+  expect(snapshot.events.some((e) => e.name === "Popped")).toBe(true);
 
-  // Reloading restores A and B both settled — the uncommitted pop is undone.
   const restored = makeCoreStore({
     initialEvents: [
       makeEvent("Initialized", {
@@ -457,159 +450,10 @@ test("captureSnapshot - 같은 액티비티의 정착 Pushed는 남기고 미정
   });
   const restoredStack = restored.actions.getStack();
 
-  expect(restoredStack.activities.map((a) => a.id)).toEqual(["a1", "b1"]);
-  expect(
-    restoredStack.activities.find((a) => a.id === "a1")?.transitionState,
-  ).toEqual("enter-done");
+  // The pop is reflected: b1 exited, a1 is the active activity again.
+  expect(restoredStack.activities.find((a) => a.isActive)?.id).toEqual("a1");
   expect(
     restoredStack.activities.find((a) => a.id === "b1")?.transitionState,
-  ).toEqual("enter-done");
-  expect(restoredStack.activities.find((a) => a.isTop)?.id).toEqual("b1");
-});
-
-test("captureSnapshot - 미커밋(enter-active) 액티비티에 얹힌 step은 부모와 함께 제외되어 고아가 되지 않습니다", () => {
-  // a1 restored settled; push a2 mid-enter, then step onto a2. The step's own
-  // transition settles instantly, but its parent a2 has not committed — so the
-  // step must drop with a2. Otherwise reload replays an orphan step that,
-  // lacking a target activity, grafts onto the committed activity below.
-  const store = makeCoreStore({
-    initialEvents: [
-      makeEvent("Initialized", {
-        transitionDuration: 350,
-        eventDate: enoughPastTime(),
-      }),
-      makeEvent("ActivityRegistered", {
-        activityName: "A",
-        eventDate: enoughPastTime(),
-      }),
-      makeEvent("ActivityRegistered", {
-        activityName: "B",
-        eventDate: enoughPastTime(),
-      }),
-    ],
-    plugins: [
-      provideSnapshot({
-        $schema: "stackflow.snapshot.v1",
-        events: [
-          makeEvent("Pushed", {
-            activityId: "a1",
-            activityName: "A",
-            activityParams: {},
-            eventDate: enoughPastTime(),
-          }),
-        ],
-      }),
-    ],
-  });
-
-  store.actions.push({ activityId: "a2", activityName: "B", activityParams: {} });
-  store.actions.stepPush({ stepId: "s1", stepParams: { step: "1" } });
-  expect(
-    store.actions.getStack().activities.find((a) => a.id === "a2")
-      ?.transitionState,
-  ).toEqual("enter-active");
-
-  const snapshot = store.actions.captureSnapshot();
-
-  // a2's push and its step both drop — no orphan step survives.
-  expect(snapshot.events.map((e) => e.name)).toEqual(["Pushed"]);
-
-  const restored = makeCoreStore({
-    initialEvents: [
-      makeEvent("Initialized", {
-        transitionDuration: 350,
-        eventDate: enoughPastTime(),
-      }),
-      makeEvent("ActivityRegistered", {
-        activityName: "A",
-        eventDate: enoughPastTime(),
-      }),
-      makeEvent("ActivityRegistered", {
-        activityName: "B",
-        eventDate: enoughPastTime(),
-      }),
-    ],
-    plugins: [provideSnapshot(snapshot)],
-  });
-  const restoredStack = restored.actions.getStack();
-
-  // The committed activity below is untouched — no grafted step, a2 absent.
-  expect(restoredStack.activities.map((a) => a.id)).toEqual(["a1"]);
-  expect(
-    restoredStack.activities.find((a) => a.id === "a1")?.steps.map((s) => s.id),
-  ).toEqual(["a1"]);
-});
-
-test("captureSnapshot - 미커밋 액티비티에서 supersede된 step 이벤트도 부모와 함께 제외됩니다", () => {
-  // A subtler orphan: a step on the mid-enter a2 is replaced, so the original
-  // StepPushed no longer survives in a2's steps. A predicate that dropped only
-  // an activity's *surviving* steps would leave that superseded StepPushed
-  // behind. Attribution binds every step to its parent, so it drops too.
-  const store = makeCoreStore({
-    initialEvents: [
-      makeEvent("Initialized", {
-        transitionDuration: 350,
-        eventDate: enoughPastTime(),
-      }),
-      makeEvent("ActivityRegistered", {
-        activityName: "A",
-        eventDate: enoughPastTime(),
-      }),
-      makeEvent("ActivityRegistered", {
-        activityName: "B",
-        eventDate: enoughPastTime(),
-      }),
-    ],
-    plugins: [
-      provideSnapshot({
-        $schema: "stackflow.snapshot.v1",
-        events: [
-          makeEvent("Pushed", {
-            activityId: "a1",
-            activityName: "A",
-            activityParams: {},
-            eventDate: enoughPastTime(),
-          }),
-        ],
-      }),
-    ],
-  });
-
-  store.actions.push({ activityId: "a2", activityName: "B", activityParams: {} });
-  store.actions.stepPush({ stepId: "s1", stepParams: { step: "1" } });
-  store.actions.stepReplace({ stepId: "s1b", stepParams: { step: "1b" } });
-  expect(
-    store.actions.getStack().activities.find((a) => a.id === "a2")
-      ?.transitionState,
-  ).toEqual("enter-active");
-
-  const snapshot = store.actions.captureSnapshot();
-
-  // Nothing from a2 survives — not its push, not the surviving step, not the
-  // superseded one.
-  expect(snapshot.events.map((e) => e.name)).toEqual(["Pushed"]);
-
-  const restored = makeCoreStore({
-    initialEvents: [
-      makeEvent("Initialized", {
-        transitionDuration: 350,
-        eventDate: enoughPastTime(),
-      }),
-      makeEvent("ActivityRegistered", {
-        activityName: "A",
-        eventDate: enoughPastTime(),
-      }),
-      makeEvent("ActivityRegistered", {
-        activityName: "B",
-        eventDate: enoughPastTime(),
-      }),
-    ],
-    plugins: [provideSnapshot(snapshot)],
-  });
-  const restoredStack = restored.actions.getStack();
-
-  expect(restoredStack.activities.map((a) => a.id)).toEqual(["a1"]);
-  expect(
-    restoredStack.activities.find((a) => a.id === "a1")?.steps.map((s) => s.id),
-  ).toEqual(["a1"]);
+  ).toEqual("exit-done");
+  expect(restoredStack.globalTransitionState).toEqual("idle");
 });

@@ -107,9 +107,9 @@ test("load - pause 중 큐잉되어 resume되지 않은 항해는 스냅샷에�
     activityParams: {},
   });
 
-  // Queued behind the pause, b1 never became a visible activity — the live
-  // session never committed it, and a reload must reflect what the session
-  // showed, not resurrect the pending push as a settled activity.
+  // Queued behind the pause and never resumed, b1 is quarantined out of the
+  // aggregate — not part of the recorded history, so a reload must not
+  // resurrect the pending push as a settled activity.
   expect(source.actions.getStack().activities.some((x) => x.id === "b1")).toBe(
     false,
   );
