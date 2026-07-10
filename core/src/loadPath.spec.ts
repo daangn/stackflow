@@ -114,6 +114,9 @@ test("load - 유효한 스냅샷의 탐색 기록을 충실히 재구성합니�
 });
 
 test("load - step 이벤트를 담은 스냅샷의 steps·현재 위치·stepId를 충실히 재구성합니다", () => {
+  // Dates follow the recorded order (a snapshot's dates are its replay
+  // order): the push precedes the step it hosts.
+  const originalPushDate = enoughPastTime();
   const originalStepDate = enoughPastTime();
 
   const { actions } = makeCoreStore({
@@ -126,7 +129,7 @@ test("load - step 이벤트를 담은 스냅샷의 steps·현재 위치·stepId�
             activityId: "a1",
             activityName: "A",
             activityParams: {},
-            eventDate: enoughPastTime(),
+            eventDate: originalPushDate,
           }),
           makeEvent("StepPushed", {
             id: "e2",
@@ -168,8 +171,8 @@ test("load - step 이벤트를 담은 스냅샷의 steps·현재 위치·stepId�
   expect(a?.steps[1].enteredBy.id).toEqual("e2");
   // Current position is the last remaining step.
   expect(a?.params.step).toEqual("2");
-  // Only eventDate is rebased; id/stepId are byte-preserved.
-  expect(a?.steps[1].enteredBy.eventDate).not.toEqual(originalStepDate);
+  // Snapshot events replay byte-for-byte — eventDate included.
+  expect(a?.steps[1].enteredBy.eventDate).toEqual(originalStepDate);
   expect(a?.transitionState).toEqual("enter-done");
   expect(actions.getStack().globalTransitionState).toEqual("idle");
 });
@@ -321,7 +324,7 @@ test("load - 체인의 반환이 재생열로 채택됩니다 — 이벤트를 �
   expect(b?.isTop).toBe(true);
 });
 
-test("load - 체인이 추가한 이벤트도 배열 순서대로 재기저되어 정착 상태로 복원됩니다", () => {
+test("load - 체인이 추가한 이벤트도 재기저 없이 그 date 그대로 재생됩니다(fresh date면 전환 진행 중으로 복원)", () => {
   const { actions } = makeCoreStore({
     initialEvents: config(["A", "C"]),
     plugins: [
@@ -337,8 +340,9 @@ test("load - 체인이 추가한 이벤트도 배열 순서대로 재기저되�
         {
           overrideInitialEvents: ({ initialEvents }) => [
             ...initialEvents,
-            // Appended with a fresh (now) eventDate — the rebase must still
-            // settle it inside the window, ordered after the snapshot events.
+            // Appended with a fresh (now) eventDate — the chain's return
+            // replays as-is, so the fresh push restores mid-transition; a
+            // plugin wanting a settled entry dates the event itself.
             makeEvent("Pushed", {
               activityId: "c1",
               activityName: "C",
@@ -352,9 +356,9 @@ test("load - 체인이 추가한 이벤트도 배열 순서대로 재기저되�
 
   const stack = actions.getStack();
   const c = stack.activities.find((x) => x.id === "c1");
-  expect(c?.transitionState).toEqual("enter-done");
+  expect(c?.transitionState).toEqual("enter-active");
   expect(c?.isTop).toBe(true);
-  expect(stack.globalTransitionState).toEqual("idle");
+  expect(stack.globalTransitionState).toEqual("loading");
 });
 
 test("load - 낡은 스냅샷을 체인이 수선하면 검증은 수선된 재생열에 적용되어 load가 성공합니다", () => {
@@ -622,7 +626,7 @@ test("load - 재생 중 post-effect 훅(onPushed·onReplaced·onChanged)이 발�
   );
 });
 
-test("load - makeCoreStore 반환 시점에 복원된 스택이 동기적으로 정착 완료돼 있습니다", () => {
+test("load - makeCoreStore 반환 시점에 복원 스택이 동기적으로 구성돼 있습니다(과거 date 스냅샷은 정착 상태)", () => {
   const { actions } = makeCoreStore({
     initialEvents: config(["A"]),
     plugins: [

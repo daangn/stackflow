@@ -141,13 +141,16 @@ export type StackflowPlugin = () => {
    * - `{ kind: "load" }`: `initialEvents` holds the provided snapshot's full
    *   replay sequence (structure-validated, original field values) —
    *   `Paused`/`Resumed` included when the snapshot recorded them. The
-   *   return is adopted as the replay sequence — re-dated in array order so
-   *   the restored stack settles, then run through the same load validation
-   *   as the snapshot itself (activity registration, replay, at least one
-   *   enter-state activity), so a failing return surfaces as a
-   *   `SnapshotLoadError` to the snapshot provider. Reshaping the sequence
-   *   reshapes the reconstructed navigation history — a plugin with no load
-   *   policy must return `initialEvents` unchanged.
+   *   return is adopted as the replay sequence with its event dates
+   *   preserved: core never re-dates it, so replay order follows the
+   *   recorded dates and a guarantee like "every restored activity is
+   *   settled" is this hook's to provide, by re-dating the events itself.
+   *   The return then runs through the same load validation as the snapshot
+   *   itself (activity registration, replay, at least one enter-state
+   *   activity), so a failing return surfaces as a `SnapshotLoadError` to
+   *   the snapshot provider. Reshaping the sequence reshapes the
+   *   reconstructed navigation history — a plugin with no load policy must
+   *   return `initialEvents` unchanged.
    */
   overrideInitialEvents?: (args: {
     initialEvents: SnapshotEvent[];

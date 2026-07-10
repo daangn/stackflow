@@ -66,6 +66,11 @@ test("load - load 직후 captureSnapshot이 같은 탐색 기록을 재구성하
 
   const recaptured = first.actions.captureSnapshot();
 
+  // The replay preserves snapshot events byte-for-byte (eventDate included)
+  // and capture exports them back as-is, so capture∘load is an identity on
+  // the snapshot events.
+  expect(recaptured.events).toEqual(original.events);
+
   const second = makeCoreStore({
     initialEvents: config(["A", "B"]),
     plugins: [provideSnapshotPlugin(recaptured)],

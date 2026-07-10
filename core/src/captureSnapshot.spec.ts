@@ -366,13 +366,14 @@ test("captureSnapshot - 전환이 진행 중인 탐색 이벤트도 포함되어
 
   const restoredStack = restored.actions.getStack();
 
-  // Both restore; the rebase settles the once-mid-transition push.
+  // Both restore, replayed at their recorded dates — the push captured
+  // mid-transition is still mid-transition on load, exactly as captured.
   expect(restoredStack.activities.map((a) => a.id)).toEqual(["a1", "a2"]);
   expect(restoredStack.activities.find((a) => a.isTop)?.id).toEqual("a2");
   expect(restoredStack.activities.find((a) => a.isTop)?.transitionState).toEqual(
-    "enter-done",
+    "enter-active",
   );
-  expect(restoredStack.globalTransitionState).toEqual("idle");
+  expect(restoredStack.globalTransitionState).toEqual("loading");
 });
 
 test("captureSnapshot - 전환 중 pop한 이벤트도 Pushed·Popped가 모두 담겨 load 시 pop이 반영됩니다", () => {
@@ -443,10 +444,11 @@ test("captureSnapshot - 전환 중 pop한 이벤트도 Pushed·Popped가 모두 
   });
   const restoredStack = restored.actions.getStack();
 
-  // The pop is reflected: b1 exited, a1 is the active activity again.
+  // The pop is reflected mid-flight, as captured: b1 is exiting, and a1 is
+  // the active activity again.
   expect(restoredStack.activities.find((a) => a.isActive)?.id).toEqual("a1");
   expect(
     restoredStack.activities.find((a) => a.id === "b1")?.transitionState,
-  ).toEqual("exit-done");
-  expect(restoredStack.globalTransitionState).toEqual("idle");
+  ).toEqual("exit-active");
+  expect(restoredStack.globalTransitionState).toEqual("loading");
 });

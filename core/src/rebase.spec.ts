@@ -2,7 +2,7 @@ import type { DomainEvent } from "./event-types";
 import { makeEvent } from "./event-utils";
 import type { StackflowPlugin } from "./interfaces";
 import { makeCoreStore } from "./makeCoreStore";
-import type { NavigationEvent, StackSnapshot } from "./StackSnapshot";
+import type { SnapshotEvent, StackSnapshot } from "./StackSnapshot";
 
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
@@ -37,7 +37,7 @@ const config = (
 ];
 
 const provideSnapshotPlugin =
-  (events: NavigationEvent[]): StackflowPlugin =>
+  (events: SnapshotEvent[]): StackflowPlugin =>
   () => ({
     key: "provider",
     provideSnapshot: (): StackSnapshot => ({
@@ -46,112 +46,7 @@ const provideSnapshotPlugin =
     }),
   });
 
-test("load - 스냅샷 events의 배열 순서대로 z-order를 재구성합니다(원본 eventDate 순서가 아님)", () => {
-  const laterDate = enoughPastTime();
-  const earlierDate = enoughPastTime();
-  // laterDate < earlierDate is false; make A's original date the *later* one so
-  // array order [A, B] disagrees with original-date order.
-  const aDate = Math.max(laterDate, earlierDate);
-  const bDate = Math.min(laterDate, earlierDate);
-
-  const { actions } = makeCoreStore({
-    initialEvents: config(["A", "B"]),
-    plugins: [
-      provideSnapshotPlugin([
-        makeEvent("Pushed", {
-          activityId: "a1",
-          activityName: "A",
-          activityParams: {},
-          eventDate: aDate,
-        }),
-        makeEvent("Pushed", {
-          activityId: "b1",
-          activityName: "B",
-          activityParams: {},
-          eventDate: bDate,
-        }),
-      ]),
-    ],
-  });
-
-  const a = actions.getStack().activities.find((x) => x.id === "a1");
-  const b = actions.getStack().activities.find((x) => x.id === "b1");
-
-  // Array order wins: A below, B on top — not the original-date order.
-  expect((a?.zIndex ?? -1) < (b?.zIndex ?? -1)).toBe(true);
-  expect(b?.isTop).toBe(true);
-});
-
-test("load - transitionDuration이 커도 모든 복원 activity를 enter-done으로, globalTransitionState를 idle로 정착시킵니다", () => {
-  const { actions } = makeCoreStore({
-    initialEvents: config(["A", "B"], 350),
-    plugins: [
-      provideSnapshotPlugin([
-        makeEvent("Pushed", {
-          activityId: "a1",
-          activityName: "A",
-          activityParams: {},
-          eventDate: enoughPastTime(),
-        }),
-        makeEvent("Pushed", {
-          activityId: "b1",
-          activityName: "B",
-          activityParams: {},
-          eventDate: enoughPastTime(),
-        }),
-      ]),
-    ],
-  });
-
-  const stack = actions.getStack();
-  expect(stack.activities.find((x) => x.id === "a1")?.transitionState).toEqual(
-    "enter-done",
-  );
-  expect(stack.activities.find((x) => x.id === "b1")?.transitionState).toEqual(
-    "enter-done",
-  );
-  expect(stack.globalTransitionState).toEqual("idle");
-});
-
-test("load - 캡처 세션 시계가 앞서 있어도 load 후 새 push가 복원 activity들 뒤로 정렬됩니다", () => {
-  const { actions } = makeCoreStore({
-    initialEvents: config(["A", "B", "C"], 350),
-    plugins: [
-      provideSnapshotPlugin([
-        // Original dates are in the future (capture clock ran ahead).
-        makeEvent("Pushed", {
-          activityId: "a1",
-          activityName: "A",
-          activityParams: {},
-          eventDate: futureTime(),
-        }),
-        makeEvent("Pushed", {
-          activityId: "b1",
-          activityName: "B",
-          activityParams: {},
-          eventDate: futureTime(),
-        }),
-      ]),
-    ],
-  });
-
-  actions.push({ activityId: "c1", activityName: "C", activityParams: {} });
-
-  const stack = actions.getStack();
-  const a = stack.activities.find((x) => x.id === "a1");
-  const b = stack.activities.find((x) => x.id === "b1");
-  const c = stack.activities.find((x) => x.id === "c1");
-
-  // A new push lands on top of the restored activities; no order collapse.
-  expect((a?.zIndex ?? -1) < (b?.zIndex ?? -1)).toBe(true);
-  expect((b?.zIndex ?? -1) < (c?.zIndex ?? -1)).toBe(true);
-  expect(c?.isTop).toBe(true);
-  // Restored activities remain settled despite the reordered new push.
-  expect(a?.transitionState).toEqual("enter-done");
-  expect(b?.transitionState).toEqual("enter-done");
-});
-
-test("load - 원본 이벤트의 id·activityId·stepId를 바이트 보존하고 eventDate만 재기저합니다", () => {
+test("load - 스냅샷 이벤트의 eventDate를 재기저 없이 그대로 보존해 재생합니다", () => {
   const originalPushDate = enoughPastTime();
   const originalStepDate = enoughPastTime();
 
@@ -179,20 +74,167 @@ test("load - 원본 이벤트의 id·activityId·stepId를 바이트 보존하�
 
   const a = actions.getStack().activities.find((x) => x.id === "a1");
 
-  // id / activityId / stepId preserved byte-for-byte.
+  // The snapshot events are preserved byte-for-byte — eventDate included.
   expect(a?.id).toEqual("a1");
   expect(a?.enteredBy.id).toEqual("e1");
+  expect(a?.enteredBy.eventDate).toEqual(originalPushDate);
   expect(a?.steps[1].id).toEqual("s2");
   expect(a?.steps[1].enteredBy.id).toEqual("e2");
-  // Only eventDate is rebased.
-  expect(a?.enteredBy.eventDate).not.toEqual(originalPushDate);
-  expect(a?.steps[1].enteredBy.eventDate).not.toEqual(originalStepDate);
+  expect(a?.steps[1].enteredBy.eventDate).toEqual(originalStepDate);
 });
 
-test("load - 정적 이벤트와 복원 이벤트를 함께 재기저해, 이벤트 수와 무관하게 정적 이벤트가 복원 이벤트보다 앞에 정렬되고 전부 정착합니다", () => {
-  // Static and navigation events are re-dated in one backward walk from
-  // now − transitionDuration, so static-before-navigation is structural for
-  // any history length — no window to overflow, whatever the count.
+test("load - 재생 순서는 기록된 eventDate 순서입니다(배열 순서 아님)", () => {
+  // Core-captured snapshots normalize array order to date order, so the two
+  // never disagree in practice; for a hand-crafted snapshot that disagrees,
+  // the dates are the replay truth (aggregate sorts by eventDate).
+  const earlierDate = enoughPastTime();
+  const laterDate = enoughPastTime();
+
+  const { actions } = makeCoreStore({
+    initialEvents: config(["A", "B"]),
+    plugins: [
+      provideSnapshotPlugin([
+        // Array order [A, B] disagrees with date order (A is dated later).
+        makeEvent("Pushed", {
+          activityId: "a1",
+          activityName: "A",
+          activityParams: {},
+          eventDate: laterDate,
+        }),
+        makeEvent("Pushed", {
+          activityId: "b1",
+          activityName: "B",
+          activityParams: {},
+          eventDate: earlierDate,
+        }),
+      ]),
+    ],
+  });
+
+  const a = actions.getStack().activities.find((x) => x.id === "a1");
+  const b = actions.getStack().activities.find((x) => x.id === "b1");
+
+  // Date order wins: B (earlier) below, A (later) on top.
+  expect((b?.zIndex ?? -1) < (a?.zIndex ?? -1)).toBe(true);
+  expect(a?.isTop).toBe(true);
+});
+
+test("load - 과거에 기록된 스냅샷은 정착 상태(enter-done·idle)로 복원됩니다", () => {
+  const { actions } = makeCoreStore({
+    initialEvents: config(["A", "B"], 350),
+    plugins: [
+      provideSnapshotPlugin([
+        makeEvent("Pushed", {
+          activityId: "a1",
+          activityName: "A",
+          activityParams: {},
+          eventDate: enoughPastTime(),
+        }),
+        makeEvent("Pushed", {
+          activityId: "b1",
+          activityName: "B",
+          activityParams: {},
+          eventDate: enoughPastTime(),
+        }),
+      ]),
+    ],
+  });
+
+  // The recorded dates predate now − transitionDuration, so the as-is replay
+  // itself folds to a settled stack — no re-dating involved.
+  const stack = actions.getStack();
+  expect(stack.activities.find((x) => x.id === "a1")?.transitionState).toEqual(
+    "enter-done",
+  );
+  expect(stack.activities.find((x) => x.id === "b1")?.transitionState).toEqual(
+    "enter-done",
+  );
+  expect(stack.globalTransitionState).toEqual("idle");
+});
+
+test("load - 미래 date 스냅샷(캡처 세션 시계 선행)도 그대로 재생되며 core는 정규화하지 않습니다", () => {
+  // As-is replay accepts the recorded dates as truth even when the capture
+  // session's clock ran ahead — the restored activities stay unsettled until
+  // the local clock catches up. A supplier or plugin that wants to rule this
+  // out normalizes the dates in overrideInitialEvents.
+  const { actions } = makeCoreStore({
+    initialEvents: config(["A", "B"], 350),
+    plugins: [
+      provideSnapshotPlugin([
+        makeEvent("Pushed", {
+          activityId: "a1",
+          activityName: "A",
+          activityParams: {},
+          eventDate: futureTime(),
+        }),
+        makeEvent("Pushed", {
+          activityId: "b1",
+          activityName: "B",
+          activityParams: {},
+          eventDate: futureTime(),
+        }),
+      ]),
+    ],
+  });
+
+  const stack = actions.getStack();
+  expect(stack.activities.find((x) => x.id === "a1")?.transitionState).toEqual(
+    "enter-active",
+  );
+  expect(stack.activities.find((x) => x.id === "b1")?.transitionState).toEqual(
+    "enter-active",
+  );
+  expect(stack.globalTransitionState).toEqual("loading");
+});
+
+test("load - 플러그인이 overrideInitialEvents에서 재기저하면 정착 복원을 스스로 보장할 수 있습니다", () => {
+  // The escape hatch for the test above: a plugin re-dates the replay
+  // sequence into the settled past, restoring a fully-settled stack from the
+  // same future-dated snapshot.
+  const settlePlugin: StackflowPlugin = () => ({
+    key: "settler",
+    overrideInitialEvents: ({ initialEvents, initInfo }) =>
+      initInfo.kind === "load"
+        ? initialEvents.map((event, index) => ({
+            ...event,
+            eventDate: Date.now() - MINUTE + index,
+          }))
+        : initialEvents,
+  });
+
+  const { actions } = makeCoreStore({
+    initialEvents: config(["A", "B"], 350),
+    plugins: [
+      provideSnapshotPlugin([
+        makeEvent("Pushed", {
+          activityId: "a1",
+          activityName: "A",
+          activityParams: {},
+          eventDate: futureTime(),
+        }),
+        makeEvent("Pushed", {
+          activityId: "b1",
+          activityName: "B",
+          activityParams: {},
+          eventDate: futureTime(),
+        }),
+      ]),
+      settlePlugin,
+    ],
+  });
+
+  const stack = actions.getStack();
+  expect(
+    stack.activities.every((x) => x.transitionState === "enter-done"),
+  ).toBe(true);
+  expect(stack.activities.find((x) => x.isTop)?.id).toEqual("b1");
+  expect(stack.globalTransitionState).toEqual("idle");
+});
+
+test("load - 이벤트 수와 무관하게 정적 이벤트가 모든 스냅샷 이벤트보다 앞 시점으로 재기저됩니다", () => {
+  // Only the statics are re-dated: pinned just before the earliest snapshot
+  // event so registration and transitionDuration apply before any replayed
+  // event, for any history length.
   const transitionDuration = 350;
   const staticEvents: DomainEvent[] = [
     makeEvent("Initialized", {
@@ -212,6 +254,7 @@ test("load - 정적 이벤트와 복원 이벤트를 함께 재기저해, 이벤
       eventDate: enoughPastTime(),
     }),
   );
+  const originalDates = snapshotEvents.map((e) => e.eventDate);
 
   const store = makeCoreStore({
     initialEvents: staticEvents,
@@ -222,39 +265,24 @@ test("load - 정적 이벤트와 복원 이벤트를 함께 재기저해, 이벤
   const staticDates = log
     .filter((e) => e.name === "Initialized" || e.name === "ActivityRegistered")
     .map((e) => e.eventDate);
-  const rebasedDates = log
+  const replayedDates = log
     .filter((e) => e.name === "Pushed")
     .map((e) => e.eventDate);
 
-  expect(rebasedDates).toHaveLength(400);
-  // Every navigation date sorts strictly after every (also re-dated) static
-  // event...
-  expect(Math.min(...rebasedDates)).toBeGreaterThan(Math.max(...staticDates));
-  // ...and at or before creation time − transitionDuration (settled).
-  expect(Math.max(...rebasedDates)).toBeLessThanOrEqual(
-    Date.now() - transitionDuration,
-  );
-  // Strictly increasing in array order.
-  expect(
-    rebasedDates.every((date, i) => i === 0 || date > rebasedDates[i - 1]),
-  ).toBe(true);
+  // Statics sort strictly before every snapshot event; the snapshot events
+  // themselves keep their recorded dates untouched.
+  expect(Math.max(...staticDates)).toBeLessThan(Math.min(...replayedDates));
+  expect(replayedDates).toEqual(originalDates);
 
-  // The replay itself settled: every restored activity folded to enter-done,
-  // with the last snapshot event on top.
   const stack = store.actions.getStack();
   expect(stack.globalTransitionState).toEqual("idle");
-  expect(
-    stack.activities.every((x) => x.transitionState === "enter-done"),
-  ).toBe(true);
   expect(stack.activities.find((x) => x.isTop)?.id).toEqual("a399");
 });
 
-test("load - transitionDuration이 0이어도 정적 이벤트가 복원 이벤트보다 앞에 정렬됩니다", () => {
-  // With td=0 the react integration backdates static by 2·td = 0, colliding
-  // with freshly created navigation dates; the old window degenerated and
-  // fell back to placement that ignored the static lower bound, sorting
-  // navigation before static. Re-dating static and navigation together makes
-  // the ordering hold structurally at td=0 too.
+test("load - transitionDuration이 0이어도 정적 이벤트가 스냅샷 이벤트보다 앞에 정렬됩니다", () => {
+  // Static backdating is pinned to the earliest snapshot event, not to the
+  // clock or the transition duration, so td=0 (where fresh static dates and
+  // fresh navigation dates would collide) plays no role in the ordering.
   const staticEvents: DomainEvent[] = [
     makeEvent("Initialized", {
       transitionDuration: 0,
@@ -289,12 +317,11 @@ test("load - transitionDuration이 0이어도 정적 이벤트가 복원 이벤�
   const staticDates = log
     .filter((e) => e.name === "Initialized" || e.name === "ActivityRegistered")
     .map((e) => e.eventDate);
-  const rebasedDates = log
+  const replayedDates = log
     .filter((e) => e.name === "Pushed")
     .map((e) => e.eventDate);
 
-  // Navigation still sorts strictly after static, with no window to lean on.
-  expect(Math.min(...rebasedDates)).toBeGreaterThan(Math.max(...staticDates));
+  expect(Math.max(...staticDates)).toBeLessThan(Math.min(...replayedDates));
 
   const stack = store.actions.getStack();
   expect(stack.globalTransitionState).toEqual("idle");
@@ -302,6 +329,43 @@ test("load - transitionDuration이 0이어도 정적 이벤트가 복원 이벤�
     stack.activities.every((x) => x.transitionState === "enter-done"),
   ).toBe(true);
   expect(stack.activities.find((x) => x.isTop)?.id).toEqual("a2");
+});
+
+test("load - 스냅샷 꼬리가 unresumed Paused여도 정적 이벤트는 그보다 앞에 적용되어 격리되지 않습니다", () => {
+  // Statics sorted after an unresumed Paused would be quarantined with the
+  // queued events — leaving the restored stack with transitionDuration 0 and
+  // no registered activities. Backdating statics ahead of the whole replay
+  // sequence rules that out structurally.
+  const { actions } = makeCoreStore({
+    initialEvents: config(["A", "B"], 350),
+    plugins: [
+      provideSnapshotPlugin([
+        makeEvent("Pushed", {
+          activityId: "a1",
+          activityName: "A",
+          activityParams: {},
+          eventDate: enoughPastTime(),
+        }),
+        makeEvent("Paused", {
+          eventDate: enoughPastTime(),
+        }),
+        makeEvent("Pushed", {
+          activityId: "b1",
+          activityName: "B",
+          activityParams: {},
+          eventDate: enoughPastTime(),
+        }),
+      ]),
+    ],
+  });
+
+  const stack = actions.getStack();
+  // The statics applied before the pause: config-derived state is intact.
+  expect(stack.transitionDuration).toEqual(350);
+  expect(stack.registeredActivities.map((x) => x.name)).toEqual(["A", "B"]);
+  // The pause itself round-tripped: b1 stays quarantined behind it.
+  expect(stack.globalTransitionState).toEqual("paused");
+  expect(stack.activities.map((x) => x.id)).toEqual(["a1"]);
 });
 
 test("load - load 후 pop이 복원 최상단을 exit 전환시키고 아래 복원 activity를 재노출합니다", () => {
@@ -332,7 +396,8 @@ test("load - load 후 pop이 복원 최상단을 exit 전환시키고 아래 복
   const b = stack.activities.find((x) => x.id === "b1");
 
   // Pop targeted the restored top: it began its exit transition (the Popped
-  // event, dispatched at the current time, sorted after the rebased events)...
+  // event, dispatched at the current time, sorts after the past-dated
+  // restored events)...
   expect(b?.transitionState).toEqual("exit-active");
   expect(b?.exitedBy?.name).toEqual("Popped");
   // ...and the restored activity below is re-exposed as the active one.
@@ -368,8 +433,8 @@ test("load - load 후 stepPush가 최신 활성 activity(복원 최상단)를 �
   const b = stack.activities.find((x) => x.id === "b1");
 
   // StepPushed resolves its target by eventDate (latest active activity) —
-  // it must land on the restored top, which only holds if rebased dates kept
-  // the restored order below the new event.
+  // it lands on the restored top because the preserved past dates keep the
+  // restored order below the new event.
   expect(b?.steps.map((s) => s.id)).toEqual(["b1", "s1"]);
   expect(b?.params.step).toEqual("1");
   expect(a?.steps.map((s) => s.id)).toEqual(["a1"]);

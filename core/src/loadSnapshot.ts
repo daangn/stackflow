@@ -1,22 +1,29 @@
 import { aggregate } from "./aggregate";
 import type { DomainEvent } from "./event-types";
-import { filterEvents, isSnapshotEventName } from "./event-utils";
+import { isSnapshotEventName } from "./event-utils";
 import { SnapshotLoadError } from "./SnapshotLoadError";
 import type { Stack } from "./Stack";
 import type { SnapshotEvent, StackSnapshot } from "./StackSnapshot";
 
 /**
  * Reconstruct a stack from a provided snapshot by replaying its events
- * through the existing aggregate machinery. Static information
- * (transitionDuration, the registered-activity set) is re-derived from the
- * current config's static events, never from the snapshot.
+ * through the existing aggregate machinery. The snapshot's events replay
+ * as-is — their recorded `eventDate`s are the replay truth (replay order
+ * follows the dates), so a stack captured mid-transition restores
+ * mid-transition and a paused stack restores paused. Core imposes no
+ * settling or normalization on the replay; a plugin that wants a stronger
+ * guarantee (e.g. a fully-settled restore) re-dates the sequence in
+ * `overrideInitialEvents`. Static information (transitionDuration, the
+ * registered-activity set) is re-derived from the current config's static
+ * events, never from the snapshot; only those static events are re-dated
+ * (see `backdateStaticEvents`).
  *
  * `overrideSnapshotEvents` is the plugins' `overrideInitialEvents` chain:
  * its return is adopted as the replay sequence. It runs after the structure
  * check (hooks never see an unrecognizable value) and before every other
- * step, so validation and rebasing apply to the sequence that actually
- * replays — whether it came straight from the snapshot or was reshaped by a
- * plugin. An error thrown by the chain itself is a plugin bug, not a snapshot
+ * step, so validation applies to the sequence that actually replays —
+ * whether it came straight from the snapshot or was reshaped by a plugin.
+ * An error thrown by the chain itself is a plugin bug, not a snapshot
  * defect, and propagates raw instead of becoming a `SnapshotLoadError`.
  */
 export function loadSnapshot(
@@ -29,18 +36,14 @@ export function loadSnapshot(
   const snapshotEvents =
     overrideSnapshotEvents?.(snapshot.events) ?? snapshot.events;
 
-  const transitionDuration =
-    filterEvents(staticEvents, "Initialized")[0]?.transitionDuration ?? 0;
-
-  const now = Date.now();
-  const events = rebaseEvents([...staticEvents, ...snapshotEvents], {
-    now,
-    transitionDuration,
-  });
+  const events: DomainEvent[] = [
+    ...backdateStaticEvents(staticEvents, snapshotEvents),
+    ...snapshotEvents,
+  ];
 
   let stack: Stack;
   try {
-    stack = aggregate(events, now);
+    stack = aggregate(events, Date.now());
   } catch (error) {
     // A structurally-valid event sequence that the replay machinery rejects
     // (e.g. `validateEvents`) is an incompatible-events failure, not a crash.
@@ -104,32 +107,31 @@ function assertSnapshotStructure(snapshot: StackSnapshot): void {
 }
 
 /**
- * Re-date the load events so replay settles deterministically: assign strictly
- * increasing dates in array order (array order is the replay order), every one
- * at or before `now − transitionDuration` so every reducer folds to a settled
- * state. Static events lead the array, so this single backward walk keeps them
- * ahead of the navigation events without dating them specially — static events
- * are navigation-inert (aggregate reads their `eventDate` only as a sort key,
- * and a re-captured snapshot never persists them), so they need only stay
- * ordered before navigation, which the shared re-dating guarantees at any
- * `transitionDuration` (td=0 included, where static and navigation would
- * otherwise share a timestamp). Every other field is preserved byte-for-byte
- * (id/activityId/stepId included). Dating by replay order rather than the
- * original values keeps a capture/load clock skew from disturbing order, and
- * makes post-load navigation (dispatched at the current time) sort after the
- * restored events.
+ * Date the static events to strictly increasing values just before the
+ * earliest replayed event, preserving their relative order. Statics must
+ * apply first: `Initialized` seeds `transitionDuration` for every later
+ * reducer step, and a snapshot whose tail is an unresumed `Paused` would
+ * quarantine statics sorted after it. Their natural dates cannot be trusted
+ * for that ordering — the current config's statics are dated "now", which
+ * falls after a past-dated snapshot — so they are pinned relative to the
+ * replay sequence instead of the clock. The replayed events themselves are
+ * never re-dated.
  */
-function rebaseEvents(
-  events: DomainEvent[],
-  context: {
-    now: number;
-    transitionDuration: number;
-  },
+function backdateStaticEvents(
+  staticEvents: DomainEvent[],
+  snapshotEvents: SnapshotEvent[],
 ): DomainEvent[] {
-  const settledUpperBound = context.now - context.transitionDuration;
+  if (snapshotEvents.length === 0) {
+    return staticEvents;
+  }
 
-  return events.map((event, index) => ({
+  const earliestReplayDate = snapshotEvents.reduce(
+    (earliest, event) => Math.min(earliest, event.eventDate),
+    Number.POSITIVE_INFINITY,
+  );
+
+  return staticEvents.map((event, index) => ({
     ...event,
-    eventDate: settledUpperBound - (events.length - index),
+    eventDate: earliestReplayDate - (staticEvents.length - index),
   }));
 }

@@ -99,7 +99,10 @@ test("persister 왕복 - 캡처(onChanged)→JSON 보존→다음 생성의 prov
   expect(home?.name).toEqual("Home");
   expect(home?.transitionState).toEqual("enter-done");
   expect(article?.name).toEqual("Article");
-  expect(article?.transitionState).toEqual("enter-done");
+  // The article was pushed (and captured) moments ago, so its as-is replay
+  // is still mid-transition — the restored stack picks up exactly where the
+  // captured one left off and settles on its own clock.
+  expect(article?.transitionState).toEqual("enter-active");
   expect(article?.isTop).toBe(true);
   expect((home?.zIndex ?? -1) < (article?.zIndex ?? -1)).toBe(true);
   expect(onInit2.mock.calls[0][0].initInfo).toEqual({ kind: "load" });
