@@ -12,7 +12,7 @@ import type { BaseDomainEvent } from "../event-types/_base";
 import type { SnapshotLoadError } from "../SnapshotLoadError";
 import type { SnapshotEvent, StackSnapshot } from "../StackSnapshot";
 import type {
-  StackflowPluginHook,
+  StackflowPluginInitHook,
   StackflowPluginPostEffectHook,
   StackflowPluginPreEffectHook,
   StackInitInfo,
@@ -27,7 +27,7 @@ export type StackflowPlugin = () => {
   /**
    * Called when the <Stack /> component is initialized for the first time
    */
-  onInit?: StackflowPluginHook;
+  onInit?: StackflowPluginInitHook;
 
   /**
    * Called before the `push()` function of `useActions()` is called and the corresponding signal is delivered to the core

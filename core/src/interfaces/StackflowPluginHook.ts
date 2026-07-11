@@ -10,7 +10,7 @@ import type { StackflowActions } from "./StackflowActions";
  */
 export type StackInitInfo = { kind: "create" | "load" };
 
-export type StackflowPluginHook = (args: {
+export type StackflowPluginInitHook = (args: {
   actions: StackflowActions;
   initInfo: StackInitInfo;
 }) => void;
