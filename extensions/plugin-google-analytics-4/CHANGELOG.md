@@ -1,5 +1,12 @@
 # @stackflow/plugin-google-analytics-4
 
+## 1.1.17
+
+### Patch Changes
+
+- Updated dependencies [f0fc1fb]
+  - @stackflow/core@3.0.0
+
 ## 1.1.16
 
 ### Patch Changes

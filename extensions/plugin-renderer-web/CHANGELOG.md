@@ -1,5 +1,12 @@
 # @stackflow/plugin-renderer-web
 
+## 1.1.15
+
+### Patch Changes
+
+- Updated dependencies [f0fc1fb]
+  - @stackflow/core@3.0.0
+
 ## 1.1.14
 
 ### Patch Changes

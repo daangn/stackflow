@@ -1,5 +1,12 @@
 # @stackflow/plugin-stack-depth-change
 
+## 1.1.7
+
+### Patch Changes
+
+- Updated dependencies [f0fc1fb]
+  - @stackflow/core@3.0.0
+
 ## 1.1.6
 
 ### Patch Changes
