@@ -48,3 +48,21 @@ test("validateEvents - 푸시했는데 해당 액티비티가 없는 경우 thro
     ]);
   }).toThrow();
 });
+
+test("validateEvents - Replace했는데 해당 액티비티가 없는 경우 throw 합니다", () => {
+  expect(() => {
+    validateEvents([
+      initializedEvent({
+        transitionDuration: 300,
+      }),
+      registeredEvent({
+        activityName: "home",
+      }),
+      makeEvent("Replaced", {
+        activityId: "a1",
+        activityName: "sample",
+        activityParams: {},
+      }),
+    ]);
+  }).toThrow();
+});
