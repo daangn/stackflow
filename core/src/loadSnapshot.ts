@@ -47,9 +47,11 @@ export function loadSnapshot(
   } catch (error) {
     // A structurally-valid event sequence that the replay machinery rejects
     // (e.g. `validateEvents`) is an incompatible-events failure, not a crash.
+    // Carry the raw thrown error unflattened so `aggregate`/`validateEvents`'
+    // call stack stays inspectable on the failure.
     throw new SnapshotLoadError({
       kind: "incompatible-events",
-      detail: error instanceof Error ? error.message : error,
+      detail: error,
     });
   }
 
