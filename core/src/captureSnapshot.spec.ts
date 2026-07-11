@@ -155,7 +155,7 @@ test("captureSnapshot - 6종 탐색 이벤트를 모두 보존합니다", () => 
   expect(names).toContain("StepPopped");
 });
 
-test("captureSnapshot - events를 eventDate 오름차순으로 정렬해 반환합니다", () => {
+test("captureSnapshot - events를 정렬 없이 기록된 순서 그대로 반환합니다", () => {
   const initDate = enoughPastTime();
   const regDate = enoughPastTime();
   const earlier = enoughPastTime();
@@ -190,13 +190,15 @@ test("captureSnapshot - events를 eventDate 오름차순으로 정렬해 반환�
 
   const snapshot = actions.captureSnapshot();
 
-  expect(snapshot.events.map((e) => e.eventDate)).toEqual([earlier, later]);
+  // Capture does not sort — load's `aggregate` does. The recorded (later,
+  // earlier) order is preserved verbatim.
+  expect(snapshot.events.map((e) => e.eventDate)).toEqual([later, earlier]);
   expect(
     snapshot.events.map((e) => (e.name === "Pushed" ? e.activityId : e.name)),
-  ).toEqual(["a-earlier", "a-later"]);
+  ).toEqual(["a-later", "a-earlier"]);
 });
 
-test("captureSnapshot - 동일 id 이벤트를 중복 제거합니다", () => {
+test("captureSnapshot - 동일 id 이벤트를 그대로 두고 중복 제거는 load에 맡깁니다", () => {
   const { actions } = makeCoreStore({
     initialEvents: [
       makeEvent("Initialized", {
@@ -227,8 +229,11 @@ test("captureSnapshot - 동일 id 이벤트를 중복 제거합니다", () => {
 
   const snapshot = actions.captureSnapshot();
 
+  // Capture is a faithful projection of the recorded log; it does not dedupe.
+  // A pathological duplicate id survives capture and is collapsed at load
+  // time by `aggregate`'s dedupe-by-id.
   expect(snapshot.events.filter((e) => e.id === "duplicated-id")).toHaveLength(
-    1,
+    2,
   );
 });
 

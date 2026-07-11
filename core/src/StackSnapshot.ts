@@ -43,10 +43,11 @@ export type StackSnapshot = {
   $schema: "stackflow.snapshot.v1";
 
   /**
-   * The event log as recorded (normalized to replay order), minus the static
-   * events the current config re-derives at load time. Whether to capture a
-   * paused stack is the caller's choice — core exports the stack it is asked
-   * about, pause state and all.
+   * The event log as recorded, minus the static events the current config
+   * re-derives at load time. Left in recorded order — load replays through
+   * `aggregate`, which sorts by eventDate and dedupes by id. Whether to
+   * capture a paused stack is the caller's choice — core exports the stack it
+   * is asked about, pause state and all.
    */
   events: SnapshotEvent[];
 };

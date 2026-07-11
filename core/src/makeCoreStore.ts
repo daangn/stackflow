@@ -12,7 +12,7 @@ import { produceEffects } from "./produceEffects";
 import { SnapshotLoadError } from "./SnapshotLoadError";
 import type { Stack } from "./Stack";
 import type { SnapshotEvent, StackSnapshot } from "./StackSnapshot";
-import { divideBy, once, uniqBy } from "./utils";
+import { divideBy, once } from "./utils";
 import { makeActions } from "./utils/makeActions";
 import { triggerPostEffectHooks } from "./utils/triggerPostEffectHooks";
 
@@ -202,17 +202,12 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
       // exactly as recorded, so a paused stack round-trips as a paused stack.
       // Whether to capture at such a moment is the caller's timing choice.
       //
-      // Normalize the log the way aggregate pre-processes — sort by eventDate
-      // ascending, dedupe by id. Dates are preserved, so this changes no
-      // replay semantics; it only makes the array order the replay order.
-      const snapshotEvents = uniqBy(
-        [...events.value].sort((a, b) => a.eventDate - b.eventDate),
-        (event) => event.id,
-      ).filter(isSnapshotEvent);
-
+      // Exported in recorded order, without sorting or de-duping: load replays
+      // through `aggregate`, which sorts by eventDate and dedupes by id itself,
+      // so normalizing here would only duplicate that work.
       return {
         $schema: "stackflow.snapshot.v1",
-        events: snapshotEvents,
+        events: events.value.filter(isSnapshotEvent),
       };
     },
     dispatchEvent(name, params) {
