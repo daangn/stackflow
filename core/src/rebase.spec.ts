@@ -84,9 +84,9 @@ test("load - 스냅샷 이벤트의 eventDate를 재기저 없이 그대로 보�
 });
 
 test("load - 재생 순서는 기록된 eventDate 순서입니다(배열 순서 아님)", () => {
-  // Core-captured snapshots normalize array order to date order, so the two
-  // never disagree in practice; for a hand-crafted snapshot that disagrees,
-  // the dates are the replay truth (aggregate sorts by eventDate).
+  // Core capture preserves recorded array order (it no longer sorts), so a
+  // snapshot's array order can disagree with its date order; either way the
+  // dates are the replay truth (aggregate sorts by eventDate).
   const earlierDate = enoughPastTime();
   const laterDate = enoughPastTime();
 

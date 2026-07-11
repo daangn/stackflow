@@ -882,10 +882,10 @@ test("load - 재생 후 enter 상태 activity가 0개인 스냅샷은 empty-stac
 // ---------------------------------------------------------------------------
 
 test("load - 중복 id 스냅샷은 거부되지 않고 마지막 출현이 이깁니다(last-wins)", () => {
-  // Duplicate event ids can only come from a consumer-transformed snapshot
-  // (capture dedupes). They are an accepted boundary, not a rejection case,
-  // and dedup keeps the LAST occurrence — pinned so the direction doesn't
-  // silently flip.
+  // Duplicate event ids reach load from a consumer-transformed snapshot or,
+  // now that capture no longer dedupes, straight from core capture. They are
+  // an accepted boundary, not a rejection case, and load's aggregate keeps the
+  // LAST occurrence — pinned so the direction doesn't silently flip.
   const { actions } = makeCoreStore({
     initialEvents: config(["A", "B"]),
     plugins: [
