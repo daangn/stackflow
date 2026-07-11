@@ -2,7 +2,7 @@
 "@stackflow/core": major
 ---
 
-Distinguish how a stack is initialized — created fresh (`create`) or restored from a snapshot (`load`) — and add the surface a snapshot round-trip needs. Runtime behavior is unchanged when no snapshot is provided; the breaks are type-level only, hence the major.
+Distinguish how a stack is initialized — created fresh (`create`) or restored from a snapshot (`load`) — and add the surface a snapshot round-trip needs: `StackSnapshot`, `actions.captureSnapshot()`, the `provideSnapshot` / `onLoadError` plugin hooks, and `initInfo` on `onInit`. Runtime behavior is unchanged when no snapshot is provided; the breaks are type-level only — the `StackflowPluginHook` → `StackflowPluginInitHook` rename, plus new required members on `StackflowActions` and on the `onInit` / `overrideInitialEvents` hook signatures — hence the major.
 
 **Added**
 
