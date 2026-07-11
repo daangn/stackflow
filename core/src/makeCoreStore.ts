@@ -58,9 +58,14 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
 
   const initialContext = options.initialContext ?? {};
 
-  const [initialPushedEventsByOption, initialRemainingEvents] = divideBy(
+  // Split the initial events the same way a snapshot does: non-static events
+  // (what a snapshot carries) versus static events (`Initialized`/
+  // `ActivityRegistered`, which both paths re-derive). The create path runs
+  // its non-static seed through the override chain; the load path re-derives
+  // statics and replays the snapshot in their place.
+  const [initialSnapshotEvents, initialStaticEvents] = divideBy(
     options.initialEvents,
-    (e) => e.name === "Pushed" || e.name === "StepPushed",
+    isSnapshotEvent,
   );
 
   const events: { value: DomainEvent[] } = {
@@ -91,14 +96,14 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
    */
   const createStack = (): Stack => {
     const initialPushedEvents = overrideInitialEvents(
-      initialPushedEventsByOption,
+      initialSnapshotEvents,
       { kind: "create" },
     );
 
     const isInitialActivityIgnored =
       initialPushedEvents.length > 0 &&
-      initialPushedEventsByOption.length > 0 &&
-      initialPushedEvents !== initialPushedEventsByOption;
+      initialSnapshotEvents.length > 0 &&
+      initialPushedEvents !== initialSnapshotEvents;
 
     if (isInitialActivityIgnored) {
       options.handlers?.onInitialActivityIgnored?.(initialPushedEvents);
@@ -108,7 +113,7 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
       options.handlers?.onInitialActivityNotFound?.();
     }
 
-    events.value = [...initialRemainingEvents, ...initialPushedEvents];
+    events.value = [...initialStaticEvents, ...initialPushedEvents];
 
     return aggregate(events.value, new Date().getTime());
   };
@@ -147,7 +152,7 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
     const { pluginInstance, snapshot } = suppliedSnapshots[0];
 
     try {
-      const loaded = loadSnapshot(snapshot, initialRemainingEvents, (events) =>
+      const loaded = loadSnapshot(snapshot, initialStaticEvents, (events) =>
         overrideInitialEvents(events, { kind: "load" }),
       );
       events.value = loaded.events;
