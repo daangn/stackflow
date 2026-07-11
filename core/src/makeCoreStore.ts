@@ -27,7 +27,7 @@ export type MakeCoreStoreOptions = {
   plugins: StackflowPlugin[];
   handlers?: {
     onInitialActivityIgnored?: (
-      initialPushedEvents: SnapshotEvent[],
+      overriddenInitialEvents: SnapshotEvent[],
     ) => void;
     onInitialActivityNotFound?: () => void;
   };
@@ -95,25 +95,25 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
    * chain sees is the initInfo signal.
    */
   const createStack = (): Stack => {
-    const initialPushedEvents = overrideInitialEvents(
+    const overriddenInitialEvents = overrideInitialEvents(
       initialSnapshotEvents,
       { kind: "create" },
     );
 
     const isInitialActivityIgnored =
-      initialPushedEvents.length > 0 &&
+      overriddenInitialEvents.length > 0 &&
       initialSnapshotEvents.length > 0 &&
-      initialPushedEvents !== initialSnapshotEvents;
+      overriddenInitialEvents !== initialSnapshotEvents;
 
     if (isInitialActivityIgnored) {
-      options.handlers?.onInitialActivityIgnored?.(initialPushedEvents);
+      options.handlers?.onInitialActivityIgnored?.(overriddenInitialEvents);
     }
 
-    if (initialPushedEvents.length === 0) {
+    if (overriddenInitialEvents.length === 0) {
       options.handlers?.onInitialActivityNotFound?.();
     }
 
-    events.value = [...initialStaticEvents, ...initialPushedEvents];
+    events.value = [...initialStaticEvents, ...overriddenInitialEvents];
 
     return aggregate(events.value, new Date().getTime());
   };
