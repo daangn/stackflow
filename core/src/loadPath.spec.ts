@@ -440,7 +440,7 @@ test("load - 체인 반환이 미등록 activity를 물화하면 incompatible-ev
 test("load - 체인이 재생열을 비우면 empty-stack으로 실패하고 공급자의 onLoadError로 라우팅됩니다", () => {
   const onLoadError = jest.fn(
     (_args: { error: SnapshotLoadError; initialContext: any }) => ({
-      recover: "create" as const,
+      policy: "recover" as const,
     }),
   );
 
@@ -953,9 +953,9 @@ test("load - 스냅샷과 이벤트 항목의 미지 프로퍼티를 수용합�
 // onLoadError routing
 // ---------------------------------------------------------------------------
 
-test('load - 실패 시 onLoadError가 {recover:"create"}를 반환하면 throw 없이 create 경로로 재개합니다', () => {
+test('load - 실패 시 onLoadError가 {policy:"recover"}를 반환하면 throw 없이 create 경로로 재개합니다', () => {
   const onInit = jest.fn();
-  const onLoadError = jest.fn(() => ({ recover: "create" as const }));
+  const onLoadError = jest.fn(() => ({ policy: "recover" as const }));
 
   const store = makeCoreStore({
     initialEvents: [
@@ -985,7 +985,7 @@ test('load - 실패 시 onLoadError가 {recover:"create"}를 반환하면 throw 
   expect(onInit.mock.calls[0][0].initInfo).toEqual({ kind: "create" });
 });
 
-test('load - recover:"create" 재개가 overrideInitialEvents 체인과 initial-activity 핸들러를 포함한 create 파이프라인을 온전히 태웁니다', () => {
+test('load - policy:"recover" 재개가 overrideInitialEvents 체인과 initial-activity 핸들러를 포함한 create 파이프라인을 온전히 태웁니다', () => {
   const onInit = jest.fn();
   const onInitialActivityIgnored = jest.fn();
   const overrideInitialEvents = jest.fn(
@@ -1016,7 +1016,7 @@ test('load - recover:"create" 재개가 overrideInitialEvents 체인과 initial-
     plugins: [
       provideSnapshotPlugin(
         rawSnapshot({ $schema: "stackflow.snapshot.v2", events: [] }),
-        { onLoadError: () => ({ recover: "create" as const }), onInit },
+        { onLoadError: () => ({ policy: "recover" as const }), onInit },
       ),
       () => ({ key: "redirector", overrideInitialEvents }),
     ],
@@ -1047,7 +1047,7 @@ test('load - recover:"create" 재개가 overrideInitialEvents 체인과 initial-
   expect(onInit.mock.calls[0][0].initInfo).toEqual({ kind: "create" });
 });
 
-test("load - recover:create 재개 시 provideSnapshot을 재폴링하지 않습니다", () => {
+test("load - policy:recover 재개 시 provideSnapshot을 재폴링하지 않습니다", () => {
   const provideSnapshot = jest.fn(() =>
     rawSnapshot({ $schema: "stackflow.snapshot.v2", events: [] }),
   );
@@ -1066,7 +1066,7 @@ test("load - recover:create 재개 시 provideSnapshot을 재폴링하지 않습
       () => ({
         key: "provider",
         provideSnapshot,
-        onLoadError: () => ({ recover: "create" as const }),
+        onLoadError: () => ({ policy: "recover" as const }),
       }),
     ],
   });
@@ -1076,7 +1076,7 @@ test("load - recover:create 재개 시 provideSnapshot을 재폴링하지 않습
   expect(actions.getStack().activities.map((x) => x.id)).toEqual(["home1"]);
 });
 
-test("load - onLoadError가 void를 반환하면 SnapshotLoadError를 makeCoreStore 밖으로 던집니다", () => {
+test('load - onLoadError가 {policy:"propagate"}를 반환하면 SnapshotLoadError를 makeCoreStore 밖으로 던집니다', () => {
   let caught: unknown;
   try {
     makeCoreStore({
@@ -1084,7 +1084,7 @@ test("load - onLoadError가 void를 반환하면 SnapshotLoadError를 makeCoreSt
       plugins: [
         provideSnapshotPlugin(
           rawSnapshot({ $schema: "stackflow.snapshot.v2", events: [] }),
-          { onLoadError: () => undefined },
+          { onLoadError: () => ({ policy: "propagate" as const }) },
         ),
       ],
     });
@@ -1095,8 +1095,8 @@ test("load - onLoadError가 void를 반환하면 SnapshotLoadError를 makeCoreSt
   expect(caught).toBeInstanceOf(SnapshotLoadError);
 });
 
-test('load - onLoadError가 {recover:"create"} 아닌 truthy 값을 반환하면 SnapshotLoadError를 그대로 던집니다', () => {
-  // Recovery takes the exact { recover: "create" } decision. A JS consumer
+test('load - onLoadError가 {policy:"recover"} 아닌 truthy 값을 반환하면 SnapshotLoadError를 그대로 던집니다', () => {
+  // Recovery takes the exact { policy: "recover" } decision. A JS consumer
   // returning some other truthy shape must not be mistaken for it — pinned so
   // the check never loosens into truthiness.
   let caught: unknown;
@@ -1108,7 +1108,9 @@ test('load - onLoadError가 {recover:"create"} 아닌 truthy 값을 반환하면
           rawSnapshot({ $schema: "stackflow.snapshot.v2", events: [] }),
           {
             onLoadError: () =>
-              ({ recover: "retry" }) as unknown as { recover: "create" },
+              ({ policy: "retry" }) as unknown as
+                | { policy: "recover" }
+                | { policy: "propagate" },
           },
         ),
       ],
@@ -1130,7 +1132,7 @@ test("load - onLoadError 핸들러가 없으면 SnapshotLoadError를 makeCoreSto
 });
 
 test("load - onLoadError는 스냅샷을 공급한 플러그인에게만 호출됩니다", () => {
-  const supplierOnLoadError = jest.fn(() => ({ recover: "create" as const }));
+  const supplierOnLoadError = jest.fn(() => ({ policy: "recover" as const }));
   const bystanderOnLoadError = jest.fn();
 
   makeCoreStore({
@@ -1164,7 +1166,7 @@ test("load - provideSnapshot·onLoadError는 생성 시 options.initialContext�
   const provideSnapshot = jest.fn(() =>
     rawSnapshot({ $schema: "stackflow.snapshot.v2", events: [] }),
   );
-  const onLoadError = jest.fn(() => ({ recover: "create" as const }));
+  const onLoadError = jest.fn(() => ({ policy: "recover" as const }));
 
   makeCoreStore({
     initialEvents: [

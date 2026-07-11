@@ -171,13 +171,17 @@ export type StackflowPlugin = () => {
 
   /**
    * Called — only on the plugin that provided the failing snapshot (R5) — when
-   * that snapshot fails to load. Returning `{ recover: "create" }` resumes the
-   * create path without re-polling; returning nothing (or having no handler)
-   * throws the `SnapshotLoadError` out of `makeCoreStore` (R4).
+   * that snapshot fails to load. Returning `{ policy: "recover" }` resumes the
+   * create path without re-polling; returning `{ policy: "propagate" }` (or
+   * having no handler) throws the `SnapshotLoadError` out of `makeCoreStore`
+   * (R4). Both outcomes share the `policy` discriminant so a handler chooses
+   * recover vs propagate explicitly, rather than propagating by falling off
+   * the end. `"recover"` currently resumes the sole create path; a future
+   * recovery target would extend this branch (e.g. an added field) rather
+   * than the discriminant.
    */
   onLoadError?: (args: {
     error: SnapshotLoadError;
     initialContext: any;
-    // biome-ignore lint/suspicious/noConfusingVoidType: `void` is intentional — it lets a handler return nothing to signal "throw the error". Narrowing to `undefined` would reject the common void-returning handler implementation.
-  }) => { recover: "create" } | void;
+  }) => { policy: "recover" } | { policy: "propagate" };
 };

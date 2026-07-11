@@ -159,14 +159,15 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
       }
 
       // The failing snapshot's provider gets first refusal (R5). An explicit
-      // `{ recover: "create" }` resumes the create path without re-polling
-      // (C1); anything else rethrows out of makeCoreStore (R4).
+      // `{ policy: "recover" }` resumes the create path without re-polling
+      // (C1); `{ policy: "propagate" }`, no handler, or anything else rethrows
+      // out of makeCoreStore (R4).
       const recovery = pluginInstance.onLoadError?.({
         error,
         initialContext,
       });
 
-      if (recovery?.recover !== "create") {
+      if (recovery?.policy !== "recover") {
         throw error;
       }
 

@@ -108,7 +108,7 @@ test("persister 왕복 - 캡처(onChanged)→JSON 보존→다음 생성의 prov
   expect(onInit2.mock.calls[0][0].initInfo).toEqual({ kind: "load" });
 });
 
-test("persister 왕복 - 손상 스냅샷을 onLoadError가 폐기하고 recover:create로 초기 화면 기동합니다", () => {
+test("persister 왕복 - 손상 스냅샷을 onLoadError가 폐기하고 policy:recover로 초기 화면 기동합니다", () => {
   // Storage already holds a corrupt snapshot (wrong $schema).
   const memory: { value: string | null } = {
     value: JSON.stringify({ $schema: "stackflow.snapshot.v2", events: [] }),
@@ -120,7 +120,7 @@ test("persister 왕복 - 손상 스냅샷을 onLoadError가 폐기하고 recover
     provideSnapshot: () => decodeOrDiscard(memory),
     onLoadError: () => {
       memory.value = null;
-      return { recover: "create" };
+      return { policy: "recover" as const };
     },
     onInit,
   });
