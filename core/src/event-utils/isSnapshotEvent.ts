@@ -12,18 +12,18 @@ import type { SnapshotEvent } from "../StackSnapshot";
  * `ReadonlySet<string>` so both membership checks below can pass a plain event
  * name — a `DomainEvent["name"]` or a runtime `string` — without a cast.
  */
-const SNAPSHOT_EVENT_NAMES: ReadonlySet<string> = new Set<SnapshotEvent["name"]>(
-  [
-    "Pushed",
-    "Replaced",
-    "Popped",
-    "StepPushed",
-    "StepReplaced",
-    "StepPopped",
-    "Paused",
-    "Resumed",
-  ],
-);
+const SNAPSHOT_EVENT_NAMES: ReadonlySet<string> = new Set<
+  SnapshotEvent["name"]
+>([
+  "Pushed",
+  "Replaced",
+  "Popped",
+  "StepPushed",
+  "StepReplaced",
+  "StepPopped",
+  "Paused",
+  "Resumed",
+]);
 
 /** Whether an event is one a snapshot carries (i.e. not a static event). */
 export function isSnapshotEvent(event: DomainEvent): event is SnapshotEvent {

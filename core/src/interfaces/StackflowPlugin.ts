@@ -165,9 +165,7 @@ export type StackflowPlugin = () => {
    * throws a creation error naming the conflicting keys — it does not
    * arbitrate (R9).
    */
-  provideSnapshot?: (args: {
-    initialContext: any;
-  }) => StackSnapshot | null;
+  provideSnapshot?: (args: { initialContext: any }) => StackSnapshot | null;
 
   /**
    * Called — only on the plugin that provided the failing snapshot (R5) — when
