@@ -219,6 +219,52 @@ describe("historySyncPlugin", () => {
     expect(fallbackActivity).toHaveBeenCalledTimes(1);
   });
 
+  test("defaultHistory receives initialContext", () => {
+    history = createMemoryHistory({
+      initialEntries: ["/articles/123"],
+    });
+
+    const initialContext = {
+      defaultHistoryActivityName: "Home" as const,
+    };
+    const defaultHistory = jest.fn(
+      (
+        _params: Record<string, string>,
+        args: { initialContext: typeof initialContext },
+      ) => [
+        {
+          activityName: args.initialContext.defaultHistoryActivityName,
+          activityParams: {},
+        },
+      ],
+    );
+    const plugin = historySyncPlugin({
+      history,
+      routes: {
+        Home: "/home",
+        Article: {
+          path: "/articles/:articleId",
+          defaultHistory,
+        },
+      },
+      fallbackActivity: () => "Home",
+    });
+
+    const initialEvents = plugin().overrideInitialEvents?.({
+      initialEvents: [],
+      initialContext,
+    });
+
+    expect(defaultHistory).toHaveBeenCalledWith(
+      { articleId: "123" },
+      { initialContext },
+    );
+    expect(initialEvents?.[0]).toMatchObject({
+      name: "Pushed",
+      activityName: "Home",
+    });
+  });
+
   test("historySyncPlugin - actions.push() 후에, URL 상태가 알맞게 바뀝니다", async () => {
     await actions.push({
       activityId: "a1",

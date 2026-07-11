@@ -16,6 +16,7 @@ export type Route<ComponentType> = {
   ) => Record<string, string | undefined>;
   defaultHistory?: (
     params: Record<string, string>,
+    args: { initialContext: any },
   ) => HistoryEntry[] | DefaultHistoryDescriptor;
 };
 
@@ -45,13 +46,15 @@ export function interpretDefaultHistoryOption(
   option:
     | ((
         params: Record<string, string>,
+        args: { initialContext: any },
       ) => HistoryEntry[] | DefaultHistoryDescriptor)
     | undefined,
   params: Record<string, string>,
+  initialContext: any,
 ): DefaultHistoryDescriptor {
   if (!option) return { entries: [] };
 
-  const entriesOrDescriptor = option(params);
+  const entriesOrDescriptor = option(params, { initialContext });
 
   if (Array.isArray(entriesOrDescriptor)) {
     return { entries: entriesOrDescriptor };
