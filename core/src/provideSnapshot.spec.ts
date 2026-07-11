@@ -112,9 +112,11 @@ test("provideSnapshot - non-null 공급이 정확히 1개면 나머지 null은 �
 test("provideSnapshot - undefined 반환을 null과 동일하게(공급 없음) 취급합니다", () => {
   const undefinedProvider: StackflowPlugin = () => ({
     key: "provider",
-    // The contract allows returning `undefined` (a bare `return;`) — core
-    // must treat it like `null`: nothing to provide.
-    provideSnapshot: () => undefined,
+    // Characterization, not contract — the type is `StackSnapshot | null`, but
+    // a JS consumer can still hand back `undefined`; core coerces it to null
+    // (nothing to provide) via `?? null`, the same defense used when a plugin
+    // has no `provideSnapshot` at all.
+    provideSnapshot: (() => undefined) as unknown as () => StackSnapshot | null,
   });
 
   const { actions } = makeCoreStore({

@@ -160,15 +160,14 @@ export type StackflowPlugin = () => {
 
   /**
    * Called synchronously at stack creation time to provide a snapshot to load
-   * from. Returning `null` (or `undefined`) means "nothing to provide" and the
-   * create path continues. If more than one plugin returns a non-null snapshot,
-   * core throws a creation error naming the conflicting keys — it does not
+   * from. Returning `null` means "nothing to provide" and the create path
+   * continues. If more than one plugin returns a non-null snapshot, core
+   * throws a creation error naming the conflicting keys — it does not
    * arbitrate (R9).
    */
   provideSnapshot?: (args: {
     initialContext: any;
-    // biome-ignore lint/suspicious/noConfusingVoidType: `void` is intentional — it lets a provider `return;` to signal "nothing to provide", as the JSDoc above promises. Narrowing to `undefined` would reject the common void-returning provider implementation.
-  }) => StackSnapshot | null | void;
+  }) => StackSnapshot | null;
 
   /**
    * Called — only on the plugin that provided the failing snapshot (R5) — when
