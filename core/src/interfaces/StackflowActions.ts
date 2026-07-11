@@ -11,12 +11,19 @@ import type {
 import type { BaseDomainEvent } from "../event-types/_base";
 import type { DispatchEvent } from "../event-utils";
 import type { Stack } from "../Stack";
+import type { StackSnapshot } from "../StackSnapshot";
 
 export type StackflowActions = {
   /**
    * Get current stack state
    */
   getStack: () => Stack;
+
+  /**
+   * Capture the current navigation history as a snapshot. Callable from any
+   * hook, at any time; normalizes the event log into navigation events.
+   */
+  captureSnapshot: () => StackSnapshot;
 
   /**
    * Dispatch new event to the core without pre-effect hooks

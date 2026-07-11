@@ -18,9 +18,15 @@ export function validateEvents(events: DomainEvent[]) {
     activityRegisteredEvents.map((e) => e.activityName),
   );
 
-  const pushedEvents = filterEvents(events, "Pushed");
+  // Both Pushed and Replaced materialize an activity by name, so both must
+  // name a registered activity — checking only Pushed left Replaced an
+  // asymmetric gap.
+  const materializingEvents = [
+    ...filterEvents(events, "Pushed"),
+    ...filterEvents(events, "Replaced"),
+  ];
 
-  if (pushedEvents.some((e) => !registeredActivityNames.has(e.activityName))) {
+  if (materializingEvents.some((e) => !registeredActivityNames.has(e.activityName))) {
     throw new Error("the corresponding activity does not exist");
   }
 }

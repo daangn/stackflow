@@ -5,6 +5,7 @@ export { DispatchEvent, makeEvent } from "./event-utils";
 export * from "./interfaces";
 export * from "./makeCoreStore";
 export { produceEffects } from "./produceEffects";
+export { SnapshotLoadError, SnapshotLoadErrorCause } from "./SnapshotLoadError";
 export {
   Activity,
   ActivityStep,
@@ -12,4 +13,9 @@ export {
   RegisteredActivity,
   Stack,
 } from "./Stack";
+export {
+  NavigationEvent,
+  SnapshotEvent,
+  StackSnapshot,
+} from "./StackSnapshot";
 export { id } from "./utils";

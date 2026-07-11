@@ -1,10 +1,17 @@
 import isEqual from "react-fast-compare";
 import { aggregate } from "./aggregate";
-import type { DomainEvent, PushedEvent, StepPushedEvent } from "./event-types";
-import { makeEvent } from "./event-utils";
-import type { StackflowActions, StackflowPlugin } from "./interfaces";
+import type { DomainEvent } from "./event-types";
+import { isSnapshotEvent, makeEvent } from "./event-utils";
+import type {
+  StackflowActions,
+  StackflowPlugin,
+  StackInitInfo,
+} from "./interfaces";
+import { loadSnapshot } from "./loadSnapshot";
 import { produceEffects } from "./produceEffects";
+import { SnapshotLoadError } from "./SnapshotLoadError";
 import type { Stack } from "./Stack";
+import type { SnapshotEvent, StackSnapshot } from "./StackSnapshot";
 import { divideBy, once } from "./utils";
 import { makeActions } from "./utils/makeActions";
 import { triggerPostEffectHooks } from "./utils/triggerPostEffectHooks";
@@ -20,7 +27,7 @@ export type MakeCoreStoreOptions = {
   plugins: StackflowPlugin[];
   handlers?: {
     onInitialActivityIgnored?: (
-      initialPushedEvents: (PushedEvent | StepPushedEvent)[],
+      overriddenInitialEvents: SnapshotEvent[],
     ) => void;
     onInitialActivityNotFound?: () => void;
   };
@@ -49,39 +56,136 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
     ...options.plugins.map((plugin) => plugin()),
   ];
 
-  const [initialPushedEventsByOption, initialRemainingEvents] = divideBy(
+  const initialContext = options.initialContext ?? {};
+
+  // Split the initial events the same way a snapshot does: non-static events
+  // (what a snapshot carries) versus static events (`Initialized`/
+  // `ActivityRegistered`, which both paths re-derive). The create path runs
+  // its non-static seed through the override chain; the load path re-derives
+  // statics and replays the snapshot in their place.
+  const [initialSnapshotEvents, initialStaticEvents] = divideBy(
     options.initialEvents,
-    (e) => e.name === "Pushed" || e.name === "StepPushed",
+    isSnapshotEvent,
   );
-
-  const initialPushedEvents = pluginInstances.reduce(
-    (initialEvents, pluginInstance) =>
-      pluginInstance.overrideInitialEvents?.({
-        initialEvents,
-        initialContext: options.initialContext ?? {},
-      }) ?? initialEvents,
-    initialPushedEventsByOption,
-  );
-
-  const isInitialActivityIgnored =
-    initialPushedEvents.length > 0 &&
-    initialPushedEventsByOption.length > 0 &&
-    initialPushedEvents !== initialPushedEventsByOption;
-
-  if (isInitialActivityIgnored) {
-    options.handlers?.onInitialActivityIgnored?.(initialPushedEvents);
-  }
-
-  if (initialPushedEvents.length === 0) {
-    options.handlers?.onInitialActivityNotFound?.();
-  }
 
   const events: { value: DomainEvent[] } = {
-    value: [...initialRemainingEvents, ...initialPushedEvents],
+    value: [],
   };
 
+  // One chain for both paths: each plugin sees the previous plugin's return,
+  // with initInfo telling which path is running. On load the return is the
+  // replay sequence, so it goes back through the load validation afterwards.
+  const overrideInitialEvents = (
+    initialEvents: SnapshotEvent[],
+    initInfo: StackInitInfo,
+  ): SnapshotEvent[] =>
+    pluginInstances.reduce(
+      (events, pluginInstance) =>
+        pluginInstance.overrideInitialEvents?.({
+          initialEvents: events,
+          initialContext,
+          initInfo,
+        }) ?? events,
+      initialEvents,
+    );
+
+  /**
+   * The create path keeps the pre-snapshot pipeline — with no snapshot
+   * provider the store is built exactly as before; the only addition the
+   * chain sees is the initInfo signal.
+   */
+  const createStack = (): Stack => {
+    const overriddenInitialEvents = overrideInitialEvents(
+      initialSnapshotEvents,
+      { kind: "create" },
+    );
+
+    const isInitialActivityIgnored =
+      overriddenInitialEvents.length > 0 &&
+      initialSnapshotEvents.length > 0 &&
+      overriddenInitialEvents !== initialSnapshotEvents;
+
+    if (isInitialActivityIgnored) {
+      options.handlers?.onInitialActivityIgnored?.(overriddenInitialEvents);
+    }
+
+    if (overriddenInitialEvents.length === 0) {
+      options.handlers?.onInitialActivityNotFound?.();
+    }
+
+    events.value = [...initialStaticEvents, ...overriddenInitialEvents];
+
+    return aggregate(events.value, new Date().getTime());
+  };
+
+  // Poll every plugin for a snapshot to load from (§3.3). `null`/`undefined`
+  // means "nothing to provide". More than one non-null supply is a wiring bug,
+  // not a snapshot defect — throw a plain creation error naming the keys,
+  // without routing to any `onLoadError` (R9).
+  const suppliedSnapshots = pluginInstances
+    .map((pluginInstance) => ({
+      pluginInstance,
+      snapshot: pluginInstance.provideSnapshot?.({ initialContext }) ?? null,
+    }))
+    .filter(
+      (
+        supply,
+      ): supply is {
+        pluginInstance: ReturnType<StackflowPlugin>;
+        snapshot: StackSnapshot;
+      } => supply.snapshot != null,
+    );
+
+  if (suppliedSnapshots.length > 1) {
+    const keys = suppliedSnapshots.map((supply) => supply.pluginInstance.key);
+    throw new Error(
+      `More than one plugin provided a snapshot (${keys.join(
+        ", ",
+      )}). A stack loads from at most one snapshot; resolve which provider wins in a layer above core.`,
+    );
+  }
+
+  let initInfo: { kind: "create" | "load" };
+  let stackValue: Stack;
+
+  if (suppliedSnapshots.length === 1) {
+    const { pluginInstance, snapshot } = suppliedSnapshots[0];
+
+    try {
+      const loaded = loadSnapshot(snapshot, initialStaticEvents, (events) =>
+        overrideInitialEvents(events, { kind: "load" }),
+      );
+      events.value = loaded.events;
+      stackValue = loaded.stack;
+      initInfo = { kind: "load" };
+    } catch (error) {
+      if (!(error instanceof SnapshotLoadError)) {
+        throw error;
+      }
+
+      // The failing snapshot's provider gets first refusal (R5). An explicit
+      // `{ policy: "recover" }` resumes the create path without re-polling
+      // (C1); `{ policy: "propagate" }`, no handler, or anything else rethrows
+      // out of makeCoreStore (R4).
+      const recovery = pluginInstance.onLoadError?.({
+        error,
+        initialContext,
+      });
+
+      if (recovery?.policy !== "recover") {
+        throw error;
+      }
+
+      stackValue = createStack();
+      initInfo = { kind: "create" };
+    }
+  } else {
+    stackValue = createStack();
+    initInfo = { kind: "create" };
+  }
+
   const stack = {
-    value: aggregate(events.value, new Date().getTime()),
+    value: stackValue,
   };
 
   let currentInterval: ReturnType<typeof setInterval> | null = null;
@@ -89,6 +193,22 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
   const actions: StackflowActions = {
     getStack() {
       return stack.value;
+    },
+    captureSnapshot() {
+      // A snapshot is the recorded event log as-is, minus the static events
+      // (`Initialized`/`ActivityRegistered`) the current config re-derives at
+      // load time. Core holds no opinion beyond that vocabulary split:
+      // `Paused`/`Resumed` and events queued behind a pause are exported
+      // exactly as recorded, so a paused stack round-trips as a paused stack.
+      // Whether to capture at such a moment is the caller's timing choice.
+      //
+      // Exported in recorded order, without sorting or de-duping: load replays
+      // through `aggregate`, which sorts by eventDate and dedupes by id itself,
+      // so normalizing here would only duplicate that work.
+      return {
+        $schema: "stackflow.snapshot.v1",
+        events: events.value.filter(isSnapshotEvent),
+      };
     },
     dispatchEvent(name, params) {
       const newEvent = makeEvent(name, params);
@@ -153,6 +273,7 @@ export function makeCoreStore(options: MakeCoreStoreOptions): CoreStore {
       pluginInstances.forEach((pluginInstance) => {
         pluginInstance.onInit?.({
           actions,
+          initInfo,
         });
       });
     }),

@@ -1,9 +1,8 @@
 import type {
   CoreStore,
-  PushedEvent,
+  SnapshotEvent,
   Stack,
   StackflowPlugin,
-  StepPushedEvent,
 } from "@stackflow/core";
 import { makeCoreStore, makeEvent } from "@stackflow/core";
 import type { Location, MemoryHistory } from "history";
@@ -70,13 +69,12 @@ const stackflow = ({
    * `@stackflow/react`에서 복사됨
    */
   const pluginInstances = plugins.map((plugin) => plugin());
-  const initialPushedEvents = pluginInstances.reduce<
-    (PushedEvent | StepPushedEvent)[]
-  >(
+  const initialPushedEvents = pluginInstances.reduce<SnapshotEvent[]>(
     (initialEvents, pluginInstance) =>
       pluginInstance.overrideInitialEvents?.({
         initialEvents,
         initialContext: {},
+        initInfo: { kind: "create" },
       }) ?? initialEvents,
     [],
   );
@@ -214,6 +212,7 @@ describe("historySyncPlugin", () => {
     pluginInstance.overrideInitialEvents?.({
       initialEvents: [],
       initialContext: {},
+      initInfo: { kind: "create" },
     });
 
     expect(fallbackActivity).toHaveBeenCalledTimes(1);

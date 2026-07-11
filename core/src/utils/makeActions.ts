@@ -11,7 +11,10 @@ export function makeActions({
   dispatchEvent,
   pluginInstances,
   actions,
-}: ActionCreatorOptions): Omit<StackflowActions, "dispatchEvent" | "getStack"> {
+}: ActionCreatorOptions): Omit<
+  StackflowActions,
+  "dispatchEvent" | "getStack" | "captureSnapshot"
+> {
   return {
     push(params) {
       const { isPrevented, nextActionParams } = triggerPreEffectHook(

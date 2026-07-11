@@ -9,10 +9,13 @@ import type {
   StepReplacedEvent,
 } from "../event-types";
 import type { BaseDomainEvent } from "../event-types/_base";
+import type { SnapshotLoadError } from "../SnapshotLoadError";
+import type { SnapshotEvent, StackSnapshot } from "../StackSnapshot";
 import type {
-  StackflowPluginHook,
+  StackflowPluginInitHook,
   StackflowPluginPostEffectHook,
   StackflowPluginPreEffectHook,
+  StackInitInfo,
 } from "./StackflowPluginHook";
 
 export type StackflowPlugin = () => {
@@ -24,7 +27,7 @@ export type StackflowPlugin = () => {
   /**
    * Called when the <Stack /> component is initialized for the first time
    */
-  onInit?: StackflowPluginHook;
+  onInit?: StackflowPluginInitHook;
 
   /**
    * Called before the `push()` function of `useActions()` is called and the corresponding signal is delivered to the core
@@ -128,10 +131,55 @@ export type StackflowPlugin = () => {
   onChanged?: StackflowPluginPostEffectHook<"%SOMETHING_CHANGED%">;
 
   /**
-   * Specifies the first `PushedEvent`, `StepPushedEvent` (Overrides the `initialActivity` option specified in the `stackflow()` function)
+   * Intercept the event sequence a stack is built from. Chained across
+   * plugins in array order — each plugin receives the previous one's
+   * return. `initInfo` says which path is running, in the same record shape
+   * `onInit` receives:
+   * - `{ kind: "create" }`: `initialEvents` holds the initial entry events
+   *   (`PushedEvent`/`StepPushedEvent`, from the `initialActivity` option or
+   *   earlier plugins). The return decides the initial entries.
+   * - `{ kind: "load" }`: `initialEvents` holds the provided snapshot's full
+   *   replay sequence (structure-validated, original field values) —
+   *   `Paused`/`Resumed` included when the snapshot recorded them. The
+   *   return is adopted as the replay sequence with its event dates
+   *   preserved: core never re-dates it, so replay order follows the
+   *   recorded dates and a guarantee like "every restored activity is
+   *   settled" is this hook's to provide, by re-dating the events itself.
+   *   The return then runs through the same load validation as the snapshot
+   *   itself (activity registration, replay, at least one enter-state
+   *   activity), so a failing return surfaces as a `SnapshotLoadError` to
+   *   the snapshot provider. Reshaping the sequence reshapes the
+   *   reconstructed navigation history — a plugin with no load policy must
+   *   return `initialEvents` unchanged.
    */
   overrideInitialEvents?: (args: {
-    initialEvents: (PushedEvent | StepPushedEvent)[];
+    initialEvents: SnapshotEvent[];
     initialContext: any;
-  }) => (PushedEvent | StepPushedEvent)[];
+    initInfo: StackInitInfo;
+  }) => SnapshotEvent[];
+
+  /**
+   * Called synchronously at stack creation time to provide a snapshot to load
+   * from. Returning `null` means "nothing to provide" and the create path
+   * continues. If more than one plugin returns a non-null snapshot, core
+   * throws a creation error naming the conflicting keys — it does not
+   * arbitrate (R9).
+   */
+  provideSnapshot?: (args: { initialContext: any }) => StackSnapshot | null;
+
+  /**
+   * Called — only on the plugin that provided the failing snapshot (R5) — when
+   * that snapshot fails to load. Returning `{ policy: "recover" }` resumes the
+   * create path without re-polling; returning `{ policy: "propagate" }` (or
+   * having no handler) throws the `SnapshotLoadError` out of `makeCoreStore`
+   * (R4). Both outcomes share the `policy` discriminant so a handler chooses
+   * recover vs propagate explicitly, rather than propagating by falling off
+   * the end. `"recover"` currently resumes the sole create path; a future
+   * recovery target would extend this branch (e.g. an added field) rather
+   * than the discriminant.
+   */
+  onLoadError?: (args: {
+    error: SnapshotLoadError;
+    initialContext: any;
+  }) => { policy: "recover" } | { policy: "propagate" };
 };
