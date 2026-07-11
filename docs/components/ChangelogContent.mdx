@@ -1,3 +1,14 @@
+## 2026.07.07
+
+Memoize the action functions returned by `useFlow` and `useStepFlow` so their references stay stable across renders. [`91c433c`](https://github.com/daangn/stackflow/commit/91c433cc2f60462c59f6e1b990bc8339d7fbbc00)
+
+Previously these hooks rebuilt their action object (`push`/`replace`/`pop`, `pushStep`/`replaceStep`/`popStep`) on every render, giving the returned functions a new reference each time. Since the underlying core actions are already a stable reference, the returned actions are now memoized on them (the same approach `usePrepare` already uses). This keeps the functions referentially stable when placed in `useEffect`/`useCallback` dependency arrays, avoiding unnecessary re-runs.
+
+Released packages:
+- 📦 [@stackflow/react@2.1.1](https://npmjs.com/package/@stackflow/react/v/2.1.1)
+
+---
+
 ## 2026.06.08
 
 Expose `prepare` on the `stackflow()` output to preload an activity's component chunk and data loader from outside the React render tree (e.g. at app bootstrap, before the first render), without depending on React Context. [`510a287`](https://github.com/daangn/stackflow/commit/510a28705ef44dd153cef895cf88a341eb351ad3)

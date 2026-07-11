@@ -10,8 +10,10 @@ import {
   type StackflowActions,
   type StepPushedEvent,
 } from "@stackflow/core";
-import type { StackflowReactPlugin } from "@stackflow/react";
-import type { ActivityComponentType } from "@stackflow/react";
+import type {
+  ActivityComponentType,
+  StackflowReactPlugin,
+} from "@stackflow/react";
 import type { History, Listener } from "history";
 import { createBrowserHistory, createMemoryHistory } from "history";
 import { useEffect, useSyncExternalStore } from "react";
@@ -321,6 +323,7 @@ export function historySyncPlugin<
         const defaultHistory = interpretDefaultHistoryOption(
           targetActivityRoute.defaultHistory,
           params,
+          initialContext,
         );
         const historyEntryToEvents = ({
           activityName,
