@@ -77,7 +77,7 @@ export function loadSnapshot(
  * `detail` names which structural check failed, for diagnosis.
  */
 function assertSnapshotStructure(snapshot: StackSnapshot): void {
-  if (snapshot?.$schema !== "stackflow.snapshot.v1") {
+  if (snapshot.$schema !== "stackflow.snapshot.v1") {
     throw new SnapshotLoadError({
       kind: "unrecognized-snapshot",
       detail: "$schema mismatch",
