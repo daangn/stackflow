@@ -1,0 +1,58 @@
+{
+  "name": "@stackflow/plugin-stack-persistence",
+  "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/daangn/stackflow.git",
+    "directory": "extensions/plugin-stack-persistence"
+  },
+  "license": "MIT",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "yarn build:js && yarn build:dts",
+    "build:dts": "tsc --emitDeclarationOnly",
+    "build:js": "node ./esbuild.config.js",
+    "clean": "rimraf dist",
+    "dev": "yarn build:js --watch && yarn build:dts --watch && yarn test --watch",
+    "test": "yarn test:runtime && yarn test:types && yarn test:boundary",
+    "test:boundary": "yarn build && vitest run boundary-tests",
+    "test:runtime": "vitest run src",
+    "test:types": "vitest run type-tests",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p type-tests/tsconfig.json && tsc --noEmit -p boundary-tests/tsconfig.json"
+  },
+  "devDependencies": {
+    "@stackflow/core": "^2.0.1",
+    "@stackflow/esbuild-config": "^1.0.3",
+    "@types/node": "^20.14.9",
+    "esbuild": "^0.23.0",
+    "rimraf": "^3.0.2",
+    "typescript": "^5.5.3",
+    "vitest": "^3.2.4"
+  },
+  "peerDependencies": {
+    "@stackflow/core": "^2.0.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "ultra": {
+    "concurrent": [
+      "dev",
+      "build"
+    ]
+  }
+}

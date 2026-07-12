@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "outDir": "./dist",
+    "paths": {
+      "@stackflow/plugin-stack-persistence": ["index.ts"]
+    }
+  },
+  "include": ["./src"],
+  "exclude": ["./dist"]
+}
