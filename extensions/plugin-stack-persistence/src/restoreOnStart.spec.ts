@@ -99,13 +99,18 @@ describe("strategy 없는 유효 record는 최초 상태부터 복원된 Stack�
 
 describe("plugin은 record envelope와 paused snapshot에 추가 검증·정규화를 하지 않는다", () => {
   test("strategy가 이해하는 opaque metadata와 추가 envelope property를 가진 record를 그대로 보고, core가 받아들이는 paused snapshot은 paused 상태 그대로 복원된다", () => {
-    // given: opaque metadata + 계약 밖 추가 envelope property + paused snapshot
+    // given: opaque metadata + 계약 밖 추가 envelope property + 마지막 event가
+    // Paused인 채로 끝나는 snapshot
     type OpaqueMetadata = { opaque: { tag: string } };
     const record = deepFreeze({
       snapshot: pausedSnapshot(),
       metadata: { opaque: { tag: "m-1" } },
       vendorExtension: "extra-envelope-value",
     }) as StackSnapshotRecord<OpaqueMetadata> & { vendorExtension: string };
+
+    // fixture self-check: 이 경계의 핵심은 terminal-Paused tail이다 — Idle로
+    // 끝나지 않는 record도 load 입력으로 유효해야 한다
+    expect(record.snapshot.events.at(-1)?.name).toBe("Paused");
 
     const controlled = makeControlledStorage<OpaqueMetadata>({
       initialRecord: record,

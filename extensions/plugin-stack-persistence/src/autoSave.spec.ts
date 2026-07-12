@@ -19,7 +19,7 @@ import {
   freshEvents,
   invalidSchemaSnapshot,
   makeRecord,
-  pausedSnapshot,
+  resumablePausedSnapshot,
   richSnapshot,
   twoActivityEvents,
   withStepEvents,
@@ -265,9 +265,10 @@ describe("전환 중에는 저장하지 않는다", () => {
 
 describe("일시정지 상태는 저장하지 않되 load 입력으로는 허용한다", () => {
   test("paused snapshot은 그대로 복원되고, paused 동안 save가 없으며, resume 후 unpaused Idle snapshot만 저장된다", async () => {
-    // given: pausedSnapshot을 load한 store — paused라는 이유로 load가 거부되지 않는다
+    // given: 큐된 탐색을 가진 paused snapshot을 load한 store — paused라는
+    // 이유로 load가 거부되지 않고, 큐 덕분에 resume의 진행이 관찰 가능하다
     const controlled = makeControlledStorage({
-      initialRecord: makeRecord(pausedSnapshot(), undefined),
+      initialRecord: makeRecord(resumablePausedSnapshot(), undefined),
     });
     const store = makeCoreStore({
       initialEvents: freshEvents(),

@@ -146,14 +146,39 @@ export function richSnapshot(): StackSnapshot {
 }
 
 /**
- * Snapshot with an unresumed `Paused`, so core restores a paused stack.
- * The navigation event dated after `Paused` replays into the restored
- * stack's queued `pausedEvents` — it stays unapplied while paused and is
- * applied by `resume()`. Core replays only queued events on resume (an
- * empty pause resumes to an unchanged stack), so the queued entry is what
- * makes the pause → resume → idle progression observable.
+ * Snapshot whose LAST event is `Paused`, so core restores a paused stack.
+ * The terminal `Paused` tail is the point: a stored record is allowed to
+ * end mid-pause, and the plugin must hand it to core unchanged instead of
+ * imposing an Idle/tail-event load precondition.
  */
 export function pausedSnapshot(): StackSnapshot {
+  return deepFreeze({
+    $schema: "stackflow.snapshot.v1",
+    events: [
+      makeEvent("Pushed", {
+        id: "paused-push-home",
+        activityId: "paused-home-1",
+        activityName: HOME_ACTIVITY,
+        activityParams: { greeting: "hello" },
+        eventDate: EVENT_BASE + 10,
+      }),
+      makeEvent("Paused", {
+        id: "paused-pause",
+        eventDate: EVENT_BASE + 20,
+      }),
+    ],
+  });
+}
+
+/**
+ * Paused snapshot with a navigation event recorded after `Paused`: it
+ * replays into the restored stack's queued `pausedEvents`, staying
+ * unapplied while paused and applied by `resume()`. Core replays only
+ * queued events on resume (an empty pause resumes to an unchanged stack),
+ * so the queued entry is what makes the pause → resume → idle progression
+ * observable.
+ */
+export function resumablePausedSnapshot(): StackSnapshot {
   return deepFreeze({
     $schema: "stackflow.snapshot.v1",
     events: [
