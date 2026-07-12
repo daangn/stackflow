@@ -1,6 +1,6 @@
 import type { DomainEvent, StackSnapshot } from "@stackflow/core";
 import { makeEvent } from "@stackflow/core";
-import type { StackSnapshotRecord } from "../StackSnapshotRecord";
+import type { StackSnapshotRecord } from "@stackflow/plugin-stack-persistence";
 
 /**
  * Base instant for fixture events — 100 seconds before `FIXED_NOW`, so

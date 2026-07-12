@@ -1,8 +1,10 @@
-import type { SnapshotLoadError, StackflowPlugin } from "@stackflow/core";
 import type {
-  StackPersistenceLoadError,
-  StackPersistenceSaveError,
-} from "./errors";
+  SnapshotLoadError,
+  StackflowActions,
+  StackflowPlugin,
+} from "@stackflow/core";
+import { StackPersistenceLoadError, StackPersistenceSaveError } from "./errors";
+import type { StackSnapshotRecord } from "./StackSnapshotRecord";
 import type { StackSnapshotStorage } from "./StackSnapshotStorage";
 import type { StackSnapshotStrategy } from "./StackSnapshotStrategy";
 
@@ -61,7 +63,136 @@ export type StackPersistencePluginOptions<Metadata = undefined> =
 export function stackPersistencePlugin<Metadata = undefined>(
   options: StackPersistencePluginOptions<Metadata>,
 ): StackflowPlugin {
-  throw new Error(
-    "@stackflow/plugin-stack-persistence: stackPersistencePlugin is not implemented yet",
-  );
+  return () => {
+    // The public options union proves that storage and strategy agree on one
+    // metadata type. This normalized internal view keeps that proof at the
+    // package boundary instead of leaking the union through every operation.
+    const storage = options.storage as StackSnapshotStorage<
+      Metadata | undefined
+    >;
+    const strategy = options.strategy as
+      | StackSnapshotStrategy<Metadata>
+      | undefined;
+
+    let initialContext: unknown;
+    let initialized = false;
+
+    const applyLoadPolicy = (
+      error: StackPersistenceLoadError | SnapshotLoadError,
+      context: unknown,
+    ): "recover" | "propagate" =>
+      options.onLoadError?.({ error, initialContext: context }).policy ??
+      "recover";
+
+    const recoverFromPersistenceLoadError = (
+      error: StackPersistenceLoadError,
+      context: unknown,
+    ): null => {
+      if (applyLoadPolicy(error, context) === "propagate") {
+        throw error;
+      }
+
+      return null;
+    };
+
+    const reportSaveError = (error: StackPersistenceSaveError): void => {
+      if (options.onSaveError) {
+        options.onSaveError({ error });
+        return;
+      }
+
+      // Save failures never unwind navigation synchronously. With no handler,
+      // a rejected promise transfers the error to the runtime's asynchronous
+      // unhandled-error boundary instead of consuming or logging it.
+      void Promise.reject(error);
+    };
+
+    const saveIfIdle = (actions: StackflowActions): void => {
+      if (actions.getStack().globalTransitionState !== "idle") {
+        return;
+      }
+
+      const snapshot = actions.captureSnapshot();
+      let metadata: Metadata | undefined;
+
+      if (strategy) {
+        try {
+          metadata = strategy.createMetadata({ snapshot, initialContext });
+        } catch (detail) {
+          reportSaveError(
+            new StackPersistenceSaveError({ kind: "strategy", detail }),
+          );
+          return;
+        }
+      } else {
+        metadata = undefined;
+      }
+
+      const record: StackSnapshotRecord<Metadata | undefined> = {
+        snapshot,
+        metadata,
+      };
+
+      // A synchronous throw violates StackSnapshotStorage's contract and is
+      // intentionally left as an unexpected exception. Rejected promises are
+      // the expected storage failure channel.
+      const savePromise = storage.save(record);
+      void savePromise.catch((detail: unknown) => {
+        reportSaveError(
+          new StackPersistenceSaveError({ kind: "storage", detail }),
+        );
+      });
+    };
+
+    return {
+      key: "@stackflow/plugin-stack-persistence",
+
+      provideSnapshot({ initialContext: context }) {
+        initialContext = context;
+
+        let record: StackSnapshotRecord<Metadata | undefined> | null;
+        try {
+          record = storage.load();
+        } catch (detail) {
+          return recoverFromPersistenceLoadError(
+            new StackPersistenceLoadError({ kind: "storage", detail }),
+            context,
+          );
+        }
+
+        if (record === null || !strategy) {
+          return record?.snapshot ?? null;
+        }
+
+        try {
+          return strategy.shouldReuse({
+            record: record as StackSnapshotRecord<Metadata>,
+            initialContext: context,
+          })
+            ? record.snapshot
+            : null;
+        } catch (detail) {
+          return recoverFromPersistenceLoadError(
+            new StackPersistenceLoadError({ kind: "strategy", detail }),
+            context,
+          );
+        }
+      },
+
+      onLoadError({ error, initialContext: context }) {
+        return { policy: applyLoadPolicy(error, context) };
+      },
+
+      onInit({ actions }) {
+        initialized = true;
+        saveIfIdle(actions);
+      },
+
+      onChanged({ actions }) {
+        if (initialized) {
+          saveIfIdle(actions);
+        }
+      },
+    };
+  };
 }

@@ -1,5 +1,7 @@
-import type { StackSnapshotRecord } from "../StackSnapshotRecord";
-import type { StackSnapshotStorage } from "../StackSnapshotStorage";
+import type {
+  StackSnapshotRecord,
+  StackSnapshotStorage,
+} from "@stackflow/plugin-stack-persistence";
 
 export type ControlledSaveCall<Metadata> = {
   record: StackSnapshotRecord<Metadata>;

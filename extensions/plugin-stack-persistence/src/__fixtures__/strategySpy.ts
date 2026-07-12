@@ -1,6 +1,8 @@
 import type { StackSnapshot } from "@stackflow/core";
-import type { StackSnapshotRecord } from "../StackSnapshotRecord";
-import type { StackSnapshotStrategy } from "../StackSnapshotStrategy";
+import type {
+  StackSnapshotRecord,
+  StackSnapshotStrategy,
+} from "@stackflow/plugin-stack-persistence";
 
 export type CreateMetadataCall = {
   snapshot: StackSnapshot;
