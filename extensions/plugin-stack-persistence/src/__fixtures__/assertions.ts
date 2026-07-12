@@ -1,21 +1,45 @@
-import type { Stack } from "@stackflow/core";
+import type { Activity, Stack } from "@stackflow/core";
 import { expect } from "vitest";
 
 /**
+ * Activities in navigation-depth order. The raw `Stack.activities` array
+ * order is not part of the navigation contract (core sorts it by activity
+ * id); the depth a user navigates back through is expressed by `zIndex`
+ * (visible entries, bottom to top). Exited entries (`zIndex: -1`) sort
+ * first, ordered by when they were entered.
+ */
+export function activitiesInNavigationOrder(stack: Stack): Activity[] {
+  return [...stack.activities].sort(
+    (a, b) =>
+      a.zIndex - b.zIndex ||
+      a.enteredBy.eventDate - b.enteredBy.eventDate ||
+      a.id.localeCompare(b.id),
+  );
+}
+
+/** Activity ids in navigation-depth order — the back-navigation sequence. */
+export function navigationOrderIds(stack: Stack): string[] {
+  return activitiesInNavigationOrder(stack).map((activity) => activity.id);
+}
+
+/**
  * The externally meaningful navigation state of a stack: activity
- * composition, order, params, step composition, and which entry is
- * current — the fields a consumer's back navigation depends on. Comparing
- * this view keeps assertions on observable behavior instead of on a
- * serialized golden snapshot.
+ * composition, depth order, params, step composition, and which entry is
+ * current — the fields a consumer's back navigation depends on. Activities
+ * are listed in navigation order (not raw array order, which carries no
+ * meaning). Comparing this view keeps assertions on observable behavior
+ * instead of on a serialized golden snapshot.
  */
 export function logicalStackView(stack: Stack) {
   return {
     globalTransitionState: stack.globalTransitionState,
-    activities: stack.activities.map((activity) => ({
+    activities: activitiesInNavigationOrder(stack).map((activity) => ({
       id: activity.id,
       name: activity.name,
       params: activity.params,
       transitionState: activity.transitionState,
+      zIndex: activity.zIndex,
+      enteredBy: activity.enteredBy.id,
       isTop: activity.isTop,
       isActive: activity.isActive,
       steps: activity.steps.map((step) => ({

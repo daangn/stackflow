@@ -9,6 +9,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import {
   installBrowserGlobalTraps,
   logicalStackView,
+  navigationOrderIds,
 } from "./__fixtures__/assertions";
 import {
   advanceUntilIdle,
@@ -338,7 +339,7 @@ describe("History/URL 통합과 URL helper를 제공하지 않는다", () => {
     });
     plainStore.init();
     expect(plainObserver.initCalls[0].kind).toBe("load");
-    expect(plainStore.actions.getStack().activities.map((a) => a.id)).toEqual([
+    expect(navigationOrderIds(plainStore.actions.getStack())).toEqual([
       "rich-home-1",
       "rich-article-1",
     ]);

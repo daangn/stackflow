@@ -1,7 +1,10 @@
 import { makeCoreStore, makeEvent } from "@stackflow/core";
 import { stackPersistencePlugin } from "@stackflow/plugin-stack-persistence";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import { logicalStackView } from "./__fixtures__/assertions";
+import {
+  activitiesInNavigationOrder,
+  logicalStackView,
+} from "./__fixtures__/assertions";
 import { useDeterministicClock, waitForCondition } from "./__fixtures__/clock";
 import { makeControlledStorage } from "./__fixtures__/controlledStorage";
 import {
@@ -38,21 +41,32 @@ describe("Activity와 Step의 전체 논리 탐색 상태가 record로 왕복 �
     });
     firstStore.init();
 
-    // then: 복원된 Stack의 논리 상태를 필드 단위로 확인한다
+    // then: 복원된 Stack의 논리 상태를 필드 단위로 확인한다 — 탐색 깊이 순서는
+    // 공개 필드 zIndex가 표현한다 (raw activities 배열 순서는 계약이 아니다)
     const firstStack = firstStore.actions.getStack();
     expect(firstStack.globalTransitionState).toBe("idle");
-    expect(firstStack.activities.map((a) => a.name)).toEqual([
+    expect(activitiesInNavigationOrder(firstStack).map((a) => a.name)).toEqual([
       "Home",
       "Article",
     ]);
 
-    const [home, article] = firstStack.activities;
+    const [home, article] = activitiesInNavigationOrder(firstStack);
     expect(home.params).toEqual({ greeting: "hello" });
     expect(home.id).toBe("rich-home-1");
-    expect(article.params).toEqual({ articleId: "a-1" });
     expect(article.id).toBe("rich-article-1");
     expect(article.isTop).toBe(true);
     expect(article.isActive).toBe(true);
+    expect(home.zIndex).toBe(0);
+    expect(article.zIndex).toBe(1);
+
+    // 진입 params와 현재 step params가 구별되어 보존된다: Activity의 현재
+    // params는 현재 step의 params이고, 진입 params는 진입 step과 진입 event에
+    // 남는다
+    expect(article.params).toEqual({ page: "2" });
+    expect(article.enteredBy).toMatchObject({
+      name: "Pushed",
+      activityParams: { articleId: "a-1" },
+    });
 
     // step 이력: 최초 진입 step + page 2 push가 남고, page 3 push/replace는 pop됨
     expect(article.steps.map((step) => step.params)).toEqual([

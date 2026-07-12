@@ -2,7 +2,10 @@ import type { StackflowActions } from "@stackflow/core";
 import { makeCoreStore } from "@stackflow/core";
 import { stackPersistencePlugin } from "@stackflow/plugin-stack-persistence";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import { logicalStackView } from "./__fixtures__/assertions";
+import {
+  logicalStackView,
+  navigationOrderIds,
+} from "./__fixtures__/assertions";
 import {
   advanceUntilIdle,
   settleMicrotasks,
@@ -270,7 +273,13 @@ describe("일시정지 상태는 저장하지 않되 load 입력으로는 허용
       initialEvents: freshEvents(),
       plugins: [stackPersistencePlugin({ storage: controlled.storage })],
     });
+
+    // then: paused 상태 그대로 복원됐다 — Paused 뒤에 기록된 탐색은 큐에
+    // 남아 아직 적용되지 않았다
     expect(store.actions.getStack().globalTransitionState).toBe("paused");
+    expect(navigationOrderIds(store.actions.getStack())).toEqual([
+      "paused-home-1",
+    ]);
 
     // when: paused 동안 시간이 지나도 저장이 없다
     store.init();
@@ -278,7 +287,7 @@ describe("일시정지 상태는 저장하지 않되 load 입력으로는 허용
     await vi.advanceTimersByTimeAsync(1_000);
     expect(controlled.saveCalls).toHaveLength(0);
 
-    // when: resume하여 Idle까지 진행한다
+    // when: resume하여 큐된 탐색이 적용되고 Idle까지 진행한다
     store.actions.resume();
     await advanceUntilIdle(store.actions.getStack);
     await waitForCondition(
@@ -286,7 +295,13 @@ describe("일시정지 상태는 저장하지 않되 load 입력으로는 허용
       "resume 후 unpaused Idle의 자동 저장 요청",
     );
 
-    // then: unpaused Idle snapshot만 저장됐다
+    // then: unpaused Idle snapshot만 저장됐다 — resume이 실제로 상태를
+    // 진행시켰다(큐에 있던 진입이 적용됨)
+    expect(store.actions.getStack().globalTransitionState).toBe("idle");
+    expect(navigationOrderIds(store.actions.getStack())).toEqual([
+      "paused-home-1",
+      "paused-article-1",
+    ]);
     expect(controlled.saveCalls).toHaveLength(1);
     const savedEvents = controlled.saveCalls[0].record.snapshot.events;
     expect(savedEvents[savedEvents.length - 1]?.name).toBe("Resumed");
@@ -413,7 +428,7 @@ describe("복원 보장선은 storage가 완료한 마지막 Idle record다", ()
       initialEvents: freshEvents(),
       plugins: [stackPersistencePlugin({ storage: controlled.storage })],
     });
-    expect(afterStore.actions.getStack().activities.map((a) => a.id)).toEqual([
+    expect(navigationOrderIds(afterStore.actions.getStack())).toEqual([
       "fresh-home-1",
       "nav-article-1",
     ]);

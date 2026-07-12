@@ -4,7 +4,10 @@ import {
   stackPersistencePlugin,
 } from "@stackflow/plugin-stack-persistence";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import { expectErrorNotToCarry } from "./__fixtures__/assertions";
+import {
+  expectErrorNotToCarry,
+  navigationOrderIds,
+} from "./__fixtures__/assertions";
 import {
   advanceUntilIdle,
   settleMicrotasks,
@@ -111,9 +114,10 @@ describe("save 실패는 탐색에 간섭하지 않고 다음 변경에서 보�
     });
 
     // then: 이전에 확정된 탐색과 방금의 탐색 모두 유지된다
-    expect(
-      store.actions.getStack().activities.map((activity) => activity.id),
-    ).toEqual(["fresh-home-1", "nav-article-1"]);
+    expect(navigationOrderIds(store.actions.getStack())).toEqual([
+      "fresh-home-1",
+      "nav-article-1",
+    ]);
 
     await advanceUntilIdle(store.actions.getStack);
     await waitForCondition(
@@ -241,9 +245,10 @@ describe("onSaveError의 반환값은 탐색과 후속 저장에 영향을 주�
       );
 
       // then
-      expect(
-        store.actions.getStack().activities.map((activity) => activity.id),
-      ).toEqual(["fresh-home-1", "nav-article-1"]);
+      expect(navigationOrderIds(store.actions.getStack())).toEqual([
+        "fresh-home-1",
+        "nav-article-1",
+      ]);
       expect(controlled.saveCalls).toHaveLength(2);
     });
   }

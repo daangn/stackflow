@@ -4,6 +4,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import {
   installBrowserGlobalTraps,
   logicalStackView,
+  navigationOrderIds,
 } from "./__fixtures__/assertions";
 import {
   settleMicrotasks,
@@ -70,7 +71,7 @@ describe("browser global 없이 같은 계약으로 동작한다", () => {
       expect(
         createStore.actions.getStack().activities.map((a) => a.id),
       ).toEqual(["fresh-home-1"]);
-      expect(loadStore.actions.getStack().activities.map((a) => a.id)).toEqual([
+      expect(navigationOrderIds(loadStore.actions.getStack())).toEqual([
         "rich-home-1",
         "rich-article-1",
       ]);

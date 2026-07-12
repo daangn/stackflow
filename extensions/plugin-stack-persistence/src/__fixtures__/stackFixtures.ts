@@ -145,7 +145,14 @@ export function richSnapshot(): StackSnapshot {
   });
 }
 
-/** Snapshot whose last event is `Paused`, so core restores a paused stack. */
+/**
+ * Snapshot with an unresumed `Paused`, so core restores a paused stack.
+ * The navigation event dated after `Paused` replays into the restored
+ * stack's queued `pausedEvents` — it stays unapplied while paused and is
+ * applied by `resume()`. Core replays only queued events on resume (an
+ * empty pause resumes to an unchanged stack), so the queued entry is what
+ * makes the pause → resume → idle progression observable.
+ */
 export function pausedSnapshot(): StackSnapshot {
   return deepFreeze({
     $schema: "stackflow.snapshot.v1",
@@ -160,6 +167,13 @@ export function pausedSnapshot(): StackSnapshot {
       makeEvent("Paused", {
         id: "paused-pause",
         eventDate: EVENT_BASE + 20,
+      }),
+      makeEvent("Pushed", {
+        id: "paused-queued-push-article",
+        activityId: "paused-article-1",
+        activityName: ARTICLE_ACTIVITY,
+        activityParams: { articleId: "queued-a-1" },
+        eventDate: EVENT_BASE + 30,
       }),
     ],
   });

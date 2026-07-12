@@ -126,6 +126,7 @@ describe("load 판단 단계는 shouldReuse만 호출한다", () => {
       callLog,
     });
     const strategy = makeStrategySpy<Metadata>({
+      callLog,
       createMetadata: "forbidden",
       shouldReuse: () => true,
     });

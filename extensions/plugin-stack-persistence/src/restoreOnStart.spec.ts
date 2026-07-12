@@ -2,7 +2,11 @@ import { makeCoreStore } from "@stackflow/core";
 import type { StackSnapshotRecord } from "@stackflow/plugin-stack-persistence";
 import { stackPersistencePlugin } from "@stackflow/plugin-stack-persistence";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import { logicalStackView } from "./__fixtures__/assertions";
+import {
+  activitiesInNavigationOrder,
+  logicalStackView,
+  navigationOrderIds,
+} from "./__fixtures__/assertions";
 import { settleMicrotasks, useDeterministicClock } from "./__fixtures__/clock";
 import { makeControlledStorage } from "./__fixtures__/controlledStorage";
 import { makeObserverPlugin } from "./__fixtures__/observerPlugin";
@@ -79,12 +83,13 @@ describe("strategy 없는 유효 record는 최초 상태부터 복원된 Stack�
     const firstRead = store.actions.getStack();
     store.init();
 
-    // then: 처음 읽은 상태가 이미 복원 상태다 — fresh seed가 잠정 노출된 적 없음
-    expect(firstRead.activities.map((a) => a.id)).toEqual([
+    // then: 처음 읽은 상태가 이미 복원 상태다 — fresh seed가 잠정 노출된 적 없음.
+    // 탐색 깊이 순서는 zIndex 기반 navigation order로 판정한다
+    expect(navigationOrderIds(firstRead)).toEqual([
       "rich-home-1",
       "rich-article-1",
     ]);
-    expect(firstRead.activities.map((a) => a.name)).toEqual([
+    expect(activitiesInNavigationOrder(firstRead).map((a) => a.name)).toEqual([
       "Home",
       "Article",
     ]);
