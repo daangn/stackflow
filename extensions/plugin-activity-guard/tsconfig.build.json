@@ -1,0 +1,5 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["./src/activityGuardPlugin.ts", "./src/index.ts"],
+  "exclude": ["./dist"]
+}
