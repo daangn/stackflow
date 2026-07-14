@@ -1,5 +1,12 @@
 # @stackflow/plugin-sentry
 
+## 0.1.2
+
+### Patch Changes
+
+- Updated dependencies [f0fc1fb]
+  - @stackflow/core@3.0.0
+
 ## 0.1.1
 
 ### Patch Changes

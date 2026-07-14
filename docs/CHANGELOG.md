@@ -1,5 +1,18 @@
 # @stackflow/docs
 
+## 2.1.2
+
+### Patch Changes
+
+- Updated dependencies [f0fc1fb]
+- Updated dependencies [fd33557]
+  - @stackflow/core@3.0.0
+  - @stackflow/plugin-history-sync@1.12.0
+  - @stackflow/demo@1.4.2
+  - @stackflow/plugin-basic-ui@1.18.3
+  - @stackflow/plugin-renderer-basic@1.1.15
+  - @stackflow/react@2.1.2
+
 ## 2.1.1
 
 ### Patch Changes

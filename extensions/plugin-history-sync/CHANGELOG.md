@@ -1,5 +1,16 @@
 # @stackflow/plugin-history-sync
 
+## 1.12.0
+
+### Minor Changes
+
+- fd33557: Pass `initialContext` to route `defaultHistory` callbacks so the initial stack can depend on request-specific context.
+
+### Patch Changes
+
+- Updated dependencies [f0fc1fb]
+  - @stackflow/core@3.0.0
+
 ## 1.11.2
 
 ### Patch Changes

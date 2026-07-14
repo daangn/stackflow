@@ -1,5 +1,12 @@
 # @stackflow/react-ui-core
 
+## 1.3.6
+
+### Patch Changes
+
+- Updated dependencies [f0fc1fb]
+  - @stackflow/core@3.0.0
+
 ## 1.3.5
 
 ### Patch Changes

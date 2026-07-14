@@ -1,3 +1,31 @@
+## 2026.07.11
+
+Distinguish how a stack is initialized — created fresh (`create`) or restored from a snapshot (`load`) — and add the surface a snapshot round-trip needs: `StackSnapshot`, `actions.captureSnapshot()`, the `provideSnapshot` / `onLoadError` plugin hooks, and `initInfo` on `onInit`. Runtime behavior is unchanged when no snapshot is provided; the breaks are type-level only — the `StackflowPluginHook` → `StackflowPluginInitHook` rename, plus new required members on `StackflowActions` and on the `onInit` / `overrideInitialEvents` hook signatures — hence the major. [`f0fc1fb`](https://github.com/daangn/stackflow/commit/f0fc1fbdda3b23f7c1400f9659e45a970be1647d)
+
+**Added**
+
+- `StackSnapshot` (with the `SnapshotEvent` / `NavigationEvent` unions) — a plain-data record of the events a stack recorded at runtime — plus `SnapshotLoadError`.
+- `actions.captureSnapshot()` to export that record, and the `provideSnapshot` / `onLoadError` plugin hooks to supply a snapshot at creation time and route a failed load.
+- `initInfo: { kind: "create" | "load" }` on `onInit`; `overrideInitialEvents` now runs on the load path too and receives the same `initInfo`.
+
+**Changed**
+
+- Renamed the `StackflowPluginHook` type to `StackflowPluginInitHook`.
+- `StackflowActions` now requires `captureSnapshot`, the `onInit` / `overrideInitialEvents` hook arguments now require `initInfo`, and `overrideInitialEvents`' parameter widens from `(PushedEvent | StepPushedEvent)[]` to `SnapshotEvent[]` — hand-written mocks and wrap-and-forward plugins must adopt these.
+- `validateEvents` now also rejects a `Replaced` that names an unregistered activity (does not fire in config-first usage).
+
+Released packages:
+- 📦 [@stackflow/core@3.0.0](https://npmjs.com/package/@stackflow/core/v/3.0.0)
+
+---
+
+Pass `initialContext` to route `defaultHistory` callbacks so the initial stack can depend on request-specific context. [`fd33557`](https://github.com/daangn/stackflow/commit/fd33557036ef2f631ac5f895e741b7af04516ca9)
+
+Released packages:
+- 📦 [@stackflow/plugin-history-sync@2.0.0](https://npmjs.com/package/@stackflow/plugin-history-sync/v/2.0.0)
+
+---
+
 ## 2026.07.07
 
 Memoize the action functions returned by `useFlow` and `useStepFlow` so their references stay stable across renders. [`91c433c`](https://github.com/daangn/stackflow/commit/91c433cc2f60462c59f6e1b990bc8339d7fbbc00)
