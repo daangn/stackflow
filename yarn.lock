@@ -5737,7 +5737,7 @@ __metadata:
     rimraf: "npm:^3.0.2"
     typescript: "npm:^5.5.3"
   peerDependencies:
-    "@stackflow/core": ^3.0.0
+    "@stackflow/core": ^2.0.0 || ^3.0.0
     "@stackflow/plugin-history-sync": ^1.6.4-canary.0
     "@stackflow/react": ^2.0.0
     "@types/react": ">=16.8.0"
@@ -5783,7 +5783,7 @@ __metadata:
     rimraf: "npm:^3.0.2"
     typescript: "npm:^5.5.3"
   peerDependencies:
-    "@stackflow/core": ^3.0.0
+    "@stackflow/core": ^2.0.0 || ^3.0.0
     "@stackflow/react": ^2.0.0
     "@types/react": ">=16.8.0"
     react: ">=16.8.0"
@@ -5813,7 +5813,7 @@ __metadata:
     rimraf: "npm:^6.1.3"
     typescript: "npm:^5.5.3"
   peerDependencies:
-    "@stackflow/core": ^3.0.0
+    "@stackflow/core": ^2.0.0 || ^3.0.0
     "@stackflow/react": ^2.0.0
     react: ">=16.8.0"
   languageName: unknown
@@ -5830,7 +5830,7 @@ __metadata:
     rimraf: "npm:^3.0.2"
     typescript: "npm:^5.5.3"
   peerDependencies:
-    "@stackflow/core": ^3.0.0
+    "@stackflow/core": ^2.0.0 || ^3.0.0
   languageName: unknown
   linkType: soft
 
@@ -5848,7 +5848,7 @@ __metadata:
     rimraf: "npm:^3.0.2"
     typescript: "npm:^5.5.3"
   peerDependencies:
-    "@stackflow/core": ^3.0.0
+    "@stackflow/core": ^2.0.0 || ^3.0.0
     "@stackflow/react": ^2.0.0
     "@types/react": ">=16.8.0"
     react: ">=16.8.0"
@@ -5892,7 +5892,7 @@ __metadata:
     url-pattern: "npm:^1.0.3"
   peerDependencies:
     "@stackflow/config": ^1.1.0 || ^2.0.0
-    "@stackflow/core": ^3.0.0
+    "@stackflow/core": ^2.0.0 || ^3.0.0
     "@stackflow/react": ^1.0.0 || ^2.0.0
     "@types/react": ">=16.8.0"
     react: ">=16.8.0"
@@ -5922,7 +5922,7 @@ __metadata:
     rimraf: "npm:^6.1.3"
     typescript: "npm:^5.5.3"
   peerDependencies:
-    "@stackflow/core": ^3.0.0
+    "@stackflow/core": ^2.0.0 || ^3.0.0
     "@stackflow/react": ^2.0.0
     react: ">=16.8.0"
   languageName: unknown
@@ -5941,7 +5941,7 @@ __metadata:
     rimraf: "npm:^3.0.2"
     typescript: "npm:^5.5.3"
   peerDependencies:
-    "@stackflow/core": ^3.0.0
+    "@stackflow/core": ^2.0.0 || ^3.0.0
     "@stackflow/react": ^2.0.0
     "@types/react": ">=16.8.0"
     react: ">=16.8.0"
@@ -5961,7 +5961,7 @@ __metadata:
     rimraf: "npm:^3.0.2"
     typescript: "npm:^5.5.3"
   peerDependencies:
-    "@stackflow/core": ^3.0.0
+    "@stackflow/core": ^2.0.0 || ^3.0.0
     "@stackflow/react": ^2.0.0
     "@types/react": ">=16.8.0"
     react: ">=16.8.0"
@@ -5981,7 +5981,7 @@ __metadata:
   peerDependencies:
     "@sentry/browser": ">=8.0.0"
     "@sentry/core": ">=8.0.0"
-    "@stackflow/core": ^3.0.0
+    "@stackflow/core": ^2.0.0 || ^3.0.0
   languageName: unknown
   linkType: soft
 
@@ -5996,7 +5996,7 @@ __metadata:
     rimraf: "npm:^3.0.2"
     typescript: "npm:^5.5.3"
   peerDependencies:
-    "@stackflow/core": ^3.0.0
+    "@stackflow/core": ^2.0.0 || ^3.0.0
   languageName: unknown
   linkType: soft
 
@@ -6013,7 +6013,7 @@ __metadata:
     rimraf: "npm:^3.0.2"
     typescript: "npm:^5.5.3"
   peerDependencies:
-    "@stackflow/core": ^3.0.0
+    "@stackflow/core": ^2.0.0 || ^3.0.0
     "@stackflow/react": ^2.0.0
     "@types/react": ">=16.8.0"
     react: ">=16.8.0"
@@ -6036,7 +6036,7 @@ __metadata:
     typescript: "npm:^5.5.3"
   peerDependencies:
     "@stackflow/config": ^2.0.0
-    "@stackflow/core": ^3.0.0
+    "@stackflow/core": ^2.0.0 || ^3.0.0
     "@types/react": ">=16.8.0"
     react: ">=16.8.0"
   languageName: unknown

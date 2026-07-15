@@ -32,7 +32,7 @@
   "peerDependencies": {
     "@sentry/browser": ">=8.0.0",
     "@sentry/core": ">=8.0.0",
-    "@stackflow/core": "^3.0.0"
+    "@stackflow/core": "^2.0.0 || ^3.0.0"
   },
   "devDependencies": {
     "@sentry/browser": "^10.46.0",
