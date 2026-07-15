@@ -19,10 +19,10 @@ export class StackPersistenceLoadError extends Error {
 }
 
 /**
- * Expected save failures: the strategy's `createMetadata` threw (the whole
- * record save is abandoned atomically) or the storage's save promise
- * rejected. Reported per failed request via `onSaveError`; never cancels
- * navigation.
+ * Expected save failures raised when the storage's save promise rejects.
+ * Reported per failed request via `onSaveError`; never cancels navigation.
+ * Strategy metadata failures are unexpected and surface as their original
+ * values instead of being wrapped in this class.
  */
 export type StackPersistenceSaveErrorCause =
   | { kind: "strategy"; detail: unknown }

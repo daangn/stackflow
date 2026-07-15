@@ -17,10 +17,11 @@ import type { StackSnapshotStrategy } from "./StackSnapshotStrategy";
  *   and answers the policy: `recover` abandons the snapshot and falls back to
  *   a fresh stack, `propagate` rethrows the very same error object. Omitting
  *   the handler defaults to `recover`.
- * - `onSaveError` receives each failed save individually. Its return value
- *   has no effect on navigation or later saves. Omitting it propagates the
- *   `StackPersistenceSaveError` as an asynchronous error instead of
- *   consuming it silently.
+ * - `onSaveError` receives each rejected storage save individually. Its
+ *   return value has no effect on navigation or later saves. Omitting it
+ *   propagates the `StackPersistenceSaveError` as an asynchronous error
+ *   instead of consuming it silently. Strategy metadata failures bypass this
+ *   expected-error callback and surface their original value asynchronously.
  */
 export type StackPersistenceErrorHandlers = {
   onLoadError?: (args: {
@@ -119,9 +120,10 @@ export function stackPersistencePlugin<Metadata = undefined>(
         try {
           metadata = strategy.createMetadata({ snapshot, initialContext });
         } catch (detail) {
-          reportSaveError(
-            new StackPersistenceSaveError({ kind: "strategy", detail }),
-          );
+          // Metadata failures are consumer bugs, not expected persistence
+          // failures. Preserve navigation availability without disguising the
+          // original value as a StackPersistenceSaveError.
+          void Promise.reject(detail);
           return;
         }
       } else {

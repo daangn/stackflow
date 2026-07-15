@@ -1,16 +1,9 @@
 import { makeCoreStore } from "@stackflow/core";
-import {
-  StackPersistenceSaveError,
-  stackPersistencePlugin,
-} from "@stackflow/plugin-stack-persistence";
+import { stackPersistencePlugin } from "@stackflow/plugin-stack-persistence";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { useDeterministicClock, waitForCondition } from "./__fixtures__/clock";
 import { makeControlledStorage } from "./__fixtures__/controlledStorage";
-import {
-  freshEvents,
-  makeRecord,
-  richSnapshot,
-} from "./__fixtures__/stackFixtures";
+import { freshEvents } from "./__fixtures__/stackFixtures";
 import { makeStrategySpy } from "./__fixtures__/strategySpy";
 
 type Metadata = { origin: string };
@@ -75,54 +68,6 @@ describe("metadata 생성 성공은 snapshot·context와 하나의 record로 결
     // then: storage는 반환값 그대로와 동일 snapshot이 결합된 record 전체를 한 번 받았다
     expect(controlled.saveCalls).toHaveLength(1);
     expect(controlled.saveCalls[0].record.metadata).toBe(returnedMetadata[0]);
-  });
-});
-
-describe("createMetadata 실패는 해당 record 저장 전체를 원자적으로 포기한다", () => {
-  test("onSaveError는 strategy 단계의 StackPersistenceSaveError를 받고, storage save는 호출되지 않으며 metadata 없는 record나 이전 metadata 재사용도 없다", async () => {
-    // given: createMetadata가 sentinel을 throw하고 이전 record가 storage에 있는 strategy
-    const sentinel = new Error("metadata-creation-sentinel");
-    const previousRecord = makeRecord(richSnapshot(), { origin: "m-prev" });
-    const controlled = makeControlledStorage<Metadata>({
-      initialRecord: previousRecord,
-    });
-    const strategy = makeStrategySpy<Metadata>({
-      createMetadata: () => {
-        throw sentinel;
-      },
-      shouldReuse: () => true,
-    });
-    const onSaveErrorCalls: StackPersistenceSaveError[] = [];
-
-    const store = makeCoreStore({
-      initialEvents: freshEvents(),
-      plugins: [
-        stackPersistencePlugin({
-          storage: controlled.storage,
-          strategy: strategy.strategy,
-          onSaveError({ error }) {
-            onSaveErrorCalls.push(error);
-          },
-        }),
-      ],
-    });
-
-    // when: 새 Idle save를 시도한다
-    store.init();
-    await waitForCondition(
-      () => onSaveErrorCalls.length >= 1,
-      "createMetadata 실패의 onSaveError 통지",
-    );
-
-    // then: strategy 단계 표시와 원본 detail
-    expect(onSaveErrorCalls).toHaveLength(1);
-    expect(onSaveErrorCalls[0]).toBeInstanceOf(StackPersistenceSaveError);
-    expect(onSaveErrorCalls[0].cause.kind).toBe("strategy");
-    expect(onSaveErrorCalls[0].cause.detail).toBe(sentinel);
-
-    // then: record 저장 전체가 포기됐다 — save 호출 없음, 이전 record 그대로
-    expect(controlled.saveCalls).toHaveLength(0);
-    expect(controlled.completedRecord).toBe(previousRecord);
   });
 });
 

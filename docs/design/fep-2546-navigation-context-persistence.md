@@ -78,7 +78,7 @@ type StackPersistenceErrorHandlers = {
 - 저장소에서 발생한 예상 가능한 load 실패는 `StackPersistenceLoadError`로 표현한다.
 - core의 Snapshot 유효성 검증이 실패하면 core가 만든 `SnapshotLoadError`를 감싸지 않고 그대로 `onLoadError`에 전달한다.
 - `onLoadError`가 `{ policy: "propagate" }`를 반환하면 전달받은 오류의 정체성을 보존한다. persistence 오류는 `StackPersistenceLoadError`, core 오류는 `SnapshotLoadError`로 전파한다.
-- `shouldReuse` throw, 플러그인 내부 결함이나 저장소의 동기 `save` throw 같은 계약 위반은 unexpected exception이며, `StackPersistenceLoadError` 또는 `StackPersistenceSaveError`로 정규화한다고 보장하지 않는다.
+- `shouldReuse`·`createMetadata` throw, 플러그인 내부 결함이나 저장소의 동기 `save` throw 같은 계약 위반은 unexpected exception이며, `StackPersistenceLoadError` 또는 `StackPersistenceSaveError`로 정규화하지 않는다.
 - 오류 객체에 실패한 record 전체를 포함하지 않는다.
 
 ### Plugin options의 metadata 결합
@@ -192,18 +192,18 @@ interface StackSnapshotStrategy<Metadata> {
 - 별도 수동 저장 API는 구체적인 추가 사용 사례가 생기기 전에는 제공하지 않는다.
 - 저장 실패는 이미 확정된 탐색을 취소하거나 앱 사용을 막지 않는다.
 - 거부된 저장 Promise의 오류는 `onSaveError`로 알리고, 이후 탐색 맥락 변경에서도 보존을 다시 시도한다.
-- `createMetadata`가 예외를 던지면 해당 Snapshot 저장 요청 전체가 실패한 것으로 취급하고, strategy 단계의 오류로 `onSaveError`에 전달한다.
+- `createMetadata`가 예외를 던지면 strategy 계약 위반으로 보고 `StackPersistenceSaveError`로 정규화하거나 `onSaveError`로 전달하지 않는다. 원본 오류를 호출 시점과 무관한 비동기 오류 경계로 전파한다.
 - metadata 생성에 실패했을 때 metadata 없는 record를 저장하거나 이전 metadata를 재사용하지 않는다.
 - `onSaveError`의 반환값은 탐색이나 이후 저장에 영향을 주지 않는다.
-- `onSaveError`를 생략하면 `StackPersistenceSaveError`를 비동기 오류로 전파하며 조용히 소비하지 않는다.
-- `onSaveError`를 제공하면 callback 호출로 해당 오류의 처리 책임을 넘기고 플러그인은 추가로 throw하지 않는다.
-- 각 저장 실패는 개별적으로 `onSaveError`에 전달되며, 이후 최신 요청이 성공하면 그 Snapshot record가 최종 저장 상태가 된다.
+- storage의 save 오류에서 `onSaveError`를 생략하면 `StackPersistenceSaveError`를 비동기 오류로 전파하며 조용히 소비하지 않는다.
+- storage의 save 오류에서 `onSaveError`를 제공하면 callback 호출로 해당 오류의 처리 책임을 넘기고 플러그인은 추가로 throw하지 않는다.
+- 각 storage save 실패는 개별적으로 `onSaveError`에 전달되며, 이후 최신 요청이 성공하면 그 Snapshot record가 최종 저장 상태가 된다.
 - 저장 실패 시 기존 Snapshot을 제거할지는 플러그인이 임의로 결정하지 않는다.
 - 탐색은 저장 Promise의 완료를 기다리지 않는다.
 - 플러그인은 실행기 종료를 지연하거나 pending 저장을 강제로 완료하지 않는다.
 - 다음 시작에서 복원을 보장할 수 있는 범위는 저장소가 마지막으로 완료한 Idle Snapshot record까지다. 호출됐지만 완료되지 않은 저장의 내구성은 저장소가 제공하는 수준에 따른다.
 - v1에는 `flush()` 또는 unload 차단 API를 제공하지 않는다.
-- 오류 콜백을 생략해도 플러그인이 임의로 `console.error`를 출력하지 않는다. load 오류는 기본 `recover` 정책을 따르고, save 오류는 비동기로 전파한다.
+- 오류 콜백을 생략해도 플러그인이 임의로 `console.error`를 출력하지 않는다. load 오류는 기본 `recover` 정책을 따르고, storage save 오류는 `StackPersistenceSaveError`로, `createMetadata` 오류는 원본 값으로 비동기 전파한다.
 
 ## 다른 플러그인과 Analytics 관찰
 
