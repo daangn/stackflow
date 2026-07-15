@@ -52,31 +52,30 @@ interface StackSnapshotStorage<Metadata = undefined> {
 ### 오류 API
 
 ```ts
-type StackPersistenceLoadErrorCause = { detail: unknown };
-
-class StackPersistenceLoadError extends Error {
-  cause: StackPersistenceLoadErrorCause;
-}
-
 type StackPersistenceSaveErrorCause = { detail: unknown };
 
 class StackPersistenceSaveError extends Error {
   cause: StackPersistenceSaveErrorCause;
 }
 
-type StackPersistenceErrorHandlers = {
+type StackPersistenceErrorHandlers<Metadata = undefined> = {
+  onStorageLoadError?: (args: {
+    error: unknown;
+    initialContext: unknown;
+  }) => StackSnapshotRecord<Metadata> | null;
   onLoadError?: (args: {
-    error: StackPersistenceLoadError | SnapshotLoadError;
+    error: SnapshotLoadError;
     initialContext: unknown;
   }) => { policy: "recover" | "propagate" };
   onSaveError?: (args: { error: StackPersistenceSaveError }) => void;
 };
 ```
 
-- 저장소에서 발생한 예상 가능한 load 실패는 `StackPersistenceLoadError`로 표현한다.
+- `storage.load()`가 예외를 던지면 원본 오류와 현재 `initialContext`를 `onStorageLoadError`에 전달한다. 핸들러가 반환한 record는 정상 load 결과와 동일하게 strategy 판단과 core 검증을 거치고, `null`을 반환하면 새 Stack을 생성한다.
+- `onStorageLoadError`를 생략하거나 핸들러가 예외를 던지면 해당 오류를 정규화하지 않고 Stack 생성 밖으로 전파한다.
 - core의 Snapshot 유효성 검증이 실패하면 core가 만든 `SnapshotLoadError`를 감싸지 않고 그대로 `onLoadError`에 전달한다.
-- `onLoadError`가 `{ policy: "propagate" }`를 반환하면 전달받은 오류의 정체성을 보존한다. persistence 오류는 `StackPersistenceLoadError`, core 오류는 `SnapshotLoadError`로 전파한다.
-- `shouldReuse`·`createMetadata` throw, 플러그인 내부 결함이나 저장소의 동기 `save` throw 같은 계약 위반은 unexpected exception이며, `StackPersistenceLoadError` 또는 `StackPersistenceSaveError`로 정규화하지 않는다.
+- `onLoadError`가 `{ policy: "propagate" }`를 반환하면 전달받은 `SnapshotLoadError`의 정체성을 보존한다.
+- `shouldReuse`·`createMetadata` throw, 플러그인 내부 결함이나 저장소의 동기 `save` throw 같은 계약 위반은 unexpected exception이며 `StackPersistenceSaveError`로 정규화하지 않는다.
 - 오류 객체에 실패한 record 전체를 포함하지 않는다.
 
 ### Plugin options의 metadata 결합
@@ -84,8 +83,12 @@ type StackPersistenceErrorHandlers = {
 ```ts
 type StackPersistencePluginBaseOptions<Metadata> = {
   storage: StackSnapshotStorage<Metadata>;
+  onStorageLoadError?: (args: {
+    error: unknown;
+    initialContext: unknown;
+  }) => StackSnapshotRecord<Metadata> | null;
   onLoadError?: (args: {
-    error: StackPersistenceLoadError | SnapshotLoadError;
+    error: SnapshotLoadError;
     initialContext: unknown;
   }) => { policy: "recover" | "propagate" };
   onSaveError?: (args: { error: StackPersistenceSaveError }) => void;
@@ -120,9 +123,10 @@ declare function stackPersistencePlugin<Metadata = undefined>(
 - 재사용 정책이 적용하기로 결정한 사용할 수 있는 탐색 Snapshot이 있으면 새 Stack을 잠정적으로 노출하지 않고 복원된 Stack을 최초 상태로 제공한다.
 - 저장된 Snapshot이 없으면 새 Stack을 정상 생성한다.
 - Snapshot이 손상됐거나 현재 앱과 호환되지 않으면 오류를 관찰 가능하게 알린 뒤 해당 Snapshot을 포기하고 새 Stack으로 복구하는 것을 기본 정책으로 한다.
-- 탐색 연속성을 필수 조건으로 취급하는 소비자는 복원 오류 전파를 선택할 수 있다.
-- 저장소 읽기 실패와 사용할 수 없는 Snapshot은 `onLoadError`로 알린다. 콜백은 `recover` 또는 `propagate` 정책을 반환하며, 생략했을 때의 기본값은 `recover`다.
-- `shouldReuse`가 `false`를 반환하면 정상적인 비재사용 판단이다. 예외를 던지면 strategy 계약 위반으로 보고 `onLoadError`나 `StackPersistenceLoadError`로 정규화하지 않은 원본 오류를 Stack 생성 밖으로 전파한다.
+- `storage.load()` 실패는 `onStorageLoadError`가 별도로 처리한다. 소비자는 `null`로 새 Stack을 선택하거나 대체 record를 제공할 수 있고, 오류를 throw해 기동을 중단할 수 있다. 핸들러를 생략하면 원본 오류를 전파한다.
+- 대체 record도 정상 record와 같은 `shouldReuse` 판단과 core Snapshot 검증을 거치며, 저장소 실패를 core 오류 정책으로 우회하지 않는다.
+- core가 사용할 수 없는 Snapshot으로 판정한 경우 `onLoadError`로 알린다. 콜백은 `recover` 또는 `propagate` 정책을 반환하며, 생략했을 때의 기본값은 `recover`다.
+- `shouldReuse`가 `false`를 반환하면 정상적인 비재사용 판단이다. 예외를 던지면 strategy 계약 위반으로 보고 load handler로 정규화하지 않은 원본 오류를 Stack 생성 밖으로 전파한다.
 - 현재 Stackflow 설정에서 그대로 복원 가능한 Snapshot만 사용한다.
 - Snapshot schema가 다르거나 현재 설정에 없는 Activity를 포함하는 등 호환되지 않는 Snapshot은 migration하지 않고 `onLoadError` 정책을 따른다.
 - 버전별 저장소 분리나 Snapshot 변환이 필요하면 소비자가 Snapshot 저장소 경계에서 담당한다.
@@ -201,7 +205,7 @@ interface StackSnapshotStrategy<Metadata> {
 - 플러그인은 실행기 종료를 지연하거나 pending 저장을 강제로 완료하지 않는다.
 - 다음 시작에서 복원을 보장할 수 있는 범위는 저장소가 마지막으로 완료한 Idle Snapshot record까지다. 호출됐지만 완료되지 않은 저장의 내구성은 저장소가 제공하는 수준에 따른다.
 - v1에는 `flush()` 또는 unload 차단 API를 제공하지 않는다.
-- 오류 콜백을 생략해도 플러그인이 임의로 `console.error`를 출력하지 않는다. load 오류는 기본 `recover` 정책을 따르고, storage save 오류는 `StackPersistenceSaveError`로, `createMetadata` 오류는 원본 값으로 비동기 전파한다.
+- 오류 콜백을 생략해도 플러그인이 임의로 `console.error`를 출력하지 않는다. storage load 오류는 원본 값으로 전파하고, core load 오류는 기본 `recover` 정책을 따르며, storage save 오류는 `StackPersistenceSaveError`로, `createMetadata` 오류는 원본 값으로 비동기 전파한다.
 
 ## 다른 플러그인과 Analytics 관찰
 

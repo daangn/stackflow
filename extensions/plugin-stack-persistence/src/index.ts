@@ -1,6 +1,4 @@
 export {
-  StackPersistenceLoadError,
-  StackPersistenceLoadErrorCause,
   StackPersistenceSaveError,
   StackPersistenceSaveErrorCause,
 } from "./errors";

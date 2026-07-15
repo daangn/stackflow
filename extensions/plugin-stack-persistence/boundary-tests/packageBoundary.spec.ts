@@ -68,6 +68,12 @@ describe("package는 React·환경별 entrypoint 없이 core plugin으로 사용
       expect(content).not.toMatch(/require\(["']react["']\)/);
       expect(content).not.toMatch(/from ["']react["']/);
     }
+
+    const declarations = fs.readFileSync(
+      path.join(DIST_DIR, "index.d.ts"),
+      "utf8",
+    );
+    expect(declarations).not.toContain("StackPersistenceLoadError");
   });
 
   test("소비자 컴파일: React 타입 없이 빌드된 선언만으로 strict 컴파일된다", () => {
@@ -124,12 +130,11 @@ describe("package는 React·환경별 entrypoint 없이 core plugin으로 사용
     // 확정 공개 이름이 entrypoint에 존재한다
     expect(observed.publicExports).toEqual(
       expect.arrayContaining([
-        "StackPersistenceLoadError",
         "StackPersistenceSaveError",
         "stackPersistencePlugin",
       ]),
     );
-    expect(observed.loadErrorExtendsError).toBe(true);
+    expect(observed.publicExports).not.toContain("StackPersistenceLoadError");
     expect(observed.saveErrorExtendsError).toBe(true);
 
     // core store에 연결되어 정상 동작한다

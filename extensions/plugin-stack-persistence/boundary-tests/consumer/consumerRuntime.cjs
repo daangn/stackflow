@@ -28,10 +28,6 @@ try {
   const core = require("@stackflow/core");
 
   report.publicExports = Object.keys(pkg).sort();
-  report.loadErrorExtendsError =
-    new pkg.StackPersistenceLoadError({
-      detail: null,
-    }) instanceof Error;
   report.saveErrorExtendsError =
     new pkg.StackPersistenceSaveError({
       detail: null,

@@ -1,10 +1,10 @@
 import { makeCoreStore, SnapshotLoadError } from "@stackflow/core";
-import {
-  StackPersistenceLoadError,
-  stackPersistencePlugin,
-} from "@stackflow/plugin-stack-persistence";
+import { stackPersistencePlugin } from "@stackflow/plugin-stack-persistence";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import { expectErrorNotToCarry } from "./__fixtures__/assertions";
+import {
+  expectErrorNotToCarry,
+  navigationOrderIds,
+} from "./__fixtures__/assertions";
 import { useDeterministicClock } from "./__fixtures__/clock";
 import { makeControlledStorage } from "./__fixtures__/controlledStorage";
 import { makeObserverPlugin } from "./__fixtures__/observerPlugin";
@@ -20,7 +20,7 @@ import { makeStrategySpy } from "./__fixtures__/strategySpy";
 type Metadata = { origin: string };
 
 type LoadErrorObservation = {
-  error: StackPersistenceLoadError | SnapshotLoadError;
+  error: SnapshotLoadError;
   initialContext: unknown;
 };
 
@@ -34,73 +34,135 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-describe("storage 읽기 실패는 persistence load 오류다", () => {
-  test("onLoadError를 생략하면 기본 recover로 fresh Stack이 만들어지고 생성은 throw하지 않으며 임의 console.error가 없다", () => {
-    // given: load()가 sentinel을 throw하고 handler를 생략한 storage
+describe("storage 읽기 실패는 전용 복구 핸들러가 처리한다", () => {
+  test("onStorageLoadError를 생략하면 onLoadError로 우회하지 않고 원본 오류가 Stack 생성 밖으로 전파된다", () => {
     const sentinel = new Error("load-failure-sentinel");
-    const consoleError = vi
-      .spyOn(console, "error")
-      .mockImplementation(() => {});
     const controlled = makeControlledStorage({ loadError: sentinel });
-    const observer = makeObserverPlugin();
+    const onLoadError = vi.fn(() => ({ policy: "recover" as const }));
 
-    // when: store를 생성하고 init()한다 — 여기서 throw하면 테스트가 실패한다
-    const store = makeCoreStore({
-      initialEvents: freshEvents(),
-      plugins: [
-        stackPersistencePlugin({ storage: controlled.storage }),
-        observer.plugin,
-      ],
-    });
-    store.init();
+    let caught: unknown;
+    try {
+      makeCoreStore({
+        initialEvents: freshEvents(),
+        plugins: [
+          stackPersistencePlugin({
+            storage: controlled.storage,
+            onLoadError,
+          }),
+        ],
+      });
+    } catch (error) {
+      caught = error;
+    }
 
-    // then: 기본 정책 recover
-    expect(observer.initCalls[0].kind).toBe("create");
-    expect(store.actions.getStack().activities.map((a) => a.id)).toEqual([
-      "fresh-home-1",
-    ]);
-    expect(consoleError).not.toHaveBeenCalled();
+    expect(caught).toBe(sentinel);
+    expect(onLoadError).not.toHaveBeenCalled();
+    expect(controlled.loadCallCount).toBe(1);
+    expect(controlled.saveCalls).toHaveLength(0);
   });
 
-  test("onLoadError는 원본 detail과 같은 initialContext를 가진 StackPersistenceLoadError를 받고 오류에 실패 record가 없다", () => {
-    // given: load() throw sentinel과 오류를 기록하는 handler
+  test("onStorageLoadError가 null을 반환하면 원본 오류와 initialContext를 관찰하고 fresh Stack을 만든다", () => {
     const sentinel = new Error("load-failure-sentinel");
     const initialContext = { entry: "home" };
     const controlled = makeControlledStorage({ loadError: sentinel });
-    let received: LoadErrorObservation | undefined;
+    const observer = makeObserverPlugin();
+    const onLoadError = vi.fn(() => ({ policy: "recover" as const }));
+    let received: { error: unknown; initialContext: unknown } | undefined;
 
-    // when: store를 생성한다
-    makeCoreStore({
+    const store = makeCoreStore({
       initialEvents: freshEvents(),
       initialContext,
       plugins: [
         stackPersistencePlugin({
           storage: controlled.storage,
-          onLoadError(args) {
+          onStorageLoadError(args) {
             received = args;
-            return { policy: "recover" };
+            return null;
           },
+          onLoadError,
         }),
+        observer.plugin,
       ],
     });
+    store.init();
 
-    // then: 오류 정체와 원본 detail
-    expect(received).toBeDefined();
-    expect(received?.error).toBeInstanceOf(StackPersistenceLoadError);
-    expect(received?.error).toBeInstanceOf(Error);
-
-    const error = received?.error as StackPersistenceLoadError;
-    expect(error.cause.detail).toBe(sentinel);
+    expect(received?.error).toBe(sentinel);
     expect(received?.initialContext).toBe(initialContext);
+    expect(onLoadError).not.toHaveBeenCalled();
+    expect(observer.initCalls[0].kind).toBe("create");
+    expect(store.actions.getStack().activities.map((a) => a.id)).toEqual([
+      "fresh-home-1",
+    ]);
+  });
 
-    // then: 실패 record를 담는 property가 없다
-    expect("record" in error).toBe(false);
-    expect("snapshot" in error).toBe(false);
+  test("onStorageLoadError가 record를 반환하면 정상 load와 동일하게 reuse 판단과 core 복원을 거친다", () => {
+    const sentinel = new Error("primary-load-failure");
+    const initialContext = { entry: "fallback" };
+    const fallbackRecord = makeRecord(richSnapshot(), { origin: "fallback" });
+    const controlled = makeControlledStorage<Metadata>({
+      loadError: sentinel,
+    });
+    const strategy = makeStrategySpy<Metadata>({
+      createMetadata: () => ({ origin: "next" }),
+      shouldReuse: () => true,
+    });
+    const observer = makeObserverPlugin();
+
+    const store = makeCoreStore({
+      initialEvents: freshEvents(),
+      initialContext,
+      plugins: [
+        stackPersistencePlugin({
+          storage: controlled.storage,
+          strategy: strategy.strategy,
+          onStorageLoadError({ error, initialContext: receivedContext }) {
+            expect(error).toBe(sentinel);
+            expect(receivedContext).toBe(initialContext);
+            return fallbackRecord;
+          },
+        }),
+        observer.plugin,
+      ],
+    });
+    store.init();
+
+    expect(strategy.shouldReuseCalls).toEqual([
+      { record: fallbackRecord, initialContext },
+    ]);
+    expect(observer.initCalls[0].kind).toBe("load");
+    expect(navigationOrderIds(store.actions.getStack())).toEqual([
+      "rich-home-1",
+      "rich-article-1",
+    ]);
+  });
+
+  test("onStorageLoadError가 받은 오류를 throw하면 같은 객체가 Stack 생성 밖으로 전파된다", () => {
+    const sentinel = new Error("load-failure-sentinel");
+    const controlled = makeControlledStorage({ loadError: sentinel });
+
+    let caught: unknown;
+    try {
+      makeCoreStore({
+        initialEvents: freshEvents(),
+        plugins: [
+          stackPersistencePlugin({
+            storage: controlled.storage,
+            onStorageLoadError({ error }) {
+              throw error;
+            },
+          }),
+        ],
+      });
+    } catch (error) {
+      caught = error;
+    }
+
+    expect(caught).toBe(sentinel);
   });
 });
 
 describe("shouldReuse 예외는 unexpected 오류다", () => {
-  test("onLoadError나 StackPersistenceLoadError로 정규화하지 않고 원본 오류를 Stack 생성 밖으로 전파한다", () => {
+  test("load handler로 정규화하지 않고 원본 오류를 Stack 생성 밖으로 전파한다", () => {
     // given: load는 성공하지만 shouldReuse가 sentinel을 throw하는 strategy
     const sentinel = new Error("reuse-evaluation-sentinel");
     const initialContext = { entry: "home" };
@@ -136,7 +198,6 @@ describe("shouldReuse 예외는 unexpected 오류다", () => {
 
     // then
     expect(caught).toBe(sentinel);
-    expect(caught).not.toBeInstanceOf(StackPersistenceLoadError);
     expect(onLoadError).not.toHaveBeenCalled();
     expect(controlled.loadCallCount).toBe(1);
     expect(controlled.saveCalls).toHaveLength(0);
@@ -193,7 +254,6 @@ describe("core 검증 오류는 wrapper 없이 원본 SnapshotLoadError로 전�
 
       // then: wrapper가 아닌 core의 원본 오류 객체다
       expect(received?.error).toBeInstanceOf(SnapshotLoadError);
-      expect(received?.error).not.toBeInstanceOf(StackPersistenceLoadError);
       expect((received?.error as SnapshotLoadError).cause.kind).toBe(
         expectedCauseKind,
       );
@@ -211,39 +271,6 @@ describe("core 검증 오류는 wrapper 없이 원본 SnapshotLoadError로 전�
       ]);
     });
   }
-});
-
-describe("persistence load 오류의 propagate는 같은 오류 객체를 전파한다", () => {
-  test("storage 오류를 propagate하면 호출부가 잡은 객체는 callback이 받은 StackPersistenceLoadError와 동일하다", () => {
-    // given: load() throw와 propagate handler
-    const sentinel = new Error("load-failure-sentinel");
-    const controlled = makeControlledStorage({ loadError: sentinel });
-    let received: unknown;
-
-    // when/then: store 생성이 같은 객체로 throw한다
-    let caught: unknown;
-    try {
-      makeCoreStore({
-        initialEvents: freshEvents(),
-        plugins: [
-          stackPersistencePlugin({
-            storage: controlled.storage,
-            onLoadError({ error }) {
-              received = error;
-              return { policy: "propagate" };
-            },
-          }),
-        ],
-      });
-    } catch (error) {
-      caught = error;
-    }
-
-    expect(caught).toBeDefined();
-    expect(caught).toBe(received);
-    expect(caught).toBeInstanceOf(StackPersistenceLoadError);
-    expect((caught as StackPersistenceLoadError).cause.detail).toBe(sentinel);
-  });
 });
 
 describe("core load 오류의 propagate는 원본 SnapshotLoadError를 전파한다", () => {
@@ -284,86 +311,43 @@ describe("core load 오류의 propagate는 원본 SnapshotLoadError를 전파한
   });
 });
 
-describe("명시적 recover는 오류별로 fresh create를 정확히 한 번 수행한다", () => {
-  type RecoverCase = {
-    label: string;
-    expectedShouldReuseCalls: number;
-    setup: (onLoadError: () => { policy: "recover" }) => {
-      plugin: ReturnType<typeof stackPersistencePlugin>;
-      loadCallCount: () => number;
-      shouldReuseCallCount: () => number;
-    };
-  };
-
-  const recoverCases: RecoverCase[] = [
-    {
-      label: "storage 읽기 실패",
-      expectedShouldReuseCalls: 0,
-      setup: (onLoadError) => {
-        const controlled = makeControlledStorage({
-          loadError: new Error("load-failure-sentinel"),
-        });
-        return {
-          plugin: stackPersistencePlugin({
-            storage: controlled.storage,
-            onLoadError,
-          }),
-          loadCallCount: () => controlled.loadCallCount,
-          shouldReuseCallCount: () => 0,
-        };
-      },
-    },
-    {
-      label: "core 검증 실패",
-      expectedShouldReuseCalls: 1,
-      setup: (onLoadError) => {
-        const controlled = makeControlledStorage<Metadata>({
-          initialRecord: makeRecord(invalidSchemaSnapshot(), {
-            origin: "m-1",
-          }),
-        });
-        const strategy = makeStrategySpy<Metadata>({
-          createMetadata: () => ({ origin: "m-next" }),
-          shouldReuse: () => true,
-        });
-        return {
-          plugin: stackPersistencePlugin({
-            storage: controlled.storage,
-            strategy: strategy.strategy,
-            onLoadError,
-          }),
-          loadCallCount: () => controlled.loadCallCount,
-          shouldReuseCallCount: () => strategy.shouldReuseCalls.length,
-        };
-      },
-    },
-  ];
-
-  for (const { label, expectedShouldReuseCalls, setup } of recoverCases) {
-    test(`${label}에서 recover하면 load/reuse 평가를 다시 poll하지 않고 fresh create와 initInfo.kind create가 한 번씩이다`, () => {
-      // given
-      const onLoadError = vi.fn(() => ({ policy: "recover" as const }));
-      const observed = setup(onLoadError);
-      const observer = makeObserverPlugin();
-
-      // when
-      const store = makeCoreStore({
-        initialEvents: freshEvents(),
-        plugins: [observed.plugin, observer.plugin],
-      });
-      store.init();
-
-      // then: 재조회 없음, create 한 번
-      expect(onLoadError).toHaveBeenCalledTimes(1);
-      expect(observed.loadCallCount()).toBe(1);
-      expect(observed.shouldReuseCallCount()).toBe(expectedShouldReuseCalls);
-      expect(observer.initCalls).toHaveLength(1);
-      expect(observer.initCalls[0].kind).toBe("create");
-      expect(store.actions.getStack().activities.map((a) => a.id)).toEqual([
-        "fresh-home-1",
-      ]);
+describe("core SnapshotLoadError의 명시적 recover는 fresh create를 정확히 한 번 수행한다", () => {
+  test("recover하면 load/reuse 평가를 다시 poll하지 않고 fresh create와 initInfo.kind create가 한 번씩이다", () => {
+    // given
+    const controlled = makeControlledStorage<Metadata>({
+      initialRecord: makeRecord(invalidSchemaSnapshot(), { origin: "m-1" }),
     });
-  }
+    const strategy = makeStrategySpy<Metadata>({
+      createMetadata: () => ({ origin: "m-next" }),
+      shouldReuse: () => true,
+    });
+    const onLoadError = vi.fn(() => ({ policy: "recover" as const }));
+    const observer = makeObserverPlugin();
+
+    // when
+    const store = makeCoreStore({
+      initialEvents: freshEvents(),
+      plugins: [
+        stackPersistencePlugin({
+          storage: controlled.storage,
+          strategy: strategy.strategy,
+          onLoadError,
+        }),
+        observer.plugin,
+      ],
+    });
+    store.init();
+
+    // then
+    expect(onLoadError).toHaveBeenCalledTimes(1);
+    expect(controlled.loadCallCount).toBe(1);
+    expect(strategy.shouldReuseCalls).toHaveLength(1);
+    expect(observer.initCalls).toHaveLength(1);
+    expect(observer.initCalls[0].kind).toBe("create");
+    expect(store.actions.getStack().activities.map((a) => a.id)).toEqual([
+      "fresh-home-1",
+    ]);
+  });
 });
 
 describe("schema/Activity 비호환은 migration 없이 오류 정책으로 처리된다", () => {
@@ -416,20 +400,18 @@ describe("schema/Activity 비호환은 migration 없이 오류 정책으로 처�
   }
 });
 
-describe("onLoadError 생략의 기본 recover는 모든 예상 load 단계에 동일 적용된다", () => {
-  const omittedHandlerCases = [
-    {
-      label: "storage 읽기 실패",
-      makePlugin: () =>
-        stackPersistencePlugin({
-          storage: makeControlledStorage({
-            loadError: new Error("load-failure-sentinel"),
-          }).storage,
-        }),
-    },
-    {
-      label: "core 검증 실패",
-      makePlugin: () =>
+describe("onLoadError 생략의 기본 recover는 core 검증 오류에 적용된다", () => {
+  test("core 검증 실패에서 handler가 없으면 fresh Stack으로 recover한다", () => {
+    // given
+    const consoleError = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
+    const observer = makeObserverPlugin();
+
+    // when
+    const store = makeCoreStore({
+      initialEvents: freshEvents(),
+      plugins: [
         stackPersistencePlugin({
           storage: makeControlledStorage<Metadata>({
             initialRecord: makeRecord(invalidSchemaSnapshot(), {
@@ -441,30 +423,16 @@ describe("onLoadError 생략의 기본 recover는 모든 예상 load 단계에 �
             shouldReuse: () => true,
           }).strategy,
         }),
-    },
-  ] as const;
-
-  for (const { label, makePlugin } of omittedHandlerCases) {
-    test(`${label}에서 handler가 없으면 오류를 동기 전파하거나 console.error로 대신하지 않고 fresh Stack(create)으로 recover한다`, () => {
-      // given
-      const consoleError = vi
-        .spyOn(console, "error")
-        .mockImplementation(() => {});
-      const observer = makeObserverPlugin();
-
-      // when: 생성과 init이 throw 없이 끝난다 — throw하면 테스트가 실패한다
-      const store = makeCoreStore({
-        initialEvents: freshEvents(),
-        plugins: [makePlugin(), observer.plugin],
-      });
-      store.init();
-
-      // then
-      expect(observer.initCalls[0].kind).toBe("create");
-      expect(store.actions.getStack().activities.map((a) => a.id)).toEqual([
-        "fresh-home-1",
-      ]);
-      expect(consoleError).not.toHaveBeenCalled();
+        observer.plugin,
+      ],
     });
-  }
+    store.init();
+
+    // then
+    expect(observer.initCalls[0].kind).toBe("create");
+    expect(store.actions.getStack().activities.map((a) => a.id)).toEqual([
+      "fresh-home-1",
+    ]);
+    expect(consoleError).not.toHaveBeenCalled();
+  });
 });

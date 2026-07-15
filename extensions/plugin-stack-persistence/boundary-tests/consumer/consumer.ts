@@ -11,7 +11,6 @@ import type {
   StackSnapshotStrategy,
 } from "@stackflow/plugin-stack-persistence";
 import {
-  StackPersistenceLoadError,
   type StackPersistenceSaveError,
   stackPersistencePlugin,
 } from "@stackflow/plugin-stack-persistence";
@@ -20,10 +19,8 @@ declare const storage: StackSnapshotStorage;
 
 export const plugin: StackflowPlugin = stackPersistencePlugin({
   storage,
-  onLoadError: ({ error }) =>
-    error instanceof StackPersistenceLoadError
-      ? { policy: "recover" }
-      : { policy: "propagate" },
+  onStorageLoadError: () => null,
+  onLoadError: () => ({ policy: "propagate" }),
   onSaveError: ({ error }) => {
     const seen: StackPersistenceSaveError = error;
     void seen;

@@ -1,33 +1,32 @@
 /**
- * Contract: the two error classes are `Error`s; both causes expose only
- * `detail`; `detail` and `initialContext` are `unknown` until narrowed; the
- * `onLoadError` error is the persistence/core union and its policy is exactly
- * `recover | propagate`; `onSaveError` returns void.
+ * Contract: storage load recovery receives unknown error/context and returns
+ * a typed record or null; core `onLoadError` receives `SnapshotLoadError` and
+ * has the closed recover/propagate policy; save errors expose unknown detail
+ * and `onSaveError` returns void.
  */
 import type { SnapshotLoadError } from "@stackflow/core";
 import type {
+  StackPersistenceErrorHandlers,
   StackPersistencePluginOptions,
+  StackSnapshotRecord,
   StackSnapshotStorage,
 } from "@stackflow/plugin-stack-persistence";
 import {
-  StackPersistenceLoadError,
   type StackPersistenceSaveError,
   stackPersistencePlugin,
 } from "@stackflow/plugin-stack-persistence";
 import type { Equal, Expect } from "./helpers";
 
-declare const loadError: StackPersistenceLoadError;
 declare const saveError: StackPersistenceSaveError;
 declare const storage: StackSnapshotStorage;
+type Metadata = { version: number };
+declare const metadataStorage: StackSnapshotStorage<Metadata>;
+declare const fallbackRecord: StackSnapshotRecord<Metadata>;
 
-// Both error classes are assignable to Error.
-export const loadAsError: Error = loadError;
+// The expected save error class is assignable to Error.
 export const saveAsError: Error = saveError;
 
 // detail is unknown until narrowed.
-export type LoadDetailIsUnknown = Expect<
-  Equal<StackPersistenceLoadError["cause"]["detail"], unknown>
->;
 export type SaveDetailIsUnknown = Expect<
   Equal<StackPersistenceSaveError["cause"]["detail"], unknown>
 >;
@@ -36,16 +35,25 @@ export function readNarrowedDetail(error: StackPersistenceSaveError): number {
   return typeof detail === "number" ? detail : 0;
 }
 
-// The onLoadError error is the persistence/core union, its context is
-// unknown (narrowed by type guard before use), and the returned policy is
-// exactly recover | propagate. onSaveError returns void.
-type LoadHandler = NonNullable<StackPersistencePluginOptions["onLoadError"]>;
+// Storage load recovery receives unknown values and may supply the same
+// metadata record type. Core onLoadError has the closed recover/propagate
+// policy. onSaveError returns void.
+type StorageLoadHandler = NonNullable<
+  StackPersistenceErrorHandlers<Metadata>["onStorageLoadError"]
+>;
+type LoadHandler = NonNullable<StackPersistenceErrorHandlers["onLoadError"]>;
 type SaveHandler = NonNullable<StackPersistencePluginOptions["onSaveError"]>;
-export type LoadHandlerErrorIsUnion = Expect<
-  Equal<
-    Parameters<LoadHandler>[0]["error"],
-    StackPersistenceLoadError | SnapshotLoadError
-  >
+export type StorageLoadErrorIsUnknown = Expect<
+  Equal<Parameters<StorageLoadHandler>[0]["error"], unknown>
+>;
+export type StorageLoadContextIsUnknown = Expect<
+  Equal<Parameters<StorageLoadHandler>[0]["initialContext"], unknown>
+>;
+export type StorageLoadResultIsRecordOrNull = Expect<
+  Equal<ReturnType<StorageLoadHandler>, StackSnapshotRecord<Metadata> | null>
+>;
+export type LoadHandlerErrorIsCoreError = Expect<
+  Equal<Parameters<LoadHandler>[0]["error"], SnapshotLoadError>
 >;
 export type LoadContextIsUnknown = Expect<
   Equal<Parameters<LoadHandler>[0]["initialContext"], unknown>
@@ -57,7 +65,7 @@ export type SaveHandlerReturnsVoid = Expect<
   Equal<ReturnType<SaveHandler>, void>
 >;
 
-// Positive: both handlers, instanceof narrowing, guarded context use.
+// Positive: all handlers and guarded unknown values.
 stackPersistencePlugin({
   storage,
   onLoadError({ error, initialContext }) {
@@ -68,12 +76,9 @@ stackPersistencePlugin({
     ) {
       void initialContext.url;
     }
-    if (error instanceof StackPersistenceLoadError) {
-      return { policy: "recover" };
-    }
     const coreError: SnapshotLoadError = error;
     void coreError;
-    return { policy: "propagate" };
+    return { policy: "recover" };
   },
   onSaveError({ error }) {
     const seen: StackPersistenceSaveError = error;
@@ -81,19 +86,45 @@ stackPersistencePlugin({
   },
 });
 
-// --- negative controls ---
+stackPersistencePlugin({
+  storage: metadataStorage,
+  strategy: {
+    createMetadata: () => ({ version: 2 }),
+    shouldReuse: () => true,
+  },
+  onStorageLoadError({ error, initialContext }) {
+    if (error instanceof Error) {
+      void error.message;
+    }
+    if (typeof initialContext === "string") {
+      void initialContext.length;
+    }
+    return fallbackRecord;
+  },
+});
 
-export const invalidLoadCause: StackPersistenceLoadError["cause"] = {
-  // @ts-expect-error load cause는 공개 단계 판별자를 제공하지 않는다
-  kind: "storage",
-  detail: null,
-};
+// --- negative controls ---
 
 export const invalidSaveCause: StackPersistenceSaveError["cause"] = {
   // @ts-expect-error save cause는 공개 단계 판별자를 제공하지 않는다
   kind: "storage",
   detail: null,
 };
+
+stackPersistencePlugin({
+  storage,
+  // @ts-expect-error storage load handler는 record 또는 null을 반환해야 한다
+  onStorageLoadError: () => false,
+});
+
+stackPersistencePlugin({
+  storage,
+  onStorageLoadError({ error }) {
+    // @ts-expect-error storage load error는 unknown — 좁히기 전 property 접근 금지
+    void error.message;
+    return null;
+  },
+});
 
 stackPersistencePlugin({
   storage,

@@ -12,9 +12,11 @@ runtime, and restore the full context as the initial stack on the next start.
 - An optional `StackSnapshotStrategy` attaches opaque metadata to each saved
   record and decides synchronously whether a stored record is reused for this
   start.
-- Load failures are reported through `onLoadError` (`recover` by default,
-  `propagate` opt-in). Save failures are reported through `onSaveError` and
-  never interfere with navigation.
+- `storage.load()` failures can be recovered through `onStorageLoadError` by
+  returning a replacement record or `null`; otherwise the original error is
+  propagated. Core snapshot validation failures use `onLoadError` (`recover`
+  by default, `propagate` opt-in). Save failures use `onSaveError` and never
+  interfere with navigation.
 
 ```ts
 import { stackPersistencePlugin } from "@stackflow/plugin-stack-persistence";

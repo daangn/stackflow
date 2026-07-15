@@ -1,10 +1,7 @@
 import type { StackSnapshot } from "@stackflow/core";
 import { makeCoreStore, SnapshotLoadError } from "@stackflow/core";
 import type { StackSnapshotStorage } from "@stackflow/plugin-stack-persistence";
-import {
-  StackPersistenceLoadError,
-  stackPersistencePlugin,
-} from "@stackflow/plugin-stack-persistence";
+import { stackPersistencePlugin } from "@stackflow/plugin-stack-persistence";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import {
   installBrowserGlobalTraps,
@@ -207,7 +204,6 @@ describe("한 options에는 storage와 strategy가 각각 하나이며 복합 �
     // then: snapshot 결함이 아니라 배선 오류로서의 생성 오류다
     expect(caught).toBeInstanceOf(Error);
     expect(caught).not.toBeInstanceOf(SnapshotLoadError);
-    expect(caught).not.toBeInstanceOf(StackPersistenceLoadError);
 
     // then: 어느 쪽 오류 정책도 중재에 동원되지 않았고 어떤 저장도 일어나지 않았다
     expect(firstOnLoadError).not.toHaveBeenCalled();

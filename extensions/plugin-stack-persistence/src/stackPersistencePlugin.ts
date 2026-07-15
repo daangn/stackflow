@@ -3,7 +3,7 @@ import type {
   StackflowActions,
   StackflowPlugin,
 } from "@stackflow/core";
-import { StackPersistenceLoadError, StackPersistenceSaveError } from "./errors";
+import { StackPersistenceSaveError } from "./errors";
 import type { StackSnapshotRecord } from "./StackSnapshotRecord";
 import type { StackSnapshotStorage } from "./StackSnapshotStorage";
 import type { StackSnapshotStrategy } from "./StackSnapshotStrategy";
@@ -11,28 +11,34 @@ import type { StackSnapshotStrategy } from "./StackSnapshotStrategy";
 /**
  * Error handlers shared by every options shape.
  *
- * - `onLoadError` receives expected load failures (storage reads as
- *   `StackPersistenceLoadError`, core validation as core's own
- *   `SnapshotLoadError`, identity preserved) together with the start context,
- *   and answers the policy: `recover` abandons the snapshot and falls back to
- *   a fresh stack, `propagate` rethrows the very same error object. Omitting
- *   the handler defaults to `recover`.
+ * - `onStorageLoadError` receives the original error from `storage.load()`.
+ *   Returning a record resumes the normal reuse and validation path; returning
+ *   `null` starts fresh. Omitting the handler or throwing from it propagates
+ *   the thrown value without normalization.
+ * - `onLoadError` receives core's `SnapshotLoadError` with its identity
+ *   preserved and answers the policy: `recover` abandons the snapshot and
+ *   falls back to a fresh stack, while `propagate` rethrows the same error.
+ *   Omitting the handler defaults to `recover`.
  * - `onSaveError` receives each rejected storage save individually. Its
  *   return value has no effect on navigation or later saves. Omitting it
  *   propagates the `StackPersistenceSaveError` as an asynchronous error
  *   instead of consuming it silently. Strategy metadata failures bypass this
  *   expected-error callback and surface their original value asynchronously.
  */
-export type StackPersistenceErrorHandlers = {
+export type StackPersistenceErrorHandlers<Metadata = undefined> = {
+  onStorageLoadError?: (args: {
+    error: unknown;
+    initialContext: unknown;
+  }) => StackSnapshotRecord<Metadata> | null;
   onLoadError?: (args: {
-    error: StackPersistenceLoadError | SnapshotLoadError;
+    error: SnapshotLoadError;
     initialContext: unknown;
   }) => { policy: "recover" | "propagate" };
   onSaveError?: (args: { error: StackPersistenceSaveError }) => void;
 };
 
 type StackPersistencePluginBaseOptions<Metadata> =
-  StackPersistenceErrorHandlers & {
+  StackPersistenceErrorHandlers<Metadata> & {
     storage: StackSnapshotStorage<Metadata>;
   };
 
@@ -79,22 +85,11 @@ export function stackPersistencePlugin<Metadata = undefined>(
     let initialized = false;
 
     const applyLoadPolicy = (
-      error: StackPersistenceLoadError | SnapshotLoadError,
+      error: SnapshotLoadError,
       context: unknown,
     ): "recover" | "propagate" =>
       options.onLoadError?.({ error, initialContext: context }).policy ??
       "recover";
-
-    const recoverFromPersistenceLoadError = (
-      error: StackPersistenceLoadError,
-      context: unknown,
-    ): null => {
-      if (applyLoadPolicy(error, context) === "propagate") {
-        throw error;
-      }
-
-      return null;
-    };
 
     const reportSaveError = (error: StackPersistenceSaveError): void => {
       if (options.onSaveError) {
@@ -153,11 +148,14 @@ export function stackPersistencePlugin<Metadata = undefined>(
         let record: StackSnapshotRecord<Metadata | undefined> | null;
         try {
           record = storage.load();
-        } catch (detail) {
-          return recoverFromPersistenceLoadError(
-            new StackPersistenceLoadError({ detail }),
-            context,
-          );
+        } catch (error) {
+          if (!options.onStorageLoadError) {
+            throw error;
+          }
+          record = options.onStorageLoadError({
+            error,
+            initialContext: context,
+          });
         }
 
         if (record === null || !strategy) {
