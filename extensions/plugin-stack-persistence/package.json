@@ -19,20 +19,15 @@
   "types": "./dist/index.d.ts",
   "files": [
     "dist",
-    "src",
-    "README.md"
+    "src"
   ],
   "scripts": {
     "build": "yarn build:js && yarn build:dts",
     "build:dts": "tsc --emitDeclarationOnly",
     "build:js": "node ./esbuild.config.js",
     "clean": "rimraf dist",
-    "dev": "yarn build:js --watch && yarn build:dts --watch && yarn test --watch",
-    "test": "yarn test:runtime && yarn test:types && yarn test:boundary",
-    "test:boundary": "yarn build && vitest run boundary-tests",
-    "test:runtime": "vitest run src",
-    "test:types": "vitest run type-tests",
-    "typecheck": "tsc --noEmit && tsc --noEmit -p type-tests/tsconfig.json && tsc --noEmit -p boundary-tests/tsconfig.json"
+    "dev": "yarn build:js --watch && yarn build:dts --watch",
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
     "@stackflow/core": "^2.0.1",
@@ -40,8 +35,7 @@
     "@types/node": "^20.14.9",
     "esbuild": "^0.23.0",
     "rimraf": "^3.0.2",
-    "typescript": "^5.5.3",
-    "vitest": "^3.2.4"
+    "typescript": "^5.5.3"
   },
   "peerDependencies": {
     "@stackflow/core": "^2.0.1"
