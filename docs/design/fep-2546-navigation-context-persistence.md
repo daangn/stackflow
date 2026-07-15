@@ -52,9 +52,7 @@ interface StackSnapshotStorage<Metadata = undefined> {
 ### 오류 API
 
 ```ts
-type StackPersistenceLoadErrorCause =
-  | { kind: "storage"; detail: unknown }
-  | { kind: "strategy"; detail: unknown };
+type StackPersistenceLoadErrorCause = { detail: unknown };
 
 class StackPersistenceLoadError extends Error {
   cause: StackPersistenceLoadErrorCause;

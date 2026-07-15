@@ -30,7 +30,6 @@ try {
   report.publicExports = Object.keys(pkg).sort();
   report.loadErrorExtendsError =
     new pkg.StackPersistenceLoadError({
-      kind: "storage",
       detail: null,
     }) instanceof Error;
   report.saveErrorExtendsError =

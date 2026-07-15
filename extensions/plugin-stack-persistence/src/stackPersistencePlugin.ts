@@ -155,7 +155,7 @@ export function stackPersistencePlugin<Metadata = undefined>(
           record = storage.load();
         } catch (detail) {
           return recoverFromPersistenceLoadError(
-            new StackPersistenceLoadError({ kind: "storage", detail }),
+            new StackPersistenceLoadError({ detail }),
             context,
           );
         }

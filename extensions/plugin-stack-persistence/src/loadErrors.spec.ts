@@ -34,7 +34,7 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-describe("storage 읽기 실패는 storage 단계의 load 오류다", () => {
+describe("storage 읽기 실패는 persistence load 오류다", () => {
   test("onLoadError를 생략하면 기본 recover로 fresh Stack이 만들어지고 생성은 throw하지 않으며 임의 console.error가 없다", () => {
     // given: load()가 sentinel을 throw하고 handler를 생략한 storage
     const sentinel = new Error("load-failure-sentinel");
@@ -62,7 +62,7 @@ describe("storage 읽기 실패는 storage 단계의 load 오류다", () => {
     expect(consoleError).not.toHaveBeenCalled();
   });
 
-  test("onLoadError는 cause.kind storage와 원본 detail, 같은 initialContext를 가진 StackPersistenceLoadError를 받고 오류에 실패 record가 없다", () => {
+  test("onLoadError는 원본 detail과 같은 initialContext를 가진 StackPersistenceLoadError를 받고 오류에 실패 record가 없다", () => {
     // given: load() throw sentinel과 오류를 기록하는 handler
     const sentinel = new Error("load-failure-sentinel");
     const initialContext = { entry: "home" };
@@ -84,13 +84,12 @@ describe("storage 읽기 실패는 storage 단계의 load 오류다", () => {
       ],
     });
 
-    // then: 오류 정체와 단계 표시
+    // then: 오류 정체와 원본 detail
     expect(received).toBeDefined();
     expect(received?.error).toBeInstanceOf(StackPersistenceLoadError);
     expect(received?.error).toBeInstanceOf(Error);
 
     const error = received?.error as StackPersistenceLoadError;
-    expect(error.cause.kind).toBe("storage");
     expect(error.cause.detail).toBe(sentinel);
     expect(received?.initialContext).toBe(initialContext);
 
@@ -215,7 +214,7 @@ describe("core 검증 오류는 wrapper 없이 원본 SnapshotLoadError로 전�
 });
 
 describe("persistence load 오류의 propagate는 같은 오류 객체를 전파한다", () => {
-  test("storage 단계 오류를 propagate하면 호출부가 잡은 객체는 callback이 받은 StackPersistenceLoadError와 동일하다", () => {
+  test("storage 오류를 propagate하면 호출부가 잡은 객체는 callback이 받은 StackPersistenceLoadError와 동일하다", () => {
     // given: load() throw와 propagate handler
     const sentinel = new Error("load-failure-sentinel");
     const controlled = makeControlledStorage({ loadError: sentinel });
@@ -243,7 +242,6 @@ describe("persistence load 오류의 propagate는 같은 오류 객체를 전파
     expect(caught).toBeDefined();
     expect(caught).toBe(received);
     expect(caught).toBeInstanceOf(StackPersistenceLoadError);
-    expect((caught as StackPersistenceLoadError).cause.kind).toBe("storage");
     expect((caught as StackPersistenceLoadError).cause.detail).toBe(sentinel);
   });
 });

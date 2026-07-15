@@ -6,15 +6,13 @@
  * storage that throws synchronously from `save`) are not normalized into
  * these classes either. Error objects never carry the failed record.
  */
-export type StackPersistenceLoadErrorCause =
-  | { kind: "storage"; detail: unknown }
-  | { kind: "strategy"; detail: unknown };
+export type StackPersistenceLoadErrorCause = { detail: unknown };
 
 export class StackPersistenceLoadError extends Error {
   cause: StackPersistenceLoadErrorCause;
 
   constructor(cause: StackPersistenceLoadErrorCause, message?: string) {
-    super(message ?? `failed to load stack snapshot record: ${cause.kind}`);
+    super(message ?? "failed to load stack snapshot record");
     this.name = "StackPersistenceLoadError";
     this.cause = cause;
   }
