@@ -1,9 +1,8 @@
 /**
- * Contract: the two error classes are `Error`s; load causes expose only
- * `detail`, while save causes are exactly `strategy | storage`; `detail` and
- * `initialContext` are `unknown` until narrowed; the `onLoadError` error is
- * the persistence/core union and its policy is exactly `recover | propagate`;
- * `onSaveError` returns void.
+ * Contract: the two error classes are `Error`s; both causes expose only
+ * `detail`; `detail` and `initialContext` are `unknown` until narrowed; the
+ * `onLoadError` error is the persistence/core union and its policy is exactly
+ * `recover | propagate`; `onSaveError` returns void.
  */
 import type { SnapshotLoadError } from "@stackflow/core";
 import type {
@@ -24,20 +23,6 @@ declare const storage: StackSnapshotStorage;
 // Both error classes are assignable to Error.
 export const loadAsError: Error = loadError;
 export const saveAsError: Error = saveError;
-
-// Save causes are exhaustively strategy | storage.
-export function categorizeSaveCause(error: StackPersistenceSaveError): string {
-  switch (error.cause.kind) {
-    case "strategy":
-      return "strategy";
-    case "storage":
-      return "storage";
-    default: {
-      const impossible: never = error.cause;
-      return impossible;
-    }
-  }
-}
 
 // detail is unknown until narrowed.
 export type LoadDetailIsUnknown = Expect<
@@ -98,17 +83,17 @@ stackPersistencePlugin({
 
 // --- negative controls ---
 
-declare const networkCause: { kind: "network"; detail: unknown };
-
 export const invalidLoadCause: StackPersistenceLoadError["cause"] = {
   // @ts-expect-error load cause는 공개 단계 판별자를 제공하지 않는다
   kind: "storage",
   detail: null,
 };
 
-// @ts-expect-error save cause는 strategy/storage 단계만 표현한다
-export const invalidSaveCause: StackPersistenceSaveError["cause"] =
-  networkCause;
+export const invalidSaveCause: StackPersistenceSaveError["cause"] = {
+  // @ts-expect-error save cause는 공개 단계 판별자를 제공하지 않는다
+  kind: "storage",
+  detail: null,
+};
 
 stackPersistencePlugin({
   storage,

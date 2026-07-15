@@ -140,9 +140,7 @@ export function stackPersistencePlugin<Metadata = undefined>(
       // the expected storage failure channel.
       const savePromise = storage.save(record);
       void savePromise.catch((detail: unknown) => {
-        reportSaveError(
-          new StackPersistenceSaveError({ kind: "storage", detail }),
-        );
+        reportSaveError(new StackPersistenceSaveError({ detail }));
       });
     };
 

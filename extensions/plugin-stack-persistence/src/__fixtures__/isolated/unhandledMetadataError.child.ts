@@ -54,7 +54,7 @@ async function main() {
   const store = makeCoreStore({
     initialEvents: freshEvents(),
     plugins: [
-      stackPersistencePlugin({
+      stackPersistencePlugin<{ origin: string }>({
         storage,
         strategy: {
           createMetadata() {

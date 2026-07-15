@@ -34,7 +34,6 @@ try {
     }) instanceof Error;
   report.saveErrorExtendsError =
     new pkg.StackPersistenceSaveError({
-      kind: "strategy",
       detail: null,
     }) instanceof Error;
 

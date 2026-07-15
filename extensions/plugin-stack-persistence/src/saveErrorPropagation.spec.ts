@@ -32,7 +32,6 @@ describe("onSaveError를 생략하면 save 오류를 비동기 오류로 전파�
     for (const rejection of rejections) {
       expect(rejection.isStackPersistenceSaveError).toBe(true);
       expect(rejection.isError).toBe(true);
-      expect(rejection.causeKind).toBe("storage");
       expect(rejection.causeDetail).toBe(report.sentinel);
     }
 
@@ -63,7 +62,6 @@ describe("onSaveError를 제공하면 오류 처리 책임이 callback으로 이
     const handlerCalls = report.onSaveErrorCalls as CapturedAsyncError[];
     expect(handlerCalls).toHaveLength(1);
     expect(handlerCalls[0].isStackPersistenceSaveError).toBe(true);
-    expect(handlerCalls[0].causeKind).toBe("storage");
     expect(handlerCalls[0].causeDetail).toBe(report.sentinel);
 
     // then: 처리 책임 이양 — 그 밖의 전파 경로가 조용하다

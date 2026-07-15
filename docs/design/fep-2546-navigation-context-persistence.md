@@ -58,9 +58,7 @@ class StackPersistenceLoadError extends Error {
   cause: StackPersistenceLoadErrorCause;
 }
 
-type StackPersistenceSaveErrorCause =
-  | { kind: "strategy"; detail: unknown }
-  | { kind: "storage"; detail: unknown };
+type StackPersistenceSaveErrorCause = { detail: unknown };
 
 class StackPersistenceSaveError extends Error {
   cause: StackPersistenceSaveErrorCause;

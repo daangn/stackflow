@@ -24,15 +24,13 @@ export class StackPersistenceLoadError extends Error {
  * Strategy metadata failures are unexpected and surface as their original
  * values instead of being wrapped in this class.
  */
-export type StackPersistenceSaveErrorCause =
-  | { kind: "strategy"; detail: unknown }
-  | { kind: "storage"; detail: unknown };
+export type StackPersistenceSaveErrorCause = { detail: unknown };
 
 export class StackPersistenceSaveError extends Error {
   cause: StackPersistenceSaveErrorCause;
 
   constructor(cause: StackPersistenceSaveErrorCause, message?: string) {
-    super(message ?? `failed to save stack snapshot record: ${cause.kind}`);
+    super(message ?? "failed to save stack snapshot record");
     this.name = "StackPersistenceSaveError";
     this.cause = cause;
   }

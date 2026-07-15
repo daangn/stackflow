@@ -33,7 +33,7 @@ afterEach(() => {
 });
 
 describe("storage rejection은 save 단계 오류로 개별 통지된다", () => {
-  test("onSaveError는 해당 요청에 대한 StackPersistenceSaveError 하나를 받고, cause는 storage 단계와 원본 detail이며 record 전체는 오류에 없다", async () => {
+  test("onSaveError는 해당 요청에 대한 StackPersistenceSaveError 하나를 받고, cause는 원본 detail을 보존하며 record 전체는 오류에 없다", async () => {
     // given: save Promise가 sentinel로 reject되는 storage와 onSaveError
     const sentinel = new Error("save-failure-sentinel");
     const controlled = makeControlledStorage();
@@ -68,7 +68,6 @@ describe("storage rejection은 save 단계 오류로 개별 통지된다", () =>
     const error = onSaveErrorCalls[0];
     expect(error).toBeInstanceOf(StackPersistenceSaveError);
     expect(error).toBeInstanceOf(Error);
-    expect(error.cause.kind).toBe("storage");
     expect(error.cause.detail).toBe(sentinel);
     expectErrorNotToCarry(error, [
       controlled.saveCalls[0].record,
