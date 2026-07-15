@@ -11,12 +11,12 @@ import type { StackSnapshotStrategy } from "./StackSnapshotStrategy";
 /**
  * Error handlers shared by every options shape.
  *
- * - `onLoadError` receives expected load failures (storage/strategy stage as
+ * - `onLoadError` receives expected load failures (storage reads as
  *   `StackPersistenceLoadError`, core validation as core's own
- *   `SnapshotLoadError`, identity preserved) together with the start
- *   context, and answers the policy: `recover` abandons the snapshot and
- *   falls back to a fresh stack, `propagate` rethrows the very same error
- *   object. Omitting the handler defaults to `recover`.
+ *   `SnapshotLoadError`, identity preserved) together with the start context,
+ *   and answers the policy: `recover` abandons the snapshot and falls back to
+ *   a fresh stack, `propagate` rethrows the very same error object. Omitting
+ *   the handler defaults to `recover`.
  * - `onSaveError` receives each failed save individually. Its return value
  *   has no effect on navigation or later saves. Omitting it propagates the
  *   `StackPersistenceSaveError` as an asynchronous error instead of
@@ -164,19 +164,12 @@ export function stackPersistencePlugin<Metadata = undefined>(
           return record?.snapshot ?? null;
         }
 
-        try {
-          return strategy.shouldReuse({
-            record: record as StackSnapshotRecord<Metadata>,
-            initialContext: context,
-          })
-            ? record.snapshot
-            : null;
-        } catch (detail) {
-          return recoverFromPersistenceLoadError(
-            new StackPersistenceLoadError({ kind: "strategy", detail }),
-            context,
-          );
-        }
+        return strategy.shouldReuse({
+          record: record as StackSnapshotRecord<Metadata>,
+          initialContext: context,
+        })
+          ? record.snapshot
+          : null;
       },
 
       onLoadError({ error, initialContext: context }) {

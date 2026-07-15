@@ -1,8 +1,8 @@
 /**
- * Expected load failures raised by the injected storage (`load()` threw) or
- * strategy (`shouldReuse` threw). Core snapshot-validation failures are NOT
- * wrapped in this class — core's own `SnapshotLoadError` is passed through
- * with its identity preserved. Unexpected failures (plugin defects, a
+ * Expected load failures raised by the injected storage (`load()` threw).
+ * Core snapshot-validation failures are NOT wrapped in this class — core's
+ * own `SnapshotLoadError` is passed through with its identity preserved.
+ * Unexpected failures (a strategy predicate that throws, plugin defects, a
  * storage that throws synchronously from `save`) are not normalized into
  * these classes either. Error objects never carry the failed record.
  */

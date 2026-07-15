@@ -100,8 +100,8 @@ describe("storage 읽기 실패는 storage 단계의 load 오류다", () => {
   });
 });
 
-describe("shouldReuse 예외는 strategy 단계의 load 오류다", () => {
-  test("onLoadError는 cause.kind strategy와 원본 detail·context를 받고, recover가 실패 record 없이 fresh Stack으로 복구한다", () => {
+describe("shouldReuse 예외는 unexpected 오류다", () => {
+  test("onLoadError나 StackPersistenceLoadError로 정규화하지 않고 원본 오류를 Stack 생성 밖으로 전파한다", () => {
     // given: load는 성공하지만 shouldReuse가 sentinel을 throw하는 strategy
     const sentinel = new Error("reuse-evaluation-sentinel");
     const initialContext = { entry: "home" };
@@ -115,36 +115,33 @@ describe("shouldReuse 예외는 strategy 단계의 load 오류다", () => {
         throw sentinel;
       },
     });
-    let received: LoadErrorObservation | undefined;
+    const onLoadError = vi.fn(() => ({ policy: "recover" as const }));
 
-    // when: onLoadError가 recover를 반환한다
-    const store = makeCoreStore({
-      initialEvents: freshEvents(),
-      initialContext,
-      plugins: [
-        stackPersistencePlugin({
-          storage: controlled.storage,
-          strategy: strategy.strategy,
-          onLoadError(args) {
-            received = args;
-            return { policy: "recover" };
-          },
-        }),
-      ],
-    });
+    // when
+    let caught: unknown;
+    try {
+      makeCoreStore({
+        initialEvents: freshEvents(),
+        initialContext,
+        plugins: [
+          stackPersistencePlugin({
+            storage: controlled.storage,
+            strategy: strategy.strategy,
+            onLoadError,
+          }),
+        ],
+      });
+    } catch (error) {
+      caught = error;
+    }
 
-    // then: strategy 단계 표시와 원본 detail·context
-    expect(received?.error).toBeInstanceOf(StackPersistenceLoadError);
-    const error = received?.error as StackPersistenceLoadError;
-    expect(error.cause.kind).toBe("strategy");
-    expect(error.cause.detail).toBe(sentinel);
-    expect(received?.initialContext).toBe(initialContext);
-
-    // then: 오류가 실패 record 전체를 담지 않은 채 fresh Stack으로 복구한다
-    expectErrorNotToCarry(error, [record, record.snapshot]);
-    expect(store.actions.getStack().activities.map((a) => a.id)).toEqual([
-      "fresh-home-1",
-    ]);
+    // then
+    expect(caught).toBe(sentinel);
+    expect(caught).not.toBeInstanceOf(StackPersistenceLoadError);
+    expect(onLoadError).not.toHaveBeenCalled();
+    expect(controlled.loadCallCount).toBe(1);
+    expect(controlled.saveCalls).toHaveLength(0);
+    expect(strategy.shouldReuseCalls).toEqual([{ record, initialContext }]);
   });
 });
 
@@ -249,47 +246,6 @@ describe("persistence load 오류의 propagate는 같은 오류 객체를 전파
     expect((caught as StackPersistenceLoadError).cause.kind).toBe("storage");
     expect((caught as StackPersistenceLoadError).cause.detail).toBe(sentinel);
   });
-
-  test("strategy 단계 오류를 propagate하면 호출부가 잡은 객체는 callback이 받은 StackPersistenceLoadError와 동일하다", () => {
-    // given: shouldReuse throw와 propagate handler
-    const sentinel = new Error("reuse-evaluation-sentinel");
-    const controlled = makeControlledStorage<Metadata>({
-      initialRecord: makeRecord(richSnapshot(), { origin: "m-1" }),
-    });
-    const strategy = makeStrategySpy<Metadata>({
-      createMetadata: () => ({ origin: "m-next" }),
-      shouldReuse: () => {
-        throw sentinel;
-      },
-    });
-    let received: unknown;
-
-    // when/then
-    let caught: unknown;
-    try {
-      makeCoreStore({
-        initialEvents: freshEvents(),
-        plugins: [
-          stackPersistencePlugin({
-            storage: controlled.storage,
-            strategy: strategy.strategy,
-            onLoadError({ error }) {
-              received = error;
-              return { policy: "propagate" };
-            },
-          }),
-        ],
-      });
-    } catch (error) {
-      caught = error;
-    }
-
-    expect(caught).toBeDefined();
-    expect(caught).toBe(received);
-    expect(caught).toBeInstanceOf(StackPersistenceLoadError);
-    expect((caught as StackPersistenceLoadError).cause.kind).toBe("strategy");
-    expect((caught as StackPersistenceLoadError).cause.detail).toBe(sentinel);
-  });
 });
 
 describe("core load 오류의 propagate는 원본 SnapshotLoadError를 전파한다", () => {
@@ -356,30 +312,6 @@ describe("명시적 recover는 오류별로 fresh create를 정확히 한 번 �
           }),
           loadCallCount: () => controlled.loadCallCount,
           shouldReuseCallCount: () => 0,
-        };
-      },
-    },
-    {
-      label: "strategy 평가 실패",
-      expectedShouldReuseCalls: 1,
-      setup: (onLoadError) => {
-        const controlled = makeControlledStorage<Metadata>({
-          initialRecord: makeRecord(richSnapshot(), { origin: "m-1" }),
-        });
-        const strategy = makeStrategySpy<Metadata>({
-          createMetadata: () => ({ origin: "m-next" }),
-          shouldReuse: () => {
-            throw new Error("reuse-evaluation-sentinel");
-          },
-        });
-        return {
-          plugin: stackPersistencePlugin({
-            storage: controlled.storage,
-            strategy: strategy.strategy,
-            onLoadError,
-          }),
-          loadCallCount: () => controlled.loadCallCount,
-          shouldReuseCallCount: () => strategy.shouldReuseCalls.length,
         };
       },
     },
@@ -495,21 +427,6 @@ describe("onLoadError 생략의 기본 recover는 모든 예상 load 단계에 �
           storage: makeControlledStorage({
             loadError: new Error("load-failure-sentinel"),
           }).storage,
-        }),
-    },
-    {
-      label: "shouldReuse 예외",
-      makePlugin: () =>
-        stackPersistencePlugin({
-          storage: makeControlledStorage<Metadata>({
-            initialRecord: makeRecord(richSnapshot(), { origin: "m-1" }),
-          }).storage,
-          strategy: makeStrategySpy<Metadata>({
-            createMetadata: () => ({ origin: "m-next" }),
-            shouldReuse: () => {
-              throw new Error("reuse-evaluation-sentinel");
-            },
-          }).strategy,
         }),
     },
     {

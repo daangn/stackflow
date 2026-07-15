@@ -77,10 +77,10 @@ type StackPersistenceErrorHandlers = {
 };
 ```
 
-- 저장소와 strategy에서 발생한 예상 가능한 load 실패는 `StackPersistenceLoadError`로 표현한다.
+- 저장소에서 발생한 예상 가능한 load 실패는 `StackPersistenceLoadError`로 표현한다.
 - core의 Snapshot 유효성 검증이 실패하면 core가 만든 `SnapshotLoadError`를 감싸지 않고 그대로 `onLoadError`에 전달한다.
 - `onLoadError`가 `{ policy: "propagate" }`를 반환하면 전달받은 오류의 정체성을 보존한다. persistence 오류는 `StackPersistenceLoadError`, core 오류는 `SnapshotLoadError`로 전파한다.
-- 플러그인 내부 결함이나 저장소의 동기 `save` throw 같은 계약 위반은 unexpected exception이며, `StackPersistenceLoadError` 또는 `StackPersistenceSaveError`로 정규화한다고 보장하지 않는다.
+- `shouldReuse` throw, 플러그인 내부 결함이나 저장소의 동기 `save` throw 같은 계약 위반은 unexpected exception이며, `StackPersistenceLoadError` 또는 `StackPersistenceSaveError`로 정규화한다고 보장하지 않는다.
 - 오류 객체에 실패한 record 전체를 포함하지 않는다.
 
 ### Plugin options의 metadata 결합
@@ -126,8 +126,7 @@ declare function stackPersistencePlugin<Metadata = undefined>(
 - Snapshot이 손상됐거나 현재 앱과 호환되지 않으면 오류를 관찰 가능하게 알린 뒤 해당 Snapshot을 포기하고 새 Stack으로 복구하는 것을 기본 정책으로 한다.
 - 탐색 연속성을 필수 조건으로 취급하는 소비자는 복원 오류 전파를 선택할 수 있다.
 - 저장소 읽기 실패와 사용할 수 없는 Snapshot은 `onLoadError`로 알린다. 콜백은 `recover` 또는 `propagate` 정책을 반환하며, 생략했을 때의 기본값은 `recover`다.
-- `shouldReuse`가 `false`를 반환하면 정상적인 비재사용 판단이지만, 예외를 던지면 strategy 평가 단계의 load 오류로 취급한다.
-- strategy 평가 오류는 오류 발생 단계를 구분할 수 있게 `onLoadError`로 전달하고 동일한 `recover` 또는 `propagate` 정책을 적용한다.
+- `shouldReuse`가 `false`를 반환하면 정상적인 비재사용 판단이다. 예외를 던지면 strategy 계약 위반으로 보고 `onLoadError`나 `StackPersistenceLoadError`로 정규화하지 않은 원본 오류를 Stack 생성 밖으로 전파한다.
 - 현재 Stackflow 설정에서 그대로 복원 가능한 Snapshot만 사용한다.
 - Snapshot schema가 다르거나 현재 설정에 없는 Activity를 포함하는 등 호환되지 않는 Snapshot은 migration하지 않고 `onLoadError` 정책을 따른다.
 - 버전별 저장소 분리나 Snapshot 변환이 필요하면 소비자가 Snapshot 저장소 경계에서 담당한다.
