@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/plugin-activity-guard",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/daangn/stackflow.git",
@@ -23,7 +23,7 @@
   ],
   "scripts": {
     "build": "yarn build:js && yarn build:dts",
-    "build:dts": "tsc -p tsconfig.build.json --emitDeclarationOnly",
+    "build:dts": "tsc --emitDeclarationOnly",
     "build:js": "node ./esbuild.config.js",
     "clean": "rimraf dist",
     "dev": "yarn build:js --watch && yarn build:dts --watch",
@@ -31,7 +31,7 @@
   },
   "devDependencies": {
     "@stackflow/config": "^2.0.0",
-    "@stackflow/core": "^2.0.0",
+    "@stackflow/core": "^3.0.0",
     "@stackflow/esbuild-config": "^1.0.3",
     "@types/node": "^20.14.9",
     "esbuild": "^0.27.3",
@@ -40,9 +40,15 @@
   },
   "peerDependencies": {
     "@stackflow/config": "^2.0.0",
-    "@stackflow/core": "^2.0.0"
+    "@stackflow/core": "^3.0.0"
   },
   "publishConfig": {
     "access": "public"
+  },
+  "ultra": {
+    "concurrent": [
+      "dev",
+      "build"
+    ]
   }
 }
