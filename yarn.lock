@@ -5780,22 +5780,8 @@ __metadata:
     "@stackflow/config": "npm:^2.0.0"
     "@stackflow/core": "npm:^2.0.0"
     "@stackflow/esbuild-config": "npm:^1.0.3"
-    "@stackflow/plugin-basic-ui": "npm:^1.14.4"
-    "@stackflow/plugin-renderer-basic": "npm:^1.1.14"
-    "@stackflow/react": "npm:^2.0.0"
-    "@swc/core": "npm:^1.6.6"
-    "@swc/jest": "npm:^0.2.36"
-    "@testing-library/dom": "npm:^10.4.0"
-    "@testing-library/react": "npm:^16.3.2"
-    "@types/jest": "npm:^29.5.12"
     "@types/node": "npm:^20.14.9"
-    "@types/react": "npm:^18.3.3"
-    "@types/react-dom": "npm:^18.3.0"
     esbuild: "npm:^0.27.3"
-    jest: "npm:^29.7.0"
-    jest-environment-jsdom: "npm:^29.7.0"
-    react: "npm:^18.3.1"
-    react-dom: "npm:^18.3.1"
     rimraf: "npm:^6.1.3"
     typescript: "npm:^5.5.3"
   peerDependencies:
@@ -5804,7 +5790,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/plugin-basic-ui@npm:^1.14.4, @stackflow/plugin-basic-ui@npm:^1.18.3, @stackflow/plugin-basic-ui@workspace:extensions/plugin-basic-ui":
+"@stackflow/plugin-basic-ui@npm:^1.18.3, @stackflow/plugin-basic-ui@workspace:extensions/plugin-basic-ui":
   version: 0.0.0-use.local
   resolution: "@stackflow/plugin-basic-ui@workspace:extensions/plugin-basic-ui"
   dependencies:
@@ -5968,7 +5954,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/plugin-renderer-basic@npm:^1.1.14, @stackflow/plugin-renderer-basic@npm:^1.1.15, @stackflow/plugin-renderer-basic@workspace:extensions/plugin-renderer-basic":
+"@stackflow/plugin-renderer-basic@npm:^1.1.15, @stackflow/plugin-renderer-basic@workspace:extensions/plugin-renderer-basic":
   version: 0.0.0-use.local
   resolution: "@stackflow/plugin-renderer-basic@workspace:extensions/plugin-renderer-basic"
   dependencies:
@@ -6075,7 +6061,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/react@npm:^2.0.0, @stackflow/react@npm:^2.1.2, @stackflow/react@workspace:integrations/react":
+"@stackflow/react@npm:^2.1.2, @stackflow/react@workspace:integrations/react":
   version: 0.0.0-use.local
   resolution: "@stackflow/react@workspace:integrations/react"
   dependencies:
