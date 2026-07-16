@@ -79,6 +79,10 @@ const RAW_RUNTIME_STATE =
       "reference": "workspace:extensions/plugin-stack-depth-change"\
     },\
     {\
+      "name": "@stackflow/plugin-stack-persistence",\
+      "reference": "workspace:extensions/plugin-stack-persistence"\
+    },\
+    {\
       "name": "@stackflow/react-ui-core",\
       "reference": "workspace:extensions/react-ui-core"\
     },\
@@ -112,6 +116,7 @@ const RAW_RUNTIME_STATE =
     ["@stackflow/plugin-renderer-web", ["workspace:extensions/plugin-renderer-web"]],\
     ["@stackflow/plugin-sentry", ["workspace:extensions/plugin-sentry"]],\
     ["@stackflow/plugin-stack-depth-change", ["virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-stack-depth-change", "workspace:extensions/plugin-stack-depth-change"]],\
+    ["@stackflow/plugin-stack-persistence", ["workspace:extensions/plugin-stack-persistence"]],\
     ["@stackflow/react", ["virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:integrations/react", "workspace:integrations/react"]],\
     ["@stackflow/react-ui-core", ["virtual:669046a185e83900af978519e5adddf8e8f1f8fed824849248ba56cf8fcd4e4208872f27e14c3c844d3b769f42be1ba6e0aa90f12df9fa6c38a55aedee211f53#workspace:extensions/react-ui-core", "workspace:extensions/react-ui-core"]]\
   ],\
@@ -7059,6 +7064,21 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./extensions/plugin-stack-depth-change/",\
         "packageDependencies": [\
           ["@stackflow/plugin-stack-depth-change", "workspace:extensions/plugin-stack-depth-change"],\
+          ["@stackflow/core", "workspace:core"],\
+          ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
+          ["@types/node", "npm:20.14.9"],\
+          ["esbuild", "npm:0.23.0"],\
+          ["rimraf", "npm:3.0.2"],\
+          ["typescript", "patch:typescript@npm%3A5.5.3#optional!builtin<compat/typescript>::version=5.5.3&hash=379a07"]\
+        ],\
+        "linkType": "SOFT"\
+      }]\
+    ]],\
+    ["@stackflow/plugin-stack-persistence", [\
+      ["workspace:extensions/plugin-stack-persistence", {\
+        "packageLocation": "./extensions/plugin-stack-persistence/",\
+        "packageDependencies": [\
+          ["@stackflow/plugin-stack-persistence", "workspace:extensions/plugin-stack-persistence"],\
           ["@stackflow/core", "workspace:core"],\
           ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
           ["@types/node", "npm:20.14.9"],\
