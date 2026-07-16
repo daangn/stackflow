@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/plugin-stack-persistence",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/daangn/stackflow.git",
@@ -30,7 +30,7 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "@stackflow/core": "^2.0.1",
+    "@stackflow/core": "^3.0.0",
     "@stackflow/esbuild-config": "^1.0.3",
     "@types/node": "^20.14.9",
     "esbuild": "^0.23.0",
@@ -38,7 +38,7 @@
     "typescript": "^5.5.3"
   },
   "peerDependencies": {
-    "@stackflow/core": "^2.0.1"
+    "@stackflow/core": "^3.0.0"
   },
   "publishConfig": {
     "access": "public"

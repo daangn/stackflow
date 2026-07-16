@@ -6534,14 +6534,6 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@stackflow/core", [\
-      ["npm:2.0.1::__archiveUrl=https%3A%2F%2Fregistry.npmjs.org%2F%40stackflow%2Fcore%2F-%2Fcore-2.0.1.tgz", {\
-        "packageLocation": "./.yarn/cache/@stackflow-core-npm-2.0.1-605e186a89-14fc9db6d8.zip/node_modules/@stackflow/core/",\
-        "packageDependencies": [\
-          ["@stackflow/core", "npm:2.0.1::__archiveUrl=https%3A%2F%2Fregistry.npmjs.org%2F%40stackflow%2Fcore%2F-%2Fcore-2.0.1.tgz"],\
-          ["react-fast-compare", "npm:3.2.2"]\
-        ],\
-        "linkType": "HARD"\
-      }],\
       ["workspace:core", {\
         "packageLocation": "./core/",\
         "packageDependencies": [\
@@ -7087,7 +7079,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./extensions/plugin-stack-persistence/",\
         "packageDependencies": [\
           ["@stackflow/plugin-stack-persistence", "workspace:extensions/plugin-stack-persistence"],\
-          ["@stackflow/core", "npm:2.0.1::__archiveUrl=https%3A%2F%2Fregistry.npmjs.org%2F%40stackflow%2Fcore%2F-%2Fcore-2.0.1.tgz"],\
+          ["@stackflow/core", "workspace:core"],\
           ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
           ["@types/node", "npm:20.14.9"],\
           ["esbuild", "npm:0.23.0"],\

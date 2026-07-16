@@ -5612,15 +5612,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/core@npm:^2.0.1":
-  version: 2.0.1
-  resolution: "@stackflow/core@npm:2.0.1::__archiveUrl=https%3A%2F%2Fregistry.npmjs.org%2F%40stackflow%2Fcore%2F-%2Fcore-2.0.1.tgz"
-  dependencies:
-    react-fast-compare: "npm:^3.2.2"
-  checksum: 10/14fc9db6d8f54213230f33e9688aa70725e69b6a19cc8b2fd2310012df69dafab7c2ec813dba2e90524f5064f4a70041b85caeeeceafb054fd8af545c7cdaee7
-  languageName: node
-  linkType: hard
-
 "@stackflow/core@npm:^3.0.0, @stackflow/core@workspace:core":
   version: 0.0.0-use.local
   resolution: "@stackflow/core@workspace:core"
@@ -6013,14 +6004,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@stackflow/plugin-stack-persistence@workspace:extensions/plugin-stack-persistence"
   dependencies:
-    "@stackflow/core": "npm:^2.0.1"
+    "@stackflow/core": "npm:^3.0.0"
     "@stackflow/esbuild-config": "npm:^1.0.3"
     "@types/node": "npm:^20.14.9"
     esbuild: "npm:^0.23.0"
     rimraf: "npm:^3.0.2"
     typescript: "npm:^5.5.3"
   peerDependencies:
-    "@stackflow/core": ^2.0.1
+    "@stackflow/core": ^3.0.0
   languageName: unknown
   linkType: soft
 
