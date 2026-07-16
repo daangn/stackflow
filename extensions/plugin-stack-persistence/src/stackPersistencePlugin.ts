@@ -1,188 +1,66 @@
 import type {
-  SnapshotLoadError,
   StackflowActions,
   StackflowPlugin,
 } from "@stackflow/core";
-import { StackPersistenceSaveError } from "./errors";
-import type { StackSnapshotRecord } from "./StackSnapshotRecord";
+import { StackSnapshotRecordSaveError, StackSnapshotRecordLoadError } from "./errors";
 import type { StackSnapshotStorage } from "./StackSnapshotStorage";
 import type { StackSnapshotStrategy } from "./StackSnapshotStrategy";
 
-/**
- * Error handlers shared by every options shape.
- *
- * - `onStorageLoadError` receives the original error from `storage.load()`.
- *   Returning a record resumes the normal reuse and validation path; returning
- *   `null` starts fresh. Omitting the handler or throwing from it propagates
- *   the thrown value without normalization.
- * - `onLoadError` receives core's `SnapshotLoadError` with its identity
- *   preserved and answers the policy: `recover` abandons the snapshot and
- *   falls back to a fresh stack, while `propagate` rethrows the same error.
- *   Omitting the handler defaults to `recover`.
- * - `onSaveError` receives each rejected storage save individually. Its
- *   return value has no effect on navigation or later saves. Omitting it
- *   propagates the `StackPersistenceSaveError` as an asynchronous error
- *   instead of consuming it silently. Strategy metadata failures bypass this
- *   expected-error callback and surface their original value asynchronously.
- */
-export type StackPersistenceErrorHandlers<Metadata = undefined> = {
-  onStorageLoadError?: (args: {
-    error: unknown;
-    initialContext: unknown;
-  }) => StackSnapshotRecord<Metadata> | null;
-  onLoadError?: (args: {
-    error: SnapshotLoadError;
-    initialContext: unknown;
-  }) => { policy: "recover" | "propagate" };
-  onSaveError?: (args: { error: StackPersistenceSaveError }) => void;
-};
+export type StackPersistencePluginOptions<Metadata> = {
+  storage: StackSnapshotStorage<Metadata>;
+  strategy: StackSnapshotStrategy<Metadata>;
+  onRecordLoadError?: (error: StackSnapshotRecordLoadError) => void;
+  onRecordSaveError?: (error: StackSnapshotRecordSaveError) => void;
+  onLoadError?: NonNullable<ReturnType<StackflowPlugin>['onLoadError']>;
+}
 
-type StackPersistencePluginBaseOptions<Metadata> =
-  StackPersistenceErrorHandlers<Metadata> & {
-    storage: StackSnapshotStorage<Metadata>;
-  };
-
-/**
- * Keeps a type parameter position out of inference (equivalent to the
- * TS 5.4 built-in `NoInfer`, spelled out so emitted declarations stay
- * readable on older TypeScript versions).
- */
-type NoInferMetadata<Metadata> = [Metadata][Metadata extends unknown
-  ? 0
-  : never];
-
-/**
- * One storage, at most one strategy. Without a strategy the storage's
- * metadata type is `undefined`; with a strategy, storage and strategy share
- * the single `Metadata` inferred from the options. The strategy is the sole
- * inference site for `Metadata`: inferring from the storage as well would
- * let TypeScript unite mismatched candidates into a union that method
- * bivariance then accepts, instead of rejecting the mismatch.
- */
-export type StackPersistencePluginOptions<Metadata = undefined> =
-  | (StackPersistencePluginBaseOptions<undefined> & {
-      strategy?: undefined;
-    })
-  | (StackPersistencePluginBaseOptions<NoInferMetadata<Metadata>> & {
-      strategy: StackSnapshotStrategy<Metadata>;
-    });
-
-export function stackPersistencePlugin<Metadata = undefined>(
-  options: StackPersistencePluginOptions<Metadata>,
+export function stackPersistencePlugin<Metadata>(
+  { storage, strategy, onRecordLoadError, onRecordSaveError, onLoadError }: StackPersistencePluginOptions<Metadata>,
 ): StackflowPlugin {
   return () => {
-    // The public options union proves that storage and strategy agree on one
-    // metadata type. This normalized internal view keeps that proof at the
-    // package boundary instead of leaking the union through every operation.
-    const storage = options.storage as StackSnapshotStorage<
-      Metadata | undefined
-    >;
-    const strategy = options.strategy as
-      | StackSnapshotStrategy<Metadata>
-      | undefined;
+    const saveIfIdle = (actions: StackflowActions) => {
+      const stack = actions.getStack();
 
-    let initialContext: unknown;
-    let initialized = false;
-
-    const applyLoadPolicy = (
-      error: SnapshotLoadError,
-      context: unknown,
-    ): "recover" | "propagate" =>
-      options.onLoadError?.({ error, initialContext: context }).policy ??
-      "recover";
-
-    const reportSaveError = (error: StackPersistenceSaveError): void => {
-      if (options.onSaveError) {
-        options.onSaveError({ error });
-        return;
-      }
-
-      // Save failures never unwind navigation synchronously. With no handler,
-      // a rejected promise transfers the error to the runtime's asynchronous
-      // unhandled-error boundary instead of consuming or logging it.
-      void Promise.reject(error);
-    };
-
-    const saveIfIdle = (actions: StackflowActions): void => {
-      if (actions.getStack().globalTransitionState !== "idle") {
-        return;
-      }
+      if (stack.globalTransitionState !== "idle") return;
 
       const snapshot = actions.captureSnapshot();
-      let metadata: Metadata | undefined;
+      const metadata = strategy.createMetadata({ snapshot });
 
-      if (strategy) {
-        try {
-          metadata = strategy.createMetadata({ snapshot, initialContext });
-        } catch (detail) {
-          // Metadata failures are consumer bugs, not expected persistence
-          // failures. Preserve navigation availability without disguising the
-          // original value as a StackPersistenceSaveError.
-          void Promise.reject(detail);
-          return;
-        }
-      } else {
-        metadata = undefined;
-      }
-
-      const record: StackSnapshotRecord<Metadata | undefined> = {
+      storage.save({
         snapshot,
-        metadata,
-      };
-
-      // A synchronous throw violates StackSnapshotStorage's contract and is
-      // intentionally left as an unexpected exception. Rejected promises are
-      // the expected storage failure channel.
-      const savePromise = storage.save(record);
-      void savePromise.catch((detail: unknown) => {
-        reportSaveError(new StackPersistenceSaveError({ detail }));
+        metadata
+      }).catch(error => {
+        if (onRecordSaveError) return onRecordSaveError(error);
+        else throw error;
       });
-    };
+    }
 
     return {
       key: "@stackflow/plugin-stack-persistence",
-
-      provideSnapshot({ initialContext: context }) {
-        initialContext = context;
-
-        let record: StackSnapshotRecord<Metadata | undefined> | null;
+      provideSnapshot({ initialContext }) {
         try {
-          record = storage.load();
+          const record = storage.load();
+
+          if (!record)
+            return null;
+          if (strategy?.shouldReuse({ record, initialContext }) === false)
+            return null;
+
+          return record.snapshot;
         } catch (error) {
-          if (!options.onStorageLoadError) {
-            throw error;
-          }
-          record = options.onStorageLoadError({
-            error,
-            initialContext: context,
-          });
+          onRecordLoadError?.(new StackSnapshotRecordLoadError(error));
+
+          return null;
         }
-
-        if (record === null || !strategy) {
-          return record?.snapshot ?? null;
-        }
-
-        return strategy.shouldReuse({
-          record: record as StackSnapshotRecord<Metadata>,
-          initialContext: context,
-        })
-          ? record.snapshot
-          : null;
       },
-
-      onLoadError({ error, initialContext: context }) {
-        return { policy: applyLoadPolicy(error, context) };
+      onLoadError(...args) {
+        return onLoadError?.(...args) ?? { policy: "recover" }
       },
-
       onInit({ actions }) {
-        initialized = true;
         saveIfIdle(actions);
       },
-
       onChanged({ actions }) {
-        if (initialized) {
-          saveIfIdle(actions);
-        }
+        saveIfIdle(actions);
       },
     };
   };
