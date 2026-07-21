@@ -154,28 +154,26 @@ export function defer<T>(): SyncInspectableDeferred<T> {
 
       isSettled = true;
 
-      let source: SyncInspectablePromise<T>;
       try {
-        source = resolve(value) as SyncInspectablePromise<T>;
+        const source = resolve(value) as SyncInspectablePromise<T>;
+
+        if (source === promise) {
+          rejectPromiseState(
+            new TypeError("A promise cannot be resolved with itself"),
+          );
+          return;
+        }
+
+        const state = inspect(source);
+        if (state.status === PromiseStatus.FULFILLED) {
+          fulfill(state.value);
+        } else if (state.status === PromiseStatus.REJECTED) {
+          rejectPromiseState(state.reason);
+        } else {
+          source.then(fulfill, rejectPromiseState);
+        }
       } catch (error) {
         rejectPromiseState(error);
-        return;
-      }
-
-      if (source === promise) {
-        rejectPromiseState(
-          new TypeError("A promise cannot be resolved with itself"),
-        );
-        return;
-      }
-
-      const state = inspect(source);
-      if (state.status === PromiseStatus.FULFILLED) {
-        fulfill(state.value);
-      } else if (state.status === PromiseStatus.REJECTED) {
-        rejectPromiseState(state.reason);
-      } else {
-        source.then(fulfill, rejectPromiseState);
       }
     },
     reject,

@@ -33,6 +33,49 @@ export function loaderPlugin<
       SyncInspectableDeferred<unknown>
     >();
 
+    const resolveLoadPathLoaderData = (actions: LoaderPluginActions) => {
+      actions
+        .getStack()
+        .activities.filter(
+          (activity) => activity.transitionState !== "exit-done",
+        )
+        .forEach((activity) => {
+          const matchActivity = input.config.activities.find(
+            (candidate) => candidate.name === activity.name,
+          );
+
+          if (!matchActivity?.loader) {
+            return;
+          }
+
+          const loaderData = (activity.context as any)?.loaderData as
+            | SyncInspectablePromise<unknown>
+            | undefined;
+          const deferred = loaderData
+            ? loadPathDeferreds.get(loaderData)
+            : undefined;
+
+          if (!loaderData || !deferred) {
+            return;
+          }
+
+          loadPathDeferreds.delete(loaderData);
+
+          Promise.allSettled([loaderData]).then(([loaderDataPromiseResult]) => {
+            printLoaderDataPromiseError({
+              promiseResult: loaderDataPromiseResult,
+              activityName: matchActivity.name,
+            });
+          });
+
+          try {
+            deferred.resolve(loadData(activity.name, activity.params));
+          } catch (error) {
+            deferred.reject(error);
+          }
+        });
+    };
+
     return {
       key: "plugin-loader",
       overrideInitialEvents({ initialEvents, initialContext, initInfo }) {
@@ -117,48 +160,16 @@ export function loaderPlugin<
           return;
         }
 
-        actions
-          .getStack()
-          .activities.filter(
-            (activity) => activity.transitionState !== "exit-done",
-          )
-          .forEach((activity) => {
-            const matchActivity = input.config.activities.find(
-              (candidate) => candidate.name === activity.name,
-            );
-
-            if (!matchActivity?.loader) {
-              return;
-            }
-
-            const loaderData = (activity.context as any)?.loaderData as
-              | SyncInspectablePromise<unknown>
-              | undefined;
-            const deferred = loaderData
-              ? loadPathDeferreds.get(loaderData)
-              : undefined;
-
-            if (!loaderData || !deferred) {
-              throw new Error(
-                `Missing deferred loader data for the restored "${activity.name}" activity`,
-              );
-            }
-
-            Promise.allSettled([loaderData]).then(
-              ([loaderDataPromiseResult]) => {
-                printLoaderDataPromiseError({
-                  promiseResult: loaderDataPromiseResult,
-                  activityName: matchActivity.name,
-                });
-              },
-            );
-
-            try {
-              deferred.resolve(loadData(activity.name, activity.params));
-            } catch (error) {
-              deferred.reject(error);
-            }
-          });
+        resolveLoadPathLoaderData(actions);
+      },
+      onResumed({ actions }) {
+        resolveLoadPathLoaderData(actions);
+      },
+      onPushed({ actions }) {
+        resolveLoadPathLoaderData(actions);
+      },
+      onReplaced({ actions }) {
+        resolveLoadPathLoaderData(actions);
       },
       onBeforePush: createBeforeRouteHandler(input, loadData),
       onBeforeReplace: createBeforeRouteHandler(input, loadData),
@@ -170,6 +181,10 @@ type OnBeforeRoute = NonNullable<
   | ReturnType<StackflowReactPlugin>["onBeforePush"]
   | ReturnType<StackflowReactPlugin>["onBeforeReplace"]
 >;
+type LoaderPluginActions = Parameters<
+  NonNullable<ReturnType<StackflowReactPlugin>["onInit"]>
+>[0]["actions"];
+
 function createBeforeRouteHandler<
   T extends ActivityDefinition<RegisteredActivityName>,
   R extends {
