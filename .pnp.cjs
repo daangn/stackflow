@@ -39,6 +39,10 @@ const RAW_RUNTIME_STATE =
       "reference": "workspace:extensions/link"\
     },\
     {\
+      "name": "@stackflow/plugin-activity-guard",\
+      "reference": "workspace:extensions/plugin-activity-guard"\
+    },\
+    {\
       "name": "@stackflow/plugin-basic-ui",\
       "reference": "workspace:extensions/plugin-basic-ui"\
     },\
@@ -106,6 +110,7 @@ const RAW_RUNTIME_STATE =
     ["@stackflow/esbuild-config", ["workspace:packages/esbuild-config"]],\
     ["@stackflow/link", ["virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/link", "workspace:extensions/link"]],\
     ["@stackflow/monorepo", ["workspace:."]],\
+    ["@stackflow/plugin-activity-guard", ["workspace:extensions/plugin-activity-guard"]],\
     ["@stackflow/plugin-basic-ui", ["virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-basic-ui", "workspace:extensions/plugin-basic-ui"]],\
     ["@stackflow/plugin-blocker", ["workspace:extensions/plugin-blocker"]],\
     ["@stackflow/plugin-devtools", ["virtual:413bca98ff76262f6f1f73762ccc4b7edee04a5da42f3d6b9ed2cb2d6dbc397b2094da59b50f6e828091c88e7b5f86990feff596c43f0eb50a58fc42aae64a20#workspace:extensions/plugin-devtools", "workspace:extensions/plugin-devtools"]],\
@@ -6713,6 +6718,22 @@ const RAW_RUNTIME_STATE =
           ["@types/react", "npm:18.3.3"],\
           ["typescript", "patch:typescript@npm%3A5.5.3#optional!builtin<compat/typescript>::version=5.5.3&hash=379a07"],\
           ["ultra-runner", "npm:3.10.5"]\
+        ],\
+        "linkType": "SOFT"\
+      }]\
+    ]],\
+    ["@stackflow/plugin-activity-guard", [\
+      ["workspace:extensions/plugin-activity-guard", {\
+        "packageLocation": "./extensions/plugin-activity-guard/",\
+        "packageDependencies": [\
+          ["@stackflow/plugin-activity-guard", "workspace:extensions/plugin-activity-guard"],\
+          ["@stackflow/config", "workspace:config"],\
+          ["@stackflow/core", "workspace:core"],\
+          ["@stackflow/esbuild-config", "workspace:packages/esbuild-config"],\
+          ["@types/node", "npm:20.14.9"],\
+          ["esbuild", "npm:0.27.3"],\
+          ["rimraf", "npm:6.1.3"],\
+          ["typescript", "patch:typescript@npm%3A5.5.3#optional!builtin<compat/typescript>::version=5.5.3&hash=379a07"]\
         ],\
         "linkType": "SOFT"\
       }]\
