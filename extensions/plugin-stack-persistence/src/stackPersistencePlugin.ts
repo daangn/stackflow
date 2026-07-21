@@ -24,7 +24,7 @@ export function stackPersistencePlugin<Metadata>(
       if (stack.globalTransitionState !== "idle") return;
 
       const snapshot = actions.captureSnapshot();
-      const metadata = strategy.createMetadata({ snapshot });
+      const metadata = strategy.createMetadata({ stack, snapshot });
 
       storage.save({
         snapshot,
