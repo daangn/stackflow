@@ -8,13 +8,15 @@ import {
   getContentComponent,
   isStructuredActivityComponent,
 } from "../StructuredActivityComponentType";
-import { isPromiseLike } from "../utils/isPromiseLike";
+import type { StackflowInput } from "../stackflow";
 import {
+  defer,
   inspect,
   PromiseStatus,
   resolve,
+  type SyncInspectableDeferred,
+  type SyncInspectablePromise,
 } from "../utils/SyncInspectablePromise";
-import type { StackflowInput } from "../stackflow";
 
 export function loaderPlugin<
   T extends ActivityDefinition<RegisteredActivityName>,
@@ -26,15 +28,47 @@ export function loaderPlugin<
   loadData: (activityName: string, activityParams: {}) => unknown,
 ): StackflowReactPlugin {
   return () => {
+    const loadPathDeferreds = new WeakMap<
+      SyncInspectablePromise<unknown>,
+      SyncInspectableDeferred<unknown>
+    >();
+
     return {
       key: "plugin-loader",
-      overrideInitialEvents({ initialEvents, initialContext }) {
+      overrideInitialEvents({ initialEvents, initialContext, initInfo }) {
         if (initialEvents.length === 0) {
           return [];
         }
 
+        if (initInfo?.kind === "load") {
+          return initialEvents.map((event) => {
+            if (event.name !== "Pushed" && event.name !== "Replaced") {
+              return event;
+            }
+
+            const matchActivity = input.config.activities.find(
+              (activity) => activity.name === event.activityName,
+            );
+
+            if (!matchActivity?.loader) {
+              return event;
+            }
+
+            const loaderData = defer<unknown>();
+            loadPathDeferreds.set(loaderData.promise, loaderData);
+
+            return {
+              ...event,
+              activityContext: {
+                ...event.activityContext,
+                loaderData: loaderData.promise,
+              },
+            };
+          });
+        }
+
         return initialEvents.map((event) => {
-          if (event.name !== "Pushed") {
+          if (event.name !== "Pushed" && event.name !== "Replaced") {
             return event;
           }
 
@@ -77,6 +111,54 @@ export function loaderPlugin<
             },
           };
         });
+      },
+      onInit({ actions, initInfo }) {
+        if (initInfo?.kind !== "load") {
+          return;
+        }
+
+        actions
+          .getStack()
+          .activities.filter(
+            (activity) => activity.transitionState !== "exit-done",
+          )
+          .forEach((activity) => {
+            const matchActivity = input.config.activities.find(
+              (candidate) => candidate.name === activity.name,
+            );
+
+            if (!matchActivity?.loader) {
+              return;
+            }
+
+            const loaderData = (activity.context as any)?.loaderData as
+              | SyncInspectablePromise<unknown>
+              | undefined;
+            const deferred = loaderData
+              ? loadPathDeferreds.get(loaderData)
+              : undefined;
+
+            if (!loaderData || !deferred) {
+              throw new Error(
+                `Missing deferred loader data for the restored "${activity.name}" activity`,
+              );
+            }
+
+            Promise.allSettled([loaderData]).then(
+              ([loaderDataPromiseResult]) => {
+                printLoaderDataPromiseError({
+                  promiseResult: loaderDataPromiseResult,
+                  activityName: matchActivity.name,
+                });
+              },
+            );
+
+            try {
+              deferred.resolve(loadData(activity.name, activity.params));
+            } catch (error) {
+              deferred.reject(error);
+            }
+          });
       },
       onBeforePush: createBeforeRouteHandler(input, loadData),
       onBeforeReplace: createBeforeRouteHandler(input, loadData),

@@ -6,6 +6,12 @@ export interface SyncInspectablePromise<T> extends Promise<T> {
   reason?: unknown;
 }
 
+export interface SyncInspectableDeferred<T> {
+  promise: SyncInspectablePromise<T>;
+  resolve: (value: T | PromiseLike<T>) => void;
+  reject: (reason: unknown) => void;
+}
+
 export const PromiseStatus = {
   PENDING: "pending",
   FULFILLED: "fulfilled",
@@ -95,4 +101,83 @@ export function reject(error: unknown): SyncInspectablePromise<never> {
     status: PromiseStatus.REJECTED,
     reason: error,
   }) as SyncInspectablePromise<never>;
+}
+
+export function defer<T>(): SyncInspectableDeferred<T> {
+  let resolvePromise!: (value: T | PromiseLike<T>) => void;
+  let rejectPromise!: (reason: unknown) => void;
+  let isSettled = false;
+
+  const promise = Object.assign(
+    new Promise<T>((resolvePromise_, rejectPromise_) => {
+      resolvePromise = resolvePromise_;
+      rejectPromise = rejectPromise_;
+    }),
+    { status: PromiseStatus.PENDING },
+  ) as SyncInspectablePromise<T>;
+
+  const fulfill = (value: T) => {
+    if (promise.status !== PromiseStatus.PENDING) {
+      return;
+    }
+
+    promise.status = PromiseStatus.FULFILLED;
+    promise.value = value;
+    resolvePromise(value);
+  };
+
+  const rejectPromiseState = (reason: unknown) => {
+    if (promise.status !== PromiseStatus.PENDING) {
+      return;
+    }
+
+    promise.status = PromiseStatus.REJECTED;
+    promise.reason = reason;
+    rejectPromise(reason);
+  };
+
+  const reject = (reason: unknown) => {
+    if (isSettled) {
+      return;
+    }
+
+    isSettled = true;
+    rejectPromiseState(reason);
+  };
+
+  return {
+    promise,
+    resolve(value) {
+      if (isSettled) {
+        return;
+      }
+
+      isSettled = true;
+
+      let source: SyncInspectablePromise<T>;
+      try {
+        source = resolve(value) as SyncInspectablePromise<T>;
+      } catch (error) {
+        rejectPromiseState(error);
+        return;
+      }
+
+      if (source === promise) {
+        rejectPromiseState(
+          new TypeError("A promise cannot be resolved with itself"),
+        );
+        return;
+      }
+
+      const state = inspect(source);
+      if (state.status === PromiseStatus.FULFILLED) {
+        fulfill(state.value);
+      } else if (state.status === PromiseStatus.REJECTED) {
+        rejectPromiseState(state.reason);
+      } else {
+        source.then(fulfill, rejectPromiseState);
+      }
+    },
+    reject,
+  };
 }
