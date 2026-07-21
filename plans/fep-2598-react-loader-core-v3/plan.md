@@ -39,6 +39,16 @@ core 플러그인 타입을 그대로 확장하므로 v3 훅 타입 표면은 �
 6. **loader 실패 ≠ load 실패**: `SnapshotLoadError`로 승격하지 않고 `onLoadError`도
    트리거하지 않는다. create path와 동일하게 콘솔 에러 + 렌더 시점 에러 바운더리로
    처리한다.
+7. **create path도 `Replaced`를 진입 이벤트로 처리한다**: v3에서
+   `overrideInitialEvents` 체인의 타입이 `SnapshotEvent[]`로 넓어져 create path에서도
+   앞선 플러그인이 `Replaced`를 포함한 시퀀스를 반환할 수 있다. 기존 **eager 방식
+   그대로** `Replaced`를 `Pushed`와 동일하게 취급한다(`initialLoaderData` 부착 규칙
+   포함) — deferred+onInit으로 통일하지 않는 이유는 create path의 SSR이 `init()`
+   없이 `overrideInitialEvents`의 eager 부착에 의존하기 때문. `[Pushed A,
+   Replaced B]`처럼 죽는 activity(A)의 loader가 실행되는 낭비는 수용한다 —
+   aliveness 판정에 core 재구성 로직 복제가 필요해지는 것보다 낫고, create
+   시퀀스는 짧다. v2 타입상 create 체인에 `Replaced`가 등장할 수 없으므로 v2-합법
+   입력에 대한 동작은 변하지 않는다(스펙 3과 양립).
 
 ## load path 메커니즘
 
@@ -80,7 +90,8 @@ aliveness 판정의 진실 원천은 core가 계산한 스택 하나뿐이다.
 ## 비목표
 
 - 런타임 훅(`onBeforePush`/`onBeforeReplace`)의 pause/resume·lazy preload 동작 변경
-- create path 동작 변경(`initialLoaderData`를 모든 `Pushed`에 붙이는 기존 quirk 포함)
+- create path 동작 변경 — 단, `Replaced` 진입 이벤트 처리 확장(스펙 7)은 예외.
+  `initialLoaderData`를 모든 진입 이벤트에 붙이는 기존 quirk은 유지
 - 시퀀스 재구성/re-dating — "settled 복원 보장" 같은 load policy는 제공하지 않음
   (snapshot provider나 별도 플러그인의 몫)
 - load path에서의 lazy 컴포넌트 preload — 초기화엔 보호할 전환이 없음, Suspense가 처리
@@ -102,6 +113,8 @@ aliveness 판정의 진실 원천은 core가 계산한 스택 하나뿐이다.
 - 죽은 activity의 deferred는 pending 유지
 - 저장된 stale loaderData 덮어쓰기 / loader 없는 activity 통과
 - load path에서 `initialLoaderData` 무시, create path에서는 기존 동작 유지
+- create path에서 `Replaced` 포함 시퀀스: `Replaced` 진입 activity에 fresh loader
+  실행 및 `initialLoaderData` 부착 (eager — `init()` 호출 없이도 동작)
 - `initInfo` 부재 시(v2 시뮬레이션) create 동작 보존 (deferred 미주입)
 - loader reject가 `SnapshotLoadError`로 승격되지 않음
 
