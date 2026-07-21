@@ -42,20 +42,40 @@ core 플러그인 타입을 그대로 확장하므로 v3 훅 타입 표면은 �
 
 ## load path 메커니즘
 
-1. 전달받은 replay 시퀀스(loaderPlugin은 체인 마지막이므로 다른 플러그인이 재구성한
-   최종본)에 현재 config 기반 static 이벤트를 합성·backdate하여 `aggregate`로 최종
-   스택을 계산한다.
-2. `transitionState !== "exit-done"`이고 loader가 정의된 activity마다 loader를
-   **1회** 실행한다 — 인자는 해당 activity의 **최종** name/params.
-3. 그 activity의 `activityId`를 가진 `Pushed`/`Replaced` 이벤트의
-   `activityContext.loaderData`에 실행 결과를 붙인다. 같은 `activityId`에 진입
-   이벤트가 복수인 경우(id 유지 replace) 전부 같은 promise로 장식해도 aggregate가
-   마지막 것을 채택하므로 동등하다. (`Pushed`/`Replaced` 모두
-   `makeActivityFromEvent`가 `context: event.activityContext`를 채택함을 확인함.)
-4. 그 외 이벤트(`Popped`/step 계열/`Paused`/`Resumed`, 죽은 activity의 진입
-   이벤트)는 무조건 통과. 이벤트의 id/date/순서/구성원은 절대 변경하지 않는다.
-5. loader promise 실패는 create path와 동일하게 `printLoaderDataPromiseError`로
+두 단계로 나뉜다: `overrideInitialEvents`에서 deferred를 심고, `onInit`에서 core가
+실제로 계산한 최종 스택을 보고 resolve한다. react 플러그인 안에서 static 이벤트
+합성·backdate·aggregate로 core의 load 재구성 로직을 복제하지 않기 위함이다 —
+aliveness 판정의 진실 원천은 core가 계산한 스택 하나뿐이다.
+
+1. **`overrideInitialEvents` (load일 때만)**: loader가 정의된 activity의 모든
+   `Pushed`/`Replaced` 이벤트의 `activityContext.loaderData`에 **sync-inspectable
+   deferred**를 심는다. loader가 없는 activity의 이벤트와 그 외 이벤트(`Popped`/
+   step 계열/`Paused`/`Resumed`)는 무조건 통과. 이벤트의 id/date/순서/구성원은
+   절대 변경하지 않는다.
+2. **`onInit` (load일 때만)**: `getStack()`으로 core가 계산한 최종 스택을 읽어,
+   `transitionState !== "exit-done"`이고 loader가 정의된 activity마다 loader를
+   **1회** 실행한다 — 인자는 해당 activity의 **최종** name/params. 실행 결과로
+   `activity.context.loaderData`(= 1에서 심은 deferred)를 resolve한다. aggregate가
+   진입 이벤트의 `activityContext`를 `activity.context`로 채택하므로
+   (`makeActivityFromEvent` 확인) activityId 부기는 불필요하다.
+3. **죽은 activity의 deferred는 pending으로 방치한다.** exit-done은 렌더되지 않아
+   소비자가 없고, `undefined` resolve보다 "이 데이터는 오지 않는다"를 정직하게
+   표현한다. 이벤트 로그가 앱 수명 동안 유지되므로 메모리 델타도 없다.
+4. loader promise 실패는 create path와 동일하게 `printLoaderDataPromiseError`로
    출력한다.
+
+### 타이밍·의미 보존 근거
+
+- `store.init()`(→ `onInit`)은 `stackflow.tsx`에서 store 생성 직후 같은 `useMemo`
+  안에서 동기 호출된다 — activity 첫 렌더 전에 resolve가 완료된다.
+- `useLoaderData`는 `useThenable`로 promise의 `status` 필드를 동기 inspect한다.
+  따라서 deferred는 naked Promise가 아니라 **SyncInspectablePromise 규약을 따르는
+  커스텀 deferred**여야 한다: resolve 시 비-thenable 값이면 `status`/`value`를
+  동기로 갱신한다. 이로써 동기 loader가 첫 렌더에서 suspend 없이 그려지는 create
+  path와의 의미 대칭이 유지된다 (naked Promise는 adoption이 마이크로태스크를 거쳐
+  동기 loader조차 Suspense fallback이 한 번 번쩍인다).
+- `onInit`은 `initInfo`를 받으므로 load 게이팅이 가능하고, v2에서는 `initInfo`
+  부재로 자연스럽게 비활성화된다(스펙 3과 일관).
 
 ## 비목표
 
@@ -65,16 +85,24 @@ core 플러그인 타입을 그대로 확장하므로 v3 훅 타입 표면은 �
   (snapshot provider나 별도 플러그인의 몫)
 - load path에서의 lazy 컴포넌트 preload — 초기화엔 보호할 전환이 없음, Suspense가 처리
 - plugin-history-sync의 load path 대응 (FEP-2001 영역)
+- **load path + SSR** — `store.init()`은 `isBrowser()`일 때만 호출되므로 서버 렌더
+  중 스냅샷이 제공되면 loader deferred가 pending으로 남는다. 스냅샷 복원은
+  본질적으로 클라이언트 시나리오이고(`initialLoaderData`를 create 전용으로 정한
+  것과 일관) 현 persister도 서버에선 스냅샷을 제공하지 않으므로 미지원으로 명시
 
 ## 테스트 계획
 
-`makeCoreStore` + `provideSnapshot` 플러그인으로 실제 load path를 구동하는 spec 추가:
+`makeCoreStore` + `provideSnapshot` 플러그인으로 실제 load path를 구동(`store.init()`
+호출 포함)하는 spec 추가:
 
 - alive activity에만 loader 실행 (죽은 activity의 loader 미실행 검증)
-- `Replaced`로 진입한 alive activity의 loaderData 장식
+- `Replaced`로 진입한 alive activity의 loaderData resolve
+- 동기 loader의 결과가 `init()` 직후 동기 inspect로 FULFILLED (suspend 없는 첫 렌더
+  보장 — create path와의 의미 대칭)
+- 죽은 activity의 deferred는 pending 유지
 - 저장된 stale loaderData 덮어쓰기 / loader 없는 activity 통과
 - load path에서 `initialLoaderData` 무시, create path에서는 기존 동작 유지
-- `initInfo` 부재 시(v2 시뮬레이션) create 동작 보존
+- `initInfo` 부재 시(v2 시뮬레이션) create 동작 보존 (deferred 미주입)
 - loader reject가 `SnapshotLoadError`로 승격되지 않음
 
 ## 릴리즈·커밋
