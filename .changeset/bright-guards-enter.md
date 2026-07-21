@@ -1,5 +1,5 @@
 ---
-"@stackflow/plugin-activity-guard": minor
+"@stackflow/plugin-activity-guard": major
 ---
 
-Add Activity entry guards with typed redirects and ordered `and` / `or` combinators. Guards apply to fresh, pushed, replaced, and redirected Activity entries while snapshot loads, reactivation, and step navigation remain unchanged.
+Package initial release; Allow programmers to restrict activity entrances via predicates called 'guards'.
