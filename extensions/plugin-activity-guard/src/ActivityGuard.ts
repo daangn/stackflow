@@ -9,7 +9,7 @@ export type GuardResolution = {
   target: {
     [ActivityName in RegisteredActivityName]: {
       activityName: ActivityName,
-      params: InferActivityParams<ActivityName>
+      activityParams: InferActivityParams<ActivityName>
     }
   }[RegisteredActivityName]
 } | true
@@ -17,7 +17,7 @@ export type GuardResolution = {
 export type ActivityGuardFor<ActivityName extends RegisteredActivityName> = (
   input: {
     activityName: ActivityName;
-    params: InferActivityParams<ActivityName>;
+    activityParams: InferActivityParams<ActivityName>;
   },
 ) => GuardResolution;
 
@@ -27,13 +27,13 @@ export type ActivityGuard = {
 
 export function redirect<ActivityName extends RegisteredActivityName>(
   activityName: ActivityName,
-  params: InferActivityParams<ActivityName>,
+  activityParams: InferActivityParams<ActivityName>,
 ): GuardResolution {
   return {
     type: 'redirect',
     target: {
       activityName,
-      params
+      activityParams
     }
   }
 }
@@ -55,7 +55,7 @@ export function all<ActivityName extends RegisteredActivityName>(...guards: NonE
 export type Target = {
   [ActivityName in RegisteredActivityName]: {
     activityName: ActivityName,
-    params: InferActivityParams<ActivityName>
+    activityParams: InferActivityParams<ActivityName>
   }
 }[RegisteredActivityName]
 

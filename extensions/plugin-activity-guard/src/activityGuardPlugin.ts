@@ -20,7 +20,7 @@ export function activityGuardPlugin({ guards }: ActivityGuardPluginOptions): Sta
           const { target, blocked } = resolveGuards(
             {
               activityName: event.activityName,
-              params: event.activityParams
+              activityParams: event.activityParams
             },
             guards
           );
@@ -29,7 +29,7 @@ export function activityGuardPlugin({ guards }: ActivityGuardPluginOptions): Sta
             nextEvents.push({
               ...event,
               activityName: target.activityName,
-              activityParams: target.params
+              activityParams: target.activityParams
             });
 
             return nextEvents;
@@ -44,23 +44,25 @@ export function activityGuardPlugin({ guards }: ActivityGuardPluginOptions): Sta
     onBeforePush({ actionParams, actions }) {
       const { target } = resolveGuards({
         activityName: actionParams.activityName,
-        params: actionParams.activityParams
+        activityParams: actionParams.activityParams
       }, guards)
 
       actions.overrideActionParams({
         ...actionParams,
-        ...target,
+        activityName: target.activityName,
+        activityParams: target.activityParams
       });
     },
     onBeforeReplace({ actionParams, actions }) {
       const { target } = resolveGuards({
         activityName: actionParams.activityName,
-        params: actionParams.activityParams
+        activityParams: actionParams.activityParams
       }, guards)
 
       actions.overrideActionParams({
         ...actionParams,
-        ...target,
+        activityName: target.activityName,
+        activityParams: target.activityParams
       });
     },
   });
