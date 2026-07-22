@@ -1,7 +1,7 @@
 import type { StackSnapshotStrategy } from "./StackSnapshotStrategy";
 
 type StrategiesMetadata<
-  Strategies extends Record<string, StackSnapshotStrategy<unknown>>,
+  Strategies extends Record<string, StackSnapshotStrategy<any>>,
 > = {
   [Key in keyof Strategies]: Strategies[Key] extends StackSnapshotStrategy<
     infer Metadata
@@ -15,13 +15,12 @@ function isMetadataRecord(
 ): metadata is Record<string, unknown> {
   return (
     typeof metadata === "object" &&
-    metadata !== null &&
-    !Array.isArray(metadata)
+    metadata !== null
   );
 }
 
 export function composeStrategies<
-  Strategies extends Record<string, StackSnapshotStrategy<unknown>>,
+  const Strategies extends Record<string, StackSnapshotStrategy<any>>,
 >(
   strategies: Strategies,
 ): StackSnapshotStrategy<StrategiesMetadata<Strategies>> {
