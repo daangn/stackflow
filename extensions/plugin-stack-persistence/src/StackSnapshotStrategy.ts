@@ -1,8 +1,8 @@
-import type { Stack, StackSnapshot } from "@stackflow/core";
+import type { StackSnapshotMetadataDefinition } from "./StackSnapshotMetadataDefinition";
 import type { StackSnapshotRecord } from "./StackSnapshotRecord";
 
 export interface StackSnapshotStrategy<Metadata> {
-  createMetadata(args: { stack: Stack; snapshot: StackSnapshot }): Metadata;
+  metadata: StackSnapshotMetadataDefinition<Metadata>;
 
   shouldReuse(args: {
     record: StackSnapshotRecord<Metadata>;
