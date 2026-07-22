@@ -1,15 +1,19 @@
 export {
   composeStrategies,
-  type StrategiesMetadata
+  type StrategiesMetadata,
 } from "./composeStrategies";
 export {
   StackSnapshotRecordLoadError,
   StackSnapshotRecordSaveError,
 } from "./errors";
-export { StackSnapshotRecord } from "./StackSnapshotRecord";
-export { StackSnapshotStorage } from "./StackSnapshotStorage";
-export { StackSnapshotStrategy } from "./StackSnapshotStrategy";
+export type {
+  Result,
+  StackSnapshotMetadataDefinition,
+} from "./StackSnapshotMetadataDefinition";
+export type { StackSnapshotRecord } from "./StackSnapshotRecord";
+export type { StackSnapshotStorage } from "./StackSnapshotStorage";
+export type { StackSnapshotStrategy } from "./StackSnapshotStrategy";
 export {
-  StackPersistencePluginOptions,
+  type StackPersistencePluginOptions,
   stackPersistencePlugin,
 } from "./stackPersistencePlugin";

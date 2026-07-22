@@ -3,11 +3,7 @@ import type { StackSnapshotStrategy } from "./StackSnapshotStrategy";
 export type StrategiesMetadata<
   Strategies extends Record<string, StackSnapshotStrategy<any>>,
 > = {
-  [Key in keyof Strategies]: Strategies[Key] extends StackSnapshotStrategy<
-    infer Metadata
-  >
-    ? Metadata
-    : never;
+  [Key in keyof Strategies]: ReturnType<Strategies[Key]["metadata"]["create"]>;
 };
 
 export function composeStrategies<
@@ -18,16 +14,43 @@ export function composeStrategies<
   const keys = Object.keys(strategies) as Array<keyof Strategies>;
 
   return {
-    createMetadata(args) {
-      return Object.fromEntries(
-        keys.map((key) => [key, strategies[key].createMetadata(args)]),
-      ) as StrategiesMetadata<Strategies>
+    metadata: {
+      create(args) {
+        return Object.fromEntries(
+          keys.map((key) => [key, strategies[key].metadata.create(args)]),
+        ) as StrategiesMetadata<Strategies>;
+      },
+      parse(data) {
+        if (data === null || typeof data !== "object") {
+          return { ok: false };
+        }
+
+        const metadata = data as Record<PropertyKey, unknown>;
+        const parsedEntries: Array<[PropertyKey, unknown]> = [];
+
+        for (const key of keys) {
+          if (!Object.hasOwn(metadata, key)) {
+            return { ok: false };
+          }
+
+          const result = strategies[key].metadata.parse(metadata[key]);
+
+          if (!result.ok) {
+            return { ok: false };
+          }
+
+          parsedEntries.push([key, result.value]);
+        }
+
+        return {
+          ok: true,
+          value: Object.fromEntries(
+            parsedEntries,
+          ) as StrategiesMetadata<Strategies>,
+        };
+      },
     },
     shouldReuse({ record, initialContext }) {
-      if (!keys.every((key) => Object.hasOwn(record.metadata, key))) {
-        return false;
-      }
-
       return keys.every((key) => {
         return strategies[key].shouldReuse({
           record: {
