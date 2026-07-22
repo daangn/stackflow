@@ -35,7 +35,11 @@ export function composeStrategies<
     },
     shouldReuse({ record, initialContext }) {
       if (!isMetadataRecord(record.metadata)) return false;
-      if (!keys.every((key) => Object.hasOwn(record.metadata, key))) {
+      if (
+        !keys.every((key) =>
+          Object.prototype.hasOwnProperty.call(record.metadata, key),
+        )
+      ) {
         return false;
       }
 
