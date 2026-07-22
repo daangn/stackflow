@@ -2,19 +2,22 @@ import type {
   ActivityDefinition,
   RegisteredActivityName,
 } from "@stackflow/config";
+import type { Stack } from "@stackflow/core";
 import type { ActivityComponentType } from "../BaseActivityComponentType";
 import type { StackflowReactPlugin } from "../StackflowReactPlugin";
 import {
   getContentComponent,
   isStructuredActivityComponent,
 } from "../StructuredActivityComponentType";
-import { isPromiseLike } from "../utils/isPromiseLike";
+import type { StackflowInput } from "../stackflow";
 import {
+  defer,
   inspect,
   PromiseStatus,
   resolve,
+  type SyncInspectableDeferred,
+  type SyncInspectablePromise,
 } from "../utils/SyncInspectablePromise";
-import type { StackflowInput } from "../stackflow";
 
 export function loaderPlugin<
   T extends ActivityDefinition<RegisteredActivityName>,
@@ -26,15 +29,111 @@ export function loaderPlugin<
   loadData: (activityName: string, activityParams: {}) => unknown,
 ): StackflowReactPlugin {
   return () => {
+    const loadPathDeferreds = new WeakMap<
+      SyncInspectablePromise<unknown>,
+      SyncInspectableDeferred<unknown>
+    >();
+
+    const resolveDeferredLoaderData = ({
+      activityName,
+      activityParams,
+      loaderData,
+    }: {
+      activityName: string;
+      activityParams: {};
+      loaderData: SyncInspectablePromise<unknown> | undefined;
+    }) => {
+      const matchActivity = input.config.activities.find(
+        (candidate) => candidate.name === activityName,
+      );
+      const deferred = loaderData
+        ? loadPathDeferreds.get(loaderData)
+        : undefined;
+
+      if (!matchActivity?.loader || !loaderData || !deferred) {
+        return;
+      }
+
+      loadPathDeferreds.delete(loaderData);
+
+      Promise.allSettled([loaderData]).then(([loaderDataPromiseResult]) => {
+        printLoaderDataPromiseError({
+          promiseResult: loaderDataPromiseResult,
+          activityName: matchActivity.name,
+        });
+      });
+
+      try {
+        deferred.resolve(loadData(activityName, activityParams));
+      } catch (error) {
+        deferred.reject(error);
+      }
+    };
+
+    const resolveRestoredStackLoaderData = (stack: Stack) => {
+      stack.activities
+        .filter((activity) => activity.transitionState !== "exit-done")
+        .forEach((activity) => {
+          resolveDeferredLoaderData({
+            activityName: activity.name,
+            activityParams: activity.params,
+            loaderData: (activity.context as any)?.loaderData,
+          });
+        });
+    };
+
+    const resolvePausedEventLoaderData = (
+      pausedEvents: Stack["pausedEvents"],
+    ) => {
+      pausedEvents?.forEach((event) => {
+        if (event.name !== "Pushed" && event.name !== "Replaced") {
+          return;
+        }
+
+        resolveDeferredLoaderData({
+          activityName: event.activityName,
+          activityParams: event.activityParams,
+          loaderData: (event.activityContext as any)?.loaderData,
+        });
+      });
+    };
+
     return {
       key: "plugin-loader",
-      overrideInitialEvents({ initialEvents, initialContext }) {
+      overrideInitialEvents({ initialEvents, initialContext, initInfo }) {
         if (initialEvents.length === 0) {
           return [];
         }
 
+        if (initInfo?.kind === "load") {
+          return initialEvents.map((event) => {
+            if (event.name !== "Pushed" && event.name !== "Replaced") {
+              return event;
+            }
+
+            const matchActivity = input.config.activities.find(
+              (activity) => activity.name === event.activityName,
+            );
+
+            if (!matchActivity?.loader) {
+              return event;
+            }
+
+            const loaderData = defer<unknown>();
+            loadPathDeferreds.set(loaderData.promise, loaderData);
+
+            return {
+              ...event,
+              activityContext: {
+                ...event.activityContext,
+                loaderData: loaderData.promise,
+              },
+            };
+          });
+        }
+
         return initialEvents.map((event) => {
-          if (event.name !== "Pushed") {
+          if (event.name !== "Pushed" && event.name !== "Replaced") {
             return event;
           }
 
@@ -78,6 +177,15 @@ export function loaderPlugin<
           };
         });
       },
+      onInit({ actions, initInfo }) {
+        if (initInfo?.kind !== "load") {
+          return;
+        }
+
+        const stack = actions.getStack();
+        resolveRestoredStackLoaderData(stack);
+        resolvePausedEventLoaderData(stack.pausedEvents);
+      },
       onBeforePush: createBeforeRouteHandler(input, loadData),
       onBeforeReplace: createBeforeRouteHandler(input, loadData),
     };
@@ -88,6 +196,7 @@ type OnBeforeRoute = NonNullable<
   | ReturnType<StackflowReactPlugin>["onBeforePush"]
   | ReturnType<StackflowReactPlugin>["onBeforeReplace"]
 >;
+
 function createBeforeRouteHandler<
   T extends ActivityDefinition<RegisteredActivityName>,
   R extends {
