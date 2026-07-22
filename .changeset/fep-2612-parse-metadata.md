@@ -1,5 +1,5 @@
 ---
-"@stackflow/plugin-stack-persistence": minor
+"@stackflow/plugin-stack-persistence": major
 ---
 
-Parse unknown persisted metadata before reuse with reusable metadata definitions. `StackSnapshotStrategy` now exposes `metadata.create` and `metadata.parse`, storage loads unknown metadata, and composed strategies persist and validate schema/version envelopes.
+`StackSnapshotStrategy` now exposes `metadata.create` and `metadata.parse`, storage loads unknown metadata, and composed strategies persist and validate schema/version envelopes.
