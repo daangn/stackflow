@@ -2,7 +2,7 @@ import type {
   ActivityDefinition,
   RegisteredActivityName,
 } from "@stackflow/config";
-import { aggregate, makeEvent, type Stack } from "@stackflow/core";
+import type { Stack } from "@stackflow/core";
 import type { ActivityComponentType } from "../BaseActivityComponentType";
 import type { StackflowReactPlugin } from "../StackflowReactPlugin";
 import {
@@ -34,44 +34,68 @@ export function loaderPlugin<
       SyncInspectableDeferred<unknown>
     >();
 
-    const resolveLoadPathLoaderData = (stack: Stack) => {
+    const resolveDeferredLoaderData = ({
+      activityName,
+      activityParams,
+      loaderData,
+    }: {
+      activityName: string;
+      activityParams: {};
+      loaderData: SyncInspectablePromise<unknown> | undefined;
+    }) => {
+      const matchActivity = input.config.activities.find(
+        (candidate) => candidate.name === activityName,
+      );
+      const deferred = loaderData
+        ? loadPathDeferreds.get(loaderData)
+        : undefined;
+
+      if (!matchActivity?.loader || !loaderData || !deferred) {
+        return;
+      }
+
+      loadPathDeferreds.delete(loaderData);
+
+      Promise.allSettled([loaderData]).then(([loaderDataPromiseResult]) => {
+        printLoaderDataPromiseError({
+          promiseResult: loaderDataPromiseResult,
+          activityName: matchActivity.name,
+        });
+      });
+
+      try {
+        deferred.resolve(loadData(activityName, activityParams));
+      } catch (error) {
+        deferred.reject(error);
+      }
+    };
+
+    const resolveRestoredStackLoaderData = (stack: Stack) => {
       stack.activities
         .filter((activity) => activity.transitionState !== "exit-done")
         .forEach((activity) => {
-          const matchActivity = input.config.activities.find(
-            (candidate) => candidate.name === activity.name,
-          );
-
-          if (!matchActivity?.loader) {
-            return;
-          }
-
-          const loaderData = (activity.context as any)?.loaderData as
-            | SyncInspectablePromise<unknown>
-            | undefined;
-          const deferred = loaderData
-            ? loadPathDeferreds.get(loaderData)
-            : undefined;
-
-          if (!loaderData || !deferred) {
-            return;
-          }
-
-          loadPathDeferreds.delete(loaderData);
-
-          Promise.allSettled([loaderData]).then(([loaderDataPromiseResult]) => {
-            printLoaderDataPromiseError({
-              promiseResult: loaderDataPromiseResult,
-              activityName: matchActivity.name,
-            });
+          resolveDeferredLoaderData({
+            activityName: activity.name,
+            activityParams: activity.params,
+            loaderData: (activity.context as any)?.loaderData,
           });
-
-          try {
-            deferred.resolve(loadData(activity.name, activity.params));
-          } catch (error) {
-            deferred.reject(error);
-          }
         });
+    };
+
+    const resolvePausedEventLoaderData = (
+      pausedEvents: Stack["pausedEvents"],
+    ) => {
+      pausedEvents?.forEach((event) => {
+        if (event.name !== "Pushed" && event.name !== "Replaced") {
+          return;
+        }
+
+        resolveDeferredLoaderData({
+          activityName: event.activityName,
+          activityParams: event.activityParams,
+          loaderData: (event.activityContext as any)?.loaderData,
+        });
+      });
     };
 
     return {
@@ -158,9 +182,9 @@ export function loaderPlugin<
           return;
         }
 
-        replayPausedEventStages(actions.getStack())
-          .reverse()
-          .forEach(resolveLoadPathLoaderData);
+        const stack = actions.getStack();
+        resolveRestoredStackLoaderData(stack);
+        resolvePausedEventLoaderData(stack.pausedEvents);
       },
       onBeforePush: createBeforeRouteHandler(input, loadData),
       onBeforeReplace: createBeforeRouteHandler(input, loadData),
@@ -172,35 +196,6 @@ type OnBeforeRoute = NonNullable<
   | ReturnType<StackflowReactPlugin>["onBeforePush"]
   | ReturnType<StackflowReactPlugin>["onBeforeReplace"]
 >;
-
-/**
- * A paused snapshot can hide entry events from the current activity list.
- * Their loader data must be ready before a later resume makes them renderable,
- * without changing the restored pause state during initialization.
- */
-function replayPausedEventStages(stack: Stack): Stack[] {
-  const stages = [stack];
-
-  if (!stack.pausedEvents?.length) {
-    return stages;
-  }
-
-  const events = [...stack.events, ...stack.pausedEvents];
-  let replayedStack = stack;
-  let resumedAt = events.reduce(
-    (latestEventDate, event) => Math.max(latestEventDate, event.eventDate),
-    Date.now(),
-  );
-
-  while (replayedStack.pausedEvents?.length) {
-    resumedAt += 1;
-    events.push(makeEvent("Resumed", { eventDate: resumedAt }));
-    replayedStack = aggregate(events, resumedAt);
-    stages.push(replayedStack);
-  }
-
-  return stages;
-}
 
 function createBeforeRouteHandler<
   T extends ActivityDefinition<RegisteredActivityName>,
