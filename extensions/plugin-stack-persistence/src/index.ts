@@ -1,6 +1,10 @@
 export {
+  composeStrategies,
+  type StrategiesMetadata
+} from "./composeStrategies";
+export {
+  StackSnapshotRecordLoadError,
   StackSnapshotRecordSaveError,
-  StackSnapshotRecordLoadError
 } from "./errors";
 export { StackSnapshotRecord } from "./StackSnapshotRecord";
 export { StackSnapshotStorage } from "./StackSnapshotStorage";
