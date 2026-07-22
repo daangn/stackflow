@@ -1,4 +1,8 @@
-export { composeStrategies } from "./composeStrategies";
+export {
+  composeStrategies,
+  type ComposedStrategyMetadata,
+  type StrategiesMetadata
+} from "./composeStrategies";
 export {
   StackSnapshotRecordLoadError,
   StackSnapshotRecordSaveError,

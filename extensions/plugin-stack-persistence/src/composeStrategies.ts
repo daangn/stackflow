@@ -1,6 +1,6 @@
 import type { StackSnapshotStrategy } from "./StackSnapshotStrategy";
 
-type StrategiesMetadata<
+export type StrategiesMetadata<
   Strategies extends Record<string, StackSnapshotStrategy<any>>,
 > = {
   [Key in keyof Strategies]: Strategies[Key] extends StackSnapshotStrategy<
@@ -10,30 +10,40 @@ type StrategiesMetadata<
     : never;
 };
 
-function isMetadataRecord(
+function isComposedStrategyMetadata<Metadata>(
   metadata: unknown,
-): metadata is Record<string, unknown> {
+): metadata is ComposedStrategyMetadata<Metadata> {
   return (
     typeof metadata === "object" &&
-    metadata !== null
+    metadata !== null &&
+    'key' in metadata &&
+    metadata['key'] === 'composed-strategy-metadata-v1'
   );
+}
+
+export interface ComposedStrategyMetadata<Metadata> {
+  key: 'composed-strategy-metadata-v1'
+  composed: Metadata;
 }
 
 export function composeStrategies<
   const Strategies extends Record<string, StackSnapshotStrategy<any>>,
 >(
   strategies: Strategies,
-): StackSnapshotStrategy<StrategiesMetadata<Strategies>> {
+): StackSnapshotStrategy<ComposedStrategyMetadata<StrategiesMetadata<Strategies>>> {
   const keys = Object.keys(strategies) as Array<keyof Strategies>;
 
   return {
     createMetadata(args) {
-      return Object.fromEntries(
-        keys.map((key) => [key, strategies[key].createMetadata(args)]),
-      ) as StrategiesMetadata<Strategies>;
+      return {
+        key: 'composed-strategy-metadata-v1',
+        composed: Object.fromEntries(
+          keys.map((key) => [key, strategies[key].createMetadata(args)]),
+        ) as StrategiesMetadata<Strategies>
+      }
     },
     shouldReuse({ record, initialContext }) {
-      if (!isMetadataRecord(record.metadata)) return false;
+      if (!isComposedStrategyMetadata(record.metadata)) return false;
       if (!keys.every((key) => Object.hasOwn(record.metadata, key))) {
         return false;
       }
@@ -42,7 +52,7 @@ export function composeStrategies<
         return strategies[key].shouldReuse({
           record: {
             ...record,
-            metadata: record.metadata[key],
+            metadata: record.metadata.composed[key],
           },
           initialContext,
         });
