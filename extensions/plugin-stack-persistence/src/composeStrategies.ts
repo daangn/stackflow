@@ -1,9 +1,20 @@
 import type { StackSnapshotStrategy } from "./StackSnapshotStrategy";
 
-export type StrategiesMetadata<
+const COMPOSED_METADATA_SCHEMA = "stackflow.compose-strategies";
+const COMPOSED_METADATA_VERSION = 1;
+
+type StrategiesMetadataData<
   Strategies extends Record<string, StackSnapshotStrategy<any>>,
 > = {
   [Key in keyof Strategies]: ReturnType<Strategies[Key]["metadata"]["create"]>;
+};
+
+export type StrategiesMetadata<
+  Strategies extends Record<string, StackSnapshotStrategy<any>>,
+> = {
+  readonly schema: typeof COMPOSED_METADATA_SCHEMA;
+  readonly version: typeof COMPOSED_METADATA_VERSION;
+  readonly data: StrategiesMetadataData<Strategies>;
 };
 
 export function composeStrategies<
@@ -16,9 +27,13 @@ export function composeStrategies<
   return {
     metadata: {
       create(args) {
-        return Object.fromEntries(
-          keys.map((key) => [key, strategies[key].metadata.create(args)]),
-        ) as StrategiesMetadata<Strategies>;
+        return {
+          schema: COMPOSED_METADATA_SCHEMA,
+          version: COMPOSED_METADATA_VERSION,
+          data: Object.fromEntries(
+            keys.map((key) => [key, strategies[key].metadata.create(args)]),
+          ),
+        } as StrategiesMetadata<Strategies>;
       },
       parse(data) {
         if (data === null || typeof data !== "object") {
@@ -26,14 +41,32 @@ export function composeStrategies<
         }
 
         const metadata = data as Record<PropertyKey, unknown>;
+
+        if (
+          !Object.hasOwn(metadata, "schema") ||
+          !Object.hasOwn(metadata, "version") ||
+          !Object.hasOwn(metadata, "data") ||
+          metadata.schema !== COMPOSED_METADATA_SCHEMA ||
+          metadata.version !== COMPOSED_METADATA_VERSION ||
+          metadata.data === null ||
+          typeof metadata.data !== "object"
+        ) {
+          return { ok: false };
+        }
+
+        const metadataData = metadata.data as Record<PropertyKey, unknown>;
+
+        if (
+          Object.keys(metadataData).length !== keys.length ||
+          !keys.every((key) => Object.hasOwn(metadataData, key))
+        ) {
+          return { ok: false };
+        }
+
         const parsedEntries: Array<[PropertyKey, unknown]> = [];
 
         for (const key of keys) {
-          if (!Object.hasOwn(metadata, key)) {
-            return { ok: false };
-          }
-
-          const result = strategies[key].metadata.parse(metadata[key]);
+          const result = strategies[key].metadata.parse(metadataData[key]);
 
           if (!result.ok) {
             return { ok: false };
@@ -44,9 +77,11 @@ export function composeStrategies<
 
         return {
           ok: true,
-          value: Object.fromEntries(
-            parsedEntries,
-          ) as StrategiesMetadata<Strategies>,
+          value: {
+            schema: COMPOSED_METADATA_SCHEMA,
+            version: COMPOSED_METADATA_VERSION,
+            data: Object.fromEntries(parsedEntries),
+          } as StrategiesMetadata<Strategies>,
         };
       },
     },
@@ -55,7 +90,7 @@ export function composeStrategies<
         return strategies[key].shouldReuse({
           record: {
             ...record,
-            metadata: record.metadata[key],
+            metadata: record.metadata.data[key],
           },
           initialContext,
         });
