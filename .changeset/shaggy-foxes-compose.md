@@ -2,4 +2,4 @@
 "@stackflow/plugin-stack-persistence": minor
 ---
 
-Add `composeStrategies` to combine keyed snapshot metadata reuse strategies.
+Add `composeStrategies` to combine multiple strategies into one.
