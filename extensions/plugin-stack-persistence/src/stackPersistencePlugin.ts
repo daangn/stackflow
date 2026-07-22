@@ -30,8 +30,10 @@ export function stackPersistencePlugin<Metadata>(
         snapshot,
         metadata
       }).catch(error => {
-        if (onRecordSaveError) return onRecordSaveError(error);
-        else throw error;
+        const saveError = new StackSnapshotRecordSaveError(error);
+
+        if (onRecordSaveError) return onRecordSaveError(saveError);
+        else throw saveError;
       });
     }
 
