@@ -10,19 +10,9 @@ export type StrategiesMetadata<
     : never;
 };
 
-function isComposedStrategyMetadata<Metadata>(
-  metadata: unknown,
-): metadata is ComposedStrategyMetadata<Metadata> {
-  return (
-    typeof metadata === "object" &&
-    metadata !== null &&
-    'key' in metadata &&
-    metadata['key'] === 'composed-strategy-metadata-v1'
-  );
-}
-
-export interface ComposedStrategyMetadata<Metadata> {
-  key: 'composed-strategy-metadata-v1'
+export interface ComposeStrategiesMetadata<Metadata> {
+  schema: 'compose-strategy',
+  version: 1,
   composed: Metadata;
 }
 
@@ -30,21 +20,21 @@ export function composeStrategies<
   const Strategies extends Record<string, StackSnapshotStrategy<any>>,
 >(
   strategies: Strategies,
-): StackSnapshotStrategy<ComposedStrategyMetadata<StrategiesMetadata<Strategies>>> {
+): StackSnapshotStrategy<ComposeStrategiesMetadata<StrategiesMetadata<Strategies>>> {
   const keys = Object.keys(strategies) as Array<keyof Strategies>;
 
   return {
     createMetadata(args) {
       return {
-        key: 'composed-strategy-metadata-v1',
+        schema: 'compose-strategy',
+        version: 1,
         composed: Object.fromEntries(
           keys.map((key) => [key, strategies[key].createMetadata(args)]),
         ) as StrategiesMetadata<Strategies>
       }
     },
     shouldReuse({ record, initialContext }) {
-      if (!isComposedStrategyMetadata(record.metadata)) return false;
-      if (!keys.every((key) => Object.hasOwn(record.metadata, key))) {
+      if (!keys.every((key) => Object.hasOwn(record.metadata.composed, key))) {
         return false;
       }
 
