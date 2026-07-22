@@ -2,6 +2,7 @@ import type {
   ActivityDefinition,
   RegisteredActivityName,
 } from "@stackflow/config";
+import { aggregate, makeEvent, type Stack } from "@stackflow/core";
 import type { ActivityComponentType } from "../BaseActivityComponentType";
 import type { StackflowReactPlugin } from "../StackflowReactPlugin";
 import {
@@ -33,12 +34,9 @@ export function loaderPlugin<
       SyncInspectableDeferred<unknown>
     >();
 
-    const resolveLoadPathLoaderData = (actions: LoaderPluginActions) => {
-      actions
-        .getStack()
-        .activities.filter(
-          (activity) => activity.transitionState !== "exit-done",
-        )
+    const resolveLoadPathLoaderData = (stack: Stack) => {
+      stack.activities
+        .filter((activity) => activity.transitionState !== "exit-done")
         .forEach((activity) => {
           const matchActivity = input.config.activities.find(
             (candidate) => candidate.name === activity.name,
@@ -160,16 +158,9 @@ export function loaderPlugin<
           return;
         }
 
-        resolveLoadPathLoaderData(actions);
-      },
-      onResumed({ actions }) {
-        resolveLoadPathLoaderData(actions);
-      },
-      onPushed({ actions }) {
-        resolveLoadPathLoaderData(actions);
-      },
-      onReplaced({ actions }) {
-        resolveLoadPathLoaderData(actions);
+        replayPausedEventStages(actions.getStack())
+          .reverse()
+          .forEach(resolveLoadPathLoaderData);
       },
       onBeforePush: createBeforeRouteHandler(input, loadData),
       onBeforeReplace: createBeforeRouteHandler(input, loadData),
@@ -181,9 +172,35 @@ type OnBeforeRoute = NonNullable<
   | ReturnType<StackflowReactPlugin>["onBeforePush"]
   | ReturnType<StackflowReactPlugin>["onBeforeReplace"]
 >;
-type LoaderPluginActions = Parameters<
-  NonNullable<ReturnType<StackflowReactPlugin>["onInit"]>
->[0]["actions"];
+
+/**
+ * A paused snapshot can hide entry events from the current activity list.
+ * Their loader data must be ready before a later resume makes them renderable,
+ * without changing the restored pause state during initialization.
+ */
+function replayPausedEventStages(stack: Stack): Stack[] {
+  const stages = [stack];
+
+  if (!stack.pausedEvents?.length) {
+    return stages;
+  }
+
+  const events = [...stack.events, ...stack.pausedEvents];
+  let replayedStack = stack;
+  let resumedAt = events.reduce(
+    (latestEventDate, event) => Math.max(latestEventDate, event.eventDate),
+    Date.now(),
+  );
+
+  while (replayedStack.pausedEvents?.length) {
+    resumedAt += 1;
+    events.push(makeEvent("Resumed", { eventDate: resumedAt }));
+    replayedStack = aggregate(events, resumedAt);
+    stages.push(replayedStack);
+  }
+
+  return stages;
+}
 
 function createBeforeRouteHandler<
   T extends ActivityDefinition<RegisteredActivityName>,
