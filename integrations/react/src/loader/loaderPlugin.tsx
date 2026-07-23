@@ -18,6 +18,7 @@ import {
   type SyncInspectableDeferred,
   type SyncInspectablePromise,
 } from "../utils/SyncInspectablePromise";
+import { LoaderDataProvider } from "./LoaderDataContext";
 
 export function loaderPlugin<
   T extends ActivityDefinition<RegisteredActivityName>,
@@ -29,32 +30,94 @@ export function loaderPlugin<
   loadData: (activityName: string, activityParams: {}) => unknown,
 ): StackflowReactPlugin {
   return () => {
-    const loadPathDeferreds = new WeakMap<
-      SyncInspectablePromise<unknown>,
+    const loaderDataByEventId = new Map<
+      string,
+      SyncInspectablePromise<unknown>
+    >();
+    const runtimeLoaderDataByActivityId = new Map<
+      string,
+      SyncInspectablePromise<unknown>
+    >();
+    const loadPathDeferreds = new Map<
+      string,
       SyncInspectableDeferred<unknown>
     >();
 
+    const deleteLoaderData = (eventId: string) => {
+      loaderDataByEventId.delete(eventId);
+      loadPathDeferreds.delete(eventId);
+    };
+
+    const cleanupLoaderData = (stack: Stack) => {
+      const retainedEventIds = new Set(
+        stack.activities
+          .filter((activity) => activity.transitionState !== "exit-done")
+          .map((activity) => activity.enteredBy.id),
+      );
+
+      stack.pausedEvents?.forEach((event) => {
+        if (event.name === "Pushed" || event.name === "Replaced") {
+          retainedEventIds.add(event.id);
+        }
+      });
+
+      loaderDataByEventId.forEach((_, eventId) => {
+        if (!retainedEventIds.has(eventId)) {
+          deleteLoaderData(eventId);
+        }
+      });
+    };
+
+    const promoteRuntimeLoaderData = (stack: Stack) => {
+      const promote = (activityId: string, eventId: string) => {
+        if (loaderDataByEventId.has(eventId)) {
+          return;
+        }
+
+        const loaderData = runtimeLoaderDataByActivityId.get(activityId);
+        if (!loaderData) {
+          return;
+        }
+
+        loaderDataByEventId.set(eventId, loaderData);
+        runtimeLoaderDataByActivityId.delete(activityId);
+      };
+
+      // A paused replacement may reuse the current activity ID, so the staged
+      // value belongs to the newest queued generation rather than its predecessor.
+      stack.pausedEvents
+        ?.slice()
+        .reverse()
+        .forEach((event) => {
+          if (event.name === "Pushed" || event.name === "Replaced") {
+            promote(event.activityId, event.id);
+          }
+        });
+      stack.activities.forEach((activity) => {
+        promote(activity.id, activity.enteredBy.id);
+      });
+    };
+
     const resolveDeferredLoaderData = ({
+      eventId,
       activityName,
       activityParams,
-      loaderData,
     }: {
+      eventId: string;
       activityName: string;
       activityParams: {};
-      loaderData: SyncInspectablePromise<unknown> | undefined;
     }) => {
       const matchActivity = input.config.activities.find(
         (candidate) => candidate.name === activityName,
       );
-      const deferred = loaderData
-        ? loadPathDeferreds.get(loaderData)
-        : undefined;
+      const loaderData = loaderDataByEventId.get(eventId);
+      const deferred = loadPathDeferreds.get(eventId);
 
       if (!matchActivity?.loader || !loaderData || !deferred) {
         return;
       }
 
-      loadPathDeferreds.delete(loaderData);
+      loadPathDeferreds.delete(eventId);
 
       Promise.allSettled([loaderData]).then(([loaderDataPromiseResult]) => {
         printLoaderDataPromiseError({
@@ -75,9 +138,9 @@ export function loaderPlugin<
         .filter((activity) => activity.transitionState !== "exit-done")
         .forEach((activity) => {
           resolveDeferredLoaderData({
+            eventId: activity.enteredBy.id,
             activityName: activity.name,
             activityParams: activity.params,
-            loaderData: (activity.context as any)?.loaderData,
           });
         });
     };
@@ -91,16 +154,32 @@ export function loaderPlugin<
         }
 
         resolveDeferredLoaderData({
+          eventId: event.id,
           activityName: event.activityName,
           activityParams: event.activityParams,
-          loaderData: (event.activityContext as any)?.loaderData,
         });
       });
     };
 
     return {
       key: "plugin-loader",
+      wrapActivity({ activity }) {
+        return (
+          <LoaderDataProvider
+            value={
+              loaderDataByEventId.get(activity.enteredBy.id) ??
+              runtimeLoaderDataByActivityId.get(activity.id)
+            }
+          >
+            {activity.render()}
+          </LoaderDataProvider>
+        );
+      },
       overrideInitialEvents({ initialEvents, initialContext, initInfo }) {
+        loaderDataByEventId.clear();
+        runtimeLoaderDataByActivityId.clear();
+        loadPathDeferreds.clear();
+
         if (initialEvents.length === 0) {
           return [];
         }
@@ -120,15 +199,10 @@ export function loaderPlugin<
             }
 
             const loaderData = defer<unknown>();
-            loadPathDeferreds.set(loaderData.promise, loaderData);
+            loaderDataByEventId.set(event.id, loaderData.promise);
+            loadPathDeferreds.set(event.id, loaderData);
 
-            return {
-              ...event,
-              activityContext: {
-                ...event.activityContext,
-                loaderData: loaderData.promise,
-              },
-            };
+            return event;
           });
         }
 
@@ -138,13 +212,11 @@ export function loaderPlugin<
           }
 
           if (initialContext.initialLoaderData) {
-            return {
-              ...event,
-              activityContext: {
-                ...event.activityContext,
-                loaderData: resolve(initialContext.initialLoaderData),
-              },
-            };
+            loaderDataByEventId.set(
+              event.id,
+              resolve(initialContext.initialLoaderData),
+            );
+            return event;
           }
 
           const { activityName, activityParams } = event;
@@ -168,26 +240,35 @@ export function loaderPlugin<
             });
           });
 
-          return {
-            ...event,
-            activityContext: {
-              ...event.activityContext,
-              loaderData,
-            },
-          };
+          loaderDataByEventId.set(event.id, loaderData);
+          return event;
         });
       },
       onInit({ actions, initInfo }) {
-        if (initInfo?.kind !== "load") {
-          return;
+        const stack = actions.getStack();
+
+        if (initInfo?.kind === "load") {
+          resolveRestoredStackLoaderData(stack);
+          resolvePausedEventLoaderData(stack.pausedEvents);
         }
 
-        const stack = actions.getStack();
-        resolveRestoredStackLoaderData(stack);
-        resolvePausedEventLoaderData(stack.pausedEvents);
+        cleanupLoaderData(stack);
       },
-      onBeforePush: createBeforeRouteHandler(input, loadData),
-      onBeforeReplace: createBeforeRouteHandler(input, loadData),
+      onChanged({ actions }) {
+        const stack = actions.getStack();
+        promoteRuntimeLoaderData(stack);
+        cleanupLoaderData(stack);
+      },
+      onBeforePush: createBeforeRouteHandler({
+        input,
+        loadData,
+        runtimeLoaderDataByActivityId,
+      }),
+      onBeforeReplace: createBeforeRouteHandler({
+        input,
+        loadData,
+        runtimeLoaderDataByActivityId,
+      }),
     };
   };
 }
@@ -202,15 +283,18 @@ function createBeforeRouteHandler<
   R extends {
     [activityName in RegisteredActivityName]: ActivityComponentType<any>;
   },
->(
-  input: StackflowInput<T, R>,
-  loadData: (activityName: string, activityParams: {}) => unknown,
-): OnBeforeRoute {
-  return ({
-    actionParams,
-    actions: { overrideActionParams, pause, resume },
-  }) => {
-    const { activityName, activityParams, activityContext } = actionParams;
+>({
+  input,
+  loadData,
+  runtimeLoaderDataByActivityId,
+}: {
+  input: StackflowInput<T, R>;
+  loadData: (activityName: string, activityParams: {}) => unknown;
+  runtimeLoaderDataByActivityId: Map<string, SyncInspectablePromise<unknown>>;
+}): OnBeforeRoute {
+  return ({ actionParams, actions }) => {
+    const { activityId, activityName, activityParams, activityContext } =
+      actionParams;
 
     const matchActivity = input.config.activities.find(
       (activity) => activity.name === activityName,
@@ -241,7 +325,7 @@ function createBeforeRouteHandler<
       (shouldRenderImmediately !== true ||
         "loading" in matchActivityComponent === false)
     ) {
-      pause();
+      actions.pause();
 
       Promise.allSettled([loaderData, lazyComponentPromise])
         .then(([loaderDataPromiseResult, lazyComponentPromiseResult]) => {
@@ -255,17 +339,23 @@ function createBeforeRouteHandler<
           });
         })
         .finally(() => {
-          resume();
+          actions.resume();
         });
     }
 
-    overrideActionParams({
-      ...actionParams,
-      activityContext: {
-        ...activityContext,
-        loaderData,
-      },
-    });
+    if (loaderData) {
+      // Stage after a possible pause so that pause's own change notification
+      // cannot associate a same-ID replacement with the current generation.
+      runtimeLoaderDataByActivityId.set(activityId, loaderData);
+
+      Promise.resolve().then(() => {
+        // Core route dispatch is synchronous. A value that was not promoted by
+        // the next microtask belongs to an action that never reached the stack.
+        if (runtimeLoaderDataByActivityId.get(activityId) === loaderData) {
+          runtimeLoaderDataByActivityId.delete(activityId);
+        }
+      });
+    }
   };
 }
 
