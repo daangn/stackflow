@@ -61,15 +61,7 @@ export function stackPersistencePlugin<Metadata>({
 
         if (!record) return null;
 
-        let parsedMetadata: ReturnType<typeof strategy.metadata.parse>;
-
-        try {
-          parsedMetadata = strategy.metadata.parse(record.metadata);
-        } catch (detail) {
-          onRecordLoadError?.(new StackSnapshotMetadataParseError(detail));
-
-          return null;
-        }
+        const parsedMetadata = strategy.metadata.parse(record.metadata);
 
         if (!parsedMetadata.ok) {
           onRecordLoadError?.(
@@ -84,17 +76,11 @@ export function stackPersistencePlugin<Metadata>({
           metadata: parsedMetadata.value,
         };
 
-        try {
-          if (!strategy.shouldReuse({ record: parsedRecord, initialContext })) {
-            return null;
-          }
-
-          return parsedRecord.snapshot;
-        } catch (error) {
-          onRecordLoadError?.(new StackSnapshotRecordLoadError(error));
-
+        if (!strategy.shouldReuse({ record: parsedRecord, initialContext })) {
           return null;
         }
+
+        return parsedRecord.snapshot;
       },
       onLoadError(...args) {
         return onLoadError?.(...args) ?? { policy: "recover" };
