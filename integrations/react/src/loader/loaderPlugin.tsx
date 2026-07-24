@@ -207,7 +207,7 @@ function createBeforeRouteHandler<
   loadData: (activityName: string, activityParams: {}) => unknown,
 ): OnBeforeRoute {
   return ({ actionParams, actions }) => {
-    if (typeof actions.isPrevented === "function" && actions.isPrevented()) {
+    if (actions.isPrevented()) {
       return;
     }
 

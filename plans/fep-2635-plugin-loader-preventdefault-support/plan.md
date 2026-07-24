@@ -3,7 +3,7 @@
 - 이슈: [FEP-2635](https://linear.app/daangn/issue/FEP-2635)
   — `plugin-loader`가 preventDefault된 push/replace의 loader와 lazy preload를 실행하고
   Stack을 pause함
-- 상태: 스펙 확정 (2026-07-24, 인터뷰 완료)
+- 상태: 구현 리뷰 반영 (2026-07-24)
 
 ## 목표
 
@@ -19,7 +19,7 @@ React 내장 `plugin-loader`가 해당 action을 관찰만 하고 다음 작업�
 
 동시에 `preventDefault()` 이후에도 남은 pre-effect hook은 plugin 순서대로 계속
 실행한다. 이번 수정은 hook pipeline을 중단하는 변경이 아니라, 각 hook이 현재 action의
-예방 상태를 판별할 수 있게 하는 변경이다.
+취소 상태를 판별할 수 있게 하는 변경이다.
 
 ## 현재 동작의 근거
 
@@ -30,11 +30,11 @@ React 내장 `plugin-loader`가 해당 action을 관찰만 하고 다음 작업�
   `preventDefault()`가 호출되면 `true`가 되지만, `core/src/utils/triggerPreEffectHooks.ts:41`
   의 plugin 순회는 계속된다.
 - `core/src/utils/makeActions.ts:20`과 `core/src/utils/makeActions.ts:34`는 모든
-  pre-effect hook이 반환된 뒤에야 예방 상태를 확인하고 push/replace dispatch를
+  pre-effect hook이 반환된 뒤에야 취소 상태를 확인하고 push/replace dispatch를
   생략한다.
 - `integrations/react/src/loader/loaderPlugin.tsx:224`부터 loader와 lazy preload를
   먼저 실행하고, pending이면 `integrations/react/src/loader/loaderPlugin.tsx:244`에서
-  Stack을 pause한다. 이 hook에는 현재 예방 상태를 읽을 방법이 없다.
+  Stack을 pause한다. 이 hook에는 현재 취소 상태를 읽을 방법이 없다.
 - `extensions/plugin-blocker/src/blockerPlugin.spec.tsx:1987`의 기존 계약 테스트는
   blocker 뒤의 플러그인도 예방된 push의 `onBeforePush`를 받는다고 명시한다.
 
@@ -43,9 +43,9 @@ React 내장 `plugin-loader`가 해당 action을 관찰만 하고 다음 작업�
 1. **Prevented Action의 의미를 유지한다.**
    `preventDefault()`는 기본 domain event dispatch를 취소하지만 pre-effect hook
    pipeline을 중단하지 않는다.
-2. **모든 pre-effect hook이 예방 상태를 읽을 수 있다.**
+2. **모든 pre-effect hook이 취소 상태를 읽을 수 있다.**
    공통 hook action API에 `actions.isPrevented(): boolean`을 추가한다.
-3. **예방 상태는 action-local이며 live하다.**
+3. **취소 상태는 action-local이며 live하다.**
    같은 hook에서 `preventDefault()`를 호출한 직후에는 `true`를 반환하고, 중첩 action은
    바깥 action과 독립된 상태를 가진다.
 4. **loader는 이미 예방된 action에서 즉시 종료한다.**
@@ -62,7 +62,7 @@ React 내장 `plugin-loader`가 해당 action을 관찰만 하고 다음 작업�
 
 ## 구현 계획
 
-### 1. Core에 action-local 예방 상태 조회 API 추가
+### 1. Core에 action-local 취소 상태 조회 API 추가
 
 대상:
 
@@ -73,7 +73,7 @@ React 내장 `plugin-loader`가 해당 action을 관찰만 하고 다음 작업�
 
 - `StackflowPluginPreEffectHook<T>`의 `actions`에
   `isPrevented: () => boolean`을 추가한다.
-- `triggerPreEffectHook()`가 이미 소유한 action-local 예방 상태를 읽는 closure를 모든
+- `triggerPreEffectHook()`가 이미 소유한 action-local 취소 상태를 읽는 closure를 모든
   pre-effect hook에 전달한다.
 - closure는 현재 hook 호출 시점의 snapshot이 아니라 현재 action invocation의 live
   값을 반환하게 한다.
@@ -88,14 +88,12 @@ React 내장 `plugin-loader`가 해당 action을 관찰만 하고 다음 작업�
 
 작업:
 
-- `createBeforeRouteHandler()`가 받은 hook action에서 예방 상태를 가장 먼저 확인한다.
+- `createBeforeRouteHandler()`가 받은 hook action에서 취소 상태를 가장 먼저 확인한다.
 - 이미 예방됐다면 loader/preload/pause/override 경로에 진입하지 않고 반환한다.
 - 내장 loader의 등록 순서는 바꾸지 않는다. 마지막에 실행되어야 앞선 사용자 플러그인이
-  만든 최종 예방 상태와 action param override를 모두 볼 수 있다.
-- `@stackflow/react`의 현재 Core peer 범위(`^2.0.0 || ^3.0.0`)는 유지한다.
-  구버전 Core 런타임에는 조회 함수가 없을 수 있으므로 capability를 방어적으로 확인한다.
-  새 예방 계약은 이 API를 제공하는 Core와 React 버전을 함께 사용할 때 활성화되며,
-  구버전 Core에서 정상 navigation이 깨지도록 만들지 않는다.
+  만든 최종 취소 상태와 action param override를 모두 볼 수 있다.
+- `@stackflow/react`의 Core peer 범위를 `^3.0.0`으로 올리고 새 API를 직접 사용한다.
+  새 예방 계약은 Core와 React를 함께 갱신할 때 활성화된다.
 
 ### 3. 공개 plugin API 문서 갱신
 
@@ -114,15 +112,15 @@ React 내장 `plugin-loader`가 해당 action을 관찰만 하고 다음 작업�
 
 대상:
 
-- `.changeset/<generated-name>.md`
+- `.changeset/fep-2635-observe-prevented-actions.md`
+- `.changeset/fep-2635-skip-prevented-loader-work.md`
 
 작업:
 
 - `@stackflow/core`: **minor** — 공개 pre-effect hook API 추가.
 - `@stackflow/react`: **patch** — Prevented Action에서 loader의 작업과 Stack pause를
-  시작하던 버그 수정.
-- 두 패키지를 함께 갱신해야 새 예방 상태 전달 계약이 완성된다는 점을 changeset 본문에
-  드러낸다.
+  시작하던 버그 수정 및 Core v3 peer 계약 반영.
+- 패키지별 릴리즈 내용을 독립된 changeset으로 기록한다.
 
 ## 검증 계획
 
@@ -170,7 +168,7 @@ throwaway harness로 push와 replace를 각각 확인한다.
 - plugin 등록 순서 변경
 - loader, lazy component, Suspense 또는 immediate-render 정책 변경
 - `plugin-blocker` 구현이나 테스트 변경
-- 구버전 Core에 새 예방 상태 조회 기능을 역으로 주입하는 compatibility shim
+- 구버전 Core 호환을 위한 capability check나 compatibility shim
 
 ## 산출물과 커밋 경계
 
