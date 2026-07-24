@@ -30,6 +30,8 @@ export function loaderPlugin<
   loadData: (activityName: string, activityParams: {}) => unknown,
 ): StackflowReactPlugin {
   return () => {
+    // React may still render an older deferred stack after core advances, so
+    // entered generations remain available until this plugin instance is released.
     const loaderDataByEventId = new Map<
       string,
       SyncInspectablePromise<unknown>
@@ -42,31 +44,6 @@ export function loaderPlugin<
       string,
       SyncInspectableDeferred<unknown>
     >();
-
-    const deleteLoaderData = (eventId: string) => {
-      loaderDataByEventId.delete(eventId);
-      loadPathDeferreds.delete(eventId);
-    };
-
-    const cleanupLoaderData = (stack: Stack) => {
-      const retainedEventIds = new Set(
-        stack.activities
-          .filter((activity) => activity.transitionState !== "exit-done")
-          .map((activity) => activity.enteredBy.id),
-      );
-
-      stack.pausedEvents?.forEach((event) => {
-        if (event.name === "Pushed" || event.name === "Replaced") {
-          retainedEventIds.add(event.id);
-        }
-      });
-
-      loaderDataByEventId.forEach((_, eventId) => {
-        if (!retainedEventIds.has(eventId)) {
-          deleteLoaderData(eventId);
-        }
-      });
-    };
 
     const promoteRuntimeLoaderData = (stack: Stack) => {
       const promote = (activityId: string, eventId: string) => {
@@ -245,19 +222,16 @@ export function loaderPlugin<
         });
       },
       onInit({ actions, initInfo }) {
-        const stack = actions.getStack();
-
         if (initInfo?.kind === "load") {
+          const stack = actions.getStack();
+
           resolveRestoredStackLoaderData(stack);
           resolvePausedEventLoaderData(stack.pausedEvents);
         }
-
-        cleanupLoaderData(stack);
       },
       onChanged({ actions }) {
         const stack = actions.getStack();
         promoteRuntimeLoaderData(stack);
-        cleanupLoaderData(stack);
       },
       onBeforePush: createBeforeRouteHandler({
         input,
