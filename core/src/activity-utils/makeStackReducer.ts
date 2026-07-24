@@ -11,18 +11,6 @@ import { makeActivitiesReducer } from "./makeActivitiesReducer";
 import { makeActivityReducer } from "./makeActivityReducer";
 import { makeReducer } from "./makeReducer";
 
-function getGlobalTransitionState(
-  activities: Stack["activities"],
-): Exclude<Stack["globalTransitionState"], "paused"> {
-  return activities.some(
-    (activity) =>
-      activity.transitionState === "enter-active" ||
-      activity.transitionState === "exit-active",
-  )
-    ? "loading"
-    : "idle";
-}
-
 function withPauseReducer<T extends DomainEvent>(
   reducer: (stack: Stack, event: T) => Stack,
 ) {
@@ -75,10 +63,18 @@ function withActivitiesReducer<T extends DomainEvent>(
       );
     }
 
+    const isLoading = activities.find(
+      (activity) =>
+        activity.transitionState === "enter-active" ||
+        activity.transitionState === "exit-active",
+    );
+
     const globalTransitionState =
       stack.globalTransitionState === "paused"
         ? "paused"
-        : getGlobalTransitionState(activities);
+        : isLoading
+          ? "loading"
+          : "idle";
 
     return reducer({ ...stack, activities, globalTransitionState }, event);
   };
@@ -144,7 +140,13 @@ export function makeStackReducer(context: { now: number; resumedAt?: number }) {
         const { pausedEvents = [], ...rest } = stack;
         const resumedStack = pausedEvents.reduce(reducer, {
           ...rest,
-          globalTransitionState: getGlobalTransitionState(rest.activities),
+          globalTransitionState: rest.activities.some(
+            (activity) =>
+              activity.transitionState === "enter-active" ||
+              activity.transitionState === "exit-active",
+          )
+            ? "loading"
+            : "idle",
         });
 
         return {
