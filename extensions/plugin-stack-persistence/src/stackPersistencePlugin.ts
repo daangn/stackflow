@@ -10,8 +10,9 @@ import type { StackSnapshotStrategy } from "./StackSnapshotStrategy";
 export type StackPersistencePluginOptions<Metadata> = {
   storage: StackSnapshotStorage<Metadata>;
   strategy: StackSnapshotStrategy<Metadata>;
-  onMetadataParseError?: (error: StackSnapshotMetadataParseError) => void;
-  onRecordLoadError?: (error: StackSnapshotRecordLoadError) => void;
+  onRecordLoadError?: (
+    error: StackSnapshotRecordLoadError | StackSnapshotMetadataParseError,
+  ) => void;
   onRecordSaveError?: (error: StackSnapshotRecordSaveError) => void;
   onLoadError?: NonNullable<ReturnType<StackflowPlugin>["onLoadError"]>;
 };
@@ -19,7 +20,6 @@ export type StackPersistencePluginOptions<Metadata> = {
 export function stackPersistencePlugin<Metadata>({
   storage,
   strategy,
-  onMetadataParseError,
   onRecordLoadError,
   onRecordSaveError,
   onLoadError,
@@ -66,13 +66,13 @@ export function stackPersistencePlugin<Metadata>({
         try {
           parsedMetadata = strategy.metadata.parse(record.metadata);
         } catch (detail) {
-          onMetadataParseError?.(new StackSnapshotMetadataParseError(detail));
+          onRecordLoadError?.(new StackSnapshotMetadataParseError(detail));
 
           return null;
         }
 
         if (!parsedMetadata.ok) {
-          onMetadataParseError?.(
+          onRecordLoadError?.(
             new StackSnapshotMetadataParseError(parsedMetadata.detail),
           );
 
