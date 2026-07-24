@@ -270,6 +270,10 @@ function createBeforeRouteHandler<
     const { activityId, activityName, activityParams, activityContext } =
       actionParams;
 
+    // A canceled attempt has no entry generation, so its alias cannot belong
+    // to a later route attempt that reuses the same activity ID.
+    runtimeLoaderDataByActivityId.delete(activityId);
+
     const matchActivity = input.config.activities.find(
       (activity) => activity.name === activityName,
     );
