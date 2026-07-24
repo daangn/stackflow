@@ -1,5 +1,6 @@
 import type { StackflowActions, StackflowPlugin } from "@stackflow/core";
 import {
+  StackSnapshotMetadataParseError,
   StackSnapshotRecordLoadError,
   StackSnapshotRecordSaveError,
 } from "./errors";
@@ -53,7 +54,9 @@ export function stackPersistencePlugin<Metadata>({
 
           const parsedMetadata = strategy.metadata.parse(record.metadata);
 
-          if (!parsedMetadata.ok) return null;
+          if (!parsedMetadata.ok) {
+            throw new StackSnapshotMetadataParseError(parsedMetadata.detail);
+          }
 
           const parsedRecord = {
             ...record,

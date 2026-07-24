@@ -7,6 +7,7 @@ export type Result<Value> =
     }
   | {
       ok: false;
+      detail?: unknown;
     };
 
 export interface StackSnapshotMetadataDefinition<Metadata> {
