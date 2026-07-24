@@ -11,6 +11,18 @@ import { makeActivitiesReducer } from "./makeActivitiesReducer";
 import { makeActivityReducer } from "./makeActivityReducer";
 import { makeReducer } from "./makeReducer";
 
+function getGlobalTransitionState(
+  activities: Stack["activities"],
+): Exclude<Stack["globalTransitionState"], "paused"> {
+  return activities.some(
+    (activity) =>
+      activity.transitionState === "enter-active" ||
+      activity.transitionState === "exit-active",
+  )
+    ? "loading"
+    : "idle";
+}
+
 function withPauseReducer<T extends DomainEvent>(
   reducer: (stack: Stack, event: T) => Stack,
 ) {
@@ -63,18 +75,10 @@ function withActivitiesReducer<T extends DomainEvent>(
       );
     }
 
-    const isLoading = activities.find(
-      (activity) =>
-        activity.transitionState === "enter-active" ||
-        activity.transitionState === "exit-active",
-    );
-
     const globalTransitionState =
       stack.globalTransitionState === "paused"
         ? "paused"
-        : isLoading
-          ? "loading"
-          : "idle";
+        : getGlobalTransitionState(activities);
 
     return reducer({ ...stack, activities, globalTransitionState }, event);
   };
@@ -128,7 +132,7 @@ export function makeStackReducer(context: { now: number; resumedAt?: number }) {
     ),
     Resumed: withActivitiesReducer(
       (stack: Stack, event: ResumedEvent): Stack => {
-        if (stack.globalTransitionState !== "paused" || !stack.pausedEvents) {
+        if (stack.globalTransitionState !== "paused") {
           return { ...stack, events: [...stack.events, event] };
         }
 
@@ -137,10 +141,10 @@ export function makeStackReducer(context: { now: number; resumedAt?: number }) {
           resumedAt: event.eventDate,
         });
 
-        const { pausedEvents, ...rest } = stack;
+        const { pausedEvents = [], ...rest } = stack;
         const resumedStack = pausedEvents.reduce(reducer, {
           ...rest,
-          globalTransitionState: "idle",
+          globalTransitionState: getGlobalTransitionState(rest.activities),
         });
 
         return {
