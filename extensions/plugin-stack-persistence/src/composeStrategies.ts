@@ -39,7 +39,7 @@ export function composeStrategies<
         if (data === null || typeof data !== "object") {
           return {
             ok: false,
-            detail: "composed strategy metadata must be an object",
+            detail: new Error("composed strategy metadata must be an object"),
           };
         }
 
@@ -51,7 +51,7 @@ export function composeStrategies<
         ) {
           return {
             ok: false,
-            detail: "invalid composed strategy metadata schema",
+            detail: new Error("invalid composed strategy metadata schema"),
           };
         }
 
@@ -61,7 +61,7 @@ export function composeStrategies<
         ) {
           return {
             ok: false,
-            detail: "unsupported composed strategy metadata version",
+            detail: new Error("unsupported composed strategy metadata version"),
           };
         }
 
@@ -72,7 +72,7 @@ export function composeStrategies<
         ) {
           return {
             ok: false,
-            detail: "composed strategy metadata data must be an object",
+            detail: new Error("composed strategy metadata data must be an object"),
           };
         }
 
@@ -84,7 +84,7 @@ export function composeStrategies<
         ) {
           return {
             ok: false,
-            detail: "composed strategy metadata keys do not match",
+            detail: new Error("composed strategy metadata keys do not match"),
           };
         }
 
