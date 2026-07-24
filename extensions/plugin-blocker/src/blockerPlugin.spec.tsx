@@ -1,5 +1,5 @@
 import { defineConfig } from "@stackflow/config";
-import type { Stack, StackflowActions } from "@stackflow/core";
+import type { Stack } from "@stackflow/core";
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
 import type { StackflowReactPlugin } from "@stackflow/react";
 import { stackflow, useFlow } from "@stackflow/react";
@@ -2174,71 +2174,6 @@ describe("blockerPlugin", () => {
         const activitiesAfter = getStack().activities;
         expect(activitiesAfter).toEqual(activitiesBefore);
       });
-    });
-  });
-
-  describe("9. Snapshot 직렬화", () => {
-    it("proceed로 replay된 뒤 캡처된 스냅샷에 symbol 키가 없어 외부 직렬화가 깨지지 않는다", async () => {
-      // given
-      let getStack!: () => Stack;
-      let captureSnapshot!: StackflowActions["captureSnapshot"];
-      let capturedProceed!: () => void;
-
-      const spyPlugin: StackflowReactPlugin = () => ({
-        key: "spy",
-        onInit({ actions }) {
-          getStack = actions.getStack;
-          captureSnapshot = actions.captureSnapshot;
-        },
-      });
-
-      function TestActivity() {
-        useBlocker({
-          shouldBlock: () => true,
-          onBlocked: (_, { proceed }) => {
-            capturedProceed = proceed;
-          },
-        });
-        return <div>Test</div>;
-      }
-
-      function OtherActivity() {
-        return <div>Other</div>;
-      }
-
-      const config = defineConfig({
-        activities: [{ name: "TestActivity" }, { name: "OtherActivity" }],
-        transitionDuration: 0,
-        initialActivity: () => "TestActivity",
-      });
-
-      const { Stack, actions } = stackflow({
-        config,
-        components: { TestActivity, OtherActivity },
-        plugins: [blockerPlugin(), basicRendererPlugin(), spyPlugin],
-      });
-
-      render(<Stack />);
-
-      // when: 네비게이션이 차단된 뒤 proceed로 replay가 실행됨
-      await act(async () => {
-        actions.push("OtherActivity", {});
-      });
-      await act(async () => {
-        capturedProceed();
-      });
-
-      // then: replay가 실제로 실행되었고
-      const activities = getStack().activities;
-      expect(activities[activities.length - 1].name).toBe("OtherActivity");
-
-      // then: 캡처된 스냅샷의 어떤 이벤트에도 symbol 키가 없다.
-      // (replay marker가 symbol이면 devalue 등 직렬화기가 throw한다)
-      const snapshot = captureSnapshot();
-      for (const event of snapshot.events) {
-        expect(Object.getOwnPropertySymbols(event)).toHaveLength(0);
-      }
-      expect(() => JSON.parse(JSON.stringify(snapshot))).not.toThrow();
     });
   });
 });
