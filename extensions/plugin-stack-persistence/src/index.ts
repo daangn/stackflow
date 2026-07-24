@@ -3,6 +3,7 @@ export {
   type StrategiesMetadata,
 } from "./composeStrategies";
 export {
+  StackSnapshotMetadataParseError,
   StackSnapshotRecordLoadError,
   StackSnapshotRecordSaveError,
 } from "./errors";

@@ -17,3 +17,13 @@ export class StackSnapshotRecordLoadError extends Error {
     this.cause = cause;
   }
 }
+
+export class StackSnapshotMetadataParseError extends Error {
+  detail?: unknown;
+
+  constructor(detail?: unknown) {
+    super("failed to parse stack snapshot metadata");
+    this.name = "StackSnapshotMetadataParseError";
+    this.detail = detail;
+  }
+}
