@@ -37,21 +37,43 @@ export function composeStrategies<
       },
       parse(data) {
         if (data === null || typeof data !== "object") {
-          return { ok: false };
+          return {
+            ok: false,
+            detail: new Error("composed strategy metadata must be an object"),
+          };
         }
 
         const metadata = data as Record<PropertyKey, unknown>;
 
         if (
           !Object.hasOwn(metadata, "schema") ||
+          metadata.schema !== COMPOSED_METADATA_SCHEMA
+        ) {
+          return {
+            ok: false,
+            detail: new Error("invalid composed strategy metadata schema"),
+          };
+        }
+
+        if (
           !Object.hasOwn(metadata, "version") ||
+          metadata.version !== COMPOSED_METADATA_VERSION
+        ) {
+          return {
+            ok: false,
+            detail: new Error("unsupported composed strategy metadata version"),
+          };
+        }
+
+        if (
           !Object.hasOwn(metadata, "data") ||
-          metadata.schema !== COMPOSED_METADATA_SCHEMA ||
-          metadata.version !== COMPOSED_METADATA_VERSION ||
           metadata.data === null ||
           typeof metadata.data !== "object"
         ) {
-          return { ok: false };
+          return {
+            ok: false,
+            detail: new Error("composed strategy metadata data must be an object"),
+          };
         }
 
         const metadataData = metadata.data as Record<PropertyKey, unknown>;
@@ -60,7 +82,10 @@ export function composeStrategies<
           Object.keys(metadataData).length !== keys.length ||
           !keys.every((key) => Object.hasOwn(metadataData, key))
         ) {
-          return { ok: false };
+          return {
+            ok: false,
+            detail: new Error("composed strategy metadata keys do not match"),
+          };
         }
 
         const parsedEntries: Array<[PropertyKey, unknown]> = [];
@@ -69,7 +94,13 @@ export function composeStrategies<
           const result = strategies[key].metadata.parse(metadataData[key]);
 
           if (!result.ok) {
-            return { ok: false };
+            return {
+              ok: false,
+              detail: {
+                strategy: String(key),
+                detail: result.detail,
+              },
+            };
           }
 
           parsedEntries.push([key, result.value]);
