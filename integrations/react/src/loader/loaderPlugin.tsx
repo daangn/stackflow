@@ -206,10 +206,12 @@ function createBeforeRouteHandler<
   input: StackflowInput<T, R>,
   loadData: (activityName: string, activityParams: {}) => unknown,
 ): OnBeforeRoute {
-  return ({
-    actionParams,
-    actions: { overrideActionParams, pause, resume },
-  }) => {
+  return ({ actionParams, actions }) => {
+    if (actions.isPrevented()) {
+      return;
+    }
+
+    const { overrideActionParams, pause, resume } = actions;
     const { activityName, activityParams, activityContext } = actionParams;
 
     const matchActivity = input.config.activities.find(

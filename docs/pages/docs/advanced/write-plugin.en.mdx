@@ -251,10 +251,13 @@ Pre-effect hooks include `onBeforePush`, `onBeforeReplace`, and `onBeforePop`. P
 |                        |            |                                            |
 | ---------------------- | ---------- | ------------------------------------------ |
 | actions.preventDefault | `function` | Cancel the default behavior.               |
+| actions.isPrevented    | `function` | Check whether the action is prevented.     |
 | actions.getStack       | `function` | Get the current stack state.               |
 | actions.dispatchEvent  | `function` | Add a new event to the core.               |
 | effect                 | `object`   | The effect that triggered the effect hook. |
 </APITable>
+
+Calling `preventDefault()` cancels the default event dispatch, but it does not stop the remaining pre-effect hooks. Those hooks can call `isPrevented()` to observe the current action-local state.
 
 ## Determining initial activity
 

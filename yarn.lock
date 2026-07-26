@@ -6068,7 +6068,7 @@ __metadata:
     typescript: "npm:^5.5.3"
   peerDependencies:
     "@stackflow/config": ^2.0.0
-    "@stackflow/core": ^2.0.0 || ^3.0.0
+    "@stackflow/core": ^3.0.0
     "@types/react": ">=16.8.0"
     react: ">=16.8.0"
   languageName: unknown
