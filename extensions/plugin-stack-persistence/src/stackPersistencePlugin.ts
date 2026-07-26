@@ -1,5 +1,6 @@
 import type { StackflowActions, StackflowPlugin } from "@stackflow/core";
 import {
+  StackSnapshotMetadataParseError,
   StackSnapshotRecordLoadError,
   StackSnapshotRecordSaveError,
 } from "./errors";
@@ -9,7 +10,9 @@ import type { StackSnapshotStrategy } from "./StackSnapshotStrategy";
 export type StackPersistencePluginOptions<Metadata> = {
   storage: StackSnapshotStorage<Metadata>;
   strategy: StackSnapshotStrategy<Metadata>;
-  onRecordLoadError?: (error: StackSnapshotRecordLoadError) => void;
+  onRecordLoadError?: (
+    error: StackSnapshotRecordLoadError | StackSnapshotMetadataParseError,
+  ) => void;
   onRecordSaveError?: (error: StackSnapshotRecordSaveError) => void;
   onLoadError?: NonNullable<ReturnType<StackflowPlugin>["onLoadError"]>;
 };
@@ -46,30 +49,38 @@ export function stackPersistencePlugin<Metadata>({
     return {
       key: "@stackflow/plugin-stack-persistence",
       provideSnapshot({ initialContext }) {
+        let record: ReturnType<typeof storage.load>;
+
         try {
-          const record = storage.load();
-
-          if (!record) return null;
-
-          const parsedMetadata = strategy.metadata.parse(record.metadata);
-
-          if (!parsedMetadata.ok) return null;
-
-          const parsedRecord = {
-            ...record,
-            metadata: parsedMetadata.value,
-          };
-
-          if (!strategy.shouldReuse({ record: parsedRecord, initialContext })) {
-            return null;
-          }
-
-          return parsedRecord.snapshot;
+          record = storage.load();
         } catch (error) {
           onRecordLoadError?.(new StackSnapshotRecordLoadError(error));
 
           return null;
         }
+
+        if (!record) return null;
+
+        const parsedMetadata = strategy.metadata.parse(record.metadata);
+
+        if (!parsedMetadata.ok) {
+          onRecordLoadError?.(
+            new StackSnapshotMetadataParseError(parsedMetadata.detail),
+          );
+
+          return null;
+        }
+
+        const parsedRecord = {
+          ...record,
+          metadata: parsedMetadata.value,
+        };
+
+        if (!strategy.shouldReuse({ record: parsedRecord, initialContext })) {
+          return null;
+        }
+
+        return parsedRecord.snapshot;
       },
       onLoadError(...args) {
         return onLoadError?.(...args) ?? { policy: "recover" };

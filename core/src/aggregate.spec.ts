@@ -4132,6 +4132,35 @@ test("aggregate - Pause되면 이벤트가 반영되지 않고, globalTransition
   });
 });
 
+test("aggregate - queued event 없이 Resumed 되어도 paused 상태를 해제합니다", () => {
+  const events = [
+    initializedEvent({
+      transitionDuration: 300,
+    }),
+    registeredEvent({
+      activityName: "a",
+    }),
+    makeEvent("Pushed", {
+      activityId: "activity-1",
+      activityName: "a",
+      eventDate: enoughPastTime(),
+      activityParams: {},
+    }),
+    makeEvent("Paused", {
+      eventDate: enoughPastTime(),
+    }),
+    makeEvent("Resumed", {
+      eventDate: enoughPastTime(),
+    }),
+  ];
+
+  const output = aggregate(events, nowTime());
+
+  expect(output.globalTransitionState).toBe("idle");
+  expect(output.pausedEvents).toBeUndefined();
+  expect(output.events).toStrictEqual(events);
+});
+
 test("aggregate - Resumed 되면 해당 시간 이후로 Transition이 정상작동합니다", () => {
   let pushedEvent1: PushedEvent;
   let pushedEvent2: PushedEvent;

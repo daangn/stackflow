@@ -281,3 +281,51 @@ test("makeCoreStore - subscribe에 등록한 이후에 아무 Event가 없는 �
 
   expect(listener1).toHaveBeenCalledTimes(0);
 });
+
+test("makeCoreStore - queued event 없이 resume해도 Stack이 재개됩니다", () => {
+  const onResumed = jest.fn();
+
+  const { actions, pullEvents } = makeCoreStore({
+    initialEvents: [
+      makeEvent("Initialized", {
+        transitionDuration: 150,
+        eventDate: enoughPastTime(),
+      }),
+      makeEvent("ActivityRegistered", {
+        activityName: "hello",
+        eventDate: enoughPastTime(),
+      }),
+      makeEvent("Pushed", {
+        activityId: "a1",
+        activityName: "hello",
+        activityParams: {},
+        eventDate: enoughPastTime(),
+      }),
+    ],
+    plugins: [
+      () => ({
+        key: "test",
+        onResumed,
+      }),
+    ],
+  });
+
+  actions.pause();
+
+  expect(actions.getStack().globalTransitionState).toBe("paused");
+  expect(actions.getStack().pausedEvents).toBeUndefined();
+
+  actions.resume();
+
+  expect(actions.getStack().globalTransitionState).toBe("idle");
+  expect(onResumed).toHaveBeenCalledTimes(1);
+  expect(last(pullEvents())?.name).toBe("Resumed");
+
+  actions.push({
+    activityId: "a2",
+    activityName: "hello",
+    activityParams: {},
+  });
+
+  expect(last(actions.getStack().activities)?.id).toBe("a2");
+});
