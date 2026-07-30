@@ -114,9 +114,9 @@ export class HistorySyncController {
     }
 
     const existing = parseState(this.history.location.state);
+    const entries = committedEntries(this.actions.getStack());
 
     if (existing === null) {
-      const entries = committedEntries(this.actions.getStack());
       entries.forEach((entry, ordinal) => {
         if (ordinal === 0) {
           this.stampReplace(entry, 0);
@@ -125,9 +125,10 @@ export class HistorySyncController {
         }
       });
       this.browserCursor = entries.length > 0 ? entries.length - 1 : 0;
+    } else if (existing.ordinal === entries.length - 1) {
+      this.browserCursor = existing.ordinal;
     } else {
-      this.browserCursor =
-        typeof existing.ordinal === "number" ? existing.ordinal : 0;
+      throw new Error('History state unmatched');
     }
 
     this.unlisten = this.history.listen((update) =>
