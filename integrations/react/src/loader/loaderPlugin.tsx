@@ -10,13 +10,12 @@ import {
   isStructuredActivityComponent,
 } from "../StructuredActivityComponentType";
 import type { StackflowInput } from "../stackflow";
+import { LoaderResultContext } from "./LoaderResultContext";
+import { LoaderResultStore, type LoaderResultId } from "./LoaderResultStore";
 import {
-  defer,
   inspect,
   PromiseStatus,
   resolve,
-  type SyncInspectableDeferred,
-  type SyncInspectablePromise,
 } from "../utils/SyncInspectablePromise";
 
 export function loaderPlugin<
@@ -29,32 +28,31 @@ export function loaderPlugin<
   loadData: (activityName: string, activityParams: {}) => unknown,
 ): StackflowReactPlugin {
   return () => {
-    const loadPathDeferreds = new WeakMap<
-      SyncInspectablePromise<unknown>,
-      SyncInspectableDeferred<unknown>
-    >();
+    const loaderResultStore = new LoaderResultStore();
 
     const resolveDeferredLoaderData = ({
       activityName,
       activityParams,
-      loaderData,
+      loaderResultId,
     }: {
       activityName: string;
       activityParams: {};
-      loaderData: SyncInspectablePromise<unknown> | undefined;
+      loaderResultId: LoaderResultId | undefined;
     }) => {
       const matchActivity = input.config.activities.find(
         (candidate) => candidate.name === activityName,
       );
-      const deferred = loaderData
-        ? loadPathDeferreds.get(loaderData)
-        : undefined;
-
-      if (!matchActivity?.loader || !loaderData || !deferred) {
+      if (!matchActivity?.loader || !loaderResultId) {
         return;
       }
 
-      loadPathDeferreds.delete(loaderData);
+      const loaderData = loaderResultStore.start(loaderResultId, () =>
+        loadData(activityName, activityParams),
+      );
+
+      if (!loaderData) {
+        return;
+      }
 
       Promise.allSettled([loaderData]).then(([loaderDataPromiseResult]) => {
         printLoaderDataPromiseError({
@@ -62,12 +60,6 @@ export function loaderPlugin<
           activityName: matchActivity.name,
         });
       });
-
-      try {
-        deferred.resolve(loadData(activityName, activityParams));
-      } catch (error) {
-        deferred.reject(error);
-      }
     };
 
     const resolveRestoredStackLoaderData = (stack: Stack) => {
@@ -77,7 +69,7 @@ export function loaderPlugin<
           resolveDeferredLoaderData({
             activityName: activity.name,
             activityParams: activity.params,
-            loaderData: (activity.context as any)?.loaderData,
+            loaderResultId: loaderResultStore.getId(activity.context),
           });
         });
     };
@@ -93,7 +85,7 @@ export function loaderPlugin<
         resolveDeferredLoaderData({
           activityName: event.activityName,
           activityParams: event.activityParams,
-          loaderData: (event.activityContext as any)?.loaderData,
+          loaderResultId: loaderResultStore.getId(event.activityContext),
         });
       });
     };
@@ -119,15 +111,14 @@ export function loaderPlugin<
               return event;
             }
 
-            const loaderData = defer<unknown>();
-            loadPathDeferreds.set(loaderData.promise, loaderData);
+            const loaderResultId = loaderResultStore.addDeferred();
 
             return {
               ...event,
-              activityContext: {
-                ...event.activityContext,
-                loaderData: loaderData.promise,
-              },
+              activityContext: loaderResultStore.withId(
+                event.activityContext,
+                loaderResultId,
+              ),
             };
           });
         }
@@ -135,16 +126,6 @@ export function loaderPlugin<
         return initialEvents.map((event) => {
           if (event.name !== "Pushed" && event.name !== "Replaced") {
             return event;
-          }
-
-          if (initialContext.initialLoaderData) {
-            return {
-              ...event,
-              activityContext: {
-                ...event.activityContext,
-                loaderData: resolve(initialContext.initialLoaderData),
-              },
-            };
           }
 
           const { activityName, activityParams } = event;
@@ -159,7 +140,22 @@ export function loaderPlugin<
             return event;
           }
 
+          if (initialContext.initialLoaderData) {
+            const loaderResultId = loaderResultStore.add(
+              resolve(initialContext.initialLoaderData),
+            );
+
+            return {
+              ...event,
+              activityContext: loaderResultStore.withId(
+                event.activityContext,
+                loaderResultId,
+              ),
+            };
+          }
+
           const loaderData = resolve(loadData(activityName, activityParams));
+          const loaderResultId = loaderResultStore.add(loaderData);
 
           Promise.allSettled([loaderData]).then(([loaderDataPromiseResult]) => {
             printLoaderDataPromiseError({
@@ -170,10 +166,10 @@ export function loaderPlugin<
 
           return {
             ...event,
-            activityContext: {
-              ...event.activityContext,
-              loaderData,
-            },
+            activityContext: loaderResultStore.withId(
+              event.activityContext,
+              loaderResultId,
+            ),
           };
         });
       },
@@ -186,8 +182,27 @@ export function loaderPlugin<
         resolveRestoredStackLoaderData(stack);
         resolvePausedEventLoaderData(stack.pausedEvents);
       },
-      onBeforePush: createBeforeRouteHandler(input, loadData),
-      onBeforeReplace: createBeforeRouteHandler(input, loadData),
+      onBeforePush: createBeforeRouteHandler(
+        input,
+        loadData,
+        loaderResultStore,
+      ),
+      onBeforeReplace: createBeforeRouteHandler(
+        input,
+        loadData,
+        loaderResultStore,
+      ),
+      wrapActivity({ activity }) {
+        const loaderResultPromise = loaderResultStore.get(
+          loaderResultStore.getId(activity.context),
+        );
+
+        return (
+          <LoaderResultContext.Provider value={loaderResultPromise}>
+            {activity.render()}
+          </LoaderResultContext.Provider>
+        );
+      },
     };
   };
 }
@@ -205,6 +220,7 @@ function createBeforeRouteHandler<
 >(
   input: StackflowInput<T, R>,
   loadData: (activityName: string, activityParams: {}) => unknown,
+  loaderResultStore: LoaderResultStore,
 ): OnBeforeRoute {
   return ({ actionParams, actions }) => {
     if (actions.isPrevented()) {
@@ -261,12 +277,18 @@ function createBeforeRouteHandler<
         });
     }
 
+    if (!loaderData) {
+      return;
+    }
+
+    const loaderResultId = loaderResultStore.add(loaderData);
+
     overrideActionParams({
       ...actionParams,
-      activityContext: {
-        ...activityContext,
-        loaderData,
-      },
+      activityContext: loaderResultStore.withId(
+        activityContext,
+        loaderResultId,
+      ),
     });
   };
 }
