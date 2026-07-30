@@ -196,27 +196,27 @@ export function loaderPlugin<
               return event;
             }
 
+            const existingLoaderResultId = getLoaderResultId(
+              event.activityContext,
+            );
+            // ID absence identifies snapshots from the schema where this plugin
+            // owned loaderData; the current config may no longer declare it.
+            const migratedEvent = existingLoaderResultId
+              ? event
+              : withoutLegacyLoaderData(event);
             const matchActivity = input.config.activities.find(
               (activity) => activity.name === event.activityName,
             );
 
             if (!matchActivity?.loader) {
-              return event;
+              return migratedEvent;
             }
 
-            const existingLoaderResultId = getLoaderResultId(
-              event.activityContext,
-            );
             const loaderResultId =
               existingLoaderResultId ?? makeLoaderResultId();
             loaderResults.set(loaderResultId, createRestoredLoaderResult());
 
-            // ID-less loader events use the legacy schema, where loaderData was
-            // owned by this plugin and carried the Promise or loader result.
-            return withLoaderResultId(
-              existingLoaderResultId ? event : withoutLegacyLoaderData(event),
-              loaderResultId,
-            );
+            return withLoaderResultId(migratedEvent, loaderResultId);
           });
         }
 
