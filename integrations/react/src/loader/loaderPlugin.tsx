@@ -2,7 +2,7 @@ import type {
   ActivityDefinition,
   RegisteredActivityName,
 } from "@stackflow/config";
-import { id, type Stack } from "@stackflow/core";
+import type { Stack } from "@stackflow/core";
 import type { ActivityComponentType } from "../BaseActivityComponentType";
 import type { StackflowReactPlugin } from "../StackflowReactPlugin";
 import {
@@ -10,7 +10,7 @@ import {
   isStructuredActivityComponent,
 } from "../StructuredActivityComponentType";
 import type { StackflowInput } from "../stackflow";
-import { LoaderResultProvider } from "./LoaderResultContext";
+import { LoaderResultContext } from "./LoaderResultContext";
 import {
   defer,
   inspect,
@@ -27,6 +27,13 @@ type LoaderResultEntry = {
   promise: SyncInspectablePromise<unknown>;
   start?: (load: () => unknown) => boolean;
 };
+
+let nextLoaderResultId = 0;
+
+function makeLoaderResultId(): LoaderResultId {
+  nextLoaderResultId += 1;
+  return nextLoaderResultId.toString();
+}
 
 function getLoaderResultId(
   activityContext: unknown,
@@ -67,7 +74,7 @@ export function loaderPlugin<
     const loaderResults = new Map<LoaderResultId, LoaderResultEntry>();
 
     const addLoaderResult = (promise: SyncInspectablePromise<unknown>) => {
-      const loaderResultId = id();
+      const loaderResultId = makeLoaderResultId();
       loaderResults.set(loaderResultId, { promise });
       return loaderResultId;
     };
@@ -75,7 +82,7 @@ export function loaderPlugin<
     const addDeferredLoaderResult = () => {
       const loaderData = defer<unknown>();
       let started = false;
-      const loaderResultId = id();
+      const loaderResultId = makeLoaderResultId();
 
       loaderResults.set(loaderResultId, {
         promise: loaderData.promise,
@@ -266,9 +273,9 @@ export function loaderPlugin<
           : undefined;
 
         return (
-          <LoaderResultProvider loaderResultPromise={loaderResultPromise}>
+          <LoaderResultContext.Provider value={loaderResultPromise}>
             {activity.render()}
-          </LoaderResultProvider>
+          </LoaderResultContext.Provider>
         );
       },
     };
