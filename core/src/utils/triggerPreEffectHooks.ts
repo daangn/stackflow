@@ -47,6 +47,7 @@ export function triggerPreEffectHook<K extends ActionName>(
         actionParams: { ...nextActionParams },
         actions: {
           ...actions,
+          isPrevented: () => isPrevented,
           preventDefault: () => {
             isPrevented = true;
           },

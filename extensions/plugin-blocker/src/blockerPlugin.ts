@@ -57,7 +57,7 @@ function useBlockerStore(): BlockerStore {
 }
 
 function replayAction(
-  replayMarker: symbol,
+  replayMarker: string,
   store: BlockerStore,
   action: NavigationAction,
 ) {
@@ -92,7 +92,7 @@ function replayAction(
 }
 
 function handleBeforeNavigation(
-  replayMarker: symbol,
+  replayMarker: string,
   store: BlockerStore,
   action: NavigationAction,
   preventDefault: () => void,
@@ -164,7 +164,7 @@ function handleBeforeNavigation(
 export function blockerPlugin(options?: {
   onError?: (error: unknown) => void;
 }): StackflowReactPlugin {
-  const replayMarker = Symbol("@@blockerReplay");
+  const replayMarker = "@stackflow/plugin-blocker/replay";
 
   const store: BlockerStore = {
     blockers: new Map(),

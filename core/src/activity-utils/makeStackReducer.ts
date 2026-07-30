@@ -128,7 +128,7 @@ export function makeStackReducer(context: { now: number; resumedAt?: number }) {
     ),
     Resumed: withActivitiesReducer(
       (stack: Stack, event: ResumedEvent): Stack => {
-        if (stack.globalTransitionState !== "paused" || !stack.pausedEvents) {
+        if (stack.globalTransitionState !== "paused") {
           return { ...stack, events: [...stack.events, event] };
         }
 
@@ -137,10 +137,16 @@ export function makeStackReducer(context: { now: number; resumedAt?: number }) {
           resumedAt: event.eventDate,
         });
 
-        const { pausedEvents, ...rest } = stack;
+        const { pausedEvents = [], ...rest } = stack;
         const resumedStack = pausedEvents.reduce(reducer, {
           ...rest,
-          globalTransitionState: "idle",
+          globalTransitionState: rest.activities.some(
+            (activity) =>
+              activity.transitionState === "enter-active" ||
+              activity.transitionState === "exit-active",
+          )
+            ? "loading"
+            : "idle",
         });
 
         return {

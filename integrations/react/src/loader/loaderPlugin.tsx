@@ -267,11 +267,15 @@ function createBeforeRouteHandler<
   runtimeLoaderDataByActivityId: Map<string, SyncInspectablePromise<unknown>>;
 }): OnBeforeRoute {
   return ({ actionParams, actions }) => {
+    if (actions.isPrevented()) {
+      return;
+    }
+
     const { activityId, activityName, activityParams, activityContext } =
       actionParams;
 
-    // A canceled attempt has no entry generation, so its alias cannot belong
-    // to a later route attempt that reuses the same activity ID.
+    // A plugin can synchronously start a same-ID successor before the accepted
+    // predecessor's staged value is promoted to its entry generation.
     runtimeLoaderDataByActivityId.delete(activityId);
 
     const matchActivity = input.config.activities.find(

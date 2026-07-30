@@ -18,6 +18,7 @@ export type StackflowPluginInitHook = (args: {
 export type StackflowPluginPreEffectHook<T> = (args: {
   actionParams: T;
   actions: StackflowActions & {
+    isPrevented: () => boolean;
     preventDefault: () => void;
     overrideActionParams: (params: T) => void;
   };
