@@ -2,7 +2,7 @@ import type {
   ActivityDefinition,
   RegisteredActivityName,
 } from "@stackflow/config";
-import type { Stack } from "@stackflow/core";
+import { id, type Stack } from "@stackflow/core";
 import type { ActivityComponentType } from "../BaseActivityComponentType";
 import type { StackflowReactPlugin } from "../StackflowReactPlugin";
 import {
@@ -10,14 +10,49 @@ import {
   isStructuredActivityComponent,
 } from "../StructuredActivityComponentType";
 import type { StackflowInput } from "../stackflow";
+import { LoaderResultProvider } from "./LoaderResultContext";
 import {
   defer,
   inspect,
   PromiseStatus,
   resolve,
-  type SyncInspectableDeferred,
   type SyncInspectablePromise,
 } from "../utils/SyncInspectablePromise";
+
+const LOADER_RESULT_ID_KEY = "@stackflow/react/loaderResultId";
+
+type LoaderResultId = string;
+
+type LoaderResultEntry = {
+  promise: SyncInspectablePromise<unknown>;
+  start?: (load: () => unknown) => boolean;
+};
+
+function getLoaderResultId(
+  activityContext: unknown,
+): LoaderResultId | undefined {
+  if (typeof activityContext !== "object" || activityContext === null) {
+    return undefined;
+  }
+
+  const loaderResultId = (activityContext as Record<string, unknown>)[
+    LOADER_RESULT_ID_KEY
+  ];
+
+  return typeof loaderResultId === "string" ? loaderResultId : undefined;
+}
+
+function withLoaderResultId(
+  activityContext: unknown,
+  loaderResultId: LoaderResultId,
+) {
+  return {
+    ...(typeof activityContext === "object" && activityContext !== null
+      ? activityContext
+      : {}),
+    [LOADER_RESULT_ID_KEY]: loaderResultId,
+  };
+}
 
 export function loaderPlugin<
   T extends ActivityDefinition<RegisteredActivityName>,
@@ -29,45 +64,73 @@ export function loaderPlugin<
   loadData: (activityName: string, activityParams: {}) => unknown,
 ): StackflowReactPlugin {
   return () => {
-    const loadPathDeferreds = new WeakMap<
-      SyncInspectablePromise<unknown>,
-      SyncInspectableDeferred<unknown>
-    >();
+    const loaderResults = new Map<LoaderResultId, LoaderResultEntry>();
+
+    const addLoaderResult = (promise: SyncInspectablePromise<unknown>) => {
+      const loaderResultId = id();
+      loaderResults.set(loaderResultId, { promise });
+      return loaderResultId;
+    };
+
+    const addDeferredLoaderResult = () => {
+      const loaderData = defer<unknown>();
+      let started = false;
+      const loaderResultId = id();
+
+      loaderResults.set(loaderResultId, {
+        promise: loaderData.promise,
+        start(load) {
+          if (started) {
+            return false;
+          }
+
+          started = true;
+
+          try {
+            loaderData.resolve(load());
+          } catch (error) {
+            loaderData.reject(error);
+          }
+
+          return true;
+        },
+      });
+
+      return loaderResultId;
+    };
 
     const resolveDeferredLoaderData = ({
       activityName,
       activityParams,
-      loaderData,
+      loaderResultId,
     }: {
       activityName: string;
       activityParams: {};
-      loaderData: SyncInspectablePromise<unknown> | undefined;
+      loaderResultId: LoaderResultId | undefined;
     }) => {
       const matchActivity = input.config.activities.find(
         (candidate) => candidate.name === activityName,
       );
-      const deferred = loaderData
-        ? loadPathDeferreds.get(loaderData)
+      const loaderResult = loaderResultId
+        ? loaderResults.get(loaderResultId)
         : undefined;
 
-      if (!matchActivity?.loader || !loaderData || !deferred) {
+      if (!matchActivity?.loader || !loaderResult?.start) {
         return;
       }
 
-      loadPathDeferreds.delete(loaderData);
-
-      Promise.allSettled([loaderData]).then(([loaderDataPromiseResult]) => {
-        printLoaderDataPromiseError({
-          promiseResult: loaderDataPromiseResult,
-          activityName: matchActivity.name,
-        });
-      });
-
-      try {
-        deferred.resolve(loadData(activityName, activityParams));
-      } catch (error) {
-        deferred.reject(error);
+      if (!loaderResult.start(() => loadData(activityName, activityParams))) {
+        return;
       }
+
+      Promise.allSettled([loaderResult.promise]).then(
+        ([loaderDataPromiseResult]) => {
+          printLoaderDataPromiseError({
+            promiseResult: loaderDataPromiseResult,
+            activityName: matchActivity.name,
+          });
+        },
+      );
     };
 
     const resolveRestoredStackLoaderData = (stack: Stack) => {
@@ -77,7 +140,7 @@ export function loaderPlugin<
           resolveDeferredLoaderData({
             activityName: activity.name,
             activityParams: activity.params,
-            loaderData: (activity.context as any)?.loaderData,
+            loaderResultId: getLoaderResultId(activity.context),
           });
         });
     };
@@ -93,7 +156,7 @@ export function loaderPlugin<
         resolveDeferredLoaderData({
           activityName: event.activityName,
           activityParams: event.activityParams,
-          loaderData: (event.activityContext as any)?.loaderData,
+          loaderResultId: getLoaderResultId(event.activityContext),
         });
       });
     };
@@ -119,15 +182,14 @@ export function loaderPlugin<
               return event;
             }
 
-            const loaderData = defer<unknown>();
-            loadPathDeferreds.set(loaderData.promise, loaderData);
+            const loaderResultId = addDeferredLoaderResult();
 
             return {
               ...event,
-              activityContext: {
-                ...event.activityContext,
-                loaderData: loaderData.promise,
-              },
+              activityContext: withLoaderResultId(
+                event.activityContext,
+                loaderResultId,
+              ),
             };
           });
         }
@@ -135,16 +197,6 @@ export function loaderPlugin<
         return initialEvents.map((event) => {
           if (event.name !== "Pushed" && event.name !== "Replaced") {
             return event;
-          }
-
-          if (initialContext.initialLoaderData) {
-            return {
-              ...event,
-              activityContext: {
-                ...event.activityContext,
-                loaderData: resolve(initialContext.initialLoaderData),
-              },
-            };
           }
 
           const { activityName, activityParams } = event;
@@ -159,7 +211,22 @@ export function loaderPlugin<
             return event;
           }
 
+          if (initialContext.initialLoaderData) {
+            const loaderResultId = addLoaderResult(
+              resolve(initialContext.initialLoaderData),
+            );
+
+            return {
+              ...event,
+              activityContext: withLoaderResultId(
+                event.activityContext,
+                loaderResultId,
+              ),
+            };
+          }
+
           const loaderData = resolve(loadData(activityName, activityParams));
+          const loaderResultId = addLoaderResult(loaderData);
 
           Promise.allSettled([loaderData]).then(([loaderDataPromiseResult]) => {
             printLoaderDataPromiseError({
@@ -170,10 +237,10 @@ export function loaderPlugin<
 
           return {
             ...event,
-            activityContext: {
-              ...event.activityContext,
-              loaderData,
-            },
+            activityContext: withLoaderResultId(
+              event.activityContext,
+              loaderResultId,
+            ),
           };
         });
       },
@@ -186,8 +253,24 @@ export function loaderPlugin<
         resolveRestoredStackLoaderData(stack);
         resolvePausedEventLoaderData(stack.pausedEvents);
       },
-      onBeforePush: createBeforeRouteHandler(input, loadData),
-      onBeforeReplace: createBeforeRouteHandler(input, loadData),
+      onBeforePush: createBeforeRouteHandler(input, loadData, addLoaderResult),
+      onBeforeReplace: createBeforeRouteHandler(
+        input,
+        loadData,
+        addLoaderResult,
+      ),
+      wrapActivity({ activity }) {
+        const loaderResultId = getLoaderResultId(activity.context);
+        const loaderResultPromise = loaderResultId
+          ? loaderResults.get(loaderResultId)?.promise
+          : undefined;
+
+        return (
+          <LoaderResultProvider loaderResultPromise={loaderResultPromise}>
+            {activity.render()}
+          </LoaderResultProvider>
+        );
+      },
     };
   };
 }
@@ -205,6 +288,7 @@ function createBeforeRouteHandler<
 >(
   input: StackflowInput<T, R>,
   loadData: (activityName: string, activityParams: {}) => unknown,
+  addLoaderResult: (promise: SyncInspectablePromise<unknown>) => LoaderResultId,
 ): OnBeforeRoute {
   return ({ actionParams, actions }) => {
     if (actions.isPrevented()) {
@@ -261,12 +345,15 @@ function createBeforeRouteHandler<
         });
     }
 
+    if (!loaderData) {
+      return;
+    }
+
+    const loaderResultId = addLoaderResult(loaderData);
+
     overrideActionParams({
       ...actionParams,
-      activityContext: {
-        ...activityContext,
-        loaderData,
-      },
+      activityContext: withLoaderResultId(activityContext, loaderResultId),
     });
   };
 }
