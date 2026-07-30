@@ -11,55 +11,12 @@ import {
 } from "../StructuredActivityComponentType";
 import type { StackflowInput } from "../stackflow";
 import { LoaderResultContext } from "./LoaderResultContext";
+import { LoaderResultStore, type LoaderResultId } from "./LoaderResultStore";
 import {
-  defer,
   inspect,
   PromiseStatus,
   resolve,
-  type SyncInspectablePromise,
 } from "../utils/SyncInspectablePromise";
-
-const LOADER_RESULT_ID_KEY = "@stackflow/react/loaderResultId";
-
-type LoaderResultId = string;
-
-type LoaderResultEntry = {
-  promise: SyncInspectablePromise<unknown>;
-  start?: (load: () => unknown) => boolean;
-};
-
-let nextLoaderResultId = 0;
-
-function makeLoaderResultId(): LoaderResultId {
-  nextLoaderResultId += 1;
-  return nextLoaderResultId.toString();
-}
-
-function getLoaderResultId(
-  activityContext: unknown,
-): LoaderResultId | undefined {
-  if (typeof activityContext !== "object" || activityContext === null) {
-    return undefined;
-  }
-
-  const loaderResultId = (activityContext as Record<string, unknown>)[
-    LOADER_RESULT_ID_KEY
-  ];
-
-  return typeof loaderResultId === "string" ? loaderResultId : undefined;
-}
-
-function withLoaderResultId(
-  activityContext: unknown,
-  loaderResultId: LoaderResultId,
-) {
-  return {
-    ...(typeof activityContext === "object" && activityContext !== null
-      ? activityContext
-      : {}),
-    [LOADER_RESULT_ID_KEY]: loaderResultId,
-  };
-}
 
 export function loaderPlugin<
   T extends ActivityDefinition<RegisteredActivityName>,
@@ -71,40 +28,7 @@ export function loaderPlugin<
   loadData: (activityName: string, activityParams: {}) => unknown,
 ): StackflowReactPlugin {
   return () => {
-    const loaderResults = new Map<LoaderResultId, LoaderResultEntry>();
-
-    const addLoaderResult = (promise: SyncInspectablePromise<unknown>) => {
-      const loaderResultId = makeLoaderResultId();
-      loaderResults.set(loaderResultId, { promise });
-      return loaderResultId;
-    };
-
-    const addDeferredLoaderResult = () => {
-      const loaderData = defer<unknown>();
-      let started = false;
-      const loaderResultId = makeLoaderResultId();
-
-      loaderResults.set(loaderResultId, {
-        promise: loaderData.promise,
-        start(load) {
-          if (started) {
-            return false;
-          }
-
-          started = true;
-
-          try {
-            loaderData.resolve(load());
-          } catch (error) {
-            loaderData.reject(error);
-          }
-
-          return true;
-        },
-      });
-
-      return loaderResultId;
-    };
+    const loaderResultStore = new LoaderResultStore();
 
     const resolveDeferredLoaderData = ({
       activityName,
@@ -118,26 +42,24 @@ export function loaderPlugin<
       const matchActivity = input.config.activities.find(
         (candidate) => candidate.name === activityName,
       );
-      const loaderResult = loaderResultId
-        ? loaderResults.get(loaderResultId)
-        : undefined;
-
-      if (!matchActivity?.loader || !loaderResult?.start) {
+      if (!matchActivity?.loader || !loaderResultId) {
         return;
       }
 
-      if (!loaderResult.start(() => loadData(activityName, activityParams))) {
-        return;
-      }
-
-      Promise.allSettled([loaderResult.promise]).then(
-        ([loaderDataPromiseResult]) => {
-          printLoaderDataPromiseError({
-            promiseResult: loaderDataPromiseResult,
-            activityName: matchActivity.name,
-          });
-        },
+      const loaderData = loaderResultStore.start(loaderResultId, () =>
+        loadData(activityName, activityParams),
       );
+
+      if (!loaderData) {
+        return;
+      }
+
+      Promise.allSettled([loaderData]).then(([loaderDataPromiseResult]) => {
+        printLoaderDataPromiseError({
+          promiseResult: loaderDataPromiseResult,
+          activityName: matchActivity.name,
+        });
+      });
     };
 
     const resolveRestoredStackLoaderData = (stack: Stack) => {
@@ -147,7 +69,7 @@ export function loaderPlugin<
           resolveDeferredLoaderData({
             activityName: activity.name,
             activityParams: activity.params,
-            loaderResultId: getLoaderResultId(activity.context),
+            loaderResultId: loaderResultStore.getId(activity.context),
           });
         });
     };
@@ -163,7 +85,7 @@ export function loaderPlugin<
         resolveDeferredLoaderData({
           activityName: event.activityName,
           activityParams: event.activityParams,
-          loaderResultId: getLoaderResultId(event.activityContext),
+          loaderResultId: loaderResultStore.getId(event.activityContext),
         });
       });
     };
@@ -189,11 +111,11 @@ export function loaderPlugin<
               return event;
             }
 
-            const loaderResultId = addDeferredLoaderResult();
+            const loaderResultId = loaderResultStore.addDeferred();
 
             return {
               ...event,
-              activityContext: withLoaderResultId(
+              activityContext: loaderResultStore.withId(
                 event.activityContext,
                 loaderResultId,
               ),
@@ -219,13 +141,13 @@ export function loaderPlugin<
           }
 
           if (initialContext.initialLoaderData) {
-            const loaderResultId = addLoaderResult(
+            const loaderResultId = loaderResultStore.add(
               resolve(initialContext.initialLoaderData),
             );
 
             return {
               ...event,
-              activityContext: withLoaderResultId(
+              activityContext: loaderResultStore.withId(
                 event.activityContext,
                 loaderResultId,
               ),
@@ -233,7 +155,7 @@ export function loaderPlugin<
           }
 
           const loaderData = resolve(loadData(activityName, activityParams));
-          const loaderResultId = addLoaderResult(loaderData);
+          const loaderResultId = loaderResultStore.add(loaderData);
 
           Promise.allSettled([loaderData]).then(([loaderDataPromiseResult]) => {
             printLoaderDataPromiseError({
@@ -244,7 +166,7 @@ export function loaderPlugin<
 
           return {
             ...event,
-            activityContext: withLoaderResultId(
+            activityContext: loaderResultStore.withId(
               event.activityContext,
               loaderResultId,
             ),
@@ -260,17 +182,20 @@ export function loaderPlugin<
         resolveRestoredStackLoaderData(stack);
         resolvePausedEventLoaderData(stack.pausedEvents);
       },
-      onBeforePush: createBeforeRouteHandler(input, loadData, addLoaderResult),
+      onBeforePush: createBeforeRouteHandler(
+        input,
+        loadData,
+        loaderResultStore,
+      ),
       onBeforeReplace: createBeforeRouteHandler(
         input,
         loadData,
-        addLoaderResult,
+        loaderResultStore,
       ),
       wrapActivity({ activity }) {
-        const loaderResultId = getLoaderResultId(activity.context);
-        const loaderResultPromise = loaderResultId
-          ? loaderResults.get(loaderResultId)?.promise
-          : undefined;
+        const loaderResultPromise = loaderResultStore.get(
+          loaderResultStore.getId(activity.context),
+        );
 
         return (
           <LoaderResultContext.Provider value={loaderResultPromise}>
@@ -295,7 +220,7 @@ function createBeforeRouteHandler<
 >(
   input: StackflowInput<T, R>,
   loadData: (activityName: string, activityParams: {}) => unknown,
-  addLoaderResult: (promise: SyncInspectablePromise<unknown>) => LoaderResultId,
+  loaderResultStore: LoaderResultStore,
 ): OnBeforeRoute {
   return ({ actionParams, actions }) => {
     if (actions.isPrevented()) {
@@ -356,11 +281,14 @@ function createBeforeRouteHandler<
       return;
     }
 
-    const loaderResultId = addLoaderResult(loaderData);
+    const loaderResultId = loaderResultStore.add(loaderData);
 
     overrideActionParams({
       ...actionParams,
-      activityContext: withLoaderResultId(activityContext, loaderResultId),
+      activityContext: loaderResultStore.withId(
+        activityContext,
+        loaderResultId,
+      ),
     });
   };
 }
