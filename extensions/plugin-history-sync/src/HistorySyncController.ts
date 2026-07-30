@@ -185,7 +185,6 @@ export class HistorySyncController {
       this.browserCursor = stackOrdinal;
     } else if (delta < 0) {
       this.inFlight = true;
-      this.browserCursor = stackOrdinal;
       this.history.go(delta);
     } else {
       const top = entries[stackOrdinal];
