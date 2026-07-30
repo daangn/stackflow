@@ -2,7 +2,7 @@ import type {
   ActivityDefinition,
   RegisteredActivityName,
 } from "@stackflow/config";
-import type { Stack } from "@stackflow/core";
+import { id as makeLoaderResultId, type Stack } from "@stackflow/core";
 import type { ActivityComponentType } from "../BaseActivityComponentType";
 import type { StackflowReactPlugin } from "../StackflowReactPlugin";
 import {
@@ -15,10 +15,63 @@ import {
   inspect,
   PromiseStatus,
   resolve,
-  type SyncInspectableDeferred,
   type SyncInspectablePromise,
 } from "../utils/SyncInspectablePromise";
 import { LoaderDataProvider } from "./LoaderDataContext";
+
+type LoaderResult = {
+  promise: SyncInspectablePromise<unknown>;
+  start?: (load: () => unknown) => boolean;
+};
+
+function createRestoredLoaderResult(): LoaderResult {
+  const deferred = defer<unknown>();
+  let started = false;
+
+  return {
+    promise: deferred.promise,
+    start(load) {
+      if (started) {
+        return false;
+      }
+
+      started = true;
+
+      try {
+        deferred.resolve(load());
+      } catch (error) {
+        deferred.reject(error);
+      }
+
+      return true;
+    },
+  };
+}
+
+function getLoaderResultId(activityContext: unknown) {
+  if (!activityContext || typeof activityContext !== "object") {
+    return undefined;
+  }
+
+  const { loaderResultId } = activityContext as {
+    loaderResultId?: unknown;
+  };
+
+  return typeof loaderResultId === "string" ? loaderResultId : undefined;
+}
+
+function withLoaderResultId<T extends { activityContext?: {} }>(
+  value: T,
+  loaderResultId: string,
+): T {
+  return {
+    ...value,
+    activityContext: {
+      ...value.activityContext,
+      loaderResultId,
+    },
+  };
+}
 
 export function loaderPlugin<
   T extends ActivityDefinition<RegisteredActivityName>,
@@ -30,99 +83,56 @@ export function loaderPlugin<
   loadData: (activityName: string, activityParams: {}) => unknown,
 ): StackflowReactPlugin {
   return () => {
-    // React may still render an older deferred stack after core advances, so
-    // entered generations remain available until this plugin instance is released.
-    const loaderDataByEventId = new Map<
-      string,
-      SyncInspectablePromise<unknown>
-    >();
-    const runtimeLoaderDataByActivityId = new Map<
-      string,
-      SyncInspectablePromise<unknown>
-    >();
-    const loadPathDeferreds = new Map<
-      string,
-      SyncInspectableDeferred<unknown>
-    >();
+    const loaderResults = new Map<string, LoaderResult>();
 
-    const promoteRuntimeLoaderData = (stack: Stack) => {
-      const promote = (activityId: string, eventId: string) => {
-        if (loaderDataByEventId.has(eventId)) {
-          return;
-        }
-
-        const loaderData = runtimeLoaderDataByActivityId.get(activityId);
-        if (!loaderData) {
-          return;
-        }
-
-        loaderDataByEventId.set(eventId, loaderData);
-        runtimeLoaderDataByActivityId.delete(activityId);
-      };
-
-      // A paused replacement may reuse the current activity ID, so the staged
-      // value belongs to the newest queued generation rather than its predecessor.
-      stack.pausedEvents
-        ?.slice()
-        .reverse()
-        .forEach((event) => {
-          if (event.name === "Pushed" || event.name === "Replaced") {
-            promote(event.activityId, event.id);
-          }
-        });
-      stack.activities.forEach((activity) => {
-        promote(activity.id, activity.enteredBy.id);
-      });
-    };
-
-    const resolveDeferredLoaderData = ({
-      eventId,
+    const startRestoredLoaderData = ({
+      activityContext,
       activityName,
       activityParams,
     }: {
-      eventId: string;
+      activityContext: unknown;
       activityName: string;
       activityParams: {};
     }) => {
       const matchActivity = input.config.activities.find(
         (candidate) => candidate.name === activityName,
       );
-      const loaderData = loaderDataByEventId.get(eventId);
-      const deferred = loadPathDeferreds.get(eventId);
+      const loaderResultId = getLoaderResultId(activityContext);
+      const loaderResult = loaderResultId
+        ? loaderResults.get(loaderResultId)
+        : undefined;
 
-      if (!matchActivity?.loader || !loaderData || !deferred) {
+      if (
+        !matchActivity?.loader ||
+        !loaderResult?.start ||
+        !loaderResult.start(() => loadData(activityName, activityParams))
+      ) {
         return;
       }
 
-      loadPathDeferreds.delete(eventId);
-
-      Promise.allSettled([loaderData]).then(([loaderDataPromiseResult]) => {
-        printLoaderDataPromiseError({
-          promiseResult: loaderDataPromiseResult,
-          activityName: matchActivity.name,
-        });
-      });
-
-      try {
-        deferred.resolve(loadData(activityName, activityParams));
-      } catch (error) {
-        deferred.reject(error);
-      }
+      Promise.allSettled([loaderResult.promise]).then(
+        ([loaderDataPromiseResult]) => {
+          printLoaderDataPromiseError({
+            promiseResult: loaderDataPromiseResult,
+            activityName: matchActivity.name,
+          });
+        },
+      );
     };
 
-    const resolveRestoredStackLoaderData = (stack: Stack) => {
+    const startRestoredStackLoaderData = (stack: Stack) => {
       stack.activities
         .filter((activity) => activity.transitionState !== "exit-done")
         .forEach((activity) => {
-          resolveDeferredLoaderData({
-            eventId: activity.enteredBy.id,
+          startRestoredLoaderData({
+            activityContext: activity.context,
             activityName: activity.name,
             activityParams: activity.params,
           });
         });
     };
 
-    const resolvePausedEventLoaderData = (
+    const startPausedEventLoaderData = (
       pausedEvents: Stack["pausedEvents"],
     ) => {
       pausedEvents?.forEach((event) => {
@@ -130,8 +140,8 @@ export function loaderPlugin<
           return;
         }
 
-        resolveDeferredLoaderData({
-          eventId: event.id,
+        startRestoredLoaderData({
+          activityContext: event.activityContext,
           activityName: event.activityName,
           activityParams: event.activityParams,
         });
@@ -141,11 +151,14 @@ export function loaderPlugin<
     return {
       key: "plugin-loader",
       wrapActivity({ activity }) {
+        const loaderResultId = getLoaderResultId(activity.context);
+
         return (
           <LoaderDataProvider
             value={
-              loaderDataByEventId.get(activity.enteredBy.id) ??
-              runtimeLoaderDataByActivityId.get(activity.id)
+              loaderResultId
+                ? loaderResults.get(loaderResultId)?.promise
+                : undefined
             }
           >
             {activity.render()}
@@ -153,9 +166,7 @@ export function loaderPlugin<
         );
       },
       overrideInitialEvents({ initialEvents, initialContext, initInfo }) {
-        loaderDataByEventId.clear();
-        runtimeLoaderDataByActivityId.clear();
-        loadPathDeferreds.clear();
+        loaderResults.clear();
 
         if (initialEvents.length === 0) {
           return [];
@@ -175,11 +186,11 @@ export function loaderPlugin<
               return event;
             }
 
-            const loaderData = defer<unknown>();
-            loaderDataByEventId.set(event.id, loaderData.promise);
-            loadPathDeferreds.set(event.id, loaderData);
+            const loaderResultId =
+              getLoaderResultId(event.activityContext) ?? makeLoaderResultId();
+            loaderResults.set(loaderResultId, createRestoredLoaderResult());
 
-            return event;
+            return withLoaderResultId(event, loaderResultId);
           });
         }
 
@@ -189,11 +200,11 @@ export function loaderPlugin<
           }
 
           if (initialContext.initialLoaderData) {
-            loaderDataByEventId.set(
-              event.id,
-              resolve(initialContext.initialLoaderData),
-            );
-            return event;
+            const loaderResultId = makeLoaderResultId();
+            loaderResults.set(loaderResultId, {
+              promise: resolve(initialContext.initialLoaderData),
+            });
+            return withLoaderResultId(event, loaderResultId);
           }
 
           const { activityName, activityParams } = event;
@@ -217,31 +228,30 @@ export function loaderPlugin<
             });
           });
 
-          loaderDataByEventId.set(event.id, loaderData);
-          return event;
+          const loaderResultId = makeLoaderResultId();
+          loaderResults.set(loaderResultId, {
+            promise: loaderData,
+          });
+          return withLoaderResultId(event, loaderResultId);
         });
       },
       onInit({ actions, initInfo }) {
         if (initInfo?.kind === "load") {
           const stack = actions.getStack();
 
-          resolveRestoredStackLoaderData(stack);
-          resolvePausedEventLoaderData(stack.pausedEvents);
+          startRestoredStackLoaderData(stack);
+          startPausedEventLoaderData(stack.pausedEvents);
         }
-      },
-      onChanged({ actions }) {
-        const stack = actions.getStack();
-        promoteRuntimeLoaderData(stack);
       },
       onBeforePush: createBeforeRouteHandler({
         input,
         loadData,
-        runtimeLoaderDataByActivityId,
+        loaderResults,
       }),
       onBeforeReplace: createBeforeRouteHandler({
         input,
         loadData,
-        runtimeLoaderDataByActivityId,
+        loaderResults,
       }),
     };
   };
@@ -260,23 +270,18 @@ function createBeforeRouteHandler<
 >({
   input,
   loadData,
-  runtimeLoaderDataByActivityId,
+  loaderResults,
 }: {
   input: StackflowInput<T, R>;
   loadData: (activityName: string, activityParams: {}) => unknown;
-  runtimeLoaderDataByActivityId: Map<string, SyncInspectablePromise<unknown>>;
+  loaderResults: Map<string, LoaderResult>;
 }): OnBeforeRoute {
   return ({ actionParams, actions }) => {
     if (actions.isPrevented()) {
       return;
     }
 
-    const { activityId, activityName, activityParams, activityContext } =
-      actionParams;
-
-    // A plugin can synchronously start a same-ID successor before the accepted
-    // predecessor's staged value is promoted to its entry generation.
-    runtimeLoaderDataByActivityId.delete(activityId);
+    const { activityName, activityParams, activityContext } = actionParams;
 
     const matchActivity = input.config.activities.find(
       (activity) => activity.name === activityName,
@@ -326,17 +331,13 @@ function createBeforeRouteHandler<
     }
 
     if (loaderData) {
-      // Stage after a possible pause so that pause's own change notification
-      // cannot associate a same-ID replacement with the current generation.
-      runtimeLoaderDataByActivityId.set(activityId, loaderData);
-
-      Promise.resolve().then(() => {
-        // Core route dispatch is synchronous. A value that was not promoted by
-        // the next microtask belongs to an action that never reached the stack.
-        if (runtimeLoaderDataByActivityId.get(activityId) === loaderData) {
-          runtimeLoaderDataByActivityId.delete(activityId);
-        }
+      const loaderResultId = makeLoaderResultId();
+      loaderResults.set(loaderResultId, {
+        promise: loaderData,
       });
+      actions.overrideActionParams(
+        withLoaderResultId(actionParams, loaderResultId),
+      );
     }
   };
 }
