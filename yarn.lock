@@ -5623,6 +5623,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@stackflow/core@npm:^2.0.0":
+  version: 2.0.1
+  resolution: "@stackflow/core@npm:2.0.1::__archiveUrl=https%3A%2F%2Fregistry.npmjs.org%2F%40stackflow%2Fcore%2F-%2Fcore-2.0.1.tgz"
+  dependencies:
+    react-fast-compare: "npm:^3.2.2"
+  checksum: 10/14fc9db6d8f54213230f33e9688aa70725e69b6a19cc8b2fd2310012df69dafab7c2ec813dba2e90524f5064f4a70041b85caeeeceafb054fd8af545c7cdaee7
+  languageName: node
+  linkType: hard
+
 "@stackflow/core@npm:^3.0.0, @stackflow/core@workspace:core":
   version: 0.0.0-use.local
   resolution: "@stackflow/core@workspace:core"
@@ -5914,7 +5923,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/plugin-history-sync@npm:^1.12.0, @stackflow/plugin-history-sync@workspace:extensions/plugin-history-sync":
+"@stackflow/plugin-history-sync@npm:^1.11.0, @stackflow/plugin-history-sync@npm:^1.12.0, @stackflow/plugin-history-sync@workspace:extensions/plugin-history-sync":
   version: 0.0.0-use.local
   resolution: "@stackflow/plugin-history-sync@workspace:extensions/plugin-history-sync"
   dependencies:
@@ -5987,7 +5996,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/plugin-renderer-basic@npm:^1.1.15, @stackflow/plugin-renderer-basic@workspace:extensions/plugin-renderer-basic":
+"@stackflow/plugin-renderer-basic@npm:^1.1.14, @stackflow/plugin-renderer-basic@npm:^1.1.15, @stackflow/plugin-renderer-basic@workspace:extensions/plugin-renderer-basic":
   version: 0.0.0-use.local
   resolution: "@stackflow/plugin-renderer-basic@workspace:extensions/plugin-renderer-basic"
   dependencies:
@@ -6094,7 +6103,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/react@npm:^2.1.2, @stackflow/react@workspace:integrations/react":
+"@stackflow/react@npm:^2.0.0, @stackflow/react@npm:^2.1.2, @stackflow/react@workspace:integrations/react":
   version: 0.0.0-use.local
   resolution: "@stackflow/react@workspace:integrations/react"
   dependencies:
