@@ -25,6 +25,8 @@ type LoaderResult = {
 };
 
 function createRestoredLoaderResult(): LoaderResult {
+  // Snapshot replay creates placeholders before loaders can run in onInit, and
+  // repeated restore scans must not execute the same loader more than once.
   const deferred = defer<unknown>();
   let started = false;
 
@@ -45,6 +47,20 @@ function createRestoredLoaderResult(): LoaderResult {
 
       return true;
     },
+  };
+}
+
+function withoutLegacyLoaderData<T extends { activityContext?: {} }>(
+  value: T,
+): T {
+  const activityContext = {
+    ...value.activityContext,
+  } as Record<string, unknown>;
+  delete activityContext.loaderData;
+
+  return {
+    ...value,
+    activityContext,
   };
 }
 
@@ -83,6 +99,8 @@ export function loaderPlugin<
   loadData: (activityName: string, activityParams: {}) => unknown,
 ): StackflowReactPlugin {
   return () => {
+    // React may still render an older activity context after core advances, so
+    // result entries remain available for the lifetime of the plugin instance.
     const loaderResults = new Map<string, LoaderResult>();
 
     const startRestoredLoaderData = ({
@@ -186,11 +204,19 @@ export function loaderPlugin<
               return event;
             }
 
+            const existingLoaderResultId = getLoaderResultId(
+              event.activityContext,
+            );
             const loaderResultId =
-              getLoaderResultId(event.activityContext) ?? makeLoaderResultId();
+              existingLoaderResultId ?? makeLoaderResultId();
             loaderResults.set(loaderResultId, createRestoredLoaderResult());
 
-            return withLoaderResultId(event, loaderResultId);
+            // ID-less loader events use the legacy schema, where loaderData was
+            // owned by this plugin and carried the Promise or loader result.
+            return withLoaderResultId(
+              existingLoaderResultId ? event : withoutLegacyLoaderData(event),
+              loaderResultId,
+            );
           });
         }
 
