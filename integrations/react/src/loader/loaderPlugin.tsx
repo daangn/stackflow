@@ -50,20 +50,6 @@ function createRestoredLoaderResult(): LoaderResult {
   };
 }
 
-function withoutLegacyLoaderData<T extends { activityContext?: {} }>(
-  value: T,
-): T {
-  const activityContext = {
-    ...value.activityContext,
-  } as Record<string, unknown>;
-  delete activityContext.loaderData;
-
-  return {
-    ...value,
-    activityContext,
-  };
-}
-
 function getLoaderResultId(activityContext: unknown) {
   if (!activityContext || typeof activityContext !== "object") {
     return undefined;
@@ -196,27 +182,22 @@ export function loaderPlugin<
               return event;
             }
 
-            const existingLoaderResultId = getLoaderResultId(
-              event.activityContext,
-            );
-            // ID absence identifies snapshots from the schema where this plugin
-            // owned loaderData; the current config may no longer declare it.
-            const migratedEvent = existingLoaderResultId
-              ? event
-              : withoutLegacyLoaderData(event);
             const matchActivity = input.config.activities.find(
               (activity) => activity.name === event.activityName,
             );
 
             if (!matchActivity?.loader) {
-              return migratedEvent;
+              return event;
             }
 
+            const existingLoaderResultId = getLoaderResultId(
+              event.activityContext,
+            );
             const loaderResultId =
               existingLoaderResultId ?? makeLoaderResultId();
             loaderResults.set(loaderResultId, createRestoredLoaderResult());
 
-            return withLoaderResultId(migratedEvent, loaderResultId);
+            return withLoaderResultId(event, loaderResultId);
           });
         }
 
