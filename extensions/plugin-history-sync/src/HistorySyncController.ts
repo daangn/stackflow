@@ -135,12 +135,6 @@ export class HistorySyncController {
     );
   }
 
-  dispose(): void {
-    this.unlisten?.();
-    this.unlisten = null;
-    this.inFlight = false;
-  }
-
   scheduleSync(): void {
     this.pendingSync = true;
     this.flushSync();
