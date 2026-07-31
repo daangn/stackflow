@@ -276,7 +276,7 @@ export function historySyncPlugin<
         initialContext,
         initInfo,
       }) {
-        if (initInfo?.kind === "load") {
+        if (initInfo.kind === "load") {
           return providedEvents;
         }
 
