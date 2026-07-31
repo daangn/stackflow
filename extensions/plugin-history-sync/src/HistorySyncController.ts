@@ -125,10 +125,8 @@ export class HistorySyncController {
         }
       });
       this.browserCursor = entries.length > 0 ? entries.length - 1 : 0;
-    } else if (existing.ordinal === entries.length - 1) {
-      this.browserCursor = existing.ordinal;
     } else {
-      throw new Error('History state unmatched');
+      this.browserCursor = existing.ordinal;
     }
 
     this.unlisten = this.history.listen((update) =>
