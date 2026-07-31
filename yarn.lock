@@ -5612,7 +5612,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/core@npm:^3.0.0, @stackflow/core@workspace:core":
+"@stackflow/core@npm:^3.0.0, @stackflow/core@npm:^3.1.0, @stackflow/core@workspace:core":
   version: 0.0.0-use.local
   resolution: "@stackflow/core@workspace:core"
   dependencies:
@@ -6057,7 +6057,7 @@ __metadata:
   resolution: "@stackflow/react@workspace:integrations/react"
   dependencies:
     "@stackflow/config": "npm:^2.0.0"
-    "@stackflow/core": "npm:^3.0.0"
+    "@stackflow/core": "npm:^3.1.0"
     "@stackflow/esbuild-config": "npm:^1.0.3"
     "@types/react": "npm:^18.3.3"
     esbuild: "npm:^0.23.0"
@@ -6068,7 +6068,7 @@ __metadata:
     typescript: "npm:^5.5.3"
   peerDependencies:
     "@stackflow/config": ^2.0.0
-    "@stackflow/core": ^3.0.0
+    "@stackflow/core": ^3.1.0
     "@types/react": ">=16.8.0"
     react: ">=16.8.0"
   languageName: unknown
