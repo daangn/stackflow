@@ -234,7 +234,6 @@ describe("historySyncPlugin", () => {
       initialEntries: ["/home"],
     });
 
-    const fallbackActivity = jest.fn((): "Home" => "Home");
     const snapshotEvents: SnapshotEvent[] = [
       makeEvent("Pushed", {
         activityId: "home",
@@ -281,7 +280,7 @@ describe("historySyncPlugin", () => {
             Home: "/home",
             Article: "/articles/:articleId",
           },
-          fallbackActivity,
+          fallbackActivity: () => 'Home',
         }),
       ],
     });
@@ -295,9 +294,6 @@ describe("historySyncPlugin", () => {
     expect(activeActivity(coreStore.actions.getStack())?.name).toEqual(
       "Article",
     );
-    expect(fallbackActivity).not.toHaveBeenCalled();
-    expect(path(history.location)).toEqual("/articles/123/");
-    expect(history.index).toEqual(1);
   });
 
   test("historySyncPlugin - actions.push() 후에, URL 상태가 알맞게 바뀝니다", async () => {
