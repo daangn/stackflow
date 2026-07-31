@@ -7,6 +7,7 @@ const STATE_TAG = "@stackflow/plugin-history-sync";
 interface State {
   activity: Activity;
   step?: ActivityStep;
+  ordinal: number;
 }
 
 interface SerializedState {
@@ -20,6 +21,7 @@ function serializeState(state: State): SerializedState {
     flattedState: stringify({
       activity: state.activity,
       step: state.step,
+      ordinal: state.ordinal,
     }),
   };
 }
@@ -42,6 +44,10 @@ export function parseState(input: unknown): State | null {
   } catch {
     return null;
   }
+}
+
+export function readBrowserOrdinal(history: History): number | null {
+  return parseState(history.location.state)?.ordinal ?? null;
 }
 
 export function pushState({

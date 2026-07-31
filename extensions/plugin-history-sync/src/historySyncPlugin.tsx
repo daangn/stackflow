@@ -14,7 +14,7 @@ import type {
   ActivityComponentType,
   StackflowReactPlugin,
 } from "@stackflow/react";
-import type { History, Listener } from "history";
+import type { History } from "history";
 import { createBrowserHistory, createMemoryHistory } from "history";
 import { useEffect, useSyncExternalStore } from "react";
 import UrlPattern from "url-pattern";
@@ -22,8 +22,11 @@ import { ActivityActivationCountsContext } from "./ActivityActivationCountsConte
 import type { ActivityActivationMonitor } from "./ActivityActivationMonitor/ActivityActivationMonitor";
 import { DefaultHistoryActivityActivationMonitor } from "./ActivityActivationMonitor/DefaultHistoryActivityActivationMonitor";
 import { HistoryQueueProvider } from "./HistoryQueueContext";
-import { parseState, pushState, replaceState } from "./historyState";
-import { last } from "./last";
+import {
+  type ControllerActions,
+  HistorySyncController,
+} from "./HistorySyncController";
+import { parseState } from "./historyState";
 import { makeHistoryTaskQueue } from "./makeHistoryTaskQueue";
 import type { UrlPatternOptions } from "./makeTemplate";
 import { makeTemplate, pathToUrl, urlSearchParamsToMap } from "./makeTemplate";
@@ -101,13 +104,30 @@ export function historySyncPlugin<
 
   const activityRoutes = sortActivityRoutes(normalizeActivityRouteMap(routes));
 
+  /** The URL pathname an activity/step occupies, from its route template. */
+  const makePath = (
+    activityName: string,
+    params: { [key: string]: string | undefined },
+  ): string => {
+    const match = activityRoutes.find((r) => r.activityName === activityName)!;
+    return makeTemplate(match, options.urlPatternOptions).fill(params);
+  };
+
   return () => {
-    let pushFlag = 0;
-    let silentFlag = false;
     let initialSetupProcess: NavigationProcess | null = null;
     const activityActivationMonitors: ActivityActivationMonitor[] = [];
     const activityActivationCountsChangeNotifier = new Publisher<void>();
 
+    /**
+     * The single authority that mutates the browser history, created in
+     * `onInit` once the core actions are available. The browser is driven only
+     * from committed stack changes (via `onChanged`) and from translated user
+     * navigations — never from a pre-effect hook.
+     */
+    let controller: HistorySyncController | null = null;
+
+    // Retained so `useHistoryTick` consumers keep a working queue; the sync
+    // mechanism itself does not depend on it.
     const { requestHistoryTick } = makeHistoryTaskQueue(history);
 
     const subscribeActivityActivationCountsChange = (
@@ -454,283 +474,27 @@ export function historySyncPlugin<
         // kicks off the staged `defaultHistory` setup (see `coreActions`).
         coreActions = actions;
 
-        const { getStack, dispatchEvent, push, stepPush } = actions;
-        const stack = getStack();
-
-        if (parseState(history.location.state) === null) {
-          for (const activity of stack.activities) {
-            if (
-              activity.transitionState === "enter-active" ||
-              activity.transitionState === "enter-done"
-            ) {
-              const match = activityRoutes.find(
-                (r) => r.activityName === activity.name,
-              )!;
-              const template = makeTemplate(match, options.urlPatternOptions);
-
-              if (activity.isRoot) {
-                replaceState({
-                  history,
-                  pathname: template.fill(activity.params),
-                  state: {
-                    activity: activity,
-                  },
-                  useHash: options.useHash,
-                });
-              } else {
-                pushState({
-                  history,
-                  pathname: template.fill(activity.params),
-                  state: {
-                    activity: activity,
-                  },
-                  useHash: options.useHash,
-                });
-              }
-
-              for (const step of activity.steps) {
-                if (!step.exitedBy && step.enteredBy.name !== "Pushed") {
-                  pushState({
-                    history,
-                    pathname: template.fill(step.params),
-                    state: {
-                      activity: activity,
-                      step: step,
-                    },
-                    useHash: options.useHash,
-                  });
-                }
-              }
-            }
-          }
-        }
-
-        const onPopState: Listener = (e) => {
-          if (silentFlag) {
-            silentFlag = false;
-            return;
-          }
-
-          const state = parseState(e.location.state);
-
-          if (!state) {
-            return;
-          }
-
-          const targetActivity = state.activity;
-          const targetActivityId = state.activity.id;
-          const targetStep = state.step;
-
-          const { activities } = getStack();
-          const currentActivity = activities.find(
-            (activity) => activity.isActive,
-          );
-
-          if (!currentActivity) {
-            return;
-          }
-
-          const currentStep = last(currentActivity.steps);
-
-          const nextActivity = activities.find(
-            (activity) => activity.id === targetActivityId,
-          );
-          const nextStep = currentActivity.steps.find(
-            (step) => step.id === targetStep?.id,
-          );
-
-          const isBackward = () => currentActivity.id > targetActivityId;
-          const isForward = () => currentActivity.id < targetActivityId;
-          const isStep = () => currentActivity.id === targetActivityId;
-
-          const isStepBackward = () => {
-            if (!isStep()) {
-              return false;
-            }
-
-            if (!targetStep) {
-              return true;
-            }
-            if (currentStep && currentStep.id > targetStep.id) {
-              return true;
-            }
-
-            return false;
-          };
-          const isStepForward = () => {
-            if (!isStep()) {
-              return false;
-            }
-
-            if (!currentStep) {
-              return true;
-            }
-            if (targetStep && currentStep.id < targetStep.id) {
-              return true;
-            }
-
-            return false;
-          };
-
-          if (isBackward()) {
-            dispatchEvent("Popped", {});
-
-            if (!nextActivity) {
-              pushFlag += 1;
-              push({
-                ...targetActivity.enteredBy,
-              });
-
-              if (
-                targetStep?.enteredBy.name === "StepPushed" ||
-                targetStep?.enteredBy.name === "StepReplaced"
-              ) {
-                const { enteredBy } = targetStep;
-                pushFlag += 1;
-                stepPush({
-                  ...enteredBy,
-                });
-              }
-            }
-          }
-          if (isStepBackward()) {
-            if (
-              !nextStep &&
-              targetStep &&
-              (targetStep?.enteredBy.name === "StepPushed" ||
-                targetStep?.enteredBy.name === "StepReplaced")
-            ) {
-              const { enteredBy } = targetStep;
-
-              pushFlag += 1;
-              stepPush({
-                ...enteredBy,
-              });
-            }
-
-            dispatchEvent("StepPopped", {});
-          }
-
-          if (isForward()) {
-            pushFlag += 1;
-            push({
-              activityId: targetActivity.id,
-              activityName: targetActivity.name,
-              activityParams: targetActivity.params,
-            });
-          }
-          if (isStepForward()) {
-            if (!targetStep) {
-              return;
-            }
-
-            pushFlag += 1;
-            stepPush({
-              stepId: targetStep.id,
-              stepParams: targetStep.params,
-            });
-          }
+        const controllerActions: ControllerActions = {
+          getStack: actions.getStack,
+          push: (params) => actions.push(params),
+          stepPush: (params) => actions.stepPush(params),
+          pop: () => actions.pop(),
+          stepPop: () => actions.stepPop(),
         };
 
-        history.listen(onPopState);
-      },
-      onPushed({ effect: { activity } }) {
-        if (pushFlag) {
-          pushFlag -= 1;
-          return;
-        }
-
-        const match = activityRoutes.find(
-          (r) => r.activityName === activity.name,
-        )!;
-
-        const template = makeTemplate(match, options.urlPatternOptions);
-
-        requestHistoryTick(() => {
-          silentFlag = true;
-          pushState({
-            history,
-            pathname: template.fill(activity.params),
-            state: {
-              activity,
-            },
-            useHash: options.useHash,
-          });
+        controller = new HistorySyncController({
+          history,
+          useHash: options.useHash,
+          actions: controllerActions,
+          makePath,
         });
-      },
-      onStepPushed({ effect: { activity, step } }) {
-        if (pushFlag) {
-          pushFlag -= 1;
-          return;
-        }
 
-        const match = activityRoutes.find(
-          (r) => r.activityName === activity.name,
-        )!;
-
-        const template = makeTemplate(match, options.urlPatternOptions);
-
-        requestHistoryTick(() => {
-          silentFlag = true;
-          pushState({
-            history,
-            pathname: template.fill(activity.params),
-            state: {
-              activity,
-              step,
-            },
-            useHash: options.useHash,
-          });
-        });
-      },
-      onReplaced({ effect: { activity } }) {
-        if (!activity.isActive) {
-          return;
-        }
-
-        const match = activityRoutes.find(
-          (r) => r.activityName === activity.name,
-        )!;
-
-        const template = makeTemplate(match, options.urlPatternOptions);
-
-        requestHistoryTick(() => {
-          silentFlag = true;
-          replaceState({
-            history,
-            pathname: template.fill(activity.params),
-            state: {
-              activity,
-            },
-            useHash: options.useHash,
-          });
-        });
-      },
-      onStepReplaced({ effect: { activity, step } }) {
-        if (!activity.isActive) {
-          return;
-        }
-
-        const match = activityRoutes.find(
-          (r) => r.activityName === activity.name,
-        )!;
-
-        const template = makeTemplate(match, options.urlPatternOptions);
-
-        requestHistoryTick(() => {
-          silentFlag = true;
-          replaceState({
-            history,
-            pathname: template.fill(activity.params),
-            state: {
-              activity,
-              step,
-            },
-            useHash: options.useHash,
-          });
-        });
+        controller.start();
       },
       onBeforePush({ actionParams, actions: { overrideActionParams } }) {
+        // Idempotent param normalization only — no observable side effect. The
+        // browser is never touched in a pre-effect hook, so a `preventDefault`
+        // by another plugin leaves history untouched.
         if (
           !actionParams.activityContext ||
           "path" in actionParams.activityContext === false
@@ -750,10 +514,10 @@ export function historySyncPlugin<
           });
         }
       },
-      onBeforeReplace({
-        actionParams,
-        actions: { overrideActionParams, getStack },
-      }) {
+      onBeforeReplace({ actionParams, actions: { overrideActionParams } }) {
+        // Idempotent param normalization only — no observable side effect (the
+        // browser history mutation that used to live here has moved to the
+        // committed-effect sync pass).
         if (
           !actionParams.activityContext ||
           "path" in actionParams.activityContext === false
@@ -771,80 +535,11 @@ export function historySyncPlugin<
               path,
             },
           });
-        }
-
-        const { activities } = getStack();
-        const enteredActivities = activities.filter(
-          (currentActivity) =>
-            currentActivity.transitionState === "enter-active" ||
-            currentActivity.transitionState === "enter-done",
-        );
-        const previousActivity =
-          enteredActivities.length > 0
-            ? enteredActivities[enteredActivities.length - 1]
-            : null;
-
-        if (previousActivity) {
-          for (let i = 0; i < previousActivity.steps.length - 1; i += 1) {
-            requestHistoryTick((resolve) => {
-              if (!parseState(history.location.state)) {
-                silentFlag = true;
-                history.back();
-              } else {
-                resolve();
-              }
-            });
-
-            requestHistoryTick(() => {
-              silentFlag = true;
-              history.back();
-            });
-          }
-        }
-      },
-      onBeforeStepPop({ actions: { getStack } }) {
-        const { activities } = getStack();
-        const currentActivity = activities.find(
-          (activity) => activity.isActive,
-        );
-
-        if ((currentActivity?.steps.length ?? 0) > 1) {
-          requestHistoryTick(() => {
-            silentFlag = true;
-            history.back();
-          });
-        }
-      },
-      onBeforePop({ actions: { getStack } }) {
-        const { activities } = getStack();
-        const currentActivity = activities.find(
-          (activity) => activity.isActive,
-        );
-
-        if (currentActivity) {
-          const { isRoot, steps } = currentActivity;
-
-          const popCount = isRoot ? 0 : steps.length;
-
-          for (let i = 0; i < popCount; i += 1) {
-            requestHistoryTick((resolve) => {
-              if (!parseState(history.location.state)) {
-                silentFlag = true;
-                history.back();
-              } else {
-                resolve();
-              }
-            });
-
-            requestHistoryTick(() => {
-              silentFlag = true;
-              history.back();
-            });
-          }
         }
       },
       onChanged({ actions }) {
         dispatchInitialSetupNavigation(actions);
+        controller?.scheduleSync();
       },
     };
   };
