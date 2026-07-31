@@ -1,5 +1,15 @@
 # @stackflow/core
 
+## 3.1.0
+
+### Minor Changes
+
+- 8ce8866: Expose the live, action-local `actions.isPrevented()` state to every pre-effect hook.
+
+### Patch Changes
+
+- 9535716: Fix `resume()` leaving a Stack paused when no navigation event was queued after `pause()`.
+
 ## 3.0.0
 
 ### Major Changes
