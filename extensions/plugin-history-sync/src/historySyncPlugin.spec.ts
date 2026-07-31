@@ -229,6 +229,77 @@ describe("historySyncPlugin", () => {
     expect(fallbackActivity).toHaveBeenCalledTimes(1);
   });
 
+  test("historySyncPlugin - snapshot load 시 복원된 navigation history를 유지합니다", () => {
+    history = createMemoryHistory({
+      initialEntries: ["/home"],
+    });
+
+    const fallbackActivity = jest.fn((): "Home" => "Home");
+    const snapshotEvents: SnapshotEvent[] = [
+      makeEvent("Pushed", {
+        activityId: "home",
+        activityName: "Home",
+        activityParams: {},
+        eventDate: enoughPastTime(),
+      }),
+      makeEvent("Pushed", {
+        activityId: "article",
+        activityName: "Article",
+        activityParams: {
+          articleId: "123",
+        },
+        eventDate: enoughPastTime(),
+      }),
+    ];
+    const snapshot = {
+      $schema: "stackflow.snapshot.v1" as const,
+      events: snapshotEvents,
+    };
+    const coreStore = makeCoreStore({
+      initialEvents: [
+        makeEvent("Initialized", {
+          transitionDuration: 32,
+          eventDate: enoughPastTime(),
+        }),
+        makeEvent("ActivityRegistered", {
+          activityName: "Home",
+          eventDate: enoughPastTime(),
+        }),
+        makeEvent("ActivityRegistered", {
+          activityName: "Article",
+          eventDate: enoughPastTime(),
+        }),
+      ],
+      plugins: [
+        () => ({
+          key: "snapshot-provider",
+          provideSnapshot: () => snapshot,
+        }),
+        historySyncPlugin({
+          history,
+          routes: {
+            Home: "/home",
+            Article: "/articles/:articleId",
+          },
+          fallbackActivity,
+        }),
+      ],
+    });
+
+    coreStore.init();
+
+    expect(coreStore.actions.getStack().activities).toHaveLength(2);
+    expect(
+      coreStore.actions.getStack().activities.map(({ name }) => name),
+    ).toEqual(expect.arrayContaining(["Home", "Article"]));
+    expect(activeActivity(coreStore.actions.getStack())?.name).toEqual(
+      "Article",
+    );
+    expect(fallbackActivity).not.toHaveBeenCalled();
+    expect(path(history.location)).toEqual("/articles/123/");
+    expect(history.index).toEqual(1);
+  });
+
   test("historySyncPlugin - actions.push() 후에, URL 상태가 알맞게 바뀝니다", async () => {
     await actions.push({
       activityId: "a1",

@@ -271,7 +271,15 @@ export function historySyncPlugin<
           </HistoryQueueProvider>
         );
       },
-      overrideInitialEvents({ initialContext }) {
+      overrideInitialEvents({
+        initialEvents: providedEvents,
+        initialContext,
+        initInfo,
+      }) {
+        if (initInfo?.kind === "load") {
+          return providedEvents;
+        }
+
         const initialState = parseState(history.location.state);
 
         if (initialState) {
