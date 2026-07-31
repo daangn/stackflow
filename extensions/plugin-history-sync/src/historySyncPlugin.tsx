@@ -490,6 +490,7 @@ export function historySyncPlugin<
         });
 
         controller.start();
+        controller.scheduleSync();
       },
       onBeforePush({ actionParams, actions: { overrideActionParams } }) {
         // Idempotent param normalization only — no observable side effect. The
