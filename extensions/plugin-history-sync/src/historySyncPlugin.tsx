@@ -26,6 +26,10 @@ import {
   type ControllerActions,
   HistorySyncController,
 } from "./HistorySyncController";
+import {
+  createHistorySyncUrlResolver,
+  type HistorySyncUrlResolver,
+} from "./HistorySyncUrlResolver";
 import { parseState } from "./historyState";
 import { makeHistoryTaskQueue } from "./makeHistoryTaskQueue";
 import type { UrlPatternOptions } from "./makeTemplate";
@@ -45,6 +49,7 @@ import { sortActivityRoutes } from "./sortActivityRoutes";
 type ConfigHistorySync = {
   makeTemplate: typeof makeTemplate;
   urlPatternOptions?: UrlPatternOptions;
+  urlResolver: HistorySyncUrlResolver;
 };
 
 declare module "@stackflow/config" {
@@ -73,17 +78,14 @@ type HistorySyncPluginOptions<T, K extends Extract<keyof T, string>> = (
   urlPatternOptions?: UrlPatternOptions;
 };
 
+export type HistorySyncPlugin<T> = StackflowReactPlugin<T> & {
+  readonly urlResolver: HistorySyncUrlResolver;
+};
+
 export function historySyncPlugin<
   T extends { [activityName: string]: unknown },
   K extends Extract<keyof T, string>,
->(options: HistorySyncPluginOptions<T, K>): StackflowReactPlugin<T> {
-  if ("config" in options) {
-    options.config.decorate("historySync", {
-      makeTemplate,
-      urlPatternOptions: options.urlPatternOptions,
-    });
-  }
-
+>(options: HistorySyncPluginOptions<T, K>): HistorySyncPlugin<T> {
   const history =
     options.history ??
     (typeof window === "undefined"
@@ -103,17 +105,22 @@ export function historySyncPlugin<
         );
 
   const activityRoutes = sortActivityRoutes(normalizeActivityRouteMap(routes));
+  const urlResolver = createHistorySyncUrlResolver({
+    activityRoutes,
+    location,
+    useHash: options.useHash,
+    urlPatternOptions: options.urlPatternOptions,
+  });
 
-  /** The URL pathname an activity/step occupies, from its route template. */
-  const makePath = (
-    activityName: string,
-    params: { [key: string]: string | undefined },
-  ): string => {
-    const match = activityRoutes.find((r) => r.activityName === activityName)!;
-    return makeTemplate(match, options.urlPatternOptions).fill(params);
-  };
+  if ("config" in options) {
+    options.config.decorate("historySync", {
+      makeTemplate,
+      urlPatternOptions: options.urlPatternOptions,
+      urlResolver,
+    });
+  }
 
-  return () => {
+  const plugin: StackflowReactPlugin<T> = () => {
     let initialSetupProcess: NavigationProcess | null = null;
     const activityActivationMonitors: ActivityActivationMonitor[] = [];
     const activityActivationCountsChangeNotifier = new Publisher<void>();
@@ -300,22 +307,7 @@ export function historySyncPlugin<
           ];
         }
 
-        function resolveCurrentPath() {
-          if (
-            initialContext?.req?.path &&
-            typeof initialContext.req.path === "string"
-          ) {
-            return initialContext.req.path;
-          }
-
-          if (options.useHash) {
-            return location.hash.split("#")[1] ?? "/";
-          }
-
-          return location.pathname + location.search;
-        }
-
-        const currentPath = resolveCurrentPath();
+        const currentPath = urlResolver.resolveEntryUrl(initialContext);
         const matchedActivityRoute = activityRoutes.find((activityRoute) => {
           const template = makeTemplate(
             activityRoute,
@@ -494,7 +486,7 @@ export function historySyncPlugin<
           history,
           useHash: options.useHash,
           actions: controllerActions,
-          makePath,
+          makePath: urlResolver.makeActivityUrl,
         });
 
         controller.start();
@@ -508,11 +500,10 @@ export function historySyncPlugin<
           !actionParams.activityContext ||
           "path" in actionParams.activityContext === false
         ) {
-          const match = activityRoutes.find(
-            (r) => r.activityName === actionParams.activityName,
-          )!;
-          const template = makeTemplate(match, options.urlPatternOptions);
-          const path = template.fill(actionParams.activityParams);
+          const path = urlResolver.makeActivityUrl(
+            actionParams.activityName,
+            actionParams.activityParams,
+          );
 
           overrideActionParams({
             ...actionParams,
@@ -531,11 +522,10 @@ export function historySyncPlugin<
           !actionParams.activityContext ||
           "path" in actionParams.activityContext === false
         ) {
-          const match = activityRoutes.find(
-            (r) => r.activityName === actionParams.activityName,
-          )!;
-          const template = makeTemplate(match, options.urlPatternOptions);
-          const path = template.fill(actionParams.activityParams);
+          const path = urlResolver.makeActivityUrl(
+            actionParams.activityName,
+            actionParams.activityParams,
+          );
 
           overrideActionParams({
             ...actionParams,
@@ -552,4 +542,6 @@ export function historySyncPlugin<
       },
     };
   };
+
+  return Object.assign(plugin, { urlResolver });
 }
