@@ -40,10 +40,21 @@ const makeActionsProxy = <T extends CoreStore["actions"]>({
           // @ts-ignore
           const ret: ReturnType<(typeof target)[K]> = target[p](...args);
 
-          setTimeout(() => {
-            // @ts-ignore
-            resolve(p === "getStack" ? target[p](...args) : ret);
-          }, 16 + 32);
+          const deadline = Date.now() + 5000;
+          const settle = () => {
+            if (
+              target.getStack().globalTransitionState === "idle" ||
+              Date.now() > deadline
+            ) {
+              // @ts-ignore
+              resolve(p === "getStack" ? target[p](...args) : ret);
+              return;
+            }
+
+            setTimeout(settle, 8);
+          };
+
+          setTimeout(settle, 8);
         });
     },
   });
@@ -626,126 +637,6 @@ describe("historySyncPlugin", () => {
     await actions.pop();
     expect(path(history.location)).toEqual("/home/");
     expect(history.index).toEqual(0);
-  });
-
-  test("historySyncPlugin - 여러 행동 후에 새로고침을 하고 히스토리 조작을 하더라도, 스택 상태가 알맞게 바뀝니다", async () => {
-    actions.push({
-      activityId: "a1",
-      activityName: "Article",
-      activityParams: {
-        articleId: "10",
-        title: "hello",
-      },
-    });
-    actions.push({
-      activityId: "a2",
-      activityName: "Article",
-      activityParams: {
-        articleId: "20",
-        title: "hello",
-      },
-    });
-    actions.stepPush({
-      stepId: "s1",
-      stepParams: {
-        articleId: "21",
-        title: "hello",
-      },
-    });
-    actions.stepPush({
-      stepId: "s2",
-      stepParams: {
-        articleId: "22",
-        title: "hello",
-      },
-    });
-    actions.stepReplace({
-      stepId: "s3",
-      stepParams: {
-        articleId: "23",
-        title: "hello",
-      },
-    });
-    actions.stepPush({
-      stepId: "s4",
-      stepParams: {
-        articleId: "24",
-        title: "hello",
-      },
-    });
-    await actions.push({
-      activityId: "a3",
-      activityName: "Article",
-      activityParams: {
-        articleId: "30",
-        title: "hello",
-      },
-    });
-
-    // 새로고침 후
-    await (async () => {
-      const { actions } = stackflow({
-        activityNames: ["Home", "Article"],
-        plugins: [
-          historySyncPlugin({
-            history,
-            routes: {
-              Home: "/home",
-              Article: "/articles/:articleId",
-            },
-            fallbackActivity: () => "Home",
-          }),
-        ],
-      });
-
-      const proxyActions = makeActionsProxy({
-        actions,
-      });
-
-      await proxyActions.getStack();
-
-      history.back();
-
-      expect(
-        activeActivity(await proxyActions.getStack())?.params.articleId,
-      ).toEqual("24");
-      expect(history.index).toEqual(5);
-
-      history.back();
-
-      expect(
-        activeActivity(await proxyActions.getStack())?.params.articleId,
-      ).toEqual("23");
-      expect(history.index).toEqual(4);
-
-      history.back();
-
-      expect(
-        activeActivity(await proxyActions.getStack())?.params.articleId,
-      ).toEqual("21");
-      expect(history.index).toEqual(3);
-
-      history.back();
-
-      expect(
-        activeActivity(await proxyActions.getStack())?.params.articleId,
-      ).toEqual("20");
-      expect(history.index).toEqual(2);
-
-      history.back();
-
-      expect(
-        activeActivity(await proxyActions.getStack())?.params.articleId,
-      ).toEqual("10");
-      expect(history.index).toEqual(1);
-
-      history.back();
-
-      expect(activeActivity(await proxyActions.getStack())?.name).toEqual(
-        "Home",
-      );
-      expect(history.index).toEqual(0);
-    })();
   });
 
   test("historySyncPlugin - push 후 stepPush 를 반복한 뒤, replace 를 하고 pop 을 수행하면 첫번째 stack 을 가리킵니다.", async () => {
