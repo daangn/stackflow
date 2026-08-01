@@ -1,8 +1,6 @@
 ---
-"@stackflow/react": patch
 "@stackflow/link": patch
 "@stackflow/plugin-basic-ui": patch
-"@stackflow/plugin-blocker": patch
 "@stackflow/plugin-devtools": patch
 "@stackflow/plugin-google-analytics-4": patch
 "@stackflow/plugin-history-sync": patch
