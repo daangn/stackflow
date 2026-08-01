@@ -1,5 +1,19 @@
 # @stackflow/demo
 
+## 1.4.3
+
+### Patch Changes
+
+- Updated dependencies [aaf2d03]
+- Updated dependencies [f7c3a2b]
+- Updated dependencies [78ea192]
+  - @stackflow/link@2.0.2
+  - @stackflow/plugin-basic-ui@1.18.4
+  - @stackflow/plugin-devtools@0.1.14
+  - @stackflow/plugin-history-sync@2.0.0
+  - @stackflow/plugin-renderer-basic@1.1.16
+  - @stackflow/plugin-stack-depth-change@1.1.8
+
 ## 1.4.2
 
 ### Patch Changes

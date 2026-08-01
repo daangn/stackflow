@@ -5630,7 +5630,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/demo@npm:^1.4.2, @stackflow/demo@workspace:demo":
+"@stackflow/demo@npm:^1.4.3, @stackflow/demo@workspace:demo":
   version: 0.0.0-use.local
   resolution: "@stackflow/demo@workspace:demo"
   dependencies:
@@ -5639,12 +5639,12 @@ __metadata:
     "@stackflow/config": "npm:^2.0.0"
     "@stackflow/core": "npm:^3.0.0"
     "@stackflow/esbuild-config": "npm:^1.0.3"
-    "@stackflow/link": "npm:^2.0.1"
-    "@stackflow/plugin-basic-ui": "npm:^1.18.3"
-    "@stackflow/plugin-devtools": "npm:^0.1.13"
-    "@stackflow/plugin-history-sync": "npm:^1.12.0"
-    "@stackflow/plugin-renderer-basic": "npm:^1.1.15"
-    "@stackflow/plugin-stack-depth-change": "npm:^1.1.7"
+    "@stackflow/link": "npm:^2.0.2"
+    "@stackflow/plugin-basic-ui": "npm:^1.18.4"
+    "@stackflow/plugin-devtools": "npm:^0.1.14"
+    "@stackflow/plugin-history-sync": "npm:^2.0.0"
+    "@stackflow/plugin-renderer-basic": "npm:^1.1.16"
+    "@stackflow/plugin-stack-depth-change": "npm:^1.1.8"
     "@stackflow/react": "npm:^2.1.2"
     "@types/react": "npm:^18.3.3"
     "@types/react-dom": "npm:^18.3.0"
@@ -5682,10 +5682,10 @@ __metadata:
     "@seed-design/design-token": "npm:^1.0.3"
     "@seed-design/stylesheet": "npm:^1.0.4"
     "@stackflow/core": "npm:^3.0.0"
-    "@stackflow/demo": "npm:^1.4.2"
-    "@stackflow/plugin-basic-ui": "npm:^1.18.3"
-    "@stackflow/plugin-history-sync": "npm:^1.12.0"
-    "@stackflow/plugin-renderer-basic": "npm:^1.1.15"
+    "@stackflow/demo": "npm:^1.4.3"
+    "@stackflow/plugin-basic-ui": "npm:^1.18.4"
+    "@stackflow/plugin-history-sync": "npm:^2.0.0"
+    "@stackflow/plugin-renderer-basic": "npm:^1.1.16"
     "@stackflow/react": "npm:^2.1.2"
     "@types/node": "npm:^22.7.5"
     "@types/react": "npm:^18.3.3"
@@ -5721,14 +5721,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/link@npm:^2.0.1, @stackflow/link@workspace:extensions/link":
+"@stackflow/link@npm:^2.0.2, @stackflow/link@workspace:extensions/link":
   version: 0.0.0-use.local
   resolution: "@stackflow/link@workspace:extensions/link"
   dependencies:
     "@stackflow/config": "npm:^2.0.0"
     "@stackflow/core": "npm:^3.0.0"
     "@stackflow/esbuild-config": "npm:^1.0.3"
-    "@stackflow/plugin-history-sync": "npm:^1.12.0"
+    "@stackflow/plugin-history-sync": "npm:^2.0.0"
     "@stackflow/react": "npm:^2.1.2"
     "@types/react": "npm:^18.3.3"
     esbuild: "npm:^0.23.0"
@@ -5738,7 +5738,7 @@ __metadata:
     typescript: "npm:^5.5.3"
   peerDependencies:
     "@stackflow/core": ^2.0.0 || ^3.0.0
-    "@stackflow/plugin-history-sync": ^1.6.4-canary.0
+    "@stackflow/plugin-history-sync": ^2.0.0
     "@stackflow/react": ^2.0.0
     "@types/react": ">=16.8.0"
     react: ">=16.8.0"
@@ -5781,14 +5781,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/plugin-basic-ui@npm:^1.18.3, @stackflow/plugin-basic-ui@workspace:extensions/plugin-basic-ui":
+"@stackflow/plugin-basic-ui@npm:^1.18.4, @stackflow/plugin-basic-ui@workspace:extensions/plugin-basic-ui":
   version: 0.0.0-use.local
   resolution: "@stackflow/plugin-basic-ui@workspace:extensions/plugin-basic-ui"
   dependencies:
     "@stackflow/core": "npm:^3.0.0"
     "@stackflow/esbuild-config": "npm:^1.0.3"
     "@stackflow/react": "npm:^2.1.2"
-    "@stackflow/react-ui-core": "npm:^1.3.6"
+    "@stackflow/react-ui-core": "npm:^1.3.7"
     "@types/react": "npm:^18.3.3"
     "@vanilla-extract/css": "npm:^1.15.3"
     "@vanilla-extract/dynamic": "npm:^2.1.1"
@@ -5836,7 +5836,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/plugin-devtools@npm:^0.1.13, @stackflow/plugin-devtools@workspace:extensions/plugin-devtools":
+"@stackflow/plugin-devtools@npm:^0.1.14, @stackflow/plugin-devtools@workspace:extensions/plugin-devtools":
   version: 0.0.0-use.local
   resolution: "@stackflow/plugin-devtools@workspace:extensions/plugin-devtools"
   dependencies:
@@ -5872,7 +5872,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/plugin-history-sync@npm:^1.12.0, @stackflow/plugin-history-sync@workspace:extensions/plugin-history-sync":
+"@stackflow/plugin-history-sync@npm:^2.0.0, @stackflow/plugin-history-sync@workspace:extensions/plugin-history-sync":
   version: 0.0.0-use.local
   resolution: "@stackflow/plugin-history-sync@workspace:extensions/plugin-history-sync"
   dependencies:
@@ -5880,7 +5880,7 @@ __metadata:
     "@stackflow/config": "npm:^2.0.0"
     "@stackflow/core": "npm:^3.0.0"
     "@stackflow/esbuild-config": "npm:^1.0.3"
-    "@stackflow/plugin-renderer-basic": "npm:^1.1.15"
+    "@stackflow/plugin-renderer-basic": "npm:^1.1.16"
     "@stackflow/react": "npm:^2.1.2"
     "@swc/core": "npm:^1.6.6"
     "@swc/jest": "npm:^0.2.36"
@@ -5923,7 +5923,7 @@ __metadata:
     "@stackflow/config": "npm:^2.0.0"
     "@stackflow/core": "npm:^3.0.0"
     "@stackflow/esbuild-config": "npm:^1.0.3"
-    "@stackflow/plugin-renderer-basic": "npm:^1.1.15"
+    "@stackflow/plugin-renderer-basic": "npm:^1.1.16"
     "@stackflow/react": "npm:^2.1.2"
     "@swc/core": "npm:^1.6.6"
     "@swc/jest": "npm:^0.2.36"
@@ -5945,7 +5945,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/plugin-renderer-basic@npm:^1.1.15, @stackflow/plugin-renderer-basic@workspace:extensions/plugin-renderer-basic":
+"@stackflow/plugin-renderer-basic@npm:^1.1.15, @stackflow/plugin-renderer-basic@npm:^1.1.16, @stackflow/plugin-renderer-basic@workspace:extensions/plugin-renderer-basic":
   version: 0.0.0-use.local
   resolution: "@stackflow/plugin-renderer-basic@workspace:extensions/plugin-renderer-basic"
   dependencies:
@@ -6002,7 +6002,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/plugin-stack-depth-change@npm:^1.1.7, @stackflow/plugin-stack-depth-change@workspace:extensions/plugin-stack-depth-change":
+"@stackflow/plugin-stack-depth-change@npm:^1.1.8, @stackflow/plugin-stack-depth-change@workspace:extensions/plugin-stack-depth-change":
   version: 0.0.0-use.local
   resolution: "@stackflow/plugin-stack-depth-change@workspace:extensions/plugin-stack-depth-change"
   dependencies:
@@ -6032,7 +6032,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@stackflow/react-ui-core@npm:^1.3.6, @stackflow/react-ui-core@workspace:extensions/react-ui-core":
+"@stackflow/react-ui-core@npm:^1.3.7, @stackflow/react-ui-core@workspace:extensions/react-ui-core":
   version: 0.0.0-use.local
   resolution: "@stackflow/react-ui-core@workspace:extensions/react-ui-core"
   dependencies:

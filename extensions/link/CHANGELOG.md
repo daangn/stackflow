@@ -1,5 +1,15 @@
 # @stackflow/link
 
+## 2.0.2
+
+### Patch Changes
+
+- aaf2d03: Expand the supported `@stackflow/core` peer dependency range to include both v2 and v3.
+- Updated dependencies [aaf2d03]
+- Updated dependencies [f7c3a2b]
+- Updated dependencies [78ea192]
+  - @stackflow/plugin-history-sync@2.0.0
+
 ## 2.0.1
 
 ### Patch Changes

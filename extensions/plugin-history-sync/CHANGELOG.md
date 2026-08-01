@@ -1,5 +1,19 @@
 # @stackflow/plugin-history-sync
 
+## 2.0.0
+
+### Major Changes
+
+- f7c3a2b: Preserve snapshot navigation history during initialization instead of replacing it with events derived from the current URL. `@stackflow/core` v3 is now required so the plugin can distinguish snapshot loads from fresh stack creation.
+
+### Minor Changes
+
+- 78ea192: Support `preventDefault`: the browser history now follows the committed stack through a single reconciler, so `preventDefault`-based plugins (e.g. `@stackflow/plugin-blocker`) work with browser back/forward and programmatic navigation without history/stack desync.
+
+### Patch Changes
+
+- aaf2d03: Expand the supported `@stackflow/core` peer dependency range to include both v2 and v3.
+
 ## 1.12.0
 
 ### Minor Changes

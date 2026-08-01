@@ -1,3 +1,36 @@
+## 2026.08.01
+
+Expand the supported `@stackflow/core` peer dependency range to include both v2 and v3. [`a201469`](https://github.com/daangn/stackflow/commit/a2014697b7bc8488d354cea93d4bbfb75a4c4a6b)
+
+Released packages:
+- 📦 [@stackflow/link@3.0.0](https://npmjs.com/package/@stackflow/link/v/3.0.0)
+- 📦 [@stackflow/plugin-basic-ui@1.18.4](https://npmjs.com/package/@stackflow/plugin-basic-ui/v/1.18.4)
+- 📦 [@stackflow/plugin-devtools@0.1.14](https://npmjs.com/package/@stackflow/plugin-devtools/v/0.1.14)
+- 📦 [@stackflow/plugin-google-analytics-4@1.1.18](https://npmjs.com/package/@stackflow/plugin-google-analytics-4/v/1.1.18)
+- 📦 [@stackflow/plugin-history-sync@2.0.0](https://npmjs.com/package/@stackflow/plugin-history-sync/v/2.0.0)
+- 📦 [@stackflow/plugin-lifecycle@0.1.3](https://npmjs.com/package/@stackflow/plugin-lifecycle/v/0.1.3)
+- 📦 [@stackflow/plugin-renderer-basic@1.1.16](https://npmjs.com/package/@stackflow/plugin-renderer-basic/v/1.1.16)
+- 📦 [@stackflow/plugin-renderer-web@1.1.16](https://npmjs.com/package/@stackflow/plugin-renderer-web/v/1.1.16)
+- 📦 [@stackflow/plugin-sentry@0.1.3](https://npmjs.com/package/@stackflow/plugin-sentry/v/0.1.3)
+- 📦 [@stackflow/plugin-stack-depth-change@1.1.8](https://npmjs.com/package/@stackflow/plugin-stack-depth-change/v/1.1.8)
+- 📦 [@stackflow/react-ui-core@1.3.7](https://npmjs.com/package/@stackflow/react-ui-core/v/1.3.7)
+
+---
+
+Preserve snapshot navigation history during initialization instead of replacing it with events derived from the current URL. `@stackflow/core` v3 is now required so the plugin can distinguish snapshot loads from fresh stack creation. [`f7c3a2b`](https://github.com/daangn/stackflow/commit/f7c3a2ba5c0adbf96d34fb1b02cae577c28c325d)
+
+Released packages:
+- 📦 [@stackflow/plugin-history-sync@2.0.0](https://npmjs.com/package/@stackflow/plugin-history-sync/v/2.0.0)
+
+---
+
+Support `preventDefault`: the browser history now follows the committed stack through a single reconciler, so `preventDefault`-based plugins (e.g. `@stackflow/plugin-blocker`) work with browser back/forward and programmatic navigation without history/stack desync. [`78ea192`](https://github.com/daangn/stackflow/commit/78ea192e8b0bdbbc02e72384656b20977137fb04)
+
+Released packages:
+- 📦 [@stackflow/plugin-history-sync@2.0.0](https://npmjs.com/package/@stackflow/plugin-history-sync/v/2.0.0)
+
+---
+
 ## 2026.07.11
 
 Distinguish how a stack is initialized — created fresh (`create`) or restored from a snapshot (`load`) — and add the surface a snapshot round-trip needs: `StackSnapshot`, `actions.captureSnapshot()`, the `provideSnapshot` / `onLoadError` plugin hooks, and `initInfo` on `onInit`. Runtime behavior is unchanged when no snapshot is provided; the breaks are type-level only — the `StackflowPluginHook` → `StackflowPluginInitHook` rename, plus new required members on `StackflowActions` and on the `onInit` / `overrideInitialEvents` hook signatures — hence the major. [`f0fc1fb`](https://github.com/daangn/stackflow/commit/f0fc1fbdda3b23f7c1400f9659e45a970be1647d)

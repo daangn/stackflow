@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/link",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "repository": {
     "type": "git",
     "url": "https://github.com/daangn/stackflow.git",
@@ -34,7 +34,7 @@
     "@stackflow/config": "^2.0.0",
     "@stackflow/core": "^3.0.0",
     "@stackflow/esbuild-config": "^1.0.3",
-    "@stackflow/plugin-history-sync": "^1.12.0",
+    "@stackflow/plugin-history-sync": "^2.0.0",
     "@stackflow/react": "^2.1.2",
     "@types/react": "^18.3.3",
     "esbuild": "^0.23.0",
@@ -45,7 +45,7 @@
   },
   "peerDependencies": {
     "@stackflow/core": "^2.0.0 || ^3.0.0",
-    "@stackflow/plugin-history-sync": "^1.6.4-canary.0",
+    "@stackflow/plugin-history-sync": "^2.0.0",
     "@stackflow/react": "^2.0.0",
     "@types/react": ">=16.8.0",
     "react": ">=16.8.0"
