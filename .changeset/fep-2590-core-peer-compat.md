@@ -3,7 +3,6 @@
 "@stackflow/plugin-basic-ui": patch
 "@stackflow/plugin-devtools": patch
 "@stackflow/plugin-google-analytics-4": patch
-"@stackflow/plugin-history-sync": patch
 "@stackflow/plugin-lifecycle": patch
 "@stackflow/plugin-renderer-basic": patch
 "@stackflow/plugin-renderer-web": patch

@@ -45,7 +45,7 @@
   },
   "peerDependencies": {
     "@stackflow/core": "^2.0.0 || ^3.0.0",
-    "@stackflow/plugin-history-sync": "^1.6.4-canary.0",
+    "@stackflow/plugin-history-sync": "^1.6.4-canary.0 || ^2.0.0",
     "@stackflow/react": "^2.0.0",
     "@types/react": ">=16.8.0",
     "react": ">=16.8.0"
