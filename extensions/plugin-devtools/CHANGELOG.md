@@ -1,5 +1,11 @@
 # @stackflow/plugin-devtools
 
+## 0.1.14
+
+### Patch Changes
+
+- aaf2d03: Expand the supported `@stackflow/core` peer dependency range to include both v2 and v3.
+
 ## 0.1.13
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @stackflow/plugin-google-analytics-4
 
+## 1.1.18
+
+### Patch Changes
+
+- aaf2d03: Expand the supported `@stackflow/core` peer dependency range to include both v2 and v3.
+
 ## 1.1.17
 
 ### Patch Changes
