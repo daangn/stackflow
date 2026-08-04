@@ -1,13 +1,17 @@
 # @stackflow/plugin-activity-guard
 
-`@stackflow/plugin-activity-guard` applies synchronous entry rules before an
-Activity is pushed, replaced, or selected as the initial Activity. A Guard can
-allow the requested Activity or redirect the entry to another registered
-Activity before the Stack changes.
+Applications often need to redirect users away from an Activity until entry
+conditions such as sign-in, onboarding, or terms acceptance are satisfied.
+Implementing those checks at individual navigation call sites or inside
+Activity components duplicates the policy and can apply it inconsistently.
 
-Use it for client-side navigation policies such as sign-in, onboarding, or
-terms checks. It controls which Activity enters the Stack; it is not an
-authorization boundary for protected data or server resources.
+`@stackflow/plugin-activity-guard` centralizes these entry policies as typed,
+synchronous Guards. Before an Activity is pushed, replaced, or selected as the
+initial Activity, a Guard can allow the requested Activity or redirect the
+entry to another registered Activity before the Stack changes.
+
+The package controls client-side navigation. It is not an authorization
+boundary for protected data or server resources.
 
 ## Installation
 
