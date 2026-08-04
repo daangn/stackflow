@@ -1,5 +1,11 @@
 # @stackflow/plugin-history-sync
 
+## 2.1.0
+
+### Minor Changes
+
+- eb798ca: Expose the history-sync URL resolver so external features can reuse the plugin's activity and entry URL semantics.
+
 ## 2.0.0
 
 ### Major Changes
