@@ -59,34 +59,3 @@ const { Stack } = stackflow({
   ],
 });
 ```
-
-## Reusing URL semantics
-
-`historySyncPlugin()` exposes the URL resolver used by the plugin instance.
-External features can use it to compare an Activity URL with the boot-time entry
-URL without duplicating route selection, encoding, hash, or SSR rules.
-
-```typescript
-const historySync = historySyncPlugin({
-  config,
-  fallbackActivity: () => "NotFoundPage",
-});
-
-const activityUrl = historySync.urlResolver.makeActivityUrl("MyArticle", {
-  articleId: "42",
-});
-const entryUrl = historySync.urlResolver.resolveEntryUrl(initialContext);
-
-const { Stack } = stackflow({
-  config,
-  components: {
-    MyHome,
-    MyArticle,
-    NotFoundPage,
-  },
-  plugins: [
-    // ...
-    historySync,
-  ],
-});
-```
