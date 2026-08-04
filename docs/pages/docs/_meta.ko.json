@@ -2,7 +2,7 @@
   "get-started": "시작하기",
   "advanced": "활용하기",
   "migration-v2": "마이그레이션 가이드 (v1 → v2)",
-  "migration-v3": "Core 마이그레이션 가이드 (v2 → v3)",
+  "migration-core-v3": "Core 마이그레이션 가이드 (v2 → v3)",
   "ai-integration": "AI 통합",
   "changelog": "변경 이력"
 }
