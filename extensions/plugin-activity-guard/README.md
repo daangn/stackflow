@@ -135,12 +135,3 @@ Guard returns `true`.
 
 Creates a typed redirect resolution. Calling `redirect()` does not navigate by
 itself; the redirect is applied only when a Guard returns the resolution.
-
-### `resolveGuards(origin, guards)`
-
-Resolves a target through the provided Guard map until a Guard allows it or no
-Guard is registered. It returns the final `target` and `blocked`, which is
-`true` when at least one redirect was followed.
-
-The package also exports the supporting types `ActivityGuard`, `Guards`,
-`GuardResolution`, `Target`, and `NonEmptyArray`.
