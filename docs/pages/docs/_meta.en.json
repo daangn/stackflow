@@ -2,6 +2,7 @@
   "get-started": "Get Started",
   "advanced": "Advanced Usage",
   "migration-v2": "Migration Guide (v1 → v2)",
+  "migration-v3": "Core Migration Guide (v2 → v3)",
   "ai-integration": "AI Integration",
   "changelog": "Changelog"
 }

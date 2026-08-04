@@ -1,0 +1,193 @@
+# Core 마이그레이션 가이드: v2 → v3
+
+이 가이드는 `@stackflow/core` v2에서 v3으로 마이그레이션하는 방법을 다뤄요. Core v3은 실행 중인 스택을 snapshot으로 캡처하고 다음 초기화에서 복원하는 API를 추가했어요. Snapshot을 사용하지 않더라도 custom plugin과 직접 만든 action mock은 변경된 타입 계약에 맞춰야 해요.
+
+## 개요
+
+Core v3의 주요 변경 사항은 다음과 같아요.
+
+- `StackflowPluginHook` 타입이 `StackflowPluginInitHook`으로 변경됐어요.
+- `onInit`과 `overrideInitialEvents`에서 초기화 경로를 나타내는 `initInfo`를 받아요.
+- `overrideInitialEvents`가 `(PushedEvent | StepPushedEvent)[]` 대신 `SnapshotEvent[]`를 다뤄요.
+- `StackflowActions`에 `captureSnapshot()`이 추가됐어요.
+- Plugin이 `provideSnapshot`으로 snapshot을 제공하고 `onLoadError`로 복원 실패 정책을 정할 수 있어요.
+- 등록되지 않은 activity를 가리키는 `Replaced` event도 거부해요.
+
+Snapshot provider를 등록하지 않으면 기존과 같이 fresh create 경로로 초기화돼요. 이 경우 snapshot 복원 동작은 적용되지 않지만, 위의 타입 변경과 `Replaced` event 검증은 확인해야 해요.
+
+## 1단계: Core v3 설치
+
+```sh npm2yarn copy
+npm install @stackflow/core@^3.0.0
+```
+
+Core를 peer dependency로 사용하는 Stackflow package도 Core v3을 지원하는 버전인지 확인하세요.
+
+## 2단계: 초기화 hook 타입과 `initInfo` 업데이트
+
+`StackflowPluginHook`은 `StackflowPluginInitHook`으로 이름이 바뀌었어요. 새 hook은 stack이 새로 만들어졌는지, snapshot에서 복원됐는지를 `initInfo.kind`로 구분해요.
+
+**변경 전:**
+
+```ts
+import type { StackflowPluginHook } from "@stackflow/core";
+
+const onInit: StackflowPluginHook = ({ actions }) => {
+  installSideEffects(actions);
+};
+```
+
+**변경 후:**
+
+```ts
+import type { StackflowPluginInitHook } from "@stackflow/core";
+
+const onInit: StackflowPluginInitHook = ({ actions, initInfo }) => {
+  installSideEffects(actions);
+
+  if (initInfo.kind === "load") {
+    restoreRelatedState();
+  }
+};
+```
+
+`initInfo`는 다음 두 값 중 하나예요.
+
+| 값 | 의미 |
+| --- | --- |
+| `{ kind: "create" }` | Snapshot을 제공하지 않았거나 복원 실패 후 recovery를 선택해 새 stack을 만들었어요. |
+| `{ kind: "load" }` | 제공된 snapshot에서 stack을 복원했어요. |
+
+Create/load 구분이 필요하지 않다면 `initInfo`를 읽지 않아도 돼요. 하지만 hook 인자 object를 직접 만들거나 forwarding하는 코드는 `initInfo`를 포함해야 해요.
+
+## 3단계: `overrideInitialEvents`에서 create와 load 구분
+
+Core v2의 `overrideInitialEvents`는 처음 진입하는 `PushedEvent`와 `StepPushedEvent`만 받았어요. Core v3에서는 create와 load 경로 모두에서 실행되며 `SnapshotEvent[]`를 받아요.
+
+`SnapshotEvent`에는 다음 event가 포함돼요.
+
+- Activity navigation: `Pushed`, `Replaced`, `Popped`
+- Step navigation: `StepPushed`, `StepReplaced`, `StepPopped`
+- Stack 상태: `Paused`, `Resumed`
+
+**변경 전:**
+
+```ts
+overrideInitialEvents({ initialEvents, initialContext }) {
+  return applyInitialEntryPolicy(initialEvents, initialContext);
+}
+```
+
+**변경 후:**
+
+```ts
+import type { StackflowPlugin } from "@stackflow/core";
+
+const initialEntryPlugin: StackflowPlugin = () => ({
+  key: "app/initial-entry",
+  overrideInitialEvents({ initialEvents, initialContext, initInfo }) {
+    if (initInfo.kind === "load") {
+      return initialEvents;
+    }
+
+    return applyInitialEntryPolicy(initialEvents, initialContext);
+  },
+});
+```
+
+복원 event를 바꿀 명시적인 정책이 없다면 load 경로에서 `initialEvents`를 그대로 반환하세요. Load 경로의 배열은 snapshot의 전체 navigation history예요. 이를 create 경로의 초기 진입 event처럼 다시 만들면 복원할 history가 사라질 수 있어요.
+
+Load event를 의도적으로 변환한다면 모든 `SnapshotEvent`를 처리하거나 `event.name`으로 먼저 타입을 좁히세요. 반환된 event도 현재 activity 설정과 snapshot 구조 검증을 다시 통과해요.
+
+## 4단계: `StackflowActions` mock 업데이트
+
+실제 Core가 제공하는 actions에는 `captureSnapshot()`이 이미 들어 있어요. `StackflowActions` 전체를 직접 구현한 test mock, facade, wrapper에는 method를 추가하세요.
+
+```ts
+import type { StackflowActions } from "@stackflow/core";
+
+const actions: StackflowActions = {
+  ...existingActionMethods,
+  captureSnapshot: () => ({
+    $schema: "stackflow.snapshot.v1",
+    events: [],
+  }),
+};
+```
+
+이 예시는 호출부를 테스트하기 위한 빈 mock이에요. 실제 저장에는 Core actions의 `captureSnapshot()` 반환값을 사용하세요.
+
+`makeCoreStore()`를 직접 사용하면서 `handlers.onInitialActivityIgnored`를 구현했다면 handler 인자도 `(PushedEvent | StepPushedEvent)[]`에서 `SnapshotEvent[]`로 넓혀야 해요. 특정 event만 필요할 때는 `event.name`으로 좁혀서 처리하세요.
+
+## 5단계: Snapshot 캡처와 복원
+
+### Snapshot 캡처
+
+`actions.captureSnapshot()`은 현재 stack의 runtime event 기록을 `StackSnapshot`으로 반환해요.
+
+```ts
+onChanged({ actions }) {
+  const snapshot = actions.captureSnapshot();
+  snapshotStorage.save(JSON.stringify(snapshot));
+}
+```
+
+`StackSnapshot`은 `$schema`와 `events`로 구성돼요. Core는 `Initialized`, `ActivityRegistered` 같은 정적 event를 제외하고 navigation 및 pause/resume event를 캡처해요. 정적 정보는 복원 시 현재 설정에서 다시 만들어요.
+
+Core는 snapshot의 구조와 복원만 담당해요. 저장 위치, 직렬화 codec, 만료, 앱 버전 간 migration은 앱 또는 persistence plugin이 결정해야 해요. Event context에 앱이나 다른 plugin이 넣은 값도 직렬화 가능한지 확인하세요.
+
+### Snapshot 제공
+
+Snapshot은 stack 생성 시 plugin의 `provideSnapshot`에서 동기적으로 제공해요. 복원할 값이 없거나 이번 시작에서는 fresh create가 필요하면 `null`을 반환하세요.
+
+```ts
+import type { StackSnapshot, StackflowPlugin } from "@stackflow/core";
+
+const snapshotPlugin = (): StackflowPlugin => () => ({
+  key: "app/snapshot",
+  provideSnapshot() {
+    const serialized = snapshotStorage.load();
+
+    return serialized === null
+      ? null
+      : (JSON.parse(serialized) as StackSnapshot);
+  },
+  onLoadError({ error }) {
+    reportSnapshotError(error);
+    return { policy: "recover" };
+  },
+});
+```
+
+Non-null snapshot을 제공하는 plugin은 하나만 있어야 해요. 둘 이상이면 Core는 우선순위를 임의로 정하지 않고 stack 생성을 실패시켜요.
+
+### 복원 오류 처리
+
+제공된 snapshot이 인식할 수 없는 구조이거나, 현재 설정과 호환되지 않는 event를 포함하거나, 복원 후 표시할 activity가 없으면 `SnapshotLoadError`가 발생해요. 해당 snapshot을 제공한 plugin의 `onLoadError`가 처리 정책을 정해요.
+
+| 반환값 | 동작 |
+| --- | --- |
+| `{ policy: "recover" }` | Snapshot을 버리고 fresh create 경로로 초기화해요. |
+| `{ policy: "propagate" }` | `SnapshotLoadError`를 호출부로 전파해요. |
+
+`onLoadError`가 없거나 값을 반환하지 않아도 오류를 전파해요. `provideSnapshot` 자체에서 발생한 storage/parse 오류는 Core의 snapshot 검증 오류가 아니므로 이 hook을 거치지 않아요. 필요하면 provider 안에서 별도로 처리하세요.
+
+## 6단계: `Replaced` event 검증
+
+Core v3은 `Pushed`뿐 아니라 `Replaced` event의 `activityName`도 현재 설정에 등록되어 있는지 확인해요. Raw event를 직접 만들거나 오래된 snapshot을 복원한다면 이름이 바뀌거나 삭제된 activity가 남아 있지 않은지 확인하세요.
+
+호환되지 않는 snapshot은 앱 정책에 따라 이전 activity 이름을 계속 등록하거나, 저장 형식을 migration하거나, snapshot을 사용하지 않고 fresh create로 복구하세요. Core는 앱별 activity 이름과 params를 자동으로 migration하지 않아요.
+
+## 마이그레이션 체크리스트
+
+- [ ] `StackflowPluginHook` import를 `StackflowPluginInitHook`으로 바꿨어요.
+- [ ] `onInit`과 `overrideInitialEvents` 인자를 직접 만드는 코드에 `initInfo`를 추가했어요.
+- [ ] `overrideInitialEvents`가 load 경로의 event를 의도치 않게 덮어쓰지 않아요.
+- [ ] `StackflowActions` mock에 `captureSnapshot()`을 추가했어요.
+- [ ] Snapshot provider가 둘 이상 non-null 값을 반환하지 않아요.
+- [ ] 복원 오류를 recover할지 propagate할지 정했어요.
+- [ ] 저장된 모든 `Replaced.activityName`이 현재 설정에 등록되어 있어요.
+- [ ] Snapshot의 event context와 선택한 codec이 호환되는지 확인했어요.
+- [ ] Fresh create와 snapshot load를 각각 테스트했어요.
+
+자세한 API 변경 목록은 [`@stackflow/core` 변경 이력](https://github.com/daangn/stackflow/blob/main/core/CHANGELOG.md)을 참고하세요.

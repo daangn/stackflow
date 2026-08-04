@@ -1,0 +1,193 @@
+# Core Migration Guide: v2 → v3
+
+This guide covers migrating `@stackflow/core` from v2 to v3. Core v3 adds APIs for capturing a running stack as a snapshot and restoring it during the next initialization. Even if you do not use snapshots, custom plugins and hand-written action mocks must adopt the updated type contracts.
+
+## Overview
+
+The main changes in Core v3 are:
+
+- The `StackflowPluginHook` type was renamed to `StackflowPluginInitHook`.
+- `onInit` and `overrideInitialEvents` receive `initInfo`, which identifies the initialization path.
+- `overrideInitialEvents` handles `SnapshotEvent[]` instead of `(PushedEvent | StepPushedEvent)[]`.
+- `captureSnapshot()` was added to `StackflowActions`.
+- Plugins can provide a snapshot with `provideSnapshot` and choose a load-error policy with `onLoadError`.
+- A `Replaced` event that targets an unregistered activity is now rejected.
+
+Without a snapshot provider, Core initializes through the fresh-create path as before. Snapshot restoration does not apply in that case, but you must still address the type changes above and check `Replaced` event validation.
+
+## Step 1: Install Core v3
+
+```sh npm2yarn copy
+npm install @stackflow/core@^3.0.0
+```
+
+Also make sure every Stackflow package that lists Core as a peer dependency supports Core v3.
+
+## Step 2: Update the init hook type and `initInfo`
+
+`StackflowPluginHook` was renamed to `StackflowPluginInitHook`. The new hook distinguishes a newly created stack from one restored from a snapshot through `initInfo.kind`.
+
+**Before:**
+
+```ts
+import type { StackflowPluginHook } from "@stackflow/core";
+
+const onInit: StackflowPluginHook = ({ actions }) => {
+  installSideEffects(actions);
+};
+```
+
+**After:**
+
+```ts
+import type { StackflowPluginInitHook } from "@stackflow/core";
+
+const onInit: StackflowPluginInitHook = ({ actions, initInfo }) => {
+  installSideEffects(actions);
+
+  if (initInfo.kind === "load") {
+    restoreRelatedState();
+  }
+};
+```
+
+`initInfo` has one of these values:
+
+| Value | Meaning |
+| --- | --- |
+| `{ kind: "create" }` | No snapshot was provided, or Core recovered from a load failure by creating a new stack. |
+| `{ kind: "load" }` | Core restored the stack from a provided snapshot. |
+
+You do not need to read `initInfo` if the distinction is irrelevant. Code that constructs or forwards the hook argument object must still include it.
+
+## Step 3: Distinguish create and load in `overrideInitialEvents`
+
+In Core v2, `overrideInitialEvents` only received the initial `PushedEvent` and `StepPushedEvent` values. In Core v3, it runs on both the create and load paths and receives `SnapshotEvent[]`.
+
+`SnapshotEvent` includes:
+
+- Activity navigation: `Pushed`, `Replaced`, and `Popped`
+- Step navigation: `StepPushed`, `StepReplaced`, and `StepPopped`
+- Stack state: `Paused` and `Resumed`
+
+**Before:**
+
+```ts
+overrideInitialEvents({ initialEvents, initialContext }) {
+  return applyInitialEntryPolicy(initialEvents, initialContext);
+}
+```
+
+**After:**
+
+```ts
+import type { StackflowPlugin } from "@stackflow/core";
+
+const initialEntryPlugin: StackflowPlugin = () => ({
+  key: "app/initial-entry",
+  overrideInitialEvents({ initialEvents, initialContext, initInfo }) {
+    if (initInfo.kind === "load") {
+      return initialEvents;
+    }
+
+    return applyInitialEntryPolicy(initialEvents, initialContext);
+  },
+});
+```
+
+If your plugin has no explicit policy for transforming restored events, return `initialEvents` unchanged on the load path. On that path, the array represents the snapshot's complete navigation history. Rebuilding it as though it only contained fresh-entry events can discard the history you intended to restore.
+
+If you intentionally transform load events, handle every `SnapshotEvent` variant or narrow by `event.name` first. Returned events pass through the current activity configuration and snapshot-structure validation again.
+
+## Step 4: Update `StackflowActions` mocks
+
+Actions created by Core already include `captureSnapshot()`. Add the method to test mocks, facades, and wrappers that manually implement the complete `StackflowActions` type.
+
+```ts
+import type { StackflowActions } from "@stackflow/core";
+
+const actions: StackflowActions = {
+  ...existingActionMethods,
+  captureSnapshot: () => ({
+    $schema: "stackflow.snapshot.v1",
+    events: [],
+  }),
+};
+```
+
+This is an empty mock for testing a caller. Use the value returned by Core's actual `captureSnapshot()` when persisting a real snapshot.
+
+If you call `makeCoreStore()` directly and implement `handlers.onInitialActivityIgnored`, widen its argument from `(PushedEvent | StepPushedEvent)[]` to `SnapshotEvent[]`. Narrow by `event.name` when you only need particular event types.
+
+## Step 5: Capture and restore snapshots
+
+### Capture a snapshot
+
+`actions.captureSnapshot()` returns the current stack's runtime event record as a `StackSnapshot`.
+
+```ts
+onChanged({ actions }) {
+  const snapshot = actions.captureSnapshot();
+  snapshotStorage.save(JSON.stringify(snapshot));
+}
+```
+
+A `StackSnapshot` contains `$schema` and `events`. Core captures navigation and pause/resume events while excluding static events such as `Initialized` and `ActivityRegistered`. Static information is rebuilt from the current configuration during restoration.
+
+Core owns the snapshot structure and restoration process. Your application or persistence plugin owns storage, encoding, expiration, and migrations between application versions. Make sure values placed in event context by your application or other plugins are compatible with your codec.
+
+### Provide a snapshot
+
+A plugin provides a snapshot synchronously through `provideSnapshot` while the stack is being created. Return `null` when there is nothing to restore or when this launch should use a fresh create.
+
+```ts
+import type { StackSnapshot, StackflowPlugin } from "@stackflow/core";
+
+const snapshotPlugin = (): StackflowPlugin => () => ({
+  key: "app/snapshot",
+  provideSnapshot() {
+    const serialized = snapshotStorage.load();
+
+    return serialized === null
+      ? null
+      : (JSON.parse(serialized) as StackSnapshot);
+  },
+  onLoadError({ error }) {
+    reportSnapshotError(error);
+    return { policy: "recover" };
+  },
+});
+```
+
+Only one plugin may return a non-null snapshot. If multiple plugins do so, Core does not choose a winner and stack creation fails.
+
+### Handle load errors
+
+Core raises `SnapshotLoadError` when the provided snapshot has an unrecognized structure, contains events incompatible with the current configuration, or restores without an activity that can be displayed. The plugin that provided the snapshot chooses the policy in `onLoadError`.
+
+| Return value | Behavior |
+| --- | --- |
+| `{ policy: "recover" }` | Discard the snapshot and initialize through the fresh-create path. |
+| `{ policy: "propagate" }` | Propagate `SnapshotLoadError` to the caller. |
+
+An absent handler or return value also propagates the error. Storage or parsing errors thrown by `provideSnapshot` itself are not Core snapshot-validation errors, so they do not pass through this hook. Handle them separately in the provider when necessary.
+
+## Step 6: Check `Replaced` event validation
+
+Core v3 verifies that the `activityName` in a `Replaced` event, as well as a `Pushed` event, is registered in the current configuration. If you construct raw events or restore old snapshots, check for activities that were renamed or removed.
+
+Depending on your compatibility policy, keep the old activity registered, migrate the stored representation, or recover with a fresh create instead of using the snapshot. Core cannot automatically migrate application-specific activity names and parameters.
+
+## Migration checklist
+
+- [ ] Replace `StackflowPluginHook` imports with `StackflowPluginInitHook`.
+- [ ] Add `initInfo` wherever code constructs `onInit` or `overrideInitialEvents` arguments.
+- [ ] Make sure `overrideInitialEvents` does not unintentionally replace load-path events.
+- [ ] Add `captureSnapshot()` to `StackflowActions` mocks.
+- [ ] Make sure no more than one snapshot provider returns a non-null value.
+- [ ] Choose whether snapshot load errors should recover or propagate.
+- [ ] Make sure every stored `Replaced.activityName` is registered in the current configuration.
+- [ ] Verify that event-context values are compatible with your snapshot codec.
+- [ ] Test fresh creation and snapshot loading separately.
+
+See the [`@stackflow/core` changelog](https://github.com/daangn/stackflow/blob/main/core/CHANGELOG.md) for the complete API change list.
