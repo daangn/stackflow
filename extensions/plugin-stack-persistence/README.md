@@ -173,15 +173,9 @@ Creates a Stackflow core plugin.
 | --- | --- |
 | `storage` | Required `StackSnapshotStorage<Metadata>` implementation. |
 | `strategy` | Required `StackSnapshotStrategy<Metadata>` implementation. |
-| `onRecordLoadError` | Receives storage-load and metadata-parse errors before startup continues with the initial stack. |
+| `onRecordLoadError` | Receives storage-load and metadata-parse errors. |
 | `onRecordSaveError` | Handles storage-save rejections. Without a handler, the wrapped rejection is rethrown. |
 | `onLoadError` | Chooses whether to recover from or propagate a core snapshot-load error. Defaults to recovery. |
-
-The options type is exported as `StackPersistencePluginOptions`.
-
-Only one Stackflow plugin can provide a non-null snapshot during stack
-creation. If this plugin accepts a record while another plugin also provides a
-snapshot, core rejects the conflicting configuration.
 
 ### Storage and record types
 
@@ -224,8 +218,7 @@ type Result<Value> =
 `metadata.create()` produces metadata for new records. `metadata.parse()` is
 the only boundary that promotes loaded `unknown` data to `Metadata`, and
 `shouldReuse()` decides whether a successfully parsed record is compatible with
-the current `initialContext`. Direct exceptions from `metadata.parse()` or
-`shouldReuse()` propagate during stack creation.
+the current `initialContext`.
 
 ### `composeStrategies()`
 
@@ -242,11 +235,3 @@ strategy can be passed to `stackPersistencePlugin()` without special setup,
 and its inferred metadata envelope type is exported as `StrategiesMetadata`.
 Every child parser and reuse predicate must succeed. Adding, removing, or
 renaming a strategy key makes previously composed metadata invalid.
-
-### Error classes
-
-- `StackSnapshotRecordLoadError` — exposes the thrown storage value as `cause`.
-- `StackSnapshotMetadataParseError` — exposes the parser failure detail as
-  `detail`.
-- `StackSnapshotRecordSaveError` — exposes the rejected storage value as
-  `cause`.
