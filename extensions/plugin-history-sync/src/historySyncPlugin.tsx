@@ -85,6 +85,13 @@ export function historySyncPlugin<
   T extends { [activityName: string]: unknown },
   K extends Extract<keyof T, string>,
 >(options: HistorySyncPluginOptions<T, K>): HistorySyncPlugin<T> {
+  if ("config" in options) {
+    options.config.decorate("historySync", {
+      makeTemplate,
+      urlPatternOptions: options.urlPatternOptions,
+    });
+  }
+
   const history =
     options.history ??
     (typeof window === "undefined"
@@ -110,13 +117,6 @@ export function historySyncPlugin<
     useHash: options.useHash,
     urlPatternOptions: options.urlPatternOptions,
   });
-
-  if ("config" in options) {
-    options.config.decorate("historySync", {
-      makeTemplate,
-      urlPatternOptions: options.urlPatternOptions,
-    });
-  }
 
   const plugin: StackflowReactPlugin<T> = () => {
     let initialSetupProcess: NavigationProcess | null = null;
