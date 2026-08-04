@@ -134,11 +134,6 @@ restores the snapshot only when the record is present, its metadata is valid,
 the strategy accepts it for reuse, and Stackflow can load the snapshot with the
 current configuration.
 
-Restoration is synchronous. If the backing store has an asynchronous read API,
-prepare its record before creating the stack. Return `null` when no prepared
-record is available, including in environments where the chosen storage cannot
-be accessed.
-
 ### Error handling
 
 | Condition | Result |
@@ -161,8 +156,6 @@ be accessed.
   `{ ok: false }` for malformed data.
 - `shouldReuse()` must return `false` for valid records that should not be used
   in the current application context, such as incompatible or expired records.
-- Strategy callbacks are synchronous. Expected metadata or reuse rejection
-  should use a failed parse result or `false` instead of throwing.
 
 ## API
 
