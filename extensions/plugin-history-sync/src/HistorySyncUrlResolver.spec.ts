@@ -1,4 +1,3 @@
-import { defineConfig } from "@stackflow/config";
 import { createMemoryHistory } from "history";
 
 import { historySyncPlugin } from "./historySyncPlugin";
@@ -88,24 +87,5 @@ describe("HistorySyncUrlResolver", () => {
         },
       }),
     ).toBe("/server-entry?source=ssr");
-  });
-
-  test("config에 동일한 URL resolver를 제공합니다", () => {
-    const config = defineConfig({
-      activities: [
-        {
-          name: "Home",
-          route: "/",
-        },
-      ],
-      transitionDuration: 350,
-    });
-    const plugin = historySyncPlugin({
-      config,
-      history: createMemoryHistory(),
-      fallbackActivity: () => "Home",
-    });
-
-    expect(config.historySync?.urlResolver).toBe(plugin.urlResolver);
   });
 });

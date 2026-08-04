@@ -65,8 +65,6 @@ const { Stack } = stackflow({
 `historySyncPlugin()` exposes the URL resolver used by the plugin instance.
 External features can use it to compare an Activity URL with the boot-time entry
 URL without duplicating route selection, encoding, hash, or SSR rules.
-When the plugin receives `config`, the same resolver is also available at
-`config.historySync?.urlResolver`.
 
 ```typescript
 const historySync = historySyncPlugin({

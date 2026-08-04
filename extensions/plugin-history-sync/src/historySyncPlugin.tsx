@@ -49,7 +49,6 @@ import { sortActivityRoutes } from "./sortActivityRoutes";
 type ConfigHistorySync = {
   makeTemplate: typeof makeTemplate;
   urlPatternOptions?: UrlPatternOptions;
-  urlResolver: HistorySyncUrlResolver;
 };
 
 declare module "@stackflow/config" {
@@ -116,7 +115,6 @@ export function historySyncPlugin<
     options.config.decorate("historySync", {
       makeTemplate,
       urlPatternOptions: options.urlPatternOptions,
-      urlResolver,
     });
   }
 
