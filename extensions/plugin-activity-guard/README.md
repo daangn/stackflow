@@ -19,9 +19,6 @@ boundary for protected data or server resources.
 yarn add @stackflow/plugin-activity-guard
 ```
 
-The package requires `@stackflow/config` 2.x and `@stackflow/core` 3.x as peer
-dependencies.
-
 ## Setup
 
 Add `activityGuardPlugin()` to your Stackflow configuration and map each
