@@ -1,10 +1,13 @@
 # @stackflow/plugin-stack-persistence
 
-Persist a Stackflow navigation snapshot beyond the lifetime of the JavaScript
-runtime and restore it when the stack starts again. The package is
-framework-neutral: it uses the `@stackflow/core` plugin contract and leaves the
-storage medium, serialization, record lifetime, and reuse policy to your
-application.
+Applications often need to preserve a user's navigation context across a page
+reload or JavaScript runtime replacement. Reconstructing only the initial
+Activity loses the navigation history and any Steps recorded in the stack.
+
+`@stackflow/plugin-stack-persistence` saves a complete Stackflow snapshot and
+restores it when the stack starts again. The package is framework-neutral and
+leaves the storage medium, serialization, record lifetime, and reuse policy to
+your application.
 
 ## Installation
 
@@ -12,12 +15,39 @@ application.
 yarn add @stackflow/plugin-stack-persistence
 ```
 
-This package requires `@stackflow/core` 3.x.
-
 ## Setup
 
-Create a synchronous loader, an asynchronous saver, and a strategy that
-validates stored metadata and decides whether its snapshot can be reused.
+Add `stackPersistencePlugin()` to your Stackflow configuration with a storage
+and reuse strategy:
+
+```typescript
+import { stackPersistencePlugin } from "@stackflow/plugin-stack-persistence";
+import { stackflow } from "@stackflow/react";
+import { ArticleActivity } from "./ArticleActivity";
+import { HomeActivity } from "./HomeActivity";
+import { snapshotStorage, snapshotStrategy } from "./persistence";
+import { config } from "./stackflow.config";
+
+const { Stack } = stackflow({
+  config,
+  components: {
+    HomeActivity,
+    ArticleActivity,
+  },
+  plugins: [
+    stackPersistencePlugin({
+      storage: snapshotStorage,
+      strategy: snapshotStrategy,
+    }),
+  ],
+});
+```
+
+## Usage
+
+The storage must provide a synchronous loader and an asynchronous saver. The
+strategy validates stored metadata and decides whether its snapshot can be
+reused.
 
 The following example stores snapshots in `localStorage`, rejects records from
 another application version, and expires records after seven days:
@@ -28,7 +58,6 @@ import type {
   StackSnapshotStorage,
   StackSnapshotStrategy,
 } from "@stackflow/plugin-stack-persistence";
-import { stackPersistencePlugin } from "@stackflow/plugin-stack-persistence";
 
 const STORAGE_KEY = "stackflow.snapshot";
 const APP_VERSION = 1 as const;
@@ -39,7 +68,7 @@ type SnapshotMetadata = {
   savedAt: number;
 };
 
-const storage: StackSnapshotStorage<SnapshotMetadata> = {
+export const snapshotStorage: StackSnapshotStorage<SnapshotMetadata> = {
   load() {
     if (typeof window === "undefined") return null;
 
@@ -56,7 +85,7 @@ const storage: StackSnapshotStorage<SnapshotMetadata> = {
   },
 };
 
-const strategy: StackSnapshotStrategy<SnapshotMetadata> = {
+export const snapshotStrategy: StackSnapshotStrategy<SnapshotMetadata> = {
   metadata: {
     create() {
       return {
@@ -92,36 +121,6 @@ const strategy: StackSnapshotStrategy<SnapshotMetadata> = {
     return Date.now() - record.metadata.savedAt < MAX_AGE_MS;
   },
 };
-
-export const persistencePlugin = stackPersistencePlugin({
-  storage,
-  strategy,
-  onRecordLoadError(error) {
-    console.warn("Could not read the saved Stackflow snapshot", error);
-  },
-  onRecordSaveError(error) {
-    console.error("Could not save the Stackflow snapshot", error);
-  },
-});
-```
-
-Add the plugin to an existing Stackflow configuration:
-
-```typescript
-import { stackflow } from "@stackflow/react";
-import { ArticleActivity } from "./ArticleActivity";
-import { HomeActivity } from "./HomeActivity";
-import { persistencePlugin } from "./persistence";
-import { config } from "./stackflow.config";
-
-const { Stack } = stackflow({
-  config,
-  components: {
-    HomeActivity,
-    ArticleActivity,
-  },
-  plugins: [persistencePlugin],
-});
 ```
 
 ## Behavior
@@ -137,30 +136,11 @@ record is present, the plugin:
 3. provides the snapshot to Stackflow when the strategy returns `true`.
 
 Returning `null` from `storage.load()`, returning `false` from `shouldReuse()`,
-or returning `{ ok: false }` from `metadata.parse()` causes Stackflow to use its
-normal initial stack. A thrown `storage.load()` error has the same fallback and
-is reported as `StackSnapshotRecordLoadError` through `onRecordLoadError`.
-Metadata parse failures are reported as `StackSnapshotMetadataParseError`.
-
-After the plugin accepts a record, core still validates and replays its
-snapshot against the current Stackflow configuration. `onLoadError` controls
-what happens when that step fails:
-
-```typescript
-stackPersistencePlugin({
-  storage,
-  strategy,
-  onLoadError({ error, initialContext }) {
-    reportSnapshotError(error, initialContext);
-
-    return { policy: "propagate" };
-  },
-});
-```
-
-The default policy is `{ policy: "recover" }`, which discards the unusable
-snapshot and creates the normal initial stack. Return `{ policy: "propagate" }`
-to let the core `SnapshotLoadError` abort stack creation.
+returning `{ ok: false }` from `metadata.parse()`, or throwing from
+`storage.load()` causes Stackflow to use its normal initial stack. After the
+plugin accepts a record, core still validates and replays its snapshot against
+the current Stackflow configuration. An unusable snapshot also falls back to
+the normal initial stack by default.
 
 `storage.load()`, metadata parsing, the reuse decision, and snapshot loading
 are all synchronous. Prepare data before creating the stack when the backing
@@ -178,9 +158,7 @@ callback receives both values.
 `storage.save()` runs asynchronously and does not block navigation. The plugin
 does not wait for an earlier save before starting a later one, so storage backed
 by asynchronous I/O must prevent an older request from overwriting a newer
-record. A rejected save is wrapped in `StackSnapshotRecordSaveError` and sent
-to `onRecordSaveError`. Without a handler, the wrapped error is rethrown from
-the promise rejection.
+record.
 
 The storage owns serialization. Ensure that the selected codec can represent
 the values carried by your application's snapshot events and metadata.
@@ -203,7 +181,7 @@ The composed strategy stores a versioned metadata envelope. On load, it
 requires exactly the same strategy keys, parses each strategy's metadata, and
 reuses the snapshot only when every `shouldReuse()` call returns `true`.
 
-## Error handling
+### Error handling
 
 - `onRecordLoadError` receives `StackSnapshotRecordLoadError` when
   `storage.load()` throws and `StackSnapshotMetadataParseError` when
@@ -212,7 +190,8 @@ reuses the snapshot only when every `shouldReuse()` call returns `true`.
 - `onLoadError` receives core `SnapshotLoadError` values for snapshots that
   cannot be loaded with the current configuration. It recovers by default.
 - `onRecordSaveError` receives `StackSnapshotRecordSaveError` when the promise
-  returned by `storage.save()` rejects.
+  returned by `storage.save()` rejects. Without a handler, the wrapped error is
+  rethrown from the promise rejection.
 
 The error wrappers expose the original value as `cause` for record load/save
 errors and as `detail` for metadata parse errors. Exceptions thrown directly by
@@ -220,17 +199,42 @@ errors and as `detail` for metadata parse errors. Exceptions thrown directly by
 propagate during stack creation. Return `{ ok: false, detail }` or `false` for
 expected rejection paths.
 
-## Public API
+To abort stack creation instead of recovering from a core snapshot-load error,
+return `{ policy: "propagate" }`:
 
-### `stackPersistencePlugin(options)`
+```typescript
+stackPersistencePlugin({
+  storage: snapshotStorage,
+  strategy: snapshotStrategy,
+  onLoadError({ error }) {
+    console.error("Could not restore the Stackflow snapshot", error);
 
-Creates a Stackflow core plugin. `options` contains:
+    return { policy: "propagate" };
+  },
+});
+```
 
-- `storage` — required `StackSnapshotStorage<Metadata>` implementation;
-- `strategy` — required `StackSnapshotStrategy<Metadata>` implementation;
-- `onRecordLoadError` — optional storage-load and metadata-parse error handler;
-- `onRecordSaveError` — optional save-rejection handler; and
-- `onLoadError` — optional core snapshot-load policy handler.
+## API
+
+### `stackPersistencePlugin()`
+
+```typescript
+function stackPersistencePlugin<Metadata>(
+  options: StackPersistencePluginOptions<Metadata>,
+): StackflowPlugin;
+```
+
+Creates a Stackflow core plugin.
+
+| Option | Description |
+| --- | --- |
+| `storage` | Required `StackSnapshotStorage<Metadata>` implementation. |
+| `strategy` | Required `StackSnapshotStrategy<Metadata>` implementation. |
+| `onRecordLoadError` | Handles storage-load and metadata-parse errors. |
+| `onRecordSaveError` | Handles storage-save rejections. |
+| `onLoadError` | Chooses whether to recover from or propagate a core snapshot-load error. |
+
+The options type is exported as `StackPersistencePluginOptions`.
 
 Only one Stackflow plugin can provide a non-null snapshot during stack
 creation. If this plugin accepts a record while another plugin also provides a
@@ -274,9 +278,19 @@ type Result<Value> =
   | { ok: false; detail?: unknown };
 ```
 
-`composeStrategies()` returns another `StackSnapshotStrategy`, so composed
-strategies can be passed to `stackPersistencePlugin()` without special setup.
-The inferred envelope type is exported as `StrategiesMetadata`.
+### `composeStrategies()`
+
+```typescript
+function composeStrategies<
+  const Strategies extends Record<string, StackSnapshotStrategy<any>>,
+>(
+  strategies: Strategies,
+): StackSnapshotStrategy<StrategiesMetadata<Strategies>>;
+```
+
+Combines keyed strategies into another `StackSnapshotStrategy`. The composed
+strategy can be passed to `stackPersistencePlugin()` without special setup,
+and its inferred metadata envelope type is exported as `StrategiesMetadata`.
 
 ### Error classes
 
