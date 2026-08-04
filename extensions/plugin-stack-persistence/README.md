@@ -1,8 +1,7 @@
 # @stackflow/plugin-stack-persistence
 
 Applications often need to preserve a user's navigation context across a page
-reload or JavaScript runtime replacement. Reconstructing only the initial
-Activity loses the navigation history and any Steps recorded in the stack.
+reload or JavaScript runtime replacement.
 
 `@stackflow/plugin-stack-persistence` saves a complete Stackflow snapshot and
 restores it when the stack starts again. The package is framework-neutral and
