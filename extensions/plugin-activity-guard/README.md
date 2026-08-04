@@ -59,10 +59,10 @@ The following Guard requires both sign-in and terms acceptance before entering
 import type { ActivityGuardFor } from "@stackflow/plugin-activity-guard";
 import { all, redirect } from "@stackflow/plugin-activity-guard";
 
-const requireSignIn: ActivityGuardFor<"Checkout"> = ({ activityParams }) =>
+const requireSignIn: ActivityGuardFor<"Checkout"> = ({ activityName, activityParams }) =>
   isSignedIn()
     ? true
-    : redirect("SignIn", { returnTo: activityParams.orderId });
+    : redirect("SignIn", { returnTo: { activityName, activityParams } });
 
 const requireTerms: ActivityGuardFor<"Checkout"> = ({ activityParams }) =>
   hasAcceptedTerms()
@@ -79,12 +79,9 @@ Each Guard receives the requested `activityName` and its typed
 
 ## Behavior and limitations
 
-- Activities without a registered Guard are allowed.
 - Redirect destinations are guarded again. Redirect chains must eventually
   reach an allowed or unguarded Activity; redirect cycles are not detected.
-- Guards run synchronously. If a Guard throws, the error is propagated and the
-  requested `push` or `replace` is not dispatched. An error during initial
-  entry aborts Stack creation.
+- Guards must not throw any errors.
 - A redirect preserves whether the original operation was a `push` or
   `replace`, along with its other action parameters.
 - Guards run for fresh initial navigation, but not when Stackflow restores a
