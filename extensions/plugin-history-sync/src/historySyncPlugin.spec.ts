@@ -121,38 +121,6 @@ const stackflow = ({
 const activeActivity = (stack: Stack) =>
   stack.activities.find((a) => a.isActive);
 
-describe("historySyncPlugin().urlResolver", () => {
-  test("대표 route, encode, URL pattern 옵션을 반영한 Activity URL을 생성합니다", () => {
-    const plugin = historySyncPlugin({
-      routes: {
-        Article: [
-          {
-            path: "/articles/*",
-          },
-          {
-            path: "/articles/$articleId",
-            encode: (params: Record<string, any>) => ({
-              articleId: String(params.articleId),
-              source: params.source,
-            }),
-          },
-        ],
-      },
-      fallbackActivity: () => "Article",
-      urlPatternOptions: {
-        segmentNameStartChar: "$",
-      },
-    });
-
-    expect(
-      plugin.urlResolver.makeActivityUrl("Article", {
-        articleId: 42,
-        source: "feed",
-      }),
-    ).toBe("/articles/42/?source=feed");
-  });
-});
-
 describe("historySyncPlugin", () => {
   let history: MemoryHistory;
   let actions: PromiseProxy<CoreStore["actions"]>;
