@@ -64,7 +64,7 @@ const APP_VERSION = 1 as const;
 const MAX_AGE_MS = 7 * 24 * 60 * 60 * 1_000;
 
 type SnapshotMetadata = {
-  appVersion: typeof APP_VERSION;
+  appVersion: number;
   savedAt: number;
 };
 
@@ -98,7 +98,7 @@ export const snapshotStrategy: StackSnapshotStrategy<SnapshotMetadata> = {
         data === null ||
         typeof data !== "object" ||
         !("appVersion" in data) ||
-        data.appVersion !== APP_VERSION ||
+        typeof data.appVersion !== "number" ||
         !("savedAt" in data) ||
         typeof data.savedAt !== "number"
       ) {
@@ -111,14 +111,17 @@ export const snapshotStrategy: StackSnapshotStrategy<SnapshotMetadata> = {
       return {
         ok: true,
         value: {
-          appVersion: APP_VERSION,
+          appVersion: data.appVersion,
           savedAt: data.savedAt,
         },
       };
     },
   },
   shouldReuse({ record }) {
-    return Date.now() - record.metadata.savedAt < MAX_AGE_MS;
+    return (
+      record.metadata.appVersion === APP_VERSION &&
+      Date.now() - record.metadata.savedAt < MAX_AGE_MS
+    );
   },
 };
 ```
