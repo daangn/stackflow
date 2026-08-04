@@ -1,5 +1,13 @@
 # @stackflow/plugin-basic-ui
 
+## 1.18.4
+
+### Patch Changes
+
+- aaf2d03: Expand the supported `@stackflow/core` peer dependency range to include both v2 and v3.
+- Updated dependencies [aaf2d03]
+  - @stackflow/react-ui-core@1.3.7
+
 ## 1.18.3
 
 ### Patch Changes

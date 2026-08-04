@@ -1,5 +1,13 @@
 # @stackflow/react
 
+## 2.1.3
+
+### Patch Changes
+
+- f0987d1: fix: Refresh loader data for renderable activities restored from core v3 snapshots.
+- aa6aa1d: Keep loader results out of navigation snapshots by storing opaque references in activity context and resolving them within the React loader plugin.
+- 8ce8866: Skip loader, preload, and pause work for prevented push and replace actions.
+
 ## 2.1.2
 
 ### Patch Changes
