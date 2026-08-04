@@ -24,45 +24,43 @@ dependencies.
 
 ## Setup
 
-Register the plugin with a Guard for each Activity that has an entry policy.
-The Activity names and parameters are inferred from your
-`@stackflow/config` registration.
+Add `activityGuardPlugin()` to your Stackflow configuration and map each
+guarded Activity to its Guard. This example assumes `Checkout`, `SignIn`, and
+`Terms` are already registered in `@stackflow/config`.
 
-```ts
-// stackflow.config.ts
-import { defineConfig } from "@stackflow/config";
+```tsx
+import { activityGuardPlugin } from "@stackflow/plugin-activity-guard";
+import { stackflow } from "@stackflow/react";
+import { config } from "./stackflow.config";
+import { Checkout, SignIn, Terms } from "./activities";
+import { checkoutGuard } from "./checkoutGuard";
 
-declare module "@stackflow/config" {
-  interface Register {
-    Home: {};
-    Checkout: { orderId: string };
-    SignIn: { returnTo: string };
-    Terms: { orderId: string };
-  }
-}
-
-export const config = defineConfig({
-  activities: [
-    { name: "Home" },
-    { name: "Checkout" },
-    { name: "SignIn" },
-    { name: "Terms" },
+export const { Stack } = stackflow({
+  config,
+  components: {
+    Checkout,
+    SignIn,
+    Terms,
+  },
+  plugins: [
+    activityGuardPlugin({
+      guards: {
+        Checkout: checkoutGuard,
+      },
+    }),
   ],
-  initialActivity: () => "Home",
-  transitionDuration: 350,
 });
 ```
 
-```tsx
+## Usage
+
+The following Guard requires both sign-in and terms acceptance before entering
+`Checkout`. Activity names and parameters are inferred from your
+`@stackflow/config` registration.
+
+```ts
 import type { ActivityGuardFor } from "@stackflow/plugin-activity-guard";
-import {
-  activityGuardPlugin,
-  all,
-  redirect,
-} from "@stackflow/plugin-activity-guard";
-import { stackflow } from "@stackflow/react";
-import { config } from "./stackflow.config";
-import { Checkout, Home, SignIn, Terms } from "./activities";
+import { all, redirect } from "@stackflow/plugin-activity-guard";
 
 const requireSignIn: ActivityGuardFor<"Checkout"> = ({ activityParams }) =>
   isSignedIn()
@@ -74,22 +72,7 @@ const requireTerms: ActivityGuardFor<"Checkout"> = ({ activityParams }) =>
     ? true
     : redirect("Terms", { orderId: activityParams.orderId });
 
-export const { Stack } = stackflow({
-  config,
-  components: {
-    Home,
-    Checkout,
-    SignIn,
-    Terms,
-  },
-  plugins: [
-    activityGuardPlugin({
-      guards: {
-        Checkout: all(requireSignIn, requireTerms),
-      },
-    }),
-  ],
-});
+export const checkoutGuard = all(requireSignIn, requireTerms);
 ```
 
 Each Guard receives the requested `activityName` and its typed
