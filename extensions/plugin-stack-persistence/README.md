@@ -129,92 +129,40 @@ export const snapshotStrategy: StackSnapshotStrategy<SnapshotMetadata> = {
 
 ### Restoring a snapshot
 
-Stackflow calls `storage.load()` synchronously while creating the stack. When a
-record is present, the plugin:
+The plugin attempts to restore a record while the stack is being created. It
+restores the snapshot only when the record is present, its metadata is valid,
+the strategy accepts it for reuse, and Stackflow can load the snapshot with the
+current configuration.
 
-1. passes its untrusted `metadata` through `strategy.metadata.parse()`;
-2. passes the parsed record and Stackflow's `initialContext` to
-   `strategy.shouldReuse()`; and
-3. provides the snapshot to Stackflow when the strategy returns `true`.
-
-Returning `null` from `storage.load()`, returning `false` from `shouldReuse()`,
-returning `{ ok: false }` from `metadata.parse()`, or throwing from
-`storage.load()` causes Stackflow to use its normal initial stack. After the
-plugin accepts a record, core still validates and replays its snapshot against
-the current Stackflow configuration. An unusable snapshot also falls back to
-the normal initial stack by default.
-
-`storage.load()`, metadata parsing, the reuse decision, and snapshot loading
-are all synchronous. Prepare data before creating the stack when the backing
-store has an asynchronous read API. In server environments, return `null` when
-the chosen storage is unavailable, as in the example above.
-
-### Saving snapshots
-
-The plugin captures a record during stack initialization and after stack
-changes, but calls `storage.save()` only when `globalTransitionState` is
-`"idle"`. Each record contains the complete core snapshot and metadata created
-from the same current `Stack` and `StackSnapshot`. The `metadata.create()`
-callback receives both values.
-
-`storage.save()` runs asynchronously and does not block navigation. The plugin
-does not wait for an earlier save before starting a later one, so storage backed
-by asynchronous I/O must prevent an older request from overwriting a newer
-record.
-
-The storage owns serialization. Ensure that the selected codec can represent
-the values carried by your application's snapshot events and metadata.
-
-### Composing reuse policies
-
-Use `composeStrategies()` when a record must satisfy several independent reuse
-policies:
-
-```typescript
-import { composeStrategies } from "@stackflow/plugin-stack-persistence";
-
-const strategy = composeStrategies({
-  appVersion: appVersionStrategy,
-  session: sessionStrategy,
-});
-```
-
-The composed strategy stores a versioned metadata envelope. On load, it
-requires exactly the same strategy keys, parses each strategy's metadata, and
-reuses the snapshot only when every `shouldReuse()` call returns `true`.
+Restoration is synchronous. If the backing store has an asynchronous read API,
+prepare its record before creating the stack. Return `null` when no prepared
+record is available, including in environments where the chosen storage cannot
+be accessed.
 
 ### Error handling
 
-- `onRecordLoadError` receives `StackSnapshotRecordLoadError` when
-  `storage.load()` throws and `StackSnapshotMetadataParseError` when
-  `metadata.parse()` returns `{ ok: false }`. In both cases, startup falls back
-  to the normal initial stack.
-- `onLoadError` receives core `SnapshotLoadError` values for snapshots that
-  cannot be loaded with the current configuration. It recovers by default.
-- `onRecordSaveError` receives `StackSnapshotRecordSaveError` when the promise
-  returned by `storage.save()` rejects. Without a handler, the wrapped error is
-  rethrown from the promise rejection.
+| Condition | Result |
+| --- | --- |
+| No record is available | Stackflow starts with its normal initial stack. |
+| The storage cannot load the record or its metadata is invalid | Stackflow starts with its normal initial stack. An optional callback can observe the failure. |
+| The strategy rejects the record | Stackflow starts with its normal initial stack without reporting an error. |
+| Stackflow cannot load the accepted snapshot | The plugin recovers with the normal initial stack by default. Applications can choose to propagate the error and abort stack creation. |
+| Saving the record fails | An optional callback handles the failure; without one, the plugin rethrows the wrapped promise rejection. |
 
-The error wrappers expose the original value as `cause` for record load/save
-errors and as `detail` for metadata parse errors. Exceptions thrown directly by
-`metadata.parse()` or `shouldReuse()` are outside these recovery callbacks and
-propagate during stack creation. Return `{ ok: false, detail }` or `false` for
-expected rejection paths.
+### Storage and strategy requirements
 
-To abort stack creation instead of recovering from a core snapshot-load error,
-return `{ policy: "propagate" }`:
-
-```typescript
-stackPersistencePlugin({
-  storage: snapshotStorage,
-  strategy: snapshotStrategy,
-  onLoadError({ error }) {
-    console.error("Could not restore the Stackflow snapshot", error);
-
-    return { policy: "propagate" };
-  },
-});
-```
+- `storage.load()` must return a complete record or `null` synchronously.
+- `storage.save()` must return a `Promise<void>`. Save requests can overlap, so
+  asynchronous storage must prevent an older request from overwriting a newer
+  record.
+- Storage owns serialization. Its codec must round-trip the snapshot and
+  metadata values produced by the application.
+- `metadata.parse()` must treat loaded metadata as untrusted input and return
+  `{ ok: false }` for malformed data.
+- `shouldReuse()` must return `false` for valid records that should not be used
+  in the current application context, such as incompatible or expired records.
+- Strategy callbacks are synchronous. Expected metadata or reuse rejection
+  should use a failed parse result or `false` instead of throwing.
 
 ## API
 
@@ -232,9 +180,9 @@ Creates a Stackflow core plugin.
 | --- | --- |
 | `storage` | Required `StackSnapshotStorage<Metadata>` implementation. |
 | `strategy` | Required `StackSnapshotStrategy<Metadata>` implementation. |
-| `onRecordLoadError` | Handles storage-load and metadata-parse errors. |
-| `onRecordSaveError` | Handles storage-save rejections. |
-| `onLoadError` | Chooses whether to recover from or propagate a core snapshot-load error. |
+| `onRecordLoadError` | Receives storage-load and metadata-parse errors before startup continues with the initial stack. |
+| `onRecordSaveError` | Handles storage-save rejections. Without a handler, the wrapped rejection is rethrown. |
+| `onLoadError` | Chooses whether to recover from or propagate a core snapshot-load error. Defaults to recovery. |
 
 The options type is exported as `StackPersistencePluginOptions`.
 
@@ -280,6 +228,12 @@ type Result<Value> =
   | { ok: false; detail?: unknown };
 ```
 
+`metadata.create()` produces metadata for new records. `metadata.parse()` is
+the only boundary that promotes loaded `unknown` data to `Metadata`, and
+`shouldReuse()` decides whether a successfully parsed record is compatible with
+the current `initialContext`. Direct exceptions from `metadata.parse()` or
+`shouldReuse()` propagate during stack creation.
+
 ### `composeStrategies()`
 
 ```typescript
@@ -293,6 +247,8 @@ function composeStrategies<
 Combines keyed strategies into another `StackSnapshotStrategy`. The composed
 strategy can be passed to `stackPersistencePlugin()` without special setup,
 and its inferred metadata envelope type is exported as `StrategiesMetadata`.
+Every child parser and reuse predicate must succeed. Adding, removing, or
+renaming a strategy key makes previously composed metadata invalid.
 
 ### Error classes
 
