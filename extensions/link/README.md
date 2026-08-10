@@ -4,9 +4,8 @@ It mimics the `<Link />` component behavior provided by Gatsby or Next.js.
 
 ## Dependencies
 
-It can be used only when `@stackflow/plugin-history-sync` is set.
-
-- `@stackflow/plugin-history-sync`
+Provide a URL resolver with `LinkUrlResolverProvider`. The resolver can come
+from `@stackflow/plugin-history-sync` or another routing plugin.
 
 ## Usage
 
@@ -38,19 +37,33 @@ import { historySyncPlugin } from "@stackflow/plugin-history-sync";
 import { config } from "./stackflow.config";
 import { MyActivity } from "./MyActivity";
 
+const historySync = historySyncPlugin({
+  config,
+  fallbackActivity: () => "MyActivity",
+});
+
 const { Stack } = stackflow({
   config,
   components: {
     MyActivity,
   },
   plugins: [
-    historySyncPlugin({
-      config,
-      fallbackActivity: () => "MyActivity",
-    }),
+    historySync,
     // ...
   ],
 });
+```
+
+Wrap `Stack` with the resolver from the routing plugin.
+
+```tsx
+import { LinkUrlResolverProvider } from "@stackflow/link";
+
+const App = () => (
+  <LinkUrlResolverProvider resolver={historySync.urlResolver}>
+    <Stack />
+  </LinkUrlResolverProvider>
+);
 ```
 
 ```tsx

@@ -1,17 +1,11 @@
-/// <reference types="@stackflow/plugin-history-sync" />
-
 import type {
   InferActivityParams,
   RegisteredActivityName,
 } from "@stackflow/config";
-import type { Route } from "@stackflow/plugin-history-sync";
-import { useConfig, useFlow } from "@stackflow/react";
+import { useFlow } from "@stackflow/react";
 import { useMemo } from "react";
+import { useLinkUrlResolver } from "./LinkUrlResolverContext";
 import { omit } from "./omit";
-
-function toRoute<T>(route: string | Route<T>): Route<T> {
-  return typeof route === "string" ? { path: route, decode: undefined } : route;
-}
 
 type AnchorProps = Omit<
   React.DetailedHTMLProps<
@@ -31,26 +25,14 @@ export interface LinkProps<K extends RegisteredActivityName>
 }
 
 export function Link<K extends RegisteredActivityName>(props: LinkProps<K>) {
-  const config = useConfig();
+  const urlResolver = useLinkUrlResolver();
   const { push, replace } = useFlow();
 
-  const href = useMemo(() => {
-    const match = config.activities.find((r) => r.name === props.activityName);
-
-    if (!match || !match.route || !config.historySync) {
-      return undefined;
-    }
-
-    const { path, decode } = Array.isArray(match.route)
-      ? toRoute(match.route[0])
-      : toRoute(match.route);
-
-    const { makeTemplate, urlPatternOptions } = config.historySync;
-
-    const template = makeTemplate({ path, decode }, urlPatternOptions);
-
-    return template.fill(props.activityParams);
-  }, [config, props.activityName, props.activityParams]);
+  const href = useMemo(
+    () =>
+      urlResolver?.makeActivityUrl(props.activityName, props.activityParams),
+    [urlResolver, props.activityName, props.activityParams],
+  );
 
   const anchorProps = omit(props, [
     // Custom Props
