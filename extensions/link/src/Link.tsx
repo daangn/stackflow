@@ -3,21 +3,9 @@ import type {
   RegisteredActivityName,
 } from "@stackflow/config";
 import { useFlow } from "@stackflow/react";
-import { useContext, useMemo } from "react";
-import { LinkUrlResolverContext } from "./LinkUrlResolverContext";
+import { useMemo } from "react";
+import { useLinkUrlResolver } from "./LinkUrlResolverContext";
 import { omit } from "./omit";
-
-function useRequiredLinkUrlResolver() {
-  const urlResolver = useContext(LinkUrlResolverContext);
-
-  if (urlResolver === null) {
-    throw new Error(
-      "Link must be rendered inside a LinkUrlResolverContext.Provider.",
-    );
-  }
-
-  return urlResolver;
-}
 
 type AnchorProps = Omit<
   React.DetailedHTMLProps<
@@ -37,7 +25,7 @@ export interface LinkProps<K extends RegisteredActivityName>
 }
 
 export function Link<K extends RegisteredActivityName>(props: LinkProps<K>) {
-  const urlResolver = useRequiredLinkUrlResolver();
+  const urlResolver = useLinkUrlResolver();
   const { push, replace } = useFlow();
 
   const href = useMemo(
