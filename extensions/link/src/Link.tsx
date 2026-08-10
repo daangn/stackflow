@@ -7,6 +7,18 @@ import { useContext, useMemo } from "react";
 import { LinkUrlResolverContext } from "./LinkUrlResolverContext";
 import { omit } from "./omit";
 
+function useRequiredLinkUrlResolver() {
+  const urlResolver = useContext(LinkUrlResolverContext);
+
+  if (urlResolver === null) {
+    throw new Error(
+      "Link must be rendered inside a LinkUrlResolverContext.Provider.",
+    );
+  }
+
+  return urlResolver;
+}
+
 type AnchorProps = Omit<
   React.DetailedHTMLProps<
     React.AnchorHTMLAttributes<HTMLAnchorElement>,
@@ -25,25 +37,13 @@ export interface LinkProps<K extends RegisteredActivityName>
 }
 
 export function Link<K extends RegisteredActivityName>(props: LinkProps<K>) {
-  const urlResolver = useContext(LinkUrlResolverContext);
+  const urlResolver = useRequiredLinkUrlResolver();
   const { push, replace } = useFlow();
 
-  const href = useMemo(() => {
-    if (urlResolver === null) {
-      return undefined;
-    }
-
-    return urlResolver.makeActivityUrl(
-      props.activityName,
-      props.activityParams,
-    );
-  }, [urlResolver, props.activityName, props.activityParams]);
-
-  if (urlResolver === null) {
-    throw new Error(
-      "Link must be rendered inside a LinkUrlResolverContext.Provider.",
-    );
-  }
+  const href = useMemo(
+    () => urlResolver.makeActivityUrl(props.activityName, props.activityParams),
+    [urlResolver, props.activityName, props.activityParams],
+  );
 
   const anchorProps = omit(props, [
     // Custom Props
