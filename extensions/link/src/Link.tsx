@@ -3,8 +3,8 @@ import type {
   RegisteredActivityName,
 } from "@stackflow/config";
 import { useFlow } from "@stackflow/react";
-import { useMemo } from "react";
-import { useLinkUrlResolver } from "./LinkUrlResolverContext";
+import { useContext, useMemo } from "react";
+import { LinkUrlResolverContext } from "./LinkUrlResolverContext";
 import { omit } from "./omit";
 
 type AnchorProps = Omit<
@@ -25,7 +25,7 @@ export interface LinkProps<K extends RegisteredActivityName>
 }
 
 export function Link<K extends RegisteredActivityName>(props: LinkProps<K>) {
-  const urlResolver = useLinkUrlResolver();
+  const urlResolver = useContext(LinkUrlResolverContext);
   const { push, replace } = useFlow();
 
   const href = useMemo(

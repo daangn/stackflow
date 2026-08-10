@@ -4,7 +4,7 @@ It mimics the `<Link />` component behavior provided by Gatsby or Next.js.
 
 ## Dependencies
 
-Provide a URL resolver with `LinkUrlResolverProvider`. The resolver can come
+Provide a URL resolver with `LinkUrlResolverContext`. The resolver can come
 from `@stackflow/plugin-history-sync` or another routing plugin.
 
 ## Usage
@@ -57,12 +57,12 @@ const { Stack } = stackflow({
 Wrap `Stack` with the resolver from the routing plugin.
 
 ```tsx
-import { LinkUrlResolverProvider } from "@stackflow/link";
+import { LinkUrlResolverContext } from "@stackflow/link";
 
 const App = () => (
-  <LinkUrlResolverProvider resolver={historySync.urlResolver}>
+  <LinkUrlResolverContext.Provider value={historySync.urlResolver}>
     <Stack />
-  </LinkUrlResolverProvider>
+  </LinkUrlResolverContext.Provider>
 );
 ```
 

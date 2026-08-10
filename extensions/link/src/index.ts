@@ -1,2 +1,3 @@
 export * from "./Link";
-export * from "./LinkUrlResolverContext";
+export type { LinkUrlResolver } from "./LinkUrlResolverContext";
+export { LinkUrlResolverContext } from "./LinkUrlResolverContext";
