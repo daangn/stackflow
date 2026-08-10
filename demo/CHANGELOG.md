@@ -1,5 +1,12 @@
 # @stackflow/demo
 
+## 1.4.3
+
+### Patch Changes
+
+- Updated dependencies [8566b5e]
+  - @stackflow/link@3.0.0
+
 ## 1.4.2
 
 ### Patch Changes

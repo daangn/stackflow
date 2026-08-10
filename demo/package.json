@@ -1,6 +1,6 @@
 {
   "name": "@stackflow/demo",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "private": true,
   "license": "MIT",
   "type": "module",
@@ -34,7 +34,7 @@
     "@seed-design/stylesheet": "^1.0.4",
     "@stackflow/config": "^2.0.0",
     "@stackflow/core": "^3.0.0",
-    "@stackflow/link": "^2.0.1",
+    "@stackflow/link": "^3.0.0",
     "@stackflow/plugin-basic-ui": "^1.18.3",
     "@stackflow/plugin-devtools": "^0.1.13",
     "@stackflow/plugin-history-sync": "^1.12.0",

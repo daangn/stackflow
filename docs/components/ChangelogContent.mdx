@@ -1,3 +1,15 @@
+## 2026.08.10
+
+Require Link consumers to provide a URL resolver through [`8566b5e`](https://github.com/daangn/stackflow/commit/8566b5ebed9bea41c04fcbc6989c4a80a7f5bd3b)
+`LinkUrlResolverProvider`. This removes Link's direct dependency on
+`@stackflow/plugin-history-sync` and keeps generated URLs consistent with the
+configured routing plugin.
+
+Released packages:
+- 📦 [@stackflow/link@3.0.0](https://npmjs.com/package/@stackflow/link/v/3.0.0)
+
+---
+
 ## 2026.08.04
 
 Expose the history-sync URL resolver so external features can reuse the plugin's activity and entry URL semantics. [`eb798ca`](https://github.com/daangn/stackflow/commit/eb798caf354f6c675d80a45af6e5a57c392c16f6)

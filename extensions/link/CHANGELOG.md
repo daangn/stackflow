@@ -1,5 +1,14 @@
 # @stackflow/link
 
+## 3.0.0
+
+### Major Changes
+
+- 8566b5e: Require Link consumers to provide a URL resolver through
+  `LinkUrlResolverProvider`. This removes Link's direct dependency on
+  `@stackflow/plugin-history-sync` and keeps generated URLs consistent with the
+  configured routing plugin.
+
 ## 2.0.2
 
 ### Patch Changes
