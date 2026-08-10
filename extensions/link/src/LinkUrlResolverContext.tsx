@@ -30,7 +30,7 @@ export function useLinkUrlResolver() {
 
   if (urlResolver === null) {
     throw new Error(
-      "Link must be rendered inside a LinkUrlResolverContext.Provider.",
+      "No LinkUrlResolver was found in context. Wrap the component tree with LinkUrlResolverProvider.",
     );
   }
 
