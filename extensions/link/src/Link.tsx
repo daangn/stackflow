@@ -28,11 +28,22 @@ export function Link<K extends RegisteredActivityName>(props: LinkProps<K>) {
   const urlResolver = useContext(LinkUrlResolverContext);
   const { push, replace } = useFlow();
 
-  const href = useMemo(
-    () =>
-      urlResolver?.makeActivityUrl(props.activityName, props.activityParams),
-    [urlResolver, props.activityName, props.activityParams],
-  );
+  const href = useMemo(() => {
+    if (urlResolver === null) {
+      return undefined;
+    }
+
+    return urlResolver.makeActivityUrl(
+      props.activityName,
+      props.activityParams,
+    );
+  }, [urlResolver, props.activityName, props.activityParams]);
+
+  if (urlResolver === null) {
+    throw new Error(
+      "Link must be rendered inside a LinkUrlResolverContext.Provider.",
+    );
+  }
 
   const anchorProps = omit(props, [
     // Custom Props
