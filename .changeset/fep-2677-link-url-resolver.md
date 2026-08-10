@@ -2,4 +2,7 @@
 "@stackflow/link": major
 ---
 
-Inject a URL resolver into Link so route selection, encoding, and URL pattern options stay consistent with the routing plugin.
+Require Link consumers to provide a URL resolver through
+`LinkUrlResolverProvider`. This removes Link's direct dependency on
+`@stackflow/plugin-history-sync` and keeps generated URLs consistent with the
+configured routing plugin.
