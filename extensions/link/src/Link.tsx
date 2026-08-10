@@ -30,7 +30,7 @@ export function Link<K extends RegisteredActivityName>(props: LinkProps<K>) {
 
   const href = useMemo(
     () => urlResolver.makeActivityUrl(props.activityName, props.activityParams),
-    [urlResolver, props.activityName, props.activityParams],
+    [urlResolver.makeActivityUrl, props.activityName, props.activityParams],
   );
 
   const anchorProps = omit(props, [
