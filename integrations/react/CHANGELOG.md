@@ -1,5 +1,12 @@
 # @stackflow/react
 
+## 2.1.4
+
+### Patch Changes
+
+- 7c23411: Fix SSR rendering that does not finish after a structured activity content
+  loader rejects.
+
 ## 2.1.3
 
 ### Patch Changes
