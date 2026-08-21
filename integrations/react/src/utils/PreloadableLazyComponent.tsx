@@ -14,10 +14,7 @@ export function preloadableLazyComponent<P extends {}>(
     default: ComponentType<P>;
   }> | null = null;
   const cachedLoad = () => {
-    if (
-      !cachedLoadingPromise ||
-      inspect(cachedLoadingPromise).status === PromiseStatus.REJECTED
-    ) {
+    if (!cachedLoadingPromise) {
       cachedLoadingPromise = load();
     }
 
