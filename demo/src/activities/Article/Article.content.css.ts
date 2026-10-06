@@ -4,7 +4,7 @@ import { style } from "@vanilla-extract/css";
 import { f } from "../../styles";
 
 export const container = style([
-  f.posAbsFull,
+  f.fullHeight,
   f.overflowScroll,
   f.rootLineHeight,
 ]);
