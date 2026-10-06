@@ -1,5 +1,12 @@
 # @stackflow/plugin-basic-ui
 
+## 1.19.0
+
+### Minor Changes
+
+- acb4ae2: Apply left and right safe area insets to AppScreen content and AppBar controls. Keep the Cupertino title centered within the safe area while backgrounds continue to fill the screen.
+- 8c6f6ac: Set the default AppBar height and minimum height to 56px for both Cupertino and Android, independent of the root font size. Previously, Cupertino used 2.75rem and Android used 3.5rem. AppScreen content spacing follows the new height while preserving the top safe area inset and custom height options.
+
 ## 1.18.4
 
 ### Patch Changes
