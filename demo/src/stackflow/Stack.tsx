@@ -7,6 +7,11 @@ import { Article } from "../activities/Article/Article";
 import Main from "../activities/Main/Main";
 import { config } from "./stackflow.config";
 
+export const historySync = historySyncPlugin({
+  config,
+  fallbackActivity: () => "Main",
+});
+
 export const { Stack, actions } = stackflow({
   config,
   components: {
@@ -30,10 +35,7 @@ export const { Stack, actions } = stackflow({
         },
       },
     }),
-    historySyncPlugin({
-      config,
-      fallbackActivity: () => "Main",
-    }),
+    historySync,
   ],
 });
 
