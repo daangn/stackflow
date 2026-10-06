@@ -106,8 +106,6 @@ const cupertinoValues: GlobalVars = {
   defaultTransitionOffSet: "100%",
   appBar: {
     ...androidValues.appBar,
-    height: "2.75rem",
-    minHeight: "2.75rem",
     borderSize: "0.5px",
     lineHeight: "normal",
   },
