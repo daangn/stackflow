@@ -73,6 +73,25 @@ const Something = () => {
 };
 ```
 
+### Safe Area
+
+`AppScreen` automatically applies the device's left and right safe area insets to its content and app bar in both themes. The Cupertino title is centered within the safe area. Backgrounds and navigation transitions still span the full screen.
+
+Include `viewport-fit=cover` in the viewport meta tag so the browser exposes the safe area insets.
+
+```html copy
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+```
+
+To extend media or other content to the screen edges, wrap it in a block element and cancel the insets with negative margins on the wrapper:
+
+```css copy
+.full-bleed {
+  margin-left: calc(-1 * env(safe-area-inset-left, 0px));
+  margin-right: calc(-1 * env(safe-area-inset-right, 0px));
+}
+```
+
 ### `appBar`
 <APITable>
 |      |      |      |
