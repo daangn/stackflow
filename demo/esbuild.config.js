@@ -12,7 +12,7 @@ const external = Object.keys({
 Promise.all([
   context({
     ...config({
-      entryPoints: ["./src/stackflow/stackflow.docs.ts"],
+      entryPoints: ["./src/stackflow/stackflow.docs.tsx"],
       outdir: "./dist/stackflow",
       vanillaExtractExternal: ["@seed-design"],
     }),
@@ -23,7 +23,7 @@ Promise.all([
   ),
   context({
     ...config({
-      entryPoints: ["./src/stackflow/stackflow.docs.ts"],
+      entryPoints: ["./src/stackflow/stackflow.docs.tsx"],
       outdir: "./dist/stackflow",
       vanillaExtractExternal: ["@seed-design"],
     }),
