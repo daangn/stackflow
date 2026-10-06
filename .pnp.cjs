@@ -16523,7 +16523,7 @@ const RAW_RUNTIME_STATE =
           ["postcss-nested", "virtual:9becc1cf754f2aff2ef6f2378e39bba4444057ad388012cba22170c3c681facb4aa49c67b0d3480037c94b07b801a3a1df5bfa0b2aab093f4a5047e2197efbfb#npm:6.2.0"],\
           ["@types/postcss", null],\
           ["postcss", "npm:8.4.47"],\
-          ["postcss-selector-parser", "npm:6.1.2"]\
+          ["postcss-selector-parser", "npm:6.1.4"]\
         ],\
         "packagePeers": [\
           "@types/postcss",\
@@ -16533,10 +16533,10 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["postcss-selector-parser", [\
-      ["npm:6.1.2", {\
-        "packageLocation": "./.yarn/cache/postcss-selector-parser-npm-6.1.2-46a8e03b00-190034c94d.zip/node_modules/postcss-selector-parser/",\
+      ["npm:6.1.4", {\
+        "packageLocation": "./.yarn/cache/postcss-selector-parser-npm-6.1.4-45600dece5-68d122d44e.zip/node_modules/postcss-selector-parser/",\
         "packageDependencies": [\
-          ["postcss-selector-parser", "npm:6.1.2"],\
+          ["postcss-selector-parser", "npm:6.1.4"],\
           ["cssesc", "npm:3.0.0"],\
           ["util-deprecate", "npm:1.0.2"]\
         ],\
@@ -18239,7 +18239,7 @@ const RAW_RUNTIME_STATE =
           ["postcss-js", "virtual:9becc1cf754f2aff2ef6f2378e39bba4444057ad388012cba22170c3c681facb4aa49c67b0d3480037c94b07b801a3a1df5bfa0b2aab093f4a5047e2197efbfb#npm:4.0.1"],\
           ["postcss-load-config", "virtual:9becc1cf754f2aff2ef6f2378e39bba4444057ad388012cba22170c3c681facb4aa49c67b0d3480037c94b07b801a3a1df5bfa0b2aab093f4a5047e2197efbfb#npm:4.0.2"],\
           ["postcss-nested", "virtual:9becc1cf754f2aff2ef6f2378e39bba4444057ad388012cba22170c3c681facb4aa49c67b0d3480037c94b07b801a3a1df5bfa0b2aab093f4a5047e2197efbfb#npm:6.2.0"],\
-          ["postcss-selector-parser", "npm:6.1.2"],\
+          ["postcss-selector-parser", "npm:6.1.4"],\
           ["resolve", "patch:resolve@npm%3A1.22.8#optional!builtin<compat/resolve>::version=1.22.8&hash=c3c19d"],\
           ["sucrase", "npm:3.35.0"]\
         ],\
