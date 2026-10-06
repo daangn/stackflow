@@ -192,9 +192,18 @@ export const safeArea = style({
 
 export const container = style([
   f.flexAlignEnd,
+  f.posRel,
   appBarOverflow,
   {
     height: globalVars.appBar.height,
+    marginLeft: [
+      "constant(safe-area-inset-left)",
+      "env(safe-area-inset-left, 0px)",
+    ],
+    marginRight: [
+      "constant(safe-area-inset-right)",
+      "env(safe-area-inset-right, 0px)",
+    ],
     transition: transitions({
       height: globalVars.appBar.heightTransitionDuration,
     }),
@@ -249,7 +258,14 @@ export const backButton = style([
 
 export const closeButton = style([backButton]);
 
-export const center = style([f.flexAlignCenter, f.flex1, appBarMinHeight]);
+export const center = style([
+  f.flexAlignCenter,
+  f.flex1,
+  appBarMinHeight,
+  {
+    minWidth: 0,
+  },
+]);
 
 export const centerMain = style({
   display: "flex",
@@ -277,10 +293,7 @@ export const centerMain = style({
       left: "50%",
       transform: "translate(-50%)",
       height: globalVars.appBar.height,
-      top: [
-        `max(${globalVars.appBar.minSafeAreaInsetTop}, constant(safe-area-inset-top))`,
-        `max(${globalVars.appBar.minSafeAreaInsetTop}, env(safe-area-inset-top))`,
-      ],
+      top: 0,
     },
   },
 });

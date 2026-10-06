@@ -118,10 +118,11 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
     const globalCloseButton = globalOptions.appBar?.closeButton;
     const globalBackButton = globalOptions.appBar?.backButton;
 
+    const containerRef = useRef<HTMLDivElement>(null);
     const centerRef = useRef<any>(null);
 
     const { maxWidth } = useAppBarTitleMaxWidth({
-      outerRef: ref,
+      outerRef: containerRef,
       innerRef: centerRef,
       enable: globalOptions.theme === "cupertino",
     });
@@ -347,7 +348,7 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
         {...activityDataAttributes}
       >
         <div className={css.safeArea} />
-        <div className={css.container}>
+        <div ref={containerRef} className={css.container}>
           <div className={css.left}>
             {closeButtonLocation === "left" && renderCloseButton()}
             {renderBackButton()}

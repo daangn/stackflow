@@ -71,6 +71,25 @@ const Something = () => {
   );
 };
 ```
+### Safe Area
+
+`AppScreen`은 두 테마 모두에서 본문과 앱 바에 기기의 좌우 Safe Area Inset을 자동으로 반영해요. Cupertino 제목은 안전 영역 안에서 가운데에 배치돼요. 배경과 화면 전환은 화면 전체 너비를 유지해요.
+
+브라우저가 Safe Area Inset을 제공하도록 viewport 메타 태그에 `viewport-fit=cover`를 포함해 주세요.
+
+```html copy
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+```
+
+이미지 등 본문 요소를 화면 끝까지 넓히려면 블록 요소로 감싸고, 감싼 요소에 음수 마진을 지정해 Inset을 상쇄해 주세요.
+
+```css copy
+.full-bleed {
+  margin-left: calc(-1 * env(safe-area-inset-left, 0px));
+  margin-right: calc(-1 * env(safe-area-inset-right, 0px));
+}
+```
+
 ### `appBar`
 <APITable>
 |      |      |      | 

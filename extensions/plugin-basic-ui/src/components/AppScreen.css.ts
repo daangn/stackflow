@@ -172,7 +172,16 @@ export const paper = recipe({
 export const paperContent = recipe({
   base: [
     f.posAbsFull,
+    f.borderBox,
     {
+      paddingLeft: [
+        "constant(safe-area-inset-left)",
+        "env(safe-area-inset-left, 0px)",
+      ],
+      paddingRight: [
+        "constant(safe-area-inset-right)",
+        "env(safe-area-inset-right, 0px)",
+      ],
       overflowY: "scroll",
       WebkitOverflowScrolling: "touch",
       "::-webkit-scrollbar": {
