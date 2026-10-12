@@ -1,4 +1,3 @@
-import { useFlow, useStack } from "@stackflow/react";
 import {
   useActivityDataAttributes,
   useLazy,
@@ -16,6 +15,7 @@ import { createContext, useContext, useMemo, useRef } from "react";
 import { useGlobalOptions } from "../basicUIPlugin";
 import type { GlobalVars } from "../basicUIPlugin.css";
 import { globalVars } from "../basicUIPlugin.css";
+import { usePop } from "../usePop";
 import type { PropOf } from "../utils";
 import { compactMap } from "../utils";
 import AppBar from "./AppBar";
@@ -68,7 +68,7 @@ const AppScreen: React.FC<AppScreenProps> = ({
   const activityDataAttributes = useActivityDataAttributes();
   const mounted = useMounted();
 
-  const { pop } = useFlow();
+  const pop = usePop();
 
   const appScreenRef = useRef<HTMLDivElement>(null);
   const dimRef = useRef<HTMLDivElement>(null);

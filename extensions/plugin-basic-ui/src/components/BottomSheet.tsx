@@ -1,4 +1,3 @@
-import { useFlow } from "@stackflow/react";
 import {
   useLazy,
   useNullableActivity,
@@ -11,6 +10,7 @@ import clsx from "clsx";
 import { useRef } from "react";
 import type { GlobalVars } from "../basicUIPlugin.css";
 import { globalVars } from "../basicUIPlugin.css";
+import { usePop } from "../usePop";
 import { compactMap } from "../utils";
 import * as css from "./BottomSheet.css";
 
@@ -34,7 +34,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
   className,
 }) => {
   const activity = useNullableActivity();
-  const { pop } = useFlow();
+  const pop = usePop();
 
   const containerRef = useRef<HTMLDivElement>(null);
   const dimRef = useRef<HTMLDivElement>(null);
