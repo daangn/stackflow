@@ -11,7 +11,7 @@ import { IconBack, IconClose } from "../assets";
 import { useGlobalOptions } from "../basicUIPlugin";
 import type { GlobalVars } from "../basicUIPlugin.css";
 import { globalVars } from "../basicUIPlugin.css";
-import { useFlow } from "../useFlow";
+import { usePop } from "../usePop";
 import { compactMap } from "../utils";
 import * as css from "./AppBar.css";
 import * as appScreenCss from "./AppScreen.css";
@@ -108,7 +108,7 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
     },
     ref,
   ) => {
-    const actions = useFlow();
+    const pop = usePop();
     const activity = useNullableActivity();
     const activityDataAttributes = useActivityDataAttributes();
 
@@ -139,7 +139,7 @@ const AppBar = forwardRef<HTMLDivElement, AppBarProps>(
       }
 
       if (!e.defaultPrevented) {
-        actions.pop();
+        pop();
       }
     };
 

@@ -10,7 +10,7 @@ import clsx from "clsx";
 import { useRef } from "react";
 import type { GlobalVars } from "../basicUIPlugin.css";
 import { globalVars } from "../basicUIPlugin.css";
-import { useFlow } from "../useFlow";
+import { usePop } from "../usePop";
 import { compactMap } from "../utils";
 import * as css from "./Modal.css";
 
@@ -33,7 +33,7 @@ const Modal: React.FC<ModalProps> = ({
   className,
 }) => {
   const activity = useNullableActivity();
-  const { pop } = useFlow();
+  const pop = usePop();
 
   const containerRef = useRef<HTMLDivElement>(null);
   const paperRef = useRef<HTMLDivElement>(null);

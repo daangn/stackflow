@@ -10,4 +10,7 @@ const navigationHooks = StackflowReact as unknown as {
 };
 
 // Stackflow React 1.x exposes the global navigation hook as useActions.
-export const useFlow = navigationHooks.useFlow ?? navigationHooks.useActions;
+export function usePop() {
+  const useNavigation = navigationHooks.useFlow ?? navigationHooks.useActions;
+  return useNavigation().pop;
+}
