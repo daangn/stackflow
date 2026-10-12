@@ -1,4 +1,3 @@
-import { useFlow } from "@stackflow/react";
 import {
   useActivityDataAttributes,
   useAppBarTitleMaxWidth,
@@ -12,6 +11,7 @@ import { IconBack, IconClose } from "../assets";
 import { useGlobalOptions } from "../basicUIPlugin";
 import type { GlobalVars } from "../basicUIPlugin.css";
 import { globalVars } from "../basicUIPlugin.css";
+import { useFlow } from "../useFlow";
 import { compactMap } from "../utils";
 import * as css from "./AppBar.css";
 import * as appScreenCss from "./AppScreen.css";

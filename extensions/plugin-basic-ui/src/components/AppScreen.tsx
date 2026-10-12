@@ -1,4 +1,3 @@
-import { useFlow, useStack } from "@stackflow/react";
 import {
   useActivityDataAttributes,
   useLazy,
@@ -16,6 +15,7 @@ import { createContext, useContext, useMemo, useRef } from "react";
 import { useGlobalOptions } from "../basicUIPlugin";
 import type { GlobalVars } from "../basicUIPlugin.css";
 import { globalVars } from "../basicUIPlugin.css";
+import { useFlow } from "../useFlow";
 import type { PropOf } from "../utils";
 import { compactMap } from "../utils";
 import AppBar from "./AppBar";

@@ -1,4 +1,3 @@
-import { useFlow } from "@stackflow/react";
 import {
   useLazy,
   useNullableActivity,
@@ -11,6 +10,7 @@ import clsx from "clsx";
 import { useRef } from "react";
 import type { GlobalVars } from "../basicUIPlugin.css";
 import { globalVars } from "../basicUIPlugin.css";
+import { useFlow } from "../useFlow";
 import { compactMap } from "../utils";
 import * as css from "./Modal.css";
 
