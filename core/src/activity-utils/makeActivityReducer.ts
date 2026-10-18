@@ -108,13 +108,14 @@ export function makeActivityReducer(context: {
      * If there are params in the previous step, set them as the new params
      */
     StepPopped: (activity: Activity, event: StepPoppedEvent): Activity => {
-      activity.steps.pop();
+      const steps = activity.steps.slice(0, -1);
 
-      const beforeActivityParams = last(activity.steps)?.params;
+      const beforeActivityParams = last(steps)?.params;
 
       return {
         ...activity,
         params: beforeActivityParams ?? activity.params,
+        steps,
       };
     },
 
