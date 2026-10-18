@@ -11,6 +11,7 @@ const ArticleProfile: React.FC = () => {
       <div className={css.avatar}>
         <LazyLoadImage
           src={imageUrl}
+          alt="Emilia's profile"
           effect="opacity"
           width="100%"
           height="100%"
