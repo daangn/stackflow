@@ -33,6 +33,7 @@ const FeedCard: React.FC<FeedCardProps> = ({
         <div className={css.thumbnail}>
           <LazyLoadImage
             src={imageUrl}
+            alt={title}
             effect="opacity"
             width={108}
             height={108}

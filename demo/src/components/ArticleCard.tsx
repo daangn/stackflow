@@ -24,6 +24,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
         <div className={css.innerImage}>
           <LazyLoadImage
             src={imageUrl}
+            alt={title}
             effect="opacity"
             width="100%"
             height="100%"
