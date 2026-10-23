@@ -77,6 +77,12 @@ const Something = () => {
 
 `AppScreen` automatically applies the device's left and right safe area insets to its content and app bar in both themes. The Cupertino title is centered within the safe area. Backgrounds and navigation transitions still span the full screen.
 
+`Modal` is centered within the area remaining after the top, right, bottom, and left safe area insets are excluded. Its existing `2.5rem` horizontal margins and `maxWidth` still apply within that area, while the dimmed backdrop covers the full screen.
+
+`BottomSheet` keeps its background at the bottom of the screen and spans the full width. It applies the left, right, and bottom safe area insets as internal padding, in addition to any padding on its children. It does not apply the top inset.
+
+If children already apply safe area insets, remove only the adjustments duplicated by the component: all four sides for `Modal`, and the left, right, and bottom for `BottomSheet`. Keep any regular content padding and any existing top inset handling in `BottomSheet` children.
+
 Include `viewport-fit=cover` in the viewport meta tag so the browser exposes the safe area insets.
 
 ```html copy
