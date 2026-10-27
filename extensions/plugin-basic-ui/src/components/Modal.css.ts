@@ -37,11 +37,28 @@ export const container = recipe({
 
 export const dim = style([
   f.posAbsFull,
+  f.borderBox,
   f.overflowHidden,
   f.flexAlignCenter,
   f.flexJustifyCenter,
   allTransitions,
   {
+    paddingTop: [
+      "constant(safe-area-inset-top)",
+      "env(safe-area-inset-top, 0px)",
+    ],
+    paddingRight: [
+      "constant(safe-area-inset-right)",
+      "env(safe-area-inset-right, 0px)",
+    ],
+    paddingBottom: [
+      "constant(safe-area-inset-bottom)",
+      "env(safe-area-inset-bottom, 0px)",
+    ],
+    paddingLeft: [
+      "constant(safe-area-inset-left)",
+      "env(safe-area-inset-left, 0px)",
+    ],
     backgroundColor: globalVars.dimBackgroundColor,
     zIndex: vars.zIndexes.dim,
     opacity: 0,
