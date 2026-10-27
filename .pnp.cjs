@@ -6593,7 +6593,7 @@ const RAW_RUNTIME_STATE =
           ["rimraf", "npm:3.0.2"],\
           ["typescript", "patch:typescript@npm%3A5.5.3#optional!builtin<compat/typescript>::version=5.5.3&hash=379a07"],\
           ["vite", "virtual:2c30557d8ca5e7c67e7558d45bc44bef6c7a622b34a97fa8102f3235f92769c87777d34ed37059c12d8f3a21841ea06cf4badc5dc796697b0f765c17db6e24e5#npm:5.3.2"],\
-          ["zod", "npm:3.23.8"]\
+          ["zod", "npm:4.6.6"]\
         ],\
         "linkType": "SOFT"\
       }]\
@@ -19630,6 +19630,13 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/zod-npm-3.23.8-11c49c85b5-846fd73e1a.zip/node_modules/zod/",\
         "packageDependencies": [\
           ["zod", "npm:3.23.8"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["npm:4.6.6", {\
+        "packageLocation": "./.yarn/cache/zod-npm-4.6.6-e95f9c541d-ce628fb334.zip/node_modules/zod/",\
+        "packageDependencies": [\
+          ["zod", "npm:4.6.6"]\
         ],\
         "linkType": "HARD"\
       }]\
