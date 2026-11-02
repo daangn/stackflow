@@ -75,6 +75,12 @@ const Something = () => {
 
 `AppScreen`은 두 테마 모두에서 본문과 앱 바에 기기의 좌우 Safe Area Inset을 자동으로 반영해요. Cupertino 제목은 안전 영역 안에서 가운데에 배치돼요. 배경과 화면 전환은 화면 전체 너비를 유지해요.
 
+`Modal`은 상하좌우 Safe Area Inset을 제외한 안전 영역의 가운데에 배치돼요. 기존 좌우 `2.5rem` 마진과 `maxWidth`는 안전 영역 안에서 그대로 적용되고, dim 배경은 화면 전체를 덮어요.
+
+`BottomSheet` 배경은 화면 전체 너비와 하단 위치를 유지해요. 내부에는 좌우와 하단 Safe Area Inset을 패딩으로 적용하며, 자식 요소의 기존 패딩은 그 안에 추가로 유지돼요. 상단 Inset은 적용하지 않아요.
+
+자식 요소에서 이미 Safe Area Inset을 적용하고 있다면, 컴포넌트가 자동 적용하는 방향과 중복되는 처리만 제거해 주세요. `Modal`은 상하좌우, `BottomSheet`는 좌우와 하단이 대상이에요. 일반적인 콘텐츠 패딩과 `BottomSheet` 자식의 기존 상단 Inset 처리는 유지해 주세요.
+
 브라우저가 Safe Area Inset을 제공하도록 viewport 메타 태그에 `viewport-fit=cover`를 포함해 주세요.
 
 ```html copy
