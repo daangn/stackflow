@@ -56,9 +56,22 @@ export const dim = style([
 ]);
 
 export const paper = style([
+  f.borderBox,
   f.overflowHidden,
   allTransitions,
   {
+    paddingRight: [
+      "constant(safe-area-inset-right)",
+      "env(safe-area-inset-right, 0px)",
+    ],
+    paddingBottom: [
+      "constant(safe-area-inset-bottom)",
+      "env(safe-area-inset-bottom, 0px)",
+    ],
+    paddingLeft: [
+      "constant(safe-area-inset-left)",
+      "env(safe-area-inset-left, 0px)",
+    ],
     backgroundColor: globalVars.backgroundColor,
     backgroundImage: globalVars.backgroundImage,
     width: "100%",
