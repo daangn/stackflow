@@ -48,3 +48,28 @@ test("makeReducer - 등록되지 않은 이벤트는 명확한 에러를 던집�
     `No reducer for event ${JSON.stringify(unknownEvent)}`,
   );
 });
+
+test("makeReducer - Object.prototype에서 상속된 이름의 이벤트도 명확한 에러를 던집니다", () => {
+  const reducer = makeReducer<number>({
+    Initialized: (state) => state,
+    ActivityRegistered: (state) => state,
+    Pushed: (state) => state,
+    Replaced: (state) => state,
+    Popped: (state) => state,
+    StepPushed: (state) => state,
+    StepReplaced: (state) => state,
+    StepPopped: (state) => state,
+    Paused: (state) => state,
+    Resumed: (state) => state,
+  });
+
+  const inheritedNameEvent = {
+    id: "e1",
+    name: "toString",
+    eventDate: 0,
+  } as unknown as DomainEvent;
+
+  expect(() => reducer(0, inheritedNameEvent)).toThrow(
+    `No reducer for event ${JSON.stringify(inheritedNameEvent)}`,
+  );
+});
