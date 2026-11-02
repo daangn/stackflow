@@ -11,10 +11,10 @@ export function makeReducer<T>(
   },
 ) {
   return (target: T, event: DomainEvent) => {
-    const reducer = (reducerMap[event.name] as Reducer<T>).bind(reducerMap);
-    if (reducer) {
-      return reducer(target, event);
+    if (!Object.hasOwn(reducerMap, event.name)) {
+      throw new Error(`No reducer for event ${JSON.stringify(event)}`);
     }
-    throw new Error(`No reducer for event ${JSON.stringify(event)}`);
+    const reducer = (reducerMap[event.name] as Reducer<T>).bind(reducerMap);
+    return reducer(target, event);
   };
 }
