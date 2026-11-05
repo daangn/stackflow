@@ -10091,7 +10091,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["dagre-d3-es", "npm:7.0.10"],\
           ["d3", "npm:7.9.0"],\
-          ["lodash-es", "npm:4.17.21"]\
+          ["lodash-es", "npm:4.18.1"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -13588,10 +13588,10 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["lodash-es", [\
-      ["npm:4.17.21", {\
-        "packageLocation": "./.yarn/cache/lodash-es-npm-4.17.21-b45832dfce-03f39878ea.zip/node_modules/lodash-es/",\
+      ["npm:4.18.1", {\
+        "packageLocation": "./.yarn/cache/lodash-es-npm-4.18.1-02cf41b912-8bfad225ef.zip/node_modules/lodash-es/",\
         "packageDependencies": [\
-          ["lodash-es", "npm:4.17.21"]\
+          ["lodash-es", "npm:4.18.1"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -14277,7 +14277,7 @@ const RAW_RUNTIME_STATE =
           ["elkjs", "npm:0.9.3"],\
           ["katex", "npm:0.16.10"],\
           ["khroma", "npm:2.1.0"],\
-          ["lodash-es", "npm:4.17.21"],\
+          ["lodash-es", "npm:4.18.1"],\
           ["mdast-util-from-markdown", "npm:1.3.1"],\
           ["non-layered-tidy-tree-layout", "npm:2.0.2"],\
           ["stylis", "npm:4.3.2"],\
