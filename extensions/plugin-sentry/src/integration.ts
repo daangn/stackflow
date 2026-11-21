@@ -5,8 +5,8 @@ import {
 import {
   SEMANTIC_ATTRIBUTE_SENTRY_OP,
   SEMANTIC_ATTRIBUTE_SENTRY_ORIGIN,
-  SEMANTIC_ATTRIBUTE_SENTRY_SOURCE,
 } from "@sentry/core";
+import { SEMANTIC_ATTRIBUTE_SENTRY_SOURCE } from "./attributes";
 
 export function stackflowBrowserTracingIntegration(
   options: Parameters<typeof originalBrowserTracingIntegration>[0] = {},
