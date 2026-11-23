@@ -1,2 +1,2 @@
 export * as f from "./f.css";
-export { safeAreaInset } from "./safeAreaInset";
+export { safeAreaInset } from "./safeAreaInset.css";

@@ -60,9 +60,9 @@ export const paper = style([
   f.overflowHidden,
   allTransitions,
   {
-    paddingRight: ["constant(safe-area-inset-right)", safeAreaInset.right],
-    paddingBottom: ["constant(safe-area-inset-bottom)", safeAreaInset.bottom],
-    paddingLeft: ["constant(safe-area-inset-left)", safeAreaInset.left],
+    paddingRight: safeAreaInset.right,
+    paddingBottom: safeAreaInset.bottom,
+    paddingLeft: safeAreaInset.left,
     backgroundColor: globalVars.backgroundColor,
     backgroundImage: globalVars.backgroundImage,
     width: "100%",

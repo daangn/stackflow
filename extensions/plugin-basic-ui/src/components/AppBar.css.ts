@@ -184,10 +184,7 @@ export const appBar = recipe({
 });
 
 export const safeArea = style({
-  height: [
-    `max(${globalVars.appBar.minSafeAreaInsetTop}, constant(safe-area-inset-top))`,
-    `max(${globalVars.appBar.minSafeAreaInsetTop}, ${safeAreaInset.top})`,
-  ],
+  height: `max(${globalVars.appBar.minSafeAreaInsetTop}, ${safeAreaInset.top})`,
 });
 
 export const container = style([
@@ -196,8 +193,8 @@ export const container = style([
   appBarOverflow,
   {
     height: globalVars.appBar.height,
-    marginLeft: ["constant(safe-area-inset-left)", safeAreaInset.left],
-    marginRight: ["constant(safe-area-inset-right)", safeAreaInset.right],
+    marginLeft: safeAreaInset.left,
+    marginRight: safeAreaInset.right,
     transition: transitions({
       height: globalVars.appBar.heightTransitionDuration,
     }),

@@ -55,19 +55,12 @@ export const appScreen = recipe({
           [vars.appBar.topMargin]: globalVars.appBar.height,
         },
         /**
-         * When `max()` and `env()` (or `constant()`) supported
+         * When `max()` supported
          *
-         * - https://caniuse.com/css-env-function
          * - https://caniuse.com/css-math-functions
          */
         "@supports": {
-          "(padding: max(0px)) and (padding: constant(safe-area-inset-top))": {
-            vars: {
-              [vars.appBar.topMargin]:
-                `calc(${globalVars.appBar.height} + max(${globalVars.appBar.minSafeAreaInsetTop}, constant(safe-area-inset-top)))`,
-            },
-          },
-          "(padding: max(0px)) and (padding: env(safe-area-inset-top))": {
+          "(padding: max(0px))": {
             vars: {
               [vars.appBar.topMargin]:
                 `calc(${globalVars.appBar.height} + max(${globalVars.appBar.minSafeAreaInsetTop}, ${safeAreaInset.top}))`,
@@ -174,8 +167,8 @@ export const paperContent = recipe({
     f.posAbsFull,
     f.borderBox,
     {
-      paddingLeft: ["constant(safe-area-inset-left)", safeAreaInset.left],
-      paddingRight: ["constant(safe-area-inset-right)", safeAreaInset.right],
+      paddingLeft: safeAreaInset.left,
+      paddingRight: safeAreaInset.right,
       overflowY: "scroll",
       WebkitOverflowScrolling: "touch",
       "::-webkit-scrollbar": {
