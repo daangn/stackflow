@@ -2,7 +2,7 @@ import { style } from "@vanilla-extract/css";
 import { recipe } from "@vanilla-extract/recipes";
 
 import { android, cupertino, globalVars } from "../basicUIPlugin.css";
-import { f } from "../styles";
+import { f, safeAreaInset } from "../styles";
 import {
   enterActive,
   enterDone,
@@ -184,10 +184,7 @@ export const appBar = recipe({
 });
 
 export const safeArea = style({
-  height: [
-    `max(${globalVars.appBar.minSafeAreaInsetTop}, constant(safe-area-inset-top))`,
-    `max(${globalVars.appBar.minSafeAreaInsetTop}, env(safe-area-inset-top))`,
-  ],
+  height: `max(${globalVars.appBar.minSafeAreaInsetTop}, ${safeAreaInset.top})`,
 });
 
 export const container = style([
@@ -196,14 +193,8 @@ export const container = style([
   appBarOverflow,
   {
     height: globalVars.appBar.height,
-    marginLeft: [
-      "constant(safe-area-inset-left)",
-      "env(safe-area-inset-left, 0px)",
-    ],
-    marginRight: [
-      "constant(safe-area-inset-right)",
-      "env(safe-area-inset-right, 0px)",
-    ],
+    marginLeft: safeAreaInset.left,
+    marginRight: safeAreaInset.right,
     transition: transitions({
       height: globalVars.appBar.heightTransitionDuration,
     }),

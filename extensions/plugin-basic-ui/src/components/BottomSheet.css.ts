@@ -2,7 +2,7 @@ import { createThemeContract, style } from "@vanilla-extract/css";
 import { recipe } from "@vanilla-extract/recipes";
 
 import { globalVars } from "../basicUIPlugin.css";
-import { f } from "../styles";
+import { f, safeAreaInset } from "../styles";
 
 export const vars = createThemeContract({
   transitionDuration: null,
@@ -60,18 +60,9 @@ export const paper = style([
   f.overflowHidden,
   allTransitions,
   {
-    paddingRight: [
-      "constant(safe-area-inset-right)",
-      "env(safe-area-inset-right, 0px)",
-    ],
-    paddingBottom: [
-      "constant(safe-area-inset-bottom)",
-      "env(safe-area-inset-bottom, 0px)",
-    ],
-    paddingLeft: [
-      "constant(safe-area-inset-left)",
-      "env(safe-area-inset-left, 0px)",
-    ],
+    paddingRight: safeAreaInset.right,
+    paddingBottom: safeAreaInset.bottom,
+    paddingLeft: safeAreaInset.left,
     backgroundColor: globalVars.backgroundColor,
     backgroundImage: globalVars.backgroundImage,
     width: "100%",
