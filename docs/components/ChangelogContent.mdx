@@ -1,3 +1,14 @@
+## 2026.11.23
+
+Read safe area insets from the `--native-safe-area-inset-*` CSS variables first, falling back to `env(safe-area-inset-*)` when they are not defined. A host app that injects these variables on the root element before the first render, and updates them whenever the insets change, no longer causes a layout shift in `AppScreen`, `AppBar`, `Modal`, and `BottomSheet`. [`1f88aab`](https://github.com/daangn/stackflow/commit/1f88aabd7913edacf5744ea54148255ee7710906)
+
+If your host app injects these variables and you set `appBar.minSafeAreaInsetTop` or its CSS variable to a cached inset to avoid that layout shift, remove the override. `AppBar` uses the larger of the two, so a stale cached value still wins over the native variable. Without the native variables, `env()` can still be `0px` on the first render, so a cached override still prevents the shift there.
+
+Released packages:
+- 📦 [@stackflow/plugin-basic-ui@1.20.0](https://npmjs.com/package/@stackflow/plugin-basic-ui/v/1.20.0)
+
+---
+
 ## 2026.10.27
 
 Center Modal within the safe area while preserving its margins and full-screen backdrop. Add left, right, and bottom safe area padding to BottomSheet content while keeping its background full-width and bottom-aligned. Remove any duplicate safe area adjustments from children when upgrading. [`1f595cc`](https://github.com/daangn/stackflow/commit/1f595cc64136e7ace422b0e481cbff188db7ea4c)
