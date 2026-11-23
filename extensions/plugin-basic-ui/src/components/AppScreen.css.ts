@@ -2,7 +2,7 @@ import { createThemeContract, style } from "@vanilla-extract/css";
 import { recipe } from "@vanilla-extract/recipes";
 
 import { android, cupertino, globalVars } from "../basicUIPlugin.css";
-import { f } from "../styles";
+import { f, safeAreaInset } from "../styles";
 
 export const vars = createThemeContract({
   transitionDuration: null,
@@ -70,7 +70,7 @@ export const appScreen = recipe({
           "(padding: max(0px)) and (padding: env(safe-area-inset-top))": {
             vars: {
               [vars.appBar.topMargin]:
-                `calc(${globalVars.appBar.height} + max(${globalVars.appBar.minSafeAreaInsetTop}, env(safe-area-inset-top)))`,
+                `calc(${globalVars.appBar.height} + max(${globalVars.appBar.minSafeAreaInsetTop}, ${safeAreaInset.top}))`,
             },
           },
         },
@@ -174,14 +174,8 @@ export const paperContent = recipe({
     f.posAbsFull,
     f.borderBox,
     {
-      paddingLeft: [
-        "constant(safe-area-inset-left)",
-        "env(safe-area-inset-left, 0px)",
-      ],
-      paddingRight: [
-        "constant(safe-area-inset-right)",
-        "env(safe-area-inset-right, 0px)",
-      ],
+      paddingLeft: ["constant(safe-area-inset-left)", safeAreaInset.left],
+      paddingRight: ["constant(safe-area-inset-right)", safeAreaInset.right],
       overflowY: "scroll",
       WebkitOverflowScrolling: "touch",
       "::-webkit-scrollbar": {

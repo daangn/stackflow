@@ -2,7 +2,7 @@ import { createThemeContract, style } from "@vanilla-extract/css";
 import { recipe } from "@vanilla-extract/recipes";
 
 import { globalVars } from "../basicUIPlugin.css";
-import { f } from "../styles";
+import { f, safeAreaInset } from "../styles";
 
 export const vars = createThemeContract({
   transitionDuration: null,
@@ -43,22 +43,10 @@ export const dim = style([
   f.flexJustifyCenter,
   allTransitions,
   {
-    paddingTop: [
-      "constant(safe-area-inset-top)",
-      "env(safe-area-inset-top, 0px)",
-    ],
-    paddingRight: [
-      "constant(safe-area-inset-right)",
-      "env(safe-area-inset-right, 0px)",
-    ],
-    paddingBottom: [
-      "constant(safe-area-inset-bottom)",
-      "env(safe-area-inset-bottom, 0px)",
-    ],
-    paddingLeft: [
-      "constant(safe-area-inset-left)",
-      "env(safe-area-inset-left, 0px)",
-    ],
+    paddingTop: ["constant(safe-area-inset-top)", safeAreaInset.top],
+    paddingRight: ["constant(safe-area-inset-right)", safeAreaInset.right],
+    paddingBottom: ["constant(safe-area-inset-bottom)", safeAreaInset.bottom],
+    paddingLeft: ["constant(safe-area-inset-left)", safeAreaInset.left],
     backgroundColor: globalVars.dimBackgroundColor,
     zIndex: vars.zIndexes.dim,
     opacity: 0,

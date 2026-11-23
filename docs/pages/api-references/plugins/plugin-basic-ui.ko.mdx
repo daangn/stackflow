@@ -87,12 +87,16 @@ const Something = () => {
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 ```
 
+각 Inset은 `--native-safe-area-inset-top`, `--native-safe-area-inset-right`, `--native-safe-area-inset-bottom`, `--native-safe-area-inset-left` CSS 변수를 먼저 사용하고, 변수가 정의되지 않은 환경에서는 `env(safe-area-inset-*)`를 사용해요. 호스트 앱이 첫 렌더링 전에 이 변수를 주입하면 `env()` 값이 늦게 반영되면서 생기는 레이아웃 시프트를 막을 수 있어요.
+
+이 레이아웃 시프트를 피하려고 이전에 측정한 Inset 값을 `appBar.minSafeAreaInsetTop`이나 해당 CSS 변수에 넣고 있다면 제거해 주세요. `AppBar`는 `minSafeAreaInsetTop`과 현재 Inset 중 큰 값을 사용하기 때문에, 화면 회전 등으로 Inset이 바뀌어도 이전 값이 계속 적용돼요.
+
 이미지 등 본문 요소를 화면 끝까지 넓히려면 블록 요소로 감싸고, 감싼 요소에 음수 마진을 지정해 Inset을 상쇄해 주세요.
 
 ```css copy
 .full-bleed {
-  margin-left: calc(-1 * env(safe-area-inset-left, 0px));
-  margin-right: calc(-1 * env(safe-area-inset-right, 0px));
+  margin-left: calc(-1 * var(--native-safe-area-inset-left, env(safe-area-inset-left, 0px)));
+  margin-right: calc(-1 * var(--native-safe-area-inset-right, env(safe-area-inset-right, 0px)));
 }
 ```
 

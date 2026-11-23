@@ -89,12 +89,16 @@ Include `viewport-fit=cover` in the viewport meta tag so the browser exposes the
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 ```
 
+Each inset reads the `--native-safe-area-inset-top`, `--native-safe-area-inset-right`, `--native-safe-area-inset-bottom`, and `--native-safe-area-inset-left` CSS variables first, and falls back to `env(safe-area-inset-*)` when a variable is not defined. A host app can inject these variables before the first render to avoid the layout shift that occurs while `env()` values are not yet available.
+
+If you set `appBar.minSafeAreaInsetTop` or its CSS variable to a previously measured inset to work around that layout shift, remove the override. `AppBar` uses the larger of `minSafeAreaInsetTop` and the current inset, so a stale value still wins after the inset changes, for example after a rotation.
+
 To extend media or other content to the screen edges, wrap it in a block element and cancel the insets with negative margins on the wrapper:
 
 ```css copy
 .full-bleed {
-  margin-left: calc(-1 * env(safe-area-inset-left, 0px));
-  margin-right: calc(-1 * env(safe-area-inset-right, 0px));
+  margin-left: calc(-1 * var(--native-safe-area-inset-left, env(safe-area-inset-left, 0px)));
+  margin-right: calc(-1 * var(--native-safe-area-inset-right, env(safe-area-inset-right, 0px)));
 }
 ```
 
