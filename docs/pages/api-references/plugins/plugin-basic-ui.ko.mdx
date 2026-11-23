@@ -87,7 +87,7 @@ const Something = () => {
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 ```
 
-각 Inset은 `--native-safe-area-inset-top`, `--native-safe-area-inset-right`, `--native-safe-area-inset-bottom`, `--native-safe-area-inset-left` CSS 변수를 먼저 사용하고, 변수가 정의되지 않은 환경에서는 `env(safe-area-inset-*)`를 사용해요. 호스트 앱이 첫 렌더링 전에 이 변수를 주입하면 `env()` 값이 늦게 반영되면서 생기는 레이아웃 시프트를 막을 수 있어요. 화면 회전이나 폴더블 기기를 펼칠 때처럼 Inset이 바뀌면 호스트 앱이 변수도 함께 갱신해야 해요. 정의된 변수는 항상 `env()`보다 우선하기 때문에, 갱신하지 않으면 이전 값이 계속 적용돼요. `env()`로 돌아가려면 변수를 제거해 주세요.
+각 Inset은 `--native-safe-area-inset-top`, `--native-safe-area-inset-right`, `--native-safe-area-inset-bottom`, `--native-safe-area-inset-left` CSS 변수를 먼저 사용하고, 변수가 정의되지 않은 환경에서는 `env(safe-area-inset-*)`를 사용해요. 호스트 앱이 첫 렌더링 전에 루트 요소(`document.documentElement`)에 이 변수를 주입하면 `env()` 값이 늦게 반영되면서 생기는 레이아웃 시프트를 막을 수 있어요. 화면 회전이나 폴더블 기기를 펼칠 때처럼 Inset이 바뀌면 호스트 앱이 변수도 함께 갱신해야 해요. 정의된 변수는 항상 `env()`보다 우선하기 때문에, 갱신하지 않으면 이전 값이 계속 적용돼요. `env()`로 돌아가려면 변수를 제거해 주세요. `body` 등 다른 요소에 설정한 변수는 사용되지 않아요.
 
 호스트 앱이 이 변수를 주입하는 환경에서, 레이아웃 시프트를 피하려고 이전에 측정한 Inset 값을 `appBar.minSafeAreaInsetTop`이나 해당 CSS 변수에 넣고 있다면 제거해 주세요. `AppBar`는 `minSafeAreaInsetTop`과 현재 Inset 중 큰 값을 사용하기 때문에, 화면 회전 등으로 Inset이 바뀌어도 이전 값이 계속 적용돼요.
 
